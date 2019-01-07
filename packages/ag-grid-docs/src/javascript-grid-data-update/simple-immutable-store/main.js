@@ -157,9 +157,12 @@ var gridOptions = {
             { component: 'agAggregationComponent' }
         ]
     },
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
-    enableColResize: true,
     rowSelection: 'multiple',
     enableRangeSelection: true,
     autoGroupColumnDef: {
@@ -168,7 +171,6 @@ var gridOptions = {
         field: 'symbol'
     },
     groupDefaultExpanded: 1,
-    enableSorting: true,
     rowData: immutableStore,
     getRowNodeId: function(data) {
         return data.symbol;

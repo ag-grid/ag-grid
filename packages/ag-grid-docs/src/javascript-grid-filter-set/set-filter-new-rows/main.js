@@ -53,10 +53,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
-    rowData: randomData(),
-    enableFilter: true,
-    enableColResize: true
+    rowData: randomData()
 };
 
 function setNewData() {

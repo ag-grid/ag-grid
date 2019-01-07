@@ -145,11 +145,13 @@
             columnDefs: columnDefs,
             rowData: createRowData(),
             rowSelection: 'multiple',
-            enableColResize: true,
-            enableSorting: true,
-            enableFilter: true,
             onModelUpdated: onModelUpdated,
-            suppressRowClickSelection: true
+            suppressRowClickSelection: true,
+            defaultColDef: {
+                sortable: true,
+                filter: true,
+                resize: true
+            }
         };
 
         function onModelUpdated() {

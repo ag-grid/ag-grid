@@ -37,10 +37,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true,
-    enableSorting: true
+    rowData: null
 };
 
 function clearFilters() {

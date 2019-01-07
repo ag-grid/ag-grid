@@ -136,15 +136,17 @@ var columnDefs = [
         filter: 'agNumberColumnFilter',
         floatingFilterComponentParams: {suppressFilterButton: true}
     },
-    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter', suppressFilter: true}
+    {headerName: "Total", field: "total", width: 100, filter: false}
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     floatingFilter: true,
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true,
-    enableSorting: true
+    rowData: null
 };
 
 function irelandAndUk() {

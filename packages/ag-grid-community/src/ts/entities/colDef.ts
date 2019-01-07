@@ -197,8 +197,10 @@ export interface ColDef extends AbstractColDef {
      * filterMenuTab, generalMenuTab, columnsMenuTab **/
     menuTabs?: string[];
 
-    /** Set to true if no sorting should be done for this column. */
-    suppressSorting?: boolean;
+    /** Set to true if sorting allowed for this column. */
+    sortable?: boolean;
+
+    suppressSorting?: boolean; // // as of v20 deprecated, use colDef.sortable=false instead
 
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
@@ -215,8 +217,7 @@ export interface ColDef extends AbstractColDef {
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
     lockPinned?: boolean;
 
-    /** Set to true to not allow filter on this column */
-    suppressFilter?: boolean;
+    suppressFilter?: boolean; // as of v20 deprecated, use colDef.filter=false instead
 
     /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
@@ -224,8 +225,10 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
     suppressSizeToFit?: boolean;
 
-    /** Set to true if you do not want this column to be resizable by dragging it's edge. */
-    suppressResize?: boolean;
+    suppressResize?: boolean; // as of v20 deprecated, use colDef.resizable=false instead
+
+    /** Set to true if this column should be resizable */
+    resizable?: boolean;
 
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
@@ -273,7 +276,7 @@ export interface ColDef extends AbstractColDef {
     templateUrl?: string;
 
     /** one of the built in filter names: [set, number, text], or a filter function*/
-    filter?: string | { new(): IFilterComp };
+    filter?: string | { new(): IFilterComp } | boolean;
 
     filterFramework?: any;
 

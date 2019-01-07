@@ -19,9 +19,9 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
+        resizable: true,
         width: 100
     },
-    enableColResize: true,
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
     columnDefs: columnDefs

@@ -9,12 +9,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     // set rowData to null or undefined to show loading panel by default
     pivotMode: true,
-    enableColResize: true,
-    columnDefs: columnDefs,
-    floatingFilter:true,
-    enableSorting:true
+    columnDefs: columnDefs
 };
 
 // setup the grid after the page has finished loading

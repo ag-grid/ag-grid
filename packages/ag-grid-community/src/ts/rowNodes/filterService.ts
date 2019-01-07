@@ -16,17 +16,17 @@ export class FilterService {
         this.doingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
-    public filterAccordingToColumnState(rowNode: RowNode): void {
+    public filter(rowNode: RowNode): void {
         const filterActive: boolean = this.filterManager.isAnyFilterPresent();
-        this.filter(rowNode, filterActive);
+        this.filterNode(rowNode, filterActive);
     }
 
-    public filter(rowNode: RowNode, filterActive: boolean): void {
+    private filterNode(rowNode: RowNode, filterActive: boolean): void {
 
         // recursively get all children that are groups to also filter
         if (rowNode.hasChildren()) {
 
-            rowNode.childrenAfterGroup.forEach(node => this.filter(node, filterActive));
+            rowNode.childrenAfterGroup.forEach(node => this.filterNode(node, filterActive));
 
             // result of filter for this node
             if (filterActive) {

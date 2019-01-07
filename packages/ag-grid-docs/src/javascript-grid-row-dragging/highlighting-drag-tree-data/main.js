@@ -37,6 +37,9 @@ var rowData = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     components: {
         fileCellRenderer: getFileCellRenderer()
     },
@@ -44,7 +47,6 @@ var gridOptions = {
     rowData: rowData,
     treeData: true,
     animateRows: true,
-    enableColResize: true,
     groupDefaultExpanded: -1,
     getDataPath: function(data) {
         return data.filePath;

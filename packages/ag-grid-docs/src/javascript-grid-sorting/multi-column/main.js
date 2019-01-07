@@ -13,11 +13,11 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 150
+        width: 150,
+        sortable: true
     },
     columnDefs: columnDefs,
     rowData: null,
-    enableSorting: true,
     multiSortKey: 'ctrl',
     onGridReady: function(params) {
         var defaultSortModel = [

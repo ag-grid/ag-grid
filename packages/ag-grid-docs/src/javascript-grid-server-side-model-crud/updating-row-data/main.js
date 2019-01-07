@@ -10,10 +10,9 @@ var columnDefs = [
 var gridOptions = {
   defaultColDef: {
     width: 250,
-    suppressFilter: true
+    resizable: true
   },
   columnDefs: columnDefs,
-  enableColResize: true,
   rowSelection: 'multiple',
   // use the enterprise row model
   rowModelType: 'serverSide',

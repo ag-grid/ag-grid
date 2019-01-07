@@ -45,9 +45,11 @@ function createRowData() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableColResize: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

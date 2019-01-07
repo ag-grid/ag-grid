@@ -24,7 +24,7 @@ export class BaseFrameworkFactory implements IFrameworkFactory {
         return colDef.cellEditor;
     }
 
-    public colDefFilter(colDef: ColDef): {new(): IFilterComp} | string | undefined {
+    public colDefFilter(colDef: ColDef): {new(): IFilterComp} | string | boolean | undefined {
         return colDef.filter;
     }
 

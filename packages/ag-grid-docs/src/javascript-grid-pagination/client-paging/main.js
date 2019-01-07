@@ -40,25 +40,25 @@ var autoGroupColumnDef = {
 };
 
 var gridOptions = {
-    enableSorting: true,
-    enableFilter: true,
+    defaultColDef:{
+        editable: true,
+        enableRowGroup:true,
+        enablePivot:true,
+        enableValue:true,
+        sortable:true,
+        resizable: true,
+        filter: true
+    },
     suppressRowClickSelection: true,
     groupSelectsChildren: true,
     debug: true,
     rowSelection: 'multiple',
-    enableColResize: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     enableRangeSelection: true,
     columnDefs: columnDefs,
     pagination: true,
-    autoGroupColumnDef: autoGroupColumnDef,
-    defaultColDef:{
-        editable: true,
-        enableRowGroup:true,
-        enablePivot:true,
-        enableValue:true
-    }
+    autoGroupColumnDef: autoGroupColumnDef
 };
 
 // setup the grid after the page has finished loading

@@ -31,6 +31,9 @@ function getRowData() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnTypes: {
         valueColumn: {editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', filter: 'agNumberColumnFilter'}
     },
@@ -40,7 +43,6 @@ var gridOptions = {
     suppressAggFuncInHeader: true,
     enableCellChangeFlash: true,
     animateRows: true,
-    enableSorting: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

@@ -43,8 +43,10 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     enableRangeSelection: true,
-    enableColResize: true,
     debug: true,
     columnDefs: columnDefs,
     rowModelType: 'viewport',

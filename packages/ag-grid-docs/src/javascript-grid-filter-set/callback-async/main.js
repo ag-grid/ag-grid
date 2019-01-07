@@ -11,6 +11,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: [
         {value:'value 1'},
@@ -23,7 +26,6 @@ var gridOptions = {
         {value:'value 2'},
         {value:'value 2'}
     ],
-    enableFilter: true,
     floatingFilter: true
 };
 

@@ -31,9 +31,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true
+    rowData: null
 };
 
 function PersonFilter() {

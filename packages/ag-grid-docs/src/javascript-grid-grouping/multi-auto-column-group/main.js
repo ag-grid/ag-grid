@@ -12,11 +12,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
     enableRangeSelection: true,
     rowData: null,
-    enableSorting:true,
     groupMultiAutoColumn:true
 };
 

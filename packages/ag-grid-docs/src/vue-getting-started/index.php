@@ -137,33 +137,31 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <h2>Enable Sorting And Filtering</h2>
 
-<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>enableSorting</code> property to the component.</p> 
+<p>So far, so good. But wouldn't it be nice to be able to sort the data to
+    help us see which car is the least/most expensive? Well, enabling sorting
+    in ag-Grid is actually quite simple - all you need to do is set
+    the <code>sortable</code> property to the column definitions.</p>
 
-<snippet language="html">
-&lt;ag-grid-vue style="width: 500px; height: 500px;"
-             class="ag-theme-balham"
-             :columnDefs="columnDefs"
-             :rowData="rowData"
-
-             :enableSorting="true"&gt;
-&lt;/ag-grid-vue&gt;
+<snippet language="js">
+this.columnDefs = [
+    {headerName: 'Make', field: 'make', sortable: true },
+    {headerName: 'Model', field: 'model', sortable: true },
+    {headerName: 'Price', field: 'price', sortable: true }
+];
 </snippet>
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
 <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
 
-<p>As with sorting, enabling filtering is as easy as setting the <code>enableFilter</code> property:</p>
+<p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 
-<snippet language="html">
-&lt;ag-grid-vue style="width: 500px; height: 500px;"
-             class="ag-theme-balham"
-             :columnDefs="columnDefs"
-             :rowData="rowData"
-
-             :enableSorting="true"
-             :enableFilter="true"&gt;
-&lt;/ag-grid-vue&gt;
+<snippet language="js">
+this.columnDefs = [
+    {headerName: 'Make', field: 'make', sortable: true, filter: true },
+    {headerName: 'Model', field: 'model', sortable: true, filter: true },
+    {headerName: 'Price', field: 'price', sortable: true, filter: true }
+];
 </snippet>
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
@@ -208,8 +206,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
                  :rowData="rowData"
-                 :enableSorting="true"
-                 :enableFilter="true"
                  rowSelection="multiple"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
@@ -254,8 +250,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
              :columnDefs="columnDefs"
              :rowData="rowData"
 
-             :enableSorting="true"
-             :enableFilter="true"
              rowSelection="multiple"&gt;
 &lt;/ag-grid-vue&gt;
 </snippet>
@@ -278,8 +272,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
-                     :enableSorting="true"
-                     :enableFilter="true"
                      rowSelection="multiple"
 
                      :gridReady="onGridReady"&gt;
@@ -377,7 +369,7 @@ import App from './App'
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
-<p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property, bind to it, and update the <code>columnDefs</code> with a <code>rowGroupIndex</code>:</p>
+<p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property, bind to it, and update the <code>columnDefs</code> with a <code>rowGroup</code>:</p>
 
 <snippet language="html">
 &lt;template&gt;
@@ -387,8 +379,6 @@ import App from './App'
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
-                     :enableSorting="true"
-                     :enableFilter="true"
                      rowSelection="multiple"
 
                      :gridReady="onGridReady"&gt;
@@ -427,7 +417,7 @@ import App from './App'
         },
         beforeMount() {
             this.columnDefs = [
-                {headerName: 'Make', field: 'make', rowGroupIndex: 0},
+                {headerName: 'Make', field: 'make', rowGroup: true},
                 {headerName: 'Model', field: 'model'},
                 {headerName: 'Price', field: 'price'}
             ];

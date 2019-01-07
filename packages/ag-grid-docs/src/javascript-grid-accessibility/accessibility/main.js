@@ -10,8 +10,9 @@ var gridOptions = {
         {headerName: 'Silver', field: 'silver', width: 110, aggFunc: 'sum'},
         {headerName: 'Bronze', field: 'bronze', width: 110, aggFunc: 'sum'}
     ],
-
-    enableColResize: true,
+    defaultColDef: {
+        resizable: true
+    },
     ensureDomOrder: true,
     suppressColumnVirtualisation: true,
     rowBuffer: 999

@@ -19,6 +19,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     components:{
         loadingRenderer: function(params) {
             if (params.value !== undefined) {
@@ -27,9 +30,7 @@ var gridOptions = {
                 return '<img src="../images/loading.gif">'
             }
         }
-
     },
-    enableColResize: true,
     rowBuffer: 0,
     rowSelection: 'multiple',
     rowDeselection: true,

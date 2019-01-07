@@ -389,11 +389,13 @@ var columnDefs = [
 
 var gridOptions = {
     // this tells the grid we are doing updates when setting new data
-    defaultColDef: {width: 150},
+    defaultColDef: {
+        width: 150,
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
-    enableSorting: true,
-    enableFilter: true,
     groupDefaultExpanded: 1,
     onRowDragMove: onRowDragMove,
     onGridReady: function() {

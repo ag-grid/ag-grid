@@ -56,15 +56,15 @@ var gridOptions = {
         ]
     },
     animateRows: true,
-    enableColResize: true,
     enableRangeSelection: true,
-    enableSorting: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     suppressAggFuncInHeader: true,
     getRowNodeId: function(data) { return data.trade; },
     defaultColDef: {
-        width: 120
+        width: 120,
+        sortable: true,
+        resizable: true
     }
 };
 

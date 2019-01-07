@@ -47,7 +47,9 @@ module.controller("exampleCtrl", function ($scope, $compile) {
     ];
 
     $scope.gridOptions = {
-        enableFilter: true,
+        defaultColDef: {
+            filter: true
+        },
         columnDefs: columnDefs,
         rowData: rowData,
         components: {

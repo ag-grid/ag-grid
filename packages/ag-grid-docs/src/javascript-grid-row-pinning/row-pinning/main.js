@@ -24,11 +24,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
-    enableSorting: true,
-    enableFilter: true,
     getRowStyle: function (params) {
         if (params.node.rowPinned) {
             return {'font-weight': 'bold'};

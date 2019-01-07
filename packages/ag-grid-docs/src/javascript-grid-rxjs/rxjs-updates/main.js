@@ -35,8 +35,10 @@ function numberFormatter(params) {
 }
 
 const gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     enableRangeSelection: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     getRowNodeId: data => data.code,
     onGridReady: params => {

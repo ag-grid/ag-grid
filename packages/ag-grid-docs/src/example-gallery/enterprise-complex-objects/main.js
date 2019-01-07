@@ -20,16 +20,16 @@ var gridOptions = {
         // restrict what aggregation functions the columns can have,
         // include a custom function 'random' that just returns a
         // random number
-        allowedAggFuncs: ['sum','min','max','random']
+        allowedAggFuncs: ['sum','min','max','random'],
+        sortable: true,
+        resizable: true
     },
     rowBuffer: 0,
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'always',
     animateRows: true,
     debug: true,
-    enableSorting: true,
     showToolPanel: true,
     suppressAggFuncInHeader: true,
     // restrict to 2 server side calls concurrently

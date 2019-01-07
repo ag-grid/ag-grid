@@ -10,12 +10,14 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    defaultColDef: { width: 150 },
+    defaultColDef: {
+        width: 150,
+        sortable: true,
+        filter: true
+    },
     rowDragManaged: true,
     columnDefs: columnDefs,
-    animateRows: true,
-    enableSorting: true,
-    enableFilter: true
+    animateRows: true
 };
 
 // setup the grid after the page has finished loading

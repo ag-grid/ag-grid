@@ -48,11 +48,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
-    floatingFilter: true,
-    enableSorting: true
+    floatingFilter: true
 };
 
 function setIdText(id, value) {

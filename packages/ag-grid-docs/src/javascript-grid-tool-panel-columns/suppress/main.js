@@ -12,8 +12,10 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
-    enableSorting: true,
     sideBar: {
         toolPanels: [{
             id: 'columns',

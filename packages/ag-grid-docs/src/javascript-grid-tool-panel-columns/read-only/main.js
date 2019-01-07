@@ -12,10 +12,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
     pivotMode: true,
-    enableSorting: true,
     sideBar: 'columns',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',

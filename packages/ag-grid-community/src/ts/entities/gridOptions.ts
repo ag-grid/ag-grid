@@ -113,13 +113,13 @@ export interface GridOptions {
     unSortIcon?: boolean;
     rowBuffer?: number;
     enableRtl?: boolean;
-    enableColResize?: boolean;
+    enableColResize?: boolean; // deprecated in v20, use colDef.resizable instead
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
-    enableSorting?: boolean;
-    enableServerSideSorting?: boolean;
-    enableFilter?: boolean;
-    enableServerSideFilter?: boolean;
+    enableSorting?: boolean; // deprecated in v20, use colDef.sortable instead
+    enableServerSideSorting?: boolean; // deprecated in v20, use colDef.sortable instead
+    enableFilter?: boolean; // deprecated in v20, use colDef.filter = true instead
+    enableServerSideFilter?: boolean; // deprecated in v20, use colDef.filter = true instead
     enableGroupEdit?: boolean;
     enterMovesDownAfterEdit?: boolean;
     enterMovesDown?: boolean;

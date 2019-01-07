@@ -12,9 +12,10 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    // set rowData to null or undefined to show loading panel by default
+    defaultColDef: {
+        resizable: true
+    },
     showToolPanel: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     sideBar: true,
 };

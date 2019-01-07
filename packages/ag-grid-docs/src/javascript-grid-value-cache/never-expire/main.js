@@ -74,6 +74,9 @@ function onUpdateOneValue() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     columnTypes: {
         quarterFigure: {
             editable: true, cellClass: 'number-cell', aggFunc: 'sum',
@@ -88,7 +91,6 @@ var gridOptions = {
     enableCellChangeFlash: true,
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableColResize: true,
     enableRangeSelection: true,
     groupDefaultExpanded: 1,
     valueCacheStrategy: 'invalidateNever',

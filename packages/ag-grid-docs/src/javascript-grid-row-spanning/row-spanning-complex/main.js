@@ -47,13 +47,13 @@ var gridOptions = {
     components: {
         showCellRenderer: createShowCellRenderer()
     },
-    enableColResize: true,
+    defaultColDef: {
+        resizable: true,
+        width: 100
+    },
     suppressRowTransform: true,
     columnDefs: columnDefs,
-    rowData: rowData,
-    defaultColDef: {
-        width: 100
-    }
+    rowData: rowData
 };
 
 // setup the grid after the page has finished loading

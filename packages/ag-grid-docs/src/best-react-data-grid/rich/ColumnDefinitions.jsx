@@ -7,43 +7,44 @@ export default class ColumnDefinitionFactory {
         return [
             // first column has the checkboxes
             { headerName: '#', width: 30, checkboxSelection: true,
-                suppressSorting: true, suppressMenu: true, pinned: true },
+                suppressMenu: true, pinned: true, resizable: true},
 
             // the first three columns are grouped in a group called 'Employee'
             { headerName: 'Employee',
                 children: [
-                    { field: "name", width: 150, pinned: true, editable: true},
-                    { field: "country", width: 150, pinned: true, filter: 'set', editable: true,
+                    { field: "name", width: 150, pinned: true, editable: true, sortable: true, resizable: true, filter: true },
+                    { field: "country", width: 150, pinned: true, filter: 'set', editable: true, resizable: true,
                         // an example of using a non-React cell renderer
                         cellRenderer: countryCellRenderer,
                         cellEditorParams: { values: COUNTRY_LIST, cellRenderer: countryCellRenderer},
                         filterParams: { cellRenderer: countryCellRenderer, cellHeight: 20},
-                        cellEditor: 'agRichSelect'
+                        cellEditor: 'agRichSelect', sortable: true
                     },
                     { headerName: "Date of Birth", field: "dob", width: 110, filter: 'date', pinned: true,
+                        resizable: true,
                         // simple cell formatter for formatting dates
                         valueFormatter: function (params) {
                             return formatDate(params.value);
                         },
                         // only show column when this group is open
-                        columnGroupShow: 'open'
+                        columnGroupShow: 'open', sortable: true
                     }
                 ]
             },
 
             // the next column is not in a group, just by itself
-            { field: "proficiency", width: 135,
+            { field: "proficiency", width: 135, resizable: true, filter: true,
                 // supply a React component for custom cell rendering
-                cellRendererFramework: ProficiencyCustomCell
+                cellRendererFramework: ProficiencyCustomCell, sortable: true
             },
 
             // then the last group with three columns
             {
                 headerName: 'Contact',
                 children: [
-                    {field: "mobile", width: 150, filter: 'text'},
-                    {field: "landline", width: 150, filter: 'text'},
-                    {field: "address", width: 500, filter: 'text'}
+                    {field: "mobile", width: 150, filter: 'text', sortable: true, resizable: true },
+                    {field: "landline", width: 150, filter: 'text', sortable: true, resizable: true },
+                    {field: "address", width: 500, filter: 'text', sortable: true, resizable: true }
                 ]
             }
         ];

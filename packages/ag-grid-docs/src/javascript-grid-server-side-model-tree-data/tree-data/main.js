@@ -8,7 +8,7 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 240,
-        suppressFilter: true
+        resizable: true
     },
     autoGroupColumnDef: {
         cellRendererParams: {
@@ -21,7 +21,6 @@ var gridOptions = {
     rowModelType: 'serverSide',
     treeData: true,
     columnDefs: columnDefs,
-    enableColResize: true,
     animateRows: true,
     isServerSideGroup: function (dataItem) {
         // indicate if node is a group

@@ -126,7 +126,10 @@ var gridOptions = {
         rowHeight: 22
     },
     defaultColDef: {
-        minWidth: 50
+        minWidth: 50,
+        sortable: true,
+        filter: true,
+        resizable: true
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
@@ -179,9 +182,6 @@ var gridOptions = {
     // enableRtl: true,
     multiSortKey: 'ctrl',
     animateRows: true,
-    enableColResize: true, //one of [true, false]
-    enableSorting: true, //one of [true, false]
-    enableFilter: true, //one of [true, false]
     enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
@@ -619,14 +619,14 @@ var defaultCols = [
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+                sortable: false, suppressMenu: true, cellStyle: {"text-align": "right"},
                 cellRenderer: function () {
                     return 'Abra...';
                 }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+                sortable: false, suppressMenu: true, cellStyle: {"text-align": "left"},
                 cellRenderer: function () {
                     return '...cadabra!';
                 }

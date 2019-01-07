@@ -55,9 +55,11 @@ function onCellValueChanged(event) {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableColResize: true,
     enableRangeSelection: true,
     onCellValueChanged: onCellValueChanged
 };

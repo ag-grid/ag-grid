@@ -39,9 +39,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
     onFilterChanged: function() {console.log('onFilterChanged');},
     onFilterModified: function() {console.log('onFilterModified');}
 };

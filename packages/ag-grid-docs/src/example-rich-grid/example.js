@@ -79,11 +79,13 @@
     ];
 
     var gridOptions = {
+        defaultColDef: {
+            sortable: true,
+            resizable: true,
+            filter: true
+        },
         columnDefs: columnDefs,
         rowSelection: "multiple",
-        enableColResize: true,
-        enableSorting: true,
-        enableFilter: true,
         enableRangeSelection: true,
         suppressRowClickSelection: true,
         animateRows: true,

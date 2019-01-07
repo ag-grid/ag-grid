@@ -1,6 +1,6 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', suppressFilter: true},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: false},
     {headerName: "Gold", field: "gold", width: 100, filter: 'customNumberFilter', suppressMenu: true},
     {headerName: "Silver", field: "silver", width: 100, filter: 'customNumberFilter', suppressMenu: true},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'customNumberFilter', suppressMenu: true},
@@ -8,13 +8,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     components:{
         customNumberFilter: getNumberFilterComponent()
     },
     floatingFilter:true,
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true
+    rowData: null
 };
 
 function isNumeric(n) {

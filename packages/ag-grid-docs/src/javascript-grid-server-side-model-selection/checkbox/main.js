@@ -9,16 +9,15 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        suppressFilter: true,
-        width: 150
+        width: 150,
+        sortable: true,
+        resizable: true
     },
     rowBuffer: 0,
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
     animateRows: true,
-    enableSorting: true,
     debug: true,
     suppressAggFuncInHeader: true,
     sideBar: {

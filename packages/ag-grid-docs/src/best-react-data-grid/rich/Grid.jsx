@@ -28,9 +28,6 @@ export default class Grid extends Component {
                     // no simple properties
                     suppressRowClickSelection="true"
                     rowSelection="multiple"
-                    enableColResize="true"
-                    enableSorting="true"
-                    enableFilter="true"
                     animateRows="true"
                     groupHeaders="true"
                 />

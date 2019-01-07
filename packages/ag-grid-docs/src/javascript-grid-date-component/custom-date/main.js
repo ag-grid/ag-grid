@@ -26,16 +26,18 @@ var columnDefs = [
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter', suppressFilter: true}
+    {headerName: "Total", field: "total", width: 100, filter: false}
 ];
 
 var gridOptions = {
-    floatingFilter:true,
+    defaultColDef: {
+        filter: true
+    },
+    floatingFilter: true,
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
     // Here is where we specify the component to be used as the date picker widget
-    components:{
+    components: {
         agDateInput: CustomDateComponent
     }
 };

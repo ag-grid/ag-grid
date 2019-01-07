@@ -12,9 +12,11 @@ let columnDefs = [
 ];
 
 let gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
-    enableSorting: true,
-    enableColResize: true,
     rowSelection: 'multiple',
     onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();

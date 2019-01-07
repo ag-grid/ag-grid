@@ -28,10 +28,10 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 90
+        width: 90,
+        resizable: true
     },
-    columnDefs: columnDefs,
-    enableColResize: true
+    columnDefs: columnDefs
 };
 
 // setup the grid after the page has finished loading

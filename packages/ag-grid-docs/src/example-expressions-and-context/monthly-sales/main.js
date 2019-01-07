@@ -57,11 +57,13 @@ var gridOptions = {
             checkbox: true
         }
     },
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     colWidth: 100,
     rowSelection: 'multiple',
-    enableColResize: true,
-    enableSorting: true,
     onModelUpdated: modelUpdated,
     groupSelectsChildren: true,
     enableRangeSelection: true,

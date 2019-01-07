@@ -85,7 +85,7 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
 
     private recursivelyAddColumnComps(column: Column): void {
 
-        if (column.getColDef() && column.getColDef().suppressFilter) {
+        if (!column.isFilterAllowed()) {
             return;
         }
 

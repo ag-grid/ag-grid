@@ -18,10 +18,10 @@ var rowData = [
 
 var gridOptions = {
     defaultColDef: {
-        editable: true
+        editable: true,
+        sortable: true,
+        filter: true
     },
-    enableSorting: true,
-    enableFilter: true,
     animateRows: true,
     getRowNodeId: function(data) { return data.id; },
     columnDefs: columnDefs,

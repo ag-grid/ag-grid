@@ -3,8 +3,10 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
-    enableSorting: true,
     animateRows: true,
     sortingOrder: ['desc','asc',null],
     accentedSort: true,

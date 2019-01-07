@@ -8,12 +8,11 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 235,
-        suppressFilter: true
+        resizable: true
     },
     rowModelType: 'serverSide',
     treeData: true,
     columnDefs: columnDefs,
-    enableColResize: true,
     rowSelection: 'multiple',
     animateRows: true,
     cacheBlockSize: 100,

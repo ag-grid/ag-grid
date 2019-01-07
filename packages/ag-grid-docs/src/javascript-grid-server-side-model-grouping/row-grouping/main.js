@@ -12,14 +12,13 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 100,
-        suppressFilter: true
+        sortable: true,
+        resizable: true
     },
     autoGroupColumnDef: {
         width: 150
     },
-    enableSorting: true,
     columnDefs: columnDefs,
-    enableColResize: true,
     // use the server side row model
     rowModelType: 'serverSide',
     // bring back data 50 rows at a time

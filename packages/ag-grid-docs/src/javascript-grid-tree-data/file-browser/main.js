@@ -103,6 +103,11 @@ var rowData = [
     ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     components: {
         fileCellRenderer: getFileCellRenderer()
     },
@@ -110,9 +115,6 @@ var gridOptions = {
     rowData: rowData,
     treeData: true,
     animateRows: true,
-    enableFilter: true,
-    enableSorting: true,
-    enableColResize: true,
     groupDefaultExpanded: -1,
     getDataPath: function(data) {
         return data.filePath;

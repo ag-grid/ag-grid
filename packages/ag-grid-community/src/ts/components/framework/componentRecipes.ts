@@ -123,7 +123,9 @@ export class ComponentRecipes {
     public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>>(column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any> {
         const colDef:ColDef = column.getColDef();
 
-        if (colDef.suppressFilter) {
+        // if filter missing (undefined, null, or false)
+        // truthy values are string (filter name) or func / class (filter class provided explicitly)
+        if (!colDef.filter) {
             return this.newEmptyFloatingFilterWrapperComponent(column);
         }
 

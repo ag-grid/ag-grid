@@ -8,9 +8,6 @@ const columnDefs = [
 ];
 
 const gridOptions = {
-    defaultColDef: {
-        suppressFilter: true
-    },
     columnDefs: columnDefs,
     animateRows: true,
 

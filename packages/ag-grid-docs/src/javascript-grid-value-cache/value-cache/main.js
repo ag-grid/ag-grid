@@ -59,6 +59,9 @@ var gridOptions = {
             }
         }
     },
+    defaultColDef: {
+        resizable: true
+    },
     getRowNodeId: function (data) {
         return data.id;
     },
@@ -66,7 +69,6 @@ var gridOptions = {
     enableCellChangeFlash: true,
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableColResize: true,
     enableRangeSelection: true,
     groupDefaultExpanded: 1,
     onCellValueChanged: function () {

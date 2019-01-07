@@ -35,7 +35,6 @@ class FileBrowser extends Component {
           columnDefs={this.colDefs}
           rowData={this.props.files}
           treeData={true}
-          enableFilter={true}
           groupDefaultExpanded={-1}
           getDataPath={data => data.filePath}
           autoGroupColumnDef={this.autoGroupColumnDef}

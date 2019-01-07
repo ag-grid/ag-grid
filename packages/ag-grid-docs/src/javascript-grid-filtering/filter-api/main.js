@@ -28,14 +28,16 @@ var columnDefs = [
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter', suppressFilter: true}
+    {headerName: "Total", field: "total", width: 100, filter: false}
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true,
-    enableSorting: true
+    rowData: null
 };
 
 function irelandAndUk() {

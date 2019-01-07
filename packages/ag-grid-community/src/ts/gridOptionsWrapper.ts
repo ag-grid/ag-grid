@@ -608,9 +608,11 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.ensureDomOrder);
     }
 
+/*
     public isEnableColResize() {
         return isTrue(this.gridOptions.enableColResize);
     }
+*/
 
     public isEnableCharts() {
         return isTrue(this.gridOptions.enableCharts);
@@ -732,9 +734,9 @@ export class GridOptionsWrapper {
         return this.gridOptions.serverSideDatasource;
     }
 
-    public isEnableSorting() {
-        return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting);
-    }
+    // public isEnableSorting() {
+    //     return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting);
+    // }
 
     public isAccentedSort() {
         return isTrue(this.gridOptions.accentedSort);
@@ -780,9 +782,11 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressClipboardPaste);
     }
 
+/*
     public isEnableFilter() {
         return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter);
     }
+*/
 
     public isPagination() {
         return isTrue(this.gridOptions.pagination);
@@ -801,13 +805,15 @@ export class GridOptionsWrapper {
     }
 
     // these are deprecated, should remove them when we take out server side pagination
+/*
     public isEnableServerSideFilter() {
         return this.gridOptions.enableServerSideFilter;
     }
+*/
 
-    public isEnableServerSideSorting() {
-        return isTrue(this.gridOptions.enableServerSideSorting);
-    }
+    // public isEnableServerSideSorting() {
+    //     return isTrue(this.gridOptions.enableServerSideSorting);
+    // }
 
     public isSuppressMovableColumns() {
         return isTrue(this.gridOptions.suppressMovableColumns);
@@ -1407,6 +1413,37 @@ export class GridOptionsWrapper {
         if (options.alwaysShowStatusBar) {
             console.warn(`ag-grid: since version 19.x, alwaysShowStatusBar is gone. Please specify a min-height on the ag-status-bar css class, eg .ag-status-bar {min-height: 35px; }`);
         }
+
+        if (options.enableServerSideSorting || options.enableSorting) {
+            console.warn(`ag-Grid: since v20, grid options enableSorting and enableServerSideSorting are gone. Instead set sortable=true on the column definition for the columns sorting are allowed on. To migrate from gridOption.enableSorting=true, set gridOptions.defaultColDef.sortable=true`);
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+            if (!options.defaultColDef.sortable) {
+                options.defaultColDef.sortable = true;
+            }
+        }
+
+        if (options.enableFilter || options.enableServerSideFilter) {
+            console.warn(`ag-Grid: since v20, grid options enableFilter and enableServerSideFilter are gone. Instead set filter=true (if not already specifying a specific filter) on the column definition for the columns filtering is allowed on. To migrate from gridOptions.enableFilter=true, set gridOptions.defaultColDef.filter=true. If you are explicitly setting specific filters for each column (ie colDef.filter is already set) the you don't need to do anything.`);
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+            if (!options.defaultColDef.filter) {
+                options.defaultColDef.filter = true;
+            }
+        }
+
+        if (options.enableColResize) {
+            console.warn(`ag-Grid: since v20, grid options enableColResize is gone. Instead set resizable=true on the column definition for the columns resizing are allowed on. To migrate from gridOption.enableColResize=true, set gridOptions.defaultColDef.resizable=true`);
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+            if (!options.defaultColDef.resizable) {
+                options.defaultColDef.resizable = true;
+            }
+        }
+
     }
 
     private checkForViolations() {

@@ -23,10 +23,10 @@ var gridOptions = {
             return params.value.toLocaleString();
         },
         width: 140,
-        type: 'numericColumn'
+        type: 'numericColumn',
+        resizable: true
     },
     enableRangeSelection: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     rowModelType: 'viewport',
     viewportDatasource: new MyViewportDataSource(),

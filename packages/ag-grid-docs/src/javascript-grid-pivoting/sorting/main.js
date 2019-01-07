@@ -7,9 +7,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
-    enableColResize: true,
-    enableSorting: true,
     suppressAggFuncInHeader: true,
     pivotMode: true,
     sideBar: true,

@@ -94,7 +94,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
     public isMenuEnabled(column: Column): boolean {
         // for standard, we show menu if filter is enabled, and he menu is not suppressed
-        return this.gridOptionsWrapper.isEnableFilter() && column.isFilterAllowed();
+        return column.isFilterAllowed();
     }
 
 }

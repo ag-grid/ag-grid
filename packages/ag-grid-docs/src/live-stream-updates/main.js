@@ -44,6 +44,11 @@
     }
 
     var gridOptions = {
+        defaultColDef: {
+            width: 120,
+            sortable: true,
+            resizable: true
+        },
         columnTypes: {
             dimension: {
                 enableRowGroup: true,
@@ -65,9 +70,7 @@
             ]
         },
         animateRows: true,
-        enableColResize: true,
         enableRangeSelection: true,
-        enableSorting: true,
         rowGroupPanelShow: "always",
         pivotPanelShow: "always",
         suppressAggFuncInHeader: true,
@@ -76,9 +79,6 @@
         },
         getRowNodeId: function(data) {
             return data.trade;
-        },
-        defaultColDef: {
-            width: 120
         }
     };
 

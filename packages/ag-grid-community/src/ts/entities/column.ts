@@ -208,7 +208,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isFilterAllowed(): boolean {
-        return this.primary && !this.colDef.suppressFilter;
+        // filter defined means it's a string, class or true.
+        // if its false, null or undefined then it's false.
+        const filterDefined = !!this.colDef.filter;
+        return this.primary && filterDefined;
     }
 
     public isFieldContainsDots(): boolean {
@@ -293,6 +296,21 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             console.warn('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.');
         }
 
+        if (colDefAny.suppressSorting) {
+            console.warn(`ag-Grid: since v20, colDef.suppressSorting is gone, instead use colDef.sortable=false.`, this.colDef);
+            this.colDef.sortable = false;
+        }
+
+        if (colDefAny.suppressFilter) {
+            console.warn(`ag-Grid: since v20, colDef.suppressFilter is gone, instead use colDef.filter=false.`, this.colDef);
+            this.colDef.filter = false;
+        }
+
+        if (colDefAny.suppressResize) {
+            console.warn(`ag-Grid: since v20, colDef.suppressResize is gone, instead use colDef.resizable=false.`, this.colDef);
+            this.colDef.resizable = false;
+        }
+
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -354,9 +372,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isResizable(): boolean {
-        const enableColResize = this.gridOptionsWrapper.isEnableColResize();
-        const suppressResize = this.colDef && this.colDef.suppressResize;
-        return enableColResize && !suppressResize;
+        return this.colDef.resizable===true;
     }
 
     private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {

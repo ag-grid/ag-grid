@@ -126,10 +126,6 @@ export class SortController {
     }
 
     public setSortModel(sortModel: any, source: ColumnEventType = "api") {
-        if (!this.gridOptionsWrapper.isEnableSorting()) {
-            console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
-            return;
-        }
         // first up, clear any previous sort
         const sortModelProvided = sortModel && sortModel.length > 0;
 
@@ -137,7 +133,7 @@ export class SortController {
         allColumnsIncludingAuto.forEach((column: Column) => {
             let sortForCol: any = null;
             let sortedAt = -1;
-            if (sortModelProvided && !column.getColDef().suppressSorting) {
+            if (sortModelProvided && column.getColDef().sortable) {
                 for (let j = 0; j < sortModel.length; j++) {
                     const sortModelEntry = sortModel[j];
                     if (typeof sortModelEntry.colId === 'string'

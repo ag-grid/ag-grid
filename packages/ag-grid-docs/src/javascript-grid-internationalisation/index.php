@@ -131,12 +131,6 @@ localeText = {
     <snippet>
 var gridOptions = {
 
-    // standard grid settings, thrown in here to pad out the example
-    enableSorting: true,
-    enableFilter: true,
-    enableColResize: true,
-    columnDefs: columnDefs,
-
     localeTextFunc: function(key, defaultValue) {
 
         // to avoid key clash with external keys, we add 'grid' to the start of each key.
@@ -147,6 +141,8 @@ var gridOptions = {
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }
+
+    ...
 };</snippet>
 
 

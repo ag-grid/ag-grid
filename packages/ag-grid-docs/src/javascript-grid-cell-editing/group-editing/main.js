@@ -37,11 +37,13 @@ var rowData = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     enableGroupEdit: true,
     columnDefs: columnDefs,
     rowData: rowData,
     debug: true,
-    enableSorting: true,
     getNodeChildDetails: getNodeChildDetails
 };
 

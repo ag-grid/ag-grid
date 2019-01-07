@@ -16,9 +16,7 @@ export class SortStage {
     @Autowired('sortController') private sortController: SortController;
 
     public execute(params: StageExecuteParams): void {
-        // if the sorting is already done by the server, then we should not do it here
-        const serverSideSorting = this.gridOptionsWrapper.isEnableServerSideSorting();
-        const sortOptions: SortOption[] = serverSideSorting ? null : this.sortController.getSortForRowController();
+        const sortOptions: SortOption[] = this.sortController.getSortForRowController();
 
         const sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         const deltaSort = sortActive

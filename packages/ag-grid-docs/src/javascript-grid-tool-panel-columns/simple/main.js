@@ -33,12 +33,12 @@ var gridOptions = {
         // allow every column to be grouped
         enableRowGroup: true,
         // allow every column to be pivoted
-        enablePivot: true
+        enablePivot: true,
+        sortable: true,
+        filter: true
     },
     columnDefs: columnDefs,
-    enableSorting: true,
-    sideBar: 'columns',
-    enableFilter: true
+    sideBar: 'columns'
 };
 
 // setup the grid after the page has finished loading

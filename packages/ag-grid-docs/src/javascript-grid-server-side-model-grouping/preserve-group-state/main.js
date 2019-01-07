@@ -13,10 +13,9 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 250,
-        suppressFilter: true
+        resizable: true
     },
     columnDefs: columnDefs,
-    enableColResize: true,
     // use the enterprise row model
     rowModelType: 'serverSide',
     sideBar: {

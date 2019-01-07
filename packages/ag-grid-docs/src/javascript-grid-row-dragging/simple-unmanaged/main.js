@@ -483,11 +483,13 @@ var columnDefs = [
 var gridOptions = {
     // this tells the grid we are doing updates when setting new data
     deltaRowDataMode: true,
-    defaultColDef: {width: 150},
+    defaultColDef: {
+        width: 150,
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
-    enableSorting: true,
-    enableFilter: true,
     onRowDragMove: onRowDragMove,
     getRowNodeId: getRowNodeId,
     onSortChanged: onSortChanged,

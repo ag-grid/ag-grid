@@ -62,6 +62,10 @@ function numberValueParser(params) {
 var gridOptions = {
     // set this to true, so only the column in question gets updated
     aggregateOnlyChangedColumns: true,
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     aggFuncs: {
         sum: function(values) {
@@ -94,8 +98,6 @@ var gridOptions = {
     rowData: createRowData(),
     suppressAggFuncInHeader: true,
     animateRows: true,
-    enableSorting: true,
-    enableColResize: true,
     getRowNodeId: function(rowData) {
         return rowData.id;
     },

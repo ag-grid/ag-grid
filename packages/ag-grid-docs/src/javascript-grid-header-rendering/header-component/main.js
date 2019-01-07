@@ -20,9 +20,6 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableSorting: true,
-    enableColResize: true,
     suppressMenuHide: true,
     components: {
         agColumnHeader: CustomHeader
@@ -31,7 +28,10 @@ var gridOptions = {
         width: 100,
         headerComponentParams: {
             menuIcon: 'fa-bars'
-        }
+        },
+        sortable: true,
+        resizable: true,
+        filter: true
     }
 };
 

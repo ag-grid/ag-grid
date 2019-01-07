@@ -66,7 +66,7 @@ export class AutoGroupColService {
             // would not be able to work.
             const noFieldOrValueGetter = _.missing(defaultAutoColDef.field) && _.missing(defaultAutoColDef.valueGetter) && _.missing(defaultAutoColDef.filterValueGetter);
             if (noFieldOrValueGetter) {
-                defaultAutoColDef.suppressFilter = true;
+                defaultAutoColDef.filter = false;
             }
         }
 

@@ -13,10 +13,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
     groupIncludeFooter: true,
-    enableSorting: true,
     sideBar: true,
     toolPanelSuppressPivots: true,
     toolPanelSuppressPivotMode: true,

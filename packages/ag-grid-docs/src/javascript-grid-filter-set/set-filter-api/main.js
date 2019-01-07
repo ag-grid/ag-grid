@@ -28,10 +28,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableColResize: true,
     components: {
         countryCellRenderer: countryCellRenderer
     }

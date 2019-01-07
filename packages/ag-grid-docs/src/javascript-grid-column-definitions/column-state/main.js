@@ -15,11 +15,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     debug: true,
     columnDefs: columnDefs,
     rowData: null,
-    enableSorting: true,
-    enableColResize: true,
     onGridReady: function() {
         gridOptions.api.addGlobalListener(function(type, event) {
             if (type.indexOf('column') >= 0) {

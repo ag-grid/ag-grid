@@ -41,7 +41,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    enableColResize: true,
+    defaultColDef: {
+        resizable: true
+    },
     debug: true,
     columnDefs: columnDefs,
     rowSelection: 'multiple',

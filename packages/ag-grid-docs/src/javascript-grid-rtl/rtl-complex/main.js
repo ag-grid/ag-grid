@@ -79,6 +79,11 @@ var groupColumn = {
 };
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        sortable: true,
+        filter: true
+    },
     components: {
         personFilter: PersonFilter
     },
@@ -88,9 +93,6 @@ var gridOptions = {
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     enableRtl: true,
     animateRows: true,
-    enableColResize: true, //one of [true, false]
-    enableSorting: true, //one of [true, false]
-    enableFilter: true, //one of [true, false]
     statusBar: {
         items: [
             { component: 'agAggregationComponent' }

@@ -78,10 +78,17 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        cellClassRules: {
+            darkGreyBackground: function(params) {
+                return params.rowIndex % 2 == 0;
+            }
+        },
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     groupHeaders: true,
-    enableFilter: true,
-    enableSorting: true,
     rowSelection: 'multiple',
     pinnedTopRowData: [
         {
@@ -111,13 +118,6 @@ var gridOptions = {
             total: 255
         }
     ],
-    defaultColDef: {
-        cellClassRules: {
-            darkGreyBackground: function(params) {
-                return params.rowIndex % 2 == 0;
-            }
-        }
-    },
     excelStyles: [
         {
             id: 'greenBackground',

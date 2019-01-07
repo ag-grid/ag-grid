@@ -16,7 +16,7 @@ function countries() {
 }
 
 var columnDefs = [
-    {field: "athlete", enableRowGroup: true, enablePivot: true, suppressFilter: true},
+    {field: "athlete", enableRowGroup: true, enablePivot: true, filter: false},
     {
         field: "age", enableRowGroup: true,
         filter: 'customAgeFilter'
@@ -34,10 +34,10 @@ var columnDefs = [
         field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
         filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
     },
-    {field: "sport", enableRowGroup: true, enablePivot: true, suppressFilter: true},
-    {field: "gold", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {field: "silver", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {field: "bronze", aggFunc: 'sum', suppressFilter: true, enableValue: true}
+    {field: "sport", enableRowGroup: true, enablePivot: true, filter: false},
+    {field: "gold", aggFunc: 'sum', filter: false, enableValue: true},
+    {field: "silver", aggFunc: 'sum', filter: false, enableValue: true},
+    {field: "bronze", aggFunc: 'sum', filter: false, enableValue: true}
 ];
 
 var gridOptions = {
@@ -46,7 +46,10 @@ var gridOptions = {
         // restrict what aggregation functions the columns can have,
         // include a custom function 'random' that just returns a
         // random number
-        allowedAggFuncs: ['sum', 'min', 'max', 'random']
+        allowedAggFuncs: ['sum', 'min', 'max', 'random'],
+        sortable: true,
+        resizable: true,
+        filter: true
     },
     autoGroupColumnDef: {
         width: 150
@@ -55,14 +58,11 @@ var gridOptions = {
         customAgeFilter: createCustomAgeFilter()
     },
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
-    enableFilter: true,
     animateRows: true,
     debug: true,
-    enableSorting: true,
     enableRangeSelection: true,
     sideBar: true,
     suppressAggFuncInHeader: true,

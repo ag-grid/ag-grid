@@ -19,8 +19,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Grid Properties</h2>
     <p>
 
-                    Most features of the grid are set using grid properties. Eg turn on sorting by setting
-                    <code>enableSorting = true</code>, or turn on filtering with <code>enableFilter = true</code>.
+                    Most features of the grid are set using grid properties. Eg turn on row animation by setting
+                    <code>animateRows = true</code>.
 
     </p>
     <p> <a href="../javascript-grid-properties/">Go to Grid Properties</a> </p>

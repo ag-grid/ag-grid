@@ -14,11 +14,11 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableSorting: true,
-    enableColResize: true,
     suppressMenuHide: true,
     defaultColDef : {
+        sortable: true,
+        resizable: true,
+        filter: true,
         width: 100,
         headerComponentParams : {
             menuIcon: 'fa-bars',

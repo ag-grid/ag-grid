@@ -43,9 +43,6 @@
                          :rowData="rowData"
                          :showToolPanel="showToolPanel"
 
-                         :enableColResize="true"
-                         :enableSorting="true"
-                         :enableFilter="true"
                          :groupHeaders="true"
                          :suppressRowClickSelection="true"
                          :toolPanelSuppressGroups="true"

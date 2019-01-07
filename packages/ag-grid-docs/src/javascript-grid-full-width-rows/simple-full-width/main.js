@@ -135,8 +135,10 @@ function countryCellRenderer(params) {
 }
 
 var gridOptions = {
-    enableSorting: true,
-    enableFilter: true,
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: rowData,
     getRowHeight: function (params) {

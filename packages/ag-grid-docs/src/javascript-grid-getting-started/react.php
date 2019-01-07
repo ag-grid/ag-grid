@@ -72,8 +72,7 @@
 
             // or provide props the old way with no binding
             rowSelection="multiple"
-            enableSorting="true"
-            enableFilter="true"
+            animateRows="true"
             /&gt;
         </snippet>
     </p>

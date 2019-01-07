@@ -15,7 +15,7 @@ var listOfCountries = ['United States','Russia','Australia','Canada','Norway','C
     return listOfCountries;
 }
 
-var colDefAthlete = {field: "athlete", enableRowGroup: true, enablePivot: true, suppressFilter: true};
+var colDefAthlete = {field: "athlete", enableRowGroup: true, enablePivot: true};
 var colDefAge = {field: "age", enableRowGroup: true};
 var colDefCountry = {
     field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true,
@@ -26,10 +26,10 @@ var colDefYear = {
     field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, filter: 'agSetColumnFilter',
     filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}
 };
-var colDefSport = {field: "sport", enableRowGroup: true, enablePivot: true, suppressFilter: true};
-var colDefGold = {field: "gold", aggFunc: 'sum', suppressFilter: true, enableValue: true};
-var colDefSilver = {field: "silver", aggFunc: 'sum', suppressFilter: true, enableValue: true};
-var colDefBronze = {field: "bronze", aggFunc: 'sum', suppressFilter: true, enableValue: true};
+var colDefSport = {field: "sport", enableRowGroup: true, enablePivot: true};
+var colDefGold = {field: "gold", aggFunc: 'sum', enableValue: true};
+var colDefSilver = {field: "silver", aggFunc: 'sum', enableValue: true};
+var colDefBronze = {field: "bronze", aggFunc: 'sum', enableValue: true};
 
 var columnDefs = [
     colDefAthlete, colDefAge, colDefCountry, colDefYear,
@@ -42,19 +42,18 @@ var gridOptions = {
         // restrict what aggregation functions the columns can have,
         // include a custom function 'random' that just returns a
         // random number
-        allowedAggFuncs: ['sum','min','max','random']
+        allowedAggFuncs: ['sum','min','max','random'],
+        sortable: true,
+        resizable: true
     },
     autoGroupColumnDef: {
         width: 150
     },
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
-    enableFilter: true,
     animateRows: true,
-    enableSorting: true,
     sideBar: {
         toolPanels: ['columns','filters']
     },

@@ -12,12 +12,12 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 100
+        width: 100,
+        sortable: true,
+        resizable: true,
+        filter: true
     },
-    columnDefs: columnDefs,
-    enableColResize: true,
-    enableSorting: true,
-    enableFilter: true
+    columnDefs: columnDefs
 };
 
 function onBtNoGroups() {

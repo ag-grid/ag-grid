@@ -27,10 +27,10 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 100
+        width: 100,
+        resizable: true
     },
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide',
     animateRows: true,
     serverSideDatasource: createSimpleDatasource()

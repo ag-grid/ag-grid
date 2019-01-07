@@ -14,13 +14,13 @@ return ['United States','Russia','Australia','Canada','Norway','China','Zimbabwe
 }
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true, suppressFilter: true},
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
     {headerName: "Country", field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true},
     {headerName: "Year", field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true},
-    {headerName: "Sport", field: "sport", enableRowGroup: true, enablePivot: true, suppressFilter: true},
-    {headerName: "Gold", field: "gold", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {headerName: "Silver", field: "silver", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {headerName: "Bronze", field: "bronze", aggFunc: 'sum', suppressFilter: true, enableValue: true}
+    {headerName: "Sport", field: "sport", enableRowGroup: true, enablePivot: true},
+    {headerName: "Gold", field: "gold", aggFunc: 'sum', enableValue: true},
+    {headerName: "Silver", field: "silver", aggFunc: 'sum', enableValue: true},
+    {headerName: "Bronze", field: "bronze", aggFunc: 'sum', enableValue: true}
 ];
 var gridOptions = {
     defaultColDef: {
@@ -29,20 +29,18 @@ var gridOptions = {
         // include a custom function 'random' that just returns a
         // random number
         allowedAggFuncs: ['sum','min','max','random'],
-        suppressFilter: true
+        sortable: true,
+        resizable: true
     },
     autoGroupColumnDef: {
         width: 180
     },
     rowBuffer: 0,
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
-    enableFilter: true,
     animateRows: true,
     debug: false,
-    enableSorting: true,
     suppressAggFuncInHeader: true,
     sideBar: {
         toolPanels: [{

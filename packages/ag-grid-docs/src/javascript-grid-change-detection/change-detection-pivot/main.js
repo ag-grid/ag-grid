@@ -172,7 +172,9 @@ function moveCourse() {
 var gridOptions = {
     defaultColDef: {
         cellRenderer:'agAnimateShowChangeCellRenderer',
-        width: 120
+        width: 120,
+        sortable: true,
+        resizable: true
     },
     columnDefs: columnDefs,
     rowData: getRowData(),
@@ -180,8 +182,6 @@ var gridOptions = {
     groupDefaultExpanded: 1,
     // enableCellChangeFlash: true,
     animateRows: true,
-    enableColResize: true,
-    enableSorting: true,
     getRowNodeId: function(data) {
         return data.student;
     }

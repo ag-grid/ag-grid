@@ -14,11 +14,7 @@ export class FilterStage implements IRowNodeStage {
     public execute(params: StageExecuteParams): void {
         const rowNode = params.rowNode;
 
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            this.filterService.filter(rowNode, false);
-        } else {
-            this.filterService.filterAccordingToColumnState(rowNode);
-        }
+        this.filterService.filter(rowNode);
 
         this.selectableService.updateSelectableAfterFiltering(rowNode);
     }

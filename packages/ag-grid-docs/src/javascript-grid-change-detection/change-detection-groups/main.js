@@ -31,6 +31,9 @@ function getRowData() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
     columnTypes: {
         valueColumn: {
@@ -47,7 +50,6 @@ var gridOptions = {
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
     animateRows: true,
-    enableSorting: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

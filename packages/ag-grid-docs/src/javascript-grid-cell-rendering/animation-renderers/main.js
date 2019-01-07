@@ -47,11 +47,11 @@ var gridOptions = {
         valueFormatter: function (params) {
             return formatNumber(params.value);
         },
-        cellClass: 'align-right'
+        cellClass: 'align-right',
+        resizable: true
     },
     columnDefs: columnDefs,
-    rowData: createRowData(),
-    enableColResize: true
+    rowData: createRowData()
 };
 
 function onUpdateSomeValues() {

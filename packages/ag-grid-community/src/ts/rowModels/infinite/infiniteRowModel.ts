@@ -79,33 +79,26 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     private onFilterChanged(): void {
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            this.reset();
-        }
+        this.reset();
     }
 
     private onSortChanged(): void {
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            this.reset();
-        }
+        this.reset();
     }
 
     private onColumnEverything(): void {
-        // if the columns get reset, then this means the sort order could be impacted
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            let resetRequired;
-            // if cache params, we require reset only if sort model has changed. we don't need to check
-            // for filter model, as the filter manager will fire an event when columns change that result
-            // in the filter changing.
-            if (this.cacheParams) {
-                resetRequired = this.isSortModelDifferent();
-            } else {
-                // if no cacheParams, means first time creating the cache, so always create one
-                resetRequired = true;
-            }
-            if (resetRequired) {
-                this.reset();
-            }
+        let resetRequired;
+        // if cache params, we require reset only if sort model has changed. we don't need to check
+        // for filter model, as the filter manager will fire an event when columns change that result
+        // in the filter changing.
+        if (this.cacheParams) {
+            resetRequired = this.isSortModelDifferent();
+        } else {
+            // if no cacheParams, means first time creating the cache, so always create one
+            resetRequired = true;
+        }
+        if (resetRequired) {
+            this.reset();
         }
     }
 

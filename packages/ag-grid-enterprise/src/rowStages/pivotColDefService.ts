@@ -292,7 +292,7 @@ export class PivotColDefService {
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
-        colDef.suppressFilter = true;
+        colDef.filter = false;
 
         return colDef;
     }

@@ -19,6 +19,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     components:{
         loadingRenderer: function(params) {
             if (params.value !== undefined) {
@@ -28,7 +31,6 @@ var gridOptions = {
             }
         }
     },
-    enableColResize: true,
     rowBuffer: 0,
     // debug: true,
     rowSelection: 'multiple',

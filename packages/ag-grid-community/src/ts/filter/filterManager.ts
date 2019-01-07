@@ -409,11 +409,9 @@ export class FilterManager {
             if (source !== 'NO_UI') {
                 this.putIntoGui(filterWrapper, source);
             }
-
         }
 
         return filterWrapper;
-
     }
 
     public cachedFilter(column: Column): FilterWrapper {
@@ -427,6 +425,13 @@ export class FilterManager {
             defaultFilter = 'agSetColumnFilter';
         }
         const sanitisedColDef: ColDef = _.cloneObject(column.getColDef());
+
+        // for filters only, we allow 'true' for the component name. this means
+        // the default filter will get used. in order for the componentResolver to work,
+        // we need to pass in 'undefined' or 'null' for it to fall back to the default filter.
+        if (sanitisedColDef.filter===true) {
+            sanitisedColDef.filter = undefined;
+        }
 
         const event: FilterModifiedEvent = {
             type: Events.EVENT_FILTER_MODIFIED,

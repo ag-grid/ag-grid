@@ -52,9 +52,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
-    enableFilter: true,
-    enableSorting: true,
     showToolPanel: true,
     rowSelection: 'multiple',
     pinnedTopRowData: [

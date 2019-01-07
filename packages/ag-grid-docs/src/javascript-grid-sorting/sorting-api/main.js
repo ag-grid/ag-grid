@@ -12,9 +12,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
-    rowData: null,
-    enableSorting: true
+    rowData: null
 };
 
 function sortByAthleteAsc() {

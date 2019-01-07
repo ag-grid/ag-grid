@@ -157,7 +157,9 @@ var gridOptions = {
             }
         }
     },
-    enableColResize: true,
+    defaultColDef: {
+        resizable: true,
+    },
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,

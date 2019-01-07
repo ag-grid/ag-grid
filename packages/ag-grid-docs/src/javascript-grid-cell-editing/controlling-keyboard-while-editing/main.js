@@ -5,26 +5,26 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    components:{
-        arrowsEditor: createActionEditor()
-    },
-    columnDefs: columnDefs,
-    enableFilter: true,
-    rowData:[
-        {a:11, b:12, c:13},
-        {a:21, b:22, c:23}
-    ],
     defaultColDef:{
         cellEditor:'arrowsEditor',
         type: 'number',
         editable: true,
+        filter: true,
         suppressKeyboardEvent: function(event){
             console.log('suppressing event');
             console.log(event);
 
             if (event.editing) return true;
         }
-    }
+    },
+    components:{
+        arrowsEditor: createActionEditor()
+    },
+    columnDefs: columnDefs,
+    rowData:[
+        {a:11, b:12, c:13},
+        {a:21, b:22, c:23}
+    ]
 };
 
 

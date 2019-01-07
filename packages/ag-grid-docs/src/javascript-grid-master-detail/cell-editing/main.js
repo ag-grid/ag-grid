@@ -8,7 +8,6 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    enableColResize: true,
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
@@ -19,9 +18,9 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            enableColResize: true,
             defaultColDef: {
-                editable: true
+                editable: true,
+                resizable: true
             },
             onFirstDataRendered(params) {
                 params.api.sizeColumnsToFit();
@@ -33,7 +32,8 @@ var gridOptions = {
     },
     detailRowHeight: 340,
     defaultColDef: {
-        editable: true
+        editable: true,
+        resizable: true
     },
     onGridReady: function (params) {
         // arbitrarily expand a row for presentational purposes

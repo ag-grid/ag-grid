@@ -21,14 +21,16 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
     enableRangeSelection: true,
-    enableColResize: true,
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
-    enableSorting:true,
     onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }

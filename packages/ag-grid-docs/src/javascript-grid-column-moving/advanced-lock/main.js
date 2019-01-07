@@ -15,11 +15,11 @@ var columnDefs = [
 
 var gridOptions = {
     suppressDragLeaveHidesColumns: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     onColumnPinned: onColumnPinned,
     defaultColDef: {
-        width: 100
+        width: 100,
+        resizable: true
     }
 };
 

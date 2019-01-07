@@ -57,8 +57,10 @@ let columnDefs = [
 ];
 
 let gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
-    enableSorting: true,
     rowSelection: 'single',
     rowHeight: 95,
     onCellClicked: (params) => {

@@ -140,29 +140,28 @@ each column entry specifies the header label and the data field to be displayed 
 
 <h2>Enable Sorting And Filtering</h2>
 
-<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>enableSorting</code> property to the <code>AgGridReact</code> component.</p> 
+<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>sort</code> property to the column definitions.</p>
 
-<snippet language="jsx">
-&lt;AgGridReact
-    enableSorting={true}
-    columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}&gt;
-&lt;/AgGridReact&gt;
+<snippet language="js">
+columnDefs: [
+    {headerName: "Make", field: "make", sortable=true },
+    {headerName: "Model", field: "model", sortable=true },
+    {headerName: "Price", field: "price", sortable=true }
+]
 </snippet>
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
 <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this filtering is your friend.</p>
 
-<p>As with sorting, enabling filtering is as easy as setting the <code>enableFilter</code> property:</p>
+<p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 
-<snippet language="jsx">
-&lt;AgGridReact
-    enableSorting={true}
-    enableFilter={true}
-    columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}&gt;
-&lt;/AgGridReact&gt;
+<snippet language="js">
+columnDefs: [
+    {headerName: "Make", field: "make", sortable=true, filter=true },
+    {headerName: "Model", field: "model", sortable=true, filter=true },
+    {headerName: "Price", field: "price", sortable=true, filter=true }
+]
 </snippet>
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
@@ -217,7 +216,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
 <snippet language="diff">
              &lt;AgGridReact
-                 enableSorting={true}
 +                rowSelection="multiple"
 </snippet>
 
@@ -293,7 +291,7 @@ Then, add the import to your file:
 <snippet language="jsx">
 this.state = {
     columnDefs: [
-        {headerName: "Make", field: "make", rowGroupIndex: 0 },
+        {headerName: "Make", field: "make", rowGroup: true },
         {headerName: "Price", field: "price"}
     ],
     autoGroupColumnDef: {

@@ -240,9 +240,9 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: rowData,
-    enableColResize: true,
     defaultColDef: {
-        editable: true
+        editable: true,
+        resizable: true
     },
     onGridReady: function (params) {
         params.api.sizeColumnsToFit();

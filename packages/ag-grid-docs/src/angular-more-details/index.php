@@ -120,9 +120,8 @@ for configuring and using Angular components in ag-Grid.</p>
     [rowData]="rowData"
 
     // boolean values 'turned on'
-    enableColResize
-    enableSorting
-    enableFilter
+    animateRows
+    pagination
 
     // simple values, not bound
     rowHeight="22"

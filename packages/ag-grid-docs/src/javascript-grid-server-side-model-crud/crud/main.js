@@ -12,11 +12,10 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 100,
-        suppressFilter: true
+        resizable: true
     },
     rowSelection: 'single',
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide'
 };
 

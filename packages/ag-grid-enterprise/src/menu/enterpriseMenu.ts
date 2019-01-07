@@ -178,14 +178,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
 
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = () => true;
-        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => {
-            const isFilterEnabled: boolean = this.gridOptionsWrapper.isEnableFilter();
-            const isFloatingFiltersEnabled: boolean = this.gridOptionsWrapper.isFloatingFilter() === true;
-            const isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
-
-            const suppressFilterForThisColumn = this.column.getColDef().suppressFilter;
-            return isAnyFilteringEnabled && !suppressFilterForThisColumn;
-        };
+        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => column.isFilterAllowed();
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = () => true;
         this.restrictTo = restrictTo;
     }

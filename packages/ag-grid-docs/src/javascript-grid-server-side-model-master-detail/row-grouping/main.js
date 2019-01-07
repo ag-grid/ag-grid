@@ -7,9 +7,6 @@ const columnDefs = [
 ];
 
 const gridOptions = {
-    defaultColDef: {
-        suppressFilter: true
-    },
     autoGroupColumnDef: {
         field: 'accountId'
     },

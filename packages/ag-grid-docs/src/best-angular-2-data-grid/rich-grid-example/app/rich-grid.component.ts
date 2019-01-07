@@ -15,6 +15,12 @@ export class RichGridComponent {
 
     private gridOptions: GridOptions;
     private icons: any;
+    private defaultColDef: any = {
+        sortable: true,
+        filter: true,
+        resizable: true
+    };
+
     public rowData: any[];
     public columnDefs: any[];
     public rowCount: string;

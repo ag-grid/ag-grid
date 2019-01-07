@@ -14,7 +14,7 @@ function countries() {
 }
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true, suppressFilter: true},
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true, filter: false},
     {
         headerName: "Age", field: "age", enablePivot: true, enableRowGroup: true, filter: 'agNumberColumnFilter',
         filterParams: {
@@ -42,10 +42,10 @@ var columnDefs = [
         filter: 'agSetColumnFilter',
         filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
     },
-    {headerName: "Sport", field: "sport", enableRowGroup: true, enablePivot: true, suppressFilter: true},
-    {headerName: "Gold", field: "gold", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {headerName: "Silver", field: "silver", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {headerName: "Bronze", field: "bronze", aggFunc: 'sum', suppressFilter: true, enableValue: true}
+    {headerName: "Sport", field: "sport", enableRowGroup: true, enablePivot: true, filter: false},
+    {headerName: "Gold", field: "gold", aggFunc: 'sum', filter: false, enableValue: true},
+    {headerName: "Silver", field: "silver", aggFunc: 'sum', filter: false, enableValue: true},
+    {headerName: "Bronze", field: "bronze", aggFunc: 'sum', filter: false, enableValue: true}
 ];
 
 var gridOptions = {
@@ -54,16 +54,16 @@ var gridOptions = {
         // restrict what aggregation functions the columns can have,
         // include a custom function 'random' that just returns a
         // random number
-        allowedAggFuncs: ['sum', 'min', 'max', 'random']
+        allowedAggFuncs: ['sum', 'min', 'max', 'random'],
+        sortable: true,
+        resizable: true,
+        filter: true
     },
     rowBuffer: 0,
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide',
-    enableFilter: true,
     animateRows: true,
     debug: true,
-    enableSorting: true,
     suppressAggFuncInHeader: true,
     sideBar: {
         toolPanels: [

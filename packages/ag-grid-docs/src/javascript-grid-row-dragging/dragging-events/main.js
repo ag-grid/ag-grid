@@ -10,11 +10,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    defaultColDef: {width: 150},
+    defaultColDef: {
+        width: 150,
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
-    enableSorting: true,
-    enableFilter: true,
     onRowDragEnter: onRowDragEnter,
     onRowDragEnd: onRowDragEnd,
     onRowDragMove: onRowDragMove,

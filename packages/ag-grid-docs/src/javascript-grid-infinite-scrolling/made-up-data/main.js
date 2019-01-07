@@ -14,7 +14,9 @@ function getColumnDefs() {
 }
 
 var gridOptions = {
-    enableColResize: true,
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: getColumnDefs(),
     rowModelType: 'infinite',
     rowSelection: 'multiple',

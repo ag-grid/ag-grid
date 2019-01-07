@@ -12,10 +12,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     groupDefaultExpanded: 1,
-    columnDefs: columnDefs,
-    enableFilter: true,
-    enableSorting: true
+    columnDefs: columnDefs
 };
 
 function onBtForEachNode() {

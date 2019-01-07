@@ -43,8 +43,10 @@ function numberFormatter(params) {
 }
 
 const gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     enableRangeSelection: true,
-    enableColResize: true,
     columnDefs: columnDefs,
 
     deltaRowDataMode: true,

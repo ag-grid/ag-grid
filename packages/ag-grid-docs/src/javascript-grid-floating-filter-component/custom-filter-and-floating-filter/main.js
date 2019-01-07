@@ -21,14 +21,16 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     components:{
-       customNumberFloatingFilter: getNumberFloatingFilterComponent(),
+        customNumberFloatingFilter: getNumberFloatingFilterComponent(),
         customNumberFilter: getNumberFilterComponent ()
     },
     floatingFilter:true,
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true
+    rowData: null
 };
 
 function isNumeric(n) {

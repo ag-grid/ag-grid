@@ -76,7 +76,7 @@ export class HeaderWrapperComp extends Component {
         this.instantiate(this.context);
 
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
-        const enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+        const enableSorting = this.column.getColDef().sortable;
         const enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
 
         this.appendHeaderComp(displayName, enableSorting, enableMenu);

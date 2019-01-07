@@ -14,10 +14,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     enableRangeSelection: true,
-    enableSorting: true,
-    enableFilter: true,
     animateRows: true,
     suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
     autoGroupColumnDef: {

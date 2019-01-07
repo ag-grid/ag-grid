@@ -58,11 +58,13 @@ function onColumnResized(event) {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        sortable: true
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableSorting: true,
-    enableFilter: true,
-    enableColResize: true,
     onGridReady: function(params) {
         // in this example, the CSS styles are loaded AFTER the grid is created,
         // so we put this in a timeout, so height is calculated after styles are applied.
