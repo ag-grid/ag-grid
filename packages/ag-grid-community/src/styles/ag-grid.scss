@@ -255,8 +255,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-floating-bottom-full-width-container, .ag-floating-top-full-width-container {
-    display: inline;
+    display: inline-block;
     overflow: hidden;
+    height: 100%;
+    width: 100%;
 }
 
 .ag-virtual-list-container {
