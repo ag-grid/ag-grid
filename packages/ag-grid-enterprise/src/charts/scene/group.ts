@@ -7,7 +7,9 @@ export class Group extends Node {
         // so all children can be transformed at once.
         // TODO: stable sort the child nodes by the zIndex before rendering them.
         this.children.forEach(child => {
+            ctx.save();
             child.render(ctx);
+            ctx.restore();
         });
     }
 }

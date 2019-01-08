@@ -1,6 +1,11 @@
 import {Node} from "../node";
 import {chainObjects} from "../../util/object";
 
+// TODO: Should we call this class `Path`?
+// `Text` sprite will also have basic attributes like `fillStyle`, `strokeStyle`
+// and `opacity`, but the `Shape` isn't a proper base class for `Text`.
+// Move the `render` method here and make `Rect` and `Arc` only supply the
+// `updatePath` method.
 export abstract class Shape extends Node {
     /**
      * Defaults for certain properties.
@@ -15,6 +20,9 @@ export abstract class Shape extends Node {
         opacity: 1
     });
 
+    /**
+     * Restores the defaults introduced by this subclass.
+     */
     restoreOwnDefaults() {
         const defaults = (this.constructor as any).defaults;
 
@@ -30,6 +38,20 @@ export abstract class Shape extends Node {
 
         for (const property in defaults) {
             (this as any)[property] = defaults[property];
+        }
+    }
+
+    /**
+     * Restores the base class defaults that have been overridden by this subclass.
+     */
+    restoreOverriddenDefaults() {
+        const defaults = (this.constructor as any).defaults;
+        const protoDefaults = Object.getPrototypeOf(defaults);
+
+        for (const property in defaults) {
+            if (defaults.hasOwnProperty(property) && protoDefaults.hasOwnProperty(property)) {
+                (this as any)[property] = defaults[property];
+            }
         }
     }
 

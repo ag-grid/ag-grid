@@ -92,7 +92,10 @@ export class HdpiCanvas {
                 }
             },
             resetTransform() {
-                this.$resetTransform();
+                // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
+                // and doesn't work in IE11 and Edge 44.
+                // this.$resetTransform();
+                this.setTransform(1, 0, 0, 1, 0, 0);
                 this.scale(pixelRatio, pixelRatio);
                 this.save();
                 depth = 0;

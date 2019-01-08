@@ -45,6 +45,14 @@ export class Path {
         }
     }
 
+    rect(x: number, y: number, width: number, height: number) {
+        this.moveTo(x, y);
+        this.lineTo(x + width, y);
+        this.lineTo(x + width, y + height);
+        this.lineTo(x, y + height);
+        this.closePath();
+    }
+
     /**
      * Adds an arc segment to the path definition.
      * https://www.w3.org/TR/SVG11/paths.html#PathDataEllipticalArcCommands
