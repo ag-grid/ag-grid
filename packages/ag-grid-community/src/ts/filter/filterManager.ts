@@ -426,13 +426,6 @@ export class FilterManager {
         }
         const sanitisedColDef: ColDef = _.cloneObject(column.getColDef());
 
-        // for filters only, we allow 'true' for the component name. this means
-        // the default filter will get used. in order for the componentResolver to work,
-        // we need to pass in 'undefined' or 'null' for it to fall back to the default filter.
-        if (sanitisedColDef.filter===true) {
-            sanitisedColDef.filter = undefined;
-        }
-
         const event: FilterModifiedEvent = {
             type: Events.EVENT_FILTER_MODIFIED,
             api: this.gridApi,

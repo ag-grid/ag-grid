@@ -30,7 +30,7 @@ export type ComponentHolder =
     | IRichCellEditorParams
     | ToolPanelDef;
 
-export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
+export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string | boolean;
 
 export enum ComponentType {
     AG_GRID, FRAMEWORK
@@ -129,9 +129,14 @@ export class ComponentResolver {
 
         if (holder != null) {
             const componentPropertyValue: AgComponentPropertyInput<IComponent<any>> = (holder as any)[propertyName];
-            if (componentPropertyValue != null) {
+            // for filters only, we allow 'true' for the component, which means default filter to be used
+            const usingDefaultComponent = componentPropertyValue===true;
+            if (componentPropertyValue != null && !usingDefaultComponent) {
                 if (typeof componentPropertyValue === 'string') {
                     hardcodedNameComponent = componentPropertyValue;
+                } else if (typeof componentPropertyValue === 'boolean') {
+                    // never happens, as we test for usingDefaultComponent above,
+                    // however it's needed for the next block to compile
                 } else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
                     HardcodedJsComponent = componentPropertyValue as { new(): A };
                 } else {
