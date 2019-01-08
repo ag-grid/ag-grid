@@ -326,6 +326,9 @@ this.params.context.componentParent</snippet>
     as part of the <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on
     GitHub.</p>
 
+<p>For UMD bundling please refer to the <a href="https://github.com/seanlandsman/ag-grid-vue-umd">UMD</a> repo for a working
+example of how this can be done.</p>
+
 <h2 id="cell-rendering-cell-editing-using-vuej">Cell Rendering & Cell Editing using VueJS</h2>
 
 <p>
@@ -360,6 +363,19 @@ resolve: {
 
 <p>The longer term fix is something the Vue team are contemplating - please refer to this
     <a href="https://github.com/vuejs/vue/issues/8278">GitHub Issue</a> for more information.</p>
+
+<h2>Example Repos</h2>
+
+<p>The following Vue repos are available, with each demonstrating a different feature:
+<ul>
+    <li><a href="https://github.com/ag-grid/ag-grid-vue-example">Main Example</a></li>
+    <li><a href="https://github.com/seanlandsman/ag-grid-vue-vuex">Vuex</a></li>
+    <li><a href="https://github.com/seanlandsman/ag-grid-vue-i18n">i18n</a></li>
+    <li><a href="https://github.com/seanlandsman/ag-grid-vue-routing">Routing</a></li>
+    <li><a href="https://github.com/seanlandsman/ag-grid-vue-typescript">Typescript</a></li>
+    <li><a href="https://github.com/seanlandsman/ag-grid-vue-umd">UMD</a></li>
+    <li><a href="https://github.com/seanlandsman/ag-grid-vue-playground">Playground</a>: Declarative, Auto Refresh and Model Driven Examples</li>
+</ul></p>
 
 <h2 id="next-steps">Next Steps</h2>
 
