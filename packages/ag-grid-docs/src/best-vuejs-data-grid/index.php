@@ -212,9 +212,7 @@ components: {
 
     // these are boolean values
     // (leaving them out will default them to false)
-    enableColResize         // same as :enableColResize="true"
-    :enableSorting="true"
-    :animateRows="true"
+    animateRows             // same as :animateRows="true"
     :pagination="true"
 
     // these are bound properties

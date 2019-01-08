@@ -34,7 +34,7 @@ export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGrou
     }
 
     public static hasChildColumns(columnProps: any): boolean {
-        return Array.isArray(columnProps.children) && React.Children.count(columnProps.children) > 0;
+        return React.Children.count(columnProps.children) > 0;
     }
 
     private static getChildColDefs(columnChildren: any) {
