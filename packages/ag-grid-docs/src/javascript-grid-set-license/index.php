@@ -58,13 +58,12 @@ enterprise.LicenseManager.setLicenseKey("your license key");
     <p>For example:</p>
 
 <snippet>
-import {platformBrowser} from "@angular/platform-browser";
-import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
+// other imports...
 
 import {LicenseManager} from "ag-grid-enterprise";
 LicenseManager.setLicenseKey("your license key");
 
-platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
+// bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
 </snippet>
 
     <h2>React</h2>
