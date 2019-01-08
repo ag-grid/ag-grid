@@ -424,9 +424,11 @@
                 vertical-align: middle;
             }
         }
-
-        .ag-menu-option-active {
-            background: $hover-color;
+        
+        @if $hover-color {
+            .ag-menu-option-active {
+                background-color: $hover-color;
+            }
         }
 
         .ag-menu-option-disabled {

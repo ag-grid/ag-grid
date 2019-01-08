@@ -110,8 +110,10 @@
         border: 1px solid $focused-cell-border-color;
     }
 
-    .ag-menu .ag-menu-option-active {
-        background: $menu-option-active-color;
+    @if $menu-option-active-color {
+        .ag-menu .ag-menu-option-active {
+            background-color: $menu-option-active-color;
+        }
     }
 
     .ag-menu .ag-menu-option {
