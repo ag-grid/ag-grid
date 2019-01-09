@@ -157,7 +157,9 @@ export class CellComp extends Component {
         templateParts.push(_.exists(tooltipSanitised) ? ` title="${tooltipSanitised}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
         templateParts.push(wrapperStartTemplate);
-        templateParts.push(valueSanitised);
+        if (_.exists(valueSanitised, true)) {
+            templateParts.push(valueSanitised);
+        }
         templateParts.push(wrapperEndTemplate);
         templateParts.push(`</div>`);
 
