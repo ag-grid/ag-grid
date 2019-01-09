@@ -56,7 +56,16 @@ var columnDefs = [
             {
                 headerName: 'Group B',
                 children: [
-                    {headerName: 'Date', field: 'date', width: 110, cellClass: 'dateFormat'},
+                    {headerName: 'Date', field: 'date', width: 110, cellClass: 'dateFormat', valueGetter: function (params) {
+                        var val = params.data.date;
+
+                        if (val.indexOf('/') < 0) { return val; }
+
+                        var split = val.split('/');
+
+                        return split[2] + '-' + split[1] + '-' + split[0];
+
+                    }},
                     {headerName: 'Sport', field: 'sport', width: 110},
                     {
                         headerName: 'Gold',
@@ -311,15 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
 
-            var httpResult = JSON.parse(httpRequest.responseText).map(function(rec) {
-                var splitDate = rec.date.split('/');
-                return [rec, { date: splitDate[2] + '-' + splitDate[1] + '-' + splitDate[0] }].reduce(function (r, o) {
-                    Object.keys(o).forEach(function (k) {
-                        r[k] = o[k];
-                    });
-                    return r;
-                }, {});
-            });
+            var httpResult = JSON.parse(httpRequest.responseText);
 
             gridOptions.api.setRowData(httpResult);
         }
