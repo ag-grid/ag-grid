@@ -51,7 +51,6 @@ export default class NumericEditor extends Component {
     }
 
     afterGuiAttached() {
-        console.log('h', this.state.highlightAllOnFocus);
         // get ref from React component
         const eInput = this.refs.input;
         eInput.focus();

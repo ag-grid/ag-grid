@@ -23,8 +23,6 @@ class AgGridPolymerExample extends PolymerElement {
         this.gridOptions = {
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
-            groupUseEntireRow: true,
-            groupRowInnerRendererFramework: 'patial-match-filter',
             components: {
                 partialMatchFilter: PartialMatchFilter
             }
@@ -44,8 +42,7 @@ class AgGridPolymerExample extends PolymerElement {
                 field: "name",
                 filterFramework: 'partial-match-filter',
                 width: 430,
-                menuTabs: ['filterMenuTab'],
-                filter: true
+                menuTabs: ['filterMenuTab']
             }
         ];
     }
