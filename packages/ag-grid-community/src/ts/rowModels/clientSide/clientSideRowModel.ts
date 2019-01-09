@@ -66,7 +66,7 @@ export interface BatchTransactionItem {
     callback: ((res: RowNodeTransaction) => void) | undefined;
 }
 
-export interface RowNodeMap { [id: string]: RowNode };
+export interface RowNodeMap { [id: string]: RowNode; }
 
 @Bean('rowModel')
 export class ClientSideRowModel {

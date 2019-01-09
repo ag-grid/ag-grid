@@ -174,9 +174,8 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
 
-        const body: HTMLElement = _.loadTemplate(`<div></div>`);
         this.dateComponentPromise.then(dateComponent => {
-            body.appendChild(dateComponent.getGui());
+            const eGui = dateComponent.getGui();
 
             const columnDef = (params.column.getDefinition() as any);
             const isInRange = (columnDef.filterParams &&
@@ -187,8 +186,8 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
             if (dateComponent.eDateInput) {
                 dateComponent.eDateInput.disabled = isInRange;
             }
+            this.setTemplateFromElement(eGui);
         });
-        this.setTemplateFromElement(body);
         }
 
     private onDateChanged(): void {

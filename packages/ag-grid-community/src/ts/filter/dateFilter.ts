@@ -296,7 +296,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
-        this.eDateInput = this.getGui() as HTMLInputElement;
+        this.eDateInput = this.getGui().querySelector('input') as HTMLInputElement;
 
         if (_.isBrowserChrome() || params.filterParams.browserDatePicker) {
             if (_.isBrowserIE()) {
