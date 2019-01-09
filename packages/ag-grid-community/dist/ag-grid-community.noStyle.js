@@ -21660,7 +21660,6 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
         return _this;
     }
     DateFloatingFilterComp.prototype.init = function (params) {
-        var _this = this;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
         var debounceMs = params.debounceMs != null ? params.debounceMs : 500;
@@ -21670,8 +21669,9 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
+        var body = utils_1._.loadTemplate('<div></div>');
         this.dateComponentPromise.then(function (dateComponent) {
-            var eGui = dateComponent.getGui();
+            body.appendChild(dateComponent.getGui());
             var columnDef = params.column.getDefinition();
             var isInRange = (columnDef.filterParams &&
                 columnDef.filterParams.filterOptions &&
@@ -21680,8 +21680,10 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             if (dateComponent.eDateInput) {
                 dateComponent.eDateInput.disabled = isInRange;
             }
-            _this.setTemplateFromElement(eGui);
         });
+        body.style.width = '100%';
+        body.style.height = '100%';
+        this.setTemplateFromElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();
@@ -23431,6 +23433,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
+        utils_1._.addOrRemoveCssClass(this.eCheckbox, 'ag-hidden', !checkboxNeeded);
     };
     GroupCellRenderer.prototype.addExpandAndContract = function () {
         var params = this.params;
@@ -23570,7 +23573,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.TEMPLATE = '<span>' +
         '<span class="ag-group-expanded" ref="eExpanded"></span>' +
         '<span class="ag-group-contracted" ref="eContracted"></span>' +
-        '<span class="ag-group-checkbox" ref="eCheckbox"></span>' +
+        '<span class="ag-group-checkbox ag-hidden" ref="eCheckbox"></span>' +
         '<span class="ag-group-value" ref="eValue"></span>' +
         '<span class="ag-group-child-count" ref="eChildCount"></span>' +
         '</span>';

@@ -251,6 +251,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
+        utils_1._.addOrRemoveCssClass(this.eCheckbox, 'ag-hidden', !checkboxNeeded);
     };
     GroupCellRenderer.prototype.addExpandAndContract = function () {
         var params = this.params;
@@ -390,7 +391,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.TEMPLATE = '<span>' +
         '<span class="ag-group-expanded" ref="eExpanded"></span>' +
         '<span class="ag-group-contracted" ref="eContracted"></span>' +
-        '<span class="ag-group-checkbox" ref="eCheckbox"></span>' +
+        '<span class="ag-group-checkbox ag-hidden" ref="eCheckbox"></span>' +
         '<span class="ag-group-value" ref="eValue"></span>' +
         '<span class="ag-group-child-count" ref="eChildCount"></span>' +
         '</span>';
