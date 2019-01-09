@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import { Component, IComponent } from "ag-grid-community";
 import { IToolPanelChildComp } from "./sideBarComp";
 export interface ToolPanelWrapperParams {

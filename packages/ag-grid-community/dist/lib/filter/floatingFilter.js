@@ -159,6 +159,7 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
         return _this;
     }
     DateFloatingFilterComp.prototype.init = function (params) {
+        var _this = this;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
         var debounceMs = params.debounceMs != null ? params.debounceMs : 500;
@@ -168,9 +169,8 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
-        var body = utils_1._.loadTemplate("<div></div>");
         this.dateComponentPromise.then(function (dateComponent) {
-            body.appendChild(dateComponent.getGui());
+            var eGui = dateComponent.getGui();
             var columnDef = params.column.getDefinition();
             var isInRange = (columnDef.filterParams &&
                 columnDef.filterParams.filterOptions &&
@@ -179,8 +179,8 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             if (dateComponent.eDateInput) {
                 dateComponent.eDateInput.disabled = isInRange;
             }
+            _this.setTemplateFromElement(eGui);
         });
-        this.setTemplateFromElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();

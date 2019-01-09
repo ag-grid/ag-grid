@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import Scale from "./scale/scale";
 export declare class Axis<D> {
     constructor(scale: Scale<D, number>);

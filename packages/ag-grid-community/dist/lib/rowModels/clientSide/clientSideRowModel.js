@@ -38,7 +38,6 @@ var RecursionType;
     RecursionType[RecursionType["AfterFilterAndSort"] = 2] = "AfterFilterAndSort";
     RecursionType[RecursionType["PivotNodes"] = 3] = "PivotNodes";
 })(RecursionType || (RecursionType = {}));
-;
 var ClientSideRowModel = /** @class */ (function () {
     function ClientSideRowModel() {
     }

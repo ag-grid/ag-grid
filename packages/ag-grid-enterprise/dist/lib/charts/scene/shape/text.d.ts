@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import { Shape } from "./shape";
 export declare class Text extends Shape {
     protected static defaults: {

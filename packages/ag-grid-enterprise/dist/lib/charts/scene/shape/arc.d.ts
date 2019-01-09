@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import { Shape } from "./shape";
 import { Path } from "../path";
 export declare class Arc extends Shape {

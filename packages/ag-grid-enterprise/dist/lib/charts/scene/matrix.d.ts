@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
  * `getTransform(): DOMMatrix;`

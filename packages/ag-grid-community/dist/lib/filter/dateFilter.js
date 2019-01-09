@@ -290,7 +290,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         return _super.call(this, "<div class=\"ag-input-text-wrapper\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
-        this.eDateInput = this.getGui();
+        this.eDateInput = this.getGui().querySelector('input');
         if (utils_1._.isBrowserChrome() || params.filterParams.browserDatePicker) {
             if (utils_1._.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');

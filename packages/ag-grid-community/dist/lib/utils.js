@@ -1069,19 +1069,15 @@ var Utils = /** @class */ (function () {
     };
     Utils.isBrowserChrome = function () {
         if (this.isChrome === undefined) {
-            // this is the old original we we did it, but it didn't work on android
-            // let anyWindow = <any> window;
-            // this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
-            // this is the new way
-            // taken from https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
-            this.isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            var win = window;
+            this.isChrome = !!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime);
         }
         return this.isChrome;
     };
     Utils.isBrowserFirefox = function () {
         if (this.isFirefox === undefined) {
-            var anyWindow = window;
-            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
+            var win = window;
+            this.isFirefox = typeof win.InstallTrigger !== 'undefined';
         }
         return this.isFirefox;
     };

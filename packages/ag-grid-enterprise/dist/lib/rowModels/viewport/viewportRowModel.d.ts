@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "ag-grid-community";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;

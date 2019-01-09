@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import { Scene } from "./scene";
 /**
  * Abstract scene graph node.

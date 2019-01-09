@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import Scale from "./scale";
 /**
  * Maps a discrete domain to a discrete range.

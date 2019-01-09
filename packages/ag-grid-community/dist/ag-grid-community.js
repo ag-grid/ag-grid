@@ -3770,19 +3770,15 @@ var Utils = /** @class */ (function () {
     };
     Utils.isBrowserChrome = function () {
         if (this.isChrome === undefined) {
-            // this is the old original we we did it, but it didn't work on android
-            // let anyWindow = <any> window;
-            // this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
-            // this is the new way
-            // taken from https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
-            this.isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            var win = window;
+            this.isChrome = !!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime);
         }
         return this.isChrome;
     };
     Utils.isBrowserFirefox = function () {
         if (this.isFirefox === undefined) {
-            var anyWindow = window;
-            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
+            var win = window;
+            this.isFirefox = typeof win.InstallTrigger !== 'undefined';
         }
         return this.isFirefox;
     };
@@ -14218,7 +14214,7 @@ var CellComp = /** @class */ (function (_super) {
         templateParts.push(utils_1._.exists(tooltipSanitised) ? " title=\"" + tooltipSanitised + "\"" : "");
         templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + " " + stylesForRowSpanning + "\" >");
         templateParts.push(wrapperStartTemplate);
-        if (valueSanitised) {
+        if (utils_1._.exists(valueSanitised, true)) {
             templateParts.push(valueSanitised);
         }
         templateParts.push(wrapperEndTemplate);
@@ -20771,7 +20767,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         return _super.call(this, "<div class=\"ag-input-text-wrapper\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
-        this.eDateInput = this.getGui();
+        this.eDateInput = this.getGui().querySelector('input');
         if (utils_1._.isBrowserChrome() || params.filterParams.browserDatePicker) {
             if (utils_1._.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
@@ -21685,6 +21681,7 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
         return _this;
     }
     DateFloatingFilterComp.prototype.init = function (params) {
+        var _this = this;
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
         var debounceMs = params.debounceMs != null ? params.debounceMs : 500;
@@ -21694,9 +21691,8 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
-        var body = utils_1._.loadTemplate("<div></div>");
         this.dateComponentPromise.then(function (dateComponent) {
-            body.appendChild(dateComponent.getGui());
+            var eGui = dateComponent.getGui();
             var columnDef = params.column.getDefinition();
             var isInRange = (columnDef.filterParams &&
                 columnDef.filterParams.filterOptions &&
@@ -21705,8 +21701,8 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             if (dateComponent.eDateInput) {
                 dateComponent.eDateInput.disabled = isInRange;
             }
+            _this.setTemplateFromElement(eGui);
         });
-        this.setTemplateFromElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();
@@ -35774,7 +35770,6 @@ var RecursionType;
     RecursionType[RecursionType["AfterFilterAndSort"] = 2] = "AfterFilterAndSort";
     RecursionType[RecursionType["PivotNodes"] = 3] = "PivotNodes";
 })(RecursionType || (RecursionType = {}));
-;
 var ClientSideRowModel = /** @class */ (function () {
     function ClientSideRowModel() {
     }

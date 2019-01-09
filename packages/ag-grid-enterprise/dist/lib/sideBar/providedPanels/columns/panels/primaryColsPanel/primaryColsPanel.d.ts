@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import { Component } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export interface BaseColumnItem {

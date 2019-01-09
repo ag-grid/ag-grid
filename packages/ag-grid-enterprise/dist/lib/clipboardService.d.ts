@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 import { Column, IClipboardService } from "ag-grid-community";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;

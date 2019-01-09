@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.0.0
 export declare class HdpiCanvas {
     constructor(width?: number, height?: number);
     _canvas: HTMLCanvasElement;
