@@ -1053,21 +1053,19 @@
     ////////////////////////////////////////
     // Selection checkbox
     ////////////////////////////////////////
-    :not(.ag-row-group-leaf-indent) > {
-        .ag-selection-checkbox,
-        .ag-group-checkbox,
-        .ag-group-expanded,
-        .ag-group-contracted {
-            + .ag-cell-value, + .ag-group-value {
-                &:not(:empty) {
-                    margin-left: $cell-horizontal-padding;
-                }
-            }
-            + .ag-group-checkbox {
+    .ag-selection-checkbox,
+    .ag-group-checkbox:not(.ag-invisible),
+    .ag-group-expanded,
+    .ag-group-contracted {
+        + .ag-cell-value, + .ag-group-value {
+            &:not(:empty) {
                 margin-left: $cell-horizontal-padding;
             }
-        }   
-    }
+        }
+        + .ag-group-checkbox {
+            margin-left: $cell-horizontal-padding;
+        }
+    }   
 
     .ag-selection-checkbox span {
         position: relative;
