@@ -5,7 +5,7 @@ var columnDefs = [
         field: "age",
         width: 90,
         sortable: false,
-        headerComponentParams: {menuIcon: 'fa-external-link'}
+        headerComponentParams: {menuIcon: 'fa-external-link-alt'}
     },
     {headerName: "Country", field: "country", width: 120, suppressMenu: true},
     {headerName: "Year", field: "year", width: 90, sortable: false},

@@ -27,7 +27,7 @@
     display: none;
 }
 
-.fa-times, .fa-long-arrow-up, .fa-long-arrow-down, .fa-bars, .customExpandButton {
+.fa-times, .fa-long-arrow-alt-up, .fa-long-arrow-alt-down, .fa-bars, .customExpandButton {
     display: inline-block;
     margin-top: 14px;
     margin-left: 5px;

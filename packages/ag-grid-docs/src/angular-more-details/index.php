@@ -178,10 +178,10 @@ this.params.context.componentParent</snippet>
     <ul class="content">
         <li>
             <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/dynamic.component.ts"
-               target="_blank"><i class="fa fa-external-link"></i> Parent Component</a></li>
+               target="_blank"><i class="fa fa-external-link-alt"></i> Parent Component</a></li>
         <li>
             <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/child-message.component.ts"
-               target="_blank"><i class="fa fa-external-link"></i> Child Component</a></li>
+               target="_blank"><i class="fa fa-external-link-alt"></i> Child Component</a></li>
     </ul>
 
     <h3 id="building-bundling">Building & Bundling</h3>

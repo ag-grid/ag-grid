@@ -35,10 +35,10 @@ export default class CustomHeader extends Component {
             sort =
                 <div style={{display: "inline-block"}}>
                     <div onClick={this.onSortRequested.bind(this, 'asc')} className={`customSortDownLabel ${this.state.ascSort}`}>
-                        <i class="fa fa-long-arrow-down"></i>
+                        <i class="fa fa-long-arrow-alt-down"></i>
                     </div>
                     <div onClick={this.onSortRequested.bind(this, 'desc')} className={`customSortUpLabel ${this.state.descSort}`}>
-                        <i class="fa fa-long-arrow-up"></i>
+                        <i class="fa fa-long-arrow-alt-up"></i>
                     </div>
                     <div onClick={this.onSortRequested.bind(this, '')} className={`customSortRemoveLabel ${this.state.noSort}`}>
                         <i class="fa fa-times"></i>

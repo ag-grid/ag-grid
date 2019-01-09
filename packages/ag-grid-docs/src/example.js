@@ -546,8 +546,8 @@ var defaultCols = [
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-down"/>'
                 }
             }
         ]
@@ -572,8 +572,8 @@ var defaultCols = [
                 // pinned: 'right',
                 // rowGroupIndex: 1,
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-down"/>'
                 }
             },
             {
@@ -613,8 +613,8 @@ var defaultCols = [
                 // valueGetter: '55',
                 // aggFunc: 'sum',
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-amount-up"/>',
+                    sortDescending: '<i class="fa fa-sort-amount-down"/>'
                 }
             },
             {
@@ -652,8 +652,8 @@ var defaultCols = [
         },
         valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
-            sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-            sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+            sortAscending: '<i class="fa fa-sort-amount-up"/>',
+            sortDescending: '<i class="fa fa-sort-amount-down"/>'
         }
     }
 ];
