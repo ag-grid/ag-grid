@@ -188,7 +188,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
                 dateComponent.eDateInput.disabled = isInRange;
             }
         });
- 
+
         body.style.width = '100%';
         body.style.height = '100%';
 
