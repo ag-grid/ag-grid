@@ -18,7 +18,7 @@ var gridOptions = {
     groupUseEntireRow: false,
     enableRangeSelection: true,
     groupRowAggNodes: groupRowAggNodes,
-    sideBar: true,
+    sideBar: ['columns'],
     autoGroupColumnDef: {
         headerName: 'Athlete',
         field: 'athlete',
