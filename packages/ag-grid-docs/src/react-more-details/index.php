@@ -20,115 +20,131 @@ include '../documentation-main/documentation_header.php';
     <h2 id="configuring-aggridreact-component">Configuring the ag-Grid React Component</h2>
     <p>After importing <code>AgGridReact</code>  you can then reference the component inside your JSX definitions.
     An example of the Grid Component can be seen below:</p>
-    <snippet language="jsx">
-    // Grid Definition
-    &lt;AgGridReact
+<snippet language="jsx">
+// Grid Definition
+&lt;AgGridReact
     // listening for events
     onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+
     // binding to array properties
     rowData=<span ng-non-bindable>{</span>this.state.rowData}
+
     // no binding, just providing hard coded strings for the properties
-    // boolean properties will default to true if provided (ie enableColResize =&gt; enableColResize="true")
+    // boolean properties will default to true if provided (ie animateRows =&gt; animateRows="true")
     rowSelection="multiple"
-    enableColResize
+    animateRows
+
     // setting grid wide date component
     dateComponentFramework=<span ng-non-bindable>{</span>DateComponent}
+
     // setting default column properties
     defaultColDef=<span ng-non-bindable>{{</span>
-    headerComponentFramework: SortableHeaderComponent,
-    headerComponentParams: <span ng-non-bindable>{</span>
-    menuIcon: 'fa-bars'
-    }
+        headerComponentFramework: SortableHeaderComponent,
+        headerComponentParams: <span ng-non-bindable>{</span>
+            menuIcon: 'fa-bars'
+        }
     }}&gt;
+
     // column definitions
     &lt;AgGridColumn field="make">&lt;/AgGridColumn>
-    &lt;/AgGridReact&gt;>
-    </snippet>
+&lt;/AgGridReact&gt;>
+</snippet>
 </p>
 <h2 id="configuring-aggridreact-columns">Configuring the Columns</h2>
 <p>Columns can be defined in three ways: declaratively (i.e. via markup), via <code>GridOptions</code> or by binding to
 <code>columnDefs</code> on the <code>AgGridReact</code> component.</p>
 <p>In all cases all <a href="../javascript-grid-column-properties/">column definition properties</a> can be defined to make up a column definition.</p>
 <p>Defining columns declaratively:</p>
-<snippet language="jsx">
+    <snippet language="jsx">
 // column definitions
 &lt;AgGridColumn field="make">&lt;/AgGridColumn>
 &lt;AgGridColumn field="model">&lt;/AgGridColumn>
 &lt;AgGridColumn field="price">&lt;/AgGridColumn>
 </snippet>
 <p>Defining columns via <code>GridOptions</code>:</p>
-<snippet language="jsx">
+    <snippet language="jsx">
 // before render/grid initialisation
 this.state = {
-gridOptions = {
-columnDefs: [
-{make: "Toyota", model: "Celica", price: 35000},
-{make: "Ford", model: "Mondeo", price: 32000},
-{make: "Porsche", model: "Boxter", price: 72000}
-]
+    gridOptions = {
+        columnDefs: [
+            {make: "Toyota", model: "Celica", price: 35000},
+            {make: "Ford", model: "Mondeo", price: 32000},
+            {make: "Porsche", model: "Boxter", price: 72000}
+        ]
+    }
 }
-}
+
 // in the render method
 &lt;AgGridReact gridOptions={this.state.gridOptions}>&lt;/AgGridReact&gt;
 </snippet>
-<p>Defining columns by binding to a property:</p>
-<snippet language="jsx">
+
+    <p>Defining columns by binding to a property:</p>
+    <snippet language="jsx">
 // before render/grid initialisation
 this.state = {
-columnDefs: [
-{make: "Toyota", model: "Celica", price: 35000},
-{make: "Ford", model: "Mondeo", price: 32000},
-{make: "Porsche", model: "Boxter", price: 72000}
-]
+    columnDefs: [
+        {make: "Toyota", model: "Celica", price: 35000},
+        {make: "Ford", model: "Mondeo", price: 32000},
+        {make: "Porsche", model: "Boxter", price: 72000}
+    ]
 }
+
 // in the render method
 &lt;AgGridReact columnDefs={this.state.columnDefs}>&lt;/AgGridReact>
 </snippet>
 <p>Column definitions via markup or on <code>GridOptions</code> are one-off definitions. Subsequent updates will not be
 reflected on the Grid. Updates using property binding will be reflected on the Grid.</p>
 <p>A full working Grid definition is shown below, illustrating various Grid & Column property definitions:</p>
-<snippet language="jsx">
+    <snippet language="jsx">
 &lt;AgGridReact
-// listening for events
-onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
-// binding to array properties
-rowData=<span ng-non-bindable>{</span>this.state.rowData}
-// no binding, just providing hard coded strings for the properties
-// boolean properties will default to true if provided (ie enableColResize =&gt; enableColResize="true")
-rowSelection="multiple"
-enableColResize
-// setting grid wide date component
-dateComponentFramework=<span ng-non-bindable>{</span>DateComponent}
-// setting default column properties
-defaultColDef=<span ng-non-bindable>{{</span>
-headerComponentFramework: SortableHeaderComponent,
-headerComponentParams: <span ng-non-bindable>{</span>
-menuIcon: 'fa-bars'
-}
-}}&gt;
-&lt;AgGridColumn headerName="#" width=<span ng-non-bindable>{</span>30} checkboxSelection suppressSorting suppressMenu suppressFilter pinned&gt;&lt;/AgGridColumn&gt;
-&lt;AgGridColumn headerName="Employee" headerGroupComponentFramework=<span ng-non-bindable>{</span>HeaderGroupComponent}&gt;
-&lt;AgGridColumn field="name" width=<span ng-non-bindable>{</span>150} pinned editable cellEditorFramework=<span ng-non-bindable>{</span>NameCellEditor}&gt;&lt;/AgGridColumn&gt;
-&lt;AgGridColumn field="country"
-width=<span ng-non-bindable>{</span>150}
-pinned editable cellRenderer=<span ng-non-bindable>{</span>RichGridDeclarativeExample.countryCellRenderer}
-filterParams=<span ng-non-bindable>{</span><span ng-non-bindable>{</span>cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}&gt;&lt;/AgGridColumn&gt;
-&lt;/AgGridColumn&gt;
+    // listening for events
+    onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+
+    // binding to array properties
+    rowData=<span ng-non-bindable>{</span>this.state.rowData}
+
+    // no binding, just providing hard coded strings for the properties
+    // boolean properties will default to true if provided (ie animateRows =&gt; animateRows="true")
+    rowSelection="multiple"
+    animateRows
+
+    // setting grid wide date component
+    dateComponentFramework=<span ng-non-bindable>{</span>DateComponent}
+
+    // setting default column properties
+    defaultColDef=<span ng-non-bindable>{{</span>
+        sortable: true,
+        filter: true,
+        headerComponentFramework: SortableHeaderComponent,
+        headerComponentParams: <span ng-non-bindable>{</span>
+            menuIcon: 'fa-bars'
+        }
+    }}&gt;
+
+    &lt;AgGridColumn headerName="#" width=<span ng-non-bindable>{</span>30} checkboxSelection suppressMenu pinned&gt;&lt;/AgGridColumn&gt;
+    &lt;AgGridColumn headerName="Employee" headerGroupComponentFramework=<span ng-non-bindable>{</span>HeaderGroupComponent}&gt;
+        &lt;AgGridColumn field="name" width=<span ng-non-bindable>{</span>150} pinned editable cellEditorFramework=<span ng-non-bindable>{</span>NameCellEditor}&gt;&lt;/AgGridColumn&gt;
+        &lt;AgGridColumn field="country"
+                      width=<span ng-non-bindable>{</span>150}
+                      pinned editable cellRenderer=<span ng-non-bindable>{</span>RichGridDeclarativeExample.countryCellRenderer}
+                      filterParams=<span ng-non-bindable>{</span><span ng-non-bindable>{</span>cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}&gt;&lt;/AgGridColumn&gt;
+    &lt;/AgGridColumn&gt;
 &lt;/AgGridReact&gt;
 </snippet>
 <h2 id="loading-css">Loading CSS</h2>
 <p>You need 1) the core ag-Grid css and 2) a theme. These are stored in css files packaged
     in the core ag-Grid. To access them, first up we need to define an alias to use inside
     webpack.config.js:
-    <snippet>
-    resolve: {
+<snippet>
+resolve: {
     alias: {
-    "ag-grid-community": path.resolve('./node_modules/ag-grid-community')
-    </snippet>
+        "ag-grid-community": path.resolve('./node_modules/ag-grid-community')
+</snippet>
     Once this is done, we can then access the two css files that we need as follows:
-    <snippet>
+<snippet>
     import 'ag-grid-community/dist/styles/ag-grid.css';
-    import 'ag-grid-community/dist/styles/ag-theme-balham.css';</snippet>
+    import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+</snippet>
     You will also need to configure CSS loaders for Webpack - you can find a full working example of this in our <a
     href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
 </p>
@@ -160,17 +176,19 @@ setting and changing the props).</p>
 <snippet language="jsx">
 // provide gridReady callback to the grid
 &lt;AgGridReact
-onGridReady={this.onGridReady}
-.../&gt;
+    onGridReady={this.onGridReady}
+    .../&gt;
+
 // in onGridReady, store the api for later use
 onGridReady = (params) => {
-this.api = params.api;
-this.columnApi = params.columnApi;
+    this.api = params.api;
+    this.columnApi = params.columnApi;
 }
+
 // use the api some point later!
 somePointLater() {
-this.api.selectAll();
-this.columnApi.setColumnVisible('country', visible);
+    this.api.selectAll();
+    this.columnApi.setColumnVisible('country', visible);
 }</snippet>
 <p>
     The <code>api</code> and <code>columnApi</code> are also stored inside the React backing object
@@ -197,11 +215,11 @@ React</h2>
 made available via <code>props</code>:</p>
 <snippet>
 constructor(props) {
-super(props);
-// change the containing div to be inline-block (instead of the default block for a div)
-this.props.reactContainer.style.display = "inline-block";
-// change the background color of the containing div to be red
-this.props.reactContainer.style.backgroundColor = "red";
+    super(props);
+    // change the containing div to be inline-block (instead of the default block for a div)
+    this.props.reactContainer.style.display = "inline-block";
+    // change the background color of the containing div to be red
+    this.props.reactContainer.style.backgroundColor = "red";
 }</snippet>
 <p>You can see an example of this in the
     <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
@@ -218,27 +236,30 @@ unexpectedly - below we document some common pitfalls that are easily avoided:</
 </ul>
 <h3>Binding to methods in the React binding</h3>
 <p>If you have something like:</p>
-<snippet language="jsx">
+    <snippet language="jsx">
 &lt;AgGridReact
-// events
-onGridReady={this.onGridReady.bind(this)}&gt;
-//... rest of the configuration</snippet>
-<p>Then everytime the component renders, a new instance of <code>onGridReady</code> will be passed to ag-Grid and it will believe
-that it's a different function. To avoid this, do the binding separately (in the constructor for example):</p>
-<snippet>
+    // events
+    onGridReady={this.onGridReady.bind(this)}&gt;
+    //... rest of the configuration</snippet>
+    <p>Then everytime the component renders, a new instance of <code>onGridReady</code> will be passed to ag-Grid and it will believe
+        that it's a different function. To avoid this, do the binding separately (in the constructor for example):</p>
+
+    <snippet>
 class TopMoversGrid extends Component {
-constructor(props) {
-super(props);
-// grid events
-this.onGridReady = this.onGridReady.bind(this);
-}
-render() {
-return (
-&lt;div className="ag-theme-balham"&gt;
-&lt;AgGridReact
-// events
-onGridReady={this.onGridReady}&gt;
-//... rest of the component</snippet>
+    constructor(props) {
+        super(props);
+
+        // grid events
+        this.onGridReady = this.onGridReady.bind(this);
+    }
+
+    render() {
+        return (
+            &lt;div className="ag-theme-balham"&gt;
+                &lt;AgGridReact
+                    // events
+                    onGridReady={this.onGridReady}&gt;
+                //... rest of the component</snippet>
 <p>Now ag-Grid will get the same function everytime the component renders.</p>
 <h3>Changing references to colDefs (even if the contents are the same)</h3>
 <p>This happens most commonly when using redux - even if the actual colDefs aren't changing, ag-Grid gets a new reference
@@ -253,18 +274,21 @@ into a component variable, and pass this to ag-Grid).</p>
     result is ag-Grid changing state.</p>
     <p>A common scenario might be where you pre-process your row data before passing it to ag-Grid - for example:</p>
     <snippet>
-    class TopMoversGrid extends Component {
+class TopMoversGrid extends Component {
     constructor(props) {
-    super(props);
+        super(props);
     }
+
     cleanData = () =>  {
-    return this.props.rowData.filter(data =&gt; data.isClean)
+        return this.props.rowData.filter(data =&gt; data.isClean)
     }
+
     render() {
-    return (
-    &lt;AgGridReact
-    rowData={this.cleanData()}
-    // ...rest of the component</snippet>
+        return (
+            &lt;AgGridReact
+                rowData={this.cleanData()}
+                // ...rest of the component</snippet>
+
     <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
     operation will return a new array each time. Again to alleviate this behaviour extract data that isn't likely to change and pre-process it only once.</p>
     <h2 id="react-portals">React Portals</h2>
@@ -272,47 +296,47 @@ into a component variable, and pass this to ag-Grid).</p>
     <p>This has worked well and been reliable since ag-Grid was created, but it is marked as <code>unstable</code> and so could be removed by the React team at any time.</p>
     <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the preferred way to create React components dynamically.</p>
     <p>If you wish to try use this feature you'll need to enable it as follows:</p>
-    <snippet>
-    // Grid Definition
-    &lt;AgGridReact
+<snippet>
+// Grid Definition
+&lt;AgGridReact
     reactNext={true}
     ...other bindings
-    </snippet>
+</snippet>
     <h3 id="react-portal-redux">React Portals with Redux</h3>
     <p>One of the downsides of using the React Portal functionality is that there are a few more steps required for the newly
     created React components to be Redux aware.</p>
     <h3>Make the Store Available to ag-Grid</h3>
     <p>When using React Portals we need to explicity suplly the store to the dynamically created component. In order to
     be able to do this you in turn need to supply the store to ag-Grid React via the React <code>context</code>:</p>
-    <snippet>
-    // Grid Definition
-    &lt;AgGridReact
+<snippet>
+// Grid Definition
+&lt;AgGridReact
     reactNext={true}
     reduxStore={this.context.store} // must be supplied when using redux with reactNext
     ...other bindings
-    </snippet>
+</snippet>
     <p>To ensure the store is available on the context you need to add it to the parent component <code>contextTypes</code>:</p>
-    <snippet>
-    GridComponent.contextTypes = {
+<snippet>
+GridComponent.contextTypes = {
     store: PropTypes.object
-    };
-    </snippet>
+};
+</snippet>
     <h3 id="higher-order-components">Higher Order Components</h3>
     <p>If you use <code>connect</code> to use Redux, or if you're using a Higher Order Component to wrap the React component at all,
         you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>withRef</code>
     is set:</p>
     <snippet>
-    export default connect(
+export default connect(
     (state) => {
-    return {
-    currencySymbol: state.currencySymbol,
-    exchangeRate: state.exchangeRate
-    }
+        return {
+            currencySymbol: state.currencySymbol,
+            exchangeRate: state.exchangeRate
+        }
     },
     null,
     null,
-    { withRef: true } // must be supplied for react/redux when using GridOptions.reactNext
-    )(PriceRenderer);
+    { forwardRef: true } // must be supplied for react/redux when using GridOptions.reactNext
+)(PriceRenderer);
     </snippet>
     <h3 id="context-api">React Context API</h3>
     <p>If you're using the new React Context API then you can access the context in the components used within the grid.</p>
@@ -324,25 +348,25 @@ into a component variable, and pass this to ag-Grid).</p>
     export default React.createContext('normal');
     </snippet>
     <p>Next we need to provide the context in a parent component (at the Grid level, or above) - for example:</p>
-    <snippet>
-    &lt;FontContext.Provider value="bold"&gt;
+<snippet>
+&lt;FontContext.Provider value="bold"&gt;
     &lt;GridComponent/&gt;
-    &lt;/FontContext.Provider&gt;
-    </snippet>
+&lt;/FontContext.Provider&gt;
+</snippet>
     
     <p>Finally, we need to consume the context within our component:</p>
-    
+
     <snippet>
-    class StyledRenderer extends Component {
+class StyledRenderer extends Component {
     render() {
-    return (<span ng-non-bindable>
-        &lt;FontContext.Consumer&gt;
-        {fontWeight =&gt; &lt;span style={{fontWeight}}&gt;Stylised Component!&lt;/span&gt; }
-    &lt;/FontContext.Consumer&gt;</span>
-    );
+        return (<span ng-non-bindable>
+            &lt;FontContext.Consumer&gt;
+                {fontWeight =&gt; &lt;span style={{fontWeight}}&gt;Stylised Component!&lt;/span&gt; }
+            &lt;/FontContext.Consumer&gt;</span>
+        );
     }
-    }
-    </snippet>
+}
+</snippet>
     <h3>Working Example</h3>
     <p>You can find a fully working example at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
 The Simple Redux Example makes use of <code>reactNext</code> together with <code>Redux</code>.</p>

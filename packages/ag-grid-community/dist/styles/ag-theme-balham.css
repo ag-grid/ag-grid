@@ -414,19 +414,19 @@
     padding-right: 1372px; }
   .ag-theme-balham .ag-ltr .ag-row-group-leaf-indent {
     margin-left: 28px; }
-  .ag-theme-balham .ag-rtl .ag-row-group-leaf-indent {
-    margin-right: 28px; }
   .ag-theme-balham .ag-ltr .ag-cell-no-focus {
     border-right: none; }
+  .ag-theme-balham .ag-ltr .ag-row.ag-cell-first-right-pinned, .ag-theme-balham .ag-ltr .ag-cell.ag-cell-first-right-pinned {
+    border-left: 1px solid #BDC3C7; }
+  .ag-theme-balham .ag-ltr .ag-row.ag-cell-last-left-pinned, .ag-theme-balham .ag-ltr .ag-cell.ag-cell-last-left-pinned {
+    border-right: 1px solid #BDC3C7; }
+  .ag-theme-balham .ag-rtl .ag-row-group-leaf-indent {
+    margin-right: 28px; }
   .ag-theme-balham .ag-rtl .ag-cell-no-focus {
     border-left: none; }
-  .ag-theme-balham .ag-rtl .ag-cell-first-right-pinned {
+  .ag-theme-balham .ag-rtl .ag-row.ag-cell-first-right-pinned, .ag-theme-balham .ag-rtl .ag-cell.ag-cell-first-right-pinned {
     border-left: 1px solid #BDC3C7; }
-  .ag-theme-balham .ag-ltr .ag-cell-first-right-pinned {
-    border-left: 1px solid #BDC3C7; }
-  .ag-theme-balham .ag-rtl .ag-cell-last-left-pinned {
-    border-right: 1px solid #BDC3C7; }
-  .ag-theme-balham .ag-ltr .ag-cell-last-left-pinned {
+  .ag-theme-balham .ag-rtl .ag-row.ag-cell-last-left-pinned, .ag-theme-balham .ag-rtl .ag-cell.ag-cell-last-left-pinned {
     border-right: 1px solid #BDC3C7; }
   .ag-theme-balham .ag-value-change-delta {
     padding-right: 2px; }

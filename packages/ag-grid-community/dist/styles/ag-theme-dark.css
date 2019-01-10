@@ -416,19 +416,19 @@
     padding-right: 1176px; }
   .ag-theme-dark .ag-ltr .ag-row-group-leaf-indent {
     margin-left: 24px; }
-  .ag-theme-dark .ag-rtl .ag-row-group-leaf-indent {
-    margin-right: 24px; }
   .ag-theme-dark .ag-ltr .ag-cell-no-focus {
     border-right: 1px dotted grey; }
+  .ag-theme-dark .ag-ltr .ag-row.ag-cell-first-right-pinned, .ag-theme-dark .ag-ltr .ag-cell.ag-cell-first-right-pinned {
+    border-left: 1px solid darkgrey; }
+  .ag-theme-dark .ag-ltr .ag-row.ag-cell-last-left-pinned, .ag-theme-dark .ag-ltr .ag-cell.ag-cell-last-left-pinned {
+    border-right: 1px solid darkgrey; }
+  .ag-theme-dark .ag-rtl .ag-row-group-leaf-indent {
+    margin-right: 24px; }
   .ag-theme-dark .ag-rtl .ag-cell-no-focus {
     border-left: 1px dotted grey; }
-  .ag-theme-dark .ag-rtl .ag-cell-first-right-pinned {
+  .ag-theme-dark .ag-rtl .ag-row.ag-cell-first-right-pinned, .ag-theme-dark .ag-rtl .ag-cell.ag-cell-first-right-pinned {
     border-left: 1px solid darkgrey; }
-  .ag-theme-dark .ag-ltr .ag-cell-first-right-pinned {
-    border-left: 1px solid darkgrey; }
-  .ag-theme-dark .ag-rtl .ag-cell-last-left-pinned {
-    border-right: 1px solid darkgrey; }
-  .ag-theme-dark .ag-ltr .ag-cell-last-left-pinned {
+  .ag-theme-dark .ag-rtl .ag-row.ag-cell-last-left-pinned, .ag-theme-dark .ag-rtl .ag-cell.ag-cell-last-left-pinned {
     border-right: 1px solid darkgrey; }
   .ag-theme-dark .ag-value-change-delta {
     padding-right: 2px; }

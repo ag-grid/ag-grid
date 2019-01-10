@@ -6,6 +6,46 @@
 ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: block; }
 
+.ag-hidden {
+  display: none !important; }
+
+.ag-invisible {
+  visibility: hidden !important; }
+
+.ag-faded {
+  opacity: 0.3; }
+
+.ag-width-half {
+  display: inline-block;
+  width: 50%; }
+
+.ag-font-style {
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+
+.ag-body-no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+
+.ag-select-agg-func-popup {
+  position: absolute; }
+
+.ag-input-text-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+  line-height: normal;
+  position: relative; }
+
 .ag-shake-left-to-right {
   -webkit-animation-direction: alternate;
   animation-direction: alternate;
@@ -418,38 +458,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     box-sizing: border-box; }
   .ag-root-wrapper.ag-layout-normal {
     height: 100%; }
-  .ag-root-wrapper .ag-hidden {
-    display: none !important; }
-  .ag-root-wrapper .ag-invisible {
-    visibility: hidden !important; }
-  .ag-root-wrapper .ag-faded {
-    opacity: 0.3; }
-  .ag-root-wrapper .ag-width-half {
-    display: inline-block;
-    width: 50%; }
-  .ag-root-wrapper .ag-font-style {
-    cursor: default;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none; }
-  .ag-root-wrapper .ag-body-no-select {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none; }
-  .ag-root-wrapper .ag-select-agg-func-popup {
-    position: absolute; }
-  .ag-root-wrapper .ag-input-text-wrapper {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    height: 100%;
-    line-height: normal;
-    position: relative; }
 
 .ag-root-wrapper-body {
   display: -webkit-box;

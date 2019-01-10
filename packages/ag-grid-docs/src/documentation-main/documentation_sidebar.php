@@ -12,7 +12,7 @@
                 <a href=""><img src="/images/complex-performance.png" style="width: 100%"></a>
                 <br><br>
                         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.1">All Videos</a>
+            <a class="learn-more" href="http://ag-grid-conf.com/">All Videos</a>
         </p>
             </div>
         </div>
