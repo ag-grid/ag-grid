@@ -5,8 +5,8 @@ export class Text extends Shape {
     protected static defaults = chainObjects(Shape.defaults, {
         fillStyle: 'black',
 
-        centerX: 0,
-        centerY: 0
+        x: 0,
+        y: 0
     });
 
     isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
