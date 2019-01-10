@@ -19,16 +19,13 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     groupIncludeFooter: true,
-    sideBar: true,
-    toolPanelSuppressPivots: true,
-    toolPanelSuppressPivotMode: true,
+    sideBar: ['columns'],
     autoGroupColumnDef: {headerName: "Athlete",
         field: "athlete",
         width: 200,
         cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
-            footerValueGetter: '"Total (" + x + ")"',
-            padding: 5
+            footerValueGetter: '"Total (" + x + ")"'
         }}
     };
 
