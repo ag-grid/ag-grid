@@ -110,37 +110,39 @@
         }
     }
 
-    .ag-ltr .ag-row-group-leaf-indent {
-        margin-left: $icon-size + $grid-size * 3;
-    }
-
-    .ag-rtl .ag-row-group-leaf-indent {
-        margin-right: $icon-size + $grid-size * 3;
-    }
-
-    .ag-ltr .ag-cell-no-focus {
-        border-right: $cell-horizontal-border;
-    }
-
-    .ag-rtl .ag-cell-no-focus {
-        border-left: $cell-horizontal-border;
-    }
-
     // we use rtl and ltr below, even though it's the same style, so it propertly
-    .ag-rtl .ag-row.ag-cell-first-right-pinned {
-        border-left: 1px solid $border-color;
+    .ag-ltr {
+        .ag-row-group-leaf-indent {
+            margin-left: $icon-size + $grid-size * 3;
+        }
+        .ag-cell-no-focus {
+            border-right: $cell-horizontal-border;
+        }
+        .ag-row, .ag-cell {
+            &.ag-cell-first-right-pinned {
+                border-left: 1px solid $border-color;
+            }
+            &.ag-cell-last-left-pinned {
+                border-right: 1px solid $border-color;
+            }
+        }
     }
 
-    .ag-ltr .ag-row.ag-cell-first-right-pinned {
-        border-left: 1px solid $border-color;
-    }
-
-    .ag-rtl .ag-row.ag-cell-last-left-pinned {
-        border-right: 1px solid $border-color;
-    }
-
-    .ag-ltr .ag-row.ag-cell-last-left-pinned {
-        border-right: 1px solid $border-color;
+    .ag-rtl {
+        .ag-row-group-leaf-indent {
+            margin-right: $icon-size + $grid-size * 3;
+        }
+        .ag-cell-no-focus {
+            border-left: $cell-horizontal-border;
+        }
+        .ag-row, .ag-cell {
+            &.ag-cell-first-right-pinned {
+                border-left: 1px solid $border-color;
+            }
+            &.ag-cell-last-left-pinned {
+                border-right: 1px solid $border-color;
+            }
+        }
     }
 
     // used by the animateShowChangedCellRenderer
