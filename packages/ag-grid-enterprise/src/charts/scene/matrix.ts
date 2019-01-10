@@ -26,6 +26,10 @@ export class Matrix {
     setElements(elements: number[]): Matrix {
         const e = this.elements;
 
+        // Slicing the `elements` and replacing `this.elements` with it
+        // is 3-4 times slower than copying in Chrome 71 and FF 64.
+        // While the performance of passing parameters individually
+        // vs as an array is about the same in both browsers.
         e[0] = elements[0];
         e[1] = elements[1];
         e[2] = elements[2];
@@ -130,6 +134,9 @@ export class Matrix {
         return new Matrix(elements);
     }
 
+    /**
+     * Returns the inverse of this matrix as a new matrix.
+     */
     inverse(): Matrix {
         let [a, b, c, d, e, f] = this.elements;
         const rD = 1 / (a * d - b * c); // reciprocal of determinant
@@ -140,6 +147,23 @@ export class Matrix {
         d *= rD;
 
         return new Matrix([d, -b, -c, a, c * f - d * e, b * e - a * f]);
+    }
+
+    /**
+     * Save the inverse of this matrix to the given matrix.
+     */
+    inverseTo(other: Matrix): Matrix {
+        let [a, b, c, d, e, f] = this.elements;
+        const rD = 1 / (a * d - b * c); // reciprocal of determinant
+
+        a *= rD;
+        b *= rD;
+        c *= rD;
+        d *= rD;
+
+        other.setElements([d, -b, -c, a, c * f - d * e, b * e - a * f]);
+
+        return this;
     }
 
     invertSelf(): Matrix {
@@ -162,5 +186,9 @@ export class Matrix {
         return this;
     }
 
-
+    toContext(ctx: CanvasRenderingContext2D) {
+        ctx.transform.apply(ctx, this.elements as MatrixElements);
+    }
 }
+
+export type MatrixElements = [number, number, number, number, number, number];
