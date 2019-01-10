@@ -127,19 +127,19 @@
     }
 
     // we use rtl and ltr below, even though it's the same style, so it propertly
-    .ag-rtl .ag-cell-first-right-pinned {
+    .ag-rtl .ag-row.ag-cell-first-right-pinned {
         border-left: 1px solid $border-color;
     }
 
-    .ag-ltr .ag-cell-first-right-pinned {
+    .ag-ltr .ag-row.ag-cell-first-right-pinned {
         border-left: 1px solid $border-color;
     }
 
-    .ag-rtl .ag-cell-last-left-pinned {
+    .ag-rtl .ag-row.ag-cell-last-left-pinned {
         border-right: 1px solid $border-color;
     }
 
-    .ag-ltr .ag-cell-last-left-pinned {
+    .ag-ltr .ag-row.ag-cell-last-left-pinned {
         border-right: 1px solid $border-color;
     }
 
