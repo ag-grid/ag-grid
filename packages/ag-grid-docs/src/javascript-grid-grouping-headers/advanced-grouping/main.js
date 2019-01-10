@@ -79,7 +79,7 @@ var gridOptions = {
     },
     icons: {
         columnGroupOpened: '<i class="far fa-plus-square"/>',
-        columnGroupClosed: '<i class="far fa-plus-square"/>'
+        columnGroupClosed: '<i class="far fa-minus-square"/>'
     }
 };
 
