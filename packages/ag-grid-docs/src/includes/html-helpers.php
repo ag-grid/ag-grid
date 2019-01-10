@@ -79,7 +79,7 @@ META;
     <meta property="og:description" content="$description">
 
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="@ceolter">
+    <meta name="twitter:site" content="@ag_grid">
     <meta name="twitter:title" content="ag-Grid">
     <meta name="twitter:description" content="$description">
 

@@ -4,29 +4,22 @@
             <h5>Documentation</h5>
             <ul>
                 <li><a href="/javascript-grid-getting-started/">Getting Started</a></li>
-                <li><a href="/ag-grid-changelog/">Changelog</a></li>
-                <li><a href="/ag-grid-pipeline/">Pipeline</a></li>
-                <li><a href="/archive/">Documentation Archive</a></li>
             </ul>
         </div>
 
         <div>
             <h5>Support &amp; Community</h5>
             <ul>
-                <li><a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a></li>
+
                 <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
-                <li><a href="https://ag-grid.zendesk.com/">Support via Zendesk</a></li>
+
             </ul>
         </div>
         <div>
             <h5>The Company</h5>
             <ul>
-                <li><a href="/about.php">About</a></li>
-                <li><a href="/about.php#team">Team</a></li>
-                <li><a href="https://medium.com/ag-grid">Blog (Medium)</a></li>
-                <li><a href="/testimonials.php">Testimonials</a></li>
                 <li><a href=/privacy.php>Privacy Policy</a><li>
-                  <li><a href="/cookies.php">Cookies Policy</a><li>
+
             </ul>
         </div>
 
@@ -35,9 +28,7 @@
         <div>
             <ul>
                 <li><a class="github-button" href="https://github.com/ag-grid/ag-grid" data-show-count="true" aria-label="Star ag-grid/ag-grid on GitHub">Star</a></li>
-                <li><a class="twitter-follow-button"
-  href="https://twitter.com/ag_grid">
-Follow @ag_grid</a></li>
+                <li><a href="https://twitter.com/ceolter?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @ceolter</a></li>
                 
             </ul>
         </div>

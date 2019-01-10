@@ -2,6 +2,23 @@
 
 </div>
 <br>
+
+    <div id="ag-grid-conf">
+        <p></p>
+        <div class="card card-highlight">
+            <div class="card-body">
+                <h5 class="card-title"><a href="https://www.ag-grid-conf.com">ag-Grid Conf</a></h5>
+                Our ag-Grid Conf videos are now live!<br><br>
+                <a href=""><img src="/images/complex-performance.png" style="width: 100%"></a>
+                <br><br>
+                        <p class="text-right">
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.1">All Videos</a>
+        </p>
+            </div>
+        </div>
+
+
+<br>
 <p>Latest Release:</p>
 
 <div class="card card-highlight">
@@ -25,6 +42,7 @@
         </p>
     </div>
 </div>
+<br>
 <div class="card card-highlight">
     <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.4">Version 19.1.4 Released</a></h5>
@@ -83,45 +101,6 @@
 <!--End mc_embed_signup-->
 
 <div id="side-bar-announcements" style="margin-top: 10px">
-    <br>
-
-    <br>
-    <div id="ag-grid-conf">
-        <p>Upcoming events</p>
-        <div class="card card-highlight">
-            <div class="card-body">
-                <h5 class="card-title"><a href="https://www.ag-grid-conf.com">ag-Grid Conf</a></h5>
-                <h6 class="card-subtitle mb-2 text-muted">London</h6>
-                <p class="card-text">
-                    A half day conference all about ag-Grid in London.<br><br>
-                    <strong>
-                        <img class="card-image" src="../images/largeFlags/gb2.png">
-                        London, Nov 29th
-                    </strong>
-                </p>
-                To register follow the link below<br><br>
-                <p class="text-left">
-                    <a class="learn-more" href="https://www.ag-grid-conf.com" target="_blank"><strong>Register</strong></a>
-                </p>
-                <hr>
-                <h5 class="card-title"><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></h5>
-                <h6 class="card-subtitle mb-2 text-muted">November 6-7<br>London, England</h6>
-                <dd>Platinum Sponsor</dd>
-                <hr>
-                <h5 class="card-title"><a href="https://finjs.io" target="_blank" rel="noopener">FinJS</a></h5>
-                <dd>ag-Grid is partnering with FinJS, join us for these excellent event.</dd>
-                <br>
-                <img class="card-image" src="../images/largeFlags/gb2.png">
-                London, Nov 13th<br><br>
-                <p class="text-left">
-                    <a class="learn-more" href="https://finjs.io" target="_blank"><strong>Find out more</strong></a>
-                </p>
-            </div>
-        </div>
-
-        <hr>
-
-        <br>
         <p>From our <a href="https://medium.com/ag-grid/">blog</a>:</p>
         <div class="card">
             <div class="card-body">
