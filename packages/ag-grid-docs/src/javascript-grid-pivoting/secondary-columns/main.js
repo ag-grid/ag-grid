@@ -10,7 +10,8 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        resizable: true
+        resizable: true,
+        filter: true
     },
     pivotMode: true,
     columnDefs: columnDefs,

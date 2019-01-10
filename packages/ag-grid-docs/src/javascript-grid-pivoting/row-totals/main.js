@@ -1,6 +1,7 @@
 var gridOptions = {
     defaultColDef: {
-        resizable: true
+        resizable: true,
+        filter: true
     },
     columnDefs: [
         {headerName: "Athlete", field: "athlete",  minWidth: 150, enablePivot:true, enableRowGroup:true},

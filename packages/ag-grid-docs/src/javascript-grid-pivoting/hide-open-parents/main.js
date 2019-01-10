@@ -26,7 +26,8 @@ var gridOptions = {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        sortable: true
+        sortable: true,
+        filter: true
     },
     pivotMode: true,
     groupDefaultExpanded: 9,
