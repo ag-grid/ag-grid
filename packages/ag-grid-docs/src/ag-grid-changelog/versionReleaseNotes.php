@@ -17,12 +17,15 @@
 
     <ul>
         <li>
+            AG-1709 Server-side Row Model - Add support for Master / Detail
+            <a href="https://www.ag-grid.com/javascript-grid-server-side-model-master-detail">Server-side Master Detail</a>.
+        </li>
+        <li>
             AG-2448 Add declarative support to vue component (column defs)
             <a href="https://www.ag-grid.com/best-vuejs-data-grid/#declarative_definition">Using Markup to Define Grid Definitions</a>.
         </li>
-
         <li>
-            AG-2280  Allow event handler in Vue too support more idiomatic conventions
+            AG-2280 Allow event handler in Vue too support more idiomatic conventions
             <a href="https://www.ag-grid.com/best-vuejs-data-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
         </li>
     </ul>
