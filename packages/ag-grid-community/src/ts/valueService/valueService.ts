@@ -221,7 +221,7 @@ export class ValueService {
         return result;
     }
 
-    private getValueCallback(node: RowNode, field: string): any {
+    private getValueCallback(node: RowNode, field: string | Column): any {
         let otherColumn = this.columnController.getPrimaryColumn(field);
         if (otherColumn) {
             return this.getValue(otherColumn, node);
