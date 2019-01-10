@@ -1,3 +1,34 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_20_0_0">
+    <p>Release 20.0.0 Overview</p>
+
+    <p>Breaking Changes:</p>
+
+    <ul>
+        <li>
+            <code>ag-grid-vue</code> now has a dependency on <code>vue-property-decorator</code>
+        </li>
+        <li>
+            <code>ag-grid-vue</code>Event bindings are now bound with <code>@</code> instead of <code>:</code>. Please
+            refer to <a href="https://www.ag-grid.com/best-vuejs-data-grid/">Configuring ag-Grid and Vue.js</a>.
+        </li>
+    </ul>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-2448 Add declarative support to vue component (column defs)
+            <a href="https://www.ag-grid.com/best-vuejs-data-grid/#declarative_definition">Using Markup to Define Grid Definitions</a>.
+        </li>
+
+        <li>
+            AG-2280  Allow event handler in Vue too support more idiomatic conventions
+            <a href="https://www.ag-grid.com/best-vuejs-data-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
+        </li>
+    </ul>
+
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_19_1_1">
     <p>Release 19.1.1 Overview</p>
 

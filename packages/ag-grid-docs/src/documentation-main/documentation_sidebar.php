@@ -6,6 +6,27 @@
 
 <div class="card card-highlight">
     <div class="card-body">
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.0.0">Version 20.0.0 Released</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jan 11</h6>
+        <p class="card-text">
+            Major release with the following feature highlights:
+        <ul>
+            <li>
+                <a class="learn-more" href="https://www.ag-grid.com/javascript-grid-server-side-model-master-detail/">Server Side Master Detail</a>.
+            </li>
+            <li>
+                <a class="learn-more" href="https://www.ag-grid.com/best-vuejs-data-grid/">Vue.js Improvements</a>.
+            </li>
+        </ul>
+        </p>
+
+        <p class="text-right">
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=20.0.0">Change Log</a>
+        </p>
+    </div>
+</div>
+<div class="card card-highlight">
+    <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.4">Version 19.1.4 Released</a></h5>
         <h6 class="card-subtitle mb-2 text-muted">Nov 22</h6>
         <p class="card-text">
@@ -17,33 +38,7 @@
         </p>
     </div>
 </div>
-<div class="card card-highlight">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.1">Version 19.1.1 Released</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Oct 30</h6>
-        <p class="card-text">
-            Minor release with the following feature highlights:
-        <ul>
-            <li>
-                <a class="learn-more" href="https://www.ag-grid.com/best-polymer-data-grid/">Polymer 3 Datagrid</a>.
-            </li>
-            <li>
-                <a class="learn-more" href="https://www.ag-grid.com/javascript-grid-excel/">Export to XLSX</a>.
-            </li>
-            <li>
-                <a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-column-definitions/#column-changes/">Allow Delta
-                    Changes to
-                    Column Definitions</a>.
-            </li>
-        </ul>
-        </p>
 
-        <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.1">Change Log</a>
-        </p>
-    </div>
-</div>
 
 <hr>
 

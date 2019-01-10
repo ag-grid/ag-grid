@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Cell Editing: A Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Editing. Users can update data with Cell Editing. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Editing. Users can update data with Cell Editing. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Cell Editors";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

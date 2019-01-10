@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Cell Rendering: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Rendering. Use Cell Rendering to have cells rendering values other than simple strings. For example, put country flags beside country names, or push buttons for actions. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Rendering. Use Cell Rendering to have cells rendering values other than simple strings. For example, put country flags beside country names, or push buttons for actions. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Rendering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
