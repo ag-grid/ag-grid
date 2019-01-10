@@ -17,7 +17,8 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         sortable: true,
-        resizable: true
+        resizable: true,
+        filter: true
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -35,7 +36,7 @@ var gridOptions = {
         // and again xyz
         'xyz': xyzFunc
     },
-    sideBar: ['columns'],
+    sideBar: true,
     onGridReady: function(params) {
         // we could also register functions after the grid is created,
         // however because we are providing the columns in the grid options,

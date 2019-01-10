@@ -11,14 +11,15 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        sortable: true
+        sortable: true,
+        filter: true
     },
     columnDefs: columnDefs,
     rowData: null,
     groupUseEntireRow: false,
     enableRangeSelection: true,
     groupRowAggNodes: groupRowAggNodes,
-    sideBar: ['columns'],
+    sideBar: true,
     autoGroupColumnDef: {
         headerName: 'Athlete',
         field: 'athlete',
