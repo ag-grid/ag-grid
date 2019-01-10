@@ -13,7 +13,8 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        resizable: true
+        resizable: true,
+        filter: true
     },
     showToolPanel: true,
     columnDefs: columnDefs,

@@ -14,7 +14,8 @@ var columnDefs = [
 // set rowData to null or undefined to show loading panel by default
 var gridOptions = {
     defaultColDef: {
-        resizable: true
+        resizable: true,
+        filter: true
     },
     showToolPanel: true,
     columnDefs: columnDefs,
