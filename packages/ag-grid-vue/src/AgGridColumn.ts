@@ -1,46 +1,46 @@
-import { ColDef, ColDefUtil } from "ag-grid-community";
+import { ColDef, ColDefUtil } from 'ag-grid-community';
 
 export class AgGridColumn {
-    static hasChildColumns(slots: any) {
+    public static hasChildColumns(slots: any) {
         return slots && slots.default && slots.default.length > 0;
     }
 
-    static mapChildColumnDefs(slots: any) {
+    public static mapChildColumnDefs(slots: any) {
         return slots.default.map((column: any) => {
             return AgGridColumn.toColDef(column);
-        })
+        });
     }
 
     public static toColDef(column: any): ColDef {
-        let colDef: ColDef = AgGridColumn.createColDefFromGridColumn(column);
+        const colDef: ColDef = AgGridColumn.createColDefFromGridColumn(column);
         if (column.children && column.children.length > 0) {
-            (<any>colDef)["children"] = AgGridColumn.getChildColDefs(column.children);
+            (colDef as any).children = AgGridColumn.getChildColDefs(column.children);
         }
         return colDef;
     }
 
     private static getChildColDefs(columnChildren: any) {
         return columnChildren.map((column: any) => {
-            return AgGridColumn.createColDefFromGridColumn(column)
+            return AgGridColumn.createColDefFromGridColumn(column);
         });
-    };
+    }
 
     private static createColDefFromGridColumn(column: any): ColDef {
-        let colDef: ColDef = {};
+        const colDef: ColDef = {};
         AgGridColumn.assign(colDef, column.data.attrs);
-        delete (<any>colDef).children;
+        delete (colDef as any).children;
 
         // booleans passed down just as is are here as property=""
         // convert boolean props to a boolean here
-        ColDefUtil.BOOLEAN_PROPERTIES.forEach(property => {
+        ColDefUtil.BOOLEAN_PROPERTIES.forEach((property) => {
             const colDefAsAny = colDef as any;
-            if(colDefAsAny[property] === "") {
+            if (colDefAsAny[property] === '') {
                 colDefAsAny[property] = true;
             }
         });
 
         return colDef;
-    };
+    }
 
     private static assign(colDef: any, from: AgGridColumn): ColDef {
         // effectively Object.assign - here for IE compatibility

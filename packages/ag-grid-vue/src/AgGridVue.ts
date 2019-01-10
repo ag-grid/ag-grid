@@ -2,7 +2,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Bean, ComponentUtil, Grid, GridOptions } from 'ag-grid-community';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
-import { AgGridColumn } from "./AgGridColumn";
+import { AgGridColumn } from './AgGridColumn';
 
 const [props, watch, model] = getAgGridProperties();
 
@@ -10,9 +10,15 @@ const [props, watch, model] = getAgGridProperties();
 @Component({
     props,
     watch,
-    model
+    model,
 })
 export class AgGridVue extends Vue {
+
+    private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
+
+    private static kebabProperty(property: string) {
+        return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    }
 
     @Prop(Boolean)
     public autoParamsRefresh!: boolean;
@@ -25,8 +31,6 @@ export class AgGridVue extends Vue {
     private gridReadyFired = false;
 
     private gridOptions!: GridOptions;
-
-    private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
     private emitRowModel: (() => void) | null = null;
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
@@ -104,14 +108,6 @@ export class AgGridVue extends Vue {
         this.gridCreated = true;
     }
 
-    private checkForBindingConflicts() {
-        const thisAsAny = (this as any);
-        if ((thisAsAny.rowData || this.gridOptions.rowData) &&
-            thisAsAny.rowDataModel) {
-            console.warn("ag-grid: Using both rowData and rowDataModel. rowData will be ignored.");
-        }
-    }
-
     // noinspection JSUnusedGlobalSymbols
     public destroyed() {
         if (this.gridCreated) {
@@ -122,14 +118,18 @@ export class AgGridVue extends Vue {
         }
     }
 
-    private static kebabProperty(property: string) {
-        return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    private checkForBindingConflicts() {
+        const thisAsAny = (this as any);
+        if ((thisAsAny.rowData || this.gridOptions.rowData) &&
+            thisAsAny.rowDataModel) {
+            console.warn('ag-grid: Using both rowData and rowDataModel. rowData will be ignored.');
+        }
     }
 
     private getRowData(): any[] {
         const rowData: any[] = [];
         this.gridOptions!.api!.forEachNode((rowNode) => {
-            rowData.push(rowNode.data)
+            rowData.push(rowNode.data);
         });
         return rowData;
     }
