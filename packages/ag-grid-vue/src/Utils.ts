@@ -11,12 +11,12 @@ export const getAgGridProperties = (): [Properties, Properties, {}] => {
                 return {};
             },
         },
-        rowDataModel: undefined
+        rowDataModel: undefined,
     };
     const watch: Properties = {
-        rowDataModel: function(currentValue: any, previousValue: any) {
+        rowDataModel(currentValue: any, previousValue: any) {
             this.processChanges('rowData', currentValue, previousValue);
-        }
+        },
     };
 
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
@@ -29,7 +29,7 @@ export const getAgGridProperties = (): [Properties, Properties, {}] => {
 
     const model: { prop: string, event: string } = {
         prop: 'rowDataModel',
-        event: 'data-model-changed'
+        event: 'data-model-changed',
     };
 
     return [props, watch, model];

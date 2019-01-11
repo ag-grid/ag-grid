@@ -11,3 +11,5 @@ tslint.json
 webpack.config.js
 webpack.js
 webpack-with-styles.js
+
+*.test.js

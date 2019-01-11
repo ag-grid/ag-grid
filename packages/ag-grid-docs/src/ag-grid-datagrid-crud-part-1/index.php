@@ -124,12 +124,12 @@ include('../includes/mediaHeader.php');
 
         <ul class="content">
             <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank"> Java 8
-                    <i class="fa fa-external-link"></i></a></li>
-            <li><a href="https://maven.apache.org/" target="_blank"> Maven 5 <i class="fa fa-external-link"></i></a>
+                    <i class="fa fa-external-link-alt"></i></a></li>
+            <li><a href="https://maven.apache.org/" target="_blank"> Maven 5 <i class="fa fa-external-link-alt"></i></a>
             </li>
             <li><a href="https://nodejs.org/en/" target="_blank"> NodeJS 6 (includes npm) <i
-                            class="fa fa-external-link"></i></a></li>
-            <li><a href="https://git-scm.com/downloads" target="_blank"> Git <i class="fa fa-external-link"></i></a>
+                            class="fa fa-external-link-alt"></i></a></li>
+            <li><a href="https://git-scm.com/downloads" target="_blank"> Git <i class="fa fa-external-link-alt"></i></a>
             </li>
         </ul>
 

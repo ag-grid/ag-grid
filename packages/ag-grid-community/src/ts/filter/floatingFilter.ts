@@ -174,7 +174,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
 
-        const body: HTMLElement = _.loadTemplate(`<div></div>`);
+        const body = _.loadTemplate('<div></div>');
         this.dateComponentPromise.then(dateComponent => {
             body.appendChild(dateComponent.getGui());
 
@@ -188,8 +188,12 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
                 dateComponent.eDateInput.disabled = isInRange;
             }
         });
+
+        body.style.width = '100%';
+        body.style.height = '100%';
+
         this.setTemplateFromElement(body);
-        }
+    }
 
     private onDateChanged(): void {
         const parentModel: SerializedDateFilter = this.currentParentModel();

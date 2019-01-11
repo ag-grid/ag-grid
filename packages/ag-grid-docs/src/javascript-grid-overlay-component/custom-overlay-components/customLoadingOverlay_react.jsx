@@ -4,7 +4,7 @@ export default class CustomLoadingOverlay extends Component {
     render() {
         return (
             <div className="ag-overlay-loading-center" style={{backgroundColor: 'lightsteelblue', height: '9%'}}>
-                <i className="fa fa-hourglass-1"> {this.props.loadingMessage} </i>
+                <i className="fas fa-hourglass-half"> {this.props.loadingMessage} </i>
             </div>
         );
     }

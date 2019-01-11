@@ -110,37 +110,39 @@
         }
     }
 
-    .ag-ltr .ag-row-group-leaf-indent {
-        margin-left: $icon-size + $grid-size * 3;
-    }
-
-    .ag-rtl .ag-row-group-leaf-indent {
-        margin-right: $icon-size + $grid-size * 3;
-    }
-
-    .ag-ltr .ag-cell-no-focus {
-        border-right: $cell-horizontal-border;
-    }
-
-    .ag-rtl .ag-cell-no-focus {
-        border-left: $cell-horizontal-border;
-    }
-
     // we use rtl and ltr below, even though it's the same style, so it propertly
-    .ag-rtl .ag-cell-first-right-pinned {
-        border-left: 1px solid $border-color;
+    .ag-ltr {
+        .ag-row-group-leaf-indent {
+            margin-left: $icon-size + $grid-size * 3;
+        }
+        .ag-cell-no-focus {
+            border-right: $cell-horizontal-border;
+        }
+        .ag-row, .ag-cell {
+            &.ag-cell-first-right-pinned {
+                border-left: 1px solid $border-color;
+            }
+            &.ag-cell-last-left-pinned {
+                border-right: 1px solid $border-color;
+            }
+        }
     }
 
-    .ag-ltr .ag-cell-first-right-pinned {
-        border-left: 1px solid $border-color;
-    }
-
-    .ag-rtl .ag-cell-last-left-pinned {
-        border-right: 1px solid $border-color;
-    }
-
-    .ag-ltr .ag-cell-last-left-pinned {
-        border-right: 1px solid $border-color;
+    .ag-rtl {
+        .ag-row-group-leaf-indent {
+            margin-right: $icon-size + $grid-size * 3;
+        }
+        .ag-cell-no-focus {
+            border-left: $cell-horizontal-border;
+        }
+        .ag-row, .ag-cell {
+            &.ag-cell-first-right-pinned {
+                border-left: 1px solid $border-color;
+            }
+            &.ag-cell-last-left-pinned {
+                border-right: 1px solid $border-color;
+            }
+        }
     }
 
     // used by the animateShowChangedCellRenderer
@@ -1054,7 +1056,7 @@
     // Selection checkbox
     ////////////////////////////////////////
     .ag-selection-checkbox,
-    .ag-group-checkbox,
+    .ag-group-checkbox:not(.ag-invisible),
     .ag-group-expanded,
     .ag-group-contracted {
         + .ag-cell-value, + .ag-group-value {
@@ -1065,7 +1067,7 @@
         + .ag-group-checkbox {
             margin-left: $cell-horizontal-padding;
         }
-    }
+    }   
 
     .ag-selection-checkbox span {
         position: relative;

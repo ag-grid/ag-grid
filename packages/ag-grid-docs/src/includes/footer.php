@@ -35,7 +35,9 @@
         <div>
             <ul>
                 <li><a class="github-button" href="https://github.com/ag-grid/ag-grid" data-show-count="true" aria-label="Star ag-grid/ag-grid on GitHub">Star</a></li>
-                <li><a href="https://twitter.com/ceolter?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @ceolter</a></li>
+                <li><a class="twitter-follow-button"
+  href="https://twitter.com/ag_grid">
+Follow @ag_grid</a></li>
                 
             </ul>
         </div>

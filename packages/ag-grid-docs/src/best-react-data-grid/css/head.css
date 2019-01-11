@@ -1,0 +1,93 @@
+.head {
+    background: linear-gradient(to top left, #0084e7, #00407f);
+    color: #fff;
+    padding-top: 30px;
+}
+
+.logo {
+    text-align: center;
+}
+
+.logo img {
+    height: 70px;
+    min-width: 40px;
+    width: 130px;
+}
+
+.head h1 {
+    font-size: 5vw;
+    line-height: 53px;
+    font-weight: 500;
+    padding: 30px 0 50px;
+    color: white;
+    font-family: 'Roboto Slab', Helvetica Neue, Arial, sans-serif;
+}
+
+.head h1 > .sub-header {
+    font-size: 3vw;
+    color: #e7c9c9;
+}
+
+.head strong {
+    font-size: 2vw;
+}
+
+@media only screen and (max-width: 800px) {
+    .head h1 {
+        font-size: 40px;
+    }
+
+    .head h1 > .sub-header {
+        font-size: 23px;
+    }
+
+    .head strong {
+        font-size: 18px;
+    }
+}
+
+@media only screen and (min-width: 1100px) {
+    .head h1 {
+        font-size: 60px;
+    }
+
+    .head h1 > .sub-header {
+        font-size: 32px;
+    }
+
+    .head strong {
+        font-size: 23px;
+    }
+}
+
+@media only screen and (min-width: 700px) {
+    .small-width-conditional-break {
+        display: none;
+    }
+}
+
+.head .container {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 950px;
+}
+
+.head .container > div {
+    flex-grow: 1;
+}
+
+.head .container ul {
+    width: 370px;
+    margin: auto;
+    list-style-type: none;
+    line-height: 160%;
+    font-size: 17px;
+    padding-left: 40px;
+}
+
+@media only screen and (max-width: 400px) {
+    .head .container ul {
+        width: auto;
+    }
+}
+

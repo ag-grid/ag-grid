@@ -8,12 +8,12 @@
     <div [hidden]="!params.enableSorting"
          class="{{'customSortDownLabel'+ (this.sorted === 'desc' ? ' active' : '') }}"
          (click)="onSortRequested('desc', $event)">
-        <i class="fa fa-long-arrow-down"></i>
+        <i class="fa fa-long-arrow-alt-down"></i>
     </div>
     <div [hidden]="!params.enableSorting"
          class="{{'customSortUpLabel'+ (this.sorted === 'asc' ? ' active' : '') }}"
          (click)="onSortRequested('asc', $event)">
-        <i class="fa fa-long-arrow-up"></i>
+        <i class="fa fa-long-arrow-alt-up"></i>
     </div>
     <div [hidden]="!params.enableSorting"
          class="{{'customSortRemoveLabel'+ (this.sorted === '' ? ' active' : '') }}"

@@ -11,7 +11,8 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        sortable: true
+        sortable: true,
+        filter: true
     },
     columnDefs: columnDefs,
     rowData: null,

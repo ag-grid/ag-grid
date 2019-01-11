@@ -34,7 +34,7 @@ function gtm_data_layer($pageCategory, $additional = array()) {
 function meta_and_links($title, $keywords, $description, $root = false) {
     $font_awesome = $GLOBALS['DONT_USE_FONT_AWESOME']
         ? ""
-        : '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">';
+        : '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">';
 
     $socialImage = $GLOBALS['socialImage'];
     if ($socialImage) {
@@ -67,7 +67,7 @@ META;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <!-- link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,900" rel="stylesheet" -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
 
     <title>$title</title>
 
@@ -79,7 +79,7 @@ META;
     <meta property="og:description" content="$description">
 
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content="@ceolter">
+    <meta name="twitter:site" content="@ag_grid">
     <meta name="twitter:title" content="ag-Grid">
     <meta name="twitter:description" content="$description">
 

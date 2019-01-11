@@ -229,8 +229,8 @@ function getRowsToUpdate(node, parentPath) {
 
 function getFileIcon(filename) {
     return filename.endsWith('.mp3') || filename.endsWith('.wav')
-        ? 'fa fa-file-audio-o'
-        : filename.endsWith('.xls') ? 'fa fa-file-excel-o' : filename.endsWith('.txt') ? 'fa fa fa-file-o' : filename.endsWith('.pdf') ? 'fa fa-file-pdf-o' : 'fa fa-folder';
+        ? 'far fa-file-audio'
+        : filename.endsWith('.xls') ? 'far fa-file-excel' : filename.endsWith('.txt') ? 'far fa fa-file' : filename.endsWith('.pdf') ? 'far fa-file-pdf' : 'far fa-folder';
 }
 
 // wait for the document to be loaded, otherwise

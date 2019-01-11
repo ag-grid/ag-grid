@@ -2,8 +2,47 @@
 
 </div>
 <br>
+
+    <div id="ag-grid-conf">
+        <p></p>
+        <div class="card card-highlight">
+            <div class="card-body">
+                <h5 class="card-title"><a href="https://www.ag-grid-conf.com">ag-Grid Conf</a></h5>
+                Our ag-Grid Conf videos are now live!<br><br>
+                <a href=""><img src="/images/complex-performance.png" style="width: 100%"></a>
+                <br><br>
+                        <p class="text-right">
+            <a class="learn-more" href="http://ag-grid-conf.com/">All Videos</a>
+        </p>
+            </div>
+        </div>
+
+
+<br>
 <p>Latest Release:</p>
 
+<div class="card card-highlight">
+    <div class="card-body">
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.0.0">Version 20.0.0 Released</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jan 11</h6>
+        <p class="card-text">
+            Major release with the following feature highlights:
+        <ul>
+            <li>
+                <a class="learn-more" href="https://www.ag-grid.com/javascript-grid-server-side-model-master-detail/">Server Side Master Detail</a>.
+            </li>
+            <li>
+                <a class="learn-more" href="https://www.ag-grid.com/best-vuejs-data-grid/">Vue.js Improvements</a>.
+            </li>
+        </ul>
+        </p>
+
+        <p class="text-right">
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=20.0.0">Change Log</a>
+        </p>
+    </div>
+</div>
+<br>
 <div class="card card-highlight">
     <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.4">Version 19.1.4 Released</a></h5>
@@ -17,33 +56,7 @@
         </p>
     </div>
 </div>
-<div class="card card-highlight">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.1">Version 19.1.1 Released</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Oct 30</h6>
-        <p class="card-text">
-            Minor release with the following feature highlights:
-        <ul>
-            <li>
-                <a class="learn-more" href="https://www.ag-grid.com/best-polymer-data-grid/">Polymer 3 Datagrid</a>.
-            </li>
-            <li>
-                <a class="learn-more" href="https://www.ag-grid.com/javascript-grid-excel/">Export to XLSX</a>.
-            </li>
-            <li>
-                <a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-column-definitions/#column-changes/">Allow Delta
-                    Changes to
-                    Column Definitions</a>.
-            </li>
-        </ul>
-        </p>
 
-        <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.1">Change Log</a>
-        </p>
-    </div>
-</div>
 
 <hr>
 
@@ -88,45 +101,6 @@
 <!--End mc_embed_signup-->
 
 <div id="side-bar-announcements" style="margin-top: 10px">
-    <br>
-
-    <br>
-    <div id="ag-grid-conf">
-        <p>Upcoming events</p>
-        <div class="card card-highlight">
-            <div class="card-body">
-                <h5 class="card-title"><a href="https://www.ag-grid-conf.com">ag-Grid Conf</a></h5>
-                <h6 class="card-subtitle mb-2 text-muted">London</h6>
-                <p class="card-text">
-                    A half day conference all about ag-Grid in London.<br><br>
-                    <strong>
-                        <img class="card-image" src="../images/largeFlags/gb2.png">
-                        London, Nov 29th
-                    </strong>
-                </p>
-                To register follow the link below<br><br>
-                <p class="text-left">
-                    <a class="learn-more" href="https://www.ag-grid-conf.com" target="_blank"><strong>Register</strong></a>
-                </p>
-                <hr>
-                <h5 class="card-title"><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></h5>
-                <h6 class="card-subtitle mb-2 text-muted">November 6-7<br>London, England</h6>
-                <dd>Platinum Sponsor</dd>
-                <hr>
-                <h5 class="card-title"><a href="https://finjs.io" target="_blank" rel="noopener">FinJS</a></h5>
-                <dd>ag-Grid is partnering with FinJS, join us for these excellent event.</dd>
-                <br>
-                <img class="card-image" src="../images/largeFlags/gb2.png">
-                London, Nov 13th<br><br>
-                <p class="text-left">
-                    <a class="learn-more" href="https://finjs.io" target="_blank"><strong>Find out more</strong></a>
-                </p>
-            </div>
-        </div>
-
-        <hr>
-
-        <br>
         <p>From our <a href="https://medium.com/ag-grid/">blog</a>:</p>
         <div class="card">
             <div class="card-body">

@@ -130,7 +130,7 @@ export class ComponentResolver {
         if (holder != null) {
             const componentPropertyValue: AgComponentPropertyInput<IComponent<any>> = (holder as any)[propertyName];
             // for filters only, we allow 'true' for the component, which means default filter to be used
-            const usingDefaultComponent = componentPropertyValue===true;
+            const usingDefaultComponent = componentPropertyValue === true;
             if (componentPropertyValue != null && !usingDefaultComponent) {
                 if (typeof componentPropertyValue === 'string') {
                     hardcodedNameComponent = componentPropertyValue;

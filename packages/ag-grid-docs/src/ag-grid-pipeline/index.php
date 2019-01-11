@@ -130,31 +130,31 @@ function extractMoreInformationMap($data)
                 <ul class="nav nav-tabs inner-nav">
                     <li class="nav-item">
                         <a href="#release" class="report-link nav-link active">Next Release
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items targeted to be in the next release" aria-hidden="true"></i>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#bugs" class="report-link nav-link">Bugs
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items reported via Zendesk/Github - these are prioritised above Feature Requests"
                                aria-hidden="true"></i>
                         </a></li>
                     <li class="nav-item">
                         <a href="#fr" class="report-link nav-link">Standard Feature Requests
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items that can be addressed on their own. These are recorded in a backlog and prioritised"
                                aria-hidden="true"></i>
                         </a></li>
                     <li class="nav-item">
                         <a href="#epics" class="report-link nav-link">Complex Feature Requests
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items that we group into Epics. We then prioritise based on the Epic rather than the individual feature request"
                                aria-hidden="true"></i>
                         </a></li>
                     <li class="nav-item">
                         <a href="#parked" class="report-link nav-link">Parked Items
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items parked for the immediate due to complexity/relevance to our entire user base"
                                aria-hidden="true"></i>
                         </a></li>

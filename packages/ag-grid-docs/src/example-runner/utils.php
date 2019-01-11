@@ -415,7 +415,7 @@ function renderExampleExtras($config)
             )
         ),
         'fontawesome' => array(
-            'styles' => array('https://use.fontawesome.com/releases/v5.5.0/css/all.css')
+            'styles' => array('https://use.fontawesome.com/releases/v5.6.3/css/all.css')
         ),
         'xlsx-style' => array(
             'scripts' => array('https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js')

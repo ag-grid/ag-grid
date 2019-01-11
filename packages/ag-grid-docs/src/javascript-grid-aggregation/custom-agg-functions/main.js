@@ -17,7 +17,8 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         sortable: true,
-        resizable: true
+        resizable: true,
+        filter: true
     },
     columnDefs: columnDefs,
     rowData: null,

@@ -34,7 +34,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         '<span>' +
          '<span class="ag-group-expanded" ref="eExpanded"></span>' +
          '<span class="ag-group-contracted" ref="eContracted"></span>' +
-         '<span class="ag-group-checkbox" ref="eCheckbox"></span>' +
+         '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +
          '<span class="ag-group-value" ref="eValue"></span>' +
          '<span class="ag-group-child-count" ref="eChildCount"></span>' +
         '</span>';
@@ -301,6 +301,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc(() => cbSelectionComponent.destroy());
         }
+
+        _.addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !checkboxNeeded);
     }
 
     private addExpandAndContract(): void {

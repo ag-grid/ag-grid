@@ -9,6 +9,7 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         sortable: true,
+        filter: true,
         resizable: true
     },
     columnDefs: columnDefs,

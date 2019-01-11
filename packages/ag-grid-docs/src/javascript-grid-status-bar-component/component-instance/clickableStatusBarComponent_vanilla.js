@@ -32,3 +32,14 @@ ClickableStatusBarComponent.prototype.destroy = function () {
 ClickableStatusBarComponent.prototype.onButtonClicked = function () {
     alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
 };
+
+ClickableStatusBarComponent.prototype.setVisible = function (visible) {
+    this.visible = visible;
+
+    this.eGui.style.display = this.visible ? 'flex' : 'none';
+};
+
+ClickableStatusBarComponent.prototype.isVisible = function () {
+    return this.visible;
+};
+

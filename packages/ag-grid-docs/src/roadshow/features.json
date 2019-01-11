@@ -491,7 +491,7 @@
             "All the icons in the grid can be replaced with your own <span class=\"feature-highlight\">Custom Icons</span>.\nYou can either use CSS or provide your own images.",
         "src": "javascript-grid-features/images/customIcons.gif",
         "snippet":
-            "gridOptions = {\n    icons: {\n        // use font awesome for menu icons\n        menu: '<i class=\"fa fa-bath\"/>',\n        filter: '<i class=\"fa fa-long-arrow-down\"/>',\n        columns: '<i class=\"fa fa-handshake-o\"/>'\n    }\n    ...\n}",
+            "gridOptions = {\n    icons: {\n        // use font awesome for menu icons\n        menu: '<i class=\"fa fa-bath\"/>',\n        filter: '<i class=\"fa fa-long-arrow-alt-down\"/>',\n        columns: '<i class=\"far fa-handshake\"/>'\n    }\n    ...\n}",
         "level": 0,
         "url": "javascript-grid-icons/"
     },
