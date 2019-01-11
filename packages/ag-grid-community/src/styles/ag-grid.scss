@@ -298,7 +298,9 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-header, .ag-pinned-left-header, .ag-pinned-right-header {
     display: inline-block;
     overflow: hidden;
-    cursor: pointer;
+    & .ag-header-cell-sortable {
+        cursor: pointer;
+    }
 }
 .ag-header {
     display: flex;
