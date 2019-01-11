@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1)) ?>
+<?= example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <note>
     When filtering using the Server-side Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.

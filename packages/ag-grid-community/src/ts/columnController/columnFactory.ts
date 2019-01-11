@@ -1,14 +1,14 @@
-import {GridOptionsWrapper} from '../gridOptionsWrapper';
-import {Logger, LoggerFactory} from '../logger';
-import {ColumnUtils} from './columnUtils';
-import {AbstractColDef, ColDef, ColGroupDef} from "../entities/colDef";
-import {ColumnKeyCreator} from "./columnKeyCreator";
-import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
-import {OriginalColumnGroup} from "../entities/originalColumnGroup";
-import {Column} from "../entities/column";
-import {Autowired, Bean, Context, Qualifier} from "../context/context";
-import {Utils as _} from "../utils";
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { Logger, LoggerFactory } from '../logger';
+import { ColumnUtils } from './columnUtils';
+import { AbstractColDef, ColDef, ColGroupDef } from "../entities/colDef";
+import { ColumnKeyCreator } from "./columnKeyCreator";
+import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
+import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { Column } from "../entities/column";
+import { Autowired, Bean, Context, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
+import { _ } from "../utils";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
@@ -24,31 +24,31 @@ export class ColumnFactory {
         this.logger = loggerFactory.create('ColumnFactory');
     }
 
-    public createColumnTree(defs: (ColDef|ColGroupDef)[], primaryColumns: boolean, existingColumns?: Column[])
+    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingColumns?: Column[])
         : {columnTree: OriginalColumnGroupChild[], treeDept: number} {
 
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
-        let columnKeyCreator = new ColumnKeyCreator();
+        const columnKeyCreator = new ColumnKeyCreator();
         if (existingColumns) {
-            let existingKeys: string[] = existingColumns.map( col => col.getId() );
+            const existingKeys: string[] = existingColumns.map(col => col.getId());
             columnKeyCreator.addExistingKeys(existingKeys);
         }
 
         // we take a copy of the columns as we are going to be removing from them
-        let existingColsCopy = existingColumns ? existingColumns.slice() : null;
+        const existingColsCopy = existingColumns ? existingColumns.slice() : null;
 
         // create am unbalanced tree that maps the provided definitions
-        let unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
+        const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
             existingColsCopy, columnKeyCreator);
-        let treeDept = this.findMaxDept(unbalancedTree, 0);
+        const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
-        let res = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
+        const res = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
-        this.columnUtils.depthFirstOriginalTreeSearch(res, (child: OriginalColumnGroupChild)=> {
+        this.columnUtils.depthFirstOriginalTreeSearch(res, (child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                (<OriginalColumnGroup>child).setupExpandable();
+                child.setupExpandable();
             }
         });
 
@@ -58,11 +58,11 @@ export class ColumnFactory {
         };
     }
 
-    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
+    public createForAutoGroups(autoGroupCols: Column[] | null, gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
 
-        let autoColBalancedTree: OriginalColumnGroupChild[] = [];
-        autoGroupCols.forEach( col => {
-            let fakeTreeItem = this.createAutoGroupTreeItem(gridBalancedTree, col);
+        const autoColBalancedTree: OriginalColumnGroupChild[] = [];
+        autoGroupCols.forEach(col => {
+            const fakeTreeItem = this.createAutoGroupTreeItem(gridBalancedTree, col);
             autoColBalancedTree.push(fakeTreeItem);
         });
 
@@ -71,13 +71,13 @@ export class ColumnFactory {
 
     private createAutoGroupTreeItem(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroupChild {
 
-        let dept = this.findDept(balancedColumnTree);
+        const dept = this.findDept(balancedColumnTree);
 
         // at the end, this will be the top of the tree item.
         let nextChild: OriginalColumnGroupChild = column;
 
-        for (let i = dept - 1; i>=0; i--) {
-            let autoGroup = new OriginalColumnGroup(
+        for (let i = dept - 1; i >= 0; i--) {
+            const autoGroup = new OriginalColumnGroup(
                 null,
                 `FAKE_PATH_${column.getId()}}_${i}`,
                 true,
@@ -96,7 +96,7 @@ export class ColumnFactory {
         let pointer = balancedColumnTree;
         while (pointer && pointer[0] && pointer[0] instanceof OriginalColumnGroup) {
             dept++;
-            pointer = (<OriginalColumnGroup>pointer[0]).getChildren();
+            pointer = (pointer[0] as OriginalColumnGroup).getChildren();
         }
         return dept;
     }
@@ -104,23 +104,23 @@ export class ColumnFactory {
     private balanceColumnTree(unbalancedTree: OriginalColumnGroupChild[], currentDept: number,
                               columnDept: number, columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
 
-        let result: OriginalColumnGroupChild[] = [];
+        const result: OriginalColumnGroupChild[] = [];
 
         // go through each child, for groups, recurse a level deeper,
         // for columns we need to pad
-        unbalancedTree.forEach( (child: OriginalColumnGroupChild)=> {
+        unbalancedTree.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                let originalGroup = <OriginalColumnGroup> child;
-                let newChildren = this.balanceColumnTree(originalGroup.getChildren(),
+                const originalGroup = child;
+                const newChildren = this.balanceColumnTree(originalGroup.getChildren(),
                     currentDept + 1, columnDept, columnKeyCreator);
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             } else {
                 let newChild = child;
-                for (let i = columnDept-1; i>=currentDept; i--) {
-                    let newColId = columnKeyCreator.getUniqueKey(null, null);
-                    let colGroupDefMerged = this.createMergedColGroupDef(null);
-                    let paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
+                for (let i = columnDept - 1; i >= currentDept; i--) {
+                    const newColId = columnKeyCreator.getUniqueKey(null, null);
+                    const colGroupDefMerged = this.createMergedColGroupDef(null);
+                    const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
@@ -134,12 +134,12 @@ export class ColumnFactory {
 
     private findMaxDept(treeChildren: OriginalColumnGroupChild[], dept: number): number {
         let maxDeptThisLevel = dept;
-        for (let i = 0; i<treeChildren.length; i++) {
-            let abstractColumn = treeChildren[i];
+        for (let i = 0; i < treeChildren.length; i++) {
+            const abstractColumn = treeChildren[i];
             if (abstractColumn instanceof OriginalColumnGroup) {
-                let originalGroup = <OriginalColumnGroup> abstractColumn;
-                let newDept = this.findMaxDept(originalGroup.getChildren(), dept+1);
-                if (maxDeptThisLevel<newDept) {
+                const originalGroup = abstractColumn;
+                const newDept = this.findMaxDept(originalGroup.getChildren(), dept + 1);
+                if (maxDeptThisLevel < newDept) {
                     maxDeptThisLevel = newDept;
                 }
             }
@@ -147,22 +147,22 @@ export class ColumnFactory {
         return maxDeptThisLevel;
     }
 
-    private recursivelyCreateColumns(defs: (ColDef|ColGroupDef)[], level: number,
+    private recursivelyCreateColumns(defs: (ColDef | ColGroupDef)[], level: number,
                                      primaryColumns: boolean, existingColsCopy: Column[],
                                      columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
 
-        let result: OriginalColumnGroupChild[] = [];
+        const result: OriginalColumnGroupChild[] = [];
 
         if (!defs) {
             return result;
         }
 
-        defs.forEach( (def: ColDef|ColGroupDef)=> {
+        defs.forEach((def: ColDef | ColGroupDef) => {
             let newGroupOrColumn: OriginalColumnGroupChild;
             if (this.isColumnGroup(def)) {
-                newGroupOrColumn = this.createColumnGroup(primaryColumns, <ColGroupDef> def, level, existingColsCopy, columnKeyCreator);
+                newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy, columnKeyCreator);
             } else {
-                newGroupOrColumn = this.createColumn(primaryColumns, <ColDef> def, existingColsCopy, columnKeyCreator);
+                newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
             }
             result.push(newGroupOrColumn);
         });
@@ -172,12 +172,12 @@ export class ColumnFactory {
 
     private createColumnGroup(primaryColumns: boolean, colGroupDef: ColGroupDef, level: number,
                               existingColumns: Column[], columnKeyCreator: ColumnKeyCreator): OriginalColumnGroup {
-        let colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
+        const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
 
-        let groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
-        let originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
+        const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
+        const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
-        let children = this.recursivelyCreateColumns(colGroupDefMerged.children,
+        const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
             level + 1, primaryColumns, existingColumns, columnKeyCreator);
 
         originalGroup.setChildren(children);
@@ -186,7 +186,7 @@ export class ColumnFactory {
     }
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef): ColGroupDef {
-        let colGroupDefMerged: ColGroupDef = <ColGroupDef> {};
+        const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
         _.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
         _.assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
@@ -195,7 +195,7 @@ export class ColumnFactory {
 
     private createColumn(primaryColumns: boolean, colDef: ColDef,
                          existingColsCopy: Column[], columnKeyCreator: ColumnKeyCreator): Column {
-        let colDefMerged = this.mergeColDefs(colDef);
+        const colDefMerged = this.mergeColDefs(colDef);
         this.checkForDeprecatedItems(colDefMerged);
 
         // see if column already exists
@@ -203,7 +203,7 @@ export class ColumnFactory {
 
         // no existing column, need to create one
         if (!column) {
-            let colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+            const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.wireBean(column);
         }
@@ -213,16 +213,16 @@ export class ColumnFactory {
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
 
-        let res: Column = _.find(existingColsCopy, col => {
-            let oldColDef = col.getUserProvidedColDef();
+        const res: Column = _.find(existingColsCopy, col => {
+            const oldColDef = col.getUserProvidedColDef();
             if (!oldColDef) { return false; }
 
             // first check object references
-            if (oldColDef===colDef) {
+            if (oldColDef === colDef) {
                 return true;
             }
             // second check id's
-            let oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
+            const oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
             if (oldColHadId) {
                 return oldColDef.colId === colDef.colId;
             } else {
@@ -241,7 +241,7 @@ export class ColumnFactory {
 
     public mergeColDefs(colDef: ColDef) {
         // start with empty merged definition
-        let colDefMerged: ColDef = <ColDef> {};
+        const colDefMerged: ColDef = {} as ColDef;
 
         // merge properties from default column definitions
         _.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
@@ -261,7 +261,7 @@ export class ColumnFactory {
         let typeKeys: string[];
 
         if (colDef.type instanceof Array) {
-            let invalidArray = colDef.type.some(a => typeof a !== 'string');
+            const invalidArray = colDef.type.some(a => typeof a !== 'string');
             if (invalidArray) {
                 console.warn("ag-grid: if colDef.type is supplied an array it should be of type 'string[]'");
             } else {
@@ -275,10 +275,10 @@ export class ColumnFactory {
         }
 
         // merge user defined with default column types
-        let allColumnTypes = _.assign({}, this.gridOptionsWrapper.getColumnTypes(), DefaultColumnTypes);
+        const allColumnTypes = _.assign({}, this.gridOptionsWrapper.getColumnTypes(), DefaultColumnTypes);
 
         typeKeys.forEach((t) => {
-            let typeColDef = allColumnTypes[t.trim()];
+            const typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
                 _.assign(colDefMerged, typeColDef);
             } else {
@@ -289,7 +289,7 @@ export class ColumnFactory {
 
     private checkForDeprecatedItems(colDef: AbstractColDef) {
         if (colDef) {
-            let colDefNoType = <any> colDef; // take out the type, so we can access attributes not defined in the type
+            const colDefNoType = colDef as any; // take out the type, so we can access attributes not defined in the type
             if (colDefNoType.group !== undefined) {
                 console.warn('ag-grid: colDef.group is invalid, please check documentation on how to do grouping as it changed in version 3');
             }
@@ -319,8 +319,8 @@ export class ColumnFactory {
     }
 
     // if object has children, we assume it's a group
-    private isColumnGroup(abstractColDef: ColDef|ColGroupDef): boolean {
-        return (<ColGroupDef>abstractColDef).children !== undefined;
+    private isColumnGroup(abstractColDef: ColDef | ColGroupDef): boolean {
+        return (abstractColDef as ColGroupDef).children !== undefined;
     }
 
 }

@@ -1,10 +1,10 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IComponent } from "./iComponent";
-export declare type StatusPanelDef = {
+export interface StatusPanelDef {
     statusPanel?: {
         new (): IStatusPanelComp;
     } | string;
@@ -12,7 +12,7 @@ export declare type StatusPanelDef = {
     align?: string;
     key?: string;
     statusPanelParams?: any;
-};
+}
 export interface IStatusPanelParams {
     api: GridApi;
     columnApi: ColumnApi;
@@ -22,4 +22,3 @@ export interface IStatusPanel {
 }
 export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> {
 }
-//# sourceMappingURL=iStatusPanel.d.ts.map

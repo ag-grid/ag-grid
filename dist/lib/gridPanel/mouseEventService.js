@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,9 +17,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var context_2 = require("../context/context");
-var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var cellComp_1 = require("../rendering/cellComp");
+var utils_1 = require("../utils");
 var MouseEventService = /** @class */ (function () {
     function MouseEventService() {
         this.gridInstanceId = MouseEventService_1.gridInstanceSequence.next();
@@ -35,7 +35,7 @@ var MouseEventService = /** @class */ (function () {
         this.eGridDiv[MouseEventService_1.GRID_DOM_KEY] = this.gridInstanceId;
     };
     MouseEventService.prototype.getRenderedCellForEvent = function (event) {
-        var sourceElement = utils_1.Utils.getTarget(event);
+        var sourceElement = utils_1._.getTarget(event);
         while (sourceElement) {
             var renderedCell = this.gridOptionsWrapper.getDomData(sourceElement, cellComp_1.CellComp.DOM_DATA_KEY_CELL_COMP);
             if (renderedCell) {
@@ -49,11 +49,11 @@ var MouseEventService = /** @class */ (function () {
     // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
     // getting executed on many grids at the same time.
     MouseEventService.prototype.isEventFromThisGrid = function (event) {
-        var path = utils_1.Utils.getEventPath(event);
+        var path = utils_1._.getEventPath(event);
         for (var i = 0; i < path.length; i++) {
             var element = path[i];
             var instanceId = element[MouseEventService_1.GRID_DOM_KEY];
-            if (utils_1.Utils.exists(instanceId)) {
+            if (utils_1._.exists(instanceId)) {
                 var eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }

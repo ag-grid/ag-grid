@@ -1,10 +1,10 @@
-import {Autowired, Bean, PostConstruct} from "../../context/context";
-import {ClientSideRowModel, RowDataTransaction} from "./clientSideRowModel";
-import {IRowModel} from "../../interfaces/iRowModel";
-import {Constants} from "../../constants";
-import {_} from "../../utils";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {RowNode} from "../../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../../context/context";
+import { ClientSideRowModel, RowDataTransaction } from "./clientSideRowModel";
+import { IRowModel } from "../../interfaces/iRowModel";
+import { Constants } from "../../constants";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { RowNode } from "../../entities/rowNode";
+import { _ } from "../../utils";
 
 @Bean('immutableService')
 export class ImmutableService {
@@ -16,66 +16,66 @@ export class ImmutableService {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = <ClientSideRowModel> this.rowModel;
+        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
         }
     }
 
     // converts the setRowData() command to a transaction
-    public createTransactionForRowData(data: any[]): [RowDataTransaction, {[id:string]: number}] {
+    public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number }]) | undefined {
 
         if (_.missing(this.clientSideRowModel)) {
             console.error('ag-Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
 
-        let getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-        if (_.missing(getRowNodeIdFunc)) {
+        const getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+        if (!getRowNodeIdFunc || _.missing(getRowNodeIdFunc)) {
             console.error('ag-Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
             return;
         }
 
         // convert the data into a transaction object by working out adds, removes and updates
-        let transaction: RowDataTransaction = {
+        const transaction: RowDataTransaction = {
             remove: [],
             update: [],
             add: []
         };
 
-        let existingNodesMap: {[id:string]: RowNode} = this.clientSideRowModel.getCopyOfNodesMap();
+        const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
-        let orderMap: {[id:string]: number} = {};
+        const orderMap: { [id: string]: number } = {};
 
         if (_.exists(data)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
             // if not changed, do not include in the transaction
-            data.forEach( (dataItem: any, index: number) => {
-                let id: string = getRowNodeIdFunc(dataItem);
-                let existingNode: RowNode = existingNodesMap[id];
+            data.forEach((dataItem: any, index: number) => {
+                const id: string = getRowNodeIdFunc(dataItem);
+                const existingNode: RowNode | undefined = existingNodesMap[id];
 
                 orderMap[id] = index;
 
                 if (existingNode) {
-                    let dataHasChanged = existingNode.data !== dataItem;
+                    const dataHasChanged = existingNode.data !== dataItem;
                     if (dataHasChanged) {
-                        transaction.update.push(dataItem);
+                        transaction.update!.push(dataItem);
                     }
                     // otherwise, if data not changed, we just don't include it anywhere, as it's not a delta
 
                     // remove from list, so we know the item is not to be removed
                     existingNodesMap[id] = undefined;
                 } else {
-                    transaction.add.push(dataItem);
+                    transaction.add!.push(dataItem);
                 }
             });
         }
 
         // at this point, all rows that are left, should be removed
-        _.iterateObject(existingNodesMap, (id: string, rowNode: RowNode)=> {
+        _.iterateObject(existingNodesMap, (id: string, rowNode: RowNode) => {
             if (rowNode) {
-                transaction.remove.push(rowNode.data);
+                transaction.remove!.push(rowNode.data);
             }
         });
 

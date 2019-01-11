@@ -1,13 +1,12 @@
-
-import {Component} from "../../widgets/component";
-import {Autowired, PostConstruct} from "../../context/context";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {_} from "../../utils";
-import {EventService} from "../../eventService";
-import {Events} from "../../events";
-import {RowRenderer} from "../../rendering/rowRenderer";
-import {PaginationProxy} from "../paginationProxy";
+import { Component } from "../../widgets/component";
+import { Autowired, PostConstruct } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { EventService } from "../../eventService";
+import { Events } from "../../events";
+import { RowRenderer } from "../../rendering/rowRenderer";
+import { PaginationProxy } from "../paginationProxy";
+import { _ } from "../../utils";
 
 export class PaginationComp extends Component {
 
@@ -37,8 +36,8 @@ export class PaginationComp extends Component {
 
         this.setTemplate(this.getTemplate());
 
-        let isPaging = this.gridOptionsWrapper.isPagination();
-        let paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+        const isPaging = this.gridOptionsWrapper.isPagination();
+        const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
         if (!paginationPanelEnabled) {
             this.setVisible(false);
             return;
@@ -54,7 +53,7 @@ export class PaginationComp extends Component {
         this.onPaginationChanged();
     }
 
-    private onPaginationChanged(): void{
+    private onPaginationChanged(): void {
         this.enableOrDisableButtons();
         this.updateRowLabels();
         this.setCurrentPageLabel();
@@ -62,16 +61,16 @@ export class PaginationComp extends Component {
     }
 
     private setCurrentPageLabel(): void {
-        let pagesExist = this.paginationProxy.getTotalPages() > 0;
-        let currentPage = this.paginationProxy.getCurrentPage();
+        const pagesExist = this.paginationProxy.getTotalPages() > 0;
+        const currentPage = this.paginationProxy.getCurrentPage();
 
-        let toDisplay = pagesExist ? currentPage + 1 : 0;
+        const toDisplay = pagesExist ? currentPage + 1 : 0;
 
         this.lbCurrent.innerHTML = this.formatNumber(toDisplay);
     }
 
     private formatNumber(value: number): string {
-        let userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        const userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
         if (userFunc) {
             return userFunc({value: value});
         } else {
@@ -81,15 +80,15 @@ export class PaginationComp extends Component {
 
     private getTemplate(): string {
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        let strPage = localeTextFunc('page', 'Page');
-        let strTo = localeTextFunc('to', 'to');
-        let strOf = localeTextFunc('of', 'of');
-        let strFirst = localeTextFunc('first', 'First');
-        let strPrevious = localeTextFunc('previous', 'Previous');
-        let strNext = localeTextFunc('next', 'Next');
-        let strLast = localeTextFunc('last', 'Last');
+        const strPage = localeTextFunc('page', 'Page');
+        const strTo = localeTextFunc('to', 'to');
+        const strOf = localeTextFunc('of', 'of');
+        const strFirst = localeTextFunc('first', 'First');
+        const strPrevious = localeTextFunc('previous', 'Previous');
+        const strNext = localeTextFunc('next', 'Next');
+        const strLast = localeTextFunc('last', 'Last');
 
         return `<div class="ag-paging-panel ag-font-style">
                 <span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
@@ -122,29 +121,29 @@ export class PaginationComp extends Component {
     }
 
     private enableOrDisableButtons() {
-        let currentPage = this.paginationProxy.getCurrentPage();
-        let maxRowFound = this.paginationProxy.isLastPageFound();
-        let totalPages = this.paginationProxy.getTotalPages();
+        const currentPage = this.paginationProxy.getCurrentPage();
+        const maxRowFound = this.paginationProxy.isLastPageFound();
+        const totalPages = this.paginationProxy.getTotalPages();
 
-        let disablePreviousAndFirst = currentPage === 0;
+        const disablePreviousAndFirst = currentPage === 0;
         this.btPrevious.disabled = disablePreviousAndFirst;
         this.btFirst.disabled = disablePreviousAndFirst;
 
-        let zeroPagesToDisplay = this.isZeroPagesToDisplay();
-        let onLastPage = maxRowFound && currentPage === (totalPages - 1);
+        const zeroPagesToDisplay = this.isZeroPagesToDisplay();
+        const onLastPage = maxRowFound && currentPage === (totalPages - 1);
 
-        let disableNext = onLastPage || zeroPagesToDisplay;
+        const disableNext = onLastPage || zeroPagesToDisplay;
         this.btNext.disabled = disableNext;
 
-        let disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
+        const disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
         this.btLast.disabled = disableLast;
     }
 
     private updateRowLabels() {
-        let currentPage = this.paginationProxy.getCurrentPage();
-        let pageSize = this.paginationProxy.getPageSize();
-        let maxRowFound = this.paginationProxy.isLastPageFound();
-        let rowCount = this.paginationProxy.isLastPageFound() ?
+        const currentPage = this.paginationProxy.getCurrentPage();
+        const pageSize = this.paginationProxy.getPageSize();
+        const maxRowFound = this.paginationProxy.isLastPageFound();
+        const rowCount = this.paginationProxy.isLastPageFound() ?
             this.paginationProxy.getTotalRowCount() : null;
 
         let startRow: any;
@@ -164,22 +163,22 @@ export class PaginationComp extends Component {
     }
 
     private isZeroPagesToDisplay() {
-        let maxRowFound = this.paginationProxy.isLastPageFound();
-        let totalPages = this.paginationProxy.getTotalPages();
+        const maxRowFound = this.paginationProxy.isLastPageFound();
+        const totalPages = this.paginationProxy.getTotalPages();
         return maxRowFound && totalPages === 0;
     }
 
     private setTotalLabels() {
-        let lastPageFound = this.paginationProxy.isLastPageFound();
-        let totalPages = this.paginationProxy.getTotalPages();
-        let rowCount = this.paginationProxy.isLastPageFound() ?
+        const lastPageFound = this.paginationProxy.isLastPageFound();
+        const totalPages = this.paginationProxy.getTotalPages();
+        const rowCount = this.paginationProxy.isLastPageFound() ?
             this.paginationProxy.getTotalRowCount() : null;
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
             this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
         } else {
-            let moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
+            const moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
         }

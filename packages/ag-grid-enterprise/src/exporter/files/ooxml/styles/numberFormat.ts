@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate} from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 const numberFormatFactory: ExcelOOXMLTemplate = {
     getTemplate(numberFormat: NumberFormat) {

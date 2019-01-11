@@ -11,13 +11,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
     groupSelectsFiltered: true,
     suppressAggFuncInHeader: true,
-    enableFilter:true,
     suppressRowClickSelection: true,
      autoGroupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
         cellRenderer:'agGroupCellRenderer',

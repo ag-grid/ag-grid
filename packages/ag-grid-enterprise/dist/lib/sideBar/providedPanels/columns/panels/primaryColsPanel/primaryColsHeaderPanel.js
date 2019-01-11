@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -40,7 +40,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     }
     PrimaryColsHeaderPanel.prototype.preConstruct = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.setTemplate("<div class=\"ag-primary-cols-header-panel\">\n            <a href=\"javascript:void(0)\" (click)=\"onExpandClicked\" ref=\"eExpand\">\n                <span class=\"ag-icon ag-icon-tree-open\" ref=\"eExpandChecked\"></span>\n                <span class=\"ag-icon ag-icon-tree-closed\" ref=\"eExpandUnchecked\"></span>\n                <span class=\"ag-icon ag-icon ag-icon-tree-indeterminate\" ref=\"eExpandIndeterminate\"></span>\n            </a>\n            <a href=\"javascript:void(0)\" (click)=\"onSelectClicked\" ref=\"eSelect\">\n                <span class=\"ag-icon ag-icon-checkbox-checked\" ref=\"eSelectChecked\"></span>\n                <span class=\"ag-icon ag-icon-checkbox-unchecked\" ref=\"eSelectUnchecked\"></span>\n                <span class=\"ag-icon ag-icon-checkbox-indeterminate\" ref=\"eSelectIndeterminate\"></span>\n            </a>\n            <div class=\"ag-primary-cols-filter-wrapper\" ref=\"eFilterWrapper\">\n                <input class=\"ag-primary-cols-filter\" ref=\"eFilterTextField\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\" (input)=\"onFilterTextChanged\">        \n            </div>\n        </div>");
+        this.setTemplate("<div class=\"ag-primary-cols-header-panel\">\n            <a href=\"javascript:void(0)\" (click)=\"onExpandClicked\" ref=\"eExpand\">\n                <span class=\"ag-icon ag-icon-tree-open\" ref=\"eExpandChecked\"></span>\n                <span class=\"ag-icon ag-icon-tree-closed\" ref=\"eExpandUnchecked\"></span>\n                <span class=\"ag-icon ag-icon ag-icon-tree-indeterminate\" ref=\"eExpandIndeterminate\"></span>\n            </a>\n            <a href=\"javascript:void(0)\" (click)=\"onSelectClicked\" ref=\"eSelect\">\n                <span class=\"ag-icon ag-icon-checkbox-checked\" ref=\"eSelectChecked\"></span>\n                <span class=\"ag-icon ag-icon-checkbox-unchecked\" ref=\"eSelectUnchecked\"></span>\n                <span class=\"ag-icon ag-icon-checkbox-indeterminate\" ref=\"eSelectIndeterminate\"></span>\n            </a>\n            <div class=\"ag-input-text-wrapper ag-primary-cols-filter-wrapper\" ref=\"eFilterWrapper\">\n                <input class=\"ag-primary-cols-filter\" ref=\"eFilterTextField\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\" (input)=\"onFilterTextChanged\">        \n            </div>\n        </div>");
     };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.instantiate(this.context);

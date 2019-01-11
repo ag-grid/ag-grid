@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate} from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 const mergeCell: ExcelOOXMLTemplate = {
     getTemplate(ref: string) {

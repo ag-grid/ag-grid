@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Status Bar: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Status Bar. The Status Bar appears on the bottom of the grid and shows aggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what happens in Excel. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Status Bar. The Status Bar appears on the bottom of the grid and shows aggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what happens in Excel. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid JavaScript Grid Status Bar";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -98,7 +98,7 @@ gridOptions: {
 </ul>
 </p>
 
-<?= example('Status Bar Simple', 'status-bar-simple', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar Simple', 'status-bar-simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h3>Configuring The Aggregation Panel</h3>
 
@@ -111,7 +111,7 @@ gridOptions: {
 <p>In the grid below, select a range by dragging the mouse over cells and notice the status bar
     showing the aggregation values as you drag.</p>
 
-<?= example('Status Bar', 'status-bar', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar', 'status-bar', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <p>By default all of the aggregations available will be displayed but you can configure the aggregation component to only
     show a subset of the aggregations.</p>
@@ -126,7 +126,7 @@ gridOptions: {
                 statusPanel: 'agAggregationComponent',
                 statusPanelParams: {
                     // possible values are: 'count', 'sum', 'min', 'max', 'avg'
-                    aggFuncs: ['min', 'max', 'average']
+                    aggFuncs: ['min', 'max', 'avg']
                 }
             }
         ]
@@ -191,7 +191,7 @@ gridOptions: {
     </ul>
 </p>
 
-<?= example('Status Bar Params', 'status-bar-params', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar Params', 'status-bar-params', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Status Bar Height</h2>
 

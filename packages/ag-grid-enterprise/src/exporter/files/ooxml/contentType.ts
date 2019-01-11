@@ -1,4 +1,4 @@
-import {ExcelContentType, ExcelOOXMLTemplate} from 'ag-grid-community';
+import { ExcelContentType, ExcelOOXMLTemplate } from 'ag-grid-community';
 
 const contentTypeFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelContentType) {

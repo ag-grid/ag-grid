@@ -1,4 +1,8 @@
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     columnDefs: [
         {headerName: "Athlete", field: "athlete",  minWidth: 150},
         {headerName: "Age", field: "age", minWidth: 50, filter: 'agNumberColumnFilter'},
@@ -11,7 +15,6 @@ var gridOptions = {
         {headerName: "Bronze", field: "bronze", width: 150, aggFunc: 'sum'}
     ],
 
-    enableColResize: true,
     pivotMode: true,
     pivotColumnGroupTotals: 'before',
     sideBar: true,

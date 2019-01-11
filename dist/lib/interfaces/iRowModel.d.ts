@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -8,9 +8,9 @@ export interface RowBounds {
 }
 export interface IRowModel {
     /** Returns the rowNode at the given index. */
-    getRow(index: number): RowNode;
+    getRow(index: number): RowNode | null;
     /** Returns the rowNode for given id. */
-    getRowNode(id: string): RowNode;
+    getRowNode(id: string): RowNode | null;
     /** Returns the first and last rows to render. */
     getPageFirstRow(): number;
     getPageLastRow(): number;
@@ -47,4 +47,3 @@ export interface IRowModel {
      */
     isLastRowFound(): boolean;
 }
-//# sourceMappingURL=iRowModel.d.ts.map

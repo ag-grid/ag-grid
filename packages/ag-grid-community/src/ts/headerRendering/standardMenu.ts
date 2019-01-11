@@ -1,12 +1,12 @@
-import {Autowired, Bean} from "../context/context";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {FilterManager, FilterWrapper} from "../filter/filterManager";
-import {Column} from "../entities/column";
-import {Utils as _} from "../utils";
-import {PopupService} from "../widgets/popupService";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {EventService} from "../eventService";
-import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
+import { Autowired, Bean } from "../context/context";
+import { IMenuFactory } from "../interfaces/iMenuFactory";
+import { FilterManager, FilterWrapper } from "../filter/filterManager";
+import { Column } from "../entities/column";
+import { PopupService } from "../widgets/popupService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { EventService } from "../eventService";
+import { IAfterGuiAttachedParams } from "../interfaces/iComponent";
+import { _ } from "../utils";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
@@ -50,9 +50,9 @@ export class StandardMenuFactory implements IMenuFactory {
     }
 
     public showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void): void {
-        let filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
+        const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
 
-        let eMenu = document.createElement('div');
+        const eMenu = document.createElement('div');
         _.addCssClass(eMenu, 'ag-menu');
         filterWrapper.guiPromise.promise.then(gui => {
             eMenu.appendChild(gui);
@@ -60,7 +60,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
         let hidePopup: (() => void);
 
-        let bodyScrollListener = (event: any) => {
+        const bodyScrollListener = (event: any) => {
             // if h scroll, popup is no longer over the column
             if (event.direction === 'horizontal') {
                 hidePopup();
@@ -68,7 +68,7 @@ export class StandardMenuFactory implements IMenuFactory {
         };
 
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
-        let closedCallback = () => {
+        const closedCallback = () => {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
             column.setMenuVisible(false, "contextMenu");
         };
@@ -80,7 +80,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
         filterWrapper.filterPromise.then(filter => {
             if (filter.afterGuiAttached) {
-                let params: IAfterGuiAttachedParams = {
+                const params: IAfterGuiAttachedParams = {
                     hidePopup: hidePopup
                 };
                 filter.afterGuiAttached(params);
@@ -94,7 +94,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
     public isMenuEnabled(column: Column): boolean {
         // for standard, we show menu if filter is enabled, and he menu is not suppressed
-        return this.gridOptionsWrapper.isEnableFilter() && column.isFilterAllowed();
+        return column.isFilterAllowed();
     }
 
 }

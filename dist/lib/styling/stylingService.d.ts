@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellClassParams, ColDef } from "../entities/colDef";
@@ -7,7 +7,6 @@ export declare class StylingService {
     processAllCellClasses(colDef: ColDef, params: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     processClassRules(classRules: {
         [cssClassName: string]: (Function | string);
-    }, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
+    } | undefined, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void): void;
 }
-//# sourceMappingURL=stylingService.d.ts.map

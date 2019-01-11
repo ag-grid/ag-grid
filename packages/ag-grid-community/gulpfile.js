@@ -168,7 +168,7 @@ function scssTask() {
     };
 
     // Uncompressed
-    return gulp.src(['src/styles/*.scss', '!src/styles/_*.scss'])
+    return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
         .pipe(named())
         .pipe(webpackStream({
             mode: 'none',
@@ -189,7 +189,10 @@ function scssTask() {
                                 loader: 'postcss-loader',
                                 options: {
                                     syntax: 'postcss-scss', 
-                                    plugins: [autoprefixer()]
+                                    plugins: [autoprefixer({
+                                        browsers: ["last 2 version"],
+                                        flexbox: true
+                                    })]
                                 }
                             }
                         ]

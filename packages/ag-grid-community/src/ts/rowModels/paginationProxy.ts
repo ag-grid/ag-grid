@@ -1,17 +1,16 @@
-
-import {BeanStub} from "../context/beanStub";
-import {IRowModel, RowBounds} from "../interfaces/iRowModel";
-import {EventService} from "../eventService";
-import {Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
-import {RowNode} from "../entities/rowNode";
-import {_} from "../utils";
-import {Bean, Autowired, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
-import {SelectionController} from "../selectionController";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
+import { BeanStub } from "../context/beanStub";
+import { IRowModel, RowBounds } from "../interfaces/iRowModel";
+import { EventService } from "../eventService";
+import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
+import { RowNode } from "../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
+import { SelectionController } from "../selectionController";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { _ } from "../utils";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
@@ -43,17 +42,19 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private checkPageSize(): void {
-        if (this.notActive()) { return; }
+        if (this.notActive()) {
+            return;
+        }
 
-        let rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         let bodyHeight = this.gridPanel.getBodyHeight();
 
-        if (this.scrollVisibleService.isBodyHorizontalScrollShowing()) {
+        if (this.scrollVisibleService.isHorizontalScrollShowing()) {
             bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
         }
 
-        if (bodyHeight>0) {
-            let newPageSize = Math.floor(bodyHeight / rowHeight);
+        if (bodyHeight > 0) {
+            const newPageSize = Math.floor(bodyHeight / rowHeight);
             this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
         }
     }
@@ -99,7 +100,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
 
     private onModelUpdated(modelUpdatedEvent?: ModelUpdatedEvent): void {
         this.setIndexesAndBounds();
-        let paginationChangedEvent: PaginationChangedEvent = {
+        const paginationChangedEvent: PaginationChangedEvent = {
             type: Events.EVENT_PAGINATION_CHANGED,
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
@@ -112,10 +113,14 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public goToPage(page: number): void {
-        if (!this.active) { return; }
-        if (this.currentPage === page) { return; }
+        if (!this.active) {
+            return;
+        }
+        if (this.currentPage === page) {
+            return;
+        }
         this.currentPage = page;
-        let event: ModelUpdatedEvent = {
+        const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
             animate: false,
             keepRenderedRows: false,
@@ -131,11 +136,11 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.pixelOffset;
     }
 
-    public getRow(index: number): RowNode {
+    public getRow(index: number): RowNode | null {
         return this.rowModel.getRow(index);
     }
 
-    public getRowNode(id: string): RowNode {
+    public getRowNode(id: string): RowNode | null {
         return this.rowModel.getRowNode(id);
     }
 
@@ -144,7 +149,9 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public getCurrentPageHeight(): number {
-        if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) { return 0; }
+        if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) {
+            return 0;
+        }
         return this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop;
     }
 
@@ -152,7 +159,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        let nodeIsInPage = rowNode.rowIndex >= this.topRowIndex && rowNode.rowIndex <= this.bottomRowIndex;
+        const nodeIsInPage = rowNode.rowIndex >= this.topRowIndex && rowNode.rowIndex <= this.bottomRowIndex;
         return nodeIsInPage;
     }
 
@@ -176,7 +183,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.rowModel.getType();
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+    public getRowBounds(index: number): { rowTop: number, rowHeight: number } {
         return this.rowModel.getRowBounds(index);
     }
 
@@ -185,8 +192,8 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public getPageLastRow(): number {
-        let totalLastRow = (this.pageSize * (this.currentPage + 1)) - 1;
-        let pageLastRow = this.rowModel.getPageLastRow();
+        const totalLastRow = (this.pageSize * (this.currentPage + 1)) - 1;
+        const pageLastRow = this.rowModel.getPageLastRow();
 
         if (pageLastRow > totalLastRow) {
             return totalLastRow;
@@ -200,9 +207,11 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public goToPageWithIndex(index: any): void {
-        if (!this.active) { return; }
+        if (!this.active) {
+            return;
+        }
 
-        let pageNumber = Math.floor(index / this.pageSize);
+        const pageNumber = Math.floor(index / this.pageSize);
         this.goToPage(pageNumber);
     }
 
@@ -231,8 +240,8 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public goToLastPage(): void {
-        let rowCount = this.rowModel.getPageLastRow() + 1;
-        let lastPage = Math.floor(rowCount / this.pageSize);
+        const rowCount = this.rowModel.getPageLastRow() + 1;
+        const lastPage = Math.floor(rowCount / this.pageSize);
         this.goToPage(lastPage);
     }
 
@@ -247,7 +256,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     private setPageSize(): void {
         // show put this into super class
         this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-        if ( !(this.pageSize>=1) ) {
+        if (!(this.pageSize >= 1)) {
             this.pageSize = 100;
         }
     }
@@ -257,7 +266,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         if (this.active) {
             this.setPageSize();
 
-            let totalRowCount = this.getTotalRowCount();
+            const totalRowCount = this.getTotalRowCount();
             this.totalPages = Math.floor((totalRowCount - 1) / this.pageSize) + 1;
 
             if (this.currentPage >= this.totalPages) {
@@ -269,9 +278,9 @@ export class PaginationProxy extends BeanStub implements IRowModel {
             }
 
             this.topRowIndex = this.pageSize * this.currentPage;
-            this.bottomRowIndex = (this.pageSize * (this.currentPage+1)) - 1;
+            this.bottomRowIndex = (this.pageSize * (this.currentPage + 1)) - 1;
 
-            let maxRowAllowed = this.rowModel.getPageLastRow();
+            const maxRowAllowed = this.rowModel.getPageLastRow();
             if (this.bottomRowIndex > maxRowAllowed) {
                 this.bottomRowIndex = maxRowAllowed;
             }

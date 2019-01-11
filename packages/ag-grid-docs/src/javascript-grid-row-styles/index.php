@@ -149,7 +149,7 @@ gridOptions.rowClassRules: {
                 and <code>api.updateRowData</code>. See <a href="../javascript-grid-data-update">Updating Data</a> for details on these update functions.</li>
         </ul>
 
-    <?= example('Row Class Rules', 'row-class-rules', 'generated') ?>
+    <?= example('Row Class Rules', 'row-class-rules', 'generated', array('processVue' => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

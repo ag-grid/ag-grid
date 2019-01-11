@@ -11,10 +11,13 @@ var columnDefs = [
     {headerName: 'Total', field: 'total', width: 100, enableValue: true}
 ];
 
+// set rowData to null or undefined to show loading panel by default
 var gridOptions = {
-    // set rowData to null or undefined to show loading panel by default
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     showToolPanel: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     sideBar: true,
 };

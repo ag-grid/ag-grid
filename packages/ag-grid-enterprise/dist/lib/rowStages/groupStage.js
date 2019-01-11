@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -36,7 +36,8 @@ var GroupStage = /** @class */ (function () {
             this.handleTransaction(details);
         }
         else {
-            this.shotgunResetEverything(details);
+            var afterColsChanged = params.afterColumnsChanged === true;
+            this.shotgunResetEverything(details, afterColsChanged);
         }
         this.sortGroupsWithComparator(details.rootNode);
         this.selectableService.updateSelectableAfterGrouping(details.rootNode);
@@ -229,13 +230,32 @@ var GroupStage = /** @class */ (function () {
             parent.childrenAfterGroup.push(child);
         }
     };
-    GroupStage.prototype.shotgunResetEverything = function (details) {
+    GroupStage.prototype.areGroupColsEqual = function (d1, d2) {
+        if (d1 == null || d2 == null) {
+            return false;
+        }
+        if (d1.pivotMode !== d2.pivotMode) {
+            return false;
+        }
+        if (!ag_grid_community_1._.compareArrays(d1.groupedCols, d2.groupedCols)) {
+            return false;
+        }
+        return true;
+    };
+    GroupStage.prototype.shotgunResetEverything = function (details, afterColumnsChanged) {
+        var skipStage = afterColumnsChanged ?
+            this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails)
+            : false;
+        this.oldGroupingDetails = details;
+        if (skipStage) {
+            return;
+        }
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
         details.rootNode.leafGroup = this.usingTreeData ? false : details.groupedCols.length === 0;
-        // we are going everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
+        // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         details.rootNode.childrenAfterGroup = [];
         details.rootNode.childrenMapped = {};
         this.insertNodes(details.rootNode.allLeafChildren, details);

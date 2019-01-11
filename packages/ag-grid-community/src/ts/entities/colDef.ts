@@ -1,14 +1,14 @@
-import {RowNode} from "./rowNode";
-import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
-import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
-import {Column} from "./column";
-import {IFilterComp} from "../interfaces/iFilter";
-import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnApi";
-import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
-import {IFloatingFilterComp} from "../filter/floatingFilter";
-import {CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent} from "../events";
-import {DynamicComponentDef, DynamicComponentParams} from "../components/framework/componentResolver";
+import { RowNode } from "./rowNode";
+import { ICellEditorComp } from "../rendering/cellEditors/iCellEditor";
+import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import { Column } from "./column";
+import { IFilterComp } from "../interfaces/iFilter";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
+import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
+import { IFloatingFilterComp } from "../filter/floatingFilter";
+import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
+import { DynamicComponentDef, DynamicComponentParams } from "../components/framework/componentResolver";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
@@ -36,7 +36,7 @@ export interface AbstractColDef {
 
 export interface ColGroupDef extends AbstractColDef {
     /** Columns in this group */
-    children: (ColDef|ColGroupDef)[];
+    children: (ColDef | ColGroupDef)[];
     /** Group ID */
     groupId?: string;
     /** Open by Default */
@@ -44,7 +44,7 @@ export interface ColGroupDef extends AbstractColDef {
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerGroupComponent?: string | {new(): IHeaderGroupComp};
+    headerGroupComponent?: string | { new(): IHeaderGroupComp };
     /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerGroupComponentFramework?: any;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
@@ -94,7 +94,7 @@ export interface ColDef extends AbstractColDef {
     tooltipField?: string;
 
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
-    tooltip?: (params: TooltipParams)=>string;
+    tooltip?: (params: TooltipParams) => string;
 
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
@@ -122,25 +122,25 @@ export interface ColDef extends AbstractColDef {
     autoHeight?: boolean;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
-    cellClass?: string | string[]| ((cellClassParams: CellClassParams) => string | string[]);
+    cellClass?: string | string[] | ((cellClassParams: CellClassParams) => string | string[]);
 
     /** An object of css values. Or a function returning an object of css values. */
     cellStyle?: {} | ((params: any) => {});
 
     /** A function for rendering a cell. */
-    cellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    cellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
-    cellRendererSelector?: (params: DynamicComponentParams)=>DynamicComponentDef;
+    cellRendererSelector?: (params: DynamicComponentParams) => DynamicComponentDef;
 
     /** Cell editor */
-    cellEditor?: {new(): ICellEditorComp} | string ;
+    cellEditor?: { new(): ICellEditorComp } | string ;
     cellEditorFramework?: any;
     cellEditorParams?: any;
-    cellEditorSelector?: (params: DynamicComponentParams)=>DynamicComponentDef;
+    cellEditorSelector?: (params: DynamicComponentParams) => DynamicComponentDef;
 
     /** A function for rendering a pinned row cell. */
-    pinnedRowCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    pinnedRowCellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     pinnedRowCellRendererFramework?: any;
     pinnedRowCellRendererParams?: any;
 
@@ -180,15 +180,15 @@ export interface ColDef extends AbstractColDef {
     pivotComparator?: (valueA: string, valueB: string) => number;
 
     /** Set to true to render a selection checkbox in the column. */
-    checkboxSelection?: boolean | ((params: any)=>boolean);
+    checkboxSelection?: boolean | ((params: any) => boolean) | null;
 
     /** If true, a 'select all' checkbox will be put into the header */
-    headerCheckboxSelection?: boolean | ((params: any)=>boolean);
+    headerCheckboxSelection?: boolean | ((params: any) => boolean);
 
     /** If true, the header checkbox selection will work on filtered items*/
     headerCheckboxSelectionFilteredOnly?: boolean;
 
-    rowDrag?: boolean | ((params: any)=>boolean);
+    rowDrag?: boolean | ((params: any) => boolean);
 
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
@@ -197,8 +197,10 @@ export interface ColDef extends AbstractColDef {
      * filterMenuTab, generalMenuTab, columnsMenuTab **/
     menuTabs?: string[];
 
-    /** Set to true if no sorting should be done for this column. */
-    suppressSorting?: boolean;
+    /** Set to true if sorting allowed for this column. */
+    sortable?: boolean;
+
+    suppressSorting?: boolean; // // as of v20 deprecated, use colDef.sortable=false instead
 
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
@@ -215,8 +217,7 @@ export interface ColDef extends AbstractColDef {
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
     lockPinned?: boolean;
 
-    /** Set to true to not allow filter on this column */
-    suppressFilter?: boolean;
+    suppressFilter?: boolean; // as of v20 deprecated, use colDef.filter=false instead
 
     /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
@@ -224,8 +225,10 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
     suppressSizeToFit?: boolean;
 
-    /** Set to true if you do not want this column to be resizable by dragging it's edge. */
-    suppressResize?: boolean;
+    suppressResize?: boolean; // as of v20 deprecated, use colDef.resizable=false instead
+
+    /** Set to true if this column should be resizable */
+    resizable?: boolean;
 
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
@@ -261,7 +264,7 @@ export interface ColDef extends AbstractColDef {
      * Return true if the update was successful, or false if not.
      * If false, then skips the UI refresh and no events are emitted.
      * Return false if the values are the same (ie no update). */
-    newValueHandler?: (params: any)=>boolean;
+    newValueHandler?: (params: any) => boolean;
 
     /** If true, this cell will be in editing mode after first click. */
     singleClickEdit?: boolean;
@@ -273,7 +276,7 @@ export interface ColDef extends AbstractColDef {
     templateUrl?: string;
 
     /** one of the built in filter names: [set, number, text], or a filter function*/
-    filter?: string | {new(): IFilterComp};
+    filter?: string | { new(): IFilterComp } | boolean;
 
     filterFramework?: any;
 
@@ -296,7 +299,7 @@ export interface ColDef extends AbstractColDef {
     onCellContextMenu?: (event: CellContextMenuEvent) => void;
 
     /** Icons for this column. Leave blank to use default. */
-    icons?: {[key: string]: string};
+    icons?: { [key: string]: string };
 
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
@@ -308,18 +311,18 @@ export interface ColDef extends AbstractColDef {
     pivotTotalColumnIds?: string[];
 
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerComponent?: string | {new(): any};
+    headerComponent?: string | { new(): any };
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerComponentFramework?: any;
     /** The custom header component parameters**/
     headerComponentParams?: any;
 
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
-    floatingFilterComponent?: {new(): IFloatingFilterComp<any, any, any>};
+    floatingFilterComponent?: string | { new(): IFloatingFilterComp<any, any, any> };
     floatingFilterComponentParams?: any;
     floatingFilterComponentFramework?: any;
 
-    refData?: {[key: string]: string};
+    refData?: { [key: string]: string };
 }
 
 export interface IsColumnFunc {
@@ -332,8 +335,8 @@ export interface IsColumnFuncParams {
     column: Column;
     colDef: ColDef;
     context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
 }
 
 export interface GetQuickFilterTextParams {
@@ -349,8 +352,8 @@ export interface BaseColDefParams {
     data: any;
     colDef: ColDef;
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
 }
 
@@ -367,15 +370,20 @@ export interface NewValueParams extends BaseColDefParams {
     newValue: any;
 }
 
-export interface ValueSetterParams extends NewValueParams {}
+export interface ValueSetterParams extends NewValueParams {
+}
 
-export interface ValueParserParams extends NewValueParams {}
+export interface ValueParserParams extends NewValueParams {
+}
 
-export interface ValueFormatterParams extends BaseWithValueColDefParams {}
+export interface ValueFormatterParams extends BaseWithValueColDefParams {
+}
 
-export interface ColSpanParams extends BaseColDefParams {}
+export interface ColSpanParams extends BaseColDefParams {
+}
 
-export interface RowSpanParams extends BaseColDefParams {}
+export interface RowSpanParams extends BaseColDefParams {
+}
 
 export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     // the keyboard event the grid received
@@ -391,7 +399,7 @@ export interface CellClassParams {
     colDef: ColDef;
     rowIndex: number;
     $scope: any;
-    api: GridApi;
+    api: GridApi | null | undefined;
     context: any;
 }
 
@@ -403,6 +411,6 @@ export interface TooltipParams {
     colDef: ColDef;
     rowIndex: number;
     $scope: any;
-    api: GridApi;
+    api: GridApi | null | undefined;
     context: any;
 }

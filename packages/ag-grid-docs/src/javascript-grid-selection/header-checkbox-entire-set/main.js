@@ -16,9 +16,9 @@ var gridOptions = {
     defaultColDef: {
         width: 100,
         headerCheckboxSelection: isFirstColumn,
-        checkboxSelection: isFirstColumn
+        checkboxSelection: isFirstColumn,
+        resizable: true
     },
-    enableColResize: true,
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
     columnDefs: columnDefs

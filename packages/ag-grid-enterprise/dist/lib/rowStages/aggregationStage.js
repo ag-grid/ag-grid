@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -99,31 +99,36 @@ var AggregationStage = /** @class */ (function () {
         var pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
         // Step 1: process value columns
         pivotColumnDefs
-            .filter(function (v) { return !ag_grid_community_1.Utils.exists(v.pivotTotalColumnIds); }) // only process pivot value columns
+            .filter(function (v) { return !ag_grid_community_1._.exists(v.pivotTotalColumnIds); }) // only process pivot value columns
             .forEach(function (valueColDef) {
-            var keys = valueColDef.pivotKeys;
+            var keys = valueColDef.pivotKeys || [];
             var values;
             var valueColumn = valueColDef.pivotValueColumn;
+            var colId = valueColDef.colId;
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
                 values = _this.getValuesFromMappedSet(rowNode.childrenMapped, keys, valueColumn);
             }
             else {
                 // value columns and pivot columns, non-leaf group
-                values = _this.getValuesPivotNonLeaf(rowNode, valueColDef.colId);
+                values = _this.getValuesPivotNonLeaf(rowNode, colId);
             }
-            result[valueColDef.colId] = _this.aggregateValues(values, valueColumn.getAggFunc());
+            result[colId] = _this.aggregateValues(values, valueColumn.getAggFunc());
         });
         // Step 2: process total columns
         pivotColumnDefs
-            .filter(function (v) { return ag_grid_community_1.Utils.exists(v.pivotTotalColumnIds); }) // only process pivot total columns
+            .filter(function (v) { return ag_grid_community_1._.exists(v.pivotTotalColumnIds); }) // only process pivot total columns
             .forEach(function (totalColDef) {
             var aggResults = [];
+            var pivotValueColumn = totalColDef.pivotValueColumn, pivotTotalColumnIds = totalColDef.pivotTotalColumnIds, colId = totalColDef.colId;
             //retrieve results for colIds associated with this pivot total column
-            totalColDef.pivotTotalColumnIds.forEach(function (colId) {
+            if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
+                return;
+            }
+            pivotTotalColumnIds.forEach(function (colId) {
                 aggResults.push(result[colId]);
             });
-            result[totalColDef.colId] = _this.aggregateValues(aggResults, totalColDef.pivotValueColumn.getAggFunc());
+            result[colId] = _this.aggregateValues(aggResults, pivotValueColumn.getAggFunc());
         });
         return result;
     };
@@ -159,7 +164,7 @@ var AggregationStage = /** @class */ (function () {
     AggregationStage.prototype.getValuesFromMappedSet = function (mappedSet, keys, valueColumn) {
         var _this = this;
         var mapPointer = mappedSet;
-        keys.forEach(function (key) { return mapPointer = mapPointer ? mapPointer[key] : null; });
+        keys.forEach(function (key) { return (mapPointer = mapPointer ? mapPointer[key] : null); });
         if (!mapPointer) {
             return [];
         }

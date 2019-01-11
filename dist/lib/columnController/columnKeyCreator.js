@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,7 @@ var ColumnKeyCreator = /** @class */ (function () {
     };
     ColumnKeyCreator.prototype.getUniqueKey = function (colId, colField) {
         // in case user passed in number for colId, convert to string
-        colId = utils_1.Utils.toStringOrNull(colId);
+        colId = utils_1._.toStringOrNull(colId);
         var count = 0;
         while (true) {
             var idToTry = void 0;

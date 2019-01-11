@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Columns Tool Panel: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Show Hide Column Tool Panel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <note>
@@ -177,7 +177,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2>Styling Columns</h2>
@@ -238,7 +238,7 @@ colDefs = {
         name when dependent on where it appears using the <code>location</code> parameter.</li>
     </ul>
 
-    <?= example('Tool Panel Styling', 'styling', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Tool Panel Styling', 'styling', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Read Only Functions</h2>
 
@@ -248,7 +248,7 @@ colDefs = {
         so they can see what columns are used, but prevent them from making changes to the selection.
     </p>
 
-    <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Next Up</h2>
 

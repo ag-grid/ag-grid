@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -48,12 +48,14 @@ var RangeController = /** @class */ (function () {
         if (!appendRange || ag_grid_community_1._.missing(this.cellRanges)) {
             this.cellRanges = [];
         }
-        this.cellRanges.push(newRange);
+        if (this.cellRanges) {
+            this.cellRanges.push(newRange);
+        }
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
     };
     RangeController.prototype.extendRangeToCell = function (toCell) {
-        var lastRange = ag_grid_community_1._.existsAndNotEmpty(this.cellRanges) ? this.cellRanges[this.cellRanges.length - 1] : null;
+        var lastRange = ag_grid_community_1._.existsAndNotEmpty(this.cellRanges) && this.cellRanges ? this.cellRanges[this.cellRanges.length - 1] : null;
         var startCell = lastRange ? lastRange.start : toCell;
         this.setRange({
             rowStart: startCell.rowIndex,
@@ -66,10 +68,10 @@ var RangeController = /** @class */ (function () {
     };
     // returns true if successful, false if not successful
     RangeController.prototype.extendRangeInDirection = function (startCell, key) {
-        var oneRangeExists = ag_grid_community_1._.exists(this.cellRanges) || this.cellRanges.length === 1;
-        var previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
+        var oneRangeExists = (ag_grid_community_1._.exists(this.cellRanges) && this.cellRanges) || (this.cellRanges && this.cellRanges.length === 1);
+        var previousSelectionStart = oneRangeExists && this.cellRanges ? this.cellRanges[0].start : null;
         var takeEndFromPreviousSelection = startCell.equals(previousSelectionStart);
-        var previousEndCell = takeEndFromPreviousSelection ? this.cellRanges[0].end : startCell;
+        var previousEndCell = takeEndFromPreviousSelection && this.cellRanges ? this.cellRanges[0].end : startCell;
         var newEndCell = this.cellNavigationService.getNextCellToFocus(key, previousEndCell);
         // if user is at end of grid, so no cell to extend to, we return false
         if (!newEndCell) {
@@ -105,8 +107,16 @@ var RangeController = /** @class */ (function () {
         if (!columns) {
             return;
         }
-        var startGridCellDef = { column: columnStart, rowIndex: rangeSelection.rowStart, floating: rangeSelection.floatingStart };
-        var endGridCellDef = { column: columnEnd, rowIndex: rangeSelection.rowEnd, floating: rangeSelection.floatingEnd };
+        var startGridCellDef = {
+            column: columnStart,
+            rowIndex: rangeSelection.rowStart,
+            floating: rangeSelection.floatingStart
+        };
+        var endGridCellDef = {
+            column: columnEnd,
+            rowIndex: rangeSelection.rowEnd,
+            floating: rangeSelection.floatingEnd
+        };
         var newRange = {
             start: new ag_grid_community_1.GridCell(startGridCellDef),
             end: new ag_grid_community_1.GridCell(endGridCellDef),
@@ -122,10 +132,10 @@ var RangeController = /** @class */ (function () {
         return this.cellRanges;
     };
     RangeController.prototype.isEmpty = function () {
-        return ag_grid_community_1.Utils.missingOrEmpty(this.cellRanges);
+        return !this.cellRanges || ag_grid_community_1._.missingOrEmpty(this.cellRanges);
     };
     RangeController.prototype.isMoreThanOneCell = function () {
-        if (ag_grid_community_1.Utils.missingOrEmpty(this.cellRanges)) {
+        if (!this.cellRanges || ag_grid_community_1._.missingOrEmpty(this.cellRanges)) {
             return false;
         }
         else {
@@ -141,7 +151,7 @@ var RangeController = /** @class */ (function () {
         }
     };
     RangeController.prototype.clearSelection = function () {
-        if (ag_grid_community_1.Utils.missing(this.cellRanges)) {
+        if (ag_grid_community_1._.missing(this.cellRanges)) {
             return;
         }
         this.activeRange = null;
@@ -158,14 +168,14 @@ var RangeController = /** @class */ (function () {
         return this.getCellRangeCount(cell) > 0;
     };
     RangeController.prototype.isCellInSpecificRange = function (cell, range) {
-        var columnInRange = range.columns.indexOf(cell.column) >= 0;
+        var columnInRange = range.columns !== null && range.columns.indexOf(cell.column) >= 0;
         var rowInRange = this.isRowInRange(cell.rowIndex, cell.floating, range);
         return columnInRange && rowInRange;
     };
     // returns the number of ranges this cell is in
     RangeController.prototype.getCellRangeCount = function (cell) {
         var _this = this;
-        if (ag_grid_community_1.Utils.missingOrEmpty(this.cellRanges)) {
+        if (!this.cellRanges || ag_grid_community_1._.missingOrEmpty(this.cellRanges)) {
             return 0;
         }
         var matchingCount = 0;
@@ -199,18 +209,18 @@ var RangeController = /** @class */ (function () {
         var multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
         var allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         var multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
-        var missingRanges = ag_grid_community_1.Utils.missing(this.cellRanges);
+        var missingRanges = ag_grid_community_1._.missing(this.cellRanges);
         var cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
-        if (ag_grid_community_1.Utils.missing(cell)) {
+        if (ag_grid_community_1._.missing(cell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
             // (which them means onDragging and onDragStop do nothing)
             return;
         }
-        var len = missingRanges ? 0 : this.cellRanges.length;
+        var len = missingRanges || !this.cellRanges ? 0 : this.cellRanges.length;
         if (missingRanges || !multiSelectKeyPressed) {
             this.cellRanges = [];
         }
-        else if (!this.activeRange && len && this.isCellInSpecificRange(cell, this.cellRanges[len - 1])) {
+        else if (!this.activeRange && len && this.cellRanges && this.isCellInSpecificRange(cell, this.cellRanges[len - 1])) {
             this.activeRange = this.activeRange = this.cellRanges[len - 1];
         }
         if (!this.activeRange) {
@@ -228,10 +238,14 @@ var RangeController = /** @class */ (function () {
             end: new ag_grid_community_1.GridCell(gridCellDef),
             columns: [cell.column]
         };
-        this.cellRanges.push(this.activeRange);
+        if (this.cellRanges) {
+            this.cellRanges.push(this.activeRange);
+        }
     };
     RangeController.prototype.selectionChanged = function (finished, started) {
-        this.activeRange.columns = this.updateSelectedColumns(this.activeRange.start.column, this.activeRange.end.column);
+        if (this.activeRange) {
+            this.activeRange.columns = this.updateSelectedColumns(this.activeRange.start.column, this.activeRange.end.column);
+        }
         this.dispatchChangedEvent(finished, started);
     };
     RangeController.prototype.dispatchChangedEvent = function (finished, started) {
@@ -255,13 +269,13 @@ var RangeController = /** @class */ (function () {
         this.dispatchChangedEvent(true, false);
     };
     RangeController.prototype.onDragging = function (mouseEvent) {
-        if (!this.dragging || !this.activeRange) {
+        if (!this.dragging || !this.activeRange || !mouseEvent) {
             return;
         }
         this.lastMouseEvent = mouseEvent;
         this.autoScrollService.check(mouseEvent);
         var cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
-        if (ag_grid_community_1.Utils.missing(cell)) {
+        if (ag_grid_community_1._.missing(cell)) {
             return;
         }
         var columnChanged = false;
@@ -380,7 +394,7 @@ var AutoScrollService = /** @class */ (function () {
     };
     AutoScrollService.prototype.ensureTickingStarted = function () {
         if (this.tickingInterval === null) {
-            this.tickingInterval = setInterval(this.doTick.bind(this), 100);
+            this.tickingInterval = window.setInterval(this.doTick.bind(this), 100);
             this.tickCount = 0;
         }
     };
@@ -413,7 +427,7 @@ var AutoScrollService = /** @class */ (function () {
     };
     AutoScrollService.prototype.ensureCleared = function () {
         if (this.tickingInterval) {
-            clearInterval(this.tickingInterval);
+            window.clearInterval(this.tickingInterval);
             this.tickingInterval = null;
         }
     };

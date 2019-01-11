@@ -30,6 +30,10 @@ function getRowData() {
 
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     columnTypes: {
         valueColumn: {
@@ -43,8 +47,6 @@ var gridOptions = {
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
     animateRows: true,
-    enableSorting: true,
-    enableFilter: true,
     onCellValueChanged: function(params) {
         var changedData = [params.data];
         params.api.updateRowData({update: changedData});

@@ -12,11 +12,10 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 100,
-        suppressFilter: true
+        resizable: true
     },
     rowSelection: 'single',
     columnDefs: columnDefs,
-    enableColResize: true,
     rowModelType: 'serverSide'
 };
 
@@ -26,8 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
-        rowDataServerSide = data;
-        var datasource = new MyDatasource();
+        var datasource = createMyDataSource(data);
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });
@@ -40,23 +38,39 @@ function onBtRemove() {
 
     var selectedRow = selectedRows[0];
 
-    rowDataServerSide.splice(selectedRow.rowIndex, 1);
+    window.rowDataServerSide.splice(selectedRow.rowIndex, 1);
 
     gridOptions.api.purgeServerSideCache();
 }
 
 function onBtAdd() {
-
     var selectedRows = gridOptions.api.getSelectedNodes();
     if (!selectedRows || selectedRows.length === 0) { return; }
 
     var selectedRow = selectedRows[0];
 
     // insert new row in the source data, at the top of the page
-    rowDataServerSide.splice(selectedRow.rowIndex, 0, {
+    window.rowDataServerSide.splice(selectedRow.rowIndex, 0, {
         athlete: 'New Item' + newItemCount
     });
     newItemCount++;
 
     gridOptions.api.purgeServerSideCache();
+}
+
+
+function createMyDataSource(data) {
+    window.rowDataServerSide = data;
+
+    function MyDatasource() {
+    }
+
+    MyDatasource.prototype.getRows = function (params) {
+        // take a slice of the total rows
+        var rowsThisPage = data.slice(params.startRow, params.endRow);
+        // call the success callback
+        params.successCallback(rowsThisPage, window.rowDataServerSide.length);
+    };
+
+    return new MyDatasource();
 }

@@ -58,7 +58,7 @@ export class PartialMatchFilter implements IFilterAngularComp {
     }
 
     ngAfterViewInit(params: IAfterGuiAttachedParams): void {
-        setTimeout(() => {
+        window.setTimeout(() => {
             this.input.element.nativeElement.focus();
         })
     }

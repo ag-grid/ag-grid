@@ -1,10 +1,11 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
+    eWrapper?: HTMLElement;
     hideWhenNoChildren?: boolean;
 }
 /**
@@ -16,6 +17,7 @@ export declare class RowContainerComponent {
     gridOptionsWrapper: GridOptionsWrapper;
     private readonly eContainer;
     private readonly eViewport;
+    private readonly eWrapper;
     private readonly hideWhenNoChildren;
     private childCount;
     private visible;
@@ -38,4 +40,3 @@ export declare class RowContainerComponent {
     private checkVisibility;
     isMadeVisibleRecently(): boolean;
 }
-//# sourceMappingURL=rowContainerComponent.d.ts.map

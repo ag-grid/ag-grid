@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "ag-grid-community";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
@@ -23,7 +23,7 @@ export declare class ViewportRowModel implements IRowModel {
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
     getType(): string;
     getRow(rowIndex: number): RowNode;
-    getRowNode(id: string): RowNode;
+    getRowNode(id: string): RowNode | null;
     getPageFirstRow(): number;
     getPageLastRow(): number;
     getRowCount(): number;
@@ -39,4 +39,3 @@ export declare class ViewportRowModel implements IRowModel {
     setRowCount(rowCount: number): void;
     isRowPresent(rowNode: RowNode): boolean;
 }
-//# sourceMappingURL=viewportRowModel.d.ts.map

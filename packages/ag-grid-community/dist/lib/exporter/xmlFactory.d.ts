@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class XmlFactory {
@@ -10,7 +10,7 @@ export interface XmlElement {
     name: string;
     properties?: XmlAttributes;
     children?: XmlElement[];
-    textNode?: string;
+    textNode?: string | null;
 }
 export interface HeaderElement {
     [key: string]: string | undefined;
@@ -26,4 +26,3 @@ export interface PrefixedXmlAttributes {
     prefix: string;
     map: any;
 }
-//# sourceMappingURL=xmlFactory.d.ts.map

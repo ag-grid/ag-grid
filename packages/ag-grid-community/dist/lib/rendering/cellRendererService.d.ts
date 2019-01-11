@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
@@ -17,4 +17,3 @@ export declare class CellRendererService {
     useFullWidthGroupRowInnerCellRenderer(eTarget: HTMLElement, params: any): Promise<ICellRendererComp>;
     bindToHtml(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement): Promise<ICellRendererComp>;
 }
-//# sourceMappingURL=cellRendererService.d.ts.map

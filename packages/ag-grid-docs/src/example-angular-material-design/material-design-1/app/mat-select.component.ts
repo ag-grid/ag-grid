@@ -52,7 +52,7 @@ export class MatSelectComponent implements ICellEditorAngularComp {
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
-        setTimeout(() => {
+        window.setTimeout(() => {
             this.group.element.nativeElement.focus();
         });
         this.selectFavouriteVegetableBasedOnSelectedIndex();

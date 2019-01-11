@@ -41,7 +41,7 @@ var gridOptions = {
     // define specific column types
     columnTypes: {
         numberColumn: {width: 83, filter: 'agNumberColumnFilter'},
-        medalColumn: {width: 100, columnGroupShow: 'open', suppressFilter: true},
+        medalColumn: {width: 100, columnGroupShow: 'open', filter: false},
         nonEditableColumn: {editable: false},
         dateColumn: {
             // specify we want to use the date filter
@@ -73,7 +73,6 @@ var gridOptions = {
     },
 
     rowData: null,
-    enableFilter: true,
     floatingFilter: true
 };
 

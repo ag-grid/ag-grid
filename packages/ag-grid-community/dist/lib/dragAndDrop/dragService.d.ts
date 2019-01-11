@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
@@ -53,4 +53,3 @@ export interface DragListenerParams {
     /** Callback for mouse move while dragging */
     onDragging: (mouseEvent: MouseEvent | Touch) => void;
 }
-//# sourceMappingURL=dragService.d.ts.map

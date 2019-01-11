@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -24,7 +24,7 @@ export interface DragSource {
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
-    dragItemName: string;
+    dragItemName: string | null;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
@@ -130,4 +130,3 @@ export declare class DragAndDropService {
     private createGhost;
     setGhostIcon(iconName: string, shake?: boolean): void;
 }
-//# sourceMappingURL=dragAndDropService.d.ts.map

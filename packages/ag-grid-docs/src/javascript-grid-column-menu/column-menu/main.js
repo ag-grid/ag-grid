@@ -12,6 +12,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     columnDefs: columnDefs,
     getMainMenuItems: getMainMenuItems,
     postProcessPopup: function(params) {
@@ -31,8 +34,7 @@ var gridOptions = {
 
             ePopup.style.top = newTop + 'px';
         }
-    },
-    enableFilter: true
+    }
 };
 
 function getMainMenuItems(params) {

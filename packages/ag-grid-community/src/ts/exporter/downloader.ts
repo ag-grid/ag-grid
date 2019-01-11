@@ -1,4 +1,4 @@
-import {Bean} from "../context/context";
+import { Bean } from "../context/context";
 
 @Bean("downloader")
 export class Downloader {

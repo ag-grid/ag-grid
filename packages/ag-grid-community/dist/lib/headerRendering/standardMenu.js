@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,10 +17,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var filterManager_1 = require("../filter/filterManager");
-var utils_1 = require("../utils");
 var popupService_1 = require("../widgets/popupService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var eventService_1 = require("../eventService");
+var utils_1 = require("../utils");
 var StandardMenuFactory = /** @class */ (function () {
     function StandardMenuFactory() {
     }
@@ -53,7 +53,7 @@ var StandardMenuFactory = /** @class */ (function () {
         var _this = this;
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         var eMenu = document.createElement('div');
-        utils_1.Utils.addCssClass(eMenu, 'ag-menu');
+        utils_1._.addCssClass(eMenu, 'ag-menu');
         filterWrapper.guiPromise.promise.then(function (gui) {
             eMenu.appendChild(gui);
         });
@@ -86,7 +86,7 @@ var StandardMenuFactory = /** @class */ (function () {
     };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
         // for standard, we show menu if filter is enabled, and he menu is not suppressed
-        return this.gridOptionsWrapper.isEnableFilter() && column.isFilterAllowed();
+        return column.isFilterAllowed();
     };
     __decorate([
         context_1.Autowired('eventService'),

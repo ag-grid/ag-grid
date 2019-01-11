@@ -13,11 +13,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     pagination: true,
-    paginationAutoPageSize: true,
-    enableFilter: true,
-    enableSorting: true
+    paginationAutoPageSize: true
 };
 
 function getDisplayedRowAtIndex() {

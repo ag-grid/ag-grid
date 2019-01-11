@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,7 +55,7 @@ var TouchListener = /** @class */ (function () {
         this.touching = true;
         this.moved = false;
         var touchStartCopy = this.touchStart;
-        setTimeout(function () {
+        window.setTimeout(function () {
             var touchesMatch = _this.touchStart === touchStartCopy;
             if (_this.touching && touchesMatch && !_this.moved) {
                 _this.moved = true;
@@ -76,7 +76,7 @@ var TouchListener = /** @class */ (function () {
         if (!touch) {
             return;
         }
-        var eventIsFarAway = !utils_1.Utils.areEventsNear(touch, this.touchStart, 4);
+        var eventIsFarAway = !utils_1._.areEventsNear(touch, this.touchStart, 4);
         if (eventIsFarAway) {
             this.moved = true;
         }
@@ -101,7 +101,7 @@ var TouchListener = /** @class */ (function () {
     };
     TouchListener.prototype.checkForDoubleTap = function () {
         var now = new Date().getTime();
-        if (this.lastTapTime > 0) {
+        if (this.lastTapTime && this.lastTapTime > 0) {
             // if previous tap, see if duration is short enough to be considered double tap
             var interval = now - this.lastTapTime;
             if (interval > TouchListener.DOUBLE_TAP_MILLIS) {

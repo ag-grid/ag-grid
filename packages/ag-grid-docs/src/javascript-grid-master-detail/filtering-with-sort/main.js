@@ -7,12 +7,17 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
-    enableSorting: true,
-    enableFilter: true,
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
+            defaultColDef: {
+                filter: true
+            },
             columnDefs: [
                 {field: 'callId'},
                 {field: 'direction'},
@@ -20,8 +25,6 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            enableSorting: true,
-            enableFilter: true,
             onFirstDataRendered(params) {
                 params.api.sizeColumnsToFit();
             }

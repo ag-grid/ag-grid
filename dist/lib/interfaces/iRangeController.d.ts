@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -11,7 +11,7 @@ export interface IRangeController {
     onDragStart(mouseEvent: MouseEvent): void;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
-    getCellRanges(): RangeSelection[];
+    getCellRanges(): RangeSelection[] | null;
     setRangeToCell(cell: GridCell, appendRange?: boolean): void;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
@@ -22,7 +22,7 @@ export interface IRangeController {
 export interface RangeSelection {
     start: GridCell;
     end: GridCell;
-    columns: Column[];
+    columns: Column[] | null;
 }
 export interface AddRangeSelectionParams {
     rowStart: number;
@@ -32,4 +32,3 @@ export interface AddRangeSelectionParams {
     columnStart: string | Column;
     columnEnd: string | Column;
 }
-//# sourceMappingURL=iRangeController.d.ts.map

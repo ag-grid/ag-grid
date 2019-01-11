@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Pagination: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Pagination";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
         Remember Pagination works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
-    <?= example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="clientPagination">Supported Row Models</h2>
 
@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
         automatically changes. To view this, open the example up in a new tab and resize your browser.
     </p>
 
-    <?= example('Auto Page Size', 'auto-page-size', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Auto Page Size', 'auto-page-size', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <note>
         Each pagination page must have the same number of rows.
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
             <code>paginationNumberFormatter</code> and putting the numbers into square brackets i.e. [x].</li>
     </ul>
 
-    <?= example('Custom Paging', 'custom-paging', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Custom Paging', 'custom-paging', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="custom-pagination-controls">Example: Custom Pagination Controls</h2>
 
@@ -88,7 +88,7 @@ include '../documentation-main/documentation_header.php';
     <p>The example also sets property <code>suppressScrollOnNewData=true</code>, which tells the grid to NOT
     scroll to the top when the page changes.</p>
 
-    <?= example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Pagination Properties</h2>
 

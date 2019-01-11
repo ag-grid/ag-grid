@@ -1,6 +1,5 @@
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {Autowired} from "./context/context";
+import { Bean } from "./context/context";
+import { Autowired } from "./context/context";
 
 @Bean('templateService')
 export class TemplateService {
@@ -14,19 +13,19 @@ export class TemplateService {
     // but will call the callback when it is loaded
     getTemplate(url: any, callback: any) {
 
-        let templateFromCache = this.templateCache[url];
+        const templateFromCache = this.templateCache[url];
         if (templateFromCache) {
             return templateFromCache;
         }
 
         let callbackList = this.waitingCallbacks[url];
-        let that = this;
+        const that = this;
         if (!callbackList) {
             // first time this was called, so need a new list for callbacks
             callbackList = [];
             this.waitingCallbacks[url] = callbackList;
             // and also need to do the http request
-            let client = new XMLHttpRequest();
+            const client = new XMLHttpRequest();
             client.onload = function() {
                 that.handleHttpResult(this, url);
             };
@@ -55,9 +54,9 @@ export class TemplateService {
         this.templateCache[url] = httpResult.response || httpResult.responseText;
 
         // inform all listeners that this is now in the cache
-        let callbacks = this.waitingCallbacks[url];
+        const callbacks = this.waitingCallbacks[url];
         for (let i = 0; i < callbacks.length; i++) {
-            let callback = callbacks[i];
+            const callback = callbacks[i];
             // we could pass the callback the response, however we know the client of this code
             // is the cell renderer, and it passes the 'cellRefresh' method in as the callback
             // which doesn't take any parameters.
@@ -65,8 +64,8 @@ export class TemplateService {
         }
 
         if (this.$scope) {
-            let that = this;
-            setTimeout(function() {
+            const that = this;
+            window.setTimeout(function() {
                 that.$scope.$apply();
             }, 0);
         }

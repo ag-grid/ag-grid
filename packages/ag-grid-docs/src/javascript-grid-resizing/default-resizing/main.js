@@ -12,9 +12,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
     onFirstDataRendered: onFirstDataRendered
 };
 

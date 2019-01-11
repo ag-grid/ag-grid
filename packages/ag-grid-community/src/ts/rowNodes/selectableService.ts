@@ -1,8 +1,8 @@
-import {RowNode} from "../entities/rowNode";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {_} from "../utils";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {IsRowSelectable} from "../entities/gridOptions";
+import { RowNode } from "../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { IsRowSelectable } from "../entities/gridOptions";
+import { _ } from "../utils";
 
 @Bean('selectableService')
 export class SelectableService {
@@ -10,7 +10,7 @@ export class SelectableService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private groupSelectsChildren: boolean;
-    private isRowSelectableFunc: IsRowSelectable;
+    private isRowSelectableFunc?: IsRowSelectable;
 
     @PostConstruct
     public init(): void {
@@ -20,14 +20,14 @@ export class SelectableService {
 
     public updateSelectableAfterGrouping(rowNode: RowNode): void {
         if (this.isRowSelectableFunc) {
-            let nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterGroup;
+            const nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterGroup;
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     }
 
     public updateSelectableAfterFiltering(rowNode: RowNode): void {
         if (this.isRowSelectableFunc) {
-            let nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterFilter;
+            const nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterFilter;
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     }
@@ -45,11 +45,11 @@ export class SelectableService {
 
             if (this.groupSelectsChildren) {
                 // have this group selectable if at least one direct child is selectable
-                let firstSelectable = _.find(nextChildrenFunc(child), 'selectable', true);
+                const firstSelectable = _.find(nextChildrenFunc(child), 'selectable', true);
                 rowSelectable = _.exists(firstSelectable);
             } else {
                 // directly retrieve selectable value from user callback
-                rowSelectable = this.isRowSelectableFunc(child);
+                rowSelectable = this.isRowSelectableFunc ? this.isRowSelectableFunc(child) : false;
             }
 
             child.setRowSelectable(rowSelectable);

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Internationalisation: Styling & Appearance with our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Internationalisation. Support multiple languages with Internationalisation. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Internationalisation. Support multiple languages with Internationalisation. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Internationalisation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -111,7 +111,7 @@ localeText = {
         ctrlV: 'ctrl n V'
 }</snippet>
 
-    <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true)) ?>
+    <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
 
     <h2>Using <code>localeTextFunc</code></h2>
 
@@ -131,12 +131,6 @@ localeText = {
     <snippet>
 var gridOptions = {
 
-    // standard grid settings, thrown in here to pad out the example
-    enableSorting: true,
-    enableFilter: true,
-    enableColResize: true,
-    columnDefs: columnDefs,
-
     localeTextFunc: function(key, defaultValue) {
 
         // to avoid key clash with external keys, we add 'grid' to the start of each key.
@@ -147,6 +141,8 @@ var gridOptions = {
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }
+
+    ...
 };</snippet>
 
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -19,10 +19,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../../utils");
 var column_1 = require("../../entities/column");
 var beanStub_1 = require("../../context/beanStub");
 var constants_1 = require("../../constants");
+var utils_1 = require("../../utils");
 var SetLeftFeature = /** @class */ (function (_super) {
     __extends(SetLeftFeature, _super);
     function SetLeftFeature(columnOrGroup, eCell, beans, colsSpanning) {
@@ -52,7 +52,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
     };
     SetLeftFeature.prototype.setLeftFirstTime = function () {
         var suppressMoveAnimation = this.beans.gridOptionsWrapper.isSuppressColumnMoveAnimation();
-        var oldLeftExists = utils_1.Utils.exists(this.columnOrGroup.getOldLeft());
+        var oldLeftExists = utils_1._.exists(this.columnOrGroup.getOldLeft());
         var animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
@@ -107,8 +107,8 @@ var SetLeftFeature = /** @class */ (function (_super) {
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
-        if (utils_1.Utils.exists(value)) {
-            this.eCell.style.left = value + 'px';
+        if (utils_1._.exists(value)) {
+            this.eCell.style.left = value + "px";
         }
     };
     return SetLeftFeature;

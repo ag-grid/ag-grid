@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -50,4 +50,3 @@ export declare class HeaderWrapperComp extends Component {
     private onColumnWidthChanged;
     private normaliseResizeAmount;
 }
-//# sourceMappingURL=headerWrapperComp.d.ts.map

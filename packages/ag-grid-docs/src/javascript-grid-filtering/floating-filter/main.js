@@ -71,7 +71,7 @@ function getPersonFilter() {
         }
     };
 
-    PersonFilter.prototype.getModelAsString = function (model){
+    PersonFilter.prototype.getModelAsString = function (model) {
         return model ? model : '';
     };
 
@@ -79,53 +79,74 @@ function getPersonFilter() {
         return this.filterText;
     };
     // lazy, the example doesn't use setModel()
-    PersonFilter.prototype.setModel = function () {};
+    PersonFilter.prototype.setModel = function () {
+    };
 
     return PersonFilter;
 }
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: getPersonFilter(), suppressMenu:true},
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', suppressMenu:true},
-    {headerName: "Country", field: "country", width: 120, filter: 'agSetColumnFilter', suppressMenu:true},
-    {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter', suppressMenu:true},
-    {headerName: "Date", field: "date", width: 145, filter:'agDateColumnFilter', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            if (dateAsString == null) return -1;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+    {headerName: "Athlete", field: "athlete", width: 150, filter: getPersonFilter(), suppressMenu: true},
+    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', suppressMenu: true},
+    {headerName: "Country", field: "country", width: 120, filter: 'agSetColumnFilter', suppressMenu: true},
+    {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter', suppressMenu: true},
+    {
+        headerName: "Date", field: "date", width: 145, filter: 'agDateColumnFilter', filterParams: {
+            comparator: function (filterLocalDateAtMidnight, cellValue) {
+                var dateAsString = cellValue;
+                if (dateAsString == null) return -1;
+                var dateParts = dateAsString.split("/");
+                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
+                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                    return 0
+                }
 
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
+                if (cellDate < filterLocalDateAtMidnight) {
+                    return -1;
+                }
 
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
-            }
-        },
-        browserDatePicker: true
-    }, suppressMenu:true},
-    {headerName: "Sport", field: "sport", width: 110, suppressMenu:true, filter: 'agTextColumnFilter'},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter', filterParams:{applyButton:true}, suppressMenu:true},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter', floatingFilterComponentParams:{suppressFilterButton:true}},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter', floatingFilterComponentParams:{suppressFilterButton:true}},
-    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter', suppressFilter: true}
+                if (cellDate > filterLocalDateAtMidnight) {
+                    return 1;
+                }
+            },
+            browserDatePicker: true
+        }, suppressMenu: true
+    },
+    {headerName: "Sport", field: "sport", width: 110, suppressMenu: true, filter: 'agTextColumnFilter'},
+    {
+        headerName: "Gold",
+        field: "gold",
+        width: 100,
+        filter: 'agNumberColumnFilter',
+        filterParams: {applyButton: true},
+        suppressMenu: true
+    },
+    {
+        headerName: "Silver",
+        field: "silver",
+        width: 100,
+        filter: 'agNumberColumnFilter',
+        floatingFilterComponentParams: {suppressFilterButton: true}
+    },
+    {
+        headerName: "Bronze",
+        field: "bronze",
+        width: 100,
+        filter: 'agNumberColumnFilter',
+        floatingFilterComponentParams: {suppressFilterButton: true}
+    },
+    {headerName: "Total", field: "total", width: 100, filter: false}
 ];
 
 var gridOptions = {
-    floatingFilter:true,
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
+    floatingFilter: true,
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true,
-    enableSorting: true,
-    // these hide enterprise features, so they are not confusing
-    // you if using ag-Grid standard
-    suppressMenu: true
+    rowData: null
 };
 
 function irelandAndUk() {
@@ -149,7 +170,7 @@ function destroyCountryFilter() {
 function endingStan() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     countryFilterComponent.selectNothing();
-    for (var i = 0; i<countryFilterComponent.getUniqueValueCount(); i++) {
+    for (var i = 0; i < countryFilterComponent.getUniqueValueCount(); i++) {
         var value = countryFilterComponent.getUniqueValue(i);
         var valueEndsWithStan = value.indexOf('stan') === value.length - 4;
         if (valueEndsWithStan) {
@@ -161,7 +182,7 @@ function endingStan() {
 
 function setCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    var model = ['Algeria','Argentina'];
+    var model = ['Algeria', 'Argentina'];
     countryFilterComponent.setModel(model);
     gridOptions.api.onFilterChanged();
 }
@@ -197,7 +218,7 @@ function sportEndsWithG() {
 function sportsCombined() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
     sportsFilterComponent.setModel({
-        condition2:{
+        condition2: {
             type: 'endsWith',
             filter: 'g'
         },
@@ -233,13 +254,13 @@ function ageAbove30() {
 function ageBelow25OrAbove30() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setModel({
-        condition1:{
+        condition1: {
             type: 'greaterThan',
             filter: 30,
             filterTo: null
         },
         operator: 'OR',
-        condition2:{
+        condition2: {
             type: 'lessThan',
             filter: 25,
             filterTo: null
@@ -264,7 +285,7 @@ function clearAgeFilter() {
     gridOptions.api.onFilterChanged();
 }
 
-function after2010(){
+function after2010() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel({
         type: 'greaterThan',
@@ -274,7 +295,7 @@ function after2010(){
     gridOptions.api.onFilterChanged();
 }
 
-function before2012(){
+function before2012() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel({
         type: 'lessThan',
@@ -284,15 +305,15 @@ function before2012(){
     gridOptions.api.onFilterChanged();
 }
 
-function dateCombined(){
+function dateCombined() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel({
-        condition1:{
+        condition1: {
             type: 'lessThan',
             dateFrom: '2012-01-01',
             dateTo: null
         },
-        condition2:{
+        condition2: {
             type: 'greaterThan',
             dateFrom: '2010-01-01',
             dateTo: null
@@ -302,7 +323,7 @@ function dateCombined(){
     gridOptions.api.onFilterChanged();
 }
 
-function clearDateFilter(){
+function clearDateFilter() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel(null);
     gridOptions.api.onFilterChanged();
@@ -310,7 +331,7 @@ function clearDateFilter(){
 
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -319,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

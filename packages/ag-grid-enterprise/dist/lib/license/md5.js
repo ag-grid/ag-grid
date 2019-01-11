@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -106,19 +106,23 @@ var MD5 = /** @class */ (function () {
         return this.cmn(c ^ (b | (~d)), a, b, x, s, t);
     };
     MD5.prototype.md51 = function (s) {
-        var n = s.length, state = [1732584193, -271733879, -1732584194, 271733878], i;
+        var n = s.length;
+        var state = [1732584193, -271733879, -1732584194, 271733878];
+        var i;
         for (i = 64; i <= s.length; i += 64) {
             this.md5cycle(state, this.md5blk(s.substring(i - 64, i)));
         }
         s = s.substring(i - 64);
         var tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        for (i = 0; i < s.length; i++)
+        for (i = 0; i < s.length; i++) {
             tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
+        }
         tail[i >> 2] |= 0x80 << ((i % 4) << 3);
         if (i > 55) {
             this.md5cycle(state, tail);
-            for (i = 0; i < 16; i++)
+            for (i = 0; i < 16; i++) {
                 tail[i] = 0;
+            }
         }
         tail[14] = n * 8;
         this.md5cycle(state, tail);
@@ -133,9 +137,9 @@ var MD5 = /** @class */ (function () {
      * providing access to strings as preformed UTF-8 8-bit unsigned value arrays.
      */
     MD5.prototype.md5blk = function (s) {
-        var md5blks = [], i;
+        var md5blks = [];
         /* Andy King said do it this way. */
-        for (i = 0; i < 64; i += 4) {
+        for (var i = 0; i < 64; i += 4) {
             md5blks[i >> 2] = s.charCodeAt(i)
                 + (s.charCodeAt(i + 1) << 8)
                 + (s.charCodeAt(i + 2) << 16)
@@ -146,14 +150,16 @@ var MD5 = /** @class */ (function () {
     MD5.prototype.rhex = function (n) {
         var hex_chr = '0123456789abcdef'.split('');
         var s = '', j = 0;
-        for (; j < 4; j++)
+        for (; j < 4; j++) {
             s += hex_chr[(n >> (j * 8 + 4)) & 0x0F]
                 + hex_chr[(n >> (j * 8)) & 0x0F];
+        }
         return s;
     };
     MD5.prototype.hex = function (x) {
-        for (var i = 0; i < x.length; i++)
+        for (var i = 0; i < x.length; i++) {
             x[i] = this.rhex(x[i]);
+        }
         return x.join('');
     };
     MD5.prototype.md5 = function (s) {

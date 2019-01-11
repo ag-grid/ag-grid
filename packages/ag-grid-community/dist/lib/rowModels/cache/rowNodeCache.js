@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../../utils");
 var beanStub_1 = require("../../context/beanStub");
 var rowNodeBlock_1 = require("./rowNodeBlock");
+var utils_1 = require("../../utils");
 var RowNodeCache = /** @class */ (function (_super) {
     __extends(RowNodeCache, _super);
     function RowNodeCache(cacheParams) {
@@ -153,7 +153,7 @@ var RowNodeCache = /** @class */ (function (_super) {
         this.virtualRowCount = rowCount;
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (utils_1.Utils.exists(maxRowFound)) {
+        if (utils_1._.exists(maxRowFound)) {
             this.maxRowFound = maxRowFound;
         }
         // if we are still searching, then the row count must not end at the end
@@ -233,13 +233,14 @@ var RowNodeCache = /** @class */ (function (_super) {
         var inActiveRange = false;
         var numberSequence = new utils_1.NumberSequence();
         // if only one node passed, we start the selection at the top
-        if (utils_1.Utils.missing(firstInRange)) {
+        if (utils_1._.missing(firstInRange)) {
             inActiveRange = true;
         }
         var foundGapInSelection = false;
         this.forEachBlockInOrder(function (block, id) {
-            if (foundGapInSelection)
+            if (foundGapInSelection) {
                 return;
+            }
             if (inActiveRange && (lastBlockId + 1 !== id)) {
                 foundGapInSelection = true;
                 return;

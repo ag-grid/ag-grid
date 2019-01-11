@@ -1,14 +1,14 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var rowNode_1 = require("../../entities/rowNode");
-var utils_1 = require("../../utils");
 var events_1 = require("../../events");
+var utils_1 = require("../../utils");
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController, gridApi, columnApi, selectionController) {
         this.nextId = 0;
@@ -39,11 +39,11 @@ var ClientSideNodeManager = /** @class */ (function () {
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
-        this.doingLegacyTreeData = utils_1.Utils.exists(this.getNodeChildDetails);
+        this.doingLegacyTreeData = utils_1._.exists(this.getNodeChildDetails);
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     };
     ClientSideNodeManager.prototype.getCopyOfNodesMap = function () {
-        var result = utils_1.Utils.cloneObject(this.allNodesMap);
+        var result = utils_1._.cloneObject(this.allNodesMap);
         return result;
     };
     ClientSideNodeManager.prototype.getRowNode = function (id) {
@@ -82,7 +82,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             update: [],
             add: []
         };
-        if (utils_1.Utils.exists(add)) {
+        if (utils_1._.exists(add)) {
             var useIndex = typeof addIndex === 'number' && addIndex >= 0;
             if (useIndex) {
                 // items get inserted in reverse order for index insertion
@@ -98,7 +98,7 @@ var ClientSideNodeManager = /** @class */ (function () {
                 });
             }
         }
-        if (utils_1.Utils.exists(remove)) {
+        if (utils_1._.exists(remove)) {
             var anyNodesSelected_1 = false;
             remove.forEach(function (item) {
                 var rowNode = _this.lookupRowNode(item);
@@ -121,7 +121,7 @@ var ClientSideNodeManager = /** @class */ (function () {
                 this.eventService.dispatchEvent(event_1);
             }
         }
-        if (utils_1.Utils.exists(update)) {
+        if (utils_1._.exists(update)) {
             update.forEach(function (item) {
                 var rowNode = _this.lookupRowNode(item);
                 if (!rowNode) {
@@ -132,14 +132,14 @@ var ClientSideNodeManager = /** @class */ (function () {
             });
         }
         if (rowNodeOrder) {
-            utils_1.Utils.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
+            utils_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
     };
     ClientSideNodeManager.prototype.addRowNode = function (data, index) {
         var newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
-        if (utils_1.Utils.exists(index)) {
-            utils_1.Utils.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
+        if (utils_1._.exists(index)) {
+            utils_1._.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
         }
         else {
             this.rootNode.allLeafChildren.push(newNode);
@@ -149,7 +149,7 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.lookupRowNode = function (data) {
         var rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         var rowNode;
-        if (utils_1.Utils.exists(rowNodeIdFunc)) {
+        if (utils_1._.exists(rowNodeIdFunc)) {
             // find rowNode using id
             var id = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
@@ -160,7 +160,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
         else {
             // find rowNode using object references
-            rowNode = utils_1.Utils.find(this.rootNode.allLeafChildren, function (rowNode) { return rowNode.data === data; });
+            rowNode = utils_1._.find(this.rootNode.allLeafChildren, function (rowNode) { return rowNode.data === data; });
             if (!rowNode) {
                 console.error("ag-Grid: could not find data item as object was not found", data);
                 return null;
@@ -179,7 +179,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             rowNode.setSelected(false, false, true);
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTop();
-            utils_1.Utils.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            utils_1._.removeFromArray(this.rootNode.allLeafChildren, rowNode);
             this.allNodesMap[rowNode.id] = undefined;
         }
     };
@@ -201,7 +201,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         var node = new rowNode_1.RowNode();
         this.context.wireBean(node);
         var doingTreeData = this.gridOptionsWrapper.isTreeData();
-        var doingLegacyTreeData = !doingTreeData && utils_1.Utils.exists(this.getNodeChildDetails);
+        var doingLegacyTreeData = !doingTreeData && utils_1._.exists(this.getNodeChildDetails);
         var nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
@@ -297,7 +297,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         for (var i = rowData.length - 1; i >= 0; i--) {
             var data = rowData[i];
             var newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
-            utils_1.Utils.insertIntoArray(nodeList, newNode, index);
+            utils_1._.insertIntoArray(nodeList, newNode, index);
             newNodes.push(newNode);
         }
         return newNodes.length > 0 ? newNodes : null;
@@ -307,7 +307,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         return this.insertItemsAtIndex(nodeList.length, items);
     };
     ClientSideNodeManager.prototype.isLegacyTreeData = function () {
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        var rowsAlreadyGrouped = utils_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
                 'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Updating Data: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Insert Remove";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -106,7 +106,7 @@ include '../documentation-main/documentation_header.php';
         edit the data so the filter is broken (ie a row is present that should not be present), then hit this button to fix the filter.</li>
     </ul>
 
-    <?= example('Updating Row Nodes', 'updating-row-nodes', 'generated') ?>
+    <?= example('Updating Row Nodes', 'updating-row-nodes', 'generated', array("processVue" => true)) ?>
 
     <h2 id="bulk-updating">Bulk Updating</h2>
 
@@ -328,7 +328,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= example('Updating with Transaction', 'updating-with-transaction', 'generated') ?>
+<?= example('Updating with Transaction', 'updating-with-transaction', 'generated', array("processVue" => true)) ?>
 
 <h3 id="example-updating-with-transaction-and-groups">Example - Updating with Transaction and Groups</h3>
 
@@ -355,7 +355,7 @@ include '../documentation-main/documentation_header.php';
         are always added to the top as they are ordered 'latest first'</li>
 </ul>
 
-<?= example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', array("enterprise" => 1)) ?>
+<?= example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
 
@@ -459,7 +459,7 @@ include '../documentation-main/documentation_header.php';
         in the provided data.
 </note>
 
-    <?= example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h3>Example - Immutable Store - Updates via Feed</h3>
@@ -500,7 +500,7 @@ include '../documentation-main/documentation_header.php';
         even though the grid data is constantly updating.
     </p>
 
-    <?= example('Complex Immutable Store', 'complex-immutable-store', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Complex Immutable Store', 'complex-immutable-store', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="batch-transactions">Bulk Method 4 - Batch Transactions</h2>
 
@@ -516,7 +516,7 @@ include '../documentation-main/documentation_header.php';
         other updates you subsequently provide using <code>batchUpdateRowData()</code>, after 50ms.
     </p>
 
-    <?= example('Batch Transaction', 'batch-transaction', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Batch Transaction', 'batch-transaction', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <p>
         To help understand the interface into <code>updateRowData()</code> and <code>batchUpdateRowData()</code>,
@@ -590,7 +590,7 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
         </ul>
     </p>
 
-    <?= example('Flashing Data Changes', 'flashing-data-changes', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Flashing Data Changes', 'flashing-data-changes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h3>How Flashing Works</h3>
 

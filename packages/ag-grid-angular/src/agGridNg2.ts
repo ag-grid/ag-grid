@@ -336,6 +336,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressMovableColumns : any = undefined;
     @Input() public suppressFieldDotNotation : any = undefined;
     @Input() public enableRangeSelection : any = undefined;
+    @Input() public deltaSort : any = undefined;
     @Input() public suppressTouch : any = undefined;
     @Input() public suppressAsyncEvents : any = undefined;
     @Input() public allowContextMenuWithControlKey : any = undefined;
@@ -350,6 +351,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressPreventDefaultOnMouseWheel : any = undefined;
     @Input() public suppressUseColIdForGroups : any = undefined;
     @Input() public suppressCopyRowsToClipboard : any = undefined;
+    @Input() public copyHeadersToClipboard : any = undefined;
     @Input() public pivotMode : any = undefined;
     @Input() public suppressAggFuncInHeader : any = undefined;
     @Input() public suppressColumnVirtualisation : any = undefined;
@@ -406,11 +408,13 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public serverSideSortingAlwaysResets : any = undefined;
     @Input() public reactNext : any = undefined;
     @Input() public suppressSetColumnStateEvents : any = undefined;
+    @Input() public enableCharts : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotModeChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnRowGroupChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public expandOrCollapseAll: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public gridColumnsChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChanged: EventEmitter<any> = new EventEmitter<any>();
@@ -476,7 +480,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnAggFuncChangeRequest: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public expandOrCollapseAll: EventEmitter<any> = new EventEmitter<any>();
     // @END@
 }
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,8 +10,9 @@ var SideBarDefParser = /** @class */ (function () {
     function SideBarDefParser() {
     }
     SideBarDefParser.parse = function (toParse) {
-        if (!toParse)
+        if (!toParse) {
             return null;
+        }
         if (toParse === true) {
             return {
                 toolPanels: [
@@ -21,8 +22,9 @@ var SideBarDefParser = /** @class */ (function () {
                 defaultToolPanel: 'columns'
             };
         }
-        if (typeof toParse === 'string')
+        if (typeof toParse === 'string') {
             return SideBarDefParser.parse([toParse]);
+        }
         if (Array.isArray(toParse)) {
             var comps_1 = [];
             toParse.forEach(function (key) {

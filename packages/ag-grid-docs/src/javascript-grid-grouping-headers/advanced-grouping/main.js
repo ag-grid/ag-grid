@@ -70,14 +70,16 @@ var gridOptions = {
     debug: true,
     columnDefs: columnDefs,
     rowData: null,
-    enableSorting: true,
-    enableFilter: true,
-    enableColResize: true,
     defaultColGroupDef: {headerClass: headerClassFunc},
-    defaultColDef: {headerClass: headerClassFunc},
+    defaultColDef: {
+        headerClass: headerClassFunc,
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     icons: {
-        columnGroupOpened: '<i class="fa fa-plus-square-o"/>',
-        columnGroupClosed: '<i class="fa fa-minus-square-o"/>'
+        columnGroupOpened: '<i class="far fa-plus-square"/>',
+        columnGroupClosed: '<i class="far fa-minus-square"/>'
     }
 };
 

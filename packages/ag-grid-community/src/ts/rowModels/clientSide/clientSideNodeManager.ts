@@ -1,16 +1,15 @@
-
-import {RowNode} from "../../entities/rowNode";
-import {Utils as _} from "../../utils";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, Context} from "../../context/context";
-import {GetNodeChildDetails, IsRowMaster} from "../../entities/gridOptions";
-import {EventService} from "../../eventService";
-import {RowDataTransaction, RowNodeTransaction} from "./clientSideRowModel";
-import {ColumnController} from "../../columnController/columnController";
-import {Events, SelectionChangedEvent} from "../../events";
-import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnApi";
-import {SelectionController} from "../../selectionController";
+import { RowNode } from "../../entities/rowNode";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Context } from "../../context/context";
+import { GetNodeChildDetails, IsRowMaster } from "../../entities/gridOptions";
+import { EventService } from "../../eventService";
+import { RowDataTransaction, RowNodeTransaction } from "./clientSideRowModel";
+import { ColumnController } from "../../columnController/columnController";
+import { Events, SelectionChangedEvent } from "../../events";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
+import { SelectionController } from "../../selectionController";
+import { _ } from "../../utils";
 
 export class ClientSideNodeManager {
 
@@ -77,7 +76,7 @@ export class ClientSideNodeManager {
     }
 
     public getCopyOfNodesMap(): {[id:string]: RowNode} {
-        let result: {[id:string]: RowNode} = _.cloneObject(this.allNodesMap);
+        const result: {[id:string]: RowNode} = _.cloneObject(this.allNodesMap);
         return result;
     }
 
@@ -102,7 +101,7 @@ export class ClientSideNodeManager {
         }
 
         // kick off recursion
-        let result = this.recursiveFunction(rowData, null, ClientSideNodeManager.TOP_LEVEL);
+        const result = this.recursiveFunction(rowData, null, ClientSideNodeManager.TOP_LEVEL);
 
         if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
@@ -112,28 +111,28 @@ export class ClientSideNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number}): RowNodeTransaction {
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction | null {
         if (this.isLegacyTreeData()) { return null; }
 
-        let {add, addIndex, remove, update} = rowDataTran;
+        const {add, addIndex, remove, update} = rowDataTran;
 
-        let rowNodeTransaction: RowNodeTransaction = {
+        const rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
             add: []
         };
 
         if (_.exists(add)) {
-            let useIndex = typeof addIndex === 'number' && addIndex >= 0;
+            const useIndex = typeof addIndex === 'number' && addIndex >= 0;
             if (useIndex) {
                 // items get inserted in reverse order for index insertion
-                add.reverse().forEach( item => {
-                    let newRowNode: RowNode = this.addRowNode(item, addIndex);
+                add.reverse().forEach(item => {
+                    const newRowNode: RowNode = this.addRowNode(item, addIndex);
                     rowNodeTransaction.add.push(newRowNode);
                 });
             } else {
-                add.forEach( item => {
-                    let newRowNode: RowNode = this.addRowNode(item);
+                add.forEach(item => {
+                    const newRowNode: RowNode = this.addRowNode(item);
                     rowNodeTransaction.add.push(newRowNode);
                 });
             }
@@ -142,8 +141,8 @@ export class ClientSideNodeManager {
         if (_.exists(remove)) {
             let anyNodesSelected = false;
 
-            remove.forEach( item => {
-                let rowNode = this.lookupRowNode(item);
+            remove.forEach(item => {
+                const rowNode = this.lookupRowNode(item);
 
                 if (!rowNode) { return; }
 
@@ -151,13 +150,13 @@ export class ClientSideNodeManager {
                     anyNodesSelected = true;
                 }
 
-                this.updatedRowNode(rowNode, item,false);
+                this.updatedRowNode(rowNode, item, false);
                 rowNodeTransaction.remove.push(rowNode);
             });
 
             if (anyNodesSelected) {
                 this.selectionController.updateGroupsFromChildrenSelections();
-                let event: SelectionChangedEvent = {
+                const event: SelectionChangedEvent = {
                     type: Events.EVENT_SELECTION_CHANGED,
                     api: this.gridApi,
                     columnApi: this.columnApi
@@ -167,12 +166,12 @@ export class ClientSideNodeManager {
         }
 
         if (_.exists(update)) {
-            update.forEach( item => {
-                let rowNode = this.lookupRowNode(item);
+            update.forEach(item => {
+                const rowNode = this.lookupRowNode(item);
 
                 if (!rowNode) { return; }
 
-                this.updatedRowNode(rowNode, item,true);
+                this.updatedRowNode(rowNode, item, true);
                 rowNodeTransaction.update.push(rowNode);
             });
         }
@@ -186,7 +185,7 @@ export class ClientSideNodeManager {
 
     private addRowNode(data: any, index?: number): RowNode {
 
-        let newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
+        const newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
 
         if (_.exists(index)) {
             _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
@@ -198,12 +197,12 @@ export class ClientSideNodeManager {
     }
 
     private lookupRowNode(data: any): RowNode {
-        let rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+        const rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
 
         let rowNode: RowNode;
         if (_.exists(rowNodeIdFunc)) {
             // find rowNode using id
-            let id: string = rowNodeIdFunc(data);
+            const id: string = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
                 console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
@@ -246,22 +245,22 @@ export class ClientSideNodeManager {
             return;
         }
 
-        let rowNodes: RowNode[] = [];
-        rowData.forEach( (dataItem)=> {
-            let node = this.createNode(dataItem, parent, level);
+        const rowNodes: RowNode[] = [];
+        rowData.forEach((dataItem) => {
+            const node = this.createNode(dataItem, parent, level);
             rowNodes.push(node);
         });
         return rowNodes;
     }
 
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
-        let node = new RowNode();
+        const node = new RowNode();
         this.context.wireBean(node);
 
-        let doingTreeData = this.gridOptionsWrapper.isTreeData();
-        let doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);
+        const doingTreeData = this.gridOptionsWrapper.isTreeData();
+        const doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);
 
-        let nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
+        const nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
 
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
@@ -295,11 +294,11 @@ export class ClientSideNodeManager {
                     node.master = false;
                 }
 
-                let rowGroupColumns = this.columnController.getRowGroupColumns();
-                let numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
+                const rowGroupColumns = this.columnController.getRowGroupColumns();
+                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
                 // need to take row group into account when determining level
-                let masterRowLevel = level + numRowGroupColumns;
+                const masterRowLevel = level + numRowGroupColumns;
 
                 node.expanded = node.master ? this.isExpanded(masterRowLevel) : false;
             }
@@ -313,8 +312,8 @@ export class ClientSideNodeManager {
         }
         node.level = level;
         node.setDataAndId(dataItem, this.nextId.toString());
-        
-        if (this.allNodesMap[node.id]){
+
+        if (this.allNodesMap[node.id]) {
             console.warn(`ag-grid: duplicate node id '${node.id}' detected from getRowNodeId callback, this could cause issues in your grid.`);
         }
         this.allNodesMap[node.id] = node;
@@ -325,8 +324,8 @@ export class ClientSideNodeManager {
     }
 
     private isExpanded(level: any) {
-        let expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
-        if (expandByDefault===-1) {
+        const expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
+        if (expandByDefault === -1) {
             return true;
         } else {
             return level < expandByDefault;
@@ -337,13 +336,13 @@ export class ClientSideNodeManager {
     private setLeafChildren(node: RowNode): void {
         node.allLeafChildren = [];
         if (node.childrenAfterGroup) {
-            node.childrenAfterGroup.forEach( childAfterGroup => {
+            node.childrenAfterGroup.forEach(childAfterGroup => {
                 if (childAfterGroup.group) {
                     if (childAfterGroup.allLeafChildren) {
-                        childAfterGroup.allLeafChildren.forEach( leafChild => node.allLeafChildren.push(leafChild) );
+                        childAfterGroup.allLeafChildren.forEach(leafChild => node.allLeafChildren.push(leafChild));
                     }
                 } else {
-                    node.allLeafChildren.push(childAfterGroup)
+                    node.allLeafChildren.push(childAfterGroup);
                 }
             });
         }
@@ -352,18 +351,18 @@ export class ClientSideNodeManager {
     public insertItemsAtIndex(index: number, rowData: any[]): RowNode[] {
         if (this.isLegacyTreeData()) { return null; }
 
-        let nodeList = this.rootNode.allLeafChildren;
+        const nodeList = this.rootNode.allLeafChildren;
 
         if (index > nodeList.length) {
             console.warn(`ag-Grid: invalid index ${index}, max index is ${nodeList.length}`);
             return;
         }
 
-        let newNodes: RowNode[] = [];
+        const newNodes: RowNode[] = [];
         // go through the items backwards, otherwise they get added in reverse order
         for (let i = rowData.length - 1; i >= 0; i--) {
-            let data = rowData[i];
-            let newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
+            const data = rowData[i];
+            const newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
             _.insertIntoArray(nodeList, newNode, index);
             newNodes.push(newNode);
         }
@@ -372,12 +371,12 @@ export class ClientSideNodeManager {
     }
 
     public addItems(items: any): RowNode[] {
-        let nodeList = this.rootNode.allLeafChildren;
+        const nodeList = this.rootNode.allLeafChildren;
         return this.insertItemsAtIndex(nodeList.length, items);
     }
 
     public isLegacyTreeData(): boolean {
-        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        const rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
                 'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');

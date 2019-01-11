@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Filters Tool Panel: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Filters Tool Panel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Filter Instances</h2>
 

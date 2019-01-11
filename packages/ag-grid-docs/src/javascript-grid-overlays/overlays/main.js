@@ -12,12 +12,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
+
     // set rowData to null or undefined to show loading panel by default
     rowData: null,
     columnDefs: columnDefs,
-    enableColResize: true,
-    enableSorting: true,
-    enableFilter: true,
     // custom loading template. the class ag-overlay-loading-center is part of the grid,
     // it gives a white background and rounded border
     overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',

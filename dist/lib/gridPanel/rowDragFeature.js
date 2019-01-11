@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,12 +101,12 @@ var RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.ensureIntervalStarted = function () {
         if (!this.movingIntervalId) {
             this.intervalCount = 0;
-            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
         }
     };
     RowDragFeature.prototype.ensureIntervalCleared = function () {
         if (this.moveInterval) {
-            clearInterval(this.movingIntervalId);
+            window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
         }
     };

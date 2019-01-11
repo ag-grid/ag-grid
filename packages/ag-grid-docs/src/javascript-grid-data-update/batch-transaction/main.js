@@ -111,15 +111,15 @@ function createTradeId() {
 
 var gridOptions = {
     columnDefs: columnDefs,
-    enableColResize: true,
-    enableSorting: true,
     suppressAggFuncInHeader: true,
     animateRows: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     getRowNodeId: function(data) { return data.trade; },
     defaultColDef: {
-        width: 120
+        width: 120,
+        sortable: true,
+        resizable: true
     },
     onGridReady: function(params) {
         createRowData();

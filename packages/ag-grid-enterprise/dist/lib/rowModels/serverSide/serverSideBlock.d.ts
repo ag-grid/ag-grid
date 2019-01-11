@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.4
-import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { NumberSequence, RowBounds, RowNode, RowNodeBlock } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 export declare class ServerSideBlock extends RowNodeBlock {
     private context;
@@ -22,13 +22,14 @@ export declare class ServerSideBlock extends RowNodeBlock {
     private rowGroupColumn;
     private nodeIdPrefix;
     private usingTreeData;
+    private usingMasterDetail;
     constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache);
     protected init(): void;
     private setBeans;
     private createNodeIdPrefix;
     protected createIdForIndex(index: number): string;
     getNodeIdPrefix(): string;
-    getRow(displayRowIndex: number): RowNode;
+    getRow(displayRowIndex: number): RowNode | null;
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
     private setChildCountIntoRowNode;
     private setGroupDataIntoRowNode;
@@ -36,7 +37,7 @@ export declare class ServerSideBlock extends RowNodeBlock {
     protected createBlankRowNode(rowIndex: number): RowNode;
     private createGroupKeys;
     isPixelInRange(pixel: number): boolean;
-    getRowBounds(index: number, virtualRowCount: number): RowBounds;
+    getRowBounds(index: number, virtualRowCount: number): RowBounds | null;
     getRowIndexAtPixel(pixel: number, virtualRowCount: number): number;
     clearRowTops(virtualRowCount: number): void;
     setDisplayIndexes(displayIndexSeq: NumberSequence, virtualRowCount: number, nextRowTop: {
@@ -50,7 +51,6 @@ export declare class ServerSideBlock extends RowNodeBlock {
     getDisplayIndexEnd(): number;
     getBlockHeight(): number;
     getBlockTop(): number;
-    isGroupLevel(): boolean;
+    isGroupLevel(): boolean | undefined;
     getGroupField(): string;
 }
-//# sourceMappingURL=serverSideBlock.d.ts.map

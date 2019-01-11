@@ -1,12 +1,14 @@
 
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {LinkedList} from "./linkedList";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {AnimationQueueEmptyEvent} from "../events";
-import {Events} from "../eventKeys";
-import {EventService} from "../eventService";
-import {_} from "../utils";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { AnimationQueueEmptyEvent } from "../events";
+import { Events } from "../eventKeys";
+import { EventService } from "../eventService";
+
+interface TaskItem {
+    task: () => void;
+    index: number;
+}
 
 @Bean('animationFrameService')
 export class AnimationFrameService {
@@ -14,27 +16,30 @@ export class AnimationFrameService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
 
-    private gridPanel: GridPanel;
-
-    private p1Tasks = new LinkedList<()=>void>();
-    private p2Tasks = new LinkedList<()=>void>();
+    // create tasks are to do with row creation. for them we want to execute according to row order, so we use
+    // TaskItem so we know what index the item is for.
+    private createRowTasks: TaskItem[] = [];
+    // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
+    // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
+    // important.
+    private destroyRowTasks: (() => void)[] = [];
     private ticking = false;
-    private supportsOverflowScrolling: boolean;
 
     private useAnimationFrame: boolean;
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
-    }
+    // we need to know direction of scroll, to build up rows in the direction of
+    // the scroll. eg if user scrolls down, we extend the rows by building down.
+    private scrollGoingDown = true;
+    private lastScrollTop = 0;
 
-    public isSupportsOverflowScrolling(): boolean {
-        return this.supportsOverflowScrolling;
+    public setScrollTop(scrollTop: number): void {
+        this.scrollGoingDown = scrollTop > this.lastScrollTop;
+        this.lastScrollTop = scrollTop;
     }
 
     @PostConstruct
     private init(): void {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
-        this.supportsOverflowScrolling = _.hasOverflowScrolling();
     }
 
     // this method is for our ag-Grid sanity only - if animation frames are turned off,
@@ -42,42 +47,45 @@ export class AnimationFrameService {
     // frames. this stops bugs - where some code is asking for a frame to be executed
     // when it should not.
     private verifyAnimationFrameOn(methodName: string): void {
-        if (this.useAnimationFrame===false) {
+        if (this.useAnimationFrame === false) {
             console.warn(`ag-Grid: AnimationFrameService.${methodName} called but animation frames are off`);
         }
     }
 
-    public addP1Task(task: ()=>void): void {
+    public addP1Task(task: () => void, index: number): void {
         this.verifyAnimationFrameOn('addP1Task');
-        this.p1Tasks.add(task);
+        const taskItem: TaskItem = {task: task, index: index};
+        this.createRowTasks.push(taskItem);
         this.schedule();
     }
 
-    public addP2Task(task: ()=>void): void {
+    public addP2Task(task: () => void): void {
         this.verifyAnimationFrameOn('addP2Task');
-        this.p2Tasks.add(task);
+        this.destroyRowTasks.push(task);
         this.schedule();
     }
 
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
 
-        let frameStart = new Date().getTime();
+        if (this.scrollGoingDown) {
+            this.createRowTasks.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
+        } else {
+            this.createRowTasks.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
+        }
+
+        const frameStart = new Date().getTime();
 
         let duration = (new Date().getTime()) - frameStart;
 
-        let gridPanelNeedsAFrame = true;
-
         // 16ms is 60 fps
-        let noMaxMillis = millis <= 0;
+        const noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (gridPanelNeedsAFrame) {
-                gridPanelNeedsAFrame = this.gridPanel.executeFrame();
-            } else if (!this.p1Tasks.isEmpty()) {
-                let task = this.p1Tasks.remove();
-                task();
-            } else if (!this.p2Tasks.isEmpty()) {
-                let task = this.p2Tasks.remove();
+            if (this.createRowTasks.length > 0) {
+                const taskItem = this.createRowTasks.pop();
+                taskItem.task();
+            } else if (this.destroyRowTasks.length > 0) {
+                const task = this.destroyRowTasks.pop();
                 task();
             } else {
                 break;
@@ -85,7 +93,7 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
+        if (this.createRowTasks.length > 0 || this.destroyRowTasks.length > 0) {
             this.requestFrame();
         } else {
             this.stopTicking();
@@ -94,7 +102,7 @@ export class AnimationFrameService {
 
     private stopTicking(): void {
         this.ticking = false;
-        let event: AnimationQueueEmptyEvent = {
+        const event: AnimationQueueEmptyEvent = {
             type: Events.EVENT_ANIMATION_QUEUE_EMPTY,
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             api: this.gridOptionsWrapper.getApi()
@@ -118,19 +126,18 @@ export class AnimationFrameService {
     private requestFrame(): void {
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
-        let callback = this.executeFrame.bind(this, 60);
+        const callback = this.executeFrame.bind(this, 60);
         if (window.requestAnimationFrame) {
             window.requestAnimationFrame(callback);
         } else if (window.webkitRequestAnimationFrame) {
             window.webkitRequestAnimationFrame(callback);
         } else {
-            setTimeout(callback, 0);
+            window.setTimeout(callback, 0);
         }
     }
 
     public isQueueEmpty(): boolean {
         return this.ticking;
     }
-
 
 }

@@ -38,9 +38,11 @@ var gridOptions = {
         stateCellRenderer: stateCellRenderer
     },
     rowData: rowData,
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowGroupPanelShow: 'always',
-    enableColResize: true,
     animateRows: true,
     groupDefaultExpanded: -1,
     autoGroupColumnDef: {

@@ -1,12 +1,16 @@
-import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from './context/context';
-import {_} from "./utils";
+import { Bean, Autowired } from './context/context';
+import { _ } from "./utils";
 
-let themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
+const themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
 const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
 const themeClass = new RegExp(`ag-(${themes.join('|')})`);
 
 const matGridSize = 8;
-type HardCodedSize = {[key: string]: {[key: string]: number}};
+interface HardCodedSize {
+    [key: string]: {
+        [key: string]: number
+    };
+}
 const freshGridSize = 4;
 const balhamGridSize = 4;
 
@@ -89,11 +93,11 @@ export class Environment {
 
             const userTheme = themeMatch[0];
 
-            let oldThemes = ['ag-fresh','ag-dark','ag-blue','ag-material','ag-bootstrap'];
-            let usingOldTheme = oldThemes.indexOf(userTheme) >= 0;
+            const oldThemes = ['ag-fresh', 'ag-dark', 'ag-blue', 'ag-material', 'ag-bootstrap'];
+            const usingOldTheme = oldThemes.indexOf(userTheme) >= 0;
             if (usingOldTheme) {
-                let newTheme =  userTheme.replace('ag-', 'ag-theme-');
-                _.doOnce( ()=> console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replacement ${userTheme} with ${newTheme}.`), 'using-old-theme');
+                const newTheme =  userTheme.replace('ag-', 'ag-theme-');
+                _.doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replacement ${userTheme} with ${newTheme}.`), 'using-old-theme');
             }
 
             return userTheme;

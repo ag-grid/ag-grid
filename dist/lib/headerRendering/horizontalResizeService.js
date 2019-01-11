@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ var HorizontalResizeService = /** @class */ (function () {
     HorizontalResizeService.prototype.addResizeBar = function (params) {
         var _this = this;
         var dragSource = {
-            dragStartPixels: 0,
+            dragStartPixels: params.dragStartPixels || 0,
             eElement: params.eResizeBar,
             onDragStart: this.onDragStart.bind(this, params),
             onDragStop: this.onDragStop.bind(this, params),

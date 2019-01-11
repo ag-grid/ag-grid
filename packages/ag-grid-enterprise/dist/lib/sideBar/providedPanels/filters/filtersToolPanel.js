@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -42,11 +42,12 @@ var FiltersToolPanel = /** @class */ (function (_super) {
         }
     };
     FiltersToolPanel.prototype.onColumnsChanged = function () {
-        this.getGui().innerHTML = '';
+        var eGui = this.getGui();
+        ag_grid_community_1._.clearElement(eGui);
         this.columnTree = this.columnController.getPrimaryColumnTree();
         var groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.setTemplateFromElement(this.getGui());
+        this.setTemplateFromElement(eGui);
     };
     FiltersToolPanel.prototype.refresh = function () {
     };
@@ -69,7 +70,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
         });
     };
     FiltersToolPanel.prototype.recursivelyAddColumnComps = function (column) {
-        if (column.getColDef() && column.getColDef().suppressFilter) {
+        if (!column.isFilterAllowed()) {
             return;
         }
         var renderedFilter = this.componentResolver.createInternalAgGridComponent(toolPanelFilterComp_1.ToolPanelFilterComp, {

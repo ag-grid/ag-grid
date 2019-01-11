@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Range Selection: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. This is handy for highlighting data or for copying to the clipboard. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. This is handy for highlighting data or for copying to the clipboard. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "range selection javascript grid ag-grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         described above.
     </p>
 
-    <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Ranges with Pinning and Floating</h2>
 
@@ -189,7 +189,7 @@ AddRangeSelectionParams{
         copying it from the clipboard.
     </p>
 
-    <?= example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Range Selection Example - Suppress Multi</h2>
 
@@ -198,7 +198,7 @@ AddRangeSelectionParams{
         one range selection even if ctrl key is held down.
     </p>
 
-    <?= example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 </div>
 

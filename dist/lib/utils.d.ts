@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -29,7 +29,7 @@ export declare class Utils {
         [key: string]: T;
     }): T[];
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
-    static getAbsoluteHeight(el: HTMLElement): number;
+    static getAbsoluteHeight(el: HTMLElement | null): number;
     static getAbsoluteWidth(el: HTMLElement): number;
     static getScrollLeft(element: HTMLElement, rtl: boolean): number;
     static cleanNumber(value: any): number;
@@ -37,10 +37,11 @@ export declare class Utils {
     static decToHex: (number: number, bytes: number) => string;
     static utf8_encode: (s: string) => string;
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
+    static clearElement(el: HTMLElement): void;
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     static iterateObject<T>(object: {
         [p: string]: T;
-    } | T[], callback: (key: string, value: T) => void): void;
+    } | T[] | undefined, callback: (key: string, value: T) => void): void;
     static cloneObject<T>(object: T): T;
     static deepCloneObject<T>(object: T): T;
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult): TResult[];
@@ -50,16 +51,16 @@ export declare class Utils {
     static getAllKeysInObjects(objects: any[]): string[];
     static mergeDeep(dest: any, source: any): void;
     static assign(object: any, ...sources: any[]): any;
-    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date;
-    static serializeDateToYyyyMmDd(date: Date, separator: string): string;
+    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null;
+    static serializeDateToYyyyMmDd(date: Date, separator: string): string | null;
     static pad(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
     static createArrayOfNumbers(first: number, last: number): number[];
     static getFunctionParameters(func: any): any;
     static find<T>(collection: T[] | {
         [id: string]: T;
-    }, predicate: string | boolean | ((item: T) => boolean), value?: any): T;
-    static toStrings<T>(array: T[]): string[];
+    }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null;
+    static toStrings<T>(array: T[]): (string | null)[];
     static iterateArray<T>(array: T[], callback: (item: T, index: number) => void): void;
     static isNode(o: any): boolean;
     static isElement(o: any): boolean;
@@ -67,17 +68,17 @@ export declare class Utils {
     static copyNodeList(nodeList: NodeList): Node[];
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
-    static makeNull<T>(value: T): T;
+    static makeNull<T>(value: T): T | null;
     static missing(value: any): boolean;
-    static missingOrEmpty(value: any[] | string): boolean;
+    static missingOrEmpty(value: any[] | string | undefined): boolean;
     static missingOrEmptyObject(value: any): boolean;
     static exists(value: any, allowEmptyString?: boolean): boolean;
-    static firstExistingValue<A>(...values: A[]): A;
+    static firstExistingValue<A>(...values: A[]): A | null;
     static anyExists(values: any[]): boolean;
-    static existsAndNotEmpty(value: any[]): boolean;
+    static existsAndNotEmpty(value?: any[] | null): boolean;
     static removeAllChildren(node: HTMLElement): void;
     static removeElement(parent: HTMLElement, cssSelector: string): void;
-    static removeFromParent(node: Element): void;
+    static removeFromParent(node: Element | null): void;
     static isVisible(element: HTMLElement): boolean;
     /**
      * loads the template and returns it as an element. makes up for no simple way in
@@ -89,7 +90,7 @@ export declare class Utils {
     static callIfPresent(func: Function): void;
     static addCssClass(element: HTMLElement, className: string): void;
     static containsClass(element: any, className: string): boolean;
-    static getElementAttribute(element: any, attributeName: string): string;
+    static getElementAttribute(element: any, attributeName: string): string | null;
     static offsetHeight(element: HTMLElement): number;
     static offsetWidth(element: HTMLElement): number;
     static sortNumberArray(numberArray: number[]): void;
@@ -106,9 +107,9 @@ export declare class Utils {
     static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
     static insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
     static every<T>(items: T[], callback: (item: T) => boolean): boolean;
-    static toStringOrNull(value: any): string;
-    static formatWidth(width: number | string): string;
-    static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
+    static toStringOrNull(value: any): string | null;
+    static formatSize(size: number | string): string;
+    static formatNumberTwoDecimalPlacesAndCommas(value: number | null): string;
     static formatNumberCommas(value: number): string;
     static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
     static iconNameClassMap: {
@@ -129,6 +130,8 @@ export declare class Utils {
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     static setVisible(element: HTMLElement, visible: boolean): void;
     static setHidden(element: HTMLElement, hidden: boolean): void;
+    static setFixedWidth(element: HTMLElement, width: string | number): void;
+    static setFixedHeight(element: HTMLElement, height: string | number): void;
     static isBrowserIE(): boolean;
     static isBrowserEdge(): boolean;
     static isBrowserSafari(): boolean;
@@ -145,14 +148,14 @@ export declare class Utils {
     static getBodyHeight(): number;
     static setCheckboxState(eCheckbox: any, state: any): void;
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void;
-    static camelCaseToHyphen(str: string): string;
-    static hyphenToCamelCase(str: string): string;
+    static camelCaseToHyphen(str: string): string | null;
+    static hyphenToCamelCase(str: string): string | null;
     static cssStyleObjectToMarkup(stylesToUse: any): string;
     /**
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
      */
     static isNumeric(value: any): boolean;
-    static escape(toEscape: string): string;
+    static escape(toEscape: string | null): string | null;
     /**
      * Mouse wheel (and 2-finger trackpad) support on the web sucks.  It is
      * complicated, thus this doc is long and (hopefully) detailed enough to answer
@@ -311,8 +314,7 @@ export declare class Promise<T> {
     then(func: (result: any) => void): void;
     firstOneOnly(func: (result: any) => void): void;
     map<Z>(adapter: (from: T) => Z): Promise<Z>;
-    resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T) => Z): Z;
+    resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z;
     private onDone;
     private onReject;
 }
-//# sourceMappingURL=utils.d.ts.map

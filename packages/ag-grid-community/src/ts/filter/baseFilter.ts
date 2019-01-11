@@ -1,11 +1,11 @@
-import {Component} from "../widgets/component";
-import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
-import {QuerySelector} from "../widgets/componentAnnotations";
-import {Autowired, Context} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {_} from "../utils";
-import {BaseFloatingFilterChange, FloatingFilterChange} from "./floatingFilter";
-import {INumberFilterParams, ITextFilterParams} from "./textFilter";
+import { Component } from "../widgets/component";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
+import { QuerySelector } from "../widgets/componentAnnotations";
+import { Autowired, Context } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { BaseFloatingFilterChange, FloatingFilterChange } from "./floatingFilter";
+import { INumberFilterParams, ITextFilterParams } from "./textFilter";
+import { _ } from "../utils";
 
 export interface Comparator<T> {
     (left: T, right: T): number;
@@ -58,10 +58,10 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
     public static IN_RANGE = 'inRange';
 
-    public static CONTAINS = 'contains';//1;
-    public static NOT_CONTAINS = 'notContains';//1;
-    public static STARTS_WITH = 'startsWith';//4;
-    public static ENDS_WITH = 'endsWith';//5;
+    public static CONTAINS = 'contains'; //1;
+    public static NOT_CONTAINS = 'notContains'; //1;
+    public static STARTS_WITH = 'startsWith'; //4;
+    public static ENDS_WITH = 'endsWith'; //5;
 
     private newRowsActionKeep: boolean;
 
@@ -106,7 +106,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
         this.filterCondition = this.defaultFilter;
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
-        this.applyActive = ((params.applyButton === true) || ((<any>params).apply === true));
+        this.applyActive = ((params.applyButton === true) || ((params as any).apply === true));
         this.newRowsActionKeep = params.newRowsAction === 'keep';
 
         this.setTemplate(this.generateTemplate());
@@ -121,7 +121,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             this.addDestroyableEventListener(this.eClearButton, "click", this.onClearButton.bind(this));
         }
 
-        let anyButtonVisible: boolean = this.applyActive || this.clearActive;
+        const anyButtonVisible: boolean = this.applyActive || this.clearActive;
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
 
         this.instantiate(this.context);
@@ -150,7 +150,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     public floatingFilter(from: string): void {
         if (from !== '') {
-            let model: M = this.modelFromFloatingFilter(from);
+            const model: M = this.modelFromFloatingFilter(from);
             this.setModel(model);
         } else {
             this.resetState();
@@ -194,11 +194,11 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     public setModel(model: M | CombinedFilter<M>): void {
         if (model) {
-            if (!(<CombinedFilter<M>>model).operator) {
+            if (!(model as CombinedFilter<M>).operator) {
                 this.resetState();
-                this.parse (<M>model, FilterConditionType.MAIN);
+                this.parse (model as M, FilterConditionType.MAIN);
             } else {
-                let asCombinedFilter = <CombinedFilter<M>>model;
+                const asCombinedFilter = model as CombinedFilter<M>;
                 this.parse ((asCombinedFilter).condition1, FilterConditionType.MAIN);
                 this.parse ((asCombinedFilter).condition2, FilterConditionType.CONDITION);
 
@@ -214,10 +214,10 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     private doOnFilterChanged(applyNow: boolean = false): boolean {
         this.filterParams.filterModifiedCallback();
-        let requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
-        let notRequiresApply: boolean = !this.applyActive;
+        const requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
+        const notRequiresApply: boolean = !this.applyActive;
 
-        let shouldFilter: boolean = notRequiresApply || requiresApplyAndIsApplying;
+        const shouldFilter: boolean = notRequiresApply || requiresApplyAndIsApplying;
         if (shouldFilter) {
             this.filterParams.filterChangedCallback();
         }
@@ -234,12 +234,12 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     }
 
     private redrawCondition() {
-        let filterCondition: HTMLElement = <HTMLElement>this.eFilterBodyWrapper.querySelector('.ag-filter-condition');
+        const filterCondition: HTMLElement = this.eFilterBodyWrapper.querySelector('.ag-filter-condition') as HTMLElement;
         if (!filterCondition && this.isFilterActive() && this.acceptsBooleanLogic()) {
             this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
             this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
             this.wireQuerySelectors();
-            let {andButton, orButton} = this.refreshOperatorUi();
+            const {andButton, orButton} = this.refreshOperatorUi();
 
             this.addDestroyableEventListener(andButton, 'change', () => {
                 this.conditionValue = 'AND';
@@ -262,8 +262,8 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     }
 
     private refreshOperatorUi() {
-        let andButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.and');
-        let orButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.or');
+        const andButton: HTMLInputElement = this.eConditionWrapper.querySelector('.and') as HTMLInputElement;
+        const orButton: HTMLInputElement = this.eConditionWrapper.querySelector('.or') as HTMLInputElement;
         this.conditionValue = this.conditionValue == null ? 'AND' : this.conditionValue;
 
         andButton.checked = this.conditionValue === 'AND';
@@ -273,13 +273,13 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
-        let casted: BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
-        if ( casted == null) {
+        const casted: BaseFloatingFilterChange<M> = change as BaseFloatingFilterChange<M>;
+        if (casted == null) {
             this.setModel(null);
         } else if (! this.isFilterConditionActive(FilterConditionType.CONDITION)) {
             this.setModel(casted ? casted.model : null);
         } else {
-            let combinedFilter :CombinedFilter<M> = {
+            const combinedFilter :CombinedFilter<M> = {
                 condition1: casted.model,
                 condition2: this.serialize(FilterConditionType.CONDITION),
                 operator: this.conditionValue
@@ -295,9 +295,9 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     }
 
     private generateTemplate(): string {
-        let translate = this.translate.bind(this);
-        let mainConditionBody = this.createConditionBody(FilterConditionType.MAIN);
-        let bodyWithBooleanLogic: string = ! this.acceptsBooleanLogic() ?
+        const translate = this.translate.bind(this);
+        const mainConditionBody = this.createConditionBody(FilterConditionType.MAIN);
+        const bodyWithBooleanLogic: string = ! this.acceptsBooleanLogic() ?
             mainConditionBody :
             this.wrapCondition (mainConditionBody);
 
@@ -315,7 +315,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     }
 
     public wrapCondition(mainCondition:string): string {
-        if (!this.isFilterActive()) return mainCondition;
+        if (!this.isFilterActive()) { return mainCondition; }
         return  `${mainCondition}${this.createConditionTemplate(FilterConditionType.CONDITION)}`;
     }
 
@@ -328,12 +328,12 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     }
 
     private createConditionBody(type:FilterConditionType): string {
-        let body: string = this.bodyTemplate(type);
+        const body: string = this.bodyTemplate(type);
         return this.generateFilterHeader(type) + body;
     }
 
     public translate(toTranslate: string): string {
-        let translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
 
@@ -365,12 +365,12 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
     public abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
 
     doesFilterPass(params: IDoesFilterPassParams): boolean {
-        let mainFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
+        const mainFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
         if (this.eTypeConditionSelector == null) {
             return mainFilterResult;
         }
 
-        let auxFilterResult = this.individualFilterPasses(params, FilterConditionType.CONDITION);
+        const auxFilterResult = this.individualFilterPasses(params, FilterConditionType.CONDITION);
         return this.conditionValue === 'AND' ? mainFilterResult && auxFilterResult : mainFilterResult || auxFilterResult;
     }
 
@@ -390,17 +390,17 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
     }
 
     public generateFilterHeader(type:FilterConditionType): string {
-        let defaultFilterTypes = this.getApplicableFilterTypes();
-        let restrictedFilterTypes = this.filterParams.filterOptions;
-        let actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
+        const defaultFilterTypes = this.getApplicableFilterTypes();
+        const restrictedFilterTypes = this.filterParams.filterOptions;
+        const actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
 
-        let optionsHtml: string[] = actualFilterTypes.map(filterType => {
-            let localeFilterName = this.translate(filterType);
+        const optionsHtml: string[] = actualFilterTypes.map(filterType => {
+            const localeFilterName = this.translate(filterType);
             return `<option value="${filterType}">${localeFilterName}</option>`;
         });
 
-        let readOnly = optionsHtml.length == 1 ? 'disabled' : '';
-        let id:string = type == FilterConditionType.MAIN ? 'filterType' : 'filterConditionType';
+        const readOnly = optionsHtml.length == 1 ? 'disabled' : '';
+        const id:string = type == FilterConditionType.MAIN ? 'filterType' : 'filterConditionType';
 
         return optionsHtml.length <= 0 ?
             '' :
@@ -414,10 +414,10 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
     public initialiseFilterBodyUi(type:FilterConditionType) {
         if (type === FilterConditionType.MAIN) {
             this.setFilterType(this.filter, type);
-            this.addDestroyableEventListener(this.eTypeSelector, "change", ()=>this.onFilterTypeChanged (type));
+            this.addDestroyableEventListener(this.eTypeSelector, "change", () => this.onFilterTypeChanged (type));
         } else {
             this.setFilterType(this.filterCondition, type);
-            this.addDestroyableEventListener(this.eTypeConditionSelector, "change", ()=>this.onFilterTypeChanged (type));
+            this.addDestroyableEventListener(this.eTypeConditionSelector, "change", () => this.onFilterTypeChanged (type));
         }
     }
 
@@ -447,9 +447,9 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
     }
 
     public isFilterActive(): boolean {
-        let rawFilterValues = this.filterValues(FilterConditionType.MAIN);
+        const rawFilterValues = this.filterValues(FilterConditionType.MAIN);
         if (rawFilterValues && this.filter === BaseFilter.IN_RANGE) {
-            let filterValueArray = (<T[]>rawFilterValues);
+            const filterValueArray = (rawFilterValues as T[]);
             return filterValueArray[0] != null && filterValueArray[1] != null;
         } else {
             return rawFilterValues != null;
@@ -460,12 +460,12 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
         if (type === FilterConditionType.MAIN) {
             this.filter = filterType;
 
-            if (!this.eTypeSelector) return;
+            if (!this.eTypeSelector) { return; }
             this.eTypeSelector.value = filterType;
         } else {
             this.filterCondition = filterType;
 
-            if (!this.eTypeConditionSelector) return;
+            if (!this.eTypeConditionSelector) { return; }
             this.eTypeConditionSelector.value = filterType;
 
         }
@@ -507,33 +507,33 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     private nullComparator(type: string): Comparator<T> {
         return (filterValue: T, gridValue: T): number => {
             if (gridValue == null) {
-                let nullValue = this.translateNull (type);
+                const nullValue = this.translateNull (type);
                 if (this.filter === BaseFilter.EQUALS) {
-                    return nullValue? 0 : 1;
+                    return nullValue ? 0 : 1;
                 }
 
                 if (this.filter === BaseFilter.GREATER_THAN) {
-                    return nullValue? 1 : -1;
+                    return nullValue ? 1 : -1;
                 }
 
                 if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
-                    return nullValue? 1 : -1;
+                    return nullValue ? 1 : -1;
                 }
 
                 if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
-                    return nullValue? -1 : 1;
+                    return nullValue ? -1 : 1;
                 }
 
                 if (this.filter === BaseFilter.LESS_THAN) {
-                    return nullValue? -1 : 1;
+                    return nullValue ? -1 : 1;
                 }
 
                 if (this.filter === BaseFilter.NOT_EQUAL) {
-                    return nullValue? 1 : 0;
+                    return nullValue ? 1 : 0;
                 }
             }
 
-            let actualComparator: Comparator<T> = this.comparator();
+            const actualComparator: Comparator<T> = this.comparator();
             return actualComparator (filterValue, gridValue);
         };
     }
@@ -543,16 +543,16 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     }
 
     private translateNull(type: string): boolean {
-        let reducedType: string =
-            type.indexOf('greater') > -1 ? 'greaterThan':
-            type.indexOf('lessThan') > -1 ? 'lessThan':
+        const reducedType: string =
+            type.indexOf('greater') > -1 ? 'greaterThan' :
+            type.indexOf('lessThan') > -1 ? 'lessThan' :
             'equals';
 
-        if (this.filterParams.nullComparator && (<any>this.filterParams.nullComparator)[reducedType]) {
-            return (<any>this.filterParams.nullComparator)[reducedType];
+        if (this.filterParams.nullComparator && (this.filterParams.nullComparator as any)[reducedType]) {
+            return (this.filterParams.nullComparator as any)[reducedType];
         }
 
-        return (<any>ScalarBaseFilter.DEFAULT_NULL_COMPARATOR)[reducedType];
+        return (ScalarBaseFilter.DEFAULT_NULL_COMPARATOR as any)[reducedType];
     }
 
     individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType) {
@@ -560,16 +560,16 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     }
 
     private doIndividualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType, filter: string) {
-        let value: any = this.filterParams.valueGetter(params.node);
-        let comparator: Comparator<T> = this.nullComparator (filter);
+        const value: any = this.filterParams.valueGetter(params.node);
+        const comparator: Comparator<T> = this.nullComparator (filter);
 
-        let rawFilterValues: T[] | T= this.filterValues(type);
-        let from: T= Array.isArray(rawFilterValues) ? rawFilterValues[0]: rawFilterValues;
+        const rawFilterValues: T[] | T = this.filterValues(type);
+        const from: T = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
         if (from == null) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         }
 
-        let compareResult = comparator(from, value);
+        const compareResult = comparator(from, value);
 
         if (filter === BaseFilter.EQUALS) {
             return compareResult === 0;
@@ -596,7 +596,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         }
 
         //From now on the type is a range and rawFilterValues must be an array!
-        let compareToResult: number = comparator((<T[]>rawFilterValues)[1], value);
+        const compareToResult: number = comparator((rawFilterValues as T[])[1], value);
         if (filter === BaseFilter.IN_RANGE) {
             if (!this.filterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;

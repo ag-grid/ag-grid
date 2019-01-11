@@ -48,14 +48,14 @@ function getPinnedBottomData() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: rowData,
-    enableColResize: true,
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
-    defaultColDef: {
-        editable: true
-    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     },

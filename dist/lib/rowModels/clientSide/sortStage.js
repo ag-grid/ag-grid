@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,17 +18,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var sortService_1 = require("../../rowNodes/sortService");
+var sortController_1 = require("../../sortController");
+var utils_1 = require("../../utils");
 var SortStage = /** @class */ (function () {
     function SortStage() {
     }
     SortStage.prototype.execute = function (params) {
-        // if the sorting is already done by the server, then we should not do it here
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            this.sortService.sort(params.rowNode, null);
-        }
-        else {
-            this.sortService.sortAccordingToColumnsState(params.rowNode);
-        }
+        var sortOptions = this.sortController.getSortForRowController();
+        var sortActive = utils_1._.exists(sortOptions) && sortOptions.length > 0;
+        var deltaSort = sortActive
+            && utils_1._.exists(params.rowNodeTransactions)
+            // in time we can remove this check, so that delta sort is always
+            // on if transactions are present. it's off for now so that we can
+            // selectively turn it on and test it with some select users before
+            // rolling out to everyone.
+            && this.gridOptionsWrapper.isDeltaSort();
+        // we only need dirty nodes if doing delta sort
+        var dirtyLeafNodes = deltaSort ?
+            this.calculateDirtyNodes(params.rowNodeTransactions) : null;
+        this.sortService.sort(params.rowNode, sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath);
+    };
+    SortStage.prototype.calculateDirtyNodes = function (rowNodeTransactions) {
+        var dirtyNodes = {};
+        var addNodesFunc = function (rowNodes) {
+            if (rowNodes) {
+                rowNodes.forEach(function (rowNode) { return dirtyNodes[rowNode.id] = true; });
+            }
+        };
+        // all leaf level nodes in the transaction were impacted
+        rowNodeTransactions.forEach(function (tran) {
+            addNodesFunc(tran.add);
+            addNodesFunc(tran.update);
+            addNodesFunc(tran.remove);
+        });
+        return dirtyNodes;
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
@@ -38,6 +61,10 @@ var SortStage = /** @class */ (function () {
         context_1.Autowired('sortService'),
         __metadata("design:type", sortService_1.SortService)
     ], SortStage.prototype, "sortService", void 0);
+    __decorate([
+        context_1.Autowired('sortController'),
+        __metadata("design:type", sortController_1.SortController)
+    ], SortStage.prototype, "sortController", void 0);
     SortStage = __decorate([
         context_1.Bean('sortStage')
     ], SortStage);

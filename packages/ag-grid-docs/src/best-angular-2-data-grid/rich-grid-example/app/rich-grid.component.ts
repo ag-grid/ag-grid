@@ -15,6 +15,12 @@ export class RichGridComponent {
 
     private gridOptions: GridOptions;
     private icons: any;
+    private defaultColDef: any = {
+        sortable: true,
+        filter: true,
+        resizable: true
+    };
+
     public rowData: any[];
     public columnDefs: any[];
     public rowCount: string;
@@ -81,7 +87,7 @@ export class RichGridComponent {
                 headerName: '#',
                 width: 30,
                 checkboxSelection: true,
-                suppressSorting: true,
+                sortable: false,
                 suppressMenu: true,
                 pinned: true
             },

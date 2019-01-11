@@ -8,7 +8,7 @@ include '../jira_reports/jira_utilities.php';
 <html lang="en">
 <head lang="en">
     <?php
-    meta_and_links("ag-Grid: Pipeline of Upcoming Features and Roadmap", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 16 is out now.", false);
+    meta_and_links("ag-Grid: Pipeline of Upcoming Features and Roadmap", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 19 is out now.", false);
     ?>
     <link rel="stylesheet" href="../dist/homepage.css">
     <link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">
@@ -83,7 +83,7 @@ function extractMoreInformationMap($data)
 <div class="info-page" id="page-pipeline">
     <div class="row">
         <section>
-            <h1>Next Release Target: TBD - 19.1.0 just released</h1>
+            <h1>Next Release Target: TBD - 19.1.2 just released</h1>
 
             <div class="note">
                 <p>
@@ -130,31 +130,31 @@ function extractMoreInformationMap($data)
                 <ul class="nav nav-tabs inner-nav">
                     <li class="nav-item">
                         <a href="#release" class="report-link nav-link active">Next Release
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items targeted to be in the next release" aria-hidden="true"></i>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#bugs" class="report-link nav-link">Bugs
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items reported via Zendesk/Github - these are prioritised above Feature Requests"
                                aria-hidden="true"></i>
                         </a></li>
                     <li class="nav-item">
                         <a href="#fr" class="report-link nav-link">Standard Feature Requests
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items that can be addressed on their own. These are recorded in a backlog and prioritised"
                                aria-hidden="true"></i>
                         </a></li>
                     <li class="nav-item">
                         <a href="#epics" class="report-link nav-link">Complex Feature Requests
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items that we group into Epics. We then prioritise based on the Epic rather than the individual feature request"
                                aria-hidden="true"></i>
                         </a></li>
                     <li class="nav-item">
                         <a href="#parked" class="report-link nav-link">Parked Items
-                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover"
+                            <i class="far fa-question-circle" data-toggle="popover" data-trigger="hover"
                                data-content="Items parked for the immediate due to complexity/relevance to our entire user base"
                                aria-hidden="true"></i>
                         </a></li>

@@ -14,11 +14,11 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-      width: 150
+      width: 150,
+      sortable: true,
+      resizable: true
     },
     enableRangeSelection: true,
-    enableSorting: true,
-    enableColResize: true,
     autoGroupColumnDef: {
         headerName: 'Athlete',
         width: 300,

@@ -1,18 +1,18 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var gridRow_1 = require("./gridRow");
+var utils_1 = require("../utils");
 var GridCell = /** @class */ (function () {
     function GridCell(gridCellDef) {
         this.rowIndex = gridCellDef.rowIndex;
         this.column = gridCellDef.column;
-        this.floating = utils_1.Utils.makeNull(gridCellDef.floating);
+        this.floating = utils_1._.makeNull(gridCellDef.floating);
     }
     GridCell.prototype.getGridCellDef = function () {
         return {

@@ -57,5 +57,4 @@ export default {
         Defining VueJS Components</a> for all the options), but in this example we're going to define our editor as a
     Single File Component:</p>
 
-<?//= ex ample('Editor Components with VueJS', 'vue-editor', 'as-is', array("noPlunker" => 1, "exampleHeight" => 380)) ?>
 <?= example('Vue Editor Components', 'component-editor', 'generated', array('enterprise' => 1, "exampleHeight" => 370, "processVue" => true, 'onlyShow' => 'vue', 'extras' => array("bootstrap"))) ?>

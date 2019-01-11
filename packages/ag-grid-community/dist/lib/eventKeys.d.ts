@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -112,4 +112,3 @@ export declare class Events {
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;
     static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: string;
 }
-//# sourceMappingURL=eventKeys.d.ts.map

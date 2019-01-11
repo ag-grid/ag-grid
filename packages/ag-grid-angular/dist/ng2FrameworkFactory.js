@@ -12,7 +12,7 @@ var Ng2FrameworkFactory = /** @class */ (function () {
     };
     Ng2FrameworkFactory.prototype.setTimeout = function (action, timeout) {
         this._ngZone.runOutsideAngular(function () {
-            setTimeout(function () {
+            window.setTimeout(function () {
                 action();
             }, timeout);
         });

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -31,7 +31,7 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private isSortModelDifferent;
     destroy(): void;
     getType(): string;
-    setDatasource(datasource: IDatasource): void;
+    setDatasource(datasource: IDatasource | undefined): void;
     private checkForDeprecated;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
@@ -41,8 +41,8 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private resetCache;
     private destroyCache;
     private onCacheUpdated;
-    getRow(rowIndex: number): RowNode;
-    getRowNode(id: string): RowNode;
+    getRow(rowIndex: number): RowNode | null;
+    getRowNode(id: string): RowNode | null;
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     getCurrentPageHeight(): number;
     getRowIndexAtPixel(pixel: number): number;
@@ -53,9 +53,8 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     isRowPresent(rowNode: RowNode): boolean;
     refreshCache(): void;
     purgeCache(): void;
-    getVirtualRowCount(): number;
-    isMaxRowFound(): boolean;
+    getVirtualRowCount(): number | null;
+    isMaxRowFound(): boolean | undefined;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
     getBlockState(): any;
 }
-//# sourceMappingURL=infiniteRowModel.d.ts.map

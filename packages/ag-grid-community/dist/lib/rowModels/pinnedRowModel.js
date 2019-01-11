@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,13 +19,11 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var rowNode_1 = require("../entities/rowNode");
 var context_1 = require("../context/context");
 var eventService_1 = require("../eventService");
-var context_2 = require("../context/context");
 var events_1 = require("../events");
-var context_3 = require("../context/context");
 var constants_1 = require("../constants");
-var utils_1 = require("../utils");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
+var utils_1 = require("../utils");
 var PinnedRowModel = /** @class */ (function () {
     function PinnedRowModel() {
     }
@@ -35,14 +33,14 @@ var PinnedRowModel = /** @class */ (function () {
     };
     PinnedRowModel.prototype.isEmpty = function (floating) {
         var rows = floating === constants_1.Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
-        return utils_1.Utils.missingOrEmpty(rows);
+        return utils_1._.missingOrEmpty(rows);
     };
     PinnedRowModel.prototype.isRowsToRender = function (floating) {
         return !this.isEmpty(floating);
     };
     PinnedRowModel.prototype.getRowAtPixel = function (pixel, floating) {
         var rows = floating === constants_1.Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (utils_1.Utils.missingOrEmpty(rows)) {
+        if (utils_1._.missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (var i = 0; i < rows.length; i++) {
@@ -115,13 +113,13 @@ var PinnedRowModel = /** @class */ (function () {
         return this.pinnedBottomRows[index];
     };
     PinnedRowModel.prototype.forEachPinnedTopRow = function (callback) {
-        if (utils_1.Utils.missingOrEmpty(this.pinnedTopRows)) {
+        if (utils_1._.missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     };
     PinnedRowModel.prototype.forEachPinnedBottomRow = function (callback) {
-        if (utils_1.Utils.missingOrEmpty(this.pinnedBottomRows)) {
+        if (utils_1._.missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -139,27 +137,27 @@ var PinnedRowModel = /** @class */ (function () {
         }
     };
     __decorate([
-        context_2.Autowired('gridOptionsWrapper'),
+        context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], PinnedRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_2.Autowired('eventService'),
+        context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], PinnedRowModel.prototype, "eventService", void 0);
     __decorate([
-        context_2.Autowired('context'),
+        context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], PinnedRowModel.prototype, "context", void 0);
     __decorate([
-        context_2.Autowired('columnApi'),
+        context_1.Autowired('columnApi'),
         __metadata("design:type", columnApi_1.ColumnApi)
     ], PinnedRowModel.prototype, "columnApi", void 0);
     __decorate([
-        context_2.Autowired('gridApi'),
+        context_1.Autowired('gridApi'),
         __metadata("design:type", gridApi_1.GridApi)
     ], PinnedRowModel.prototype, "gridApi", void 0);
     __decorate([
-        context_3.PostConstruct,
+        context_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)

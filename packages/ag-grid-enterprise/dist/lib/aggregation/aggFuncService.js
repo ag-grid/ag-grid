@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -45,7 +45,7 @@ var AggFuncService = /** @class */ (function () {
             return AggFuncService_1.AGG_SUM;
         }
         else {
-            if (ag_grid_community_1.Utils.existsAndNotEmpty(allKeys)) {
+            if (ag_grid_community_1._.existsAndNotEmpty(allKeys)) {
                 return allKeys[0];
             }
             else {
@@ -54,7 +54,7 @@ var AggFuncService = /** @class */ (function () {
         }
     };
     AggFuncService.prototype.addAggFuncs = function (aggFuncs) {
-        ag_grid_community_1.Utils.iterateObject(aggFuncs, this.addAggFunc.bind(this));
+        ag_grid_community_1._.iterateObject(aggFuncs, this.addAggFunc.bind(this));
     };
     AggFuncService.prototype.addAggFunc = function (key, aggFunc) {
         this.init();
@@ -66,7 +66,7 @@ var AggFuncService = /** @class */ (function () {
     };
     AggFuncService.prototype.getFuncNames = function (column) {
         var userAllowedFuncs = column.getColDef().allowedAggFuncs;
-        if (ag_grid_community_1._.exists(userAllowedFuncs)) {
+        if (ag_grid_community_1._.exists(userAllowedFuncs) && userAllowedFuncs) {
             return userAllowedFuncs;
         }
         else {
@@ -174,7 +174,7 @@ function aggCount(input) {
     };
     var length = input.length;
     for (var i = 0; i < length; i++) {
-        var isGroupAgg = ag_grid_community_1.Utils.exists(input[i]) && typeof input[i].value === 'number';
+        var isGroupAgg = ag_grid_community_1._.exists(input[i]) && typeof input[i].value === 'number';
         if (isGroupAgg) {
             result.value += input[i].value;
         }
@@ -193,7 +193,7 @@ function aggAvg(input) {
     var length = input.length;
     for (var i = 0; i < length; i++) {
         var currentItem = input[i];
-        var itemIsGroupResult = ag_grid_community_1.Utils.exists(currentItem) && typeof currentItem.value === 'number' && typeof currentItem.count === 'number';
+        var itemIsGroupResult = ag_grid_community_1._.exists(currentItem) && typeof currentItem.value === 'number' && typeof currentItem.count === 'number';
         // skip values that are not numbers (ie skip empty values)
         if (typeof currentItem === 'number') {
             sum += currentItem;

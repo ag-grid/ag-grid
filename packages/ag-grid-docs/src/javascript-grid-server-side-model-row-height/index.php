@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
-<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Server-side Row Model.
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <note>
     Purging the cache and auto row heights do not work together for the Server-side Row Model.
@@ -58,7 +58,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a>.
+    Continue to the next section to learn how to combine
+    <a href="../javascript-grid-server-side-model-master-detail/">Master Detail</a> with the Server-side Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

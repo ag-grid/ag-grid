@@ -1,31 +1,47 @@
 import parser, {recognizedDomEvents} from './vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
+function getFunctionName(code) {
+    let matches = /function ([^\(]*)/.exec(code);
+    return matches && matches.length === 2 ? matches[1] : null;
+}
+
+function isInstanceMethod(instance: any, property: any) {
+    const instanceMethods = instance.map(getFunctionName);
+    return instanceMethods.filter(methodName => methodName === property.name).length > 0;
+}
+
 function indexTemplate(bindings, componentFilenames) {
     const imports = [];
     const propertyAssignments = [];
     const componentAttributes = [];
 
-    bindings.properties.forEach( property => {
-        if (property.value === 'null') {
-            return;
-        }
-
-        if(componentFilenames.length > 0 && property.name === "components") {
+    const instanceBindings = [];
+    bindings.properties.filter(property => property.name != 'onGridReady').forEach(property => {
+        if (componentFilenames.length > 0 && property.name === "components") {
             property.name = "frameworkComponents";
         }
 
         if (property.value === 'true' || property.value === 'false') {
             componentAttributes.push(`${property.name}={${property.value}}`);
+        } else if (property.value === null) {
+            componentAttributes.push(`${property.name}={this.${property.name}}`);
         } else {
-            propertyAssignments.push(`${property.name}: ${property.value}`);
-            componentAttributes.push(`${property.name}={this.state.${property.name}}`);
+            // for when binding a method
+            // see javascript-grid-keyboard-navigation for an example
+            // tabToNextCell needs to be bound to the react component
+            if(isInstanceMethod(bindings.instance, property)) {
+                instanceBindings.push(`this.${property.name}=${property.value}`);
+            } else {
+                propertyAssignments.push(`${property.name}: ${property.value}`);
+                componentAttributes.push(`${property.name}={this.state.${property.name}}`);
+            }
         }
     });
 
     const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
 
-    componentAttributes.push('onGridReady={this.onGridReady.bind(this)}');
+    componentAttributes.push('onGridReady={this.onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
     const additional = [];
@@ -47,9 +63,13 @@ function indexTemplate(bindings, componentFilenames) {
 
     if (bindings.data) {
         let setRowDataBlock = bindings.data.callback;
-        if(bindings.data.callback.indexOf('api.setRowData') !== -1) {
-            propertyAssignments.push('rowData: []');
-            componentAttributes.push('rowData={this.state.rowData}');
+        if (bindings.data.callback.indexOf('api.setRowData') !== -1) {
+            if (propertyAssignments.filter(item => item.indexOf('rowData') !== -1).length === 0) {
+                propertyAssignments.push('rowData: []');
+            }
+            if (componentAttributes.filter(item => item.indexOf('rowData') !== -1).length === 0) {
+                componentAttributes.push('rowData={this.state.rowData}');
+            }
 
             setRowDataBlock = bindings.data.callback.replace("params.api.setRowData(data);", "this.setState({ rowData: data });");
         }
@@ -80,7 +100,6 @@ function indexTemplate(bindings, componentFilenames) {
     const agGridTag = `<div 
                 id="myGrid"
                 style={{
-                    boxSizing: 'border-box', 
                     height: '${bindings.gridSettings.height}', 
                     width: '${bindings.gridSettings.width}'}} 
                     className="${bindings.gridSettings.theme}">
@@ -105,6 +124,7 @@ function indexTemplate(bindings, componentFilenames) {
 
     const eventHandlers = bindings.eventHandlers.map(event => event.handler.replace(/^function /, ''));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
+    const instance = bindings.instance.map(body => body.replace(/^function /, ''));
 
     const style = bindings.gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
 
@@ -123,9 +143,11 @@ class GridExample extends Component {
         this.state = {
             ${propertyAssignments.join(',\n    ')}
         };
+        
+        ${instanceBindings.join(';\n    ')}
     }
 
-    onGridReady(params) {
+    onGridReady = (params) => {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
         ${additionalInReady.join('\n')}
@@ -140,7 +162,7 @@ ${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
         );
     }
     
-    ${bindings.instance.join('\\\\n')}
+    ${instance.join('\n')}
 }
 
 ${bindings.utils.join('\n')}
@@ -152,8 +174,8 @@ render(
 `;
 }
 
-export function vanillaToReact(src, gridSettings, componentFilenames) {
-    const bindings = parser(src, gridSettings);
+export function vanillaToReact(js, html, exampleSettings, componentFilenames) {
+    const bindings = parser(js, html, exampleSettings);
     return indexTemplate(bindings, componentFilenames);
 }
 

@@ -1,4 +1,4 @@
-import {Bean} from "./context/context";
+import { Bean } from "./context/context";
 
 @Bean("downloader")
 export class Downloader {
@@ -8,7 +8,7 @@ export class Downloader {
 
         // Internet Explorer
         if (window.navigator.msSaveOrOpenBlob) {
-            let blobObject = new Blob(["\ufeff", content], {
+            const blobObject = new Blob(["\ufeff", content], {
                 type: mimeType
             });
             window.navigator.msSaveOrOpenBlob(blobObject, fileName);

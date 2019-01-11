@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IAggFunc } from "../entities/colDef";
@@ -9,6 +9,5 @@ export interface IAggFuncService {
     }): void;
     addAggFunc(key: string, aggFunc: IAggFunc): void;
     clear(): void;
-    getDefaultAggFunc(column: Column): string;
+    getDefaultAggFunc(column: Column): string | null;
 }
-//# sourceMappingURL=iAggFuncService.d.ts.map

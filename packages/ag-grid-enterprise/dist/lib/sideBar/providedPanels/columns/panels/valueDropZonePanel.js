@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -43,7 +43,7 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         var title = localeTextFunc('values', 'Values');
         _super.prototype.init.call(this, {
             dragAndDropIcon: main_1.DragAndDropService.ICON_AGGREGATE,
-            icon: main_1.Utils.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
+            icon: main_1._.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });

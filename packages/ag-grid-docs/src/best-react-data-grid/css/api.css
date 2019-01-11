@@ -1,0 +1,72 @@
+.api {
+    display: none;
+}
+
+@media only screen and (min-width: 1100px) {
+    .api {
+        display: block;
+    }
+
+    .api .container {
+        display: grid;
+        grid-template-columns: auto 500px;
+        column-gap: 40px;
+        margin: 0 auto;
+    }
+
+    .api .grid-container {
+        height: 500px;
+    }
+
+    .api-operations {
+        list-style: none;
+        margin-top: 15px;
+    }
+
+    .api-operations li {
+        cursor: pointer;
+        line-height: 25px;
+        padding-left: 20px;
+    }
+
+    .api-operations li:before {
+        content: "\f0a4";
+        font-family: FontAwesome;
+        display: inline-block;
+        margin-left: -20px;
+        width: 25px;
+    }
+
+    .api-operations li:hover {
+        color: #18a3fa;
+    }
+
+    .api-operations li.active {
+        color: #18a3fa;
+        font-weight: 600;
+    }
+
+    .api-methods-container {
+        /* h4 height with padding */
+        padding-top: 66px;
+        position: relative;
+    }
+
+    .api-methods-container img {
+        width: 170px;
+        position: absolute;
+        right: 20px;
+        top: 210px;
+    }
+
+    .api-code {
+        margin-bottom: 30px;
+        font-size: 14px;
+        padding: 10px 20px;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        min-height: 90px;
+        border: 1px solid #e3e2e2;
+    }
+}

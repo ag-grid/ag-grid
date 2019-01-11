@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Component, GridOptionsWrapper } from "ag-grid-community";
 export interface VirtualListModel {
     getRowCount(): number;
@@ -29,4 +29,3 @@ export declare class VirtualList extends Component {
     private addScrollListener;
     setModel(model: VirtualListModel): void;
 }
-//# sourceMappingURL=virtualList.d.ts.map

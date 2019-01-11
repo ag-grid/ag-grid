@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelCell, _, ExcelColumn} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, _ } from 'ag-grid-community';
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
@@ -47,7 +47,7 @@ const getMergedCells = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
     return mergedCells;
 };
 
-const getExcelColumnName = (colIdx: number): string => {
+export const getExcelColumnName = (colIdx: number): string => {
     const startCode = 65;
     const tableWidth = 26;
     const fromCharCode = String.fromCharCode;
@@ -55,9 +55,9 @@ const getExcelColumnName = (colIdx: number): string => {
     const pos = Math.floor(colIdx / tableWidth);
     const tableIdx = colIdx % tableWidth;
 
-    if (!pos || colIdx === tableWidth) return fromCharCode(startCode + colIdx - 1);
-    if (!tableIdx) return getExcelColumnName(pos - 1) + 'Z';
-    if (pos < tableWidth) return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1);
+    if (!pos || colIdx === tableWidth) { return fromCharCode(startCode + colIdx - 1); }
+    if (!tableIdx) { return getExcelColumnName(pos - 1) + 'Z'; }
+    if (pos < tableWidth) { return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1); }
 
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
@@ -69,18 +69,23 @@ const worksheetFactory: ExcelOOXMLTemplate = {
 
         const mergedCells = getMergedCells(rows, columns);
 
-        const children = [].concat(
-            columns.length ? {
+        const children = [];
+        if (columns.length) {
+            children.push({
                 name: 'cols',
                 children: _.map(columns, columnFactory.getTemplate)
-            } : []
-        ).concat(
-            rows.length ? {
+            });
+        }
+
+        if (rows.length) {
+            children.push({
                 name: 'sheetData',
                 children: _.map(rows, rowFactory.getTemplate)
-            } : []
-        ).concat(
-            mergedCells.length ? {
+            });
+        }
+
+        if (mergedCells.length) {
+            children.push({
                 name: 'mergeCells',
                 properties: {
                     rawMap: {
@@ -88,8 +93,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
                     }
                 },
                 children: _.map(mergedCells, mergeCell.getTemplate)
-            } : []
-        );
+            });
+        }
 
         return {
             name: "worksheet",

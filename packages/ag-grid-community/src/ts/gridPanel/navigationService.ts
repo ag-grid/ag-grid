@@ -1,17 +1,16 @@
-
-import {Autowired, Bean, Optional, PostConstruct} from "../context/context";
-import {GridCell, GridCellDef} from "../entities/gridCell";
-import {Constants} from "../constants";
-import {MouseEventService} from "./mouseEventService";
-import {PaginationProxy} from "../rowModels/paginationProxy";
-import {Column} from "../entities/column";
-import {FocusedCellController} from "../focusedCellController";
-import {_} from "../utils";
-import {GridPanel} from "./gridPanel";
-import {AnimationFrameService} from "../misc/animationFrameService";
-import {IRangeController} from "../interfaces/iRangeController";
-import {ColumnController} from "../columnController/columnController";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
+import { GridCell, GridCellDef } from "../entities/gridCell";
+import { Constants } from "../constants";
+import { MouseEventService } from "./mouseEventService";
+import { PaginationProxy } from "../rowModels/paginationProxy";
+import { Column } from "../entities/column";
+import { FocusedCellController } from "../focusedCellController";
+import { GridPanel } from "./gridPanel";
+import { AnimationFrameService } from "../misc/animationFrameService";
+import { IRangeController } from "../interfaces/iRangeController";
+import { ColumnController } from "../columnController/columnController";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from "../utils";
 
 @Bean('navigationService')
 export class NavigationService {
@@ -40,11 +39,11 @@ export class NavigationService {
 
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
 
-        let key = event.which || event.keyCode;
-        let alt = event.altKey;
-        let ctrl = event.ctrlKey;
+        const key = event.which || event.keyCode;
+        const alt = event.altKey;
+        const ctrl = event.ctrlKey;
 
-        let currentCell: GridCellDef = this.mouseEventService.getGridCellForEvent(event).getGridCellDef();
+        const currentCell: GridCellDef = this.mouseEventService.getGridCellForEvent(event).getGridCellDef();
         if (!currentCell) { return false; }
 
         let processed = false;
@@ -105,8 +104,8 @@ export class NavigationService {
     // held down on key, we ignore page up/down events until 100ms has passed,
     // which effectively empties the queue of page up/down events.
     private isTimeSinceLastPageEventToRecent(): boolean {
-        let now = new Date().getTime();
-        let diff = now - this.timeLastPageEventProcessed;
+        const now = new Date().getTime();
+        const diff = now - this.timeLastPageEventProcessed;
         return (diff < 100);
     }
 
@@ -118,24 +117,24 @@ export class NavigationService {
 
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
-        let scrollPosition = this.gridPanel.getVScrollPosition();
+        const scrollPosition = this.gridPanel.getVScrollPosition();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.gridPanel.isHorizontalScrollShowing()) {
             pixelsInOnePage -= this.scrollWidth;
         }
 
-        let pagingPixelOffset = this.paginationProxy.getPixelOffset();
+        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
-        let currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
-        let currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
+        const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
+        const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
         let scrollIndex = currentPageBottomRow;
 
-        let currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex).rowTop;
-        let nextCellPixel = currentCellPixel + pixelsInOnePage - pagingPixelOffset;
+        const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex).rowTop;
+        const nextCellPixel = currentCellPixel + pixelsInOnePage - pagingPixelOffset;
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
-        let pageLastRow = this.paginationProxy.getPageLastRow();
+        const pageLastRow = this.paginationProxy.getPageLastRow();
 
         if (focusIndex > pageLastRow) { focusIndex = pageLastRow; }
         if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
@@ -149,24 +148,24 @@ export class NavigationService {
 
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
-        let scrollPosition = this.gridPanel.getVScrollPosition();
+        const scrollPosition = this.gridPanel.getVScrollPosition();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.gridPanel.isHorizontalScrollShowing()) {
             pixelsInOnePage -= this.scrollWidth;
         }
 
-        let pagingPixelOffset = this.paginationProxy.getPixelOffset();
+        const pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
-        let currentPageTopPixel = scrollPosition.top;
-        let currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
+        const currentPageTopPixel = scrollPosition.top;
+        const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
         let scrollIndex = currentPageTopRow;
 
-        let currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
-        let nextCellPixel = currentRowNode.rowTop + currentRowNode.rowHeight - pixelsInOnePage - pagingPixelOffset;
+        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
+        const nextCellPixel = currentRowNode.rowTop + currentRowNode.rowHeight - pixelsInOnePage - pagingPixelOffset;
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
-        let firstRow = this.paginationProxy.getPageFirstRow();
+        const firstRow = this.paginationProxy.getPageFirstRow();
 
         if (focusIndex < firstRow) { focusIndex = firstRow; }
         if (scrollIndex < firstRow) { scrollIndex = firstRow; }
@@ -198,7 +197,7 @@ export class NavigationService {
         // highlighted.
         this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
-            let gridCell = new GridCell({rowIndex: focusIndex, floating: null, column: focusColumn});
+            const gridCell = new GridCell({rowIndex: focusIndex, floating: null, column: focusColumn});
             this.rangeController.setRangeToCell(gridCell);
         }
     }
@@ -206,8 +205,8 @@ export class NavigationService {
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     private onCtrlUpOrDown(key: number, gridCell: GridCellDef): void {
 
-        let upKey = key === Constants.KEY_UP;
-        let rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
+        const upKey = key === Constants.KEY_UP;
+        const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
 
         this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToScrollTo, gridCell.column);
     }
@@ -215,10 +214,10 @@ export class NavigationService {
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
     private onCtrlLeftOrRight(key: number, gridCell: GridCellDef): void {
 
-        let leftKey = key === Constants.KEY_LEFT;
+        const leftKey = key === Constants.KEY_LEFT;
 
-        let allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        let columnToSelect: Column = leftKey ? allColumns[0]: allColumns[allColumns.length - 1];
+        const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
+        const columnToSelect: Column = leftKey ? allColumns[0] : allColumns[allColumns.length - 1];
 
         this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
     }
@@ -227,11 +226,11 @@ export class NavigationService {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: number): void {
 
-        let homeKey = key === Constants.KEY_PAGE_HOME;
+        const homeKey = key === Constants.KEY_PAGE_HOME;
 
-        let allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        let columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
-        let rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+        const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
+        const columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        const rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
 
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
     }

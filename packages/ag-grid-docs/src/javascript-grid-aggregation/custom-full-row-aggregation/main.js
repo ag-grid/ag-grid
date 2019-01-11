@@ -10,10 +10,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
     groupUseEntireRow: false,
-    enableSorting: true,
     enableRangeSelection: true,
     groupRowAggNodes: groupRowAggNodes,
     sideBar: true,

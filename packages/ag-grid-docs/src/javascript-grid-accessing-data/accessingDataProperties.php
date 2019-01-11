@@ -17,7 +17,7 @@ $getRowNodeApi = [
     'Similar to forEachNode, except lists all the leaf nodes. This effectively goes through all the data that you provided the grid before the grid did any grouping. If doing tree data, then goes through all the nodes for data you provided, including nodes that have children, but excluding groups the grid created where gaps were missing in the hierarchy.'
     ],
     ['getDisplayedRowAtIndex(index)',
-    'Returns the displayed rowNode at the riven index.'
+    'Returns the displayed rowNode at the given index.'
     ],
     ['getDisplayedRowCount()',
     'Returns the total number of displayed rows.'

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Full Width Rows: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Full Width Rows. Full Width Rows allow you to have one cell that spans the entire width of the tables. This allows a card layout to work alongside the normal cells. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Full Width Rows. Full Width Rows allow you to have one cell that spans the entire width of the tables. This allows a card layout to work alongside the normal cells. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "JavaScript Grid Full Width";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= example('Simple Full Width', 'simple-full-width', 'generated') ?>
+<?= example('Simple Full Width', 'simple-full-width', 'generated', array("processVue" => true)) ?>
 
 <note>
     You may be wondering, what is full width rows useful for? It's usage is very
@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
         the full width and normal rows.</li>
 </ul>
 
-<?= example('Basic Full Width', 'basic-full-width', 'generated') ?>
+<?= example('Basic Full Width', 'basic-full-width', 'generated', array("processVue" => true)) ?>
 
 <h2>Embedded Full Width vs Normal Full Width</h2>
 
@@ -140,6 +140,6 @@ include '../documentation-main/documentation_header.php';
     <li>Each full width row horizontally scrolls with the main grid.</li>
 </ul>
 
-<?= example('Full Width Embedded', 'full-width-embedded', 'generated') ?>
+<?= example('Full Width Embedded', 'full-width-embedded', 'generated', array("processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

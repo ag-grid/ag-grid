@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var filtersToolPanel_1 = require("./dist/lib/sideBar/providedPanels/filters/filtersToolPanel");
@@ -38,6 +38,7 @@ var totalAndFilteredRowsComp_1 = require("./dist/lib/statusBar/providedPanels/to
 var primaryColsHeaderPanel_1 = require("./dist/lib/sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel");
 var primaryColsListPanel_1 = require("./dist/lib/sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel");
 var gridHeaderDropZones_1 = require("./dist/lib/sideBar/providedPanels/columns/gridHeaderDropZones");
+var chartingService_1 = require("./dist/lib/charts/chartingService");
 var aggregationStage_2 = require("./dist/lib/rowStages/aggregationStage");
 exports.AggregationStage = aggregationStage_2.AggregationStage;
 var groupStage_2 = require("./dist/lib/rowStages/groupStage");
@@ -108,11 +109,13 @@ var excelXmlFactory_2 = require("./dist/lib/exporter/excelXmlFactory");
 exports.ExcelXmlFactory = excelXmlFactory_2.ExcelXmlFactory;
 var excelXlsxFactory_2 = require("./dist/lib/exporter/excelXlsxFactory");
 exports.ExcelXlsxFactory = excelXlsxFactory_2.ExcelXlsxFactory;
+var chartingService_2 = require("./dist/lib/charts/chartingService");
+exports.ChartingService = chartingService_2.ChartingService;
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
 ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, excelXlsxFactory_1.ExcelXlsxFactory, rowGroupCompFactory_1.RowGroupCompFactory,
     pivotCompFactory_1.PivotCompFactory, rangeController_1.RangeController, clipboardService_1.ClipboardService, pivotStage_1.PivotStage, pivotColDefService_1.PivotColDefService,
     contextMenu_1.ContextMenuFactory, groupStage_1.GroupStage, aggregationStage_1.AggregationStage, enterpriseBoot_1.EnterpriseBoot, aggFuncService_1.AggFuncService, licenseManager_1.LicenseManager, md5_1.MD5,
-    menuItemMapper_1.MenuItemMapper, statusBarService_1.StatusBarService], rowModelTypes);
+    menuItemMapper_1.MenuItemMapper, statusBarService_1.StatusBarService, chartingService_1.ChartingService], rowModelTypes);
 ag_grid_community_1.Grid.setEnterpriseComponents([
     { componentName: 'AgPrimaryColsHeader', theClass: primaryColsHeaderPanel_1.PrimaryColsHeaderPanel },
     { componentName: 'AgPrimaryColsList', theClass: primaryColsListPanel_1.PrimaryColsListPanel },

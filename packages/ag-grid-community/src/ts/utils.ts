@@ -1,12 +1,12 @@
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {Constants} from "./constants";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { Column } from "./entities/column";
+import { RowNode } from "./entities/rowNode";
+import { Constants } from "./constants";
 
-let FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-let FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
+const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 
-let AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
+const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 
 // util class, only used when debugging, for printing time to console
 export class Timer {
@@ -14,11 +14,10 @@ export class Timer {
     private timestamp = new Date().getTime();
 
     public print(msg: string) {
-        let duration = (new Date().getTime()) - this.timestamp;
+        const duration = (new Date().getTime()) - this.timestamp;
         console.info(`${msg} = ${duration}`);
         this.timestamp = new Date().getTime();
     }
-
 }
 
 /** HTML Escapes. */
@@ -67,7 +66,7 @@ export class Utils {
         if ("buttons" in mouseEvent) {
             return mouseEvent.buttons == 1;
         }
-        let button = (<any>mouseEvent).which || (<any>mouseEvent).button;
+        const button = (mouseEvent as any).which || (mouseEvent as any).button;
         return button == 1;
     }
 
@@ -78,17 +77,17 @@ export class Utils {
         if (pixelCount === 0) {
             return false;
         }
-        let diffX = Math.abs(e1.clientX - e2.clientX);
-        let diffY = Math.abs(e1.clientY - e2.clientY);
+        const diffX = Math.abs(e1.clientX - e2.clientX);
+        const diffY = Math.abs(e1.clientY - e2.clientY);
 
         return Math.max(diffX, diffY) <= pixelCount;
     }
 
     public static jsonEquals(val1: any, val2: any): boolean {
 
-        let val1Json = val1 ? JSON.stringify(val1) : null;
-        let val2Json = val2 ? JSON.stringify(val2) : null;
-        let res = val1Json === val2Json;
+        const val1Json = val1 ? JSON.stringify(val1) : null;
+        const val2Json = val2 ? JSON.stringify(val2) : null;
+        const res = val1Json === val2Json;
 
         return res;
     }
@@ -117,14 +116,14 @@ export class Utils {
     }
 
     static getNameOfClass(TheClass: any) {
-        let funcNameRegex = /function (.{1,})\(/;
-        let funcAsString = TheClass.toString();
-        let results = (funcNameRegex).exec(funcAsString);
+        const funcNameRegex = /function (.{1,})\(/;
+        const funcAsString = TheClass.toString();
+        const results = (funcNameRegex).exec(funcAsString);
         return (results && results.length > 1) ? results[1] : "";
     }
 
     static values<T>(object: { [key: string]: T }): T[] {
-        let result: T[] = [];
+        const result: T[] = [];
         this.iterateObject(object, (key: string, value: T) => {
             result.push(value);
         });
@@ -140,7 +139,7 @@ export class Utils {
             return data[field];
         } else {
             // otherwise it is a deep value, so need to dig for it
-            let fields = field.split('.');
+            const fields = field.split('.');
             let currentObject = data;
             for (let i = 0; i < fields.length; i++) {
                 currentObject = currentObject[fields[i]];
@@ -152,16 +151,16 @@ export class Utils {
         }
     }
 
-    static getAbsoluteHeight(el: HTMLElement): number {
-        const styles = window.getComputedStyle(el);
-        const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+    static getAbsoluteHeight(el: HTMLElement | null): number {
+        const styles: any = window.getComputedStyle(el!);
+        const margin = parseFloat(styles.marginTop) + parseFloat(styles.marginBottom);
 
-        return Math.ceil(el.offsetHeight + margin);
+        return Math.ceil(el!.offsetHeight + margin);
     }
 
     static getAbsoluteWidth(el: HTMLElement): number {
-        const styles = window.getComputedStyle(el);
-        const margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
+        const styles: any = window.getComputedStyle(el);
+        const margin = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight);
 
         return Math.ceil(el.offsetWidth + margin);
     }
@@ -242,18 +241,22 @@ export class Utils {
         element.scrollLeft = value;
     }
 
+    static clearElement(el: HTMLElement): void {
+        while (el.firstChild) { el.removeChild(el.firstChild); }
+    }
+
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
         if (!map) {
             return;
         }
         for (let i = 0; i < map.length; i++) {
-            let attr = map[i];
+            const attr = map[i];
             callback(attr.name, attr.value);
         }
     }
 
-    static iterateObject<T>(object: { [p: string]: T } | T[], callback: (key: string, value: T) => void) {
-        if (this.missing(object)) {
+    static iterateObject<T>(object: { [p: string]: T } | T[] | undefined, callback: (key: string, value: T) => void) {
+        if (!object || this.missing(object)) {
             return;
         }
 
@@ -262,10 +265,10 @@ export class Utils {
                 callback(index + '', value);
             });
         } else {
-            let keys = Object.keys(object);
+            const keys = Object.keys(object);
             for (let i = 0; i < keys.length; i++) {
-                let key = keys[i];
-                let value = object[key];
+                const key = keys[i];
+                const value = object[key];
                 callback(key, value);
             }
         }
@@ -273,12 +276,12 @@ export class Utils {
     }
 
     static cloneObject<T>(object: T): T {
-        let copy = <T>{};
-        let keys = Object.keys(object);
+        const copy = {} as T;
+        const keys = Object.keys(object);
         for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            let value = (<any>object)[key];
-            (<any>copy)[key] = value;
+            const key = keys[i];
+            const value = (object as any)[key];
+            (copy as any)[key] = value;
         }
         return copy;
     }
@@ -288,17 +291,17 @@ export class Utils {
     }
 
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult) {
-        let result: TResult[] = [];
+        const result: TResult[] = [];
         for (let i = 0; i < array.length; i++) {
-            let item = array[i];
-            let mappedItem = callback(item, i);
+            const item = array[i];
+            const mappedItem = callback(item, i);
             result.push(mappedItem);
         }
         return result;
     }
 
     static mapObject<TResult>(object: any, callback: (item: any) => TResult) {
-        let result: TResult[] = [];
+        const result: TResult[] = [];
         Utils.iterateObject(object, (key: string, value: any) => {
             result.push(callback(value));
         });
@@ -311,14 +314,14 @@ export class Utils {
         }
 
         for (let i = 0; i < array.length; i++) {
-            let value = array[i];
+            const value = array[i];
             callback(value, i);
         }
     }
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
-        let result: T[] = [];
-        array.forEach(function (item: T) {
+        const result: T[] = [];
+        array.forEach(function(item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -327,7 +330,7 @@ export class Utils {
     }
 
     static getAllKeysInObjects(objects: any[]): string[] {
-        let allValues: any = {};
+        const allValues: any = {};
         objects.forEach(obj => {
             if (obj) {
                 Object.keys(obj).forEach(key => allValues[key] = null);
@@ -337,10 +340,12 @@ export class Utils {
     }
 
     static mergeDeep(dest: any, source: any): void {
-        if (!this.exists(source)) return;
+        if (!this.exists(source)) {
+            return;
+        }
 
         this.iterateObject(source, (key: string, newValue: any) => {
-            let oldValue: any = dest[key];
+            const oldValue: any = dest[key];
 
             if (oldValue === newValue) {
                 return;
@@ -357,7 +362,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function (key: string, value: any) {
+                this.iterateObject(source, function(key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -366,27 +371,37 @@ export class Utils {
         return object;
     }
 
-    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date {
+    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null {
         try {
-            if (!yyyyMmDd) return null;
-            if (yyyyMmDd.indexOf(separator) === -1) return null;
+            if (!yyyyMmDd) {
+                return null;
+            }
+            if (yyyyMmDd.indexOf(separator) === -1) {
+                return null;
+            }
 
-            let fields: string[] = yyyyMmDd.split(separator);
-            if (fields.length != 3) return null;
+            const fields: string[] = yyyyMmDd.split(separator);
+            if (fields.length != 3) {
+                return null;
+            }
             return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
         } catch (e) {
             return null;
         }
     }
 
-    static serializeDateToYyyyMmDd(date: Date, separator: string): string {
-        if (!date) return null;
+    static serializeDateToYyyyMmDd(date: Date, separator: string): string | null {
+        if (!date) {
+            return null;
+        }
         return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2);
     }
 
     static pad(num: number, totalStringSize: number): string {
         let asString: string = num + "";
-        while (asString.length < totalStringSize) asString = "0" + asString;
+        while (asString.length < totalStringSize) {
+            asString = "0" + asString;
+        }
         return asString;
     }
 
@@ -398,7 +413,7 @@ export class Utils {
     }
 
     static createArrayOfNumbers(first: number, last: number): number[] {
-        let result: number[] = [];
+        const result: number[] = [];
         for (let i = first; i <= last; i++) {
             result.push(i);
         }
@@ -406,8 +421,8 @@ export class Utils {
     }
 
     static getFunctionParameters(func: any) {
-        let fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-        let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
+        const fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
+        const result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
         if (result === null) {
             return [];
         } else {
@@ -415,28 +430,28 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => boolean), value?: any): T {
+    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
         if (collection === null || collection === undefined) {
             return null;
         }
 
         if (!Array.isArray(collection)) {
-            let objToArray = this.values(collection);
+            const objToArray = this.values(collection);
             return this.find(objToArray, predicate, value);
         }
 
-        let collectionAsArray = <T[]> collection;
+        const collectionAsArray = collection as T[];
 
-        let firstMatchingItem: T;
+        let firstMatchingItem: T | null = null;
         for (let i = 0; i < collectionAsArray.length; i++) {
-            let item: T = collectionAsArray[i];
+            const item: T = collectionAsArray[i];
             if (typeof predicate === 'string') {
-                if ((<any>item)[predicate] === value) {
+                if ((item as any)[predicate] === value) {
                     firstMatchingItem = item;
                     break;
                 }
             } else {
-                let callback = predicate as (item: T) => boolean;
+                const callback = predicate as (item: T) => boolean;
                 if (callback(item)) {
                     firstMatchingItem = item;
                     break;
@@ -446,8 +461,8 @@ export class Utils {
         return firstMatchingItem;
     }
 
-    static toStrings<T>(array: T[]): string[] {
-        return this.map(array, function (item) {
+    static toStrings<T>(array: T[]): (string | null)[] {
+        return this.map(array, function(item) {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
@@ -458,7 +473,7 @@ export class Utils {
 
     static iterateArray<T>(array: T[], callback: (item: T, index: number) => void) {
         for (let index = 0; index < array.length; index++) {
-            let value = array[index];
+            const value = array[index];
             callback(value, index);
         }
     }
@@ -487,8 +502,8 @@ export class Utils {
 
     // makes a copy of a node list into a list
     static copyNodeList(nodeList: NodeList) {
-        let childCount = nodeList ? nodeList.length : 0;
-        let res: Node[] = [];
+        const childCount = nodeList ? nodeList.length : 0;
+        const res: Node[] = [];
         for (let i = 0; i < childCount; i++) {
             res.push(nodeList[i]);
         }
@@ -496,7 +511,7 @@ export class Utils {
     }
 
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
-        let pressedChar = String.fromCharCode(event.charCode);
+        const pressedChar = String.fromCharCode(event.charCode);
 
         // newline is an exception, as it counts as a printable character, but we don't
         // want to start editing when it is pressed. without this check, if user is in chrome
@@ -542,8 +557,8 @@ export class Utils {
     }
 
     //if value is undefined, null or blank, returns null, otherwise returns the value
-    static makeNull<T>(value: T): T {
-        let valueNoType = <any> value;
+    static makeNull<T>(value: T): T | null {
+        const valueNoType = value as any;
         if (value === null || value === undefined || valueNoType === "") {
             return null;
         } else {
@@ -555,8 +570,8 @@ export class Utils {
         return !this.exists(value);
     }
 
-    static missingOrEmpty(value: any[] | string): boolean {
-        return this.missing(value) || value.length === 0;
+    static missingOrEmpty(value: any[] | string | undefined): boolean {
+        return !value || this.missing(value) || value.length === 0;
     }
 
     static missingOrEmptyObject(value: any): boolean {
@@ -567,10 +582,12 @@ export class Utils {
         return value != null && (value !== '' || allowEmptyString);
     }
 
-    static firstExistingValue<A>(...values: A[]): A {
+    static firstExistingValue<A>(...values: A[]): A | null {
         for (let i = 0; i < values.length; i++) {
-            let value: A = values[i];
-            if (_.exists(value)) return value;
+            const value: A = values[i];
+            if (_.exists(value)) {
+                return value;
+            }
         }
 
         return null;
@@ -587,13 +604,13 @@ export class Utils {
         return false;
     }
 
-    static existsAndNotEmpty(value: any[]): boolean {
-        return this.exists(value) && value.length > 0;
+    static existsAndNotEmpty(value?: any[] | null): boolean {
+        return value != null && this.exists(value) && value.length > 0;
     }
 
     static removeAllChildren(node: HTMLElement) {
         if (node) {
-            while (node.hasChildNodes()) {
+            while (node.hasChildNodes() && node.lastChild) {
                 node.removeChild(node.lastChild);
             }
         }
@@ -603,7 +620,7 @@ export class Utils {
         this.removeFromParent(parent.querySelector(cssSelector));
     }
 
-    static removeFromParent(node: Element) {
+    static removeFromParent(node: Element | null) {
         if (node && node.parentNode) {
             node.parentNode.removeChild(node);
         }
@@ -618,9 +635,9 @@ export class Utils {
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
      */
     static loadTemplate(template: string): HTMLElement {
-        let tempDiv = document.createElement("div");
+        const tempDiv = document.createElement("div");
         tempDiv.innerHTML = template;
-        return <HTMLElement> tempDiv.firstChild;
+        return tempDiv.firstChild as HTMLElement;
     }
 
     static appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
@@ -663,13 +680,15 @@ export class Utils {
             }
         } else {
             if (element.className && element.className.length > 0) {
-                let cssClasses = element.className.split(' ');
+                const cssClasses = element.className.split(' ');
                 if (cssClasses.indexOf(className) < 0) {
                     cssClasses.push(className);
-                    element.className = cssClasses.join(' ');
+                    element.setAttribute('class', cssClasses.join(' '));
                 }
             } else {
-                element.className = className;
+                // do not use element.classList = className here, it will cause
+                // a read-only assignment error on some browsers (IE/Edge).
+                element.setAttribute('class', className);
             }
         }
     }
@@ -681,13 +700,13 @@ export class Utils {
         } else if (element.className) {
             // for older browsers, check against the string of class names
             // if only one class, can check for exact match
-            let onlyClass = element.className === className;
+            const onlyClass = element.className === className;
             // if many classes, check for class name, we have to pad with ' ' to stop other
             // class names that are a substring of this class
-            let contains = element.className.indexOf(' ' + className + ' ') >= 0;
+            const contains = element.className.indexOf(' ' + className + ' ') >= 0;
             // the padding above then breaks when it's the first or last class names
-            let startsWithClass = element.className.indexOf(className + ' ') === 0;
-            let endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
+            const startsWithClass = element.className.indexOf(className + ' ') === 0;
+            const endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
             return onlyClass || contains || startsWithClass || endsWithClass;
         } else {
             // if item is not a node
@@ -695,10 +714,10 @@ export class Utils {
         }
     }
 
-    static getElementAttribute(element: any, attributeName: string): string {
+    static getElementAttribute(element: any, attributeName: string): string | null {
         if (element.attributes) {
             if (element.attributes[attributeName]) {
-                let attribute = element.attributes[attributeName];
+                const attribute = element.attributes[attributeName];
                 return attribute.value;
             } else {
                 return null;
@@ -727,13 +746,13 @@ export class Utils {
             }
         } else {
             if (element.className && element.className.length > 0) {
-                let cssClasses = element.className.split(' ');
+                const cssClasses = element.className.split(' ');
                 if (cssClasses.indexOf(className) >= 0) {
                     // remove all instances of the item, not just the first, in case it's in more than once
                     while (cssClasses.indexOf(className) >= 0) {
                         cssClasses.splice(cssClasses.indexOf(className), 1);
                     }
-                    element.className = cssClasses.join(' ');
+                    element.setAttribute('class', cssClasses.join(' '));
                 }
             }
         }
@@ -744,8 +763,8 @@ export class Utils {
             return;
         }
         for (let index = array.length - 2; index >= 0; index--) {
-            let thisOneMatches = array[index] === object;
-            let nextOneMatches = array[index + 1] === object;
+            const thisOneMatches = array[index] === object;
+            const nextOneMatches = array[index + 1] === object;
             if (thisOneMatches && nextOneMatches) {
                 array.splice(index + 1, 1);
             }
@@ -777,7 +796,7 @@ export class Utils {
         }
         // put items in backwards, otherwise inserted items end up in reverse order
         for (let i = src.length - 1; i >= 0; i--) {
-            let item = src[i];
+            const item = src[i];
             this.insertIntoArray(dest, item, toIndex);
         }
     }
@@ -796,8 +815,8 @@ export class Utils {
     }
 
     static defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
-        let valueAMissing = valueA === null || valueA === undefined;
-        let valueBMissing = valueB === null || valueB === undefined;
+        const valueAMissing = valueA === null || valueA === undefined;
+        const valueBMissing = valueB === null || valueB === undefined;
 
         // this is for aggregations sum and avg, where the result can be a number that is wrapped.
         // if we didn't do this, then the toString() value would be used, which would result in
@@ -918,7 +937,7 @@ export class Utils {
         if (eChildBefore) {
             // if previous element exists, just slot in after the previous element
             eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
-            res = <HTMLElement> eChildBefore.nextSibling;
+            res = eChildBefore.nextSibling as HTMLElement;
         } else {
             if (eContainer.firstChild) {
                 // insert it at the first location
@@ -927,7 +946,7 @@ export class Utils {
                 // otherwise eContainer is empty, so just append it
                 eContainer.innerHTML = htmlTemplate;
             }
-            res = <HTMLElement> eContainer.firstChild;
+            res = eContainer.firstChild as HTMLElement;
         }
         return res;
     }
@@ -946,7 +965,7 @@ export class Utils {
         return true;
     }
 
-    static toStringOrNull(value: any): string {
+    static toStringOrNull(value: any): string | null {
         if (this.exists(value) && value.toString) {
             return value.toString();
         } else {
@@ -954,15 +973,15 @@ export class Utils {
         }
     }
 
-    static formatWidth(width: number | string) {
-        if (typeof width === "number") {
-            return width + "px";
+    static formatSize(size: number | string) {
+        if (typeof size === "number") {
+            return size + "px";
         } else {
-            return width;
+            return size;
         }
     }
 
-    static formatNumberTwoDecimalPlacesAndCommas(value: number): string {
+    static formatNumberTwoDecimalPlacesAndCommas(value: number | null): string {
         if (typeof value !== 'number') {
             return '';
         }
@@ -1050,7 +1069,7 @@ export class Utils {
         if (iconContents.className.indexOf('ag-icon') > -1) {
             return iconContents;
         } else {
-            let eResult = document.createElement('span');
+            const eResult = document.createElement('span');
             eResult.appendChild(iconContents);
             return eResult;
         }
@@ -1100,8 +1119,10 @@ export class Utils {
             return;
         }
         Object.keys(styles).forEach((key) => {
-            let keyCamelCase = this.hyphenToCamelCase(key);
-            eElement.style[keyCamelCase] = styles[key];
+            const keyCamelCase = this.hyphenToCamelCase(key);
+            if (keyCamelCase) {
+                eElement.style[keyCamelCase] = styles[key];
+            }
         });
     }
 
@@ -1120,11 +1141,11 @@ export class Utils {
 
         let res = 1000000;
         // FF reports the height back but still renders blank after ~6M px
-        let testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
-        let div = this.loadTemplate("<div/>");
+        const testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
+        const div = this.loadTemplate("<div/>");
         document.body.appendChild(div);
         while (true) {
-            let test = res * 2;
+            const test = res * 2;
             div.style.height = test + 'px';
 
             if (test > testUpTo || div.clientHeight !== test) {
@@ -1140,26 +1161,28 @@ export class Utils {
     }
 
     static getScrollbarWidth() {
-        let outer = document.createElement("div");
+        const outer = document.createElement("div");
         outer.style.visibility = "hidden";
         outer.style.width = "100px";
         outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
 
         document.body.appendChild(outer);
 
-        let widthNoScroll = outer.offsetWidth;
+        const widthNoScroll = outer.offsetWidth;
         // force scrollbars
         outer.style.overflow = "scroll";
 
         // add inner div
-        let inner = document.createElement("div");
+        const inner = document.createElement("div");
         inner.style.width = "100%";
         outer.appendChild(inner);
 
-        let widthWithScroll = inner.offsetWidth;
+        const widthWithScroll = inner.offsetWidth;
 
         // remove divs
-        outer.parentNode.removeChild(outer);
+        if (outer.parentNode) {
+            outer.parentNode.removeChild(outer);
+        }
 
         return widthNoScroll - widthWithScroll;
     }
@@ -1174,26 +1197,30 @@ export class Utils {
         body.appendChild(div);
         div.setAttribute('style', prefixes.map(prefix => `-${prefix}-overflow-scrolling: touch`).concat('overflow-scrolling: touch').join(';'));
 
-        let computedStyle: CSSStyleDeclaration = window.getComputedStyle(div);
+        const computedStyle: CSSStyleDeclaration = window.getComputedStyle(div);
 
-        if ((<any>computedStyle)['overflowScrolling'] === 'touch') found = true;
+        if ((computedStyle as any).overflowScrolling === 'touch') {
+            found = true;
+        }
 
         if (!found) {
             for (p of prefixes) {
-                if ((<any>computedStyle)[`${p}OverflowScrolling`] === 'touch') {
+                if ((computedStyle as any)[`${p}OverflowScrolling`] === 'touch') {
                     found = true;
                     break;
                 }
             }
         }
 
-        div.parentNode.removeChild(div);
+        if (div.parentNode) {
+            div.parentNode.removeChild(div);
+        }
 
         return found;
     }
 
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number) {
-        let pressedKey = event.which || event.keyCode;
+        const pressedKey = event.which || event.keyCode;
         return pressedKey === keyToCheck;
     }
 
@@ -1202,29 +1229,43 @@ export class Utils {
     }
 
     static setHidden(element: HTMLElement, hidden: boolean) {
-        this.addOrRemoveCssClass(element, 'ag-visibility-hidden', hidden);
+        this.addOrRemoveCssClass(element, 'ag-invisible', hidden);
+    }
+
+    static setFixedWidth(element: HTMLElement, width: string | number) {
+        width = this.formatSize(width);
+        element.style.width = width;
+        element.style.maxWidth = width;
+        element.style.minWidth = width;
+    }
+
+    static setFixedHeight(element: HTMLElement, height: string | number) {
+        height = this.formatSize(height);
+        element.style.height = height;
+        element.style.maxHeight = height;
+        element.style.minHeight = height;
     }
 
     static isBrowserIE(): boolean {
         if (this.isIE === undefined) {
-            this.isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
+            this.isIE = /*@cc_on!@*/false || !!(document as any).documentMode; // At least IE6
         }
         return this.isIE;
     }
 
     static isBrowserEdge(): boolean {
         if (this.isEdge === undefined) {
-            this.isEdge = !this.isBrowserIE() && !!(<any>window).StyleMedia;
+            this.isEdge = !this.isBrowserIE() && !!(window as any).StyleMedia;
         }
         return this.isEdge;
     }
 
     static isBrowserSafari(): boolean {
         if (this.isSafari === undefined) {
-            let anyWindow = <any> window;
+            const anyWindow = window as any;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) {
+                || (function(p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -1234,21 +1275,16 @@ export class Utils {
 
     static isBrowserChrome(): boolean {
         if (this.isChrome === undefined) {
-            // this is the old original we we did it, but it didn't work on android
-            // let anyWindow = <any> window;
-            // this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
-
-            // this is the new way
-            // taken from https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
-            this.isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            const win = window as any;
+            this.isChrome = !!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime);
         }
         return this.isChrome;
     }
 
     static isBrowserFirefox(): boolean {
         if (this.isFirefox === undefined) {
-            let anyWindow = <any> window;
-            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
+            const win = window as any;
+            this.isFirefox = typeof win.InstallTrigger !== 'undefined';
         }
         return this.isFirefox;
     }
@@ -1264,7 +1300,7 @@ export class Utils {
     // srcElement is only available in IE. In all other browsers it is target
     // http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
     static getTarget(event: Event): Element {
-        let eventNoType = <any> event;
+        const eventNoType = event as any;
         return eventNoType.target || eventNoType.srcElement;
     }
 
@@ -1272,13 +1308,13 @@ export class Utils {
         if (!event || !element) {
             return false;
         }
-        let path = _.getEventPath(event);
+        const path = _.getEventPath(event);
         return path.indexOf(element) >= 0;
     }
 
     static createEventPath(event: Event): EventTarget[] {
-        let res: EventTarget[] = [];
-        let pointer = _.getTarget(event);
+        const res: EventTarget[] = [];
+        let pointer: any = _.getTarget(event);
         while (pointer) {
             res.push(pointer);
             pointer = pointer.parentElement;
@@ -1291,14 +1327,14 @@ export class Utils {
     // removed from the dom. used by MouseEventService, where it works out if a click
     // was from the current grid, or a detail grid (master / detail).
     static addAgGridEventPath(event: Event): void {
-        (<any>event).__agGridEventPath = this.getEventPath(event);
+        (event as any).__agGridEventPath = this.getEventPath(event);
     }
 
     static getEventPath(event: Event): EventTarget[] {
         // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
         // https://developer.mozilla.org/en-US/docs/Web/API/Event
 
-        let eventNoType = event as any;
+        const eventNoType = event as any;
         if (eventNoType.deepPath) {
             // IE supports deep path
             return eventNoType.deepPath();
@@ -1320,7 +1356,7 @@ export class Utils {
 
     static forEachSnapshotFirst(list: any[], callback: (item: any) => void): void {
         if (list) {
-            let arrayCopy = list.slice(0);
+            const arrayCopy = list.slice(0);
             arrayCopy.forEach(callback);
         }
     }
@@ -1371,7 +1407,7 @@ export class Utils {
     }
 
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void {
-        let keyParts: any[] = [];
+        const keyParts: any[] = [];
 
         recursiveSearchNodes(nodes);
 
@@ -1381,7 +1417,7 @@ export class Utils {
                 // also checking for children for tree data
                 if (node.group || node.hasChildren()) {
                     keyParts.push(node.key);
-                    let key = keyParts.join('|');
+                    const key = keyParts.join('|');
                     callback(node, key);
                     recursiveSearchNodes(node.childrenAfterGroup);
                     keyParts.pop();
@@ -1391,7 +1427,7 @@ export class Utils {
     }
 
     // from https://gist.github.com/youssman/745578062609e8acac9f
-    static camelCaseToHyphen(str: string): string {
+    static camelCaseToHyphen(str: string): string | null {
         if (str === null || str === undefined) {
             return null;
         }
@@ -1399,7 +1435,7 @@ export class Utils {
     }
 
     // from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
-    static hyphenToCamelCase(str: string): string {
+    static hyphenToCamelCase(str: string): string | null {
         if (str === null || str === undefined) {
             return null;
         }
@@ -1412,9 +1448,9 @@ export class Utils {
             return '';
         }
 
-        let resParts: string[] = [];
+        const resParts: string[] = [];
         this.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
-            let styleKeyDashed = this.camelCaseToHyphen(styleKey);
+            const styleKeyDashed = this.camelCaseToHyphen(styleKey);
             resParts.push(`${styleKeyDashed}: ${styleValue};`);
         });
 
@@ -1425,11 +1461,13 @@ export class Utils {
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
      */
     static isNumeric(value: any): boolean {
-        if (value === '') return false;
+        if (value === '') {
+            return false;
+        }
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
-    static escape(toEscape: string): string {
+    static escape(toEscape: string | null): string | null {
         if (toEscape === null || toEscape === undefined || !toEscape.replace) {
             return toEscape;
         }
@@ -1539,9 +1577,9 @@ export class Utils {
      *
      */
     static normalizeWheel(event: any): any {
-        let PIXEL_STEP = 10;
-        let LINE_HEIGHT = 40;
-        let PAGE_HEIGHT = 800;
+        const PIXEL_STEP = 10;
+        const LINE_HEIGHT = 40;
+        const PAGE_HEIGHT = 800;
 
         // spinX, spinY
         let sX = 0;
@@ -1617,7 +1655,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function () {
+        return function() {
             // reference the context and args for the setTimeout function
             const context = this;
             const args = arguments;
@@ -1630,10 +1668,10 @@ export class Utils {
             //   function several times, but it will only execute once
             //   [before or after imposing a delay].
             //   Each time the returned function is called, the timer starts over.
-            clearTimeout(timeout);
+            window.clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function () {
+            timeout = window.setTimeout(function() {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1649,7 +1687,9 @@ export class Utils {
             }, wait);
 
             // Immediate mode and no wait timer? Execute the function..
-            if (callNow) func.apply(context, args);
+            if (callNow) {
+                func.apply(context, args);
+            }
         };
     }
 
@@ -1660,11 +1700,11 @@ export class Utils {
     // to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
     // but we still let the event pass back to teh body.
     static stopPropagationForAgGrid(event: Event): void {
-        (<any>event)[AG_GRID_STOP_PROPAGATION] = true;
+        (event as any)[AG_GRID_STOP_PROPAGATION] = true;
     }
 
     static isStopPropagationForAgGrid(event: Event): boolean {
-        return (<any>event)[AG_GRID_STOP_PROPAGATION] === true;
+        return (event as any)[AG_GRID_STOP_PROPAGATION] === true;
     }
 
     static executeInAWhile(funcs: Function[]): void {
@@ -1677,33 +1717,41 @@ export class Utils {
 
     static executeAfter(funcs: Function[], millis: number): void {
         if (funcs.length > 0) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 funcs.forEach(func => func());
             }, millis);
         }
     }
 
     static referenceCompare(left: any, right: any): boolean {
-        if (left == null && right == null) return true;
-        if (left == null && right) return false;
-        if (left && right == null) return false;
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null && right) {
+            return false;
+        }
+        if (left && right == null) {
+            return false;
+        }
         return left === right;
     }
 
     static get(source: { [p: string]: any }, expression: string, defaultValue: any): any {
-        if (source == null) return defaultValue;
+        if (source == null) {
+            return defaultValue;
+        }
 
         if (expression.indexOf('.') > -1) {
-            let fields: string[] = expression.split('.');
-            let thisKey: string = fields[0];
-            let nextValue: any = source[thisKey];
+            const fields: string[] = expression.split('.');
+            const thisKey: string = fields[0];
+            const nextValue: any = source[thisKey];
             if (nextValue != null) {
                 return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
             } else {
                 return defaultValue;
             }
         } else {
-            let nextValue: any = source[expression];
+            const nextValue: any = source[expression];
             return nextValue != null ? nextValue : defaultValue;
         }
     }
@@ -1711,16 +1759,18 @@ export class Utils {
     static passiveEvents: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
     static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
-        eElement.addEventListener(event, listener, <any>(Utils.passiveEvents.indexOf(event) > -1 ? {passive: true} : undefined));
+        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? {passive: true} : undefined) as any);
     }
 
     static camelCaseToHumanText(camelCase: string | undefined): string | null {
-        if (!camelCase || camelCase == null) return null;
+        if (!camelCase || camelCase == null) {
+            return null;
+        }
 
         // Who needs to learn how to code when you have stack overflow!
         // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
-        let rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
-        let words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
+        const rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
+        const words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
 
         return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
     }
@@ -1730,11 +1780,11 @@ export class Utils {
     // it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
     // checking in.
     static message(msg: string): void {
-        let eMessage = document.createElement('div');
+        const eMessage = document.createElement('div');
         eMessage.innerHTML = msg;
         let eBox = document.querySelector('#__ag__message');
         if (!eBox) {
-            let template = `<div id="__ag__message" style="display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;"></div>`;
+            const template = `<div id="__ag__message" style="display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;"></div>`;
             eBox = this.loadTemplate(template);
             if (document.body) {
                 document.body.appendChild(eBox);
@@ -1753,14 +1803,14 @@ export class Utils {
             return;
         }
         rowNodes.sort((nodeA: RowNode, nodeB: RowNode) => {
-            let positionA = rowNodeOrder[nodeA.id];
-            let positionB = rowNodeOrder[nodeB.id];
+            const positionA = rowNodeOrder[nodeA.id];
+            const positionB = rowNodeOrder[nodeB.id];
 
-            let aHasIndex = positionA !== undefined;
-            let bHasIndex = positionB !== undefined;
+            const aHasIndex = positionA !== undefined;
+            const bHasIndex = positionB !== undefined;
 
-            let bothNodesAreUserNodes = aHasIndex && bHasIndex;
-            let bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+            const bothNodesAreUserNodes = aHasIndex && bHasIndex;
+            const bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
 
             if (bothNodesAreUserNodes) {
                 // when comparing two nodes the user has provided, they always
@@ -1785,8 +1835,8 @@ export class Utils {
     public static fuzzyCheckStrings(inputValues: string[],
                                     validValues: string[],
                                     allSuggestions: string[]): { [p: string]: string[] } {
-        let fuzzyMatches: { [p: string]: string[] } = {};
-        let invalidInputs: string [] = inputValues.filter(inputValue =>
+        const fuzzyMatches: { [p: string]: string[] } = {};
+        const invalidInputs: string [] = inputValues.filter(inputValue =>
             !validValues.some(
                 (validValue) => validValue === inputValue
             )
@@ -1804,10 +1854,10 @@ export class Utils {
     public static fuzzySuggestions(inputValue: string,
                                    validValues: string[],
                                    allSuggestions: string[]): string[] {
-        let thisSuggestions: string [] = allSuggestions.slice(0);
+        const thisSuggestions: string [] = allSuggestions.slice(0);
         thisSuggestions.sort((suggestedValueLeft, suggestedValueRight) => {
-                let leftDifference = _.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
-                let rightDifference = _.string_similarity(suggestedValueRight.toLowerCase(), inputValue.toLowerCase());
+                const leftDifference = _.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
+                const rightDifference = _.string_similarity(suggestedValueRight.toLowerCase(), inputValue.toLowerCase());
                 return leftDifference > rightDifference ? -1 :
                     leftDifference === rightDifference ? 0 :
                         1;
@@ -1820,8 +1870,8 @@ export class Utils {
     //Algorithm to do fuzzy search
     //https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
     static get_bigrams(from: string) {
-        let s = from.toLowerCase();
-        let v = new Array(s.length - 1);
+        const s = from.toLowerCase();
+        const v = new Array(s.length - 1);
         let i;
         let j;
         let ref;
@@ -1833,20 +1883,20 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function (str1: string, str2: string) {
+    static string_similarity = function(str1: string, str2: string) {
         if (str1.length > 0 && str2.length > 0) {
-            let pairs1 = Utils.get_bigrams(str1);
-            let pairs2 = Utils.get_bigrams(str2);
-            let union = pairs1.length + pairs2.length;
+            const pairs1 = Utils.get_bigrams(str1);
+            const pairs2 = Utils.get_bigrams(str2);
+            const union = pairs1.length + pairs2.length;
             let hit_count = 0;
             let j;
             let len;
             for (j = 0, len = pairs1.length; j < len; j++) {
-                let x = pairs1[j];
+                const x = pairs1[j];
                 let k;
                 let len1;
                 for (k = 0, len1 = pairs2.length; k < len1; k++) {
-                    let y = pairs2[k];
+                    const y = pairs2[k];
                     if (x === y) {
                         hit_count++;
                     }
@@ -1880,7 +1930,7 @@ export class NumberSequence {
     }
 
     public next(): number {
-        let valToReturn = this.nextValue;
+        const valToReturn = this.nextValue;
         this.nextValue += this.step;
         return valToReturn;
     }
@@ -1909,19 +1959,19 @@ export interface ExternalPromise<T> {
 
 export class Promise<T> {
     private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
-    private resolution: T = null;
+    private resolution: T | null = null;
     private listOfWaiters: ((value: T) => void)[] = [];
 
     static all<T>(toCombine: Promise<T>[]): Promise<T[]> {
         return new Promise(resolve => {
-            let combinedValues: T[] = [];
+            const combinedValues: (T | null)[] = [];
             let remainingToResolve: number = toCombine.length;
             toCombine.forEach((source, index) => {
                 source.then(sourceResolved => {
                     remainingToResolve--;
                     combinedValues[index] = sourceResolved;
                     if (remainingToResolve == 0) {
-                        resolve(combinedValues);
+                        resolve(combinedValues as any);
                     }
                 });
                 combinedValues.push(null);  // spl todo: review with Alberto - why?
@@ -1935,15 +1985,15 @@ export class Promise<T> {
 
     static external<T>(): ExternalPromise<T> {
         let capture: (value: T) => void;
-        let promise: Promise<T> = new Promise<T>((resolve) => {
+        const promise: Promise<T> = new Promise<T>((resolve) => {
             capture = resolve;
         });
-        return <ExternalPromise<T>>{
+        return {
             promise: promise,
             resolve: (value: T): void => {
                 capture(value);
             }
-        };
+        } as ExternalPromise<T>;
     }
 
     constructor(callback: ResolveAndRejectCallback<T>) {
@@ -1976,8 +2026,10 @@ export class Promise<T> {
         });
     }
 
-    public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T) => Z): Z {
-        if (this.status == PromiseStatus.IN_PROGRESS) return ifNotResolvedValue;
+    public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {
+        if (this.status == PromiseStatus.IN_PROGRESS) {
+            return ifNotResolvedValue;
+        }
 
         return ifResolved(this.resolution);
     }

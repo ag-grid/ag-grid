@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNodeBlock } from "./rowNodeBlock";
@@ -9,7 +9,7 @@ export declare class RowNodeBlockLoader {
     private blocks;
     private logger;
     private active;
-    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number);
+    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number | undefined);
     private setBeans;
     addBlock(block: RowNodeBlock): void;
     removeBlock(block: RowNodeBlock): void;
@@ -20,4 +20,3 @@ export declare class RowNodeBlockLoader {
     getBlockState(): any;
     private printCacheStatus;
 }
-//# sourceMappingURL=rowNodeBlockLoader.d.ts.map

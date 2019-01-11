@@ -1,12 +1,11 @@
-
-import {Logger} from "./logger";
-import {LoggerFactory} from "./logger";
-import {Utils as _} from './utils';
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {IEventEmitter} from "./interfaces/iEventEmitter";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {AgEvent, Events} from "./events";
+import { Logger } from "./logger";
+import { LoggerFactory } from "./logger";
+import { Bean } from "./context/context";
+import { Qualifier } from "./context/context";
+import { IEventEmitter } from "./interfaces/iEventEmitter";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { AgEvent } from "./events";
+import { _ } from './utils';
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {
@@ -43,13 +42,13 @@ export class EventService implements IEventEmitter {
         this.logger = loggerFactory.create('EventService');
 
         if (globalEventListener) {
-            let async = gridOptionsWrapper.useAsyncEvents();
+            const async = gridOptionsWrapper.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
         }
     }
 
     private getListenerList(eventType: string, async: boolean): Function[] {
-        let listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+        const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
         let listenerList = listenerMap[eventType];
         if (!listenerList) {
             listenerList = [];
@@ -59,8 +58,8 @@ export class EventService implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: Function, async = false): void {
-        let listenerList = this.getListenerList(eventType, async);
-        if (listenerList.indexOf(listener)<0) {
+        const listenerList = this.getListenerList(eventType, async);
+        if (listenerList.indexOf(listener) < 0) {
             listenerList.push(listener);
         }
     }
@@ -81,7 +80,7 @@ export class EventService implements IEventEmitter {
     }
 
     public removeEventListener(eventType: string, listener: Function, async = false): void {
-        let listenerList = this.getListenerList(eventType, async);
+        const listenerList = this.getListenerList(eventType, async);
         _.removeFromArray(listenerList, listener);
     }
 
@@ -104,30 +103,30 @@ export class EventService implements IEventEmitter {
     }
 
     public dispatchEventOnce(event: AgEvent): void {
-        if(!this.firedEvents[event.type]) {
+        if (!this.firedEvents[event.type]) {
             this.dispatchEvent(event);
         }
     }
 
     private dispatchToListeners(event: AgEvent, async: boolean) {
 
-        let globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
-        let eventType = event.type;
+        const globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
+        const eventType = event.type;
 
         // this allows the columnController to get events before anyone else
-        let p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY, async);
+        const p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY, async);
         _.forEachSnapshotFirst(p1ListenerList, listener => {
             if (async) {
-                this.dispatchAsync( () => listener(event) );
+                this.dispatchAsync(() => listener(event));
             } else {
                 listener(event);
             }
         });
 
-        let listenerList = this.getListenerList(eventType, async);
-        _.forEachSnapshotFirst(listenerList,listener => {
+        const listenerList = this.getListenerList(eventType, async);
+        _.forEachSnapshotFirst(listenerList, listener => {
             if (async) {
-                this.dispatchAsync( () => listener(event) );
+                this.dispatchAsync(() => listener(event));
             } else {
                 listener(event);
             }
@@ -135,7 +134,7 @@ export class EventService implements IEventEmitter {
 
         _.forEachSnapshotFirst(globalListeners, listener => {
             if (async) {
-                this.dispatchAsync( () => listener(eventType, event) );
+                this.dispatchAsync(() => listener(eventType, event));
             } else {
                 listener(eventType, event);
             }
@@ -157,7 +156,7 @@ export class EventService implements IEventEmitter {
         // set to 'true' so it will know it's already scheduled for subsequent calls.
         if (!this.scheduled) {
             // if not scheduled, schedule one
-            setTimeout(this.flushAsyncQueue.bind(this), 0);
+            window.setTimeout(this.flushAsyncQueue.bind(this), 0);
             // mark that it is scheduled
             this.scheduled = true;
         }
@@ -172,10 +171,10 @@ export class EventService implements IEventEmitter {
         // added to the queue, so safe to take a copy, the new events will
         // get executed in a later VM turn rather than risk updating the
         // queue as we are flushing it.
-        let queueCopy = this.asyncFunctionsQueue.slice();
+        const queueCopy = this.asyncFunctionsQueue.slice();
         this.asyncFunctionsQueue = [];
 
         // execute the queue
-        queueCopy.forEach( func => func() );
+        queueCopy.forEach(func => func());
     }
 }

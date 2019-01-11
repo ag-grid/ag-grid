@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -34,17 +34,17 @@ var ContextMenuFactory = /** @class */ (function () {
     ContextMenuFactory.prototype.init = function () {
     };
     ContextMenuFactory.prototype.hideActiveMenu = function () {
-        if (this.activeMenu) {
-            this.activeMenu.destroy();
+        if (!this.activeMenu) {
+            return;
         }
+        this.activeMenu.destroy();
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
-        var defaultMenuOptions;
-        if (ag_grid_community_1.Utils.exists(node)) {
-            defaultMenuOptions = [];
+        var defaultMenuOptions = [];
+        if (ag_grid_community_1._.exists(node)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator'];
+                defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
             }
             // if user clicks a cell
             var suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
@@ -59,28 +59,28 @@ var ContextMenuFactory = /** @class */ (function () {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
             // nothing to show, perhaps tool panels???
         }
+        if (this.gridOptionsWrapper.isEnableCharts()) {
+            defaultMenuOptions.push('createChart');
+        }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             var userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
             var params = {
                 node: node,
                 column: column,
                 value: value,
-                defaultItems: defaultMenuOptions,
+                defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
-            var menuItemsFromUser = userFunc(params);
-            return menuItemsFromUser;
+            return userFunc ? userFunc(params) : undefined;
         }
-        else {
-            return defaultMenuOptions;
-        }
+        return defaultMenuOptions;
     };
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
-        if (ag_grid_community_1.Utils.missingOrEmpty(menuItems)) {
+        if (menuItems === undefined || ag_grid_community_1._.missingOrEmpty(menuItems)) {
             return;
         }
         var menu = new ContextMenu(menuItems);

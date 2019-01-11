@@ -196,6 +196,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressMovableColumns: any;
     suppressFieldDotNotation: any;
     enableRangeSelection: any;
+    deltaSort: any;
     suppressTouch: any;
     suppressAsyncEvents: any;
     allowContextMenuWithControlKey: any;
@@ -210,6 +211,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressPreventDefaultOnMouseWheel: any;
     suppressUseColIdForGroups: any;
     suppressCopyRowsToClipboard: any;
+    copyHeadersToClipboard: any;
     pivotMode: any;
     suppressAggFuncInHeader: any;
     suppressColumnVirtualisation: any;
@@ -266,10 +268,12 @@ export declare class AgGridNg2 implements AfterViewInit {
     serverSideSortingAlwaysResets: any;
     reactNext: any;
     suppressSetColumnStateEvents: any;
+    enableCharts: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;
     columnRowGroupChanged: EventEmitter<any>;
+    expandOrCollapseAll: EventEmitter<any>;
     columnPivotChanged: EventEmitter<any>;
     gridColumnsChanged: EventEmitter<any>;
     columnValueChanged: EventEmitter<any>;
@@ -335,5 +339,4 @@ export declare class AgGridNg2 implements AfterViewInit {
     columnPivotChangeRequest: EventEmitter<any>;
     columnValueChangeRequest: EventEmitter<any>;
     columnAggFuncChangeRequest: EventEmitter<any>;
-    expandOrCollapseAll: EventEmitter<any>;
 }

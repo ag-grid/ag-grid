@@ -58,7 +58,7 @@ function methodFunc(alias: string, target: Object, methodName: string) {
 
 function addToObjectProps(target: Object, key: string, value: any): void {
     // it's an attribute on the class
-    let props = getOrCreateProps(target, (<any>target.constructor).name);
+    const props = getOrCreateProps(target, (target.constructor as any).name);
     if (!props[key]) {
         props[key] = [];
     }

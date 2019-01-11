@@ -1,11 +1,11 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
 export declare class ChangedPath {
+    private readonly keepingColumns;
     private active;
-    private keepingColumns;
     private nodeIdsToBoolean;
     private nodeIdsToColumns;
     constructor(keepingColumns: boolean);
@@ -17,4 +17,3 @@ export declare class ChangedPath {
     getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[];
     private validateActive;
 }
-//# sourceMappingURL=changedPath.d.ts.map

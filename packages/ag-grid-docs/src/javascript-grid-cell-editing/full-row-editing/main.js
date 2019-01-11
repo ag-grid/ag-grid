@@ -7,7 +7,7 @@ var columnDefs = [
         editable: true,
         cellEditor:'agSelectCellEditor',
         cellEditorParams: {
-            values: ['AAA', 'BBB', 'CCC']
+            values: ['Porsche','Toyota','Ford','AAA', 'BBB', 'CCC']
         }
     },
     {headerName: 'Model', field: 'model', editable: true},

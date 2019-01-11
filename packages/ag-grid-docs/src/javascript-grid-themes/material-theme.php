@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 
     <p> The example below shows the grid with a rich set of features enabled.</p>
 
-    <?= example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'extras' => array("roboto") )) ?>
+    <?= example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'processVue' => true, 'extras' => array("roboto") )) ?>
 
     <p>
         To use the theme, add <code>ag-theme-material</code> CSS class to the DIV element on which the ag-Grid instance is instantiated.
@@ -53,7 +53,7 @@ $primary-color: #2196F3; // blue-500
 $accent-color: #FFD740; // amber-A200
 
 // Import the ag-Grid material theme
-@import '~ag-grid/src/styles/ag-theme-material';</snippet>
+@import '~ag-grid/src/styles/ag-theme-material/sass/ag-theme-material';</snippet>
 
 <p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-material.scss#L17-L59">theme source file</a>.</p>
 

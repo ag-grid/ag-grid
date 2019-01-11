@@ -13,10 +13,11 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     IToolPanelComp,
-    ValueService
+    ValueService,
+    _
 } from "ag-grid-community";
 
-import {ToolPanelFilterComp} from "./toolPanelFilterComp";
+import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
 export class FiltersToolPanel extends Component implements IToolPanelComp {
 
@@ -46,18 +47,19 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     public init(): void {
         this.instantiate(this.context);
         this.initialised = true;
-        this.eventService.addEventListener('newColumnsLoaded', ()=>this.onColumnsChanged());
+        this.eventService.addEventListener('newColumnsLoaded', () => this.onColumnsChanged());
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
     }
 
     public onColumnsChanged(): void {
-        this.getGui().innerHTML = '';
+        const eGui = this.getGui();
+        _.clearElement(eGui);
         this.columnTree = this.columnController.getPrimaryColumnTree();
-        let groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
+        const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.setTemplateFromElement(this.getGui());
+        this.setTemplateFromElement(eGui);
     }
 
     public refresh(): void {
@@ -76,18 +78,18 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
             if (child instanceof OriginalColumnGroup) {
                 this.recursivelyAddComps(child.getChildren(), dept, groupsExist);
             } else {
-                this.recursivelyAddColumnComps(<Column> child);
+                this.recursivelyAddColumnComps(child as Column);
             }
         });
     }
 
     private recursivelyAddColumnComps(column: Column): void {
 
-        if (column.getColDef() && column.getColDef().suppressFilter) {
+        if (!column.isFilterAllowed()) {
             return;
         }
 
-        let renderedFilter = this.componentResolver.createInternalAgGridComponent(ToolPanelFilterComp, {
+        const renderedFilter = this.componentResolver.createInternalAgGridComponent(ToolPanelFilterComp, {
             column: column
         });
         this.context.wireBean(renderedFilter);

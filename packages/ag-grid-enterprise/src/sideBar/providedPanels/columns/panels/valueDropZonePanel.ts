@@ -1,5 +1,4 @@
 import {
-    Utils,
     Autowired,
     ColumnController,
     EventService,
@@ -12,9 +11,10 @@ import {
     Column,
     ColumnValueChangeRequestEvent,
     ColumnApi,
-    GridApi
+    GridApi,
+    _
 } from "ag-grid-community/main";
-import {BaseDropZonePanel} from "../dropZone/baseDropZonePanel";
+import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
 
@@ -42,13 +42,13 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
-        let title = localeTextFunc('values', 'Values');
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
+        const title = localeTextFunc('values', 'Values');
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_AGGREGATE,
-            icon: Utils.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
+            icon: _.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
@@ -66,14 +66,14 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) { return false; }
 
-        let columnValue = column.isAllowValue();
-        let columnNotValue= !column.isValueActive();
+        const columnValue = column.isAllowValue();
+        const columnNotValue = !column.isValueActive();
         return columnValue && columnNotValue;
     }
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            let event: ColumnValueChangeRequestEvent = {
+            const event: ColumnValueChangeRequestEvent = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,

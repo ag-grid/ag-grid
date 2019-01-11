@@ -35,7 +35,6 @@ class FileBrowser extends Component {
           columnDefs={this.colDefs}
           rowData={this.props.files}
           treeData={true}
-          enableFilter={true}
           groupDefaultExpanded={-1}
           getDataPath={data => data.filePath}
           autoGroupColumnDef={this.autoGroupColumnDef}
@@ -46,7 +45,6 @@ class FileBrowser extends Component {
           onRowDragEnd={this.onRowDragEnd}
           frameworkComponents={this.frameworkComponents}
           reactNext={true}
-          reduxStore={this.context.store} // must be supplied when using redux with reactNext
         >
         </AgGridReact>
       </div>

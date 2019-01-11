@@ -1,7 +1,7 @@
 
-import {ICellRenderer} from "./iCellRenderer";
-import {Utils as _} from "../../utils";
-import {Component} from "../../widgets/component";
+import { ICellRenderer } from "./iCellRenderer";
+import { Component } from "../../widgets/component";
+import { _ } from "../../utils";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 
@@ -36,7 +36,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // below we keep checking this, and stop working on the animation
         // if it no longer matches - this means another animation has started
         // and this one is stale.
-        let refreshCountCopy = this.refreshCount;
+        const refreshCountCopy = this.refreshCount;
 
         // if old animation, remove it
         if (this.ePrevious) {
@@ -50,12 +50,12 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
-        setTimeout( ()=> {
+        window.setTimeout(() => {
             if (refreshCountCopy !== this.refreshCount) { return; }
             _.addCssClass(this.ePrevious, 'ag-value-slide-out-end');
         }, 50);
 
-        setTimeout( ()=> {
+        window.setTimeout(() => {
             if (refreshCountCopy !== this.refreshCount) { return; }
             this.getGui().removeChild(this.ePrevious);
             this.ePrevious = null;
@@ -83,7 +83,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         } else if (_.exists(params.value)) {
             this.eCurrent.innerHTML = value;
         } else {
-            this.eCurrent.innerHTML = '';
+            _.clearElement(this.eCurrent);
         }
 
         return true;

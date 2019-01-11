@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Pinning: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Pinning. Use Pinned Rows to pin one or more rows to the top or the bottom. Pinned rows are always present and not impacted by vertical scroll. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Pinning. Use Pinned Rows to pin one or more rows to the top or the bottom. Pinned rows are always present and not impacted by vertical scroll. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Pinned Rows";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -50,9 +50,9 @@ include '../documentation-main/documentation_header.php';
     <p>In this example we're using Components to render custom pinned row values for Athlete and Age (color blue and italics
     respectively).</p>
 
-    <?= example('Row Pinning', 'row-pinning', 'generated') ?>
+    <?= example('Row Pinning', 'row-pinning', 'generated', array('processVue' => true)) ?>
 
-    <h2>None Supported Items</h2>
+    <h2>Non Supported Items</h2>
 
     <p>
         Pinned rows are not part of the main row model. For this reason, the following is not possible:

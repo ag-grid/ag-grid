@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class ResizeObserverService {
@@ -6,4 +6,3 @@ export declare class ResizeObserverService {
     private frameworkFactory;
     observeResize(element: HTMLElement, callback: () => void): () => void;
 }
-//# sourceMappingURL=resizeObserverService.d.ts.map

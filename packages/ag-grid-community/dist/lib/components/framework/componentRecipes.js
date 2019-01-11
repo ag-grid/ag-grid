@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57,7 +57,9 @@ var ComponentRecipes = /** @class */ (function () {
     ComponentRecipes.prototype.newFloatingFilterWrapperComponent = function (column, params) {
         var _this = this;
         var colDef = column.getColDef();
-        if (colDef.suppressFilter) {
+        // if filter missing (undefined, null, or false)
+        // truthy values are string (filter name) or func / class (filter class provided explicitly)
+        if (!colDef.filter) {
             return this.newEmptyFloatingFilterWrapperComponent(column);
         }
         var defaultFloatingFilterType;
@@ -81,7 +83,8 @@ var ComponentRecipes = /** @class */ (function () {
         };
         if (!floatingFilter) {
             var filterComponent = this.getFilterComponentPrototype(colDef);
-            if (filterComponent && !filterComponent.component.prototype.getModelAsString) {
+            if (filterComponent &&
+                !(filterComponent.component && filterComponent.component.prototype && filterComponent.component.prototype.getModelAsString)) {
                 return this.newEmptyFloatingFilterWrapperComponent(column);
             }
             var rawModelFn_1 = params.currentParentModel;

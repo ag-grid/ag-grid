@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,7 @@ var TabbedLayout = /** @class */ (function () {
         this.eGui.innerHTML = TabbedLayout.TEMPLATE;
         this.eHeader = this.eGui.querySelector('[ref="tabHeader"]');
         this.eBody = this.eGui.querySelector('[ref="tabBody"]');
-        utils_1.Utils.addCssClass(this.eGui, params.cssClass);
+        utils_1._.addCssClass(this.eGui, params.cssClass);
         if (params.items) {
             params.items.forEach(function (item) { return _this.addItem(item); });
         }
@@ -35,7 +35,7 @@ var TabbedLayout = /** @class */ (function () {
         var minWidth = 0;
         var minHeight = 0;
         this.items.forEach(function (itemWrapper) {
-            utils_1.Utils.removeAllChildren(eDummyBody);
+            utils_1._.removeAllChildren(eDummyBody);
             var eClone = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, function (body) { return body.cloneNode(true); });
             if (eClone == null) {
                 return;
@@ -64,7 +64,7 @@ var TabbedLayout = /** @class */ (function () {
     TabbedLayout.prototype.addItem = function (item) {
         var eHeaderButton = document.createElement('span');
         eHeaderButton.appendChild(item.title);
-        utils_1.Utils.addCssClass(eHeaderButton, 'ag-tab');
+        utils_1._.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
         var wrapper = {
             tabbedItem: item,
@@ -74,7 +74,7 @@ var TabbedLayout = /** @class */ (function () {
         eHeaderButton.addEventListener('click', this.showItemWrapper.bind(this, wrapper));
     };
     TabbedLayout.prototype.showItem = function (tabbedItem) {
-        var itemWrapper = utils_1.Utils.find(this.items, function (wrapper) {
+        var itemWrapper = utils_1._.find(this.items, function (wrapper) {
             return wrapper.tabbedItem === tabbedItem;
         });
         if (itemWrapper) {
@@ -87,17 +87,17 @@ var TabbedLayout = /** @class */ (function () {
             this.params.onItemClicked({ item: wrapper.tabbedItem });
         }
         if (this.activeItem === wrapper) {
-            utils_1.Utils.callIfPresent(this.params.onActiveItemClicked);
+            utils_1._.callIfPresent(this.params.onActiveItemClicked);
             return;
         }
-        utils_1.Utils.removeAllChildren(this.eBody);
+        utils_1._.removeAllChildren(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(function (body) {
             _this.eBody.appendChild(body);
         });
         if (this.activeItem) {
-            utils_1.Utils.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
+            utils_1._.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }
-        utils_1.Utils.addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
+        utils_1._.addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
         this.activeItem = wrapper;
         if (wrapper.tabbedItem.afterAttachedCallback) {
             wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);

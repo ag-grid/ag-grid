@@ -51,7 +51,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
 
     ngAfterViewInit() {
         this.gridOptions.api.forEachNode(rowNode => {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 rowNode.setDataValue("random_col", this.randomNumberUpTo(100));
                 this.gridOptions.api.refreshCells({
                     rowNodes: [rowNode],

@@ -19,11 +19,11 @@ import {
     _
 } from 'ag-grid-community';
 
-import {ExcelCell, ExcelStyle} from 'ag-grid-community';
-import {ExcelXmlSerializingSession} from './excelXmlSerializingSession';
-import {ExcelXlsxSerializingSession} from './excelXlsxSerializingSession';
-import {ExcelXmlFactory} from './excelXmlFactory';
-import {ExcelXlsxFactory} from './excelXlsxFactory';
+import { ExcelCell, ExcelStyle } from 'ag-grid-community';
+import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelXmlSerializingSession';
+import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
+import { ExcelXmlFactory } from './excelXmlFactory';
+import { ExcelXlsxFactory } from './excelXlsxFactory';
 
 export interface ExcelMixedStyle {
     key: string;
@@ -67,7 +67,11 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public getDataAsExcelXml(params?: ExcelExportParams): string {
-        return this.getData(_.assign({}, params, { exportMode: 'xml' }));
+        if (params && params.exportMode) {
+            delete params.exportMode;
+        }
+        this.setExportMode('xml');
+        return this.getData(params || {});
     }
 
     public getMimeType(): string {
@@ -82,9 +86,9 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.getExportMode();
     }
 
-    public createSerializingSession(params?: ExcelExportParams): SerializingSession {
+    public createSerializingSession(params: ExcelExportParams): SerializingSession {
         const {columnController, valueService, gridOptionsWrapper} = this;
-        const {processCellCallback, processHeaderCallback, sheetName, suppressTextAsCDATA} = params;
+        const {processCellCallback, processHeaderCallback, sheetName, suppressTextAsCDATA, rowHeight, headerRowHeight} = params;
         const isXlsx = this.getExportMode() === 'xlsx';
         const excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
 
@@ -92,27 +96,31 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             columnController,
             valueService,
             gridOptionsWrapper,
-            processCellCallback: processCellCallback || null,
-            processHeaderCallback: processHeaderCallback || null,
-            sheetName: sheetName != null && sheetName !== '' ? (sheetName.toString()).substr(0, 31) : 'ag-grid',
+            processCellCallback,
+            processHeaderCallback,
+            rowHeight,
+            headerRowHeight: headerRowHeight || rowHeight,
+            sheetName: _.exists(sheetName) ? (sheetName as String).toString().substr(0, 31) : 'ag-grid',
             excelFactory,
-            baseExcelStyles: this.gridOptions.excelStyles,
+            baseExcelStyles: this.gridOptions.excelStyles || undefined,
             styleLinker: this.styleLinker.bind(this),
             suppressTextAsCDATA: suppressTextAsCDATA || false
         };
 
-        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
+        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)((config as ExcelGridSerializingParams));
     }
 
-    private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] {
-        if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) return ["header"];
-        if (!this.gridOptions.excelStyles || this.gridOptions.excelStyles.length === 0) return null;
+    private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] | null {
+        if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) { return ["header"]; }
+        const styles = this.gridOptions.excelStyles;
 
-        let styleIds: string[] = this.gridOptions.excelStyles.map((it: ExcelStyle) => {
+        if (!styles || !styles.length) { return null; }
+
+        const styleIds: string[] = styles.map((it: ExcelStyle) => {
             return it.id;
         });
 
-        let applicableStyles: string [] = [];
+        const applicableStyles: string [] = [];
         this.stylingService.processAllCellClasses(
             column.getColDef(),
             {
@@ -155,19 +163,24 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
         const {zipContainer, xlsxFactory} = this;
 
-        zipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
+        zipContainer.addFolders([
+            'xl/worksheets/', 
+            'xl/',
+            'xl/theme/',
+            'xl/_rels/',
+            'docProps/',
+            '_rels/'
+        ]);
 
-        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
-        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
-        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
-
+        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
         zipContainer.addFile('xl/workbook.xml', xlsxFactory.createWorkbook());
         zipContainer.addFile('xl/styles.xml', xlsxFactory.createStylesheet());
         zipContainer.addFile('xl/sharedStrings.xml', xlsxFactory.createSharedStrings());
-
         zipContainer.addFile('xl/theme/theme1.xml', xlsxFactory.createTheme());
         zipContainer.addFile('xl/_rels/workbook.xml.rels', xlsxFactory.createWorkbookRels());
-        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
+        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
+        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
+        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
 
         return zipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }

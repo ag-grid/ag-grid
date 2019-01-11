@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -29,11 +29,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
-var utils_1 = require("../../utils");
 var constants_1 = require("../../constants");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var valueFormatterService_1 = require("../valueFormatterService");
+var utils_1 = require("../../utils");
 var SelectCellEditor = /** @class */ (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
@@ -44,8 +44,8 @@ var SelectCellEditor = /** @class */ (function (_super) {
     SelectCellEditor.prototype.init = function (params) {
         var _this = this;
         this.focusAfterAttached = params.cellStartedEdit;
-        if (utils_1.Utils.missing(params.values)) {
-            console.log('ag-Grid: no values found for select cellEditor');
+        if (utils_1._.missing(params.values)) {
+            console.warn('ag-Grid: no values found for select cellEditor');
             return;
         }
         params.values.forEach(function (value) {

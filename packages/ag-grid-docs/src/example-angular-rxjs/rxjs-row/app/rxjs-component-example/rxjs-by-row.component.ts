@@ -19,7 +19,6 @@ export class RxJsComponentByRow {
 
         this.gridOptions = <GridOptions> {
             enableRangeSelection: true,
-            enableColResize: true,
             columnDefs: this.createColumnDefs(),
             getRowNodeId: function (data) {
                 // the code is unique, so perfect for the id
@@ -54,28 +53,28 @@ export class RxJsComponentByRow {
 
     private createColumnDefs() {
         return [
-            {headerName: "Code", field: "code", width: 70},
-            {headerName: "Name", field: "name", width: 280},
+            {headerName: "Code", field: "code", width: 70, resizable: true},
+            {headerName: "Name", field: "name", width: 280, resizable: true},
             {
-                headerName: "Bid", field: "bid", width: 100,
+                headerName: "Bid", field: "bid", width: 100, resizable: true,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
                 cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
-                headerName: "Mid", field: "mid", width: 100,
+                headerName: "Mid", field: "mid", width: 100, resizable: true,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
                 cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
-                headerName: "Ask", field: "ask", width: 100,
+                headerName: "Ask", field: "ask", width: 100, resizable: true,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
                 cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
-                headerName: "Volume", field: "volume", width: 100,
+                headerName: "Volume", field: "volume", width: 100, resizable: true,
                 cellClass: 'cell-number',
                 cellRenderer: 'agAnimateSlideCellRenderer'
             }

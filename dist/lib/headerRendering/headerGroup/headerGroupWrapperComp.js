@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -30,7 +30,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var column_1 = require("../../entities/column");
-var utils_1 = require("../../utils");
 var columnGroup_1 = require("../../entities/columnGroup");
 var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
@@ -44,6 +43,7 @@ var gridApi_1 = require("../../gridApi");
 var componentRecipes_1 = require("../../components/framework/componentRecipes");
 var beans_1 = require("../../rendering/beans");
 var hoverFeature_1 = require("../hoverFeature");
+var utils_1 = require("../../utils");
 var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
     function HeaderGroupWrapperComp(columnGroup, dragSourceDropTarget, pinned) {
@@ -91,10 +91,10 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.columnGroup.isMoving()) {
-            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1._.addCssClass(this.getGui(), 'ag-header-cell-moving');
         }
         else {
-            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1._.removeCssClass(this.getGui(), 'ag-header-cell-moving');
         }
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
@@ -172,7 +172,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         this.columnController.getAllDisplayedColumns().forEach(function (column) {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
-                utils_1.Utils.removeFromArray(allColumnsOriginalOrder, column);
+                utils_1._.removeFromArray(allColumnsOriginalOrder, column);
             }
         });
         // we are left with non-visible columns, stick these in at the end
@@ -235,7 +235,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         var _this = this;
         this.eHeaderCellResize = this.getRefElement('agResize');
         if (!this.columnGroup.isResizable()) {
-            utils_1.Utils.removeFromParent(this.eHeaderCellResize);
+            utils_1._.removeFromParent(this.eHeaderCellResize);
             return;
         }
         var finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
@@ -264,7 +264,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     HeaderGroupWrapperComp.prototype.onResizeStart = function (shiftKey) {
         var _this = this;
         var leafCols = this.columnGroup.getDisplayedLeafColumns();
-        this.resizeCols = utils_1.Utils.filter(leafCols, function (col) { return col.isResizable(); });
+        this.resizeCols = utils_1._.filter(leafCols, function (col) { return col.isResizable(); });
         this.resizeStartWidth = 0;
         this.resizeCols.forEach(function (col) { return _this.resizeStartWidth += col.getActualWidth(); });
         this.resizeRatios = [];
@@ -275,7 +275,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         }
         if (takeFromGroup) {
             var takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
-            this.resizeTakeFromCols = utils_1.Utils.filter(takeFromLeafCols, function (col) { return col.isResizable(); });
+            this.resizeTakeFromCols = utils_1._.filter(takeFromLeafCols, function (col) { return col.isResizable(); });
             this.resizeTakeFromStartWidth = 0;
             this.resizeTakeFromCols.forEach(function (col) { return _this.resizeTakeFromStartWidth += col.getActualWidth(); });
             this.resizeTakeFromRatios = [];
@@ -286,6 +286,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             this.resizeTakeFromStartWidth = null;
             this.resizeTakeFromRatios = null;
         }
+        utils_1._.addCssClass(this.getGui(), 'ag-column-resizing');
     };
     HeaderGroupWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
         var resizeSets = [];
@@ -303,6 +304,9 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             });
         }
         this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
+        if (finished) {
+            utils_1._.removeCssClass(this.getGui(), 'ag-column-resizing');
+        }
     };
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderCell - should refactor out?

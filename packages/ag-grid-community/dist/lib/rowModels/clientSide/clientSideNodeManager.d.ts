@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -38,7 +38,7 @@ export declare class ClientSideNodeManager {
     setRowData(rowData: any[]): RowNode[];
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {
         [id: string]: number;
-    }): RowNodeTransaction;
+    } | null | undefined): RowNodeTransaction | null;
     private addRowNode;
     private lookupRowNode;
     private updatedRowNode;
@@ -50,4 +50,3 @@ export declare class ClientSideNodeManager {
     addItems(items: any): RowNode[];
     isLegacyTreeData(): boolean;
 }
-//# sourceMappingURL=clientSideNodeManager.d.ts.map

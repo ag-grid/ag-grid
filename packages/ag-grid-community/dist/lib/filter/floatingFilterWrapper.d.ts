@@ -1,12 +1,12 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
-import { Promise } from "../utils";
 import { IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange } from "./floatingFilter";
 import { Component } from "../widgets/component";
 import { IComponent } from "../interfaces/iComponent";
 import { CombinedFilter } from "./baseFilter";
+import { Promise } from "../utils";
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column: Column;
     floatingFilterComp: Promise<IFloatingFilterComp<M, F, P>>;
@@ -47,4 +47,3 @@ export declare class EmptyFloatingFilterWrapperComp extends BaseFilterWrapperCom
     enrichBody(body: HTMLElement): void;
     onParentModelChanged(parentModel: any): void;
 }
-//# sourceMappingURL=floatingFilterWrapper.d.ts.map

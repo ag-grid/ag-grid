@@ -402,13 +402,20 @@ function renderExampleExtras($config)
                 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css'
             )
         ),
+        'flatpickr' => array(
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/flatpickr.min.js'),
+            'styles' => array(
+                'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/flatpickr.min.css', 
+                'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/material_blue.css'
+            )
+        ),
         'roboto' => array(
             'styles' => array(
                 'https://fonts.googleapis.com/css?family=Roboto'
             )
         ),
         'fontawesome' => array(
-            'styles' => array('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+            'styles' => array('https://use.fontawesome.com/releases/v5.6.3/css/all.css')
         ),
         'xlsx-style' => array(
             'scripts' => array('https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js')

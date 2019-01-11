@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -93,7 +93,7 @@ export declare class RowRenderer extends BeanStub {
     private keepRowBecauseEditing;
     private createRowComp;
     getRenderedNodes(): RowNode[];
-    navigateToNextCell(event: KeyboardEvent, key: number, previousCell: GridCell, allowUserOverride: boolean): void;
+    navigateToNextCell(event: KeyboardEvent | null, key: number, previousCell: GridCell, allowUserOverride: boolean): void;
     ensureCellVisible(gridCell: GridCell): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell;
@@ -115,4 +115,3 @@ export interface RefreshViewParams {
     newData?: boolean;
     newPage?: boolean;
 }
-//# sourceMappingURL=rowRenderer.d.ts.map

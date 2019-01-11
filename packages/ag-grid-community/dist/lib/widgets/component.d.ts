@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -40,7 +40,7 @@ export declare class Component extends BeanStub implements IComponent<any> {
     appendChild(newChild: Node | IComponent<any>): void;
     addFeature(context: Context, feature: BeanStub): void;
     isVisible(): boolean;
-    setVisible(visible: boolean): void;
+    setVisible(visible: boolean, visibilityMode?: 'display' | 'visibility'): void;
     addOrRemoveCssClass(className: string, addOrRemove: boolean): void;
     destroy(): void;
     addGuiEventListener(event: string, listener: (event: any) => void): void;
@@ -49,4 +49,3 @@ export declare class Component extends BeanStub implements IComponent<any> {
     getAttribute(key: string): string | null;
     getRefElement(refName: string): HTMLElement;
 }
-//# sourceMappingURL=component.d.ts.map

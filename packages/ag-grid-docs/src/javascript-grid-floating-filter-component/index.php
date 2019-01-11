@@ -195,6 +195,28 @@ interface IFloatingFilterParams {
 
 <?= example('Custom Filter Only', 'custom-filter') ?>
 
+<h3>Custom Filters Containing a Floating Element</h3>
+
+<p>
+    Sometimes you will need to create custom components for your filters that also contain a floating element, 
+    which is the case of a Date filter the expands a Date Picker. When this happens, you will end up facing a
+    problem with extra floating element (in this case the calendar picker) does not belong (hierarchically)
+    to your custom component. For this reason, when you click on it, the grid detects a click outside of the floating
+    filter and collapses it.
+
+    There are two ways you can get fix this problem: 
+    <ul>
+        <li>Add a mouse click listener to your floating element and set it to preventDefault(). This way, the click event 
+        will not bubble up to the grid.<br>
+        Note: This is the best solution, but you can only do this if you are writing the component yourself.
+        </li>
+        <li>
+        Add the <code>ag-custom-component-popup</code> CSS class to your floating element. An example of this 
+        usage can be found here: <a href="/javascript-grid-date-component/#example-custom-date">Custom Date Component</a>
+        </li>
+    </ul>
+</p>
+
 <h3>Complex example with JQuery</h3>
 
 <p>The following example illustrates a complex scenario where all columns have ag-Grid floating filters, except for
@@ -213,5 +235,6 @@ interface IFloatingFilterParams {
 
 <?php include './angular.php'; ?>
 <?php include './react.php'; ?>
+<?php include './vue.php'; ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

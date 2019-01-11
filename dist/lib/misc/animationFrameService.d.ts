@@ -1,21 +1,19 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridPanel } from "../gridPanel/gridPanel";
 export declare class AnimationFrameService {
     private gridOptionsWrapper;
     private eventService;
-    private gridPanel;
-    private p1Tasks;
-    private p2Tasks;
+    private createRowTasks;
+    private destroyRowTasks;
     private ticking;
-    private supportsOverflowScrolling;
     private useAnimationFrame;
-    registerGridComp(gridPanel: GridPanel): void;
-    isSupportsOverflowScrolling(): boolean;
+    private scrollGoingDown;
+    private lastScrollTop;
+    setScrollTop(scrollTop: number): void;
     private init;
     private verifyAnimationFrameOn;
-    addP1Task(task: () => void): void;
+    addP1Task(task: () => void, index: number): void;
     addP2Task(task: () => void): void;
     private executeFrame;
     private stopTicking;
@@ -24,4 +22,3 @@ export declare class AnimationFrameService {
     private requestFrame;
     isQueueEmpty(): boolean;
 }
-//# sourceMappingURL=animationFrameService.d.ts.map

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Promise } from "../utils";
@@ -22,4 +22,3 @@ export interface IComponent<T> {
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
     init?(params: T): Promise<void> | void;
 }
-//# sourceMappingURL=iComponent.d.ts.map

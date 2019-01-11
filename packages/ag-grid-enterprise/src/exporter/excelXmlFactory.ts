@@ -1,5 +1,5 @@
-import {XmlElement, XmlFactory, Utils} from 'ag-grid-community';
-import {Bean, Autowired} from 'ag-grid-community';
+import { XmlElement, XmlFactory, _ } from 'ag-grid-community';
+import { Bean, Autowired } from 'ag-grid-community';
 
 import workbook from './files/xml/workbook';
 import excelWorkbook from './files/xml/excelWorkbook';
@@ -14,7 +14,7 @@ import protection from './files/xml/styles/protection';
 import numberFormat from './files/xml/styles/numberFormat';
 import style from './files/xml/styles/style';
 
-import {ExcelStyle, ExcelWorksheet, ExcelXMLTemplate} from 'ag-grid-community';
+import { ExcelStyle, ExcelWorksheet, ExcelXMLTemplate } from 'ag-grid-community';
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */
@@ -29,7 +29,7 @@ export class ExcelXmlFactory {
         const eWorkbook = excelWorkbook.getTemplate();
         const wb = this.workbook(docProps, eWorkbook, styles, worksheets);
 
-        return `${header}${this.xmlFactory.createXml(wb, boolean => boolean ? '1': '0')}`;
+        return `${header}${this.xmlFactory.createXml(wb, boolean => boolean ? '1' : '0')}`;
     }
 
     private workbook(docProperties: XmlElement, eWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]) : XmlElement {
@@ -37,9 +37,9 @@ export class ExcelXmlFactory {
             docProperties,
             eWorkbook,
             this.stylesXmlElement(styles)
-        ].concat(Utils.map(worksheets, (it):XmlElement => worksheet.getTemplate(it)));
+        ].concat(_.map(worksheets, (it):XmlElement => worksheet.getTemplate(it)));
 
-        return Utils.assign({}, workbook.getTemplate(), {children});
+        return _.assign({}, workbook.getTemplate(), {children});
     }
 
     private excelXmlHeader() : string {
@@ -51,14 +51,14 @@ export class ExcelXmlFactory {
     private stylesXmlElement(styles:ExcelStyle[]):XmlElement {
         return {
             name:'Styles',
-            children:styles ? Utils.map(styles, (it) => {
+            children:styles ? _.map(styles, (it) => {
                 return this.styleXmlElement (it);
-            }): []
+            }) : []
         };
     }
 
     private styleXmlElement(styleProperties:ExcelStyle):XmlElement {
-        const children = Utils.compose(
+        const children = _.compose(
             this.addProperty('alignment', styleProperties),
             this.addProperty('borders', styleProperties),
             this.addProperty('font', styleProperties),
@@ -67,12 +67,12 @@ export class ExcelXmlFactory {
             this.addProperty('numberFormat', styleProperties)
         )([]);
 
-        return Utils.assign({}, style.getTemplate(styleProperties), {children});
+        return _.assign({}, style.getTemplate(styleProperties), {children});
     }
 
     private addProperty<K extends keyof ExcelStyle>(property: K, styleProperties: ExcelStyle) {
         return (children: XmlElement[]) => {
-            if (!styleProperties[property]) return children;
+            if (!styleProperties[property]) { return children; }
 
             const options: { [s: string]: ExcelXMLTemplate } = {
                 alignment,

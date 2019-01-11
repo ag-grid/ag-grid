@@ -1,8 +1,8 @@
-import {Column} from "../entities/column";
-import {ColDef} from "../entities/colDef";
-import {IRowModel} from "./iRowModel";
-import {RowNode} from "../entities/rowNode";
-import {IComponent} from "./iComponent";
+import { Column } from "../entities/column";
+import { ColDef } from "../entities/colDef";
+import { IRowModel } from "./iRowModel";
+import { RowNode } from "../entities/rowNode";
+import { IComponent } from "./iComponent";
 
 export interface IFilter {
     /** This is used to show the filter icon in the header. If true, the filter icon will be shown. */
@@ -52,7 +52,6 @@ export interface SerializedFilter {
     filterType: string;
 }
 
-
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 
@@ -68,13 +67,13 @@ export interface IFilterParams {
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;
-    filterChangedCallback: ()=> void;
-    filterModifiedCallback: ()=> void;
+    filterChangedCallback: () => void;
+    filterModifiedCallback: () => void;
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
     $scope: any;
     filterOptions?: string[];
     defaultOption?: string;
-    textFormatter?: (from: string)=>string;
+    textFormatter?: (from: string) => string;
 }

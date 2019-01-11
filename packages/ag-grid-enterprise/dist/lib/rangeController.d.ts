@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.4
-import { IRangeController, GridPanel, RangeSelection, GridCell, AddRangeSelectionParams } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { AddRangeSelectionParams, GridCell, GridPanel, IRangeController, RangeSelection } from "ag-grid-community";
 export declare class RangeController implements IRangeController {
     private loggerFactory;
     private rowModel;
@@ -27,7 +27,7 @@ export declare class RangeController implements IRangeController {
     extendRangeInDirection(startCell: GridCell, key: number): boolean;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
-    getCellRanges(): RangeSelection[];
+    getCellRanges(): RangeSelection[] | null;
     isEmpty(): boolean;
     isMoreThanOneCell(): boolean;
     clearSelection(): void;
@@ -41,7 +41,6 @@ export declare class RangeController implements IRangeController {
     private selectionChanged;
     private dispatchChangedEvent;
     onDragStop(): void;
-    onDragging(mouseEvent: MouseEvent): void;
+    onDragging(mouseEvent: MouseEvent | null): void;
     private updateSelectedColumns;
 }
-//# sourceMappingURL=rangeController.d.ts.map

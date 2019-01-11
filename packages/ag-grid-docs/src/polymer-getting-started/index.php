@@ -201,13 +201,13 @@ window.customElements.define('polymer-getting-started-app', PolymerGettingStarte
 <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
     enabled by setting a Grid property to true:</p>
 
-<snippet language="diff">
-&lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-balham"
-                 rowData="{{rowData}}"
-                 columnDefs="{{columnDefs}}"
-+                enableSorting
-                 on-first-data-rendered="{{firstDataRendered}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
+<snippet language="js">
+this.columnDefs = [
+    { headerName: "Make", field: "make", sortable=true },
+    { headerName: "Model", field: "model", sortable=true },
+    { headerName: "Price", field: "price", sortable=true },
+];
+</snippet>
 
 <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
     clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
@@ -225,15 +225,15 @@ window.customElements.define('polymer-getting-started-app', PolymerGettingStarte
 
 <p>As with sorting, enabling filtering is as easy as setting a single property in our Grid definition:</p>
 
-<snippet language="diff">
-&lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-balham"
-                 rowData="{{rowData}}"
-                 columnDefs="{{columnDefs}}"
-+                enableFilter
-                 on-first-data-rendered="{{firstDataRendered}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
+<snippet language="js">
+this.columnDefs = [
+    { headerName: "Make", field: "make", sortable=true, filter=true },
+    { headerName: "Model", field: "model", sortable=true, filter=true },
+    { headerName: "Price", field: "price", sortable=true, filter=true },
+];
+</snippet>
 
-<p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
+<p>With the <code>filter</code> property set we are now able to filter any column by clicking the column
     header
     "hamburger" to the right of a column (visible when hovered over). Note that in this example we're filtering the
     <code>Model</code>

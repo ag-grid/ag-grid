@@ -1,7 +1,7 @@
-import {Constants} from "../../constants";
-import {Component} from "../../widgets/component";
-import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
-import {Utils as _} from '../../utils';
+import { Constants } from "../../constants";
+import { Component } from "../../widgets/component";
+import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
+import { _ } from '../../utils';
 
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
@@ -13,29 +13,30 @@ export interface ITextCellEditorParams extends ICellEditorParams {
 
 export class TextCellEditor extends Component implements ICellEditorComp {
 
-    private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
+    private static TEMPLATE = '<div class="ag-input-text-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     private params: ICellEditorParams;
+    private eInput: HTMLInputElement;
 
     constructor() {
         super(TextCellEditor.TEMPLATE);
+        this.eInput = this.getGui().querySelector('input') as HTMLInputElement;
     }
 
     public init(params: ITextCellEditorParams): void {
 
         this.params = params;
 
-        let eInput = <HTMLInputElement> this.getGui();
+        const eInput = this.eInput;
         let startValue: string;
 
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
-
             this.focusAfterAttached = true;
 
-            let keyPressBackspaceOrDelete =
+            const keyPressBackspaceOrDelete =
                 params.keyPress === Constants.KEY_BACKSPACE
                 || params.keyPress === Constants.KEY_DELETE;
 
@@ -59,22 +60,22 @@ export class TextCellEditor extends Component implements ICellEditorComp {
             eInput.value = startValue;
         }
 
-        this.addDestroyableEventListener(eInput, 'keydown', (event: KeyboardEvent)=> {
-            let isNavigationKey = event.keyCode===Constants.KEY_LEFT
-                || event.keyCode===Constants.KEY_RIGHT
-                || event.keyCode===Constants.KEY_UP
-                || event.keyCode===Constants.KEY_DOWN
-                || event.keyCode===Constants.KEY_PAGE_DOWN
-                || event.keyCode===Constants.KEY_PAGE_UP
-                || event.keyCode===Constants.KEY_PAGE_HOME
-                || event.keyCode===Constants.KEY_PAGE_END;
+        this.addDestroyableEventListener(eInput, 'keydown', (event: KeyboardEvent) => {
+            const isNavigationKey = event.keyCode === Constants.KEY_LEFT
+                || event.keyCode === Constants.KEY_RIGHT
+                || event.keyCode === Constants.KEY_UP
+                || event.keyCode === Constants.KEY_DOWN
+                || event.keyCode === Constants.KEY_PAGE_DOWN
+                || event.keyCode === Constants.KEY_PAGE_UP
+                || event.keyCode === Constants.KEY_PAGE_HOME
+                || event.keyCode === Constants.KEY_PAGE_END;
             if (isNavigationKey) {
                 // this stops the grid from executing keyboard navigation
                 event.stopPropagation();
 
                 // this stops the browser from scrolling up / down
-                let pageUp = event.keyCode===Constants.KEY_PAGE_UP;
-                let pageDown = event.keyCode===Constants.KEY_PAGE_DOWN;
+                const pageUp = event.keyCode === Constants.KEY_PAGE_UP;
+                const pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
                 if (pageUp || pageDown) {
                     event.preventDefault();
                 }
@@ -85,7 +86,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
     public afterGuiAttached(): void {
         if (!this.focusAfterAttached) { return; }
 
-        let eInput = <HTMLInputElement> this.getGui();
+        const eInput = this.eInput;
         eInput.focus();
         if (this.highlightAllOnFocus) {
             eInput.select();
@@ -94,27 +95,27 @@ export class TextCellEditor extends Component implements ICellEditorComp {
             // this comes into play in two scenarios: a) when user hits F2 and b)
             // when user hits a printable character, then on IE (and only IE) the carot
             // was placed after the first character, thus 'apply' would end up as 'pplea'
-            let length = eInput.value ? eInput.value.length : 0;
+            const length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
-                eInput.setSelectionRange(length,length);
+                eInput.setSelectionRange(length, length);
             }
         }
     }
 
     // gets called when tabbing trough cells and in full row edit mode
     public focusIn(): void {
-        let eInput = <HTMLInputElement> this.getGui();
+        const eInput = this.eInput;
         eInput.focus();
         eInput.select();
     }
 
     public getValue(): any {
-        let eInput = <HTMLInputElement> this.getGui();
+        const eInput = this.eInput;
         return this.params.parseValue(eInput.value);
     }
 
     private getStartValue(params: ITextCellEditorParams) {
-        let formatValue = params.useFormatter || params.column.getColDef().refData;
+        const formatValue = params.useFormatter || params.column.getColDef().refData;
         return formatValue ? params.formatValue(params.value) : params.value;
     }
 }

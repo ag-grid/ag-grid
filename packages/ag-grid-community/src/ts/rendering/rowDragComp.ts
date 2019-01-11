@@ -1,17 +1,12 @@
-import {Component} from "../widgets/component";
-import {Autowired, PostConstruct} from "../context/context";
-import {RowNode} from "../entities/rowNode";
-import {DragAndDropService, DragItem, DragSource, DragSourceType} from "../dragAndDrop/dragAndDropService";
-import {EventService} from "../eventService";
-import {SortService} from "../rowNodes/sortService";
-import {FilterManager} from "../filter/filterManager";
-import {Events} from "../eventKeys";
-import {SortController} from "../sortController";
-import {_} from "../utils";
-import {ColumnController} from "../columnController/columnController";
-import {Beans} from "./beans";
-import {BeanStub} from "../context/beanStub";
-import {Column} from "../entities/column";
+import { Component } from "../widgets/component";
+import { PostConstruct } from "../context/context";
+import { RowNode } from "../entities/rowNode";
+import { DragItem, DragSource, DragSourceType } from "../dragAndDrop/dragAndDropService";
+import { Events } from "../eventKeys";
+import { Beans } from "./beans";
+import { BeanStub } from "../context/beanStub";
+import { Column } from "../entities/column";
+import { _ } from "../utils";
 
 export class RowDragComp extends Component {
 
@@ -37,20 +32,20 @@ export class RowDragComp extends Component {
 
         if (this.beans.gridOptionsWrapper.isRowDragManaged()) {
             this.addFeature(this.beans.context,
-                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
+                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column));
         } else {
             this.addFeature(this.beans.context,
-                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
+                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column));
         }
     }
 
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
-        let managed = this.beans.gridOptionsWrapper.isRowDragManaged();
-        let treeData = this.beans.gridOptionsWrapper.isTreeData();
+        const managed = this.beans.gridOptionsWrapper.isRowDragManaged();
+        const treeData = this.beans.gridOptionsWrapper.isTreeData();
 
         if (treeData && managed) {
-            _.doOnce( ()=>
+            _.doOnce(() =>
                 console.warn('ag-Grid: If using row drag with tree data, you cannot have rowDragManaged=true'),
                 'RowDragComp.managedAndTreeData'
             );
@@ -59,11 +54,11 @@ export class RowDragComp extends Component {
 
     private addDragSource(): void {
 
-        let dragItem: DragItem = {
+        const dragItem: DragItem = {
             rowNode: this.rowNode
         };
 
-        let dragSource: DragSource = {
+        const dragSource: DragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: this.cellValue,
@@ -71,7 +66,7 @@ export class RowDragComp extends Component {
             dragStartPixels: 0
         };
         this.beans.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc( ()=> this.beans.dragAndDropService.removeDragSource(dragSource) );
+        this.addDestroyFunc(() => this.beans.dragAndDropService.removeDragSource(dragSource));
     }
 }
 
@@ -109,13 +104,13 @@ class NonManagedVisibilityStrategy extends BeanStub {
     private workOutVisibility(): void {
 
         // only show the drag if both sort and filter are not present
-        let suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
 
         if (suppressRowDrag) {
-            this.parent.setVisible(false);
+            this.parent.setVisible(false, 'visibility');
         } else {
-            let visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible);
+            const visible = this.column.isRowDrag(this.rowNode);
+            this.parent.setVisible(visible, 'visibility');
         }
     }
 
@@ -163,7 +158,7 @@ class ManagedVisibilityStrategy extends BeanStub {
     }
 
     private updateRowGroupActive(): void {
-        let rowGroups = this.beans.columnController.getRowGroupColumns();
+        const rowGroups = this.beans.columnController.getRowGroupColumns();
         this.rowGroupActive = !_.missingOrEmpty(rowGroups);
     }
 
@@ -173,7 +168,7 @@ class ManagedVisibilityStrategy extends BeanStub {
     }
 
     private updateSortActive(): void {
-        let sortModel = this.beans.sortController.getSortModel();
+        const sortModel = this.beans.sortController.getSortModel();
         this.sortActive = !_.missingOrEmpty(sortModel);
     }
 
@@ -197,16 +192,16 @@ class ManagedVisibilityStrategy extends BeanStub {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        let sortOrFilterOrGroupActive = this.sortActive || this.filterActive || this.rowGroupActive;
-        let suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        const sortOrFilterOrGroupActive = this.sortActive || this.filterActive || this.rowGroupActive;
+        const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
 
-        let alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
+        const alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
 
         if (alwaysHide) {
-            this.parent.setVisible(false);
+            this.parent.setVisible(false, 'visibility');
         } else {
-            let visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible);
+            const visible = this.column.isRowDrag(this.rowNode);
+            this.parent.setVisible(visible, 'visibility');
         }
     }
 }

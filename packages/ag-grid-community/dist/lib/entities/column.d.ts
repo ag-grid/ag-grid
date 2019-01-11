@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -90,7 +90,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private createColumnEvent;
     isMoving(): boolean;
     getSort(): string;
-    setSort(sort: string, source?: ColumnEventType): void;
+    setSort(sort: string | null | undefined, source?: ColumnEventType): void;
     setMenuVisible(visible: boolean, source?: ColumnEventType): void;
     isMenuVisible(): boolean;
     isSortAscending(): boolean;
@@ -98,13 +98,13 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isSortNone(): boolean;
     isSorting(): boolean;
     getSortedAt(): number;
-    setSortedAt(sortedAt: number): void;
-    setAggFunc(aggFunc: string | IAggFunc | null): void;
+    setSortedAt(sortedAt: number | null): void;
+    setAggFunc(aggFunc: string | IAggFunc | null | undefined): void;
     getAggFunc(): string | IAggFunc;
     getLeft(): number;
     getOldLeft(): number;
     getRight(): number;
-    setLeft(left: number, source?: ColumnEventType): void;
+    setLeft(left: number | null, source?: ColumnEventType): void;
     isFilterActive(): boolean;
     setFilterActive(active: boolean, source?: ColumnEventType): void;
     setPinned(pinned: string | boolean | null | undefined): void;
@@ -145,4 +145,3 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isAllowRowGroup(): boolean;
     getMenuTabs(defaultValues: string[]): string[];
 }
-//# sourceMappingURL=column.d.ts.map

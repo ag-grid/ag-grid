@@ -1,21 +1,34 @@
+/**
+ ****************************
+ * Generic Styles
+ ****************************
+*/
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
 ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: block;
 }
 
-.ag-rtl {
-    //text-align right
-    direction: rtl;
+.ag-hidden {
+    display: none !important;
 }
 
-.ag-ltr {
-    //text-align left
-    direction: ltr;
+.ag-invisible {
+    visibility: hidden !important;
 }
 
-.ag-select-agg-func-popup {
-    position: absolute;
+.ag-faded {
+    opacity: 0.3;
+}
+
+.ag-width-half {
+    display: inline-block;
+    width: 50%;
+}
+
+.ag-font-style {
+    cursor: default;
+    user-select: none; // disable user mouse selection
 }
 
 // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
@@ -24,11 +37,76 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     user-select: none;
 }
 
+.ag-select-agg-func-popup {
+    position: absolute;
+}
+
+.ag-input-text-wrapper {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    line-height: normal;
+    position: relative;
+}
+
+// setting shake class to an item will give it a left ot right animation
+// used for the 'left' and 'rigth' arrows when dragging columns and scrolling
+.ag-shake-left-to-right {
+    animation-direction: alternate;
+    animation-duration: 0.2s;
+    animation-iteration-count: infinite;
+    animation-name: ag-shake-left-to-right;
+}
+
+@keyframes ag-shake-left-to-right {
+    from {
+        padding-left: 6px;
+        padding-right: 2px;
+    }
+
+    to {
+        padding-left: 2px;
+        padding-right: 6px;
+    }
+}
+
+$icons-path: "./ag-theme-base/icons/" !default;
+
+@if variable-exists(ag-icons-path) {
+    $icons-path: $ag-icons-path;
+}
+
+$ag-icons-filter: "initial" !default;
+
+@mixin icon-background($icon) {
+    background: transparent url("#{$icons-path}#{$icon}.svg") center no-repeat;
+    background-size: 12px 12px;
+    filter: $ag-icons-filter;
+    height: 12px;
+    width: 12px;
+}
+
+/* icons are used outside of the grid root (in the ghost) */
+$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
+    column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left
+    small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
+
+@each $icon in $icons {
+    .ag-icon-#{$icon} {
+        display: inline-block;
+
+        @include icon-background("#{$icon}");
+    }
+}
+
 .ag-root-wrapper {
     position: relative; // set to relative, so absolute popups appear relative to this
-
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    *, *:before, *:after {
+        box-sizing: border-box;
+    }
 
     &.ag-layout-normal {
         height: 100%;
@@ -40,14 +118,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-direction: row;
 
     &.ag-layout-normal {
-        flex-grow: 1;
-        height: 0px;
-        min-height: 0px;
+        flex: 1;
+        overflow: hidden;
     }
 }
 
 .ag-root {
-    box-sizing: border-box;
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
@@ -55,7 +131,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     &.ag-layout-normal,
     &.ag-layout-auto-height {
         overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
-        width: 0px;
         min-width: 0px;
         flex: 1;
     }
@@ -65,59 +140,182 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
-.ag-font-style {
-    cursor: default;
-    user-select: none; // disable user mouse selection
+/**
+ ****************************
+ * Viewports
+ ****************************
+*/
+.ag-header-viewport, 
+.ag-floating-top-viewport,
+.ag-body-viewport,
+.ag-pinned-left-cols-viewport,
+.ag-center-cols-viewport,
+.ag-pinned-right-cols-viewport,
+.ag-floating-bottom-viewport,
+.ag-body-horizontal-scroll-viewport,
+.ag-virtual-list-viewport {
+    position: relative;
+    height: 100%;
+    min-width: 0px;
+    overflow: hidden;
+    flex: 1;
 }
 
-.ag-popup-backdrop {
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
+.ag-body-viewport {
+    display: flex;
+
+    &.ag-layout-normal {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    &:not(.ag-layout-print).ag-force-vertical-scroll {
+        overflow-y: scroll;
+    }
+}
+
+.ag-pinned-left-cols-viewport, .ag-pinned-right-cols-viewport {
+    flex-grow: 1000;
+}
+
+.ag-center-cols-viewport {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.ag-body-horizontal-scroll-viewport {
+    overflow-x: scroll;
+}
+
+.ag-virtual-list-viewport {
+    overflow: auto;
     width: 100%;
 }
 
-.ag-header {
-    box-sizing: border-box;
-    //overflow: hidden;
+/**
+ ****************************
+ * Containers
+ ****************************
+*/
+.ag-header-container,
+.ag-floating-top-container,
+.ag-body-container,
+.ag-pinned-right-cols-container,
+.ag-center-cols-container,
+.ag-pinned-left-cols-container,
+.ag-floating-bottom-container,
+.ag-body-horizontal-scroll-container,
+.ag-full-width-container,
+.ag-floating-bottom-full-width-container,
+.ag-virtual-list-container {
+    position: relative;
+}
+
+// for when auto height is used but there is no row data
+.ag-header-container, .ag-floating-top-container, .ag-floating-bottom-container {
+    height: 100%;
     white-space: nowrap;
+}
+
+.ag-body-container {
+    // we do NOT use block with layout-print because it does not work with 
+    // page-break (to stop rows getting spread across printed pages).
+    &:not(.ag-layout-print) {
+        display: block;
+    }
+    .ag-layout-auto-height {
+        min-height: 50px;
+    }
+}
+
+.ag-pinned-right-cols-container {
+    display: block;
+}
+
+.ag-body-horizontal-scroll-container {
+    height: 100%;
+}
+
+.ag-full-width-container, 
+.ag-floating-top-full-width-container,
+.ag-floating-bottom-full-width-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    // turn off pointer events, because this container overlays the main row containers.
+    // so when user clicks on space between full width rows, we want the mouse clicks to
+    // pass onto the underlying container where the real rows are. eg if using full width
+    // for row grouping, the groups will be in the full width container, but when user
+    // opens a group the children are shown in the other containers - we want to make sure we
+    // don't block mouse clicks to those other containers with the children.
+    pointer-events: none;
+}
+.ag-full-width-container {
+    width: 100%;
+}
+
+.ag-floating-bottom-full-width-container, .ag-floating-top-full-width-container {
+    display: inline-block;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.ag-virtual-list-container {
+    overflow: hidden;
+}
+
+/**
+ ****************************
+ * Scrollers
+ ****************************
+*/
+.ag-center-cols-clipper {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.ag-body-horizontal-scroll {
+    min-height: 0;
+    min-width: 0;
     width: 100%;
     display: flex;
+    position: relative;
+}
+
+.ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
+    height: 100%;
+    min-width: 0;
+    flex-grow: 1000;
+}
+
+/**
+ ****************************
+ * Headers
+ ****************************
+*/
+.ag-header, .ag-pinned-left-header, .ag-pinned-right-header {
+    display: inline-block;
+    overflow: hidden;
+    cursor: pointer;
+}
+.ag-header {
+    display: flex;
+    width: 100%;
+    white-space: nowrap;
 }
 
 .ag-pinned-left-header {
-    box-sizing: border-box;
-    display: inline-block;
     height: 100%;
-    overflow: hidden;
 }
 
 .ag-pinned-right-header {
-    box-sizing: border-box;
-    display: inline-block;
     height: 100%;
-    overflow: hidden;
-}
-
-.ag-header-viewport {
-    box-sizing: border-box;
-    height: 100%;
-    overflow: hidden;
-    width: 0px;
-    min-width: 0px;
-    flex: 1;
 }
 
 .ag-header-row {
     position: absolute;
-}
-
-.ag-header-container {
-    box-sizing: border-box;
-    height: 100%;
-    position: relative;
-    white-space: nowrap;
 }
 
 .ag-header-overlay {
@@ -126,83 +324,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-header-cell {
-    box-sizing: border-box;
     display: inline-block;
     height: 100%;
     position: absolute;
     vertical-align: bottom;
-    //float left // safari doesn't align if we don't float
 }
 
-.ag-floating-filter {
-    box-sizing: border-box;
-    display: inline-block;
-    position: absolute;
-}
-
-.ag-floating-filter-body {
-    height: 20px;
-    margin-right: 25px;
-}
-
-.ag-floating-filter-full-body {
-    height: 20px;
-    width: 100%;
-}
-
-.ag-floating-filter-input {
-    width: 100%;
-}
-
-.ag-floating-filter-input:read-only {
-    background-color: #eee;
-}
-
-.ag-floating-filter-menu {
-    position: absolute;
-    user-select: none;
-}
-// the ghost header cell doesn't live inside the grid, it's parent is the body element,
-// so we cannot style using standard themes. hence we break the rules, and style it here
-.ag-dnd-ghost {
-    background: #e5e5e5;
-    border: 1px solid black;
-    box-sizing: border-box;
-    cursor: move;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
-    overflow: hidden;
-    padding: 3px;
-    position: absolute;
-    text-overflow: ellipsis;
-    user-select: none;
-    //img
-    //    vertical-align: middle;
-    //    border: 0px;
-}
-
-.ag-dnd-ghost-icon {
-    display: inline-block;
-    float: left;
-    padding: 2px;
-}
-
-.ag-dnd-ghost-label {
-    display: inline-block;
-}
-
-.ag-header-group-cell {
-    box-sizing: border-box;
-    display: inline-block;
-    height: 100%;
-    overflow: hidden;
-    position: absolute;
-    text-overflow: ellipsis;
-    //float: left // safari doesn't align if we don't float
-}
-// we needed to have display of table-cell below,
-// as with inline-block, the layout messed up in Safari (not problems in the others).
 .ag-header-group-cell-label {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -225,58 +352,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 4px;
 }
 
-.ag-ltr .ag-header-cell-resize {
-    right: -4px;
-}
-
-.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {
-    left: -4px;
-}
-
-.ag-rtl .ag-header-cell-resize {
-    left: -4px;
-}
-
-.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {
-    right: -4px;
-}
-
-.ag-ltr .ag-header-select-all {
-    float: left;
-}
-
-.ag-rtl .ag-header-select-all {
-    float: right;
-}
-
 .ag-header-expand-icon {
     padding-left: 4px;
 }
 
 .ag-header-cell-menu-button {
     float: right;
-}
-
-.ag-overlay {
-    height: 100%;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    width: 100%;
-}
-
-.ag-overlay-panel {
-    display: table;
-    height: 100%;
-    pointer-events: none;
-    width: 100%;
-}
-
-.ag-overlay-wrapper {
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
 }
 
 .ag-primary-cols-header-panel .ag-column-name-filter {
@@ -288,324 +369,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 100%;
 }
 
-.ag-tool-panel-wrapper {
+.ag-primary-cols-header-panel {
     display: flex;
-    overflow-y: auto;
-}
-
-.ag-column-panel {
-    display: flex;
-    min-height: 400px;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-x: hidden;
-    max-height: 100vh;
-}
-
-// for when auto height is used but there is no row data
-.ag-body-container.ag-layout-auto-height {
-    min-height: 50px;
-}
-
-// for when auto height is used but there is no row data
-.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-    padding-top: 30px;
-}
-
-.ag-body {
-    box-sizing: border-box;
-    position: relative; // needed so rows translate is relative to this container
-    display: flex;
-
-    &.ag-layout-normal {
-        flex: 1;
-        height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
-        min-height: 0px; // min-height needed for firefox
-    }
-}
-
-// we want the pinned left to always be on the left, and the pinned right
-// always to be on the right. hence we do row-reverse for rtl, otherwise having
-// RTL applied will reverse the order of the flex layout (and invert what's left and right)
-.ag-rtl .ag-body {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-body {
     flex-direction: row;
 }
 
-.ag-rtl .ag-floating-top {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-floating-top {
-    flex-direction: row;
-}
-
-.ag-rtl .ag-floating-bottom {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-floating-bottom {
-    flex-direction: row;
-}
-
-// we don't want right and left pinned flipped when doing RTL
-.ag-ltr .ag-header {
-    flex-direction: row;
-}
-.ag-rtl .ag-header {
-    flex-direction: row-reverse;
-}
-
-.ag-floating-top {
-    box-sizing: border-box;
-    overflow: hidden;
-    white-space: nowrap;
-    width: 100%;
-    position: relative;
-    display: flex;
-}
-
-.ag-pinned-left-floating-top {
-    box-sizing: border-box;
-    display: inline-block;
-    overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
-    min-width: 0px;
-    width: 0px;
-    flex-grow: 1000;
-}
-
-.ag-pinned-right-floating-top {
-    box-sizing: border-box;
-    display: inline-block;
-    overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
-    min-width: 0px;
-    width: 0px;
-    flex-grow: 1000;
-}
-
-.ag-floating-top-viewport {
-    box-sizing: border-box;
-    overflow: hidden;
-    width: 0px;
-    min-width: 0px;
-    flex: 1;
-
-    &.ag-layout-normal {
-        height: 100%;
-    }
-}
-
-.ag-floating-top-container {
-    box-sizing: border-box;
-    position: relative;
-    white-space: nowrap;
-}
-
-.ag-floating-bottom {
-    box-sizing: border-box;
-    overflow: hidden;
-    white-space: nowrap;
-    width: 100%;
-    position: relative;
-    display: flex;
-}
-
-.ag-pinned-left-floating-bottom {
-    box-sizing: border-box;
-    display: inline-block;
-    overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
-    min-width: 0px;
-    width: 0px;
-    flex-grow: 1000;
-}
-
-.ag-pinned-right-floating-bottom {
-    box-sizing: border-box;
-    display: inline-block;
-    overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
-    min-width: 0px;
-    width: 0px;
-    flex-grow: 1000;
-}
-
-.ag-floating-bottom-viewport {
-    box-sizing: border-box;
-    overflow: hidden;
-    flex: 1;
-    width: 0px;
-    min-width: 0px;
-}
-
-.ag-floating-bottom-container {
-    box-sizing: border-box;
-    position: relative;
-    white-space: nowrap;
-}
-
-.ag-pinned-right-cols-viewport-wrapper {
-    height: 100%;
-    overflow: hidden;
-    flex-grow: 1000;
-    min-width: 0px;
-    width: 0px;
-}
-
-.ag-pinned-right-cols-viewport {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-pinned-right-cols-container {
-    display: block;
-    position: relative;
-}
-
-.ag-pinned-left-cols-viewport-wrapper {
-    height: 100%;
-    overflow: hidden;
-    flex-grow: 1000;
-    min-width: 0px;
-    width: 0px;
-}
-
-.ag-pinned-left-cols-viewport {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-pinned-left-cols-container {
-    display: block;
-    position: relative;
-}
-
-.ag-body-viewport-wrapper {
-
-    overflow: hidden; // needed to clip the scrollbar when pinning
-
-    &.ag-layout-auto-height,
-    &.ag-layout-normal {
-        height: 100%;
-        // we have width (and min width) set to 20 so that the body is always at least 20px visible
-        // if this was NOT set (eg if min width of 0px) then user could have many pinned left cols
-        // and a narrow browser such that only the pinned left portion was visible, then the vertical
-        // scrollbar would be missing (as this is on the body, which would be pushed out by the pinned
-        // sections). by having a min width on the body, it ensures we always see it, even if to many pinned
-        // rows, which means user can always get access to the vertical scrollbar.
-        width: 20px; // min width, flex grows the center to fit
-        min-width: 20px; // width didn't do the trick in firefox, so needed min-width also
-        flex: 1;
-    }
-}
-
-.ag-body-viewport {
-    // layout-auto-height has x (horizontal) scrolls (but no y)
-    &.ag-layout-auto-height {
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
-
-    // layout-normal should have x and y scrolls
-    &.ag-layout-normal {
-        overflow-x: auto;
-        overflow-y: auto;
-        height: 100%;
-    }
-}
-
-.ag-full-width-viewport-wrapper {
-    height: 100%;
-    width: 100%;
-    display: inline-block;
-    pointer-events: none;
-    overflow: hidden;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    box-sizing: border-box;
-}
-
-.ag-full-width-viewport {
-    box-sizing: border-box;
-    height: 100%;
-    // because the full width container is an overlay over the rest of the grid, we cannot
-    // have it consume mouse events, otherwise no mouse events would be allowed on the
-    // rest of the grid
-    pointer-events: none;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-full-width-container {
-    // if we don't put this in, the RHS will overflow into the viewports margin,
-    // no idea why, trial and error
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-}
-
-.ag-floating-bottom-full-width-container {
-    display: inline;
-    left: 0;
-    overflow: hidden;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-}
-
-.ag-floating-top-full-width-container {
-    display: inline;
-    left: 0;
-    overflow: hidden;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-}
-
-.ag-full-width-row {
-    overflow: hidden;
-    // turn events back on, as we removed them in the parent
-    pointer-events: all;
-}
-
-.ag-body-container {
-    position: relative;
-
-    // we do NOT use block with layout-print because it does not work with 
-    // page-break (to stop rows getting spread across printed pages).
-    &:not(.ag-layout-print) {
-        display: block;
-    }
-}
-
-// for animations, allows rows to slide up and down,
-.ag-row-animation .ag-row {
-    transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
-}
-
-.ag-row-no-animation .ag-row {
-    transition: background-color 0.1s;
-}
-
-.ag-row {
-    box-sizing: border-box;
-    white-space: nowrap;
-    width: 100%;
-}
-
-.ag-row-position-absolute {
-    position: absolute;
-}
-
-.ag-row-position-relative {
-    position: relative;
-}
-
+/**
+ ****************************
+ * Columns
+ ****************************
+*/
 .ag-column-moving {
     .ag-cell {
         transition: left 0.2s;
@@ -621,7 +394,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-column-drop {
-    box-sizing: border-box;
     width: 100%;
 }
 
@@ -683,8 +455,62 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+.ag-column-select-indent {
+    display: inline-block;
+}
+
+.ag-column-panel {
+    display: flex;
+    min-height: 400px;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-x: hidden;
+    max-height: 100vh;
+}
+
+/**
+ ****************************
+ * Rows
+ ****************************
+*/
+// for animations, allows rows to slide up and down,
+.ag-row-animation .ag-row {
+    transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+}
+
+.ag-row-no-animation .ag-row {
+    transition: background-color 0.1s;
+}
+
+.ag-row {
+    white-space: nowrap;
+    width: 100%;
+}
+
+.ag-row-position-absolute {
+    position: absolute;
+}
+
+.ag-row-position-relative {
+    position: relative;
+}
+
+.ag-full-width-row {
+    overflow: hidden;
+    // turn events back on, as we removed them in the parent
+    pointer-events: all;
+}
+
+.ag-row-inline-editing {
+    z-index: 1;
+}
+
+/**
+ ****************************
+ * Cells
+ ****************************
+*/
 .ag-cell {
-    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     // this float was needed for layout in safari, without it, when images were used (eg country flags),
@@ -698,6 +524,263 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-cell-with-height {
     height: 100%;
 }
+
+.ag-cell-edit-input {
+    height: 100%;
+    width: 100%;
+    line-height: normal;
+}
+
+.ag-group-cell-entire-row {
+    display: inline-block;
+    height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
+    width: 100%;
+}
+
+.ag-footer-cell-entire-row {
+    display: inline-block;
+    height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
+    width: 100%;
+}
+
+/**
+ ****************************
+ * Filters
+ ****************************
+*/
+.ag-set-filter-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ag-filter-filter {
+    width: 100%;
+}
+
+.ag-filter {
+    // for focus reasons, we need this for IE, otherwise for the set filter, the 'selectAll' click doesn't work
+    // when you click on it when the quick filter has focus. this was a fix for AG-2258
+    .ag-filter-checkbox {
+        pointer-events: none;
+    }
+}
+
+.ag-filter-select {
+    margin: 4px 4px 0 4px;
+    width: 110px;
+}
+
+/**
+ ****************************
+ * Floating Filter
+ ****************************
+*/
+.ag-floating-filter-body {
+    input {
+        height: 19px;
+        margin: 0;
+        width: 100%;
+    }
+}
+
+.ag-floating-filter-full-body {
+    input {
+        height: 19px;
+        margin: 0;
+        width: 100%;
+    }
+}
+
+.ag-floating-filter {
+    display: inline-block;
+    position: absolute;
+}
+
+.ag-floating-filter-body {
+    height: 20px;
+    margin-right: 25px;
+}
+
+.ag-floating-filter-full-body {
+    height: 20px;
+    width: 100%;
+}
+
+.ag-floating-filter-input {
+    width: 100%;
+}
+
+.ag-floating-filter-input:read-only {
+    background-color: #eee;
+}
+
+.ag-floating-filter-menu {
+    position: absolute;
+    user-select: none;
+}
+
+/**
+ ****************************
+ * Drag & Drop
+ ****************************
+*/
+
+// the ghost header cell doesn't live inside the grid, it's parent is the body element,
+// so we cannot style using standard themes. hence we break the rules, and style it here
+.ag-dnd-ghost {
+    background: #e5e5e5;
+    border: 1px solid black;
+    cursor: move;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    overflow: hidden;
+    padding: 3px;
+    position: absolute;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+
+.ag-dnd-ghost-icon {
+    display: inline-block;
+    padding: 2px;
+}
+
+.ag-dnd-ghost-label {
+    display: inline-block;
+}
+
+/**
+ ****************************
+ * Overlay
+ ****************************
+*/
+.ag-overlay {
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.ag-overlay-panel {
+    display: table;
+    height: 100%;
+    pointer-events: none;
+    width: 100%;
+}
+
+.ag-overlay-wrapper {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+// for when auto height is used but there is no row data
+.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 30px;
+}
+
+/**
+ ****************************
+ * Popup
+ ****************************
+*/
+.ag-popup-backdrop {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.ag-popup-editor {
+    position: absolute;
+    user-select: none;
+}
+
+/**
+ ****************************
+ * Virtual Lists
+ ****************************
+*/
+.ag-virtual-list-item {
+    position: absolute;
+    width: 100%;
+
+    span:empty:not(.ag-icon) {
+        border-left: 1px solid transparent;
+    }
+}
+
+/**
+ ****************************
+ * Floating Top and Bottom
+ ****************************
+*/
+.ag-floating-top {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    position: relative;
+    display: flex;
+}
+
+.ag-pinned-left-floating-top {
+    display: inline-block;
+    overflow: hidden;
+    position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    flex-grow: 1000;
+}
+
+.ag-pinned-right-floating-top {
+    display: inline-block;
+    overflow: hidden;
+    position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    flex-grow: 1000;
+}
+
+.ag-floating-bottom {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    position: relative;
+    display: flex;
+}
+
+.ag-pinned-left-floating-bottom {
+    display: inline-block;
+    overflow: hidden;
+    position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    flex-grow: 1000;
+}
+
+.ag-pinned-right-floating-bottom {
+    display: inline-block;
+    overflow: hidden;
+    position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    flex-grow: 1000;
+}
+
+/**
+ ****************************
+ * Animations
+ ****************************
+*/
 
 // this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
 // however it is not tied to color, only placement and visiblity, which is behaviour and not style,
@@ -718,38 +801,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     opacity: 0;
 }
 
-.ag-cell-edit-input {
-    height: 100%;
-    width: 100%;
-}
 
-.ag-group-cell-entire-row {
-    box-sizing: border-box;
-    display: inline-block;
-    height: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
-    width: 100%;
-}
-
-.ag-footer-cell-entire-row {
-    box-sizing: border-box;
-    display: inline-block;
-    height: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
-    width: 100%;
-}
-
-.ag-popup-editor {
-    position: absolute;
-    user-select: none;
-}
-
+/**
+ ****************************
+ * Menu
+ ****************************
+*/
 .ag-menu {
     max-height: 100%;
     overflow-y: auto;
@@ -797,17 +854,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: table-cell;
 }
 
-.ag-virtual-list-viewport {
+.ag-menu-column-select-wrapper .ag-column-select-panel {
     height: 100%;
-    overflow-x: auto;
-    width: 100%;
 }
 
-.ag-virtual-list-container {
-    overflow: hidden;
-    position: relative;
-}
 
+/**
+ ****************************
+ * Rich Select
+ ****************************
+*/
 .ag-rich-select {
     cursor: default;
     outline: none;
@@ -827,75 +883,26 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 200px;
 }
 
-.ag-set-filter-item {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.ag-virtual-list-item {
-    position: absolute;
-    width: 100%;
-
-    span:empty:not(.ag-icon) {
-        border-left: 1px solid transparent;
-    }
-}
-
-.ag-filter-filter {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.ag-filter {
-    // for focus reasons, we need this for IE, otherwise for the set filter, the 'selectAll' click doesn't work
-    // when you click on it when the quick filter has focus. this was a fix for AG-2258
-    .ag-filter-checkbox {
-        pointer-events: none;
-    }
-}
-
-.ag-floating-filter-body {
-    input {
-        height: 19px;
-        margin: 0;
-        width: 100%;
-    }
-}
-
-.ag-floating-filter-full-body {
-    input {
-        height: 19px;
-        margin: 0;
-        width: 100%;
-    }
-}
-
-.ag-filter-select {
-    margin: 4px 4px 0 4px;
-    width: 110px;
-}
-
-.ag-list-selection {
-    cursor: default;
-    user-select: none;
-}
-
+/**
+ ****************************
+ * Tool Panel
+ ****************************
+*/
 .ag-tool-panel-wrapper {
-    box-sizing: border-box;
+    display: flex;
+    overflow-y: auto;
     cursor: default;
     user-select: none;
     width: 200px;
+    .ag-filter-toolpanel-header {
+        cursor: pointer;
+    }
 }
 
 .ag-primary-cols-list-panel {
     flex-grow: 1;
     height: 50px;
     overflow: auto;
-}
-
-.ag-column-select-indent {
-    display: inline-block;
 }
 
 .ag-ltr .ag-column-tool-panel-column {
@@ -959,80 +966,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     transform: translateX(-3px);
 }
 
-.ag-menu-column-select-wrapper .ag-column-select-panel {
-    height: 100%;
-}
-
-.ag-hidden {
-    display: none !important;
-}
-
-.ag-visibility-hidden {
-    visibility: hidden !important;
-}
-
-.ag-faded {
-    opacity: 0.3;
-}
-
-.ag-width-half {
-    display: inline-block;
-    width: 50%;
-}
-//.ag-tool-panel-container
-//    user-select: none;
-//    cursor: default;
-//    width: 200px;
-// setting shake class to an item will give it a left ot right animation
-// used for the 'left' and 'rigth' arrows when dragging columns and scrolling
-.ag-shake-left-to-right {
-    animation-direction: alternate;
-    animation-duration: 0.2s;
-    animation-iteration-count: infinite;
-    animation-name: ag-shake-left-to-right;
-}
-
-@keyframes ag-shake-left-to-right {
-    from {
-        padding-left: 6px;
-        padding-right: 2px;
-    }
-
-    to {
-        padding-left: 2px;
-        padding-right: 6px;
-    }
-}
-
-$icons-path: "./icons/" !default;
-
-@if variable-exists(ag-icons-path) {
-    $icons-path: $ag-icons-path;
-}
-
-$ag-icons-filter: "initial" !default;
-
-@mixin icon-background($icon) {
-    background: transparent url("#{$icons-path}#{$icon}.svg") center no-repeat;
-    background-size: 12px 12px;
-    filter: $ag-icons-filter;
-    height: 12px;
-    width: 12px;
-}
-
-/* icons are used outside of the grid root (in the ghost) */
-$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-    column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left
-    small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
-
-@each $icon in $icons {
-    .ag-icon-#{$icon} {
-        display: inline-block;
-
-        @include icon-background("#{$icon}");
-    }
-}
-
 .loading-filter {
     background-color: #e6e6e6;
     height: 100%;
@@ -1053,37 +986,23 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     width: 100%;
 }
 
-.ag-primary-cols-header-panel {
-    display: flex;
-    flex-direction: row;
+.ag-header-group-cell {
+    display: inline-block;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    //float: left // safari doesn't align if we don't float
 }
 
-$toolpanel-indent-size: 10px !default;
-$row-group-indent-size: 10px !default;
-
-// Default values for themes that do not use the mixins
-@for $i from 1 to 50 {
-    .ag-ltr .ag-toolpanel-indent-#{$i} {
-        padding-left: $i * $toolpanel-indent-size;
-    }
-
-    .ag-rtl .ag-toolpanel-indent-#{$i} {
-        padding-right: $i * $toolpanel-indent-size;
-    }
-
-    .ag-ltr .ag-row-group-indent-#{$i} {
-        padding-left: $i * $row-group-indent-size;
-    }
-
-    .ag-rtl .ag-row-group-indent-#{$i} {
-        padding-right: $i * $row-group-indent-size;
-    }
-}
-
+/**
+ ****************************
+ * Side Bar
+ ****************************
+*/
 .ag-side-bar {
     display: flex;
     flex-direction: row-reverse;
-    box-sizing: border-box;
 
     .ag-side-buttons {
         width: 20px;
@@ -1093,6 +1012,7 @@ $row-group-indent-size: 10px !default;
                 display: block;
                 white-space: nowrap;
                 outline: none;
+                cursor: pointer;
 
                 span {
                   writing-mode: tb;
@@ -1122,10 +1042,11 @@ $row-group-indent-size: 10px !default;
     }
 }
 
-.ag-row-inline-editing {
-    z-index: 1;
-}
-
+/**
+ ****************************
+ * Status Bar
+ ****************************
+*/
 .ag-status-bar {
     display: flex;
     justify-content: space-between;
@@ -1145,6 +1066,60 @@ $row-group-indent-size: 10px !default;
 
 .ag-status-bar-right {
     display: inline-flex;
+}
+
+$toolpanel-indent-size: 10px !default;
+$row-group-indent-size: 10px !default;
+
+// Default values for themes that do not use the mixins
+@for $i from 1 to 50 {
+    .ag-ltr .ag-toolpanel-indent-#{$i} {
+        padding-left: $i * $toolpanel-indent-size;
+    }
+
+    .ag-rtl .ag-toolpanel-indent-#{$i} {
+        padding-right: $i * $toolpanel-indent-size;
+    }
+
+    .ag-ltr .ag-row-group-indent-#{$i} {
+        padding-left: $i * $row-group-indent-size;
+    }
+
+    .ag-rtl .ag-row-group-indent-#{$i} {
+        padding-right: $i * $row-group-indent-size;
+    }
+}
+
+.ag-ltr {
+    direction: ltr;
+    .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        flex-direction: row;
+    }
+    .ag-header-cell-resize {
+        right: -4px;
+    }
+    .ag-pinned-right-header .ag-header-cell-resize {
+        left: -4px;
+    }
+    .ag-header-select-all {
+        float: left;
+    }
+}
+
+.ag-rtl {
+    direction: rtl;
+    .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        flex-direction: row-reverse;
+    }
+    .ag-header-cell-resize {
+        left: -4px;
+    }
+    .ag-pinned-left-header .ag-header-cell-resize {
+        right: -4px;
+    }
+    .ag-header-select-all {
+        float: right;
+    }
 }
 
 @media print {

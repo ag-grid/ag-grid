@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>filter<br/>filterFramework</th>
-            <td>Filter component to use for this column.</td>
+            <td>Filter component to use for this column. Set to true to use the default filter.</td>
         </tr>
         <tr>
             <th>floatingFilterComponent<br/>floatingFilterComponentFramework</th>
@@ -96,6 +96,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true block pinning column via the UI (API will still work).</td>
         </tr>
         <tr>
+            <th>sortable</th>
+            <td>Set to true to allow sorting on this column.</td>
+        </tr>
+        <tr>
             <th>sort</th>
             <td>Set to 'asc' or 'desc' to sort by this column by default.</td>
         </tr>
@@ -104,7 +108,18 @@ include '../documentation-main/documentation_header.php';
             <td>If doing multi sort by default, this column should say when the sort for each column was done
                 in milliseconds, so the grid knows which order to execute the sort.</td>
         </tr>
+        <tr>
+            <th>sortingOrder</th>
+            <td>
+                Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
+                <code>desc</code> or <code>null</code>.
+            </td>
+        </tr>
 
+        <tr>
+            <th>resizable</th>
+            <td>Set to true to allow column to be resized.</td>
+        </tr>
         <tr>
             <th>headerTooltip</th>
             <td>Tooltip for the column header</td>
@@ -246,24 +261,12 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true if no menu should be shown for this column header.</td>
         </tr>
         <tr>
-            <th>suppressSorting</th>
-            <td>Set to true if no sorting should be done for this column.</td>
-        </tr>
-        <tr>
             <th>suppressSizeToFit</th>
             <td>Set to true if you want this columns width to be fixed during 'size to fit' operation.</td>
         </tr>
         <tr>
             <th>suppressMovable</th>
             <td>Set to true if you do not want this column to be movable via dragging.</td>
-        </tr>
-        <tr>
-            <th>suppressFilter</th>
-            <td>Set to true to not allow filter on this column.</td>
-        </tr>
-        <tr>
-            <th>suppressResize</th>
-            <td>Set to true if you do not want this column to be resizable by dragging its edge.</td>
         </tr>
         <tr>
             <th>suppressNavigable</th>

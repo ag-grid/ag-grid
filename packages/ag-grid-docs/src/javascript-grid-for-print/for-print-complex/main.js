@@ -31,10 +31,10 @@ function createRowData() {
 
 var gridOptions = {
     defaultColDef: {
+        sortable: true
     },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableSorting: true,
     animateRows: true,
     toolPanelSuppressSideButtons: true,
     groupUseEntireRow: true,

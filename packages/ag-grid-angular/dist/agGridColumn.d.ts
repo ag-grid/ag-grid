@@ -109,4 +109,6 @@ export declare class AgGridColumn {
     enableCellChangeFlash: any;
     rowDrag: any;
     autoHeight: any;
+    sortable: any;
+    resizable: any;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var columnController_1 = require("../columnController/columnController");
 var constants_1 = require("../constants");
-var utils_1 = require("../utils");
 var selectionController_1 = require("../selectionController");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var displayedGroupCreator_1 = require("../columnController/displayedGroupCreator");
@@ -26,7 +25,7 @@ var columnFactory_1 = require("../columnController/columnFactory");
 var groupInstanceIdCreator_1 = require("../columnController/groupInstanceIdCreator");
 var columnGroup_1 = require("../entities/columnGroup");
 var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
-var autoGroupColService_1 = require("../columnController/autoGroupColService");
+var utils_1 = require("../utils");
 var BaseGridSerializingSession = /** @class */ (function () {
     function BaseGridSerializingSession(config) {
         var columnController = config.columnController, valueService = config.valueService, gridOptionsWrapper = config.gridOptionsWrapper, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, cellAndHeaderEscaper = config.cellAndHeaderEscaper;
@@ -47,7 +46,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
     BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, type, node) {
         var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
         var valueForCell;
-        if (node.group && isRowGrouping && index === 0) {
+        if (node && node.group && isRowGrouping && index === 0) {
             valueForCell = this.createValueForGroupNode(node);
         }
         else {
@@ -126,14 +125,14 @@ var GridSerializer = /** @class */ (function () {
         var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
         var columnsToExport;
-        if (utils_1.Utils.existsAndNotEmpty(columnKeys)) {
+        if (utils_1._.existsAndNotEmpty(columnKeys)) {
             columnsToExport = this.columnController.getGridColumns(columnKeys);
         }
         else if (allColumns && !isPivotMode) {
             // add auto group column for tree data
             columnsToExport = this.gridOptionsWrapper.isTreeData() ?
-                this.columnController.getGridColumns([autoGroupColService_1.AutoGroupColService.GROUP_AUTO_COLUMN_ID]) : [];
-            columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns());
+                this.columnController.getGridColumns([constants_1.Constants.GROUP_AUTO_COLUMN_ID]) : [];
+            columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns() || []);
         }
         else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
@@ -143,7 +142,7 @@ var GridSerializer = /** @class */ (function () {
         }
         gridSerializingSession.prepare(columnsToExport);
         if (includeCustomHeader) {
-            gridSerializingSession.addCustomHeader(params.customHeader);
+            gridSerializingSession.addCustomHeader(includeCustomHeader);
         }
         // first pass, put in the header names of the cols
         if (columnGroups) {
@@ -154,7 +153,7 @@ var GridSerializer = /** @class */ (function () {
         if (!skipHeader) {
             var gridRowIterator_1 = gridSerializingSession.onNewHeaderRow();
             columnsToExport.forEach(function (column, index) {
-                gridRowIterator_1.onColumn(column, index, null);
+                gridRowIterator_1.onColumn(column, index, undefined);
             });
         }
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
@@ -193,7 +192,7 @@ var GridSerializer = /** @class */ (function () {
         }
         this.pinnedRowModel.forEachPinnedBottomRow(processRow);
         if (includeCustomFooter) {
-            gridSerializingSession.addCustomFooter(params.customFooter);
+            gridSerializingSession.addCustomFooter(includeCustomFooter);
         }
         function processRow(node) {
             var shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
@@ -224,8 +223,9 @@ var GridSerializer = /** @class */ (function () {
                 api: api,
                 context: context
             });
-            if (shouldRowBeSkipped)
+            if (shouldRowBeSkipped) {
                 return;
+            }
             var rowAccumulator = gridSerializingSession.onNewBodyRow();
             columnsToExport.forEach(function (column, index) {
                 rowAccumulator.onColumn(column, index, node);
@@ -237,8 +237,9 @@ var GridSerializer = /** @class */ (function () {
         var directChildrenHeaderGroups = [];
         displayedGroups.forEach(function (columnGroupChild) {
             var columnGroup = columnGroupChild;
-            if (!columnGroup.getChildren)
+            if (!columnGroup.getChildren) {
                 return;
+            }
             columnGroup.getChildren().forEach(function (it) { return directChildrenHeaderGroups.push(it); });
         });
         if (displayedGroups.length > 0 && displayedGroups[0] instanceof columnGroup_1.ColumnGroup) {
@@ -255,7 +256,7 @@ var GridSerializer = /** @class */ (function () {
         displayedGroups.forEach(function (columnGroupChild) {
             var columnGroup = columnGroupChild;
             var columnName = _this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
-            gridRowIterator.onColumn(columnName, columnIndex++, columnGroup.getLeafColumns().length - 1);
+            gridRowIterator.onColumn(columnName || '', columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     };
     __decorate([

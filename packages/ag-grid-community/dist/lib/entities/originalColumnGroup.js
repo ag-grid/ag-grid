@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,10 +15,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var context_1 = require("../context/context");
 var columnGroup_1 = require("./columnGroup");
 var column_1 = require("./column");
 var eventService_1 = require("../eventService");
-var context_1 = require("../context/context");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var OriginalColumnGroup = /** @class */ (function () {
@@ -47,7 +47,7 @@ var OriginalColumnGroup = /** @class */ (function () {
         return this.padding;
     };
     OriginalColumnGroup.prototype.setExpanded = function (expanded) {
-        this.expanded = expanded;
+        this.expanded = expanded === undefined ? false : expanded;
         var event = {
             type: OriginalColumnGroup.EVENT_EXPANDED_CHANGED
         };

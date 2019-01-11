@@ -7,14 +7,13 @@ import {
     Utils,
     Constants,
     ICellRendererComp,
-    ICellRendererFunc,
     CellRendererService,
     IRichCellEditorParams,
     Promise,
     _
 } from "ag-grid-community";
-import {RichSelectRow} from "./richSelectRow";
-import {VirtualList} from "../virtualList";
+import { RichSelectRow } from "./richSelectRow";
+import { VirtualList } from "../virtualList";
 
 export class RichSelectCellEditor extends Component implements ICellEditor {
 
@@ -72,9 +71,9 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
             console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
-        let values = params.values;
+        const values = params.values;
 
-        this.virtualList.setModel( {
+        this.virtualList.setModel({
             getRowCount: function() { return values.length; },
             getRow(index: number) { return values[index]; }
         });
@@ -86,7 +85,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        let key = event.which || event.keyCode;
+        const key = event.which || event.keyCode;
 
         switch (key) {
             case Constants.KEY_ENTER:
@@ -108,34 +107,34 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         // if we don't stop propagation, then the grids navigation kicks in
         event.stopPropagation();
 
-        let oldIndex = this.params.values.indexOf(this.selectedValue);
-        let newIndex = key===Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
+        const oldIndex = this.params.values.indexOf(this.selectedValue);
+        const newIndex = key === Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
 
         if (newIndex >= 0 && newIndex < this.params.values.length) {
-            let valueToSelect = this.params.values[newIndex];
+            const valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);
         }
     }
 
     private renderSelectedValue(): void {
-        let valueFormatted = this.params.formatValue(this.selectedValue);
-        let eValue = <HTMLElement> this.getRefElement('eValue');
+        const valueFormatted = this.params.formatValue(this.selectedValue);
+        const eValue = this.getRefElement('eValue') as HTMLElement;
 
-        let promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
 
-        let foundRenderer = _.exists(promise);
+        const foundRenderer = _.exists(promise);
 
         if (foundRenderer) {
             promise.then(renderer => {
                 if (renderer && renderer.destroy) {
-                    this.addDestroyFunc( ()=> renderer.destroy() );
+                    this.addDestroyFunc(() => renderer.destroy());
                 }
             });
         } else {
             if (Utils.exists(this.selectedValue)) {
                 eValue.innerHTML = valueFormatted;
             } else {
-                eValue.innerHTML = '';
+                _.clearElement(eValue);
             }
         }
     }
@@ -145,7 +144,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
             return;
         }
 
-        let index = this.params.values.indexOf(value);
+        const index = this.params.values.indexOf(value);
 
         if (index >= 0) {
             this.selectedValue = value;
@@ -155,20 +154,20 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private createRowComponent(value: any): Component {
-        let valueFormatted = this.params.formatValue(value);
-        let row = new RichSelectRow(this.params.column.getColDef());
+        const valueFormatted = this.params.formatValue(value);
+        const row = new RichSelectRow(this.params.column.getColDef());
         this.context.wireBean(row);
-        row.setState(value, valueFormatted,value === this.selectedValue);
+        row.setState(value, valueFormatted, value === this.selectedValue);
         return row;
     }
 
     private onMouseMove(mouseEvent: MouseEvent): void {
-        let rect = this.virtualList.getGui().getBoundingClientRect();
-        let scrollTop = this.virtualList.getScrollTop();
-        let mouseY = mouseEvent.clientY - rect.top + scrollTop;
+        const rect = this.virtualList.getGui().getBoundingClientRect();
+        const scrollTop = this.virtualList.getScrollTop();
+        const mouseY = mouseEvent.clientY - rect.top + scrollTop;
 
-        let row = Math.floor(mouseY / this.virtualList.getRowHeight());
-        let value = this.params.values[row];
+        const row = Math.floor(mouseY / this.virtualList.getRowHeight());
+        const value = this.params.values[row];
 
         // not using utils.exist() as want empty string test to pass
         if (value !== undefined) {
@@ -185,13 +184,13 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     // virtual row logic needs info about the gui state
     public afterGuiAttached(): void  {
 
-        let selectedIndex = this.params.values.indexOf(this.selectedValue);
+        const selectedIndex = this.params.values.indexOf(this.selectedValue);
 
         // we have to call this here to get the list to have the right height, ie
         // otherwise it would not have scrolls yet and ensureIndeVisible would do nothing
         this.virtualList.refresh();
 
-        if (selectedIndex>=0) {
+        if (selectedIndex >= 0) {
             this.virtualList.ensureIndexVisible(selectedIndex);
         }
 

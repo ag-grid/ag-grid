@@ -30,10 +30,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
     animateRows: true,
-    enableFilter: true,
     isExternalFilterPresent: isExternalFilterPresent,
     doesExternalFilterPass: doesExternalFilterPass
 };

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Component, IToolPanelComp, IToolPanelParams } from "ag-grid-community/main";
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
@@ -28,4 +28,3 @@ export declare class ColumnToolPanel extends Component implements IToolPanelComp
     refresh(): void;
     destroy(): void;
 }
-//# sourceMappingURL=columnToolPanel.d.ts.map

@@ -8,35 +8,37 @@ const EVENTS = (<any>Object).values(Events);
 const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
 
-function collect(iterable, accumulator, collectors) {
-    return iterable.reduce((col, value) => {
+function collect(iterable, initialBindings, collectors) {
+    return iterable.reduce((bindings, value) => {
         collectors.forEach(collector => {
             if (collector.matches(value)) {
-                collector.apply(col, value);
+                collector.apply(bindings, value);
             }
         });
 
-        return col;
-    }, accumulator);
+        return bindings;
+    }, initialBindings);
 }
 
 function nodeIsVarNamed(node, name) {
+    // eg: var currentRowHeight = 10;
     return node.type === 'VariableDeclaration' && (<any>node.declarations[0].id).name === name;
 }
 
 function nodeIsFunctionNamed(node, name) {
+    // eg: function someFunction() { }
     return node.type === 'FunctionDeclaration' && (<any>node.id).name === name;
 }
 
 function nodeIsInScope(node, name, unboundInstanceMethods) {
-    if(!unboundInstanceMethods) {
+    if (!unboundInstanceMethods) {
         return false;
     }
     return node.type === 'FunctionDeclaration' && unboundInstanceMethods.indexOf((<any>node.id).name) >= 0;
 }
 
 function nodeIsUnusedFunction(node, used, unboundInstanceMethods) {
-    if(nodeIsInScope(node, used, unboundInstanceMethods)) {
+    if (nodeIsInScope(node, used, unboundInstanceMethods)) {
         return;
     }
     return node.type === 'FunctionDeclaration' && used.indexOf((<any>node.id).name) === -1;
@@ -47,7 +49,7 @@ function nodeIsUnusedVar(node, used) {
 }
 
 function nodeIsPropertyNamed(node, name) {
-    // we skip { property: variable }
+    // we skip { property: variable } - SPL why??
     // and get only inline property assignments
     return node.key.name == name && node.value.type != 'Identifier';
 }
@@ -93,28 +95,29 @@ const flatMap = function (array, callback) {
 };
 
 const extractEventHandlerBody = call => call.match(/^([\w]+)\((.*)\)/);
-const getAttr = attrName => el => el.getAttribute(attrName);
+const getElementAttribute = attrName => el => el.getAttribute(attrName);
 
+
+/*
+ * for each of the recognised events (click, change etc) extract the corresponding event handler, with (optional) params
+ * eg: onclick="refreshEvenRowsCurrencyData()"
+ */
 function extractEventHandlers(tree, eventNames: string[]) {
     return flatMap(eventNames, eventName => {
-        return arrayMap(tree.find(`[on${eventName}]`), getAttr(`on${eventName}`)).map(extractEventHandlerBody);
+        return arrayMap(tree.find(`[on${eventName}]`), getElementAttribute(`on${eventName}`)).map(extractEventHandlerBody);
     });
 }
 
-const localGridOptions = esprima.parseScript('const gridInstance = this.agGrid').body[0];
-
-function generateWithReplacedGridOptions(node) {
-    const code = generate(node)
+function generateWithReplacedGridOptions(node, options?) {
+    const code = generate(node, options)
         .replace(/gridOptions.api/g, 'this.gridApi')
         .replace(/gridOptions.columnApi/g, 'this.gridColumnApi');
-
-    if (code.indexOf('gridOptions') > -1) {
-        throw new Error("An event handlers contain a gridOptions reference that does not access api or columnApi");
-    }
 
     return code;
 }
 
+// if a function is marked as "inScope" then they'll be marked as "instance" methods, as opposed to (global/unused)
+// "util" ones
 let extractUnboundInstanceMethods = function (tree) {
     const inScopeRegex = /inScope\[([\w-].*)]/;
 
@@ -130,7 +133,7 @@ let extractUnboundInstanceMethods = function (tree) {
         });
 };
 
-export default function parser([js, html], gridSettings) {
+export default function parser(js, html, exampleSettings) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
@@ -146,6 +149,7 @@ export default function parser([js, html], gridSettings) {
 
     const registered = ['gridOptions'];
 
+    // handler is the function name, params are any function parameters
     domEventHandlers.forEach(([_, handler, params]) => {
         if (registered.indexOf(handler) > -1) {
             return;
@@ -153,10 +157,12 @@ export default function parser([js, html], gridSettings) {
 
         registered.push(handler);
 
+        // one of the event handlers extracted earlier (onclick, onchange etc)
+        // body replaces gridOptions.api/columnApi with this.gridApi/columnApi
         collectors.push({
             matches: node => nodeIsFunctionNamed(node, handler),
-            apply: (col, node) => {
-                col.externalEventHandlers.push({
+            apply: (bindings, node) => {
+                bindings.externalEventHandlers.push({
                     name: handler,
                     params: params,
                     body: generateWithReplacedGridOptions(node)
@@ -165,75 +171,83 @@ export default function parser([js, html], gridSettings) {
         });
     });
 
+    // functions marked as "inScope" will be added to "instance" methods, as opposed to (global/unused) "util" ones
     const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
     collectors.push({
         matches: node => nodeIsInScope(node, registered, unboundInstanceMethods),
-        apply: (col, node) => {
-            col.instance.push(generate(node, indentOne).replace("function ", ""))
+        apply: (bindings, node) => {
+            bindings.instance.push(generate(node, indentOne))
         }
     });
 
+    // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
     collectors.push({
         matches: node => nodeIsUnusedFunction(node, registered, unboundInstanceMethods),
-        apply: (col, node) => {
-            col.utils.push(generate(node).replace(/gridOptions/g, 'gridInstance'));
+        apply: (bindings, node) => {
+            bindings.utils.push(generate(node).replace(/gridOptions/g, 'gridInstance'));
         }
     });
 
+    // anything vars not not handled above in the eventHandlers is considered an unused/util method
     collectors.push({
         matches: node => nodeIsUnusedVar(node, registered),
-        apply: (col, node) => {
-            col.utils.push(generate(node));
+        apply: (bindings, node) => {
+            bindings.utils.push(generate(node));
         }
     });
 
     // extract the xmlhttpreq call
     onReadyCollectors.push({
         matches: nodeIsHttpOpen,
-        apply: (col, node) => {
+        apply: (bindings, node) => {
             const dataUrl = node.expression.arguments[1].raw;
             const callback = '{ params.api.setRowData(data); }';
 
-            col.data = {url: dataUrl, callback: callback};
+            bindings.data = {url: dataUrl, callback: callback};
         }
     });
 
     // extract the simpleHttpRequest call
     onReadyCollectors.push({
         matches: nodeIsSimpleHttpRequest,
-        apply: (col, node) => {
+        apply: (bindings, node) => {
             const dataUrl = node.expression.callee.object.arguments[0].properties[0].value.raw;
             const callback = generate(node.expression.arguments[0].body).replace(/gridOptions/g, 'params');
 
-            col.data = {url: dataUrl, callback: callback};
+            bindings.data = {url: dataUrl, callback: callback};
         }
     });
 
     // extract the resizeColumnsToFit
     onReadyCollectors.push({
         matches: nodeIsResizeColumnsToFit,
-        apply: (col, node) => {
-            col.resizeToFit = true;
+        apply: (bindings, node) => {
+            bindings.resizeToFit = true;
         }
     });
 
     // extract onready
     collectors.push({
         matches: nodeIsDocumentContentLoaded,
-        apply: (col, node) => {
-            collect(node.expression.arguments[1].body.body, col, onReadyCollectors);
+        apply: (bindings, node) => {
+            collect(node.expression.arguments[1].body.body, bindings, onReadyCollectors);
         }
     });
 
+    // all onXXX will be handled here
+    // note: gridOptions = { onGridSizeChanged = function() {}  WILL NOT WORK
+    // needs to be a separate function  gridOptions = { onGridSizeChanged = myGridSizeChangedFunc
     EVENTS.forEach(eventName => {
         var onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
 
         registered.push(onEventName);
 
         collectors.push({
-            matches: node => nodeIsFunctionNamed(node, onEventName),
-            apply: (col, node) => {
-                col.eventHandlers.push({
+            matches: node => {
+                return nodeIsFunctionNamed(node, onEventName)
+            },
+            apply: (bindings, node) => {
+                bindings.eventHandlers.push({
                     name: eventName,
                     handlerName: onEventName,
                     handler: generateWithReplacedGridOptions(node)
@@ -245,9 +259,13 @@ export default function parser([js, html], gridSettings) {
     FUNCTION_PROPERTIES.forEach(functionName => {
         registered.push(functionName);
         collectors.push({
-            matches: node => nodeIsFunctionNamed(node, functionName),
-            apply: (col, node) => {
-                col.properties.push({name: functionName, value: generate(node, indentOne)});
+            matches: node => {
+                return nodeIsFunctionNamed(node, functionName)
+            },
+            apply: (bindings, node) => {
+                bindings.instance.push(generateWithReplacedGridOptions(node, indentOne));
+
+                bindings.properties.push({name: functionName, value: null });
             }
         });
     });
@@ -258,10 +276,10 @@ export default function parser([js, html], gridSettings) {
         collectors.push({
             matches: node => nodeIsVarNamed(node, propertyName),
 
-            apply: (col, node) => {
+            apply: (bindings, node) => {
                 try {
                     const code = generate(node.declarations[0].init, indentOne);
-                    col.properties.push({name: propertyName, value: code});
+                    bindings.properties.push({name: propertyName, value: code});
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                 }
@@ -269,23 +287,43 @@ export default function parser([js, html], gridSettings) {
         });
 
         gridOptionsCollectors.push({
-            matches: node => nodeIsPropertyNamed(node, propertyName),
-            apply: (col, node) => col.properties.push({name: propertyName, value: generate(node.value, indentOne)})
+            matches: node => {
+                return nodeIsPropertyNamed(node, propertyName)
+            },
+            apply: (bindings, node) => bindings.properties.push({
+                name: propertyName,
+                value: generate(node.value, indentOne)
+            })
         });
     });
 
     gridOptionsCollectors.push({
         matches: node => nodeIsPropertyNamed(node, 'onGridReady'),
-        apply: (col, node) => {
-            col.onGridReady = generate(node.value.body).replace(/gridOptions/g, 'params');
+        apply: (bindings, node) => {
+            bindings.onGridReady = generate(node.value.body).replace(/gridOptions/g, 'params');
         }
     });
 
+    // gridOptionsCollectors captures all events, properties etc that are related to gridOptions
     collectors.push({
-        matches: node => nodeIsVarNamed(node, 'gridOptions'),
-        apply: (col, node) => collect(node.declarations[0].init.properties, col, gridOptionsCollectors)
+        matches: node => {
+            return nodeIsVarNamed(node, 'gridOptions')
+        },
+        apply: (bindings, node) => {
+            return collect(node.declarations[0].init.properties, bindings, gridOptionsCollectors)
+        }
     });
 
+    /*
+     * externalEventHandlers -> onclick, onchange etc in index.html
+     * eventHandlers -> grid related events
+     * properties -> grid related properties
+     * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (ie non-instance)
+     * instance -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
+     * onGridReady -> any matching onGridReady method
+     * data -> url: dataUrl, callback: callback, http calls etc
+     * resizeToFit -> true if sizeColumnsToFit is used
+     */
     const bindings = collect(
         tree.body,
         {
@@ -303,15 +341,15 @@ export default function parser([js, html], gridSettings) {
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
     if (inlineClass) {
-        gridSettings.theme = inlineClass;
+        exampleSettings.theme = inlineClass;
     }
 
     if (parseInt(inlineHeight)) {
-        gridSettings.height = inlineHeight;
+        exampleSettings.height = inlineHeight;
     }
 
     if (parseInt(inlineWidth)) {
-        gridSettings.width = inlineWidth;
+        exampleSettings.width = inlineWidth;
     }
 
     bindings.template = domTree.html().replace(/<br>/g, '<br />');
@@ -320,6 +358,6 @@ export default function parser([js, html], gridSettings) {
         width: '100%',
         height: '100%',
         theme: 'ag-theme-balham'
-    }, gridSettings);
+    }, exampleSettings);
     return bindings;
 }

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IFilterParams } from "./iFilter";
@@ -26,4 +26,3 @@ export interface ISetFilterParams extends IFilterParams {
     debounceMs?: number;
     miniFilterSearchByRefDataKey?: boolean;
 }
-//# sourceMappingURL=iSetFilterParams.d.ts.map

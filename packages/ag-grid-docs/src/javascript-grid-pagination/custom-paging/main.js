@@ -44,13 +44,19 @@ var autoGroupColumnDef = {
 };
 
 var gridOptions = {
-    enableSorting: true,
-    enableFilter: true,
+    defaultColDef: {
+        editable: true,
+        enableRowGroup: true,
+        enablePivot: true,
+        enableValue: true,
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     suppressRowClickSelection: true,
     groupSelectsChildren: true,
     debug: true,
     rowSelection: 'multiple',
-    enableColResize: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     enableRangeSelection: true,
@@ -60,12 +66,6 @@ var gridOptions = {
     autoGroupColumnDef: autoGroupColumnDef,
     paginationNumberFormatter: function(params) {
         return '[' + params.value.toLocaleString() + ']';
-    },
-    defaultColDef: {
-        editable: true,
-        enableRowGroup: true,
-        enablePivot: true,
-        enableValue: true
     }
 };
 

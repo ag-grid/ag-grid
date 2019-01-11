@@ -26,9 +26,9 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
     defaultColDef: {
-        width: 100
+        width: 100,
+        resizable: true
     }
 };
 

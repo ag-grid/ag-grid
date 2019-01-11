@@ -48,12 +48,12 @@ function createNewRowData(category) {
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 100
+        width: 100,
+        sortable: true
     },
     groupDefaultExpanded: 1,
     rowData: getInitialRowData(),
     rememberGroupStateWhenNewData: true,
-    enableSorting: true,
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
     animateRows: true,

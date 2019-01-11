@@ -2,7 +2,7 @@
 // id is already taken, it will start appending numbers until it gets a unique id.
 // eg, if the col field is 'name', it will try ids: {name, name_1, name_2...}
 // if no field or id provided in the col, it will try the ids of natural numbers
-import {Utils as _} from "../utils";
+import { _ } from "../utils";
 
 export class ColumnKeyCreator {
 
@@ -23,12 +23,12 @@ export class ColumnKeyCreator {
             let idToTry: string;
             if (colId) {
                 idToTry = colId;
-                if (count!==0) {
+                if (count !== 0) {
                     idToTry += '_' + count;
                 }
             } else if (colField) {
                 idToTry = colField;
-                if (count!==0) {
+                if (count !== 0) {
                     idToTry += '_' + count;
                 }
             } else {

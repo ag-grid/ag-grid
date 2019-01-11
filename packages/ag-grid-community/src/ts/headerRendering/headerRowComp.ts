@@ -1,25 +1,25 @@
-import {Component} from "../widgets/component";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnGroup} from "../entities/columnGroup";
-import {ColumnController} from "../columnController/columnController";
-import {Column} from "../entities/column";
-import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import {EventService} from "../eventService";
-import {Events} from "../events";
-import {Promise, Utils as _} from "../utils";
-import {HeaderWrapperComp} from "./header/headerWrapperComp";
-import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
-import {FilterManager, FilterRequestSource} from "../filter/filterManager";
-import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
-import {IComponent} from "../interfaces/iComponent";
-import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
-import {ComponentRecipes} from "../components/framework/componentRecipes";
-import {IFilterComp} from "../interfaces/iFilter";
-import {GridApi} from "../gridApi";
-import {CombinedFilter} from "../filter/baseFilter";
-import {Constants} from "../constants";
+import { Component } from "../widgets/component";
+import { Autowired, Context, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { ColumnGroup } from "../entities/columnGroup";
+import { ColumnController } from "../columnController/columnController";
+import { Column } from "../entities/column";
+import { DropTarget } from "../dragAndDrop/dragAndDropService";
+import { EventService } from "../eventService";
+import { Events } from "../events";
+import { HeaderWrapperComp } from "./header/headerWrapperComp";
+import { HeaderGroupWrapperComp } from "./headerGroup/headerGroupWrapperComp";
+import { FilterManager } from "../filter/filterManager";
+import { IFloatingFilterWrapperComp } from "../filter/floatingFilterWrapper";
+import { IComponent } from "../interfaces/iComponent";
+import { FloatingFilterChange, IFloatingFilterParams } from "../filter/floatingFilter";
+import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { IFilterComp } from "../interfaces/iFilter";
+import { GridApi } from "../gridApi";
+import { CombinedFilter } from "../filter/baseFilter";
+import { Constants } from "../constants";
+import { Promise, _ } from "../utils";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -58,14 +58,14 @@ export class HeaderRowComp extends Component {
     }
 
     public destroy(): void {
-        let idsOfAllChildren = Object.keys(this.headerComps);
+        const idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
         super.destroy();
     }
 
     private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach(id => {
-            let childHeaderComp: IComponent<any> = this.headerComps[id];
+            const childHeaderComp: IComponent<any> = this.headerComps[id];
             this.getGui().removeChild(childHeaderComp.getGui());
             if (childHeaderComp.destroy) {
                 childHeaderComp.destroy();
@@ -76,7 +76,7 @@ export class HeaderRowComp extends Component {
 
     private onRowHeightChanged(): void {
         let headerRowCount = this.columnController.getHeaderRowCount();
-        let sizes: number[] = [];
+        const sizes: number[] = [];
 
         let numberOfFloating = 0;
         let groupHeight: number;
@@ -93,8 +93,8 @@ export class HeaderRowComp extends Component {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
         }
-        let numberOfNonGroups = 1 + numberOfFloating;
-        let numberOfGroups = headerRowCount - numberOfNonGroups;
+        const numberOfNonGroups = 1 + numberOfFloating;
+        const numberOfGroups = headerRowCount - numberOfNonGroups;
 
         for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight); }
         sizes.push(headerHeight);
@@ -134,15 +134,15 @@ export class HeaderRowComp extends Component {
     }
 
     private setWidth(): void {
-        let width = this.getWidthForRow();
+        const width = this.getWidthForRow();
         this.getGui().style.width = width + 'px';
     }
 
     private getWidthForRow(): number {
-        let printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (printLayout) {
-            let centerRow = _.missing(this.pinned);
+            const centerRow = _.missing(this.pinned);
             if (centerRow) {
                 return this.columnController.getContainerWidth(Column.PINNED_RIGHT)
                     + this.columnController.getContainerWidth(Column.PINNED_LEFT)
@@ -161,7 +161,7 @@ export class HeaderRowComp extends Component {
     }
 
     private removeAndDestroyAllChildComponents(): void {
-        let idsOfAllChildren = Object.keys(this.headerComps);
+        const idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
     }
 
@@ -171,15 +171,15 @@ export class HeaderRowComp extends Component {
     }
 
     private getItemsAtDept(): ColumnGroupChild[] {
-        let printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (printLayout) {
             // for print layout, we add all columns into the center
-            let centerContainer = _.missing(this.pinned);
+            const centerContainer = _.missing(this.pinned);
             if (centerContainer) {
                 let result: ColumnGroupChild[] = [];
-                [Column.PINNED_LEFT, null, Column.PINNED_RIGHT].forEach( pinned => {
-                    let items = this.columnController.getVirtualHeaderGroupRow(
+                [Column.PINNED_LEFT, null, Column.PINNED_RIGHT].forEach(pinned => {
+                    const items = this.columnController.getVirtualHeaderGroupRow(
                         pinned,
                         this.type == HeaderRowType.FLOATING_FILTER ?
                             this.dept - 1 :
@@ -204,10 +204,10 @@ export class HeaderRowComp extends Component {
 
     private onVirtualColumnsChanged(): void {
 
-        let currentChildIds = Object.keys(this.headerComps);
+        const currentChildIds = Object.keys(this.headerComps);
 
-        let itemsAtDepth = this.getItemsAtDept();
-        let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        const itemsAtDepth = this.getItemsAtDept();
+        const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         let eBefore: HTMLElement;
 
         itemsAtDepth.forEach((child: ColumnGroupChild) => {
@@ -219,11 +219,11 @@ export class HeaderRowComp extends Component {
                 return;
             }
 
-            let idOfChild = child.getUniqueId();
-            let eParentContainer = this.getGui();
+            const idOfChild = child.getUniqueId();
+            const eParentContainer = this.getGui();
 
             // if we already have this cell rendered, do nothing
-            let colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
+            const colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
             let headerComp: IComponent<any>;
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
@@ -256,13 +256,13 @@ export class HeaderRowComp extends Component {
 
         switch (this.type) {
             case HeaderRowType.COLUMN :
-                result = new HeaderWrapperComp(<Column> columnGroupChild, this.dropTarget, this.pinned);
+                result = new HeaderWrapperComp(columnGroupChild as Column, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.COLUMN_GROUP :
-                result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.dropTarget, this.pinned);
+                result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
-                let column = <Column> columnGroupChild;
+                const column = columnGroupChild as Column;
                 result = this.createFloatingFilterWrapper(column);
                 break;
         }
@@ -273,20 +273,20 @@ export class HeaderRowComp extends Component {
     }
 
     private createFloatingFilterWrapper(column: Column): IFloatingFilterWrapperComp<any, any, any, any> {
-        let floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
+        const floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
 
-        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentRecipes.newFloatingFilterWrapperComponent(
+        const floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentRecipes.newFloatingFilterWrapperComponent(
             column,
-            <null>floatingFilterParams
+            floatingFilterParams as null
         );
 
         this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
-            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
+            const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
             floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
         });
-        let cachedFilter = <any>this.filterManager.cachedFilter(column);
+        const cachedFilter = this.filterManager.cachedFilter(column) as any;
         if (cachedFilter) {
-            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
+            const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
             floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
         }
 
@@ -299,42 +299,42 @@ export class HeaderRowComp extends Component {
         //
         // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
         //
-        let baseParams: IFloatingFilterParams<M, F> = {
+        const baseParams: IFloatingFilterParams<M, F> = {
             api: this.gridApi,
             column: column,
             currentParentModel: (): M => {
-                let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column, 'NO_UI');
-                let wholeParentFilter: CombinedFilter<M> | M= filterComponentPromise.resolveNow(null, (filter: any) =>
+                const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI') as any;
+                const wholeParentFilter: CombinedFilter<M> | M = filterComponentPromise.resolveNow(null, (filter: any) =>
                     (filter.getNullableModel) ?
                         filter.getNullableModel() :
                         filter.getModel()
                 );
-                return (wholeParentFilter && (<CombinedFilter<M>>wholeParentFilter).operator != null) ? (<CombinedFilter<M>>wholeParentFilter).condition1 : <M>wholeParentFilter;
+                return (wholeParentFilter && (wholeParentFilter as CombinedFilter<M>).operator != null) ? (wholeParentFilter as CombinedFilter<M>).condition1 : wholeParentFilter as M;
             },
             onFloatingFilterChanged: (change: F | M): boolean => {
                 let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
-                let modelChanged: Promise<boolean> = new Promise((resolve) => {
+                const modelChanged: Promise<boolean> = new Promise((resolve) => {
                     captureModelChangedResolveFunc = resolve;
                 });
-                let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column, 'NO_UI');
+                const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI') as any;
                 filterComponentPromise.then(filterComponent => {
                     if (filterComponent.onFloatingFilterChanged) {
                         //If going through this branch of code the user MUST
                         //be passing an object of type change that contains
                         //a model propery inside and some other stuff
-                        let result: boolean = filterComponent.onFloatingFilterChanged(<F>change);
+                        const result: boolean = filterComponent.onFloatingFilterChanged(change as F);
                         captureModelChangedResolveFunc(result);
                     } else {
                         //If going through this branch of code the user MUST
                         //be passing the plain model and delegating to ag-Grid
                         //the responsibility to set the parent model and refresh
                         //the filters
-                        filterComponent.setModel(<M>change);
+                        filterComponent.setModel(change as M);
                         this.filterManager.onFilterChanged();
                         captureModelChangedResolveFunc(true);
                     }
                 });
-                return modelChanged.resolveNow(true, modelChanged => modelChanged);
+                return modelChanged.resolveNow(true, changed => changed);
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false

@@ -12,8 +12,10 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
-    enableColResize: true,
     groupUseEntireRow: true
 };
 

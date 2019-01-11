@@ -1,13 +1,11 @@
-import {Constants as constants} from '../constants';
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnGroup} from "../entities/columnGroup";
-import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
-import {OriginalColumnGroup} from "../entities/originalColumnGroup";
-import {Column} from "../entities/column";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {Autowired} from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { ColumnGroup } from "../entities/columnGroup";
+import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
+import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { Column } from "../entities/column";
+import { Bean } from "../context/context";
+import { Autowired } from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('columnUtils')
@@ -29,7 +27,7 @@ export class ColumnUtils {
     }
 
     public getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] {
-        let result: OriginalColumnGroup[] = [];
+        const result: OriginalColumnGroup[] = [];
         let found = false;
 
         recursePath(originalBalancedTree, 0);
@@ -44,15 +42,15 @@ export class ColumnUtils {
 
         function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
 
-            for (let i = 0; i<balancedColumnTree.length; i++) {
+            for (let i = 0; i < balancedColumnTree.length; i++) {
                 if (found) {
                     // quit the search, so 'result' is kept with the found result
                     return;
                 }
-                let node = balancedColumnTree[i];
+                const node = balancedColumnTree[i];
                 if (node instanceof OriginalColumnGroup) {
-                    let nextNode = <OriginalColumnGroup> node;
-                    recursePath(nextNode.getChildren(), dept+1);
+                    const nextNode = node;
+                    recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;
                 } else {
                     if (node === column) {
@@ -98,39 +96,39 @@ export class ColumnUtils {
         }
     }*/
 
-    public depthFirstOriginalTreeSearch(tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild)=>void ): void {
+    public depthFirstOriginalTreeSearch(tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild) => void): void {
 
         if (!tree) { return; }
 
-        tree.forEach( (child: OriginalColumnGroupChild) => {
+        tree.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                this.depthFirstOriginalTreeSearch((<OriginalColumnGroup>child).getChildren(), callback);
+                this.depthFirstOriginalTreeSearch(child.getChildren(), callback);
             }
             callback(child);
         });
 
     }
 
-    public depthFirstAllColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
+    public depthFirstAllColumnTreeSearch(tree: ColumnGroupChild[] | null, callback: (treeNode: ColumnGroupChild) => void): void {
 
         if (!tree) { return; }
 
-        tree.forEach( (child: ColumnGroupChild) => {
+        tree.forEach((child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                this.depthFirstAllColumnTreeSearch((<ColumnGroup>child).getChildren(), callback);
+                this.depthFirstAllColumnTreeSearch(child.getChildren(), callback);
             }
             callback(child);
         });
 
     }
 
-    public depthFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
+    public depthFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild) => void): void {
 
         if (!tree) { return; }
 
-        tree.forEach( (child: ColumnGroupChild) => {
+        tree.forEach((child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                this.depthFirstDisplayedColumnTreeSearch((<ColumnGroup>child).getDisplayedChildren(), callback);
+                this.depthFirstDisplayedColumnTreeSearch(child.getDisplayedChildren(), callback);
             }
             callback(child);
         });

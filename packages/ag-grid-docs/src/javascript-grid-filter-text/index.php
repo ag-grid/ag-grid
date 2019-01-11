@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Text Filter: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Text Filter. Text Filter allows filtering text strings with {equals, notEqual, contains, notContains, startsWith, endsWith}. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Text Filter. Text Filter allows filtering text strings with {equals, notEqual, contains, notContains, startsWith, endsWith}. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Text Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
 <p>In order to set the filter type to text you need to add the following to your column definition</p>
 
 <p><snippet>
-colDef:{
+colDef: {
     filter:'agTextColumnFilter'
 }</snippet></p>
 
@@ -264,7 +264,7 @@ filterParams.suppressAndOrCondition = true</code></p>
         searching the string 'Bjo'</code></li>
     <li>The athlete column has a debounce of 0ms <code>debounceMs:0</code> in the column filter menu. The floating filter
     has the default 500ms</li>
-    <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
+    <li>The athlete column filter is case sensitive, note tahat it has the following flag: <code>caseSensitive:true</code></li>
     <li>The athlete column filter has the AND/OR additional filter suppressed, note that it has the following flag: <code>suppressAndOrCondition:true</code></li>
     <li>The country column has only one filter option: <code>filterOptions=['contains']</code></li>
     <li>The country column has a <code>textCustomComparator</code> so that there are aliases that can be entered in the filter
@@ -275,7 +275,7 @@ filterParams.suppressAndOrCondition = true</code></p>
     <li>The sports column has a different default option <code>defaultOption='startsWith'</code></li>
 </ul>
 
-<?= example('Text Filter', 'text-filter', 'generated') ?>
+<?= example('Text Filter', 'text-filter', 'generated', array("processVue" => true)) ?>
 
 <h2>Common Column Filtering Functionality And Examples</h2>
 

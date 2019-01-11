@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont } from 'ag-grid-community';
 import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';
@@ -7,20 +7,20 @@ import cellStylesXfsFactory from './cellStyleXfs';
 import cellXfsFactory from './cellXfs';
 import cellStylesFactory from './cellStyles';
 
-import {NumberFormat, numberFormatMap} from './numberFormat';
-import {getFamilyId, Font} from './font';
-import {Fill} from './fill';
-import {convertLegacyBorder, BorderSet} from './border';
-import {Xf} from './xf';
-import {CellStyle} from './cellStyle';
+import { NumberFormat, numberFormatMap } from './numberFormat';
+import { getFamilyId, Font } from './font';
+import { Fill } from './fill';
+import { convertLegacyBorder, BorderSet, Border } from './border';
+import { Xf } from './xf';
+import { CellStyle } from './cellStyle';
 
 const registeredNumberFmts: NumberFormat[] = [];
 const registeredFonts: Font[] = [{ name: 'Calibri', size: 14, colorTheme: '1', family: 2, scheme: 'minor' }];
-const registeredFills: Fill[] = [{ patternType: 'none', },{ patternType: 'gray125' }];
+const registeredFills: Fill[] = [{ patternType: 'none', }, { patternType: 'gray125' }];
 const registeredBorders: BorderSet[] = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
 const registeredCellStyleXfs: Xf[] = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
 const registeredCellXfs: Xf[] = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
-const registeredCellStyles: CellStyle[] =[{ builtinId: 0, name: 'normal', xfId: 0 }];
+const registeredCellStyles: CellStyle[] = [{ builtinId: 0, name: 'normal', xfId: 0 }];
 
 interface StylesMap {
     [key: string]: number;
@@ -29,6 +29,8 @@ interface StylesMap {
 interface ColorMap {
     [key: string]: string;
 }
+type BorderProperty = string | undefined;
+
 const stylesMap:StylesMap  = {base: 0};
 
 const convertLegacyPattern = (name: string): string => {
@@ -54,13 +56,13 @@ const convertLegacyPattern = (name: string): string => {
         Gray0625: 'gray0625'
     };
 
-    if (!name) return 'none';
+    if (!name) { return 'none'; }
 
     return colorMap[name] || name;
 };
 
 export const convertLegacyColor = (color: string): string => {
-    if (color == undefined) return color;
+    if (color == undefined) { return color; }
 
     if (color.charAt(0) === '#') {
         color = color.substr(1);
@@ -74,9 +76,9 @@ const registerFill = (fill: ExcelInterior): number => {
     const convertedFillColor = convertLegacyColor(fill.color);
     const convertedPatternColor = convertLegacyColor(fill.patternColor);
     const reg = registeredFills.filter(currentFill => {
-        if (currentFill.patternType != convertedPattern) return false;
-        if (currentFill.fgRgb != convertedFillColor) return false;
-        if (currentFill.bgRgb != convertedPatternColor) return false;
+        if (currentFill.patternType != convertedPattern) { return false; }
+        if (currentFill.fgRgb != convertedFillColor) { return false; }
+        if (currentFill.bgRgb != convertedPatternColor) { return false; }
 
         return true;
     });
@@ -92,9 +94,9 @@ const registerFill = (fill: ExcelInterior): number => {
 };
 
 const registerNumberFmt = (format: string): number => {
-    if (numberFormatMap[format]) return numberFormatMap[format];
+    if (numberFormatMap[format]) { return numberFormatMap[format]; }
     const reg = registeredNumberFmts.filter((currentFmt) => {
-        if (currentFmt.formatCode !== format) return false;
+        if (currentFmt.formatCode !== format) { return false; }
     });
 
     let pos = reg.length ? reg[0].numFmtId : -1;
@@ -109,8 +111,8 @@ const registerNumberFmt = (format: string): number => {
 
 const registerBorders = (borders: ExcelBorders): number => {
     const {borderBottom, borderTop, borderLeft, borderRight} = borders;
-    let bottomStyle: string, topStyle: string, leftStyle:string, rightStyle: string;
-    let bottomColor: string, topColor: string, leftColor:string, rightColor: string;
+    let bottomStyle: BorderProperty, topStyle: BorderProperty, leftStyle:BorderProperty, rightStyle: BorderProperty;
+    let bottomColor: BorderProperty, topColor: BorderProperty, leftColor:BorderProperty, rightColor: BorderProperty;
 
     if (borderLeft) {
         leftStyle = convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
@@ -133,20 +135,20 @@ const registerBorders = (borders: ExcelBorders): number => {
 
     const reg = registeredBorders.filter(currentBorder => {
         const {left, right, top, bottom} = currentBorder;
-        if (!left && (leftStyle || leftColor)) return false;
-        if (!right && (rightStyle || rightColor)) return false;
-        if (!top && (topStyle || topColor)) return false;
-        if (!bottom && (bottomStyle || bottomColor)) return false;
+        if (!left && (leftStyle || leftColor)) { return false; }
+        if (!right && (rightStyle || rightColor)) { return false; }
+        if (!top && (topStyle || topColor)) { return false; }
+        if (!bottom && (bottomStyle || bottomColor)) { return false; }
 
-        const {style: clS, color: clC} = left;
-        const {style: crS, color: crC} = right;
-        const {style: ctS, color: ctC} = top;
-        const {style: cbS, color: cbC} = bottom;
+        const {style: clS, color: clC} = left || {} as Border;
+        const {style: crS, color: crC} = right || {} as Border;
+        const {style: ctS, color: ctC} = top || {} as Border;
+        const {style: cbS, color: cbC} = bottom || {} as Border;
 
-        if (clS != leftStyle || clC != leftColor) return false;
-        if (crS != rightStyle || crC != rightColor) return false;
-        if (ctS != topStyle || ctC != topColor) return false;
-        if (cbS != bottomStyle || cbC != bottomColor) return false;
+        if (clS != leftStyle || clC != leftColor) { return false; }
+        if (crS != rightStyle || crC != rightColor) { return false; }
+        if (ctS != topStyle || ctC != topColor) { return false; }
+        if (cbS != bottomStyle || cbC != bottomColor) { return false; }
 
         return true;
     });
@@ -184,16 +186,16 @@ const registerFont = (font: ExcelFont): number => {
     const familyId = getFamilyId(family);
 
     const reg = registeredFonts.filter(currentFont => {
-        if (currentFont.name != name) return false;
-        if (currentFont.color != convertedColor) return false;
-        if (currentFont.size != size) return false;
-        if (currentFont.bold != bold) return false;
-        if (currentFont.italic != italic) return false;
-        if (currentFont.outline != outline) return false;
-        if (currentFont.shadow != shadow) return false;
-        if (currentFont.strike != strikeThrough) return false;
-        if (currentFont.underline != underline) return false;
-        if (currentFont.family != familyId) return false;
+        if (currentFont.name != name) { return false; }
+        if (currentFont.color != convertedColor) { return false; }
+        if (currentFont.size != size) { return false; }
+        if (currentFont.bold != bold) { return false; }
+        if (currentFont.italic != italic) { return false; }
+        if (currentFont.outline != outline) { return false; }
+        if (currentFont.shadow != shadow) { return false; }
+        if (currentFont.strike != strikeThrough) { return false; }
+        if (currentFont.underline != underline) { return false; }
+        if (currentFont.family != familyId) { return false; }
 
         return true;
     });
@@ -221,12 +223,12 @@ const registerFont = (font: ExcelFont): number => {
 
 const registerStyle = (config: ExcelStyle): void => {
     const {id, alignment, borders, font, interior, numberFormat, protection} = config;
-    let currentFill: number;
-    let currentBorder: number;
-    let currentFont: number;
-    let currentNumberFmt: number;
+    let currentFill = 0;
+    let currentBorder = 0;
+    let currentFont = 0;
+    let currentNumberFmt = 0;
 
-    if (stylesMap[id] != undefined) return;
+    if (!id || stylesMap[id] != undefined) { return; }
 
     if (interior) {
         currentFill = registerFill(interior);

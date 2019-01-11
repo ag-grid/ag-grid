@@ -158,12 +158,12 @@ include '../documentation-main/documentation_header.php';
         (using your browsers developer tools) to dig deeper.
     </p>
 
-<?= example('ag-Grid styling', 'styling', 'generated') ?>
+<?= example('ag-Grid styling', 'styling', 'generated', array('processVue' => true)) ?>
 
     <h2 id="high-level-overview">High Level Overview</h2>
 
     <p>
-        The diagram below shows the hierarchy of the core div elements which form the four quadrants
+        The code below shows the hierarchy of the core div elements which form the four quadrants
         of the table. The four quadrants are as follows:
     </p>
 
@@ -172,59 +172,15 @@ include '../documentation-main/documentation_header.php';
         <li><b>ag-header-container:</b> Contains the non-pinned header cells. This container is within
             a viewport (<b>ag-header-viewport</b>) that scrolls horizontally to match the position of the ag-body-viewport. This
             container does not scroll vertically.</li>
-        <li><b>ag-pinned-cols-container:</b> Contains the pinned rows. This container is within a
-            viewport (<b>ag-pinned-cols-viewport</b>) that scrolls vertically to match the position of the ag-body-viewport. This
-            container does not scroll horizontally.</li>
-        <li><b>ag-body-container:</b> Contains the non-pinned rows. This container is within a
-            viewport (<b>ag-body-viewport</b>) that scrolls both vertically and horizontally.</li>
+        <li><b>ag-pinned-left-cols-container or ag-pinned-right-cols-container:</b> Contains the pinned rows. This container is within a
+            viewport (<b>ag-body-viewport</b>) that scrolls vertically. This container does not scroll horizontally.</li>
+        <li><b>ag-center-cols-container:</b> Contains the non-pinned rows. This container is within a
+            viewport (<b>ag-center-cols-viewport</b>) that scrolls horizontally.</li>
     </ul>
 
     <note>
-        Both the ag-header-viewport and ag-pinned-cols-viewport do not have scrollbars. They
-        only scroll in response to changes to the ag-body-viewport.
+        The ag-header-viewport does not have scrollbars. It only scrolls in response to changes to the ag-center-cols-viewport.
     </note>
-
-    <h3>Core DIV Elements</h3>
-
-    <div class='inline' style="margin-left: 50px;">
-        ag-root <br/>
-        <!-- header -->
-        <div class='block'>
-            ag-header <br/>
-            <div class='inline'>
-                ag-pinned-header <br/>
-                <img src="pinnedHeader.png" alt="ag-Grid Pinned Header" />
-            </div>
-            <div class='inline'>
-                ag-header-viewport <br/>
-                <div class='inline'>
-                    ag-header-container <br/>
-                    <img src="header.png" alt="ag-Grid Header Container" />
-                </div>
-            </div>
-        </div>
-        <!-- body -->
-        <div class='block'>
-            ag-body <br/>
-            <div class='inline'>
-                ag-pinned-cols-viewport <br/>
-                <div class='inline'>
-                    ag-pinned-cols-container <br/>
-                    <img src="pinnedBody.png" alt="ag-Grid Pinned Column Container" />
-                </div>
-            </div>
-            <div class='inline'>
-                ag-body-viewport-wrapper <br/>
-                <div class='inline'>
-                    ag-body-viewport <br/>
-                    <div class='inline'>
-                        ag-body-container <br/>
-                        <img src="body.png" alt="ag-Grid Body Container" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <h3>Detailed Breakdown</h3>
 
@@ -232,135 +188,177 @@ include '../documentation-main/documentation_header.php';
 
     <ul class="content">
         <li><span class="agClass">Classes:</span> These CSS classes can have style associated with them in a theme.</li>
-        <li><span class="agAttr">Row & Col Attributes:</span> These attributes can be used to identify rows and columns using CSS selectors.</li>
-        <li><span class="agPos">Position Attributes:</span> Nothing to do with style, however they stick out below, so worth mentioning. These
-            are set by ag-Grid to position the rows within the containers. Because rows are virtualised, and widths are dynamic, these
-            attributes cannot be set as classes, they are set as dynamic styles by ag-Grid.</li>
     </ul>
 
-<snippet language="html">&lt;div class='ag-root ag-layout-normal'>
+<snippet language="html">&lt;div class="ag-root"&gt;
 
-    &lt;!-- header -->
-    &lt;div class="ag-header">
-        &lt;div class="ag-pinned-header">
+    &lt;!-- header --&gt;
+    &lt;div class="ag-header"&gt;
+        &lt;div class="ag-pinned-left-header"&gt;
+            &lt;div class="ag-header-row"&gt;
+                &lt;!-- pinned header cell --&gt;
+                &lt;div class="ag-header-cell"&gt;
+                    &lt;div class="ag-cell-label-container"&gt;
+                        &lt;div class="ag-header-cell-label"&gt;
+                            &lt;span class="ag-header-cell-text"&gt;Athlete&lt;/span&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="ag-header-cell"&gt;
+                    &lt;div class="ag-cell-label-container"&gt;
+                        &lt;div class="ag-header-cell-label"&gt;
+                            &lt;span class="ag-header-cell-text"&gt;Age&lt;/span&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="ag-header-viewport"&gt;
+            &lt;div class="ag-header-container"&gt;
+                &lt;div class="ag-header-row"&gt;
+                    &lt;!-- main header cell --&gt;
+                    &lt;div class="ag-header-cell"&gt;
+                        &lt;div class="ag-cell-label-container"&gt;
+                            &lt;div class="ag-header-cell-label"&gt;
+                                &lt;span class="ag-header-cell-text"&gt;Country&lt;/span&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="ag-header-cell"&gt;
+                        &lt;div class="ag-cell-label-container"&gt;
+                            &lt;div class="ag-header-cell-label"&gt;
+                                &lt;span class="ag-header-cell-text"&gt;Year&lt;/span&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
 
-            &lt;!-- pinned header cell -->
-            &lt;div class="ag-header-cell">
-                &lt;div class="ag-header-label">Athlete&lt;/div>
-            &lt;/div>
-            <!-- pinned header cell -->
-            &lt;div class="ag-header-cell">
-                &lt;div class="ag-header-label">Age&lt;/div>
-            &lt;/div>
+                    &lt;!-- the other header cells... --&gt;
 
-        &lt;/div>
-        &lt;div class="ag-header-viewport">
-            &lt;div class="ag-header-container">
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
 
-                &lt;!-- main header cell -->
-                &lt;div class="ag-header-cell">
-                    &lt;div class="ag-header-label">County&lt;/div>
-                &lt;/div>
-                &lt;!-- main header cell -->
-                &lt;div class="ag-header-cell">
-                    &lt;div class="ag-header-label">Year&lt;/div>
-                &lt;/div>
+    &lt;!-- body --&gt;
+    &lt;div class="ag-body-viewport&gt;
+        &lt;div class="ag-pinned-left-cols-container"&gt;
+            &lt;div class="ag-row"&gt;
+                &lt;div class="ag-cell"&gt;Michael Phelps&lt;/div&gt;
+                &lt;div class="ag-cell"&gt;23&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="ag-row"&gt;
+                &lt;div class="ag-cell"&gt;Michael Phelps&lt;/div&gt;
+                &lt;div class="ag-cell"&gt;19&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;!-- the other pinned rows... --&gt;
+        &lt;/div&gt;
 
-                &lt;!-- the other header cells... -->
-            &lt;/div>
-        &lt;/div>
-    &lt;/div>
+        &lt;div class="ag-center-cols-viewport"&gt;
+            &lt;div class="ag-center-cols-container"&gt;
+                &lt;div class="ag-row"&gt;
+                    &lt;div class="ag-cell"&gt;United States&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;2008&lt;/div&gt;
 
-    &lt;!-- body -->
-    &lt;div class="ag-body">
-        &lt;div class="ag-pinned-cols-viewport">
-            &lt;div class="ag-pinned-cols-container">
+                    &lt;!-- the other row cells... --&gt;
 
-                &lt;div class="ag-row ag-row-even" row="0" style="top: 0px; height: 30px;">
-                    &lt;div class="ag-cell cell-col-0" col="0" style="width: 150px;">Michael Phelps&lt;/div>
-                    &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">23&lt;/div>
-                &lt;/div>
+                &lt;/div&gt;
+                &lt;div class="ag-row"&gt;
+                    &lt;div class="ag-cell"&gt;United States&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;2004&lt;/div&gt;
 
-                &lt;div class="ag-row ag-row-odd" row="1" style="top: 30px; height: 30px;">
-                    &lt;div class="ag-cell cell-col-0" col="0" style="width: 150px;">Michael Phelps&lt;/div>
-                    &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">19&lt;/div>
-                &lt;/div>
+                    &lt;!-- the other row cells... --&gt;
 
-                &lt;!-- the other pinned rows... -->
+                &lt;/div&gt;
 
-            &lt;/div>
-        &lt;/div>
-        &lt;div class="ag-body-viewport-wrapper">
-            &lt;div class="ag-body-viewport">
-                &lt;div class="ag-body-container">
+                &lt;!-- the other body rows... --&gt;
 
-                    &lt;div class="ag-row ag-row-even" row="0" style="top: 0px; height: 30px; width: 830px;">
-                        &lt;div class="ag-cell cell-col-2" col="2" style="width: 120px;">United States&lt;/div>
-                        &lt;div class="ag-cell cell-col-3" col="3" style="width: 90px;">2008&lt;/div>
-                        &lt;div class="ag-cell cell-col-4" col="4" style="width: 110px;">24/08/2008&lt;/div>
-                        &lt;!-- the other row cells... -->
-                    &lt;/div>
-
-                    &lt;div class="ag-row ag-row-odd" row="1" style="top: 30px; height: 30px; width: 830px;">
-                        &lt;div class="ag-cell cell-col-2" col="2" style="width: 120px;">United States&lt;/div>
-                        &lt;div class="ag-cell cell-col-3" col="3" style="width: 90px;">2004&lt;/div>
-                        &lt;div class="ag-cell cell-col-4" col="4" style="width: 110px;">29/08/2004&lt;/div>
-                        &lt;!-- the other row cells... -->
-                    &lt;/div>
-
-                    &lt;!-- the other body rows... -->
-
-                &lt;/div>
-            &lt;/div>
-        &lt;/div>
-    &lt;/div>
-&lt;/div>
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
 </snippet>
 
     <h2 id="styling-with-for-print">Styling with For Print</h2>
 
     <p>
-        Styling with the option <a href="../javascript-grid-for-print/">domLayout=forPrint</a>
+        Styling with the option <a href="../javascript-grid-for-print/">domLayout='print'</a>
         is similar to styling as normal, however the dom layout is much simpler.
         When laying out for printing, there are no pinned columns and no viewports for scrolling.
     </p>
 
-<snippet language="html">&lt;div class="ag-root ag-layout-for-print">
+<snippet language="html">&lt;div class="ag-root ag-layout-print"&gt;
 
-    &lt;!-- header -->
-    &lt;div class="ag-header-container">
-        &lt;div class="ag-header-cell" style="width: 120px;">
-            &lt;span>Athlete&lt;/span>
-        &lt;/div>
-        &lt;div class="ag-header-cell" style="width: 90px;">
-            &lt;span>Age&lt;/span>
-        &lt;/div>
+    &lt;!-- header --&gt;
+    &lt;div class="ag-header"&gt;
+        &lt;div class="ag-header-viewport"&gt;
+            &lt;div class="ag-header-container"&gt;
+                &lt;div class="ag-header-row"&gt;
+                    &lt;!-- main header cell --&gt;
+                    &lt;div class="ag-header-cell"&gt;
+                        &lt;div class="ag-cell-label-container"&gt;
+                            &lt;div class="ag-header-cell-label"&gt;
+                                &lt;span class="ag-header-cell-text"&gt;Athlete&lt;/span&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="ag-header-cell"&gt;
+                        &lt;div class="ag-cell-label-container"&gt;
+                            &lt;div class="ag-header-cell-label"&gt;
+                                &lt;span class="ag-header-cell-text"&gt;Age&lt;/span&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="ag-header-cell"&gt;
+                        &lt;div class="ag-cell-label-container"&gt;
+                            &lt;div class="ag-header-cell-label"&gt;
+                                &lt;span class="ag-header-cell-text"&gt;Country&lt;/span&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div class="ag-header-cell"&gt;
+                        &lt;div class="ag-cell-label-container"&gt;
+                            &lt;div class="ag-header-cell-label"&gt;
+                                &lt;span class="ag-header-cell-text"&gt;Year&lt;/span&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
 
-        &lt;!-- the other headers... -->
+                    &lt;!-- the other header cells... --&gt;
 
-    &lt;/div>
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
 
-    <!-- body -->
-    &lt;div class="ag-body-container">
-        &lt;div class="ag-row ag-row-even" row="0" style="height: 30px; width: 830px;">
-            &lt;div class="ag-cell cell-col-0" col="0" style="width: 120px;">Michael Phelps&lt;/div>
-            &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">United States&lt;/div>
+    &lt;!-- body --&gt;
+    &lt;div class="ag-body-viewport&gt;
+        &lt;div class="ag-center-cols-viewport"&gt;
+            &lt;div class="ag-center-cols-container"&gt;
+                &lt;div class="ag-row"&gt;
+                    &lt;div class="ag-cell"&gt;Michael Phelps&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;23&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;United States&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;2008&lt;/div&gt;
 
-            &lt;!-- the other row cells... -->
+                    &lt;!-- the other row cells... --&gt;
 
-        &lt;/div>
-        &lt;div class="ag-row ag-row-odd" row="1" style="height: 30px; width: 830px;">
-            &lt;div class="ag-cell cell-col-0" col="0" style="width: 120px;">Michael Phelps&lt;/div>
-            &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">United States&lt;/div>
+                &lt;/div&gt;
+                &lt;div class="ag-row"&gt;
+                    &lt;div class="ag-cell"&gt;Michael Phelps&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;19&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;United States&lt;/div&gt;
+                    &lt;div class="ag-cell"&gt;2004&lt;/div&gt;
 
-            &lt;!-- the other row cells... -->
+                    &lt;!-- the other row cells... --&gt;
 
-        &lt;/div>
+                &lt;/div&gt;
 
-        &lt;!-- the other rows... -->
+                &lt;!-- the other body rows... --&gt;
 
-    &lt;/div>
-&lt;/div>
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
 </snippet>
 
 <h2 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h2>
@@ -387,7 +385,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated') ?>
+<?= example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated', array('processVue' => true)) ?>
 
 <h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
 
@@ -409,221 +407,918 @@ by overriding the theme variables value and referencing the Sass source files af
 This is a redundant step we are looking into removing in the future.
 </note>
 
-<p>The example below is taken from <a href="https://github.com/ag-grid/ag-grid-customise-theme">Theme Customization Example Repository</a>:</p>
+<p>For a live example, see: <a href="https://github.com/ag-grid/ag-grid-customise-theme">Theme Customization Example Repository</a>:</p>
 
-<snippet>
-// Customize the look and feel of the grid with Sass variables
-// Up-to-date list of variables is available in the source code: https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-fresh.scss 
-$icons-path: "~ag-grid/src/styles/icons/";
+<p>Following is a list of Sass variables, their default values, and a short explanation of their purpose.</p>
+<style>
+.tabpanel, .tabheader, .tabpanel .content {
+    display: flex
+}
+.tabpanel {
+    flex-direction: column;
+    height: 500px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+.tabheader {
+    background-image: linear-gradient(to bottom right, #0084e7, #0067b4);
+    height: 50px;
+    flex: none;
+    align-items: flex-end;
+}
+.tab {
+    height: 40px;
+    line-height: 40px;
+    background-color: #ebebeb;
+    cursor: pointer;
+    margin: 0 0 0 10px;
+    padding: 0 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    user-select: none;
+    -ms-user-select: none;
+}
+.tab.selected {
+    border: 1px solid #ebebeb;
+    border-bottom-width: 0;
+    background-color: white;
+    color: #0084e7;
+}
+.tabpanel .content {
+    height: calc(100% - 45px);
+}
+.tabpanel .content > div {
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    margin: 10px;
+    border: 1px solid lightgray;
+    border-left-width: 0;
+}
+.tabpanel table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+} 
+.tabpanel tr {
+    height: 40px;
+}
+.tabpanel table th, .tabpanel table td {
+    border: 1px solid #ebebeb;
+    padding: 5px;
+}
+.tabpanel table tr:first-of-type th {
+    border-top-width: 0;
+}
+.tabpanel table th {
+    text-align: center;
+}
+.tabpanel table tbody tr td:first-of-type {
+    white-space: pre;
+}
+.hidden {
+    display: none;
+}
+</style> 
+<script>
+window.addEventListener("load", function() {
+    var tabs = document.querySelectorAll('.tabpanel .tab');
 
-// changes the border color
-$border-color: #FF0000;
+    function changeActiveTab(e) {
+        var tab, selectedIdx, currentIdx, i, cts;
 
-// Changes the font size
-// $font-size: 12px;
+        if (e.target.classList.contains('selected')) { return; }
+        for (i = 0; i < tabs.length; i++) {
+            tab = tabs[i];
+            if (tab.classList.contains('selected')) { 
+                selectedIdx = i; 
+            }
+            if (tab === e.target) {
+                currentIdx = i;
+            }
+            if (currentIdx != null && selectedIdx != null) { break; }
+        }
 
-// Changes the font family
-// $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        tabs[selectedIdx].classList.toggle('selected');
+        tabs[currentIdx].classList.toggle('selected');
 
-// Reverts the cell horizontal padding change between ag-fresh and ag-theme-fresh
-// $cell-horizontal-padding: 2px;
+        cts = document.querySelectorAll('.tabpanel .content > div');
 
-// changes the icon color
-$icon-color: red;
+        cts[selectedIdx].classList.toggle('hidden');
+        cts[currentIdx].classList.toggle('hidden');
+    }
+    for (var i = 0; i < tabs.length; i++) {
+        var tab = tabs[i];
+        tab.addEventListener('click', changeActiveTab);
+    }
+});
+</script>
+<div class="tabpanel">
+    <div class="tabheader">
+    <div class="tab selected">Base Variables</div>
+        <div class="tab">Balham Theme</div>
+        <div class="tab">Material Theme</div>
+    </div>
+    <div class="content">
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable Name</th>
+                        <th style="width: 195px;">Default Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>foreground-opacity</td>
+                    <td>1</td>
+                    <td>The foreground opacity.</td>
+                </tr>
+                <tr>
+                    <td>secondary-foreground-color-opacity</td>
+                    <td>1</td>
+                    <td>The header font color opacity.</td>
+                </tr>
+                <tr>
+                    <td>disabled-foreground-color-opacity</td>
+                    <td>0.5</td>
+                    <td>The opacity of the disabled / empty text elements.</td>
+                </tr>
+                <tr>
+                    <td>icon-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The icon color.</td>
+                </tr>
+                <tr>
+                    <td>alt-icon-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The secondary icon, used on icons with two colors (eg. checkbox background).</td>
+                </tr>
+                <tr>
+                    <td>foreground-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The default color of the text.</td>
+                </tr>
+                <tr>
+                    <td>secondary-foreground-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The header font color.</td>
+                </tr>
+                <tr>
+                    <td>disabled-foreground-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The color of the disabled / empty text elements.</td>
+                </tr>
+                <tr>
+                    <td>menu-option-active-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of the context / column menu items when hovered.</td>
+                </tr>
+                <tr>
+                    <td>input-disabled-background-color</td>
+                    <td>#ebebeb</td>
+                    <td>The color of disabled input field</td>
+                </tr>
+                <tr>
+                    <td>card-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color for the context menu and the column menu.</td>
+                </tr>
+                <tr>
+                    <td>border-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The color used for all borders.</td>
+                </tr>
+                <tr>
+                    <td>primary-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The main color associated with selected cells and other items (eg. cell border color, sidbar selected tab border).</td>
+                </tr>
+                <tr>
+                    <td>accent-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The color for the checked checkboxes.</td>
+                </tr>
+                <tr>
+                    <td>background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The default background color.</td>
+                </tr>
+                <tr>
+                    <td>odd-row-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The odd row background color.</td>
+                </tr>
+                <tr>
+                    <td>editor-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of cells being edited.</td>
+                </tr>
+                <tr>
+                    <td>header-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The header background color.</td>
+                </tr>
+                <tr>
+                    <td>header-cell-hover-background-color</td>
+                    <td>$header-background-color</td>
+                    <td>The header background color while hovering</td>
+                </tr>
+                <tr>
+                    <td>header-cell-moving-background-color</td>
+                    <td>#bebebe</td>
+                    <td>The header background color while being moved.</td>
+                </tr>
+                <tr>
+                    <td>header-foreground-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The header text color.</td>
+                </tr>
+                <tr>
+                    <td>header-background-image</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The header background gradient - you can also refer to an an image with `url(...)`.</td>
+                </tr>
+                <tr>
+                    <td>panel-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of the column menu.</td>
+                </tr>
+                <tr>
+                    <td>tool-panel-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The tool panel background color</td>
+                </tr>
+                <tr>
+                    <td>chip-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of the column labels used in the grouping / pivoting.</td>
+                </tr>
+                <tr>
+                    <td>range-selection-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of the selected cells.</td>
+                </tr>
+                <tr>
+                    <td>hover-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of the row when hovered.</td>
+                </tr>
+                <tr>
+                    <td>selected-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of selected rows.</td>
+                </tr>
+                <tr>
+                    <td>cell-data-changed-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color used when the cell flashes when data is changed.</td>
+                </tr>
+                <tr>
+                    <td>focused-cell-border-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The border color of the focused cell.</td>
+                </tr>
+                <tr>
+                    <td>tab-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of the tab in the column menu</td>
+                </tr>
+                <tr>
+                    <td>cell-highlight-border</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The border used to mark cells as being copied.</td>
+                </tr>
+                <tr>
+                    <td>cell-horizontal-border</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The border delimiter between cells.</td>
+                </tr>
+                <tr>
+                    <td>ag-range-selected-color-1</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The selection background color.</td>
+                </tr>
+                <tr>
+                    <td>ag-range-selected-color-2</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The selection background color when it overlaps with another selection (range) 1 level.</td>
+                </tr>
+                <tr>
+                    <td>ag-range-selected-color-3</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The selection background color when it overlaps with another selection (range) 2 levels.</td>
+                </tr>
+                <tr>
+                    <td>ag-range-selected-color-4</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The selection background color when it overlaps with another selection (range) 3 levels.</td>
+                </tr>
+                <tr>
+                    <td>value-change-delta-up-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The color used when the cell value increases.</td>
+                </tr>
+                <tr>
+                    <td>value-change-delta-down-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The color used when the cell value decreases.</td>
+                </tr>
+                <tr>
+                    <td>value-change-value-highlight-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color used when the cell value changes.</td>
+                </tr>
+                <tr>
+                    <td>row-floating-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The background color of the pinned rows.</td>
+                </tr>
+                <tr>
+                    <td>row-stub-background-color</td>
+                    <td><code>&lt;no default&gt;</code></td>
+                    <td>The color of row stub background (see: <a href="/javascript-grid-row-node/">Row Node</a>)</td>
+                </tr>
+                <tr>
+                    <td>grid-size</td>
+                    <td>4px</td>
+                    <td>The basic unit used for the grid spacing and dimensions. Changing this makes the grid UI more / less compact.</td>
+                </tr>
+                <tr>
+                    <td>icon-size</td>
+                    <td>12px</td>
+                    <td>The icon width and height (icons are square).</td>
+                </tr>
+                <tr>
+                    <td>header-height</td>
+                    <td><code>grid-size</code> * 6 + 1</td>
+                    <td>The header row height - if you change this, you also have to change the value of the `headerHeight` in the grid options. We are looking into removing this redundant step in the future.</td>
+                </tr>
+                <tr>
+                    <td>row-height</td>
+                    <td><code>grid-size</code> * 6 + 1</td>
+                    <td>The row height - if you change this, you also have to change the value of the `rowHeight` in the grid options. We are looking into removing this redundant step in the future.</td>
+                </tr>
+                <tr>
+                    <td>cell-horizontal-padding</td>
+                    <td><code>grid-size</code> * 3</td>
+                    <td>The cell horizontal padding.</td>
+                </tr>
+                <tr>
+                    <td>virtual-item-height</td>
+                    <td><code>grid-size</code> * 5</td>
+                    <td>The height of virtual items (eg. Set Filter items).</td>
+                </tr>
+                <tr>
+                    <td>header-icon-size</td>
+                    <td>14px</td>
+                    <td>The header icon height.</td>
+                </tr>
+                <tr>
+                    <td>icons-path</td>
+                    <td><code>../../ag-theme-base/icons/</code></td>
+                    <td>The path to the icon svg files. If you are to change that, make sure that the directory you point to contains the complete set of icons.</td>
+                </tr>
+                <tr>
+                    <td>font-family</td>
+                    <td>'Helvetica Neue', sans-serif</td>
+                    <td>The grid font family.</td>
+                </tr>
+                <tr>
+                    <td>font-size</td>
+                    <td>14px</td>
+                    <td>The grid font size.</td>
+                </tr>
+                <tr>
+                    <td>font-weight</td>
+                    <td>400</td>
+                    <td>The grid font weight</td>
+                </tr>
+                <tr>
+                    <td>secondary-font-family</td>
+                    <td><code>font-family</code></td>
+                    <td>The font family used in the header.</td>
+                </tr>
+                <tr>
+                    <td>secondary-font-size</td>
+                    <td>14px</td>
+                    <td>The header font size.</td>
+                </tr>
+                <tr>
+                    <td>secondary-font-weight</td>
+                    <td>400</td>
+                    <td>The header font weight.</td>
+                </tr>
+                <tr>
+                    <td>card-shadow</td>
+                    <td>none</td>
+                    <td>Box shadow value for the context menu and the column menu.</td>
+                </tr>
+                <tr>
+                    <td>card-radius</td>
+                    <td>0</td>
+                    <td>Border radius for the context menu and the column menu.</td>
+                </tr>
+                <tr>
+                    <td>row-border-width</td>
+                    <td>0</td>
+                    <td>the row border width.</td>
+                </tr>
+                <tr>
+                    <td>toolpanel-indent-size</td>
+                    <td><code>grid-size</code> * <code>icon-size</code></td>
+                    <td>The indent used for the tool panel hierarchy.</td>
+                </tr>
+                <tr>
+                    <td>row-group-indent-size</td>
+                    <td><code>grid-size</code> * 3 + <code>icon-size</code></td>
+                    <td>The indent used for the row groups.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable Name</th>
+                        <th>Default Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>foreground-opacity</td>
+                        <td>0.87</td>
+                    </tr>
+                    <tr>
+                        <td>secondary-foreground-color-opacity</td>
+                        <td>0.54</td>
+                    </tr>
+                    <tr>
+                        <td>disabled-foreground-color-opacity</td>
+                        <td>0.38</td>
+                    </tr>
+                    <tr>
+                        <td>grid-size</td>
+                        <td>4px</td>
+                    </tr>
+                    <tr>
+                        <td>icon-size</td>
+                        <td>16px</td>
+                    </tr>
+                    <tr>
+                        <td>row-height</td>
+                        <td><code>grid-size</code> * 7</td>
+                    </tr>
+                    <tr>
+                        <td>default-background</td>
+                        <td>#FFFFF;</td>
+                    </tr>
+                    <tr>
+                        <td>chrome-background</td>
+                        <td><code>lighten(flat-clouds, 3)</code></td>
+                    </tr>
+                    <tr>
+                        <td>active</td>
+                        <td>#0091EA</td>
+                    </tr>
+                    <tr>
+                        <td>foreground-color</td>
+                        <td>#000000;</td>
+                    </tr>
+                    <tr>
+                        <td>border-color</td>
+                        <td><code>flat-silver</code></td>
+                    </tr>
+                    <tr>
+                        <td>icon-color</td>
+                        <td><code>flat-gray-4</code></td>
+                    </tr>
+                    <tr>
+                        <td>alt-background</td>
+                        <td><code>flat-clouds</code></td>
+                    </tr>
+                    <tr>
+                        <td>odd-row-background-color</td>
+                        <td>#fcfdfe</td>
+                    </tr>
+                    <tr>
+                        <td>header-cell-moving-background-color</td>
+                        <td><code>default-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>foreground-color</td>
+                        <td><code>rgba(foreground-color, foreground-opacity)</code></td>
+                    </tr>
+                    <tr>
+                        <td>secondary-foreground-color</td>
+                        <td><code>rgba(foreground-color, secondary-foreground-color-opacity)</code></td>
+                    </tr>
+                    <tr>
+                        <td>disabled-foreground-color</td>
+                        <td><code>rgba(foreground-color, disabled-foreground-color-opacity)</code></td>
+                    </tr>
+                    <tr>
+                        <td>input-disabled-background-color</td>
+                        <td>#ebebeb</td>
+                    </tr>
+                    <tr>
+                        <td>primary-color</td>
+                        <td><code>active</code></td>
+                    </tr>
+                    <tr>
+                        <td>accent-color</td>
+                        <td><code>active</code></td>
+                    </tr>
+                    <tr>
+                        <td>range-selection-background-color</td>
+                        <td><code>transparentize(active, 0.8)</code></td>
+                    </tr>
+                    <tr>
+                        <td>ag-range-selected-color-1/td>
+                        <td><code>opacify(range-selection-background-color, 0.1)</code></td>
+                    </tr>
+                    <tr>
+                        <td>ag-range-selected-color-2</td>
+                        <td><code>opacify(range-selection-background-color, 0.2)</code></td>
+                    </tr>
+                    <tr>
+                        <td>ag-range-selected-color-3</td>
+                        <td><code>opacify(range-selection-background-color, 0.3)</code></td>
+                    </tr>
+                    <tr>
+                        <td>ag-range-selected-color-4</td>
+                        <td><code>opacify(range-selection-background-color, 0.4)</code></td>
+                    </tr>
+                    <tr>
+                        <td>range-selection-highlight-color</td>
+                        <td><code>active</code></td>
+                    </tr>
+                    <tr>
+                        <td>selected-color</td>
+                        <td><code>lighten(active, 40)</code></td>
+                    </tr>
+                    <tr>
+                        <td>alt-icon-color</td>
+                        <td><code>default-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>background-color</td>
+                        <td><code>default-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>editor-background-color</td>
+                        <td><code>chrome-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>panel-background-color</td>
+                        <td><code>chrome-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>tool-panel-background-color</td>
+                        <td><code>chrome-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>header-background-color</td>
+                        <td><code>chrome-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>header-foreground-color</td>
+                        <td><code>secondary-foreground-color</code></td>
+                    </tr>
+                    <tr>
+                        <td>hover-color</td>
+                        <td><code>alt-background</code></td>
+                    </tr>
+                    <tr>
+                        <td>chip-background-color</td>
+                        <td><code>darken(alt-background, 5)</code></td>
+                    </tr>
+                    <tr>
+                        <td>row-stub-background-color</td>
+                        <td>inherit</td>
+                    </tr>
+                    <tr>
+                        <td>row-floating-background-color</td>
+                        <td>inherit</td>
+                    </tr>
+                    <tr>
+                        <td>cell-data-changed-color</td>
+                        <td>#fce4ec</td>
+                    </tr>
+                    <tr>
+                        <td>value-change-delta-up-color</td>
+                        <td>#43a047</td>
+                    </tr>
+                    <tr>
+                        <td>value-change-delta-down-color</td>
+                        <td>#e53935</td>
+                    </tr>
+                    <tr>
+                        <td>value-change-value-highlight-background-color</td>
+                        <td><code>transparentize(#16A085, 0.5)</code></td>
+                    </tr>
+                    <tr>
+                        <td>header-height</td>
+                        <td><code>grid-size * 8</code></td>
+                    </tr>
+                    <tr>
+                        <td>virtual-item-height</td>
+                        <td><code>grid-size * 7</code></td>
+                    </tr>
+                    <tr>
+                        <td>row-border-width</td>
+                        <td>1px</td>
+                    </tr>
+                    <tr>
+                        <td>toolpanel-indent-size</td>
+                        <td><code>$grid-size</code> + <code>$icon-size</code></td>
+                    </tr>
+                    <tr>
+                        <td>row-group-indent-size</td>
+                        <td><code>$grid-size</code> * 3 + <code>$icon-size</code></td>
+                    </tr>
+                    <tr>
+                        <td>cell-horizontal-padding</td>
+                        <td><code>grid-size</code> * 3</td>
+                    </tr>
+                    <tr>
+                        <td>header-icon-size</td>
+                        <td>14px</td>
+                    </tr>
+                    <tr>
+                        <td>border-radius</td>
+                        <td>2px</td>
+                    </tr>
+                    <tr>
+                        <td>icons-path</td>
+                        <td> "../../ag-theme-balham/icons/"</td>
+                    </tr>
+                    <tr>
+                        <td>font-family</td>
+                        <td>-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif</td>
+                    </tr>
+                    <tr>
+                        <td>font-size</td>
+                        <td>12px</td>
+                    </tr>
+                    <tr>
+                        <td>font-weight</td>
+                        <td>400</td>
+                    </tr>
+                    <tr>
+                        <td>secondary-font-family</td>
+                        <td><code>font-family</code></td>
+                    </tr>
+                    <tr>
+                        <td>secondary-font-size</td>
+                        <td>12px</td>
+                    </tr>
+                    <tr>
+                        <td>secondary-font-weight</td>
+                        <td>600</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable Name</th>
+                        <th>Default Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>mat-grey-0 <code>(color accessor)</code></td>
+                        <td>#ffffff</td>
+                    </tr>
+                    <tr>
+                        <td>mat-grey-50 <code>(color accessor)</code></td>
+                        <td>#fafafa</td>
+                    </tr>
+                    <tr>
+                        <td>mat-grey-100 <code>(color accessor)</code></td>
+                        <td>#f5f5f5</td>
+                    </tr>
+                    <tr>
+                        <td>mat-grey-200 <code>(color accessor)</code></td>
+                        <td>#eeeeee</td>
+                    </tr>
+                    <tr>
+                        <td>mat-grey-300 <code>(color accessor)</code></td>
+                        <td>#e2e2e2</td>
+                    </tr>
+                    <tr>
+                        <td>mat-indigo-500 <code>(color accessor)</code></td>
+                        <td>#3f51b5</td>
+                    </tr>
+                    <tr>
+                        <td>mat-pink-A200 <code>(color accessor)</code></td>
+                        <td>#ff4081</td>
+                    </tr>
+                    <tr>
+                        <td>mat-pink-50 <code>(color accessor)</code></td>
+                        <td>#fce4ec</td>
+                    </tr>
+                    <tr>
+                        <td>mat-indigo-50 <code>(color accessor)</code></td>
+                        <td>#e8eaf6</td>
+                    </tr>
+                    <tr>
+                        <td>foreground-opacity</td>
+                        <td>0.87</td>
+                    </tr>
+                    <tr>
+                        <td>secondary-foreground-color-opacity</td>
+                        <td>0.54</td>
+                    </tr>
+                    <tr>
+                        <td>disabled-foreground-color-opacity</td>
+                        <td>0.38</td>
+                    </tr>
+                    <tr>
+                        <td>grid-size</td>
+                        <td>8px</td>
+                    </tr>
+                    <tr>
+                        <td>icon-size</td>
+                        <td>18px</td>
+                    </tr>
+                    <tr>
+                        <td>header-height</td>
+                        <td><code>grid-size</code> * 7</td>
+                    </tr>
+                    <tr>
+                        <td>row-height</td>
+                        <td><code>grid-size</code> * 6</td>
+                    </tr>
+                    <tr>
+                        <td>row-border-width</td>
+                        <td>1px</td>
+                    </tr>
+                    <tr>
+                        <td>toolpanel-indent-size</td>
+                        <td><code>grid-size</code> + <code>icon-size</code></td>
+                    </tr>
+                    <tr>
+                        <td>row-group-indent-size</td>
+                        <td><code>grid-size</code> * 3 + <code>icon-size</code></td>
+                    </tr>
+                    <tr>
+                        <td>cell-horizontal-padding</td>
+                        <td><code>grid-size</code> * 3</td>
+                    </tr>
+                    <tr>
+                        <td>virtual-item-height</td>
+                        <td><code>grid-size</code> * 5</td>
+                    </tr>
+                    <tr>
+                        <td>header-icon-size</td>
+                        <td>14px</td>
+                    </tr>
+                    <tr>
+                        <td>icons-path</td>
+                        <td>"../icons/"</td>
+                    </tr>
+                    <tr>
+                        <td>font-family</td>
+                        <td>"Roboto", sans-serif</td>
+                    </tr>
+                    <tr>
+                        <td>font-size</td>
+                        <td>13px</td>
+                    </tr>
+                    <tr>
+                        <td>font-weight</td>
+                        <td>400</td>
+                    </tr>
+                    <tr>
+                        <td>secondary-font-family</td>
+                        <td>"Roboto", sans-serif</td>
+                    </tr>
+                    <tr>
+                        <td>secondary-font-size</td>
+                        <td>12px</td>
+                    </tr>
+                    <tr>
+                        <td>secondary-font-weight</td>
+                        <td>700</td>
+                    </tr>
+                    <tr>
+                        <td>foreground-color</td>
+                        <td><code>rgba(#000, foreground-opacity)</code></td>
+                    </tr>
+                    <tr>
+                        <td>secondary-foreground-color</td>
+                        <td><code>rgba(#000, secondary-foreground-color-opacity)</code></td>
+                    </tr>
+                    <tr>
+                        <td>disabled-foreground-color</td>
+                        <td><code>rgba(#000, $disabled-foreground-color-opacity)</code></td>
+                    </tr>
+                    <tr>
+                        <td>header-background-color</td>
+                        <td>$background-color</td>
+                    </tr>
+                    <tr>
+                        <td>header-cell-hover-background-color</td>
+                        <td>darken(<code>$header-background-color</code>, 5%)</td>
+                    </tr>
+                    <tr>
+                        <td>header-cell-moving-background-color</td>
+                        <td><code>$header-cell-hover-background-color</code></td>
+                    </tr>
+                    <tr>
+                        <td>header-foreground-color</td>
+                        <td><code>$secondary-foreground-color</code></td>
+                    </tr>
+                    <tr>
+                        <td>border-color</td>
+                        <td><code>mat-indigo-300</code></td>
+                    </tr>
+                    <tr>
+                        <td>primary-color</td>
+                        <td><code>mat-indigo-500</code></td>
+                    </tr>
+                    <tr>
+                        <td>accent-color</td>
+                        <td><code>mat-pink-A200</code></td>
+                    </tr>
+                    <tr>
+                        <td>icon-color</td>
+                        <td>#333</td>
+                    </tr>
+                    <tr>
+                        <td>background-color</td>
+                        <td><code>mat-grey-0</code></td>
+                    </tr>
+                    <tr>
+                        <td>editor-background-color</td>
+                        <td><code>mat-grey-50</code></td>
+                    </tr>
+                    <tr>
+                        <td>panel-background-color</td>
+                        <td><code>mat-grey-200</code></td>
+                    </tr>
+                    <tr>
+                        <td>tool-panel-background-color</td>
+                        <td><code>mat-grey-50</code></td>
+                    </tr>
+                    <tr>
+                        <td>chip-background-color</td>
+                        <td><code>mat-grey-300</code></td>
+                    </tr>
+                    <tr>
+                        <td>range-selection-background-color</td>
+                        <td><code>mat-indigo-50</code></td>
+                    </tr>
+                    <tr>
+                        <td>range-selection-highlight-color</td>
+                        <td><code>mat-pink-50</code></td>
+                    </tr>
+                    <tr>
+                        <td>hover-color</td>
+                        <td><code>mat-grey-50</code></td>
+                    </tr>
+                    <tr>
+                        <td>selected-color</td>
+                        <td><code>mat-grey-200</code></td>
+                    </tr>
+                    <tr>
+                        <td>cell-data-changed-color</td>
+                        <td><code>mat-pink-50</code></td>
+                    </tr>
+                    <tr>
+                        <td>card-shadow</td>
+                        <td>0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12)</td>
+                    </tr>
+                    <tr>
+                        <td>card-radius</td>
+                        <td>2px</td>
+                    </tr>
+                    <tr>
+                        <td>value-change-delta-up-color</td>
+                        <td>#43a047</td>
+                    </tr>
+                    <tr>
+                        <td>value-change-delta-down-color: </td>
+                        <td>#e53935</td>
+                    </tr>
+                    <tr>
+                        <td>value-change-value-highlight-background-color</td>
+                        <td>#00acc1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-
-@import '~ag-grid/src/styles/ag-grid.scss';
-@import '~ag-grid/src/styles/ag-theme-fresh.scss';</snippet>
-
-<p>A runnable version of the example above is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag-Grid Customize Theme repository</a>. </p>
-
-<p>Following is a list of the most common Sass variables used, their default values for the fresh theme, and a short explanation of their purpose.</p>
-
-<dl class="content">
-<dt>$accent-color<code>black </code></dt>
-<dd>
-The color for the checked checkboxes.
-</dd>
-<dt>$ag-range-selected-color-1<code>rgba(120, 120, 120, 0.4) </code></dt>
-<dd>
-The selection background color.
-</dd>
-<dt>$background-color<code>white </code></dt>
-<dd>
-The default background color.
-</dd>
-<dt>$border-color<code>darkgrey </code></dt>
-<dd>
-The color used for all borders.
-</dd>
-<dt>$card-background-color<code>#f6f6f6 </code></dt>
-<dd>
-The background color for the context menu and the column menu.
-</dd>
-<dt>$cell-data-changed-color<code>white </code></dt>
-<dd>
-The background color used when the cell flashes when data is changed.
-</dd>
-<dt>$cell-highlight-border<code>2px solid darkgreen </code></dt>
-<dd>
-The border used to mark cells as being copied.
-</dd>
-<dt>$cell-horizontal-border<code>1px dotted silver </code></dt>
-<dd>
-The border delimiter between cells.
-</dd>
-<dt>$cell-horizontal-padding<code>$grid-size * 3 </code></dt>
-<dd>
-The cell horizontal padding.
-</dd>
-<dt>$chip-background-color<code>#ecf0f1 </code></dt>
-<dd>
-The background color of the column labels used in the grouping / pivoting.
-</dd>
-<dt>$disabled-foreground-color-opacity<code>0.5 </code></dt>
-<dd>
-The opacity of the disabled / empty text elements.
-</dd>
-<dt>$disabled-foreground-color<code>rgba(black, $disabled-foreground-color-opacity) </code></dt>
-<dd>
-The color of the disabled / empty text elements.
-</dd>
-<dt>$focused-cell-border-color<code>darkgrey </code></dt>
-<dd>
-The border color of the focused cell.
-</dd>
-<dt>$font-family<code>'Helvetica Neue', sans-serif </code></dt>
-<dd>
-The grid font family.
-</dd>
-<dt>$font-size<code>14px </code></dt>
-<dd>
-The grid font size.
-</dd>
-<dt>$font-weight<code>400 </code></dt>
-<dd>
-The grid font weight (400 equals 'normal').
-</dd>
-<dt>$foreground-opacity<code>1 </code></dt>
-<dd>
-The foreground opacity.
-</dd>
-<dt>$foreground-color<code>rgba(black, $foreground-opacity) </code></dt>
-<dd>
-The default color of the text.
-</dd>
-<dt>$grid-size<code>4px </code></dt>
-<dd>
-The basic unit used for the grid spacing and dimensions. Changing this makes the grid UI more / less compact.
-</dd>
-<dt>$header-background-color<code>transparent </code></dt>
-<dd>
-The header background color.
-</dd>
-<dt>$header-background-image<code>linear-gradient(white, lightgrey) </code></dt>
-<dd>
-The header background gradient - you can also refer to an an image with `url(...)`.
-</dd>
-<dt>$header-height<code>$grid-size * 6 + 1 </code></dt>
-<dd>
-The header row height - if you change this, you also have to change the value of the `headerHeight` in the grid options. We are looking into removing this redundant step in the future. 
-</dd>
-<dt>$header-icon-size<code>14px </code></dt>
-<dd>
-The header icon height.
-</dd>
-<dt>$hover-color<code>inherit </code></dt>
-<dd>
-The background color of the row when hovered. 
-</dd>
-<dt>$icon-color<code>#333 </code></dt>
-<dd>
-The icon color.
-</dd>
-<dt>$icon-size<code>12px </code></dt>
-<dd>
-The icon width and height (icons are square).
-</dd>
-<dt>$icons-path<code>'./icons/' </code></dt>
-<dd>
-The path to the icon svg files. If you are to change that, make sure that the directory you point to contains the complete set of icons.
-</dd>
-<dt>$menu-option-active-color<code>#bde2e5 </code></dt>
-<dd>
-The background color of the context / column menu items when hovered.
-</dd>
-<dt>$odd-row-background-color<code>#f6f6f6 </code></dt>
-<dd>
-The odd row background color.
-</dd>
-<dt>$panel-background-color<code>#f6f6f6 </code></dt>
-<dd>
-The background color of the column menu.
-</dd>
-<dt>$range-selection-background-color<code>rgba(120, 120, 120, 0.4) </code></dt>
-<dd>
-The background color of the selected cells.
-</dd> 
-<dt>$range-selection-highlight-color<code>rgba(255, 255, 255, 0.4) </code></dt>
-<dd>
-The background color for the copied cells.
-</dd>
-<dt>$row-height<code>($grid-size * 6 + 1) </code></dt>
-<dd>
-The row height - if you change this, you also have to change the value of the `rowHeight` in the grid options. We are looking into removing this redundant step in the future. 
-</dd>
-<dt>$secondary-font-family<code>$font-family </code></dt>
-<dd>
-The font family used in the header.
-</dd>
-<dt>$secondary-font-size<code>14px </code></dt>
-<dd>
-The header font size.
-</dd>
-<dt>$secondary-font-weight<code>400 </code></dt>
-<dd>
-The header font weight.
-</dd>
-<dt>$secondary-foreground-color-opacity<code>1 </code></dt>
-<dd>
-The header font color opacity.
-</dd>
-<dt>$secondary-foreground-color<code>rgba(#333, $secondary-foreground-color-opacity) </code></dt>
-<dd>
-The header font color.
-</dd>
-<dt>$tab-background-color<code>#e6e6e6 </code></dt>
-<dd>
-The background color of the tab in the column menu
-</dd>
-<dt>$tool-panel-background-color<code>#f6f6f6 </code></dt>
-<dd>
-The tool panel background color
-</dd>
-<dt>$value-change-delta-down-color<code>darkred </code></dt>
-<dd>
-The color used when the cell value decreases.
-</dd>
-<dt>$value-change-delta-up-color<code>darkgreen </code></dt>
-<dd>
-The color used when the cell value increases.
-</dd>
-<dt>$value-change-value-highlight-background-color<code>#cec </code></dt>
-<dd>
-The background color used when the cell value changes.
-</dd>
-<dt>$row-group-indent-size<code>$grid-size * 3 + $icon-size</code></dt>
-<dd>
-The indent used for the row groups.
-</dd>
-<dt>$toolpanel-indent-size<code>$grid-size + $icon-size</code></dt>
-<dd>
-The indent used for the tool panel hierarchy.
-</dd>
-</dl>
-
-<p>You can examine the full, up-to-date list of the Sass variables and their usage in <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">the source code of the themes</a>.
-The <code>_ag-theme-common.scss</code> file contains the actual implementation, while the <code>ag-theme-*.scss</code> contain the default variable values for each theme.
+<p>
+    You can examine the full, up-to-date list of the Sass variables and their usage in <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">the source code of the themes</a>.
 </p>
 
 

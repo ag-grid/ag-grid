@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -90,8 +90,8 @@ var ZipContainer = /** @class */ (function () {
         var foData = '';
         var lL = 0;
         var cL = 0;
-        for (var i = 0; i < len; i++) {
-            var currentFile = totalFiles[i];
+        for (var _i = 0, totalFiles_1 = totalFiles; _i < totalFiles_1.length; _i++) {
+            var currentFile = totalFiles_1[_i];
             var _a = this.getHeader(currentFile, lL), fileHeader = _a.fileHeader, folderHeader = _a.folderHeader, content = _a.content;
             lL += fileHeader.length + content.length;
             cL += folderHeader.length;
@@ -114,7 +114,7 @@ var ZipContainer = /** @class */ (function () {
             extraFields = "\x75\x70" + decToHex(uExtraFieldPath.length, 2) + uExtraFieldPath;
         }
         var header = '\x0A\x00' +
-            (isUTF8 ? '\x00\x08' : '\x00\x00') + // general purpose bit flag
+            (isUTF8 ? '\x00\x08' : '\x00\x00') +
             '\x00\x00' +
             decToHex(time, 2) + // last modified time
             decToHex(dt, 2) + // last modified date
@@ -149,20 +149,21 @@ var ZipContainer = /** @class */ (function () {
     };
     ZipContainer.prototype.buildUint8Array = function (content) {
         var uint8 = new Uint8Array(content.length);
-        for (var i = 0; i < content.length; i++) {
+        for (var i = 0; i < uint8.length; i++) {
             uint8[i] = content.charCodeAt(i);
         }
         return uint8;
     };
     ZipContainer.prototype.getFromCrc32Table = function (content, crc) {
         if (crc === void 0) { crc = 0; }
-        if (content.length)
+        if (!content.length) {
             return 0;
+        }
         crc ^= (-1);
         var j = 0;
         var k = 0;
         var l = 0;
-        for (var i = 0, iTop = content.length; i < iTop; i++) {
+        for (var i = 0; i < content.length; i++) {
             j = content.charCodeAt(i);
             k = (crc ^ j) & 0xFF;
             l = crcTable[k];

@@ -28,10 +28,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     groupHeaders: true,
-    enableFilter: true,
-    enableSorting: true,
     rowSelection: 'multiple',
     pinnedTopRowData: [
         {

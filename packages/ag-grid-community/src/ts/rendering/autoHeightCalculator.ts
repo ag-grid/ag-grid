@@ -1,10 +1,10 @@
-import {GridPanel} from "../gridPanel/gridPanel";
-import {Autowired, Bean} from "../context/context";
-import {Beans} from "./beans";
-import {RowNode} from "../entities/rowNode";
-import {CellComp} from "./cellComp";
-import {ColumnController} from "../columnController/columnController";
-import {_} from "../utils";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { Autowired, Bean } from "../context/context";
+import { Beans } from "./beans";
+import { RowNode } from "../entities/rowNode";
+import { CellComp } from "./cellComp";
+import { ColumnController } from "../columnController/columnController";
+import { _ } from "../utils";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator {
@@ -33,13 +33,13 @@ export class AutoHeightCalculator {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        let eBodyContainer = this.gridPanel.getBodyContainer();
+        const eBodyContainer = this.gridPanel.getCenterContainer();
         eBodyContainer.appendChild(this.eDummyContainer);
 
-        let cellComps: CellComp[] = [];
-        let cols = this.columnController.getAllAutoRowHeightCols();
-        cols.forEach( col => {
-            let cellComp = new CellComp(
+        const cellComps: CellComp[] = [];
+        const cols = this.columnController.getAllAutoRowHeightCols();
+        cols.forEach(col => {
+            const cellComp = new CellComp(
                 this.$scope,
                 this.beans,
                 col,
@@ -51,18 +51,18 @@ export class AutoHeightCalculator {
             cellComps.push(cellComp);
         });
 
-        let template = cellComps.map( cellComp => cellComp.getCreateTemplate() ).join(' ');
+        const template = cellComps.map(cellComp => cellComp.getCreateTemplate()).join(' ');
         this.eDummyContainer.innerHTML = template;
 
         // this gets any cellComps that are using components to put the components in
-        cellComps.forEach( cellComp => cellComp.afterAttached() );
+        cellComps.forEach(cellComp => cellComp.afterAttached());
 
         // we should be able to just take the height of the row at this point, however
         // the row isn't expanding to cover the cell heights, i don't know why, i couldn't
         // figure it out so instead looking at the individual cells instead
         let maxCellHeight = 0;
         for (let i = 0; i < this.eDummyContainer.children.length; i++) {
-            let child = <HTMLElement> this.eDummyContainer.children[i];
+            const child = this.eDummyContainer.children[i] as HTMLElement;
             if (child.offsetHeight > maxCellHeight) {
                 maxCellHeight = child.offsetHeight;
             }
@@ -71,11 +71,11 @@ export class AutoHeightCalculator {
         // we are finished with the dummy container, so get rid of it
         eBodyContainer.removeChild(this.eDummyContainer);
 
-        cellComps.forEach( cellComp => {
+        cellComps.forEach(cellComp => {
             // dunno why we need to detach first, doing it here to be consistent with code in RowComp
             cellComp.detach();
             cellComp.destroy();
-        } );
+        });
 
         // in case anything left over from last time
         _.removeAllChildren(this.eDummyContainer);

@@ -28,11 +28,13 @@ function countryHeaderValueGetter(params) {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableSorting: true,
     sideBar: 'columns',
-    enableFilter: true,
     rowGroupPanelShow: 'always'
 };
 

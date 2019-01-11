@@ -1,26 +1,26 @@
-import {Component} from "../../widgets/component";
-import {Column} from "../../entities/column";
-import {Utils as _} from "../../utils";
-import {Autowired} from "../../context/context";
-import {IMenuFactory} from "../../interfaces/iMenuFactory";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {SortController} from "../../sortController";
-import {TapEvent, LongTapEvent, TouchListener} from "../../widgets/touchListener";
-import {IComponent} from "../../interfaces/iComponent";
-import {EventService} from "../../eventService";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {Events} from "../../events";
-import {ColumnApi} from "../../columnController/columnApi";
-import {GridApi} from "../../gridApi";
+import { Component } from "../../widgets/component";
+import { Column } from "../../entities/column";
+import { Autowired } from "../../context/context";
+import { IMenuFactory } from "../../interfaces/iMenuFactory";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { SortController } from "../../sortController";
+import { TapEvent, LongTapEvent, TouchListener } from "../../widgets/touchListener";
+import { IComponent } from "../../interfaces/iComponent";
+import { EventService } from "../../eventService";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { Events } from "../../events";
+import { ColumnApi } from "../../columnController/columnApi";
+import { GridApi } from "../../gridApi";
+import { _ } from "../../utils";
 
 export interface IHeaderParams {
     column: Column;
     displayName: string;
     enableSorting: boolean;
     enableMenu: boolean;
-    showColumnMenu: (source:HTMLElement)=>void;
-    progressSort: (multiSort?: boolean)=>void;
-    setSort: (sort: string, multiSort?: boolean)=>void;
+    showColumnMenu: (source:HTMLElement) => void;
+    progressSort: (multiSort?: boolean) => void;
+    setSort: (sort: string, multiSort?: boolean) => void;
     columnApi: ColumnApi;
     api: GridApi;
     context: any;
@@ -90,7 +90,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupText(displayName: string): void {
-        let displayNameSanitised = _.escape(displayName);
+        const displayNameSanitised = _.escape(displayName);
         if (this.eText) {
             this.eText.innerHTML = displayNameSanitised;
         }
@@ -105,9 +105,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
-        if (eParent == null) return;
+        if (eParent == null) { return; }
 
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
 
@@ -133,7 +133,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const target = event.touchStart.target as HTMLElement;
                 // When suppressMenuHide is true, a tap on the menu icon will bubble up
                 // to the header container, in that case we should not sort
-                if (suppressMenuHide && this.eMenu.contains(target)) return;
+                if (suppressMenuHide && this.eMenu.contains(target)) { return; }
 
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
@@ -170,15 +170,15 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
-            this.addGuiEventListener('mouseover', ()=> {
+            this.addGuiEventListener('mouseover', () => {
                 this.eMenu.style.opacity = '1';
             });
-            this.addGuiEventListener('mouseout', ()=> {
+            this.addGuiEventListener('mouseout', () => {
                 this.eMenu.style.opacity = '0';
             });
         }
-        let style = <any> this.eMenu.style;
-        style['transition'] = 'opacity 0.2s, border 0.2s';
+        const style = this.eMenu.style as any;
+        style.transition = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     }
 
@@ -194,17 +194,17 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     public setupSort(): void {
-        let enableSorting = this.params.enableSorting;
+        const enableSorting = this.params.enableSorting;
 
         if (!enableSorting) {
             this.removeSortIcons();
             return;
         }
 
-        let sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+        const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
 
         // keep track of last time the moving changed flag was set
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_MOVING_CHANGED, ()=> {
+        this.addDestroyableEventListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
             this.lastMovingChanged = new Date().getTime();
         });
 
@@ -215,14 +215,14 @@ export class HeaderComp extends Component implements IHeaderComp {
                 // sometimes when moving a column via dragging, this was also firing a clicked event.
                 // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
                 // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
-                let moving = this.params.column.isMoving();
-                let nowTime = new Date().getTime();
+                const moving = this.params.column.isMoving();
+                const nowTime = new Date().getTime();
                 // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
-                let movedRecently = (nowTime - this.lastMovingChanged) < 50;
-                let columnMoving = moving || movedRecently;
+                const movedRecently = (nowTime - this.lastMovingChanged) < 50;
+                const columnMoving = moving || movedRecently;
 
                 if (!columnMoving) {
-                    let multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                    const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
                 }
             });
@@ -250,7 +250,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         if (this.eSortNone) {
-            let alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
+            const alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
             _.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
         }
     }
@@ -264,18 +264,18 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        let col = this.params.column;
-        let allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
-        let indexThisCol = allColumnsWithSorting.indexOf(col);
-        let moreThanOneColSorting = allColumnsWithSorting.length > 1;
-        let showIndex = col.isSorting() && moreThanOneColSorting;
+        const col = this.params.column;
+        const allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
+        const indexThisCol = allColumnsWithSorting.indexOf(col);
+        const moreThanOneColSorting = allColumnsWithSorting.length > 1;
+        const showIndex = col.isSorting() && moreThanOneColSorting;
 
         _.setVisible(this.eSortOrder, showIndex);
 
-        if (indexThisCol>=0) {
-            this.eSortOrder.innerHTML = (indexThisCol+1).toString();
+        if (indexThisCol >= 0) {
+            this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
         } else {
-            this.eSortOrder.innerHTML = '';
+            _.clearElement(this.eSortOrder);
         }
     }
 
@@ -290,7 +290,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private onFilterChanged(): void {
-        let filterPresent = this.params.column.isFilterActive();
+        const filterPresent = this.params.column.isFilterActive();
         _.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     }
 

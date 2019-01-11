@@ -1,11 +1,10 @@
-import {Autowired, Bean} from "../../context/context";
-import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./componentProvider";
-import {IComponent} from "../../interfaces/iComponent";
-import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
-import {ComponentSource, ComponentType, ResolvedComponent} from "./componentResolver";
-import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
-import {_} from "../../utils";
-import {IStatusPanelComp, IStatusPanelParams} from "../../interfaces/iStatusPanel";
+import { Autowired, Bean } from "../../context/context";
+import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./componentProvider";
+import { IComponent } from "../../interfaces/iComponent";
+import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
+import { ComponentSource, ComponentType, ResolvedComponent } from "./componentResolver";
+import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { _ } from "../../utils";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils {
@@ -18,21 +17,22 @@ export class AgComponentUtils {
         type: ComponentType,
         source: ComponentSource
     ): ResolvedComponent<A, B> {
-        if (hardcodedJsFunction == null) return {
+        if (hardcodedJsFunction == null) { return {
             component: null,
             type: type,
             source: source,
             dynamicParams: null
         };
+        }
 
-        let metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
+        const metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
         if (metadata && metadata.functionAdapter) {
             return {
                 type: type,
-                component: <{ new(): A }>metadata.functionAdapter(hardcodedJsFunction),
+                component: metadata.functionAdapter(hardcodedJsFunction) as { new(): A },
                 source: source,
                 dynamicParams: null
-            }
+            };
         }
         return null;
     }
@@ -46,12 +46,12 @@ export class AgComponentUtils {
             }
 
             getGui(): HTMLElement {
-                let callbackResult: string | HTMLElement = callback(this.params);
-                let type = typeof callbackResult;
+                const callbackResult: string | HTMLElement = callback(this.params);
+                const type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
                     return _.loadTemplate('<span>' + callbackResult + '</span>');
                 } else {
-                    return <HTMLElement> callbackResult;
+                    return callbackResult as HTMLElement;
                 }
             }
 
@@ -64,7 +64,7 @@ export class AgComponentUtils {
     }
 
     public doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean {
-        if (!candidate) return false;
-        return (<any>candidate).prototype && 'getGui' in (<any>candidate).prototype;
+        if (!candidate) { return false; }
+        return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
     }
 }

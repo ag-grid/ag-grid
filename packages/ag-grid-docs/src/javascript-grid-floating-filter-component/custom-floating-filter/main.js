@@ -1,6 +1,6 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", filter: 'agTextColumnFilter', suppressFilter: true},
+    {headerName: "Athlete", field: "athlete", filter: false},
     {headerName: "Gold", field: "gold", filter: 'agNumberColumnFilter', suppressMenu:true,
         floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
@@ -32,13 +32,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    components:{
+    defaultColDef: {
+        filter: true
+    },
+    components: {
         customNumberFloatingFilter: getNumberFloatingFilterComponent()
     },
-    floatingFilter:true,
+    floatingFilter: true,
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true
+    rowData: null
 };
 
 function getNumberFloatingFilterComponent (){

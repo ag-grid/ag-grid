@@ -1,5 +1,5 @@
-import {IComponent} from "../interfaces/iComponent";
-import {IDateFilterParams} from "../filter/dateFilter";
+import { IComponent } from "../interfaces/iComponent";
+import { IDateFilterParams } from "../filter/dateFilter";
 export interface IDate {
     /** Returns the current date represented by this editor */
     getDate(): Date;
@@ -10,7 +10,7 @@ export interface IDate {
 
 export interface IDateParams {
     /** Method for component to tell ag-Grid that the date has changed. */
-    onDateChanged: ()=>void;
+    onDateChanged: () => void;
     filterParams:IDateFilterParams;
 }
 

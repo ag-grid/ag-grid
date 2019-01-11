@@ -1,5 +1,4 @@
-import {Utils as _} from "../utils";
-import {IFilterParams, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
+import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
 import {
     ComparableBaseFilter,
     BaseFilter,
@@ -7,7 +6,8 @@ import {
     FilterConditionType,
     IComparableFilterParams
 } from "./baseFilter";
-import {QuerySelector} from "../widgets/componentAnnotations";
+import { QuerySelector } from "../widgets/componentAnnotations";
+import { _ } from "../utils";
 
 export interface SerializedTextFilter extends SerializedFilter {
     filter: string;
@@ -43,16 +43,16 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     private filterConditionText: string;
     private comparator: TextComparator;
     private formatter: TextFormatter;
-    static DEFAULT_FORMATTER: TextFormatter = (from: string)=> {
+    static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
     }
 
-    static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string)=> {
+    static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
     }
 
-    static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string)=> {
+    static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
         case TextFilter.CONTAINS:
             return value.indexOf(filterText) >= 0;
@@ -65,7 +65,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         case TextFilter.STARTS_WITH:
             return value.indexOf(filterText) === 0;
         case TextFilter.ENDS_WITH:
-            let index = value.lastIndexOf(filterText);
+            const index = value.lastIndexOf(filterText);
             return index >= 0 && index === (value.length - filterText.length);
         default:
             // should never happen
@@ -101,10 +101,12 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public bodyTemplate(type:FilterConditionType): string {
-        let translate = this.translate.bind(this);
-        let fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
+        const translate = this.translate.bind(this);
+        const fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
         return `<div class="ag-filter-body">
-            <input class="ag-filter-filter" id=${fieldId} type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+            <div class="ag-input-text-wrapper">
+                <input class="ag-filter-filter" id=${fieldId} type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+            </div>
         </div>`;
     }
 
@@ -116,9 +118,9 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     private addFilterChangedListener(type:FilterConditionType) {
-        let eElement = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
-        let debounceMs = this.getDebounceMs(this.filterParams);
-        let toDebounce: () => void = _.debounce(()=>this.onFilterTextFieldChanged(type), debounceMs);
+        const eElement = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
+        const debounceMs = this.getDebounceMs(this.filterParams);
+        const toDebounce: () => void = _.debounce(() => this.onFilterTextFieldChanged(type), debounceMs);
         this.addDestroyableEventListener(eElement, 'input', toDebounce);
     }
 
@@ -137,8 +139,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
-        let filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
-        let filter:string = type == FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
+        const filter:string = type == FilterConditionType.MAIN ? this.filter : this.filterCondition;
 
         if (!filterText) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
@@ -148,18 +150,18 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     private checkIndividualFilter(params: IDoesFilterPassParams, filterType:string, filterText: string) {
-        let value = this.filterParams.valueGetter(params.node);
+        const value = this.filterParams.valueGetter(params.node);
         if (value == null || value === undefined) {
             return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
         }
-        let filterTextFormatted = this.formatter(filterText);
-        let valueFormatted: string = this.formatter(value);
+        const filterTextFormatted = this.formatter(filterText);
+        const valueFormatted: string = this.formatter(value);
         return this.comparator (filterType, valueFormatted, filterTextFormatted);
     }
 
     private onFilterTextFieldChanged(type:FilterConditionType) {
-        let value:string = type === FilterConditionType.MAIN ? this.eFilterTextField.value : this.eFilterConditionTextField.value;
-        let current:string = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
+        const value:string = type === FilterConditionType.MAIN ? this.eFilterTextField.value : this.eFilterConditionTextField.value;
+        const current:string = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
 
         let filterText = _.makeNull(value);
         if (filterText && filterText.trim() === '') {
@@ -167,10 +169,10 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         }
 
         if (current !== filterText) {
-            let newLowerCase =
+            const newLowerCase =
                 filterText && this.filterParams.caseSensitive != true ? filterText.toLowerCase() :
                 filterText;
-            let previousLowerCase = current && this.filterParams.caseSensitive != true  ? current.toLowerCase() :
+            const previousLowerCase = current && this.filterParams.caseSensitive != true  ? current.toLowerCase() :
                 current;
 
             if (type === FilterConditionType.MAIN) {
@@ -192,24 +194,24 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             if (filter) {
                 this.filterText = this.formatter(filter);
 
-                if (!this.eFilterTextField) return;
+                if (!this.eFilterTextField) { return; }
                 this.eFilterTextField.value = filter;
             } else {
                 this.filterText = null;
 
-                if (!this.eFilterTextField) return;
+                if (!this.eFilterTextField) { return; }
                 this.eFilterTextField.value = null;
             }
         } else {
             if (filter) {
                 this.filterConditionText = this.formatter(filter);
 
-                if (!this.eFilterConditionTextField) return;
+                if (!this.eFilterConditionTextField) { return; }
                 this.eFilterConditionTextField.value = filter;
             } else {
                 this.filterConditionText = null;
 
-                if (!this.eFilterConditionTextField) return;
+                if (!this.eFilterConditionTextField) { return; }
                 this.eFilterConditionTextField.value = null;
             }
         }
@@ -228,8 +230,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public serialize(type:FilterConditionType): SerializedTextFilter {
-        let filter = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
-        let filterText = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
+        const filter = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const filterText = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
         return {
             type: filter ? filter : this.defaultFilter,
             filter: filterText,

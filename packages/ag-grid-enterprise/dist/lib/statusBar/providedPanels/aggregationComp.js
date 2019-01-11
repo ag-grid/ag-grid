@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -36,7 +36,7 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.prototype.postConstruct = function () {
         if (!this.isValidRowModel()) {
-            console.warn("ag-Grid: agSelectedRowCountComponent should only be used with the client and server side row model.");
+            console.warn("ag-Grid: agAggregationComponent should only be used with the client and server side row model.");
             return;
         }
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
@@ -45,7 +45,7 @@ var AggregationComp = /** @class */ (function (_super) {
     AggregationComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
         var rowModelType = this.gridApi.getModel().getType();
-        return rowModelType === 'clientSide' || rowModelType !== 'serverSide';
+        return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     };
     AggregationComp.prototype.init = function () {
     };
@@ -86,10 +86,10 @@ var AggregationComp = /** @class */ (function (_super) {
         var sum = 0;
         var count = 0;
         var numberCount = 0;
-        var min = 0;
+        var min = null;
         var max = 0;
         var cellsSoFar = {};
-        if (!ag_grid_community_1._.missingOrEmpty(cellRanges)) {
+        if (cellRanges && !ag_grid_community_1._.missingOrEmpty(cellRanges)) {
             cellRanges.forEach(function (cellRange) {
                 // get starting and ending row, remember rowEnd could be before rowStart
                 var startRow = cellRange.start.getGridRow();
@@ -99,7 +99,7 @@ var AggregationComp = /** @class */ (function (_super) {
                 var lastRow = startRowIsFirst ? endRow : startRow;
                 while (true) {
                     var finishedAllRows = ag_grid_community_1._.missing(currentRow) || !currentRow || lastRow.before(currentRow);
-                    if (finishedAllRows || !currentRow) {
+                    if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
                     cellRange.columns.forEach(function (column) {

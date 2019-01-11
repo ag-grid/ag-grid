@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -149,7 +149,7 @@ var ViewportRowModel = /** @class */ (function () {
         return this.rowCount > 0;
     };
     ViewportRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        var firstIndex = ag_grid_community_1.Utils.missing(firstInRange) ? 0 : firstInRange.rowIndex;
+        var firstIndex = ag_grid_community_1._.missing(firstInRange) ? 0 : firstInRange.rowIndex;
         var lastIndex = lastInRange.rowIndex;
         var firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
         var lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;
@@ -176,7 +176,7 @@ var ViewportRowModel = /** @class */ (function () {
     };
     ViewportRowModel.prototype.setRowData = function (rowData) {
         var _this = this;
-        ag_grid_community_1.Utils.iterateObject(rowData, function (indexStr, dataItem) {
+        ag_grid_community_1._.iterateObject(rowData, function (indexStr, dataItem) {
             var index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
@@ -185,7 +185,7 @@ var ViewportRowModel = /** @class */ (function () {
                 // the abnormal case is we requested a row even though the grid didn't need it
                 // as a result of the paging and buffer (ie the row is off screen), in which
                 // case we need to create a new node now
-                if (ag_grid_community_1.Utils.missing(rowNode)) {
+                if (ag_grid_community_1._.missing(rowNode)) {
                     rowNode = _this.createBlankRowNode(index);
                     _this.rowNodesByIndex[index] = rowNode;
                 }

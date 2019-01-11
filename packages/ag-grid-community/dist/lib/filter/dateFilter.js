@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -30,10 +30,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
-var utils_1 = require("../utils");
 var baseFilter_1 = require("./baseFilter");
 var context_1 = require("../context/context");
 var componentRecipes_1 = require("../components/framework/componentRecipes");
+var utils_1 = require("../utils");
 var DateFilter = /** @class */ (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
@@ -140,10 +140,11 @@ var DateFilter = /** @class */ (function (_super) {
             panel = this.eDateToConditionPanel;
             filterTypeValue = this.filterCondition;
         }
-        if (!panel)
+        if (!panel) {
             return;
+        }
         var visible = filterTypeValue === baseFilter_1.BaseFilter.IN_RANGE;
-        utils_1.Utils.setVisible(panel, visible);
+        utils_1._.setVisible(panel, visible);
     };
     DateFilter.prototype.comparator = function () {
         return this.filterParams.comparator ? this.filterParams.comparator : this.defaultComparator.bind(this);
@@ -164,71 +165,77 @@ var DateFilter = /** @class */ (function (_super) {
         var dateFromComponent = type === baseFilter_1.FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
         var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.filter : this.filterCondition;
         return {
-            dateTo: utils_1.Utils.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
-            dateFrom: utils_1.Utils.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
+            dateTo: utils_1._.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
+            dateFrom: utils_1._.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
             type: filterType ? filterType : this.defaultFilter,
             filterType: 'date'
         };
     };
     DateFilter.prototype.filterValues = function (type) {
         if (type === baseFilter_1.FilterConditionType.MAIN) {
-            if (!this.dateFromComponent)
+            if (!this.dateFromComponent) {
                 return null;
+            }
             return this.filter !== baseFilter_1.BaseFilter.IN_RANGE ?
                 this.dateFromComponent.getDate() :
                 [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
         }
-        if (!this.dateFromConditionComponent)
+        if (!this.dateFromConditionComponent) {
             return null;
+        }
         return this.filterCondition !== baseFilter_1.BaseFilter.IN_RANGE ?
             this.dateFromConditionComponent.getDate() :
             [this.dateFromConditionComponent.getDate(), this.dateToConditionComponent.getDate()];
     };
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     DateFilter.prototype.getDateFrom = function () {
-        return utils_1.Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
+        return utils_1._.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
     };
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     DateFilter.prototype.getDateTo = function () {
-        return utils_1.Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
+        return utils_1._.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
     };
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     DateFilter.prototype.getFilterType = function () {
         return this.filter;
     };
     DateFilter.prototype.setDateFrom = function (date, type) {
-        var parsedDate = utils_1.Utils.parseYyyyMmDdToDate(date, "-");
+        var parsedDate = utils_1._.parseYyyyMmDdToDate(date, "-");
         this.setDateFrom_date(parsedDate, type);
     };
     DateFilter.prototype.setDateFrom_date = function (parsedDate, type) {
         if (type === baseFilter_1.FilterConditionType.MAIN) {
             this.dateFrom = parsedDate;
-            if (!this.dateFromComponent)
+            if (!this.dateFromComponent) {
                 return;
+            }
             this.dateFromComponent.setDate(this.dateFrom);
         }
         else {
             this.dateFromCondition = parsedDate;
-            if (!this.dateFromConditionComponent)
+            if (!this.dateFromConditionComponent) {
                 return;
+            }
             this.dateFromConditionComponent.setDate(this.dateFromCondition);
         }
     };
     DateFilter.prototype.setDateTo = function (date, type) {
-        var parsedDate = utils_1.Utils.parseYyyyMmDdToDate(date, "-");
+        var parsedDate = utils_1._.parseYyyyMmDdToDate(date, "-");
         this.setDateTo_date(parsedDate, type);
     };
     DateFilter.prototype.setDateTo_date = function (parsedDate, type) {
         if (type === baseFilter_1.FilterConditionType.MAIN) {
             this.dateTo = parsedDate;
-            if (!this.dateToComponent)
+            if (!this.dateToComponent) {
                 return;
+            }
             this.dateToComponent.setDate(this.dateTo);
         }
         else {
             this.dateToCondition = parsedDate;
-            if (!this.dateToConditionComponent)
+            if (!this.dateToConditionComponent) {
                 return;
+            }
             this.dateToConditionComponent.setDate(this.dateToCondition);
         }
     };
@@ -280,12 +287,12 @@ exports.DateFilter = DateFilter;
 var DefaultDateComponent = /** @class */ (function (_super) {
     __extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
-        return _super.call(this, "<input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\">") || this;
+        return _super.call(this, "<div class=\"ag-input-text-wrapper\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
-        this.eDateInput = this.getGui();
-        if (utils_1.Utils.isBrowserChrome() || params.filterParams.browserDatePicker) {
-            if (utils_1.Utils.isBrowserIE()) {
+        this.eDateInput = this.getGui().querySelector('input');
+        if (utils_1._.isBrowserChrome() || params.filterParams.browserDatePicker) {
+            if (utils_1._.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             }
             else {
@@ -296,10 +303,10 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         this.addGuiEventListener('input', this.listener);
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return utils_1.Utils.parseYyyyMmDdToDate(this.eDateInput.value, "-");
+        return utils_1._.parseYyyyMmDdToDate(this.eDateInput.value, "-");
     };
     DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.value = utils_1.Utils.serializeDateToYyyyMmDd(date, "-");
+        this.eDateInput.value = utils_1._.serializeDateToYyyyMmDd(date, "-");
     };
     return DefaultDateComponent;
 }(component_1.Component));

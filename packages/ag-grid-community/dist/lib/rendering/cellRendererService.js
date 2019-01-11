@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,8 +18,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var componentRecipes_1 = require("../components/framework/componentRecipes");
 var componentResolver_1 = require("../components/framework/componentResolver");
-var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var utils_1 = require("../utils");
 /** Class to use a cellRenderer. */
 var CellRendererService = /** @class */ (function () {
     function CellRendererService() {

@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, XmlElement, _} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, XmlElement, _ } from 'ag-grid-community';
 
 type GsType = [string, string, string, string?, string?, string?];
 type LinType = [string, string];
@@ -18,9 +18,9 @@ const getGs = (props: GsType): XmlElement => {
     const children: XmlElement[] = [];
 
     children.push(getPropertyVal('satMod', satMod));
-    if (lumMod) children.push(getPropertyVal('lumMod', lumMod));
-    if (tint) children.push(getPropertyVal('tint', tint));
-    if (shade) children.push(getPropertyVal('shade', shade));
+    if (lumMod) { children.push(getPropertyVal('lumMod', lumMod)); }
+    if (tint) { children.push(getPropertyVal('tint', tint)); }
+    if (shade) { children.push(getPropertyVal('shade', shade)); }
 
     return {
         name: 'a:gs',
@@ -63,7 +63,7 @@ const getGradFill = (props: [string, GsType, GsType, GsType, LinType]): XmlEleme
                 getGs(gs2),
                 getGs(gs3)
             ]
-        },{
+        }, {
             name: 'a:lin',
             properties: {
                 rawMap: {
@@ -131,7 +131,7 @@ const getFillStyleList = (): XmlElement => ({
             ['0', 'phClr', '105000', '110000', '67000'],
             ['50000', 'phClr', '103000', '105000', '73000' ],
             ['100000', 'phClr', '109000', '105000', '81000' ],
-            ['5400000','0']
+            ['5400000', '0']
         ]),
         getGradFill([
             '1',

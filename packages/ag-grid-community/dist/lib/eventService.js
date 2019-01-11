@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,10 +19,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var logger_1 = require("./logger");
-var utils_1 = require("./utils");
 var context_1 = require("./context/context");
 var context_2 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var utils_1 = require("./utils");
 var EventService = /** @class */ (function () {
     function EventService() {
         this.allSyncListeners = {};
@@ -86,15 +86,15 @@ var EventService = /** @class */ (function () {
     EventService.prototype.removeEventListener = function (eventType, listener, async) {
         if (async === void 0) { async = false; }
         var listenerList = this.getListenerList(eventType, async);
-        utils_1.Utils.removeFromArray(listenerList, listener);
+        utils_1._.removeFromArray(listenerList, listener);
     };
     EventService.prototype.removeGlobalListener = function (listener, async) {
         if (async === void 0) { async = false; }
         if (async) {
-            utils_1.Utils.removeFromArray(this.globalAsyncListeners, listener);
+            utils_1._.removeFromArray(this.globalAsyncListeners, listener);
         }
         else {
-            utils_1.Utils.removeFromArray(this.globalSyncListeners, listener);
+            utils_1._.removeFromArray(this.globalSyncListeners, listener);
         }
     };
     // why do we pass the type here? the type is in ColumnChangeEvent, so unless the
@@ -116,7 +116,7 @@ var EventService = /** @class */ (function () {
         var eventType = event.type;
         // this allows the columnController to get events before anyone else
         var p1ListenerList = this.getListenerList(eventType + EventService_1.PRIORITY, async);
-        utils_1.Utils.forEachSnapshotFirst(p1ListenerList, function (listener) {
+        utils_1._.forEachSnapshotFirst(p1ListenerList, function (listener) {
             if (async) {
                 _this.dispatchAsync(function () { return listener(event); });
             }
@@ -125,7 +125,7 @@ var EventService = /** @class */ (function () {
             }
         });
         var listenerList = this.getListenerList(eventType, async);
-        utils_1.Utils.forEachSnapshotFirst(listenerList, function (listener) {
+        utils_1._.forEachSnapshotFirst(listenerList, function (listener) {
             if (async) {
                 _this.dispatchAsync(function () { return listener(event); });
             }
@@ -133,7 +133,7 @@ var EventService = /** @class */ (function () {
                 listener(event);
             }
         });
-        utils_1.Utils.forEachSnapshotFirst(globalListeners, function (listener) {
+        utils_1._.forEachSnapshotFirst(globalListeners, function (listener) {
             if (async) {
                 _this.dispatchAsync(function () { return listener(eventType, event); });
             }
@@ -155,7 +155,7 @@ var EventService = /** @class */ (function () {
         // set to 'true' so it will know it's already scheduled for subsequent calls.
         if (!this.scheduled) {
             // if not scheduled, schedule one
-            setTimeout(this.flushAsyncQueue.bind(this), 0);
+            window.setTimeout(this.flushAsyncQueue.bind(this), 0);
             // mark that it is scheduled
             this.scheduled = true;
         }

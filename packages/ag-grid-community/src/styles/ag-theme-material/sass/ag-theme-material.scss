@@ -1,0 +1,74 @@
+@import "../vars/ag-theme-material-vars";
+@import "../../ag-theme-base/sass/ag-theme-base";
+
+.ag-theme-material {
+    %selected-tab {
+        border-bottom: 2px solid $primary-color;
+    }
+
+    @include ag-grid-theme($params);
+
+    .ag-header-cell, .ag-header-group-cell {
+        transition: background-color 0.5s;
+    }
+
+    .ag-cell-highlight {
+        background-color: $range-selection-highlight-color !important;
+    }
+
+    .ag-cell-highlight-animation {
+        transition: background-color 1s;
+    }
+
+    .ag-row-drag {
+        background-position-y: center;
+    }
+
+    .ag-column-drag {
+        background-position-y: center;
+    }
+
+
+    .ag-side-bar {
+        border-bottom: 0;
+        border-right: 0;
+        border-top: 0;
+
+        .ag-side-buttons button {
+            border: 0;
+            color: $secondary-foreground-color;
+            font-family: $secondary-font-family;
+            font-size: $secondary-font-size;
+            font-weight: $secondary-font-weight;
+            background: transparent;
+        }
+
+        .ag-side-buttons .ag-side-button button {
+          background-color: transparent;
+          border-width: 0;
+        }
+
+        .ag-side-buttons .ag-selected button {
+          border-left: 2px solid $primary-color;
+          background-color: $tool-panel-background-color;
+          margin-left: -2px;
+          padding-left: 1px;
+        }
+
+        .ag-filter-toolpanel-body {
+            background-color: $background-color;
+        }
+    }
+
+    .ag-rtl .ag-side-bar {
+        .ag-side-buttons .ag-selected button {
+          border-left: 0;
+          margin-left: 0;
+          padding-left:0;
+
+          border-right: 2px solid $primary-color;
+          margin-right: -2px;
+          padding-right: 1px;
+        }
+    }
+}

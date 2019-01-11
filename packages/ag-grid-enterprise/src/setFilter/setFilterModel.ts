@@ -11,8 +11,8 @@ import {
     SetFilterValuesFuncParams,
     TextFilter,
     TextFormatter,
-    Utils,
-    ValueFormatterService
+    ValueFormatterService,
+    _
 } from "ag-grid-community";
 
 // we cannot have 'null' as a key in a JavaScript map,
@@ -31,8 +31,8 @@ export class SetFilterModel {
 
     private clientSideRowModel: ClientSideRowModel;
     private valueGetter: any;
-    private allUniqueValues: string[]; // all values in the table
-    private availableUniqueValues: string[]; // all values not filtered by other rows
+    private allUniqueValues: (string | null)[]; // all values in the table
+    private availableUniqueValues: (string | null)[]; // all values not filtered by other rows
     private displayedValues: any[]; // all values we are rendering on screen (ie after mini filter)
     private miniFilter: string | null;
     private selectedValuesCount: number;
@@ -74,11 +74,11 @@ export class SetFilterModel {
         this.column = column;
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = <ClientSideRowModel> rowModel;
+            this.clientSideRowModel = rowModel as ClientSideRowModel;
         }
 
-        this.filterParams = this.colDef.filterParams ? <ISetFilterParams> this.colDef.filterParams : <ISetFilterParams>{};
-        if (Utils.exists(this.filterParams) && Utils.exists(this.filterParams.values)) {
+        this.filterParams = this.colDef.filterParams ? this.colDef.filterParams as ISetFilterParams : {} as ISetFilterParams;
+        if (_.exists(this.filterParams) && _.exists(this.filterParams.values)) {
             this.valuesType = Array.isArray(this.filterParams.values) ?
                 SetFilterModelValuesType.PROVIDED_LIST :
                 SetFilterModelValuesType.PROVIDED_CB;
@@ -122,7 +122,7 @@ export class SetFilterModel {
     private refreshSelection(keepSelection: any, isSelectAll: boolean) {
         this.createAvailableUniqueValues();
 
-        let oldModel = Object.keys(this.selectedValuesMap);
+        const oldModel = Object.keys(this.selectedValuesMap);
 
         this.selectedValuesMap = {};
         this.processMiniFilter();
@@ -143,7 +143,7 @@ export class SetFilterModel {
 
     private createAllUniqueValues() {
         if (this.areValuesSync()) {
-            let valuesToUse: string[] = this.extractSyncValuesToUse();
+            const valuesToUse: (string | null)[] = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
             this.filterValuesPromise = Promise.resolve([]);
         } else {
@@ -151,8 +151,8 @@ export class SetFilterModel {
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
-            let callback = <SetFilterValuesFunc> this.filterParams.values;
-            let params: SetFilterValuesFuncParams = {
+            const callback = this.filterParams.values as SetFilterValuesFunc;
+            const params: SetFilterValuesFuncParams = {
                 success: this.onAsyncValuesLoaded.bind(this),
                 colDef: this.colDef
             };
@@ -174,7 +174,7 @@ export class SetFilterModel {
         this.valuesType = value;
     }
 
-    private setValues(valuesToUse: string[]) {
+    private setValues(valuesToUse: (string | null)[]) {
         this.allUniqueValues = valuesToUse;
         if (!this.suppressSorting) {
             this.sortValues(this.allUniqueValues);
@@ -182,10 +182,10 @@ export class SetFilterModel {
     }
 
     private extractSyncValuesToUse() {
-        let valuesToUse: string[];
+        let valuesToUse: (string | null)[];
         if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
             if (Array.isArray(this.filterParams.values)) {
-                valuesToUse = Utils.toStrings(<string[]>this.filterParams.values);
+                valuesToUse = _.toStrings(this.filterParams.values as string[]);
             } else {
                 // In this case the values are async but have already been resolved, so we can reuse them
                 valuesToUse = this.allUniqueValues;
@@ -193,21 +193,21 @@ export class SetFilterModel {
         } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB) {
             throw Error(`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
         } else {
-            let uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            valuesToUse = Utils.toStrings(uniqueValuesAsAnyObjects);
+            const uniqueValuesAsAnyObjects = this.getUniqueValues(false);
+            valuesToUse = _.toStrings(uniqueValuesAsAnyObjects);
         }
         return valuesToUse;
     }
 
     private createAvailableUniqueValues() {
-        let dontCheckAvailableValues = !this.showingAvailableOnly || this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
+        const dontCheckAvailableValues = !this.showingAvailableOnly || this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
         if (dontCheckAvailableValues) {
             this.availableUniqueValues = this.allUniqueValues;
             return;
         }
 
-        let uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-        this.availableUniqueValues = Utils.toStrings(uniqueValuesAsAnyObjects);
+        const uniqueValuesAsAnyObjects = this.getUniqueValues(true);
+        this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
         this.sortValues(this.availableUniqueValues);
     }
 
@@ -217,13 +217,13 @@ export class SetFilterModel {
         } else if (this.colDef.comparator) {
             values.sort(this.colDef.comparator);
         } else {
-            values.sort(Utils.defaultComparator);
+            values.sort(_.defaultComparator);
         }
     }
 
     private getUniqueValues(filterOutNotAvailable: boolean): any[] {
-        let uniqueCheck = <any>{};
-        let result = <any>[];
+        const uniqueCheck = {} as any;
+        const result = [] as any;
 
         if (!this.clientSideRowModel) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
@@ -272,8 +272,8 @@ export class SetFilterModel {
     }
 
     //sets mini filter. returns true if it changed from last value, otherwise false
-    public setMiniFilter(newMiniFilter: string): boolean {
-        newMiniFilter = Utils.makeNull(newMiniFilter);
+    public setMiniFilter(newMiniFilter: string | null): boolean {
+        newMiniFilter = _.makeNull(newMiniFilter);
         if (this.miniFilter === newMiniFilter) {
             //do nothing if filter has not changed
             return false;
@@ -302,7 +302,7 @@ export class SetFilterModel {
         const miniFilterUpperCase = miniFilter.toUpperCase();
 
         //This function encapsulates the logic to check if a string matches the mini filter
-        let matchesFn: any = (valueToCheck: string): boolean => {
+        const matchesFn: any = (valueToCheck: string): boolean => {
             if (valueToCheck == null) {
                 return false;
             }
@@ -313,11 +313,11 @@ export class SetFilterModel {
         };
 
         for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            let value = this.availableUniqueValues[i];
+            const value = this.availableUniqueValues[i];
             if (value) {
                 const displayedValue = this.formatter(value.toString());
 
-                let formattedValue: string =
+                const formattedValue: string =
                     this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
 
                 if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
@@ -344,10 +344,10 @@ export class SetFilterModel {
     }
 
     private selectOn(toSelectOn: any[]) {
-        let count = toSelectOn.length;
+        const count = toSelectOn.length;
         for (let i = 0; i < count; i++) {
-            let key = toSelectOn[i];
-            let safeKey = this.valueToKey(key);
+            const key = toSelectOn[i];
+            const safeKey = this.valueToKey(key);
             this.selectedValuesMap[safeKey] = null;
         }
         this.selectedValuesCount = count;
@@ -386,12 +386,12 @@ export class SetFilterModel {
         return this.allUniqueValues.length;
     }
 
-    public getUniqueValue(index: any): string {
+    public getUniqueValue(index: any): string | null {
         return this.allUniqueValues[index];
     }
 
     public unselectValue(value: any) {
-        let safeKey = this.valueToKey(value);
+        const safeKey = this.valueToKey(value);
         if (this.selectedValuesMap[safeKey] !== undefined) {
             delete this.selectedValuesMap[safeKey];
             this.selectedValuesCount--;
@@ -399,7 +399,7 @@ export class SetFilterModel {
     }
 
     public selectValue(value: any) {
-        let safeKey = this.valueToKey(value);
+        const safeKey = this.valueToKey(value);
         if (this.selectedValuesMap[safeKey] === undefined) {
             this.selectedValuesMap[safeKey] = null;
             this.selectedValuesCount++;
@@ -407,7 +407,7 @@ export class SetFilterModel {
     }
 
     public isValueSelected(value: any) {
-        let safeKey = this.valueToKey(value);
+        const safeKey = this.valueToKey(value);
         return this.selectedValuesMap[safeKey] !== undefined;
     }
 
@@ -431,9 +431,9 @@ export class SetFilterModel {
         if (!this.isFilterActive()) {
             return null;
         }
-        let selectedValues: any[] = [];
-        Utils.iterateObject(this.selectedValuesMap, (key: string) => {
-            let value = this.keyToValue(key);
+        const selectedValues: any[] = [];
+        _.iterateObject(this.selectedValuesMap, (key: string) => {
+            const value = this.keyToValue(key);
             selectedValues.push(value);
         });
         return selectedValues;
@@ -454,8 +454,8 @@ export class SetFilterModel {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {
-                let rawValue = model[i];
-                let value = this.keyToValue(rawValue);
+                const rawValue = model[i];
+                const value = this.keyToValue(rawValue);
                 if (value && this.allUniqueValues.indexOf(value) >= 0) {
                     this.selectValue(value);
                 }

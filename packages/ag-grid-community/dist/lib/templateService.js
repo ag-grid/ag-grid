@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,7 +69,7 @@ var TemplateService = /** @class */ (function () {
         }
         if (this.$scope) {
             var that_1 = this;
-            setTimeout(function () {
+            window.setTimeout(function () {
                 that_1.$scope.$apply();
             }, 0);
         }

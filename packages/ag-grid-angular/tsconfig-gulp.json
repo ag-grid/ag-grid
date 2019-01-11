@@ -10,12 +10,17 @@
     "noImplicitAny": true,
     "declaration": true,
     "suppressImplicitAnyIndexErrors": true,
-    "lib": ["dom","es2015"],
+    "lib": [
+      "dom",
+      "es2015"
+    ],
     "outDir": "dist/",
-    "noStrictGenericChecks":true
+    "noStrictGenericChecks": true
   },
-  "include": ["src/**/*"],
-  "exclude":[
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
     "node_modules",
     "typings"
   ],

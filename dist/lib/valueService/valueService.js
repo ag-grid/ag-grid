@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,10 +19,10 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var expressionService_1 = require("./expressionService");
 var columnController_1 = require("../columnController/columnController");
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
 var events_1 = require("../events");
 var eventService_1 = require("../eventService");
 var valueCache_1 = require("./valueCache");
+var utils_1 = require("../utils");
 var ValueService = /** @class */ (function () {
     function ValueService() {
         this.initialised = false;
@@ -39,6 +39,9 @@ var ValueService = /** @class */ (function () {
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
             this.init();
+        }
+        if (!rowNode) {
+            return undefined;
         }
         // pull these out to make code below easier to read
         var colDef = column.getColDef();
@@ -115,7 +118,7 @@ var ValueService = /** @class */ (function () {
         };
         params.newValue = newValue;
         var valueWasDifferent;
-        if (utils_1._.exists(newValueHandler)) {
+        if (newValueHandler && utils_1._.exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
         }
         else if (utils_1._.exists(valueSetter)) {
@@ -140,9 +143,10 @@ var ValueService = /** @class */ (function () {
         rowNode.resetQuickFilterAggregateText();
         this.valueCache.onDataChanged();
         params.newValue = this.getValue(column, rowNode);
-        if (typeof column.getColDef().onCellValueChanged === 'function') {
+        var onCellValueChanged = column.getColDef().onCellValueChanged;
+        if (typeof onCellValueChanged === 'function') {
             // to make callback async, do in a timeout
-            setTimeout(function () { return column.getColDef().onCellValueChanged(params); }, 0);
+            setTimeout(function () { return onCellValueChanged(params); }, 0);
         }
         var event = {
             type: events_1.Events.EVENT_CELL_VALUE_CHANGED,
@@ -163,8 +167,11 @@ var ValueService = /** @class */ (function () {
         this.eventService.dispatchEvent(event);
     };
     ValueService.prototype.setValueUsingField = function (data, field, newValue, isFieldContainsDots) {
+        if (!field) {
+            return false;
+        }
         // if no '.', then it's not a deep value
-        var valuesAreSame;
+        var valuesAreSame = false;
         if (!isFieldContainsDots) {
             data[field] = newValue;
         }

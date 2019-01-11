@@ -11,27 +11,27 @@ var columnDefs = [
         headerName: 'Only Year Resizes',
         children: [
             {headerName: 'Year', field: 'year', headerClass: 'resizable-header'},
-            {headerName: 'Date', field: 'date', suppressResize: true, headerClass: 'fixed-size-header'},
-            {headerName: 'Sport', field: 'sport', suppressResize: true, headerClass: 'fixed-size-header'}
+            {headerName: 'Date', field: 'date', resizable: false, headerClass: 'fixed-size-header'},
+            {headerName: 'Sport', field: 'sport', resizable: false, headerClass: 'fixed-size-header'}
         ]
     },
     {
         headerName: 'Nothing Resizes',
         children: [
-            {headerName: 'Gold', field: 'gold', suppressResize: true, headerClass: 'fixed-size-header'},
-            {headerName: 'Silver', field: 'silver', suppressResize: true, headerClass: 'fixed-size-header'},
-            {headerName: 'Bronze', field: 'bronze', suppressResize: true, headerClass: 'fixed-size-header'},
-            {headerName: 'Total', field: 'total', suppressResize: true, headerClass: 'fixed-size-header'}
+            {headerName: 'Gold', field: 'gold', resizable: false, headerClass: 'fixed-size-header'},
+            {headerName: 'Silver', field: 'silver', resizable: false, headerClass: 'fixed-size-header'},
+            {headerName: 'Bronze', field: 'bronze', resizable: false, headerClass: 'fixed-size-header'},
+            {headerName: 'Total', field: 'total', resizable: false, headerClass: 'fixed-size-header'}
         ]
     }
 ];
 
 var gridOptions = {
     defaultColDef: {
-        width: 90
+        width: 90,
+        resizable: true
     },
-    columnDefs: columnDefs,
-    enableColResize: true
+    columnDefs: columnDefs
 };
 
 // setup the grid after the page has finished loading

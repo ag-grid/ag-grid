@@ -66,7 +66,7 @@ export default class extends Component {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 this.rowData = JSON.parse(httpRequest.responseText);
                 this.setState(this.createState());
-                setTimeout(() => {
+                window.setTimeout(() => {
                     // mix up some columns
                     this.topGrid.columnApi.moveColumnByIndex(11, 4);
                     this.topGrid.columnApi.moveColumnByIndex(11, 4);

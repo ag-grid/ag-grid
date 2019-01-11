@@ -121,10 +121,15 @@ var gridOptions = {
         ratingFilterRenderer: ratingFilterRenderer
     },
     defaultExportParams: {
-        columnGroups: true
+        columnGroups: true,
+        headerRowHeight: 30,
+        rowHeight: 22
     },
     defaultColDef: {
-        minWidth: 50
+        minWidth: 50,
+        sortable: true,
+        filter: true,
+        resizable: true
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
@@ -167,6 +172,7 @@ var gridOptions = {
     // suppressMovingCss: true,
     // suppressMovableColumns: true,
     // groupIncludeFooter: true,
+    // suppressHorizontalScroll: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressRowHoverHighlight: true,
     // suppressTouch: true,
@@ -176,9 +182,6 @@ var gridOptions = {
     // enableRtl: true,
     multiSortKey: 'ctrl',
     animateRows: true,
-    enableColResize: true, //one of [true, false]
-    enableSorting: true, //one of [true, false]
-    enableFilter: true, //one of [true, false]
     enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
@@ -190,7 +193,7 @@ var gridOptions = {
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
     // suppressContextMenu: true,
-    //suppressFieldDotNotation: true,
+    // suppressFieldDotNotation: true,
     autoGroupColumnDef: groupColumn,
     // suppressCellSelection: true,
     // suppressMultiSort: true,
@@ -200,7 +203,7 @@ var gridOptions = {
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
     // toolPanelSuppressColumnExpandAll: true,
-    //  autoSizePadding: 20,
+    // autoSizePadding: 20,
     // toolPanelSuppressGroups: true,
     // toolPanelSuppressValues: true,
     // groupSuppressAutoColumn: true,
@@ -244,18 +247,18 @@ var gridOptions = {
     // suppressTabbing: true,
     // rowHoverClass: true,
     // suppressAnimationFrame: true,
-    //     pinnedTopRowData: [
-    //         {name: 'Mr Pinned Top 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
-    //         {name: 'Mr Pinned Top 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
-    //         {name: 'Mr Pinned Top 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
-    //         ],
-    //     pinnedBottomRowData: [
-    //         {name: 'Mr Pinned Bottom 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
-    //         {name: 'Mr Pinned Bottom 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
-    //         {name: 'Mr Pinned Bottom 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
-    //     ],
+    // pinnedTopRowData: [
+    //     {name: 'Mr Pinned Top 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //     {name: 'Mr Pinned Top 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //     {name: 'Mr Pinned Top 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    // ],
+    // pinnedBottomRowData: [
+    //     {name: 'Mr Pinned Bottom 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //     {name: 'Mr Pinned Bottom 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //     {name: 'Mr Pinned Bottom 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    // ],
     // callback when row clicked
-    //     stopEditingWhenGridLosesFocus: true,
+    // stopEditingWhenGridLosesFocus: true,
     onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
@@ -316,7 +319,23 @@ var gridOptions = {
     getContextMenuItems: getContextMenuItems,
     excelStyles: [
         {
+            id: 'vAlign',
+            alignment: {
+                vertical: 'Center'
+            }
+        },
+        {
+            id: 'alphabet',
+            alignment: {
+                vertical:'Center'
+            }
+        },
+        {
             id: 'good-score',
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
             interior: {
                 color: "#C6EFCE", pattern: 'Solid'
             },
@@ -326,6 +345,10 @@ var gridOptions = {
         },
         {
             id: 'bad-score',
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
             interior: {
                 color: "#FFC7CE", pattern: 'Solid'
             },
@@ -335,19 +358,57 @@ var gridOptions = {
         },
         {
             id: 'header',
+            font: {
+                color: "#44546A",
+                size: 16
+            },
             interior: {
-                color: "#CCCCCC", pattern: 'Solid'
+                color: '#F2F2F2',
+                pattern: 'Solid'
+            },
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
+            borders: {
+                borderTop: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#8EA9DB'
+                },
+                borderRight: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#8EA9DB'
+                },
+                borderBottom: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#8EA9DB'
+                },
+                borderLeft: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#8EA9DB'
+                }
             }
         },
         {
             id: 'currencyCell',
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
             numberFormat: {
                 format: '[$$-409]#,##0'
             }
         },
         {
             id: 'booleanType',
-            dataType: 'boolean'
+            dataType: 'boolean',
+            alignment: {
+                vertical: 'Center'
+            }
         }
     ]
 };
@@ -400,6 +461,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 // enablePivot: true,
                 filter: 'personFilter',
+                cellClass: 'vAlign',
                 floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
@@ -414,6 +476,7 @@ var defaultCols = [
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
                 cellEditor: 'agSelectCellEditor',
+                cellClass: 'vAlign',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -436,6 +499,7 @@ var defaultCols = [
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
+                cellClass: 'vAlign',
                 // colSpan: function(params) {
                 //     if (params.data && params.data.country==='Ireland') {
                 //         return 2;
@@ -482,8 +546,8 @@ var defaultCols = [
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-down"/>'
                 }
             }
         ]
@@ -508,8 +572,8 @@ var defaultCols = [
                 // pinned: 'right',
                 // rowGroupIndex: 1,
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-down"/>'
                 }
             },
             {
@@ -549,20 +613,20 @@ var defaultCols = [
                 // valueGetter: '55',
                 // aggFunc: 'sum',
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-amount-up"/>',
+                    sortDescending: '<i class="fa fa-sort-amount-down"/>'
                 }
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+                sortable: false, suppressMenu: true, cellStyle: {"text-align": "right"},
                 cellRenderer: function () {
                     return 'Abra...';
                 }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+                sortable: false, suppressMenu: true, cellStyle: {"text-align": "left"},
                 cellRenderer: function () {
                     return '...cadabra!';
                 }
@@ -571,6 +635,7 @@ var defaultCols = [
     },
     {
         headerName: "Rating", field: "rating", width: 120, editable: true, cellRenderer: 'ratingRenderer',
+        cellClass: 'vAlign',
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
@@ -587,8 +652,8 @@ var defaultCols = [
         },
         valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
-            sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-            sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+            sortAscending: '<i class="fa fa-sort-amount-up"/>',
+            sortDescending: '<i class="fa fa-sort-amount-down"/>'
         }
     }
 ];
@@ -634,27 +699,13 @@ function toggleToolPanel() {
 }
 
 function getColCount() {
-    switch (dataSize) {
-        case '10x100':
-            return 100;
-        default:
-            return 22;
-    }
+    return parseInt(dataSize.split('x')[1], 10);
 }
 
 function getRowCount() {
-    switch (dataSize) {
-        case '.1x22':
-            return 100;
-        case '1x22':
-            return 1000;
-        case '10x100':
-            return 10000;
-        case '100x22':
-            return 100000;
-        default:
-            return -1;
-    }
+    var rows = parseFloat(dataSize.split('x')[0]);
+
+    return rows * 1000;
 }
 
 function createCols() {
@@ -675,7 +726,6 @@ function createCols() {
 var loadInstance = 0;
 
 function createData() {
-
     var eMessage = document.querySelector('#message');
     var eMessageText = document.querySelector('#messageText');
     loadInstance++;
@@ -711,7 +761,7 @@ function createData() {
 
         if (row >= rowCount) {
             clearInterval(intervalId);
-            setTimeout(function () {
+            window.setTimeout(function () {
                 gridOptions.api.setColumnDefs(colDefs);
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
@@ -790,11 +840,14 @@ function rowSelected(event) {
 
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
-
     gridOptions.api.resetRowHeights();
     gridOptions.api.redrawRows();
     gridOptions.api.refreshHeader();
     gridOptions.api.refreshToolPanel();
+
+    var isDark = newTheme && newTheme.indexOf('dark') >= 0;
+
+    document.body.classList.toggle('dark', isDark);
 }
 
 var filterCount = 0;
@@ -802,7 +855,7 @@ var filterCount = 0;
 function onFilterChanged(newFilter) {
     filterCount++;
     var filterCountCopy = filterCount;
-    setTimeout(function () {
+    window.setTimeout(function () {
         if (filterCount === filterCountCopy) {
             gridOptions.api.setQuickFilter(newFilter);
         }
@@ -859,7 +912,7 @@ PersonFilter.prototype.setupGui = function () {
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
         '<div style="font-weight: bold;">Custom Athlete Filter</div>' +
-        '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
+        '<div class="ag-input-text-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
         '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, e.g. "mich phel" still brings back Michael Phelps.</div>' +
         '<div style="margin-top: 20px; width: 200px;">Just to illustrate that anything can go in here, here is an image:</div>' +
         '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
@@ -925,12 +978,15 @@ function PersonFloatingFilterComponent() {
 
 PersonFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;
-    this.eGui = document.createElement('input');
-    var eGui = this.eGui;
+    var eGui = this.eGui = document.createElement('div');
+    eGui.className = 'ag-input-text-wrapper';
+    var input = this.input = document.createElement('input');
+    input.className = 'ag-floating-filter-input';
+    eGui.appendChild(input);
     this.changeEventListener = function () {
-        params.onFloatingFilterChanged(eGui.value);
+        params.onFloatingFilterChanged(input.value);
     };
-    this.eGui.addEventListener('input', this.changeEventListener);
+    input.addEventListener('input', this.changeEventListener);
 };
 
 PersonFloatingFilterComponent.prototype.getGui = function () {
@@ -939,15 +995,11 @@ PersonFloatingFilterComponent.prototype.getGui = function () {
 
 PersonFloatingFilterComponent.prototype.onParentModelChanged = function (model) {
     // add in child, one for each flat
-    if (model) {
-        this.eGui.value = model;
-    } else {
-        this.eGui.value = '';
-    }
+    this.input.value = model != null ? model : '';
 };
 
 PersonFloatingFilterComponent.prototype.destroy = function () {
-    this.eGui.removeEventListener('input', this.changeEventListener);
+    this.input.removeEventListener('input', this.changeEventListener);
 };
 
 function WinningsFilter() {
@@ -1013,17 +1065,20 @@ WinningsFilter.prototype.getModelAsString = function (model) {
 WinningsFilter.prototype.getModel = function () {
     if (this.cbNoFilter.checked) {
         return '';
-    } else if (this.cbPositive.checked) {
-        return 'value >= 0';
-    } else if (this.cbNegative.checked) {
-        return 'value < 0';
-    } else if (this.cbGreater50.checked) {
-        return 'value >= 50000';
-    } else if (this.cbGreater90.checked) {
-        return 'value >= 90000';
-    } else {
-        console.error('invalid checkbox selection');
     }
+    if (this.cbPositive.checked) {
+        return 'value >= 0';
+    }
+    if (this.cbNegative.checked) {
+        return 'value < 0';
+    }
+    if (this.cbGreater50.checked) {
+        return 'value >= 50000';
+    }
+    if (this.cbGreater90.checked) {
+        return 'value >= 90000';
+    }
+    console.error('invalid checkbox selection');
 };
 // lazy, the example doesn't use setModel()
 WinningsFilter.prototype.setModel = function () {

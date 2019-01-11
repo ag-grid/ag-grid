@@ -43,9 +43,6 @@
                          :rowData="rowData"
                          :showToolPanel="showToolPanel"
 
-                         :enableColResize="true"
-                         :enableSorting="true"
-                         :enableFilter="true"
                          :groupHeaders="true"
                          :suppressRowClickSelection="true"
                          :toolPanelSuppressGroups="true"
@@ -138,7 +135,7 @@
             createColumnDefs() {
                 this.columnDefs = [
                     {
-                        headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
+                        headerName: '#', width: 30, checkboxSelection: true,
                         suppressMenu: true, pinned: true
                     },
                     {
@@ -147,11 +144,11 @@
                         children: [
                             {
                                 headerName: "Name", field: "name",
-                                width: 150, pinned: true,
+                                width: 150, pinned: true, sortable: true,
                             },
                             {
                                 headerName: "Country", field: "country", width: 150,
-                                cellRenderer: countryCellRenderer, pinned: true,
+                                cellRenderer: countryCellRenderer, pinned: true, sortable: true,
                                 filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
                             },
                             {
@@ -165,7 +162,7 @@
                                         params.value.getFullYear();
                                 },
                                 filter: 'date',
-                                columnGroupShow: 'open'
+                                columnGroupShow: 'open', sortable: true
                             }
                         ]
                     },
@@ -175,7 +172,6 @@
                             {
                                 headerName: "Skills",
                                 width: 125,
-                                suppressSorting: true,
                                 cellRenderer: skillsCellRenderer,
                                 filter: SkillFilter
                             },
@@ -184,16 +180,16 @@
                                 field: "proficiency",
                                 width: 120,
                                 cellRenderer: percentCellRenderer,
-                                filter: ProficiencyFilter
+                                filter: ProficiencyFilter, sortable: true
                             },
                         ]
                     },
                     {
                         headerName: 'Contact',
                         children: [
-                            {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-                            {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
-                            {headerName: "Address", field: "address", width: 500, filter: 'text'}
+                            {headerName: "Mobile", field: "mobile", width: 150, filter: 'text', sortable: true},
+                            {headerName: "Land-line", field: "landline", width: 150, filter: 'text', sortable: true},
+                            {headerName: "Address", field: "address", width: 500, filter: 'text', sortable: true}
                         ]
                     }
                 ];

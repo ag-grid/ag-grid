@@ -1,15 +1,14 @@
-
-import {Component} from "../widgets/component";
-import {RowNode} from "../entities/rowNode";
-import {Utils as _} from '../utils';
-import {Autowired} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Column} from "../entities/column";
-import {Events} from "../events";
-import {EventService} from "../eventService";
-import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnApi";
-import {IsRowSelectable} from "../entities/gridOptions";
+import { Component } from "../widgets/component";
+import { RowNode } from "../entities/rowNode";
+import { Autowired } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Column } from "../entities/column";
+import { Events } from "../events";
+import { EventService } from "../eventService";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
+import { IsRowSelectable } from "../entities/gridOptions";
+import { _ } from '../utils';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -35,7 +34,7 @@ export class CheckboxSelectionComponent extends Component {
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
 
-        let element = this.getGui();
+        const element = this.getGui();
         element.appendChild(this.eCheckedIcon);
         element.appendChild(this.eUncheckedIcon);
         element.appendChild(this.eIndeterminateIcon);
@@ -52,27 +51,27 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
-        let state = this.rowNode.isSelected();
+        const state = this.rowNode.isSelected();
         _.setVisible(this.eCheckedIcon, state === true);
         _.setVisible(this.eUncheckedIcon, state === false);
         _.setVisible(this.eIndeterminateIcon, typeof state !== 'boolean');
     }
 
     private onCheckedClicked(): number {
-        let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        let updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
+        const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        const updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
         return updatedCount;
     }
 
     private onUncheckedClicked(event: MouseEvent): number {
-        let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        let updatedCount = this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
+        const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        const updatedCount = this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
         return updatedCount;
     }
 
     private onIndeterminateClicked(event: MouseEvent): void {
-        let result = this.onUncheckedClicked(event);
-        if (result===0) {
+        const result = this.onUncheckedClicked(event);
+        if (result === 0) {
             this.onCheckedClicked();
         }
     }
@@ -87,9 +86,9 @@ export class CheckboxSelectionComponent extends Component {
 
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
-        this.addGuiEventListener('click', event => _.stopPropagationForAgGrid(event) );
+        this.addGuiEventListener('click', event => _.stopPropagationForAgGrid(event));
         // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', event => _.stopPropagationForAgGrid(event) );
+        this.addGuiEventListener('dblclick', event => _.stopPropagationForAgGrid(event));
 
         this.addDestroyableEventListener(this.eCheckedIcon, 'click', this.onCheckedClicked.bind(this));
         this.addDestroyableEventListener(this.eUncheckedIcon, 'click', this.onUncheckedClicked.bind(this));
@@ -100,7 +99,7 @@ export class CheckboxSelectionComponent extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
         this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        let checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
+        const checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
         if (checkboxVisibleIsDynamic) {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
@@ -124,7 +123,7 @@ export class CheckboxSelectionComponent extends Component {
 
     private checkboxCallbackExists(): boolean {
         // column will be missing if groupUseEntireRow=true
-        let colDef = this.column ? this.column.getColDef() : null;
+        const colDef = this.column ? this.column.getColDef() : null;
         return colDef && typeof colDef.checkboxSelection === 'function';
     }
 }

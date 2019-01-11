@@ -1,4 +1,4 @@
-// ag-grid-aurelia v19.1.4
+// ag-grid-aurelia v20.0.0
 import { TargetInstruction } from "aurelia-framework";
 export declare class AgCellTemplate {
     template: string;
@@ -32,4 +32,3 @@ export declare class AgFullWidthRowTemplate {
     template: string;
     constructor(targetInstruction: TargetInstruction);
 }
-//# sourceMappingURL=agTemplate.d.ts.map

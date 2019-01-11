@@ -39,13 +39,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
     showToolPanel: true,
-    enableSorting: true,
-    enableFilter: true,
     floatingFilter: true,
-    enableColResize: true,
     autoGroupColumnDef: {
         headerName: "Athlete", field: "athlete", width: 180,
         // use font awesome for first col, with numbers for sort

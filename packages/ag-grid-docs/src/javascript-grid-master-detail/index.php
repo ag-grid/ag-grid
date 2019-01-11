@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Master Detail: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid full width master detail javascript datagrid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -9,18 +9,20 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail</h1>
 
 <p class="lead">
-    Master / Detail allows you to nest grids inside grids. The top level grid is referred to as the 'master grid'.
-    The nested grid is referred to as the 'detail grid'. Typically the detail grid gives more information
-    about the row in the master grid that was expanded to reveal the detail grid.
+    This section describes how to nest grids inside grids using a Master / Detail configuration.
 </p>
 
-<note>
-    Prior to ag-Grid v14.2, Master / Detail was not a feature of ag-Grid.
-    Instead ag-Grid provided a feature called 'flower nodes' that could be used to implement
-    Master / Detail which required a lot of complex configuration. Flower nodes are now deprecated.
-    We will continue to support flower nodes for backwards compatibility, however we do not recommend
-    them for any new development and have removed them from the documentation.
-</note>
+<p>
+    With the Master Detail grid configuration, the top level grid is referred to as the 'master grid' and the nested grid
+    is referred to as the 'detail grid'.
+</p>
+
+<p>
+    With this configuration the detail grid can be used to display more information about the row in the master grid that was
+    expanded to reveal the detail grid.
+</p>
+
+<h2>Enabling Master Detail</h2>
 
 <p>
     To enable Master / Detail, you should set the following grid options:
@@ -204,6 +206,10 @@ detailCellRendererParams: {
     The template <b>must</b> contain an element with attribute <code>ref="eDetailGrid"</code>.
     This element is used to host the detail grid instance.
 </p>
+
+<note>
+    The element containing <code>ref="eDetailGrid"</code> must be wrapped inside a div with the height set appropriately.
+</note>
 
 <p>
     The following examples demonstrate both approaches.
@@ -526,33 +532,25 @@ var masterGridOptions = {
 
 <p>
     The Master / Detail feature organises the grid in a way which overlaps with other features.
-    For example, Master / Detail expands rows, which is also the case with row grouping or enterprise
-    row model. For this reason, Master / Detail does not work with certain grid configurations.
-    These configurations are listed below.
+    For example, Master / Detail expands rows, which is also the case with row grouping. For this reason,
+    Master / Detail does not work with certain grid configurations. These configurations are listed below:
 </p>
 
 <h3 id="row-models">Row Models</h3>
 
 <p>
-    The master grid (i.e. the top level grid) in Master / Detail can only be using the
-    <a href="../javascript-grid-client-side-model/">Client-side</a> row model.
-    It is not supported with <a href="../javascript-grid-server-side-model/">Server-side</a>,
-    <a href="../javascript-grid-viewport">Viewport</a> or
-    <a href="../javascript-grid-infinite-scrolling">Infinite</a> row models. This is because
-    all of these row models have their own unique way of loading data which would clash with
-    the workings on master detail.
+    The master grid (i.e. the top level grid) in Master / Detail can be used in the
+    <a href="../javascript-grid-client-side-model/">Client-side</a> and
+    <a href="../javascript-grid-server-side-model-master-detail/">Server-side</a> Row Models.
+    However it is not supported with the <a href="../javascript-grid-viewport">Viewport</a> or
+    <a href="../javascript-grid-infinite-scrolling">Infinite</a> Row Models.
 </p>
 
 <p>
-    The detail grid (i.e. the child grid) can use any of the row models. Thus as long as the
-    master grid uses <a href="../javascript-grid-client-side-model/">Client-side</a>, then the detail
+    The detail grid (i.e. the child grid) can use any Row Model, as long as the
+    master grid uses the <a href="../javascript-grid-client-side-model/">Client-side</a> or
+    <a href="../javascript-grid-server-side-model-master-detail/">Server-side</a> Row Models, then the detail
     grid can use any of the other row models.
-</p>
-
-<p>
-    The reason for this is that the row expand and collapse is either not support (viewport and
-    infinite row models) or has a different meaning (enterprise row model loads more rows when
-    you expand).
 </p>
 
 <h3 id="tree-data">Tree Data</h3>

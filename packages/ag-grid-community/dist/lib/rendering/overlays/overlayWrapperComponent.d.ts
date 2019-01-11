@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -24,4 +24,3 @@ export declare class OverlayWrapperComponent extends Component implements IOverl
     hideOverlay(eOverlayWrapper: HTMLElement): void;
     private showOverlay;
 }
-//# sourceMappingURL=overlayWrapperComponent.d.ts.map

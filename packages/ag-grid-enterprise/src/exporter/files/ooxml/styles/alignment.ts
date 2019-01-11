@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelAlignment} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelAlignment } from 'ag-grid-community';
 
 const convertLegacyHorizontalAlignment = (alignment: string): string => {
     const map:{[key: string]: string} = {
@@ -16,8 +16,8 @@ const convertLegacyHorizontalAlignment = (alignment: string): string => {
     return map[alignment] || 'general';
 };
 
-const convertLegacyVerticalAlignment = (alignment: string): string => {
-    const map:{[key: string]: string} = {
+const convertLegacyVerticalAlignment = (alignment: string): string | undefined => {
+    const map:{[key: string]: string | undefined} = {
         Automatic: undefined,
         Top: 'top',
         Bottom: 'bottom',

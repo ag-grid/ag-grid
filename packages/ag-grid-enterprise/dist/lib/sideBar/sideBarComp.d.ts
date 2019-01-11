@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Component, GridPanel, IComponent, ISideBar } from "ag-grid-community";
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;
@@ -24,4 +24,3 @@ export declare class SideBarComp extends Component implements ISideBar {
     openedItem(): string | null;
     reset(): void;
 }
-//# sourceMappingURL=sideBarComp.d.ts.map

@@ -1,10 +1,10 @@
-import {NumberSequence, Utils as _} from "../../utils";
-import {RowNode} from "../../entities/rowNode";
-import {Context} from "../../context/context";
-import {BeanStub} from "../../context/beanStub";
-import {RowNodeCacheParams} from "./rowNodeCache";
-import {RowRenderer} from "../../rendering/rowRenderer";
-import {AgEvent} from "../../events";
+import { NumberSequence, _ } from "../../utils";
+import { RowNode } from "../../entities/rowNode";
+import { Context } from "../../context/context";
+import { BeanStub } from "../../context/beanStub";
+import { RowNodeCacheParams } from "./rowNodeCache";
+import { RowRenderer } from "../../rendering/rowRenderer";
+import { AgEvent } from "../../events";
 
 export interface RowNodeBlockBeans {
     context: Context;
@@ -54,7 +54,7 @@ export abstract class RowNodeBlock extends BeanStub {
     // local index is the same as the display index, so the override just calls
     // getRowUsingLocalIndex(). however for server side row model, they are different, hence
     // server side row model does logic before calling getRowUsingLocalIndex().
-    public abstract getRow(displayIndex: number): RowNode;
+    public abstract getRow(displayIndex: number): RowNode | null;
 
     // returns the node id prefix, which is essentially the id of the cache
     // that the block belongs to. this is used for debugging purposes, where the
@@ -76,7 +76,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     public isAnyNodeOpen(rowCount: number): boolean {
         let result = false;
-        this.forEachNodeCallback( (rowNode: RowNode) => {
+        this.forEachNodeCallback((rowNode: RowNode) => {
             if (rowNode.expanded) {
                 result = true;
             }
@@ -84,19 +84,19 @@ export abstract class RowNodeBlock extends BeanStub {
         return result;
     }
 
-    private forEachNodeCallback(callback: (rowNode: RowNode, index: number)=> void, rowCount: number): void {
+    private forEachNodeCallback(callback: (rowNode: RowNode, index: number) => void, rowCount: number): void {
         for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
             // we check against rowCount as this page may be the last one, and if it is, then
             // the last rows are not part of the set
             if (rowIndex < rowCount) {
-                let rowNode = this.getRowUsingLocalIndex(rowIndex);
+                const rowNode = this.getRowUsingLocalIndex(rowIndex);
                 callback(rowNode, rowIndex);
             }
         }
     }
 
-    private forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number, deep: boolean): void {
-        this.forEachNodeCallback( (rowNode: RowNode) => {
+    private forEachNode(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number, deep: boolean): void {
+        this.forEachNodeCallback((rowNode: RowNode) => {
             callback(rowNode, sequence.next());
             // this will only every happen for server side row model, as infinite
             // row model doesn't have groups
@@ -106,11 +106,11 @@ export abstract class RowNodeBlock extends BeanStub {
         }, rowCount);
     }
 
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
         this.forEachNode(callback, sequence, rowCount, true);
     }
 
-    public forEachNodeShallow(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+    public forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
         this.forEachNode(callback, sequence, rowCount, false);
     }
 
@@ -126,7 +126,7 @@ export abstract class RowNodeBlock extends BeanStub {
         if (!dontTouchLastAccessed) {
             this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
         }
-        let localIndex = rowIndex - this.startRow;
+        const localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
     }
 
@@ -155,7 +155,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     public setDirtyAndPurge(): void {
         this.setDirty();
-        this.rowNodes.forEach( rowNode => {
+        this.rowNodes.forEach(rowNode => {
             rowNode.setData(null);
         });
     }
@@ -165,25 +165,25 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     public setRowNode(rowIndex: number, rowNode: RowNode): void {
-        let localIndex = rowIndex - this.startRow;
+        const localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = rowNode;
     }
 
     public setBlankRowNode(rowIndex: number): RowNode {
-        let localIndex = rowIndex - this.startRow;
-        let newRowNode = this.createBlankRowNode(rowIndex);
+        const localIndex = rowIndex - this.startRow;
+        const newRowNode = this.createBlankRowNode(rowIndex);
         this.rowNodes[localIndex] = newRowNode;
         return newRowNode;
     }
 
     public setNewData(rowIndex: number, dataItem: any): RowNode {
-        let newRowNode = this.setBlankRowNode(rowIndex);
+        const newRowNode = this.setBlankRowNode(rowIndex);
         this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);
         return newRowNode;
     }
 
     protected createBlankRowNode(rowIndex: number): RowNode {
-        let rowNode = new RowNode();
+        const rowNode = new RowNode();
         this.beans.context.wireBean(rowNode);
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
         return rowNode;
@@ -193,8 +193,8 @@ export abstract class RowNodeBlock extends BeanStub {
     protected createRowNodes(): void {
         this.rowNodes = [];
         for (let i = 0; i < this.rowNodeCacheParams.blockSize; i++) {
-            let rowIndex = this.startRow + i;
-            let rowNode = this.createBlankRowNode(rowIndex);
+            const rowIndex = this.startRow + i;
+            const rowNode = this.createBlankRowNode(rowIndex);
             this.rowNodes.push(rowNode);
         }
     }
@@ -206,7 +206,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected pageLoadFailed() {
         this.state = RowNodeBlock.STATE_FAILED;
-        let event: LoadCompleteEvent = {
+        const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: false,
             page: this,
@@ -216,9 +216,9 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     private populateWithRowData(rows: any[]): void {
-        let rowNodesToRefresh: RowNode[] = [];
-        this.rowNodes.forEach( (rowNode: RowNode, index: number)=> {
-            let data = rows[index];
+        const rowNodesToRefresh: RowNode[] = [];
+        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
+            const data = rows[index];
             if (rowNode.stub) {
                 rowNodesToRefresh.push(rowNode);
             }
@@ -231,7 +231,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     public destroy(): void {
         super.destroy();
-        this.rowNodes.forEach( rowNode => {
+        this.rowNodes.forEach(rowNode => {
             if (rowNode.childrenCache) {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
@@ -247,7 +247,7 @@ export abstract class RowNodeBlock extends BeanStub {
         // we need to check the version, in case there was an old request
         // from the server that was sent before we refreshed the cache,
         // if the load was done as a result of a cache refresh
-        if (version===this.version) {
+        if (version === this.version) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
@@ -255,7 +255,7 @@ export abstract class RowNodeBlock extends BeanStub {
         lastRow = _.cleanNumber(lastRow);
 
         // check here if lastrow should be set
-        let event: LoadCompleteEvent = {
+        const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: true,
             page: this,
@@ -266,4 +266,3 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
 }
-

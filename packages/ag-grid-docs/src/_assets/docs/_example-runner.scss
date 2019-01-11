@@ -3,6 +3,12 @@
     min-width: 0;
     margin-bottom: 1rem;
 
+    .token.comment,
+    .token.string {
+	    word-break: break-all;
+	    word-break: break-word;
+    }
+
     ul.primary {
         background-image: linear-gradient(to bottom right, $blue-2, darken($blue-2, 10));
         border-top-left-radius: $border-radius;
@@ -194,7 +200,6 @@
     }
 
     li .runner-item {
-        box-sizing: border-box;
         padding-left: 52px;
         background-position: 12px center;
         padding-top: 0.5em;

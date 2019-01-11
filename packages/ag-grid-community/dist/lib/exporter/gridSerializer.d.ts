@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -80,7 +80,7 @@ export declare abstract class BaseGridSerializingSession<T> implements GridSeria
     abstract onNewBodyRow(): RowAccumulator;
     abstract parse(): string;
     extractHeaderValue(column: Column): string;
-    extractRowCellValue(column: Column, index: number, type: string, node?: RowNode): any;
+    extractRowCellValue(column: Column, index: number, type: string, node: RowNode): any;
     private getHeaderName;
     private createValueForGroupNode;
     private processCell;
@@ -102,4 +102,3 @@ export declare enum RowType {
     HEADER = 1,
     BODY = 2
 }
-//# sourceMappingURL=gridSerializer.d.ts.map

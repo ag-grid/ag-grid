@@ -1,5 +1,5 @@
-import {SerializedFilter} from "./iFilter";
+import { SerializedFilter } from "./iFilter";
 
 export interface SerializedSetFilter extends SerializedFilter {
-    values: string[] | null
+    values: string[] | null;
 }

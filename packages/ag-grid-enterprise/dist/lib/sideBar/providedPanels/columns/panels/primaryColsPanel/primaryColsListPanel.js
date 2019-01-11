@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -47,9 +47,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.updateVisibilityOfRows();
     };
     PrimaryColsListPanel.prototype.destroyColumnComps = function () {
-        main_1.Utils.removeAllChildren(this.getGui());
+        main_1._.removeAllChildren(this.getGui());
         if (this.columnComps) {
-            main_1.Utils.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
+            main_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
         }
         this.columnComps = {};
     };
@@ -176,7 +176,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 else {
                     var comp = _this.columnComps[item.getId()];
                     if (comp && _this.filterText) {
-                        filterPasses = comp.getDisplayName().toLowerCase().indexOf(_this.filterText) >= 0;
+                        var displayName = comp.getDisplayName();
+                        filterPasses = displayName !== null ? displayName.toLowerCase().indexOf(_this.filterText) >= 0 : true;
                     }
                     else {
                         filterPasses = true;

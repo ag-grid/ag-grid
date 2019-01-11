@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./componentProvider";
@@ -12,4 +12,3 @@ export declare class AgComponentUtils {
     };
     doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean;
 }
-//# sourceMappingURL=agComponentUtils.d.ts.map

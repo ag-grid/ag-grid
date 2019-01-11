@@ -1,4 +1,4 @@
-// ag-grid-react v19.1.4
+// ag-grid-react v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -35,6 +35,8 @@ var AgGridReact = /** @class */ (function (_super) {
         var _this = _super.call(this, props, state) || this;
         _this.props = props;
         _this.state = state;
+        _this.portals = [];
+        _this.hasPendingPortalUpdate = false;
         return _this;
     }
     AgGridReact.prototype.render = function () {
@@ -44,7 +46,7 @@ var AgGridReact = /** @class */ (function (_super) {
             ref: function (e) {
                 _this.eGridDiv = e;
             }
-        });
+        }, this.portals);
     };
     AgGridReact.prototype.createStyleForDiv = function () {
         var style = { height: "100%" };
@@ -79,22 +81,49 @@ var AgGridReact = /** @class */ (function (_super) {
         // property changes.
         return false;
     };
+    /**
+     * Mounts a react portal for components registered under the componentFramework.
+     * We do this because we want all portals to be in the same tree - in order to get
+     * Context to work properly.
+     */
+    AgGridReact.prototype.mountReactPortal = function (portal, resolve) {
+        this.portals = this.portals.concat([portal]);
+        this.batchUpdate(function () { return resolve(null); });
+    };
+    AgGridReact.prototype.batchUpdate = function (callback) {
+        var _this = this;
+        if (this.hasPendingPortalUpdate) {
+            return callback && callback();
+        }
+        setTimeout(function () {
+            _this.forceUpdate(function () {
+                callback && callback();
+                _this.hasPendingPortalUpdate = false;
+            });
+        });
+        this.hasPendingPortalUpdate = true;
+    };
+    AgGridReact.prototype.destroyPortal = function (portal) {
+        this.portals = this.portals.filter(function (curPortal) { return curPortal !== portal; });
+        this.batchUpdate();
+    };
     AgGridReact.prototype.componentWillReceiveProps = function (nextProps) {
         var _this = this;
         var debugLogging = !!nextProps.debug;
-        // keeping consistent with web components, put changing
-        // values in currentValue and previousValue pairs and
-        // not include items that have not changed.
         var changes = {};
-        AgGrid.ComponentUtil.ALL_PROPERTIES.forEach(function (propKey) {
-            if (!_this.areEquivalent(_this.props[propKey], nextProps[propKey])) {
-                if (debugLogging) {
-                    console.log("agGridReact: [" + propKey + "] property changed");
+        var changedKeys = Object.keys(nextProps);
+        changedKeys.forEach(function (propKey) {
+            if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+                if (_this.skipPropertyCheck(propKey) ||
+                    !_this.areEquivalent(_this.props[propKey], nextProps[propKey])) {
+                    if (debugLogging) {
+                        console.log("agGridReact: [" + propKey + "] property changed");
+                    }
+                    changes[propKey] = {
+                        previousValue: _this.props[propKey],
+                        currentValue: nextProps[propKey]
+                    };
                 }
-                changes[propKey] = {
-                    previousValue: _this.props[propKey],
-                    currentValue: nextProps[propKey]
-                };
             }
         });
         AgGrid.ComponentUtil.getEventCallbacks().forEach(function (funcName) {
@@ -109,6 +138,9 @@ var AgGridReact = /** @class */ (function (_super) {
             }
         });
         AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+    };
+    AgGridReact.prototype.skipPropertyCheck = function (propKey) {
+        return this.props['deltaRowDataMode'] && propKey === 'rowData';
     };
     AgGridReact.prototype.componentWillUnmount = function () {
         if (this.api) {
@@ -258,7 +290,7 @@ var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
                 var _this = this;
                 var frameworkComponentInstance = this.getFrameworkComponentInstance();
                 if (frameworkComponentInstance == null) {
-                    setTimeout(function () { return _this.callMethod(name, args); }, 100);
+                    window.setTimeout(function () { return _this.callMethod(name, args); }, 100);
                 }
                 else {
                     var method = wrapper.getFrameworkComponentInstance()[name];

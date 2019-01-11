@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,11 +18,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var constants_1 = require("./constants");
 var columnController_1 = require("./columnController/columnController");
-var utils_1 = require("./utils");
 var gridRow_1 = require("./entities/gridRow");
 var gridCell_1 = require("./entities/gridCell");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
+var utils_1 = require("./utils");
 var CellNavigationService = /** @class */ (function () {
     function CellNavigationService() {
     }
@@ -61,7 +61,7 @@ var CellNavigationService = /** @class */ (function () {
                     break;
                 default:
                     pointer = null;
-                    console.log('ag-Grid: unknown key for navigation ' + key);
+                    console.warn('ag-Grid: unknown key for navigation ' + key);
                     break;
             }
             if (pointer) {
@@ -260,7 +260,7 @@ var CellNavigationService = /** @class */ (function () {
         if (!newColumn) {
             newColumn = displayedColumns[0];
             var rowBelow = this.getRowBelow(gridCell.getGridRow());
-            if (utils_1.Utils.missing(rowBelow)) {
+            if (utils_1._.missing(rowBelow)) {
                 return null;
             }
             newRowIndex = rowBelow ? rowBelow.rowIndex : null;
@@ -279,7 +279,7 @@ var CellNavigationService = /** @class */ (function () {
         if (!newColumn) {
             newColumn = displayedColumns[displayedColumns.length - 1];
             var rowAbove = this.getRowAbove(gridCell.getGridRow());
-            if (utils_1.Utils.missing(rowAbove)) {
+            if (utils_1._.missing(rowAbove)) {
                 return null;
             }
             newRowIndex = rowAbove ? rowAbove.rowIndex : null;

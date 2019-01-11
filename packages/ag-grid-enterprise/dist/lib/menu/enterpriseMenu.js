@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -132,13 +132,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         _this.tabFactories[EnterpriseMenu.TAB_FILTER] = _this.createFilterPanel.bind(_this);
         _this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = _this.createColumnsPanel.bind(_this);
         _this.includeChecks[EnterpriseMenu.TAB_GENERAL] = function () { return true; };
-        _this.includeChecks[EnterpriseMenu.TAB_FILTER] = function () {
-            var isFilterEnabled = _this.gridOptionsWrapper.isEnableFilter();
-            var isFloatingFiltersEnabled = _this.gridOptionsWrapper.isFloatingFilter();
-            var isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
-            var suppressFilterForThisColumn = _this.column.getColDef().suppressFilter;
-            return isAnyFilteringEnabled && !suppressFilterForThisColumn;
-        };
+        _this.includeChecks[EnterpriseMenu.TAB_FILTER] = function () { return column.isFilterAllowed(); };
         _this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = function () { return true; };
         _this.restrictTo = restrictTo;
         return _this;
@@ -173,8 +167,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             itemsToConsider = this.restrictTo;
         }
         isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1;
-        if (!isValid)
+        if (!isValid) {
             console.warn("Trying to render an invalid menu item '" + menuTabName + "'. Check that your 'menuTabs' contains one of [" + itemsToConsider + "]");
+        }
         return isValid;
     };
     EnterpriseMenu.prototype.isNotSuppressed = function (menuTabName) {
@@ -202,7 +197,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
     };
     EnterpriseMenu.prototype.onTabItemClicked = function (event) {
-        var key;
+        var key = null;
         switch (event.item) {
             case this.tabItemColumns:
                 key = EnterpriseMenu.TAB_COLUMNS;
@@ -250,7 +245,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
         // GUI looks weird when two separators are side by side. this can happen accidentally
         // if we remove items from the menu then two separators can edit up adjacent.
-        ag_grid_community_1.Utils.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        ag_grid_community_1._.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
         return result;
     };
     EnterpriseMenu.prototype.getDefaultMenuOptions = function () {
@@ -319,7 +314,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.mainMenuList.addMenuItems(menuItemsMapped);
         this.mainMenuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
-            title: ag_grid_community_1.Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
+            title: ag_grid_community_1._.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             bodyPromise: ag_grid_community_1.Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
@@ -330,14 +325,18 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.createFilterPanel = function () {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
-        var afterFilterAttachedCallback;
+        var afterFilterAttachedCallback = null;
+        // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
+        // async (_unless_ in react or similar, but if so why not encountered before now?).
+        // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
+        // async and is confusing if you don't have this context
         filterWrapper.filterPromise.then(function (filter) {
             if (filter.afterGuiAttached) {
                 afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
             }
         });
         this.tabItemFilter = {
-            title: ag_grid_community_1.Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
+            title: ag_grid_community_1._.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
             bodyPromise: filterWrapper.guiPromise.promise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -346,7 +345,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.createColumnsPanel = function () {
         var eWrapperDiv = document.createElement('div');
-        ag_grid_community_1.Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
+        ag_grid_community_1._.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
         this.columnSelectPanel = new primaryColsPanel_1.PrimaryColsPanel(false, {
             suppressValues: false,
             suppressPivots: false,
@@ -362,20 +361,25 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.context.wireBean(this.columnSelectPanel);
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
-            title: ag_grid_community_1.Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
+            title: ag_grid_community_1._.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
             bodyPromise: ag_grid_community_1.Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
         return this.tabItemColumns;
     };
     EnterpriseMenu.prototype.afterGuiAttached = function (params) {
+        var _this = this;
         this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
         this.hidePopupFunc = params.hidePopup;
+        var initialScroll = this.gridApi.getHorizontalPixelRange().left;
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         var onBodyScroll = function (event) {
             // if h scroll, popup is no longer over the column
             if (event.direction === 'horizontal') {
-                params.hidePopup();
+                var newScroll = _this.gridApi.getHorizontalPixelRange().left;
+                if (Math.abs(newScroll - initialScroll) > _this.gridOptionsWrapper.getScrollbarWidth()) {
+                    params.hidePopup();
+                }
             }
         };
         this.addDestroyFunc(params.hidePopup);

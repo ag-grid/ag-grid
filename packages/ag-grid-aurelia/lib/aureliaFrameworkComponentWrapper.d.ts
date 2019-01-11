@@ -1,4 +1,4 @@
-// ag-grid-aurelia v19.1.4
+// ag-grid-aurelia v20.0.0
 import { Container, TaskQueue, ViewCompiler, ViewResources } from "aurelia-framework";
 import { BaseComponentWrapper, FrameworkComponentWrapper, WrapableInterface } from 'ag-grid-community';
 export declare class AureliaFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
@@ -11,4 +11,3 @@ export declare class AureliaFrameworkComponentWrapper extends BaseComponentWrapp
     setContainer(container: Container): void;
     setViewResources(viewResources: ViewResources): void;
 }
-//# sourceMappingURL=aureliaFrameworkComponentWrapper.d.ts.map

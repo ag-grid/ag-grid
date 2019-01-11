@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
@@ -22,7 +22,7 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     getLevel(): number;
     isVisible(): boolean;
     isPadding(): boolean;
-    setExpanded(expanded: boolean): void;
+    setExpanded(expanded: boolean | undefined): void;
     isExpandable(): boolean;
     isExpanded(): boolean;
     getGroupId(): string;
@@ -32,11 +32,10 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     getColGroupDef(): ColGroupDef;
     getLeafColumns(): Column[];
     private addLeafColumns;
-    getColumnGroupShow(): string;
+    getColumnGroupShow(): string | undefined;
     setupExpandable(): void;
     setExpandable(): void;
     private onColumnVisibilityChanged;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
 }
-//# sourceMappingURL=originalColumnGroup.d.ts.map

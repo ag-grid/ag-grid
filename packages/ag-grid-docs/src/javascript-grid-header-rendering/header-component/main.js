@@ -4,25 +4,22 @@ var columnDefs = [
         headerName: "Age",
         field: "age",
         width: 90,
-        suppressSorting: true,
-        headerComponentParams: {menuIcon: 'fa-external-link'}
+        sortable: false,
+        headerComponentParams: {menuIcon: 'fa-external-link-alt'}
     },
     {headerName: "Country", field: "country", width: 120, suppressMenu: true},
-    {headerName: "Year", field: "year", width: 90, suppressSorting: true},
+    {headerName: "Year", field: "year", width: 90, sortable: false},
     {headerName: "Date", field: "date", width: 100, suppressMenu: true},
-    {headerName: "Sport", field: "sport", width: 90, suppressSorting: true},
+    {headerName: "Sport", field: "sport", width: 90, sortable: false},
     {headerName: "Gold", field: "gold", width: 115, headerComponentParams: {menuIcon: 'fa-cog'}},
-    {headerName: "Silver", field: "silver", width: 90, suppressSorting: true},
+    {headerName: "Silver", field: "silver", width: 90, sortable: false},
     {headerName: "Bronze", field: "bronze", width: 115, suppressMenu: true},
-    {headerName: "Total", field: "total", width: 90, suppressSorting: true}
+    {headerName: "Total", field: "total", width: 90, sortable: false}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableSorting: true,
-    enableColResize: true,
     suppressMenuHide: true,
     components: {
         agColumnHeader: CustomHeader
@@ -31,7 +28,10 @@ var gridOptions = {
         width: 100,
         headerComponentParams: {
             menuIcon: 'fa-bars'
-        }
+        },
+        sortable: true,
+        resizable: true,
+        filter: true
     }
 };
 

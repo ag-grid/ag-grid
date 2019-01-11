@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var numberFormats_1 = require("./numberFormats");
@@ -41,13 +41,15 @@ var convertLegacyPattern = function (name) {
         Gray125: 'gray125',
         Gray0625: 'gray0625'
     };
-    if (!name)
+    if (!name) {
         return 'none';
+    }
     return colorMap[name] || name;
 };
 exports.convertLegacyColor = function (color) {
-    if (color == undefined)
+    if (color == undefined) {
         return color;
+    }
     if (color.charAt(0) === '#') {
         color = color.substr(1);
     }
@@ -58,12 +60,15 @@ var registerFill = function (fill) {
     var convertedFillColor = exports.convertLegacyColor(fill.color);
     var convertedPatternColor = exports.convertLegacyColor(fill.patternColor);
     var reg = registeredFills.filter(function (currentFill) {
-        if (currentFill.patternType != convertedPattern)
+        if (currentFill.patternType != convertedPattern) {
             return false;
-        if (currentFill.fgRgb != convertedFillColor)
+        }
+        if (currentFill.fgRgb != convertedFillColor) {
             return false;
-        if (currentFill.bgRgb != convertedPatternColor)
+        }
+        if (currentFill.bgRgb != convertedPatternColor) {
             return false;
+        }
         return true;
     });
     var pos = reg.length ? registeredFills.indexOf(reg[0]) : -1;
@@ -74,11 +79,13 @@ var registerFill = function (fill) {
     return pos;
 };
 var registerNumberFmt = function (format) {
-    if (numberFormat_1.numberFormatMap[format])
+    if (numberFormat_1.numberFormatMap[format]) {
         return numberFormat_1.numberFormatMap[format];
+    }
     var reg = registeredNumberFmts.filter(function (currentFmt) {
-        if (currentFmt.formatCode !== format)
+        if (currentFmt.formatCode !== format) {
             return false;
+        }
     });
     var pos = reg.length ? reg[0].numFmtId : -1;
     if (pos === -1) {
@@ -109,26 +116,34 @@ var registerBorders = function (borders) {
     }
     var reg = registeredBorders.filter(function (currentBorder) {
         var left = currentBorder.left, right = currentBorder.right, top = currentBorder.top, bottom = currentBorder.bottom;
-        if (!left && (leftStyle || leftColor))
+        if (!left && (leftStyle || leftColor)) {
             return false;
-        if (!right && (rightStyle || rightColor))
+        }
+        if (!right && (rightStyle || rightColor)) {
             return false;
-        if (!top && (topStyle || topColor))
+        }
+        if (!top && (topStyle || topColor)) {
             return false;
-        if (!bottom && (bottomStyle || bottomColor))
+        }
+        if (!bottom && (bottomStyle || bottomColor)) {
             return false;
-        var clS = left.style, clC = left.color;
-        var crS = right.style, crC = right.color;
-        var ctS = top.style, ctC = top.color;
-        var cbS = bottom.style, cbC = bottom.color;
-        if (clS != leftStyle || clC != leftColor)
+        }
+        var _a = left || {}, clS = _a.style, clC = _a.color;
+        var _b = right || {}, crS = _b.style, crC = _b.color;
+        var _c = top || {}, ctS = _c.style, ctC = _c.color;
+        var _d = bottom || {}, cbS = _d.style, cbC = _d.color;
+        if (clS != leftStyle || clC != leftColor) {
             return false;
-        if (crS != rightStyle || crC != rightColor)
+        }
+        if (crS != rightStyle || crC != rightColor) {
             return false;
-        if (ctS != topStyle || ctC != topColor)
+        }
+        if (ctS != topStyle || ctC != topColor) {
             return false;
-        if (cbS != bottomStyle || cbC != bottomColor)
+        }
+        if (cbS != bottomStyle || cbC != bottomColor) {
             return false;
+        }
         return true;
     });
     var pos = reg.length ? registeredBorders.indexOf(reg[0]) : -1;
@@ -160,26 +175,36 @@ var registerFont = function (font) {
     var convertedColor = exports.convertLegacyColor(color);
     var familyId = font_1.getFamilyId(family);
     var reg = registeredFonts.filter(function (currentFont) {
-        if (currentFont.name != name)
+        if (currentFont.name != name) {
             return false;
-        if (currentFont.color != convertedColor)
+        }
+        if (currentFont.color != convertedColor) {
             return false;
-        if (currentFont.size != size)
+        }
+        if (currentFont.size != size) {
             return false;
-        if (currentFont.bold != bold)
+        }
+        if (currentFont.bold != bold) {
             return false;
-        if (currentFont.italic != italic)
+        }
+        if (currentFont.italic != italic) {
             return false;
-        if (currentFont.outline != outline)
+        }
+        if (currentFont.outline != outline) {
             return false;
-        if (currentFont.shadow != shadow)
+        }
+        if (currentFont.shadow != shadow) {
             return false;
-        if (currentFont.strike != strikeThrough)
+        }
+        if (currentFont.strike != strikeThrough) {
             return false;
-        if (currentFont.underline != underline)
+        }
+        if (currentFont.underline != underline) {
             return false;
-        if (currentFont.family != familyId)
+        }
+        if (currentFont.family != familyId) {
             return false;
+        }
         return true;
     });
     var pos = reg.length ? registeredFonts.indexOf(reg[0]) : -1;
@@ -202,12 +227,13 @@ var registerFont = function (font) {
 };
 var registerStyle = function (config) {
     var id = config.id, alignment = config.alignment, borders = config.borders, font = config.font, interior = config.interior, numberFormat = config.numberFormat, protection = config.protection;
-    var currentFill;
-    var currentBorder;
-    var currentFont;
-    var currentNumberFmt;
-    if (stylesMap[id] != undefined)
+    var currentFill = 0;
+    var currentBorder = 0;
+    var currentFont = 0;
+    var currentNumberFmt = 0;
+    if (!id || stylesMap[id] != undefined) {
         return;
+    }
     if (interior) {
         currentFill = registerFill(interior);
     }

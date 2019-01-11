@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -152,7 +152,7 @@ export interface ColDef extends AbstractColDef {
     /** Comparator for ordering the pivot columns */
     pivotComparator?: (valueA: string, valueB: string) => number;
     /** Set to true to render a selection checkbox in the column. */
-    checkboxSelection?: boolean | ((params: any) => boolean);
+    checkboxSelection?: boolean | ((params: any) => boolean) | null;
     /** If true, a 'select all' checkbox will be put into the header */
     headerCheckboxSelection?: boolean | ((params: any) => boolean);
     /** If true, the header checkbox selection will work on filtered items*/
@@ -163,7 +163,8 @@ export interface ColDef extends AbstractColDef {
     /** The menu tabs to show, and in which order, the valid values for this property are:
      * filterMenuTab, generalMenuTab, columnsMenuTab **/
     menuTabs?: string[];
-    /** Set to true if no sorting should be done for this column. */
+    /** Set to true if sorting allowed for this column. */
+    sortable?: boolean;
     suppressSorting?: boolean;
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
@@ -175,14 +176,14 @@ export interface ColDef extends AbstractColDef {
     lockVisible?: boolean;
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
     lockPinned?: boolean;
-    /** Set to true to not allow filter on this column */
     suppressFilter?: boolean;
     /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
     /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
     suppressSizeToFit?: boolean;
-    /** Set to true if you do not want this column to be resizable by dragging it's edge. */
     suppressResize?: boolean;
+    /** Set to true if this column should be resizable */
+    resizable?: boolean;
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
@@ -216,7 +217,7 @@ export interface ColDef extends AbstractColDef {
     /** one of the built in filter names: [set, number, text], or a filter function*/
     filter?: string | {
         new (): IFilterComp;
-    };
+    } | boolean;
     filterFramework?: any;
     /** The filter params are specific to each filter! */
     filterParams?: any;
@@ -251,7 +252,7 @@ export interface ColDef extends AbstractColDef {
     /** The custom header component parameters**/
     headerComponentParams?: any;
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
-    floatingFilterComponent?: {
+    floatingFilterComponent?: string | {
         new (): IFloatingFilterComp<any, any, any>;
     };
     floatingFilterComponentParams?: any;
@@ -269,8 +270,8 @@ export interface IsColumnFuncParams {
     column: Column;
     colDef: ColDef;
     context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
 }
 export interface GetQuickFilterTextParams {
     value: any;
@@ -284,8 +285,8 @@ export interface BaseColDefParams {
     data: any;
     colDef: ColDef;
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
 }
 export interface BaseWithValueColDefParams extends BaseColDefParams {
@@ -319,7 +320,7 @@ export interface CellClassParams {
     colDef: ColDef;
     rowIndex: number;
     $scope: any;
-    api: GridApi;
+    api: GridApi | null | undefined;
     context: any;
 }
 export interface TooltipParams {
@@ -330,7 +331,6 @@ export interface TooltipParams {
     colDef: ColDef;
     rowIndex: number;
     $scope: any;
-    api: GridApi;
+    api: GridApi | null | undefined;
     context: any;
 }
-//# sourceMappingURL=colDef.d.ts.map

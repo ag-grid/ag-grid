@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -106,7 +106,7 @@ var PivotStage = /** @class */ (function () {
         // map the children out based on the pivot column
         children.forEach(function (child) {
             var key = _this.valueService.getKeyForNode(pivotColumn, child);
-            if (ag_grid_community_1.Utils.missing(key)) {
+            if (ag_grid_community_1._.missing(key)) {
                 key = '';
             }
             if (!uniqueValues[key]) {
@@ -123,7 +123,7 @@ var PivotStage = /** @class */ (function () {
         }
         else {
             var result_1 = {};
-            ag_grid_community_1.Utils.iterateObject(mappedChildren, function (key, value) {
+            ag_grid_community_1._.iterateObject(mappedChildren, function (key, value) {
                 result_1[key] = _this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
             });
             return result_1;

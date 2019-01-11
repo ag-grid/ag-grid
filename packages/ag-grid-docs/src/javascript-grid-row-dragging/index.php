@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Dragging: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Dragging. Row Dragging allows you to re-arrange rows by dragging them. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Dragging. Row Dragging allows you to re-arrange rows by dragging them. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "Javascript Grid row dragging";
 $pageGroup = "features";
 include '../documentation-main/documentation_header.php';
@@ -73,7 +73,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= example('Row Drag Simple Managed', 'simple-managed', 'generated') ?>
+    <?= example('Row Drag Simple Managed', 'simple-managed', 'generated', array('processVue' => true)) ?>
 
     <p> The logic for managed dragging is simple and has the following constraints:</p>
         <ul class="content">
@@ -119,7 +119,7 @@ colDef = {
             <li>Applying a sort or a filter to the grid will also suppress the drag icons.</li>
         </ul>
 
-    <?= example('Suppress Row Drag', 'suppress-row-drag', 'generated') ?>
+    <?= example('Suppress Row Drag', 'suppress-row-drag', 'generated', array('processVue' => true)) ?>
 
     <h2>Unmanaged Dragging</h2>
 
@@ -241,7 +241,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= example('Row Drag Events', 'dragging-events', 'generated') ?>
+    <?= example('Row Drag Events', 'dragging-events', 'generated', array('processVue' => true)) ?>
 
     <h2>Simple Unmanaged Example</h2>
 
@@ -271,7 +271,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated') ?>
+    <?= example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated', array('processVue' => true)) ?>
 
     <p>
         The simple example doesn't add anything that managed dragging gives (the first
@@ -327,7 +327,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <h2>Row Dragging & Tree Data</h2>
 
@@ -361,7 +361,7 @@ colDef = {
             </li>
         </ul>
 
-        <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+        <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'processVue'=> true, 'extras' => array('fontawesome')) ) ?>
 
 
     <h3>Example Highlighted Tree Data</h3>
@@ -400,7 +400,7 @@ colDef = {
             </li>
         </ul>
 
-        <?= example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+        <?= example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', array('enterprise' => true, 'processVue'=>true, 'extras' => array('fontawesome')) ) ?>
 
     <h2>Dragging Multiple Rows</h2>
 

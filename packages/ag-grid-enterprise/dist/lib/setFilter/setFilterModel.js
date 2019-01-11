@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -26,7 +26,7 @@ var SetFilterModel = /** @class */ (function () {
             this.clientSideRowModel = rowModel;
         }
         this.filterParams = this.colDef.filterParams ? this.colDef.filterParams : {};
-        if (ag_grid_community_1.Utils.exists(this.filterParams) && ag_grid_community_1.Utils.exists(this.filterParams.values)) {
+        if (ag_grid_community_1._.exists(this.filterParams) && ag_grid_community_1._.exists(this.filterParams.values)) {
             this.valuesType = Array.isArray(this.filterParams.values) ?
                 SetFilterModelValuesType.PROVIDED_LIST :
                 SetFilterModelValuesType.PROVIDED_CB;
@@ -120,7 +120,7 @@ var SetFilterModel = /** @class */ (function () {
         var valuesToUse;
         if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
             if (Array.isArray(this.filterParams.values)) {
-                valuesToUse = ag_grid_community_1.Utils.toStrings(this.filterParams.values);
+                valuesToUse = ag_grid_community_1._.toStrings(this.filterParams.values);
             }
             else {
                 // In this case the values are async but have already been resolved, so we can reuse them
@@ -132,7 +132,7 @@ var SetFilterModel = /** @class */ (function () {
         }
         else {
             var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            valuesToUse = ag_grid_community_1.Utils.toStrings(uniqueValuesAsAnyObjects);
+            valuesToUse = ag_grid_community_1._.toStrings(uniqueValuesAsAnyObjects);
         }
         return valuesToUse;
     };
@@ -143,7 +143,7 @@ var SetFilterModel = /** @class */ (function () {
             return;
         }
         var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-        this.availableUniqueValues = ag_grid_community_1.Utils.toStrings(uniqueValuesAsAnyObjects);
+        this.availableUniqueValues = ag_grid_community_1._.toStrings(uniqueValuesAsAnyObjects);
         this.sortValues(this.availableUniqueValues);
     };
     SetFilterModel.prototype.sortValues = function (values) {
@@ -154,7 +154,7 @@ var SetFilterModel = /** @class */ (function () {
             values.sort(this.colDef.comparator);
         }
         else {
-            values.sort(ag_grid_community_1.Utils.defaultComparator);
+            values.sort(ag_grid_community_1._.defaultComparator);
         }
     };
     SetFilterModel.prototype.getUniqueValues = function (filterOutNotAvailable) {
@@ -201,7 +201,7 @@ var SetFilterModel = /** @class */ (function () {
     };
     //sets mini filter. returns true if it changed from last value, otherwise false
     SetFilterModel.prototype.setMiniFilter = function (newMiniFilter) {
-        newMiniFilter = ag_grid_community_1.Utils.makeNull(newMiniFilter);
+        newMiniFilter = ag_grid_community_1._.makeNull(newMiniFilter);
         if (this.miniFilter === newMiniFilter) {
             //do nothing if filter has not changed
             return false;
@@ -344,7 +344,7 @@ var SetFilterModel = /** @class */ (function () {
             return null;
         }
         var selectedValues = [];
-        ag_grid_community_1.Utils.iterateObject(this.selectedValuesMap, function (key) {
+        ag_grid_community_1._.iterateObject(this.selectedValuesMap, function (key) {
             var value = _this.keyToValue(key);
             selectedValues.push(value);
         });

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -36,17 +36,16 @@ export interface ShouldRowBeSkippedParams {
 }
 export interface ProcessCellForExportParams {
     value: any;
-    node: RowNode;
+    node?: RowNode | null;
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
     type: string;
 }
 export interface ProcessHeaderForExportParams {
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
 }
-//# sourceMappingURL=exportParams.d.ts.map

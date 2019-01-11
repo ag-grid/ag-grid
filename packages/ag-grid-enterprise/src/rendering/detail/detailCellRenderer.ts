@@ -1,16 +1,16 @@
 import {
-    _,
+    Autowired,
+    Component,
+    DetailGridInfo,
+    Environment,
     Grid,
     GridApi,
-    RowNode,
-    Component,
-    Autowired,
-    RefSelector,
     GridOptions,
-    DetailGridInfo,
     GridOptionsWrapper,
     ICellRendererParams,
-    Environment
+    RefSelector,
+    RowNode,
+    _
 } from "ag-grid-community";
 
 export class DetailCellRenderer extends Component {
@@ -43,12 +43,12 @@ export class DetailCellRenderer extends Component {
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
 
-            setTimeout(() => {
+            window.setTimeout(() => {
                 // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
                 if (this.detailGridOptions.api) {
                     this.detailGridOptions.api.doLayout();
                 }
-            },0);
+            }, 0);
         } else {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
@@ -58,14 +58,14 @@ export class DetailCellRenderer extends Component {
     private addThemeToDetailGrid(): void {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
-        let theme = this.environment.getTheme();
+        const theme = this.environment.getTheme();
         if (_.exists(theme)) {
             _.addCssClass(this.eDetailGrid, theme);
         }
     }
 
     private registerDetailWithMaster(rowNode: RowNode): void {
-        let gridInfo: DetailGridInfo = {
+        const gridInfo: DetailGridInfo = {
             id: this.rowId,
             api: this.detailGridOptions.api,
             columnApi: this.detailGridOptions.columnApi
@@ -77,14 +77,14 @@ export class DetailCellRenderer extends Component {
         // register with node
         rowNode.detailGridInfo = gridInfo;
 
-        this.addDestroyFunc( ()=> {
+        this.addDestroyFunc(() => {
             this.masterGridApi.removeDetailGridInfo(this.rowId); // unregister from api
             rowNode.detailGridInfo = null; // unregister from node
         });
     }
 
     private selectAndSetTemplate(params: ICellRendererParams): void {
-        let paramsAny = <any> params;
+        const paramsAny = params as any;
 
         if (_.missing(paramsAny.template)) {
             // use default template
@@ -92,10 +92,10 @@ export class DetailCellRenderer extends Component {
         } else {
             // use user provided template
             if (typeof paramsAny.template === 'string') {
-                this.setTemplate(<string>paramsAny.template);
+                this.setTemplate(paramsAny.template as string);
             } else if (typeof paramsAny.template === 'function') {
-                let templateFunc: TemplateFunc = <TemplateFunc> paramsAny.template;
-                let template = templateFunc(params);
+                const templateFunc: TemplateFunc = paramsAny.template as TemplateFunc;
+                const template = templateFunc(params);
                 this.setTemplate(template);
             } else {
                 console.warn('ag-Grid: detailCellRendererParams.template should be function or string');
@@ -109,7 +109,7 @@ export class DetailCellRenderer extends Component {
         // across many instances, and that would be a problem because we set
         // api and columnApi into gridOptions
 
-        let gridOptions = params.detailGridOptions;
+        const gridOptions = params.detailGridOptions;
         if (_.missing(gridOptions)) {
             console.warn('ag-Grid: could not find detail grid options for master detail, ' +
                 'please set gridOptions.detailCellRendererParams.detailGridOptions');
@@ -117,7 +117,10 @@ export class DetailCellRenderer extends Component {
 
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = _.cloneObject(gridOptions);
+        // tslint:disable-next-line
         new Grid(this.eDetailGrid, this.detailGridOptions, {
+            $scope: params.$scope,
+            $compile: params.$compile,
             seedBeanInstances: {
                 // a temporary fix for AG-1574
                 // AG-1715 raised to do a wider ranging refactor to improve this
@@ -127,17 +130,21 @@ export class DetailCellRenderer extends Component {
             }
         });
 
-        this.addDestroyFunc( () => this.detailGridOptions.api.destroy() );
+        this.addDestroyFunc(() => {
+            if (this.detailGridOptions.api) {
+                this.detailGridOptions.api.destroy()
+            }
+        });
     }
 
     private loadRowData(params: IDetailCellRendererParams): void {
-        let userFunc = params.getDetailRowData;
+        const userFunc = params.getDetailRowData;
         if (!userFunc) {
             console.warn('ag-Grid: could not find getDetailRowData for master / detail, ' +
                 'please set gridOptions.detailCellRendererParams.getDetailRowData');
             return;
         }
-        let funcParams: any = {
+        const funcParams: any = {
             node: params.node,
             data: params.data,
             successCallback: this.setRowData.bind(this)
@@ -158,6 +165,7 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     getDetailRowData: GetDetailRowData;
     agGridReact: any;
     frameworkComponentWrapper: any;
+    $compile: any;
 }
 
 export interface GetDetailRowData {
@@ -166,7 +174,7 @@ export interface GetDetailRowData {
 
 export interface GetDetailRowDataParams {
     // details for the request,
-    node:  RowNode;
+    node: RowNode;
     data: any;
 
     // success callback, pass the rows back the grid asked for

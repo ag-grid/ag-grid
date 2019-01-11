@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { BaseFilter, IDoesFilterPassParams, ISetFilterParams, SerializedSetFilter } from "ag-grid-community";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[] | SerializedSetFilter | null> {
     private model;
@@ -47,7 +47,7 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     private doSelectAll;
     private onItemSelected;
     setMiniFilter(newMiniFilter: any): void;
-    getMiniFilter(): string;
+    getMiniFilter(): string | null;
     selectEverything(): void;
     selectNothing(): void;
     unselectValue(value: any): void;
@@ -56,10 +56,9 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     isEverythingSelected(): boolean;
     isNothingSelected(): boolean;
     getUniqueValueCount(): number;
-    getUniqueValue(index: any): string;
+    getUniqueValue(index: any): string | null;
     serialize(): string[] | SerializedSetFilter | null;
     parse(dataModel: string[] | SerializedSetFilter): void;
     resetState(): void;
     isFilterConditionActive(): boolean;
 }
-//# sourceMappingURL=setFilter.d.ts.map

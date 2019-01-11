@@ -92,7 +92,9 @@ export class ColDefUtil {
         'suppressNavigable',
         'enableCellChangeFlash',
         'rowDrag',
-        'autoHeight'
+        'autoHeight',
+        'sortable',
+        'resizable'
     ];
 
     public static FUNCTION_PROPERTIES = [

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -60,14 +60,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
         this.updateCheckboxIcon();
     };
     SetFilterListItem.prototype.updateCheckboxIcon = function () {
-        if (this.eCheckbox.children) {
-            for (var i = 0; i < this.eCheckbox.children.length; i++) {
-                var node = this.eCheckbox.children.item(i);
-                if (node) {
-                    this.eCheckbox.removeChild(node);
-                }
-            }
-        }
+        ag_grid_community_1._.clearElement(this.eCheckbox);
         if (this.isSelected()) {
             this.eCheckbox.appendChild(this.eCheckedIcon);
         }
@@ -82,8 +75,9 @@ var SetFilterListItem = /** @class */ (function (_super) {
         var colDef = this.column.getColDef();
         var valueObj = { value: this.value, valueFormatted: valueFormatted };
         var componentPromise = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
-        if (!componentPromise)
+        if (!componentPromise) {
             return;
+        }
         componentPromise.then(function (component) {
             if (component && component.destroy) {
                 _this.addDestroyFunc(component.destroy.bind(component));

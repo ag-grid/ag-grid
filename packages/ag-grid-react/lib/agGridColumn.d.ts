@@ -1,4 +1,4 @@
-// ag-grid-react v19.1.4
+// ag-grid-react v20.0.0
 import { Component } from "react";
 import * as AgGrid from "ag-grid-community";
 import { ColDef, ColGroupDef } from "ag-grid-community";
@@ -18,4 +18,3 @@ export declare class AgGridColumn extends Component<AgGridColumnProps | AgGridCo
     private static createColDefFromGridColumn;
     private static assign;
 }
-//# sourceMappingURL=agGridColumn.d.ts.map

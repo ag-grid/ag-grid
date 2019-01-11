@@ -1,5 +1,6 @@
-const {JSDOM} = require('jsdom');
+const { JSDOM } = require('jsdom');
 const {window, document} = new JSDOM('<html></html>');
+window.Date = Date;
 global.window = window;
 global.document = document;
 const jQuery = require('jquery');
@@ -26,6 +27,8 @@ function moveScriptsWithoutToken(scripts, dest, token) {
     scripts.forEach(file => removeTokenFromFile(file));
 }
 
+// childMessageRenderer_react.jsx -> childMessageRenderer.jsx
+// childMessageRenderer_angular.ts -> childMessageRenderer.ts
 function extractComponentFileNames(scripts, token) {
     return scripts.map(script => path.basename(script).replace(token, ''));
 }
@@ -93,48 +96,62 @@ module.exports = (cb, scope) => {
     forEachExampleToGenerate(
         (section, example, options) => {
             count++;
+
+            //    src section                        example        index.html
+            // eg src/javascript-grid-accessing-data/using-for-each/index.html
             const document = glob.sync(path.join('./src', section, example, 'index.html'))[0];
+
             let script, scripts;
             if (glob.sync(path.join('./src', section, example, '*.js')).length > 1) {
+                // multiple scripts - main.js is the main one, the rest are supplemental
                 script = glob.sync(path.join('./src', section, example, 'main.js'))[0];
+
+                // get the rest of the scripts
                 scripts = glob.sync(
                     path.join('./src', section, example, '*.js'),
                     {ignore: ['**/main.js', '**/*_angular.js', '**/*_react.js', '**/*_vanilla.js', '**/*_vue.js']}
                 );
             } else {
+                // only one script - name isn't important
                 script = glob.sync(path.join('./src', section, example, '*.js'))[0];
                 scripts = [];
             }
 
+            // any associated css
             const stylesGlob = path.join('./src', section, example, '*.css');
-            const sources = [fs.readFileSync(script, {encoding: 'utf8'}), fs.readFileSync(document, {encoding: 'utf8'})];
+
+            // read the main script (js) and the associated index.html
+            const [mainJs, indexHtml] = [fs.readFileSync(script, {encoding: 'utf8'}), fs.readFileSync(document, {encoding: 'utf8'})];
+
+            // this examples _gen directory
+            // eg src/javascript-grid-accessing-data/using-for-each/_gen
             const _gen = path.join('./src', section, example, '_gen');
 
             let source, indexJSX, mainApp;
 
             let inlineStyles;
-            const style = jQuery(`<div>${sources[1]}</div>`).find('style');
+            const style = jQuery(`<div>${indexHtml}</div>`).find('style');
 
+            // inline styles in the examples index.html
+            // will be added to styles.css in the various generated fw examples
             if (style.length) {
                 inlineStyles = prettier.format(style.text(), {parser: 'css'});
             }
 
             const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
             try {
-                source = vanillaToReact(sources, options, extractComponentFileNames(reactScripts, '_react'));
-                indexJSX = prettier.format(source, {printWidth: 120});
+                source = vanillaToReact(mainJs, indexHtml, options, extractComponentFileNames(reactScripts, '_react'));
+                indexJSX = prettier.format(source, {parser: 'babylon', printWidth: 120});
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
                 return;
-                // console.error(source);
-                // throw new Error('Failed generating the react version');
             }
 
             const angularScripts = glob.sync(path.join('./src', section, example, '*_angular*'));
             let angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
             let appComponentTS, appModuleTS;
             try {
-                source = vanillaToAngular(sources, options, angularComponentFileNames);
+                source = vanillaToAngular(mainJs, indexHtml, options, angularComponentFileNames);
 
                 appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
                 appModuleTS = prettier.format(appModuleAngular(angularComponentFileNames), {
@@ -144,8 +161,6 @@ module.exports = (cb, scope) => {
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
                 return;
-                // console.error(source);
-                // throw new Error('Failed generating the angular version');
             }
 
             const vueScripts = glob.sync(path.join('./src', section, example, '*_vue*'));
@@ -153,14 +168,12 @@ module.exports = (cb, scope) => {
                 // vue is still new - only process examples marked as tested and good to go
                 // when all examples have been tested this check can be removed
                 if(options.processVue) {
-                    source = vanillaToVue(sources, options, extractComponentFileNames(vueScripts, '_vue'));
-                    mainApp = prettier.format(source, {printWidth: 120});
+                    source = vanillaToVue(mainJs, indexHtml, options, extractComponentFileNames(vueScripts, '_vue'));
+                    mainApp = prettier.format(source, {parser: 'babylon', printWidth: 120});
                 }
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
-                // return;
-                // console.error(source);
-                // throw new Error('Failed generating the vue version');
+                return;
             }
 
             // fetch and move react files to _gen/react

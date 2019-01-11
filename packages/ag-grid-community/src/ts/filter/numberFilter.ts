@@ -1,8 +1,8 @@
-import {Utils as _} from "../utils";
-import {SerializedFilter} from "../interfaces/iFilter";
-import {QuerySelector} from "../widgets/componentAnnotations";
-import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
-import {INumberFilterParams} from "./textFilter";
+import { SerializedFilter } from "../interfaces/iFilter";
+import { QuerySelector } from "../widgets/componentAnnotations";
+import { BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter } from "./baseFilter";
+import { INumberFilterParams } from "./textFilter";
+import { _ } from "../utils";
 
 export interface SerializedNumberFilter extends SerializedFilter {
     filter: number;
@@ -29,7 +29,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
     private eFilterTextField: HTMLInputElement;
     private eFilterTextConditionField: HTMLInputElement;
-    public static LESS_THAN = 'lessThan';//3;
+    public static LESS_THAN = 'lessThan'; //3;
 
     modelFromFloatingFilter(from: string): SerializedNumberFilter {
         return {
@@ -46,15 +46,15 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public bodyTemplate(type:FilterConditionType): string {
-        let translate = this.translate.bind(this);
-        let fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
-        let filterNumberToPanelId = type == FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";
-        let fieldToId = type == FilterConditionType.MAIN ? "filterToText" : "filterToConditionText";
+        const translate = this.translate.bind(this);
+        const fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
+        const filterNumberToPanelId = type == FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";
+        const fieldToId = type == FilterConditionType.MAIN ? "filterToText" : "filterToConditionText";
         return `<div class="ag-filter-body">
-            <div>
+            <div class="ag-input-text-wrapper">
                 <input class="ag-filter-filter" id="${fieldId}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
-             <div class="ag-filter-number-to" id="${filterNumberToPanelId}">
+             <div class="ag-input-text-wrapper ag-filter-number-to" id="${filterNumberToPanelId}">
                 <input class="ag-filter-filter" id="${fieldToId}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
         </div>`;
@@ -62,9 +62,9 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
     public initialiseFilterBodyUi(type:FilterConditionType) {
         super.initialiseFilterBodyUi(type);
-        if (type === FilterConditionType.MAIN){
+        if (type === FilterConditionType.MAIN) {
             this.eFilterTextField = this.queryForHtmlInputElement("#filterText");
-            this.addFilterChangedEventListeners( type, this.eFilterTextField, this.eFilterToTextField);
+            this.addFilterChangedEventListeners(type, this.eFilterTextField, this.eFilterToTextField);
         } else {
             this.eFilterTextConditionField = this.queryForHtmlInputElement("#filterConditionText");
             this.addFilterChangedEventListeners(type, this.eFilterTextConditionField, this.eFilterToConditionText);
@@ -76,8 +76,8 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     private addFilterChangedEventListeners(type:FilterConditionType, filterElement: HTMLInputElement, filterToElement: HTMLInputElement) {
-        let debounceMs = this.getDebounceMs(this.filterParams);
-        let toDebounce: () => void = _.debounce(()=>this.onTextFieldsChanged(type, filterElement, filterToElement), debounceMs);
+        const debounceMs = this.getDebounceMs(this.filterParams);
+        const toDebounce: () => void = _.debounce(() => this.onTextFieldsChanged(type, filterElement, filterToElement), debounceMs);
         this.addDestroyableEventListener(filterElement, "input", toDebounce);
         this.addDestroyableEventListener(filterToElement, "input", toDebounce);
     }
@@ -87,7 +87,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public comparator(): Comparator<number> {
-        return (left: number, right: number): number=> {
+        return (left: number, right: number): number => {
             if (left === right) { return 0; }
             if (left < right) { return 1; }
             if (left > right) { return -1; }
@@ -95,10 +95,10 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     private onTextFieldsChanged(type:FilterConditionType, filterElement: HTMLInputElement, filterToElement: HTMLInputElement) {
-        let newFilter = this.stringToFloat(filterElement.value);
-        let newFilterTo = this.stringToFloat(filterToElement.value);
+        const newFilter = this.stringToFloat(filterElement.value);
+        const newFilterTo = this.stringToFloat(filterToElement.value);
 
-        if (type === FilterConditionType.MAIN){
+        if (type === FilterConditionType.MAIN) {
             if (this.filterNumber !== newFilter || this.filterNumberTo !== newFilterTo) {
                 this.filterNumber = newFilter;
                 this.filterNumberTo = newFilterTo;
@@ -113,15 +113,15 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         }
     }
 
-    public filterValues(type:FilterConditionType): number|number[] {
-        if (type === FilterConditionType.MAIN){
+    public filterValues(type:FilterConditionType): number | number[] {
+        if (type === FilterConditionType.MAIN) {
             return this.filter !== BaseFilter.IN_RANGE ?
-                this.asNumber(this.filterNumber):
+                this.asNumber(this.filterNumber) :
                 [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
         }
 
         return this.filterCondition !== BaseFilter.IN_RANGE ?
-            this.asNumber(this.filterNumberCondition):
+            this.asNumber(this.filterNumberCondition) :
             [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     }
 
@@ -152,12 +152,12 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         if (type === FilterConditionType.MAIN) {
             this.filterNumber = filter;
 
-            if (!this.eFilterTextField) return;
+            if (!this.eFilterTextField) { return; }
             this.eFilterTextField.value = filter;
         } else {
             this.filterNumberCondition = filter;
 
-            if (!this.eFilterTextConditionField) return;
+            if (!this.eFilterTextConditionField) { return; }
             this.eFilterTextConditionField.value = filter;
         }
     }
@@ -171,12 +171,12 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         if (type === FilterConditionType.MAIN) {
             this.filterNumberTo = filter;
 
-            if (!this.eFilterToTextField) return;
+            if (!this.eFilterToTextField) { return; }
             this.eFilterToTextField.value = filter;
         } else {
             this.filterNumberConditionTo = filter;
 
-            if (!this.eFilterToConditionText) return;
+            if (!this.eFilterToConditionText) { return; }
             this.eFilterToConditionText.value = filter;
         }
     }
@@ -186,9 +186,9 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public serialize(type:FilterConditionType): SerializedNumberFilter {
-        let filter = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
-        let filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
-        let filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
+        const filter = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
+        const filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
         return {
             type: filter ? filter : this.defaultFilter,
             filter: filterNumber,
@@ -204,12 +204,12 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public refreshFilterBodyUi(type:FilterConditionType): void {
-        let filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
-        let panel = type === FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
+        const filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const panel = type === FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
 
-        if (!panel) return;
+        if (!panel) { return; }
 
-        let visible = filterType === NumberFilter.IN_RANGE;
+        const visible = filterType === NumberFilter.IN_RANGE;
         _.setVisible(panel, visible);
     }
 

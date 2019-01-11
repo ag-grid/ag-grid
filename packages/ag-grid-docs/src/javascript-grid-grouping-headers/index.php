@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Groups: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Groups. Columns can be grouped together into Column Groups. Additionally you can configure groups to be expandable to show and hide columns within the group. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Groups. Columns can be grouped together into Column Groups. Additionally you can configure groups to be expandable to show and hide columns within the group. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Group Columns ag-Grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -161,7 +161,7 @@ Change the theme class to the one you use.
         Here is a basic example of grouping in action.
     </p>
 
-    <?= example('Basic Grouping', 'basic-grouping', 'generated') ?>
+    <?= example('Basic Grouping', 'basic-grouping', 'generated', array("processVue" => true)) ?>
 
     <h2 id="grouping-example-with-marrychildren-set">Marry Children</h2>
 
@@ -190,7 +190,7 @@ Change the theme class to the one you use.
         </li>
     </ul>
 
-    <?= example('Marry Children', 'marry-children', 'generated') ?>
+    <?= example('Marry Children', 'marry-children', 'generated', array("processVue" => true)) ?>
 
     <h2 id="advanced-grouping-example">Advanced Grouping Example</h2>
 
@@ -217,7 +217,7 @@ Change the theme class to the one you use.
         </li>
     </ul>
 
-    <?= example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"))) ?>
+    <?= example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"), "processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
@@ -34,7 +34,7 @@ export declare abstract class RowNodeBlock extends BeanStub {
     private rowNodeCacheParams;
     protected abstract loadFromDatasource(): void;
     protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
-    abstract getRow(displayIndex: number): RowNode;
+    abstract getRow(displayIndex: number): RowNode | null;
     abstract getNodeIdPrefix(): string;
     protected constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams);
     isAnyNodeOpen(rowCount: number): boolean;
@@ -63,4 +63,3 @@ export declare abstract class RowNodeBlock extends BeanStub {
     destroy(): void;
     protected pageLoaded(version: number, rows: any[], lastRow: number): void;
 }
-//# sourceMappingURL=rowNodeBlock.d.ts.map

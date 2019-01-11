@@ -1,5 +1,5 @@
-import {XmlElement, Utils} from 'ag-grid-community';
-import {ExcelXMLTemplate, ExcelWorksheet} from 'ag-grid-community';
+import { XmlElement, _ } from 'ag-grid-community';
+import { ExcelXMLTemplate, ExcelWorksheet } from 'ag-grid-community';
 import column from './column';
 import row from './row';
 
@@ -8,8 +8,8 @@ const worksheet: ExcelXMLTemplate = {
         const {table, name} = ws;
         const {columns, rows} = table;
 
-        const c = Utils.map(columns, (it):XmlElement => column.getTemplate(it));
-        const r = Utils.map(rows, (it):XmlElement => row.getTemplate(it));
+        const c = _.map(columns, (it):XmlElement => column.getTemplate(it));
+        const r = _.map(rows, (it):XmlElement => row.getTemplate(it));
 
         return {
             name: "Worksheet",

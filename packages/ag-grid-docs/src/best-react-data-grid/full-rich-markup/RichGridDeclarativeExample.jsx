@@ -60,33 +60,30 @@ export default class RichGridDeclarativeExample extends Component {
                     // binding to array properties
                     rowData={this.state.rowData}
                     // no binding, just providing hard coded strings for the properties
-                    // boolean properties will default to true if provided (ie enableColResize => enableColResize="true")
+                    // boolean properties will default to true if provided (ie pagination => pagination="true")
                     suppressRowClickSelection
                     rowSelection="multiple"
-                    enableColResize
-                    enableSorting
-                    enableFilter
                     groupHeaders
                     >
                     {/* first column has the checkboxes */}
-                    <AgGridColumn headerName="#" width={30} checkboxSelection suppressSorting suppressMenu suppressFilter pinned></AgGridColumn>
+                    <AgGridColumn headerName="#" width={30} checkboxSelection suppressMenu filter={false} pinned resizable></AgGridColumn>
                     {/* the first three columns are grouped in a group called 'Employee' */}
                     <AgGridColumn headerName="Employee">
-                        <AgGridColumn field="name" width={150} pinned editable></AgGridColumn>
-                        <AgGridColumn field="country" width={150} pinned editable
+                        <AgGridColumn field="name" width={150} pinned editable sortable resizable filter></AgGridColumn>
+                        <AgGridColumn field="country" width={150} pinned editable resizable
                                       cellRenderer={RichGridDeclarativeExample.countryCellRenderer}
                                       cellEditorParams={{ values: COUNTRY_LIST, cellRenderer: RichGridDeclarativeExample.countryCellRenderer}} cellEditor="agRichSelect"
-                                      filter="set" filterParams={{cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}>
+                                      filter="set" sortable filterParams={{cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}>
                         </AgGridColumn>
-                        <AgGridColumn field="dob" width={110} headerName="Date of Birth" filter="date" pinned valueFormatter={RichGridDeclarativeExample.dateCellRenderer} columnGroupShow="open"></AgGridColumn>
+                        <AgGridColumn field="dob" width={110} headerName="Date of Birth" sortable filter="date" pinned valueFormatter={RichGridDeclarativeExample.dateCellRenderer} columnGroupShow="open" resizable></AgGridColumn>
                     </AgGridColumn>
                     {/* the next column is not in a group, just by itself */}
-                    <AgGridColumn field="proficiency" width={135} enableValue cellRendererFramework={ProficiencyCellRenderer}></AgGridColumn>
+                    <AgGridColumn field="proficiency" width={135} sortable enableValue filter resizable cellRendererFramework={ProficiencyCellRenderer}></AgGridColumn>
                     {/* then the last group with three columns */}
                     <AgGridColumn headerName="Contact">
-                        <AgGridColumn field="mobile" width={150} filter="text"></AgGridColumn>
-                        <AgGridColumn field="landline" width={150} filter="text"></AgGridColumn>
-                        <AgGridColumn field="address" width={500} filter="text"></AgGridColumn>
+                        <AgGridColumn field="mobile" width={150} filter="text" sortable resizable></AgGridColumn>
+                        <AgGridColumn field="landline" width={150} filter="text" sortable resizable></AgGridColumn>
+                        <AgGridColumn field="address" width={500} filter="text" sortable resizable></AgGridColumn>
                     </AgGridColumn>
                 </AgGridReact>
             </div>

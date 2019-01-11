@@ -12,10 +12,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     debug: true,
-    rowData: null,
-    enableColResize: true
+    rowData: null
 };
 
 function clearPinned() {

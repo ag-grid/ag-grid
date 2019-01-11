@@ -1,5 +1,5 @@
-import {ExcelOOXMLTemplate, ExcelCell, _} from 'ag-grid-community';
-import {getStyleId} from './styles/stylesheet';
+import { ExcelOOXMLTemplate, ExcelCell, _ } from 'ag-grid-community';
+import { getStyleId } from './styles/stylesheet';
 
 const convertLegacyType = (type: string): string => {
     const t = type.charAt(0).toLowerCase();
@@ -22,7 +22,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             properties: {
                 rawMap: {
                     r: ref,
-                    t: convertedType,
+                    t: convertedType === 'empty' ? undefined : convertedType,
                     s: styleId ? getStyleId(styleId) : undefined
                 }
             }

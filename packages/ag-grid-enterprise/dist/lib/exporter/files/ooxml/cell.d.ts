@@ -1,5 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { ExcelOOXMLTemplate } from 'ag-grid-community';
 declare const cellFactory: ExcelOOXMLTemplate;
 export default cellFactory;
-//# sourceMappingURL=cell.d.ts.map

@@ -1,7 +1,7 @@
-import {Autowired, Bean} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {Utils as _} from "../utils";
+import { Autowired, Bean } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { _ } from "../utils";
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService {
@@ -66,12 +66,12 @@ export class ColumnAnimationService {
         // up the count, so we can tell if someone else has updated the count
         // by the time the 'wait' func executes
         this.animationThreadCount++;
-        let animationThreadCountCopy = this.animationThreadCount;
+        const animationThreadCountCopy = this.animationThreadCount;
         this.gridPanel.setColumnMovingCss(true);
 
-        this.executeLaterFuncs.push(()=> {
+        this.executeLaterFuncs.push(() => {
             // only remove the class if this thread was the last one to update it
-            if (this.animationThreadCount===animationThreadCountCopy) {
+            if (this.animationThreadCount === animationThreadCountCopy) {
                 this.gridPanel.setColumnMovingCss(false);
             }
         });
@@ -79,15 +79,15 @@ export class ColumnAnimationService {
 
     public flush(): void {
 
-        let nowFuncs = this.executeNextFuncs;
+        const nowFuncs = this.executeNextFuncs;
         this.executeNextFuncs = [];
 
-        let waitFuncs = this.executeLaterFuncs;
+        const waitFuncs = this.executeLaterFuncs;
         this.executeLaterFuncs = [];
 
-        if (nowFuncs.length===0 && waitFuncs.length===0) { return; }
+        if (nowFuncs.length === 0 && waitFuncs.length === 0) { return; }
 
-        setTimeout( ()=> nowFuncs.forEach( func => func() ), 0 );
-        setTimeout( ()=> waitFuncs.forEach( func => func() ), 300 );
+        window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
+        window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
     }
 }

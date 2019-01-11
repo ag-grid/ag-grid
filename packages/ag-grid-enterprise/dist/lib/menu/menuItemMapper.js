@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
 var clipboardService_1 = require("../clipboardService");
 var aggFuncService_1 = require("../aggregation/aggFuncService");
+var chartingService_1 = require("../charts/chartingService");
 var MenuItemMapper = /** @class */ (function () {
     function MenuItemMapper() {
     }
@@ -34,7 +35,9 @@ var MenuItemMapper = /** @class */ (function () {
                 var resultDef = result;
                 resultDef.subMenu = _this.mapWithStockItems(resultDef.subMenu, column);
             }
-            resultList.push(result);
+            if (result != null) {
+                resultList.push(result);
+            }
         });
         return resultList;
     };
@@ -146,6 +149,12 @@ var MenuItemMapper = /** @class */ (function () {
                 }); }
             };
             case 'separator': return 'separator';
+            case 'createChart': return {
+                name: 'Create Chart',
+                action: function () {
+                    _this.chartingService.createChart();
+                }
+            };
             default:
                 console.warn("ag-Grid: unknown menu item type " + key);
                 return null;
@@ -161,7 +170,8 @@ var MenuItemMapper = /** @class */ (function () {
             columnToUse = column;
         }
         else {
-            columnToUse = column.getColDef().pivotValueColumn;
+            var pivotValueColumn = column.getColDef().pivotValueColumn;
+            columnToUse = ag_grid_community_1._.exists(pivotValueColumn) ? pivotValueColumn : undefined;
         }
         var result = [];
         funcNames.forEach(function (funcName) {
@@ -196,6 +206,10 @@ var MenuItemMapper = /** @class */ (function () {
         ag_grid_community_1.Autowired('aggFuncService'),
         __metadata("design:type", aggFuncService_1.AggFuncService)
     ], MenuItemMapper.prototype, "aggFuncService", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('chartingService'),
+        __metadata("design:type", chartingService_1.ChartingService)
+    ], MenuItemMapper.prototype, "chartingService", void 0);
     MenuItemMapper = __decorate([
         ag_grid_community_1.Bean('menuItemMapper')
     ], MenuItemMapper);

@@ -1,7 +1,7 @@
 var columnDefs = [
-    {headerName: "Country", field: "country", suppressFilter: true},
-    {headerName: "Language", field: "language", suppressFilter: true},
-    {headerName: "Name", field: "name", suppressFilter: true},
+    {headerName: "Country", field: "country", filter: false},
+    {headerName: "Language", field: "language", filter: false},
+    {headerName: "Name", field: "name", filter: false},
     {
         headerName: "Gold",
         field: "gold",

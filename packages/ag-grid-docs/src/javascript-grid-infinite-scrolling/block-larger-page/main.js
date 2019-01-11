@@ -122,11 +122,10 @@ var columnDefs = [
         cellRenderer: 'loadingRenderer',
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
-        suppressSorting: true,
-        suppressMenu: true,
-        suppressFilter: true
+        sortable: false,
+        suppressMenu: true
     },
-    {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true, suppressFilter: true},
+    {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true},
     {
         headerName: 'Age',
         field: 'age',
@@ -151,12 +150,12 @@ var columnDefs = [
         filter: 'agSetColumnFilter',
         filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
     },
-    {headerName: 'Date', field: 'date', width: 110, suppressFilter: true},
-    {headerName: 'Sport', field: 'sport', width: 110, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Gold', field: 'gold', width: 100, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Silver', field: 'silver', width: 100, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Bronze', field: 'bronze', width: 100, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Total', field: 'total', width: 100, suppressMenu: true, suppressFilter: true}
+    {headerName: 'Date', field: 'date', width: 110},
+    {headerName: 'Sport', field: 'sport', width: 110, suppressMenu: true},
+    {headerName: 'Gold', field: 'gold', width: 100, suppressMenu: true},
+    {headerName: 'Silver', field: 'silver', width: 100, suppressMenu: true},
+    {headerName: 'Bronze', field: 'bronze', width: 100, suppressMenu: true},
+    {headerName: 'Total', field: 'total', width: 100, suppressMenu: true}
 ];
 
 var gridOptions = {
@@ -169,11 +168,12 @@ var gridOptions = {
             }
         }
     },
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     floatingFilter: true,
     debug: true,
-    enableServerSideSorting: true,
-    enableServerSideFilter: true,
-    enableColResize: true,
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,

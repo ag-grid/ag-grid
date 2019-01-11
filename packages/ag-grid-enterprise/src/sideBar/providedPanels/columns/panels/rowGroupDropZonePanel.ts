@@ -7,14 +7,14 @@ import {
     DragAndDropService,
     GridOptionsWrapper,
     PostConstruct,
-    Utils,
     Events,
     Column,
     ColumnRowGroupChangeRequestEvent,
     ColumnApi,
-    GridApi
+    GridApi,
+    _
 } from "ag-grid-community/main";
-import {BaseDropZonePanel} from "../dropZone/baseDropZonePanel";
+import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
@@ -42,13 +42,13 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
-        let title = localeTextFunc('groups', 'Row Groups');
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
+        const title = localeTextFunc('groups', 'Row Groups');
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: Utils.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
+            icon: _.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
@@ -62,14 +62,14 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) { return false; }
 
-        let columnGroupable = column.isAllowRowGroup();
-        let columnNotAlreadyGrouped = !column.isRowGroupActive();
+        const columnGroupable = column.isAllowRowGroup();
+        const columnNotAlreadyGrouped = !column.isRowGroupActive();
         return columnGroupable && columnNotAlreadyGrouped;
     }
 
     protected updateColumns(columns:Column[]) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            let event: ColumnRowGroupChangeRequestEvent = {
+            const event: ColumnRowGroupChangeRequestEvent = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,

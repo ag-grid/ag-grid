@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
@@ -37,4 +37,3 @@ export declare class RowDragFeature implements DropTarget {
     onDragStop(draggingEvent: DraggingEvent): void;
     private stopDragging;
 }
-//# sourceMappingURL=rowDragFeature.d.ts.map

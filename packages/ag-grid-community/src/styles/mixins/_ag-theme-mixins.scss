@@ -1,0 +1,129 @@
+@function encodecolor($string) {
+    @if $string == null {
+        @return "";
+    }
+
+    @if type-of($string) == "color" {
+        $hex: str-slice(ie-hex-str($string), 4);
+        $string: unquote("#{$hex}");
+    }
+    $string: "%23" + $string;
+
+    @return $string;
+}
+
+@mixin row-border($color) {
+    border-style: solid;
+    border-color: $color;
+}
+
+@mixin grid-cell($height, $padding) {
+    line-height: $height;
+    padding-left: $padding;
+    padding-right: $padding;
+}
+
+@mixin icon-background($params, $icon) {
+    $size: map-get($params, "icon-size");
+    $color: map-get($params, "foreground-color");
+    $iconpath: map-get($params, "icons-path");
+    $color1: #{encodecolor(map-get($params, "icon-color"))};
+    $color2: #{encodecolor(map-get($params, "alt-icon-color"))};
+
+    background-color: transparent;
+    background: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: $size $size;
+    height: $size;
+    opacity: map-get($params, "icon-opacity");
+    width: $size;
+}
+
+@mixin colorful-icon($path, $icon, $color, $altColor) {
+    $iconpath: map-get($params, "icons-path");
+    $color1: encodecolor($color);
+    $color2: encodecolor($altColor);
+
+    background-image: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
+}
+
+@mixin card($params) {
+    @extend %card !optional;
+
+    background: map-get($params, "card-background-color");
+    border-radius: map-get($params, "card-radius");
+    box-shadow: map-get($params, "card-shadow");
+    padding: map-get($params, "grid-size");
+}
+
+@mixin textbox($params) {
+    $border-color: map-get($params, "border-color");
+    $foreground-color: map-get($params, "foreground-color");
+    $grid-size: map-get($params, "grid-size");
+    $primary-color: map-get($params, "primary-color");
+    $placeholder-color: map-get($params, "disabled-foreground-color");
+    $focused-border: map-get($params, "focused-textbox-border");
+    $input-border-width: map-get($params, "input-border-width");
+    $input-bottom-border: map-get($params, "input-bottom-border");
+    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
+    $input-bottom-border-disabled: map-get($params, "input-bottom-border-disabled");
+
+    @if map-get($params, "customize-inputs") {
+        background: transparent;
+        color: $foreground-color;
+        font-family: inherit;
+        font-size: inherit;
+        height: map-get($params, "input-height");
+        padding-bottom: $grid-size;
+
+        @if $input-border-width {
+            border-width: $input-border-width;
+        }
+
+        @if $input-bottom-border {
+            border-bottom: $input-bottom-border;
+        }
+
+        &:focus {
+            @if $focused-border {
+                border-bottom: $focused-border;
+                outline: none;
+                padding-bottom: $grid-size - 1;
+            }
+        }
+
+        &::placeholder {
+            color: $placeholder-color;
+        }
+
+        &:disabled {
+            @if $input-bottom-border-disabled {
+                border-bottom: $input-bottom-border-disabled;
+            }
+        }
+    }
+    &:disabled {
+        color: $placeholder-color;
+        @if $input-disabled-background-color {
+            background-color: $input-disabled-background-color;
+        }
+    }
+}
+
+@mixin regular-button($color, $background-color, $text-transform) {
+    appearance: none;
+    background-color: $background-color;
+    border: 0;
+    color: $color;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+    text-transform: $text-transform;
+}
+
+@mixin hide-text {
+    overflow: hidden;
+    text-indent: 100%;
+}

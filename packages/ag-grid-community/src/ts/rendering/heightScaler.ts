@@ -1,9 +1,9 @@
-import {BeanStub} from "../context/beanStub";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {EventService} from "../eventService";
-import {Events} from "../eventKeys";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {_} from "../utils";
+import { BeanStub } from "../context/beanStub";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { EventService } from "../eventService";
+import { Events } from "../eventKeys";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { _ } from "../utils";
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -64,10 +64,10 @@ export class HeightScaler extends BeanStub {
     public update(): void {
         if (!this.scaling) { return; }
 
-        let newScrollY = this.gridPanel.getVScrollPosition().top;
-        let newBodyHeight = this.getUiBodyHeight();
+        const newScrollY = this.gridPanel.getVScrollPosition().top;
+        const newBodyHeight = this.getUiBodyHeight();
 
-        let atLeastOneChanged = newScrollY!==this.scrollY || newBodyHeight!==this.uiBodyHeight;
+        const atLeastOneChanged = newScrollY !== this.scrollY || newBodyHeight !== this.uiBodyHeight;
         if (atLeastOneChanged) {
             this.scrollY = newScrollY;
             this.uiBodyHeight = newBodyHeight;
@@ -80,7 +80,7 @@ export class HeightScaler extends BeanStub {
         this.pixelsToShave = this.modelHeight - this.uiContainerHeight;
 
         this.maxScrollY = this.uiContainerHeight - this.uiBodyHeight;
-        let scrollPercent = this.scrollY / this.maxScrollY;
+        const scrollPercent = this.scrollY / this.maxScrollY;
 
         this.setOffset(scrollPercent * this.pixelsToShave);
     }
@@ -94,11 +94,11 @@ export class HeightScaler extends BeanStub {
 
     private setOffset(newOffset: number): void {
         // because we are talking pixels, no point in confusing things with half numbers
-        let newOffsetFloor = typeof newOffset === 'number' ? Math.floor(newOffset) : null;
-        if (this.offset!==newOffsetFloor) {
-            this.offset = newOffsetFloor;
-            this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
-        }
+        const newOffsetFloor = typeof newOffset === 'number' ? Math.floor(newOffset) : null;
+        if (this.offset === newOffsetFloor) { return; }
+
+        this.offset = newOffsetFloor;
+        this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
     }
 
     public setModelHeight(modelHeight: number): void {
@@ -116,27 +116,20 @@ export class HeightScaler extends BeanStub {
     }
 
     public getRealPixelPosition(modelPixel: number): number {
-        let uiPixel = modelPixel - this.offset;
-        return uiPixel;
+        return modelPixel - this.offset;
     }
 
     private getUiBodyHeight(): number {
-        let pos = this.gridPanel.getVScrollPosition();
-        let bodyHeight = pos.bottom - pos.top;
-        if (this.gridPanel.isHorizontalScrollShowing()) {
-            bodyHeight -= this.scrollBarWidth;
-        }
-        return bodyHeight;
+        const pos = this.gridPanel.getVScrollPosition();
+        return pos.bottom - pos.top;
     }
 
     public getScrollPositionForPixel(rowTop: number): number {
-        if (this.pixelsToShave<=0) {
-            return rowTop;
-        } else {
-            let modelMaxScroll = this.modelHeight - this.getUiBodyHeight();
-            let scrollPercent = rowTop / modelMaxScroll;
-            let scrollPixel = this.maxScrollY * scrollPercent;
-            return scrollPixel;
-        }
+        if (this.pixelsToShave <= 0) { return rowTop; }
+
+        const modelMaxScroll = this.modelHeight - this.getUiBodyHeight();
+        const scrollPercent = rowTop / modelMaxScroll;
+        const scrollPixel = this.maxScrollY * scrollPercent;
+        return scrollPixel;
     }
 }

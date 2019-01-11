@@ -24,7 +24,7 @@ var columnDefs = [
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: function (params) {
             var selectedCountry = params.data.country;
-            var allowedCities = this.countyToCityMap(selectedCountry);
+            var allowedCities = countyToCityMap(selectedCountry);
             return {
                 values: allowedCities,
                 formatValue: function (value) {
@@ -240,9 +240,9 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: rowData,
-    enableColResize: true,
     defaultColDef: {
-        editable: true
+        editable: true,
+        resizable: true
     },
     onGridReady: function (params) {
         params.api.sizeColumnsToFit();
@@ -257,7 +257,7 @@ function onCellValueChanged(params) {
         var selectedCountry = params.data.country;
         var selectedCity = params.data.city;
 
-        var allowedCities = this.countyToCityMap(selectedCountry);
+        var allowedCities = countyToCityMap(selectedCountry);
         var cityMismatch = allowedCities.indexOf(selectedCity) < 0;
 
         if (cityMismatch) {

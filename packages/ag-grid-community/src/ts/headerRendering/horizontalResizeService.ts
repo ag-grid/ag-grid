@@ -1,12 +1,13 @@
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Autowired, Bean} from "../context/context";
-import {DragListenerParams, DragService} from "../dragAndDrop/dragService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Autowired, Bean } from "../context/context";
+import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
-    onResizeStart: (shiftKey: boolean)=>void;
-    onResizing: (delta: number)=>void;
-    onResizeEnd: (delta: number)=>void;
+    dragStartPixels?: number;
+    onResizeStart: (shiftKey: boolean) => void;
+    onResizing: (delta: number) => void;
+    onResizeEnd: (delta: number) => void;
 }
 
 @Bean('horizontalResizeService')
@@ -17,18 +18,16 @@ export class HorizontalResizeService {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private draggingStarted: boolean;
-
     private dragStartX: number;
-
     private resizeAmount: number;
 
     private oldBodyCursor: string;
     private oldMsUserSelect: string;
     private oldWebkitUserSelect: string;
 
-    public addResizeBar(params: HorizontalResizeParams): ()=>void {
-        let dragSource: DragListenerParams = {
-            dragStartPixels: 0,
+    public addResizeBar(params: HorizontalResizeParams): () => void {
+        const dragSource: DragListenerParams = {
+            dragStartPixels: params.dragStartPixels || 0,
             eElement: params.eResizeBar,
             onDragStart: this.onDragStart.bind(this, params),
             onDragStop: this.onDragStop.bind(this, params),
@@ -39,18 +38,18 @@ export class HorizontalResizeService {
 
         // we pass remove func back to the caller, so call can tell us when they
         // are finished, and then we remove the listener from the drag source
-        let finishedWithResizeFunc = ()=> this.dragService.removeDragSource(dragSource);
+        const finishedWithResizeFunc = () => this.dragService.removeDragSource(dragSource);
 
         return finishedWithResizeFunc;
     }
 
-    private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent|Touch): void {
+    private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
         this.draggingStarted = true;
         this.dragStartX = mouseEvent.clientX;
 
         this.setResizeIcons();
 
-        let shiftKey = mouseEvent instanceof MouseEvent ? (<MouseEvent>mouseEvent).shiftKey === true : false;
+        const shiftKey = mouseEvent instanceof MouseEvent ? (mouseEvent as MouseEvent).shiftKey === true : false;
         params.onResizeStart(shiftKey);
     }
 
@@ -66,7 +65,7 @@ export class HorizontalResizeService {
         this.eGridDiv.style.webkitUserSelect = 'none';
     }
 
-    private onDragStop(params: HorizontalResizeParams, mouseEvent: MouseEvent|Touch): void {
+    private onDragStop(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
         params.onResizeEnd(this.resizeAmount);
         this.resetIcons();
     }
@@ -78,7 +77,7 @@ export class HorizontalResizeService {
         this.eGridDiv.style.webkitUserSelect = this.oldWebkitUserSelect;
     }
 
-    private onDragging(params: HorizontalResizeParams, mouseEvent: MouseEvent|Touch): void {
+    private onDragging(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
         this.resizeAmount = mouseEvent.clientX - this.dragStartX;
         params.onResizing(this.resizeAmount);
     }

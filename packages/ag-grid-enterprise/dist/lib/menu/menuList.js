@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -32,7 +32,6 @@ var MenuList = /** @class */ (function (_super) {
         _this.timerCount = 0;
         _this.removeChildFuncs = [];
         return _this;
-        // console.log('MenuList->constructor() ' + this.instance);
     }
     MenuList.prototype.clearActiveItem = function () {
         this.removeActiveItem();
@@ -40,7 +39,7 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.prototype.addMenuItems = function (menuItems) {
         var _this = this;
-        if (ag_grid_community_1.Utils.missing(menuItems)) {
+        if (!menuItems || ag_grid_community_1._.missing(menuItems)) {
             return;
         }
         menuItems.forEach(function (menuItemOrString) {
@@ -83,14 +82,14 @@ var MenuList = /** @class */ (function (_super) {
         this.removeActiveItem();
         this.activeMenuItemParams = menuItemParams;
         this.activeMenuItem = menuItem;
-        ag_grid_community_1.Utils.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+        ag_grid_community_1._.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
         if (menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItemParams, menuItem);
         }
     };
     MenuList.prototype.removeActiveItem = function () {
         if (this.activeMenuItem) {
-            ag_grid_community_1.Utils.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+            ag_grid_community_1._.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
             this.activeMenuItem = null;
             this.activeMenuItemParams = null;
         }
@@ -98,7 +97,7 @@ var MenuList = /** @class */ (function (_super) {
     MenuList.prototype.addHoverForChildPopup = function (menuItemDef, menuItemComp) {
         var _this = this;
         var timerCountCopy = this.timerCount;
-        setTimeout(function () {
+        window.setTimeout(function () {
             var shouldShow = timerCountCopy === _this.timerCount;
             var showingThisMenu = _this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {
@@ -107,7 +106,7 @@ var MenuList = /** @class */ (function (_super) {
         }, 500);
     };
     MenuList.prototype.addSeparator = function () {
-        this.getGui().appendChild(ag_grid_community_1.Utils.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+        this.getGui().appendChild(ag_grid_community_1._.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     };
     MenuList.prototype.showChildMenu = function (menuItemDef, menuItemComp, mouseEvent) {
         var _this = this;
@@ -115,9 +114,9 @@ var MenuList = /** @class */ (function (_super) {
         var childMenu = new MenuList();
         this.context.wireBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
-        var ePopup = ag_grid_community_1.Utils.loadTemplate('<div class="ag-menu"></div>');
+        var ePopup = ag_grid_community_1._.loadTemplate('<div class="ag-menu"></div>');
         ePopup.appendChild(childMenu.getGui());
-        var hidePopupFunc = this.popupService.addAsModalPopup(ePopup, true, null, mouseEvent);
+        var hidePopupFunc = this.popupService.addAsModalPopup(ePopup, true, undefined, mouseEvent);
         this.popupService.positionPopupForMenu({
             eventSource: menuItemComp.getGui(),
             ePopup: ePopup
@@ -140,7 +139,6 @@ var MenuList = /** @class */ (function (_super) {
         this.removeChildFuncs = [];
     };
     MenuList.prototype.destroy = function () {
-        // console.log('MenuList->destroy() ' + this.instance);
         this.removeChildPopup();
         _super.prototype.destroy.call(this);
     };

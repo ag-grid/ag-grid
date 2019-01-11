@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -191,7 +191,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
-        lastRow = utils_1.Utils.cleanNumber(lastRow);
+        lastRow = utils_1._.cleanNumber(lastRow);
         // check here if lastrow should be set
         var event = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,

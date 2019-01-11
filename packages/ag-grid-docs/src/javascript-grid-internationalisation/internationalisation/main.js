@@ -14,15 +14,17 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     components:{
         rowNodeIdRenderer: function(params) {
             return params.node.id + 1;
         }
     },
-    enableSorting: true,
-    enableFilter: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     sideBar: true,
     pagination:true,

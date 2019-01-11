@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,9 +24,9 @@ var columnController_1 = require("../columnController/columnController");
 var columnApi_1 = require("../columnController/columnApi");
 var context_1 = require("../context/context");
 var constants_1 = require("../constants");
-var utils_1 = require("../utils");
 var valueCache_1 = require("../valueService/valueCache");
 var gridApi_1 = require("../gridApi");
+var utils_1 = require("../utils");
 var RowNode = /** @class */ (function () {
     function RowNode() {
         /** Children mapped by the pivot columns */
@@ -108,7 +108,7 @@ var RowNode = /** @class */ (function () {
         return oldNode;
     };
     RowNode.prototype.setDataAndId = function (data, id) {
-        var oldNode = utils_1.Utils.exists(this.id) ? this.createDaemonNode() : null;
+        var oldNode = utils_1._.exists(this.id) ? this.createDaemonNode() : null;
         var oldData = this.data;
         this.data = data;
         this.updateDataOnDetailNode();
@@ -120,7 +120,7 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.checkRowSelectable = function () {
         var isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        var shouldInvokeIsRowSelectable = isRowSelectableFunc && utils_1.Utils.exists(this);
+        var shouldInvokeIsRowSelectable = isRowSelectableFunc && utils_1._.exists(this);
         this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
     };
     RowNode.prototype.setRowSelectable = function (newVal) {
@@ -277,7 +277,7 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.setGroupValue = function (colKey, newValue) {
         var column = this.columnController.getGridColumn(colKey);
-        if (utils_1.Utils.missing(this.groupData)) {
+        if (utils_1._.missing(this.groupData)) {
             this.groupData = {};
         }
         this.groupData[column.getColId()] = newValue;
@@ -287,7 +287,7 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.setAggData = function (newAggData) {
         var _this = this;
         // find out all keys that could potentially change
-        var colIds = utils_1.Utils.getAllKeysInObjects([this.aggData, newAggData]);
+        var colIds = utils_1._.getAllKeysInObjects([this.aggData, newAggData]);
         this.aggData = newAggData;
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
@@ -305,7 +305,7 @@ var RowNode = /** @class */ (function () {
         return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
     };
     RowNode.prototype.isEmptyFillerNode = function () {
-        return this.group && utils_1.Utils.missingOrEmpty(this.childrenAfterGroup);
+        return this.group && utils_1._.missingOrEmpty(this.childrenAfterGroup);
     };
     RowNode.prototype.dispatchCellChangedEvent = function (column, newValue) {
         var cellChangedEvent = {
@@ -346,8 +346,9 @@ var RowNode = /** @class */ (function () {
             for (var i = 0; i < this.childrenAfterGroup.length; i++) {
                 var child = this.childrenAfterGroup[i];
                 // skip non-selectable nodes to prevent inconsistent selection values
-                if (!child.selectable)
+                if (!child.selectable) {
                     continue;
+                }
                 var childState = child.isSelected();
                 switch (childState) {
                     case true:
@@ -499,8 +500,9 @@ var RowNode = /** @class */ (function () {
         return false;
     };
     RowNode.prototype.selectThisNode = function (newValue) {
-        if (!this.selectable || this.selected === newValue)
+        if (!this.selectable || this.selected === newValue) {
             return false;
+        }
         this.selected = newValue;
         if (this.eventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
@@ -512,7 +514,7 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
         var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
         var updatedCount = 0;
-        if (utils_1.Utils.missing(children)) {
+        if (utils_1._.missing(children)) {
             return;
         }
         for (var i = 0; i < children.length; i++) {
@@ -549,7 +551,7 @@ var RowNode = /** @class */ (function () {
         var nodeToSwapIn;
         while (isCandidate && !foundFirstChildPath) {
             var parentRowNode = currentRowNode.parent;
-            var firstChild = utils_1.Utils.exists(parentRowNode) && currentRowNode.firstChild;
+            var firstChild = utils_1._.exists(parentRowNode) && currentRowNode.firstChild;
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {
                     foundFirstChildPath = true;

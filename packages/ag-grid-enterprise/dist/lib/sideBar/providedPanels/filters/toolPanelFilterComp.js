@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -45,8 +45,9 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.params.column, ag_grid_community_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     };
     ToolPanelFilterComp.prototype.addInIcon = function (iconName, eParent, column) {
-        if (eParent == null)
+        if (eParent == null) {
             return;
+        }
         var eIcon = ag_grid_community_1._.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eIcon.innerHTML = '&nbsp';
         eParent.appendChild(eIcon);
@@ -86,12 +87,15 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         ag_grid_community_1._.setVisible(this.eExpandUnchecked, true);
     };
     ToolPanelFilterComp.prototype.onFilterOpened = function (event) {
-        if (event.source !== 'COLUMN_MENU')
+        if (event.source !== 'COLUMN_MENU') {
             return;
-        if (event.column !== this.params.column)
+        }
+        if (event.column !== this.params.column) {
             return;
-        if (!this.expanded)
+        }
+        if (!this.expanded) {
             return;
+        }
         this.doCollapse();
     };
     ToolPanelFilterComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-instance\" >\n            <div class=\"ag-filter-toolpanel-header ag-header-cell-label\" ref=\"eFilterToolpanelHeader\">\n                <a href=\"javascript:void(0)\" (click)=\"onExpandClicked\" ref=\"eExpand\">\n                    <span class=\"ag-icon ag-icon-tree-open\" ref=\"eExpandChecked\"></span>\n                    <span class=\"ag-icon ag-icon-tree-closed\" ref=\"eExpandUnchecked\"></span>\n                </a>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-body ag-filter\" ref=\"agFilterToolpanelBody\"/>\n        </div>";

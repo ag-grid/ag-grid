@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,6 +55,7 @@ var Constants = /** @class */ (function () {
     Constants.DOM_LAYOUT_NORMAL = 'normal';
     Constants.DOM_LAYOUT_PRINT = 'print';
     Constants.DOM_LAYOUT_AUTO_HEIGHT = 'autoHeight';
+    Constants.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
     return Constants;
 }());
 exports.Constants = Constants;

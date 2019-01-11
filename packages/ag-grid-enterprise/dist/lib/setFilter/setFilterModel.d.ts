@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { ColDef, Column, IRowModel, ValueFormatterService } from "ag-grid-community";
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
@@ -41,8 +41,8 @@ export declare class SetFilterModel {
     private createAvailableUniqueValues;
     private sortValues;
     private getUniqueValues;
-    setMiniFilter(newMiniFilter: string): boolean;
-    getMiniFilter(): string;
+    setMiniFilter(newMiniFilter: string | null): boolean;
+    getMiniFilter(): string | null;
     private processMiniFilter;
     getDisplayedValueCount(): number;
     getDisplayedValue(index: any): any;
@@ -53,7 +53,7 @@ export declare class SetFilterModel {
     isFilterActive(): boolean;
     selectNothing(): void;
     getUniqueValueCount(): number;
-    getUniqueValue(index: any): string;
+    getUniqueValue(index: any): string | null;
     unselectValue(value: any): void;
     selectValue(value: any): void;
     isValueSelected(value: any): boolean;
@@ -64,4 +64,3 @@ export declare class SetFilterModel {
     private setSyncModel;
     onFilterValuesReady(callback: () => void): void;
 }
-//# sourceMappingURL=setFilterModel.d.ts.map

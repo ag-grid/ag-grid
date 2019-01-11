@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var stylesheet_1 = require("./stylesheet");
@@ -48,15 +48,16 @@ var borderFactory = {
 };
 exports.default = borderFactory;
 var getWeightName = function (value) {
-    if (value === void 0) { value = 0; }
-    if (value === 0)
-        return 'hair';
-    if (value === 1)
+    if (value === 1) {
         return 'thin';
-    if (value === 2)
+    }
+    if (value === 2) {
         return 'medium';
-    if (value === 3)
+    }
+    if (value === 3) {
         return 'thick';
+    }
+    return 'hair';
 };
 var mappedNames = {
     None: 'None',
@@ -75,9 +76,11 @@ exports.convertLegacyBorder = function (type, weight) {
     // dashDotDot, mediumDashDotDot, slantDashDot
     var namedWeight = getWeightName(weight);
     var mappedName = mappedNames[type];
-    if (type === 'Continuous')
+    if (type === 'Continuous') {
         return namedWeight;
-    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) > 0)
+    }
+    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) > 0) {
         return "medium" + mappedName;
+    }
     return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
 };

@@ -1,6 +1,6 @@
 // to satisfy server side compilation
 declare let global: any;
-let globalObj = typeof global === 'undefined' ? {} : global;
+const globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
 globalObj.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
 globalObj.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
@@ -90,7 +90,7 @@ export {BaseFilter} from "./filter/baseFilter";
 export {DateFilter, SerializedDateFilter} from "./filter/dateFilter";
 export {FilterManager, FilterWrapper, FilterRequestSource} from "./filter/filterManager";
 export {NumberFilter} from "./filter/numberFilter";
-export {TextFilter,SerializedTextFilter} from "./filter/textFilter";
+export {TextFilter, SerializedTextFilter} from "./filter/textFilter";
 export {IFloatingFilter, IFloatingFilterParams} from "./filter/floatingFilter";
 
 // gridPanel

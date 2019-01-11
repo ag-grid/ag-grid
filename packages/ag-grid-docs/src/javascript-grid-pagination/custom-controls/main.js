@@ -20,11 +20,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    enableSorting: true,
-    enableFilter: true,
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     debug: true,
     rowSelection: 'multiple',
-    enableColResize: true,
     paginationPageSize: 500,
     columnDefs: columnDefs,
     pagination: true,
@@ -66,6 +67,7 @@ function onBtFirst() {
 }
 
 function onBtLast() {
+    console.log("here");
     gridOptions.api.paginationGoToLastPage();
 }
 

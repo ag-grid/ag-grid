@@ -34,22 +34,26 @@ var dataForBottomGrid = [
 
 // this is the grid options for the top grid
 var gridOptionsTop = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
     debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
-    enableSorting: true,
     alignedGrids: []
 };
 
 // this is the grid options for the bottom grid
 var gridOptionsBottom = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     // we are hard coding the data here, it's just for demo purposes
     rowData: dataForBottomGrid,
-    enableColResize: true,
     debug: true,
     rowClass: 'bold-row',
     // hide the header on the bottom grid

@@ -27,39 +27,43 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 <div id="example-toolbar">
     <div>
         <div>
-            <span>Data Size:</span>
-            <select onchange="onDataSizeChanged(this.value)" id="data-size"
-                    style="color: #333;">
-                <option value=".1x22">100 Rows, 22 Cols</option>
-                <option value="1x22">1,000 Rows, 22 Cols</option>
-                <option value="10x100">10,000 Rows, 100 Cols</option>
-                <option value="100x22">100,000 Rows, 22 Cols</option>
-            </select>
+            <div>
+                <span>Data Size:</span>
+                <select onchange="onDataSizeChanged(this.value)" id="data-size"
+                        style="color: #333;">
+                    <option value=".1x22">100 Rows, 22 Cols</option>
+                    <option value="1x22">1,000 Rows, 22 Cols</option>
+                    <option value="10x100">10,000 Rows, 100 Cols</option>
+                    <option value="50x22">50,000 Rows, 22 Cols</option>
+                    <option value="100x22">100,000 Rows, 22 Cols</option>
+                </select>
 
-            <span id="message" style="margin-left: 10px;">
-                <i class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i>
-            </span>
+                <span id="message" style="margin-left: 10px;">
+                    <i class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i>
+                </span>
+            </div>
+            <div>
+                <span class="hide-when-small">Theme:</span>
+
+                <select onchange="onThemeChanged(this.value)" style="width: 150px; color: #333;"
+                        id="grid-theme"
+                        class="hide-when-small">
+                    <option value="">-none-</option>
+                    <option value="ag-theme-balham" selected>Balham</option>
+                    <option value="ag-theme-balham-dark">Balham (dark)</option>
+                    <option value="ag-theme-material">Material</option>
+                </select>
+            </div>
         </div>
         <div>
-            <span class="hide-when-small">Theme:</span>
-
-            <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
-                    id="grid-theme"
-                    class="hide-when-small">
-                <option value="">-none-</option>
-                <option value="ag-theme-balham" selected>Balham</option>
-                <option value="ag-theme-balham-dark">Balham (dark)</option>
-                <option value="ag-theme-material">Material</option>
-            </select>
-        </div>
-
-        <div id="features-overlay" style="flex: 0;  margin-left: auto;">
-            <a style=" white-space: nowrap;" href="#" @click.prevent="toggleTutorial">Walk me through the features</a>
-            <router-view></router-view>
-        </div>
-
-        <div style="flex: 0; align-self: flex-end; white-space: nowrap;">
-            <a href="#" id="videoLink" data-toggle="modal" data-target="#videoModal">Take video tour</a>
+            <div class="link-container">
+                <div class="features"></div>
+                <a style=" white-space: nowrap;" href="#" @click.prevent="toggleTutorial">Walk me through the features</a>
+            </div>
+            <div class="link-container">
+                <div class="youtube"></div>
+                <a href="#" id="videoLink" data-toggle="modal" data-target="#videoModal">Take video tour</a>
+            </div>
         </div>
     </div>
 </div>

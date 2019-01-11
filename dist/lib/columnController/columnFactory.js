@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,8 +25,8 @@ var columnKeyCreator_1 = require("./columnKeyCreator");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var column_1 = require("../entities/column");
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
 var defaultColumnTypes_1 = require("../entities/defaultColumnTypes");
+var utils_1 = require("../utils");
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 var ColumnFactory = /** @class */ (function () {
     function ColumnFactory() {
@@ -161,8 +161,8 @@ var ColumnFactory = /** @class */ (function () {
     };
     ColumnFactory.prototype.createMergedColGroupDef = function (colGroupDef) {
         var colGroupDefMerged = {};
-        utils_1.Utils.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
-        utils_1.Utils.assign(colGroupDefMerged, colGroupDef);
+        utils_1._.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
+        utils_1._.assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
         return colGroupDefMerged;
     };
@@ -180,7 +180,7 @@ var ColumnFactory = /** @class */ (function () {
         return column;
     };
     ColumnFactory.prototype.findExistingColumn = function (colDef, existingColsCopy) {
-        var res = utils_1.Utils.find(existingColsCopy, function (col) {
+        var res = utils_1._.find(existingColsCopy, function (col) {
             var oldColDef = col.getUserProvidedColDef();
             if (!oldColDef) {
                 return false;
@@ -201,7 +201,7 @@ var ColumnFactory = /** @class */ (function () {
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef's with common id
         if (res) {
-            utils_1.Utils.removeFromArray(existingColsCopy, res);
+            utils_1._.removeFromArray(existingColsCopy, res);
         }
         return res;
     };
@@ -209,13 +209,13 @@ var ColumnFactory = /** @class */ (function () {
         // start with empty merged definition
         var colDefMerged = {};
         // merge properties from default column definitions
-        utils_1.Utils.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
+        utils_1._.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
         // merge properties from column type properties
         if (colDef.type) {
             this.assignColumnTypes(colDef, colDefMerged);
         }
         // merge properties from column definitions
-        utils_1.Utils.assign(colDefMerged, colDef);
+        utils_1._.assign(colDefMerged, colDef);
         return colDefMerged;
     };
     ColumnFactory.prototype.assignColumnTypes = function (colDef, colDefMerged) {
@@ -237,11 +237,11 @@ var ColumnFactory = /** @class */ (function () {
             return;
         }
         // merge user defined with default column types
-        var allColumnTypes = utils_1.Utils.assign({}, this.gridOptionsWrapper.getColumnTypes(), defaultColumnTypes_1.DefaultColumnTypes);
+        var allColumnTypes = utils_1._.assign({}, this.gridOptionsWrapper.getColumnTypes(), defaultColumnTypes_1.DefaultColumnTypes);
         typeKeys.forEach(function (t) {
             var typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                utils_1.Utils.assign(colDefMerged, typeColDef);
+                utils_1._.assign(colDefMerged, typeColDef);
             }
             else {
                 console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");

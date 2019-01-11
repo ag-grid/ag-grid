@@ -1,11 +1,10 @@
-
 export class LinkedList<T> {
 
     private first: LinkedListItem<T> = null;
     private last: LinkedListItem<T> = null;
 
     public add(item: T): void {
-        let entry: LinkedListItem<T> = {
+        const entry: LinkedListItem<T> = {
             item: item,
             next: null
         };
@@ -18,7 +17,7 @@ export class LinkedList<T> {
     }
 
     public remove(): T {
-        let result = this.first;
+        const result = this.first;
         if (result) {
             this.first = result.next;
             if (!this.first) {

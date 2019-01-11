@@ -21,18 +21,22 @@ var columnDefs = [
 
 // this is the grid options for the top grid
 var gridOptionsTop = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
     debug: true,
     alignedGrids: []
 };
 
 // this is the grid options for the bottom grid
 var gridOptionsBottom = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
     debug: true,
     alignedGrids: []
 };

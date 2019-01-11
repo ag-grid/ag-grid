@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("./utils");
 var context_1 = require("./context/context");
 var context_2 = require("./context/context");
 var logger_1 = require("./logger");
@@ -30,6 +29,7 @@ var context_4 = require("./context/context");
 var constants_1 = require("./constants");
 var columnApi_1 = require("./columnController/columnApi");
 var gridApi_1 = require("./gridApi");
+var utils_1 = require("./utils");
 var SelectionController = /** @class */ (function () {
     function SelectionController() {
     }
@@ -55,7 +55,7 @@ var SelectionController = /** @class */ (function () {
     };
     SelectionController.prototype.getSelectedNodes = function () {
         var selectedNodes = [];
-        utils_1.Utils.iterateObject(this.selectedNodes, function (key, rowNode) {
+        utils_1._.iterateObject(this.selectedNodes, function (key, rowNode) {
             if (rowNode) {
                 selectedNodes.push(rowNode);
             }
@@ -64,7 +64,7 @@ var SelectionController = /** @class */ (function () {
     };
     SelectionController.prototype.getSelectedRows = function () {
         var selectedRows = [];
-        utils_1.Utils.iterateObject(this.selectedNodes, function (key, rowNode) {
+        utils_1._.iterateObject(this.selectedNodes, function (key, rowNode) {
             if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
             }
@@ -73,7 +73,7 @@ var SelectionController = /** @class */ (function () {
     };
     SelectionController.prototype.removeGroupsFromSelection = function () {
         var _this = this;
-        utils_1.Utils.iterateObject(this.selectedNodes, function (key, rowNode) {
+        utils_1._.iterateObject(this.selectedNodes, function (key, rowNode) {
             if (rowNode && rowNode.group) {
                 _this.selectedNodes[rowNode.id] = undefined;
             }
@@ -105,16 +105,20 @@ var SelectionController = /** @class */ (function () {
         var _this = this;
         var groupsToRefresh = {};
         var updatedCount = 0;
-        utils_1.Utils.iterateObject(this.selectedNodes, function (key, otherRowNode) {
+        utils_1._.iterateObject(this.selectedNodes, function (key, otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 var rowNode = _this.selectedNodes[otherRowNode.id];
-                updatedCount += rowNode.setSelectedParams({ newValue: false, clearSelection: false, suppressFinishActions: true });
+                updatedCount += rowNode.setSelectedParams({
+                    newValue: false,
+                    clearSelection: false,
+                    suppressFinishActions: true
+                });
                 if (_this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }
             }
         });
-        utils_1.Utils.iterateObject(groupsToRefresh, function (key, group) {
+        utils_1._.iterateObject(groupsToRefresh, function (key, group) {
             group.calculateSelectedFromChildren();
         });
         return updatedCount;
@@ -148,16 +152,16 @@ var SelectionController = /** @class */ (function () {
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
     SelectionController.prototype.syncInOldRowNode = function (rowNode, oldNode) {
-        var oldNodeHasDifferentId = utils_1.Utils.exists(oldNode) && (rowNode.id !== oldNode.id);
+        var oldNodeHasDifferentId = utils_1._.exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId) {
-            var oldNodeSelected = utils_1.Utils.exists(this.selectedNodes[oldNode.id]);
+            var oldNodeSelected = utils_1._.exists(this.selectedNodes[oldNode.id]);
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id] = oldNode;
             }
         }
     };
     SelectionController.prototype.syncInNewRowNode = function (rowNode) {
-        if (utils_1.Utils.exists(this.selectedNodes[rowNode.id])) {
+        if (utils_1._.exists(this.selectedNodes[rowNode.id])) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
         }
@@ -210,7 +214,7 @@ var SelectionController = /** @class */ (function () {
     };
     SelectionController.prototype.isEmpty = function () {
         var count = 0;
-        utils_1.Utils.iterateObject(this.selectedNodes, function (nodeId, rowNode) {
+        utils_1._.iterateObject(this.selectedNodes, function (nodeId, rowNode) {
             if (rowNode) {
                 count++;
             }
@@ -230,7 +234,7 @@ var SelectionController = /** @class */ (function () {
             clientSideRowModel.forEachNodeAfterFilter(callback);
         }
         else {
-            utils_1.Utils.iterateObject(this.selectedNodes, function (id, rowNode) {
+            utils_1._.iterateObject(this.selectedNodes, function (id, rowNode) {
                 // remember the reference can be to null, as we never 'delete' from the map
                 if (rowNode) {
                     callback(rowNode);
@@ -276,7 +280,9 @@ var SelectionController = /** @class */ (function () {
     };
     // Deprecated method
     SelectionController.prototype.selectNode = function (rowNode, tryMulti) {
-        rowNode.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
+        if (rowNode) {
+            rowNode.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
+        }
     };
     // Deprecated method
     SelectionController.prototype.deselectIndex = function (rowIndex) {
@@ -285,7 +291,9 @@ var SelectionController = /** @class */ (function () {
     };
     // Deprecated method
     SelectionController.prototype.deselectNode = function (rowNode) {
-        rowNode.setSelectedParams({ newValue: false, clearSelection: false });
+        if (rowNode) {
+            rowNode.setSelectedParams({ newValue: false, clearSelection: false });
+        }
     };
     // Deprecated method
     SelectionController.prototype.selectIndex = function (index, tryMulti) {

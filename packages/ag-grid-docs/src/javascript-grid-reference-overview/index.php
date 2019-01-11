@@ -19,8 +19,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Grid Properties</h2>
     <p>
 
-                    Most features of the grid are set using grid properties. Eg turn on sorting by setting
-                    <code>enableSorting = true</code>, or turn on filtering with <code>enableFilter = true</code>.
+                    Most features of the grid are set using grid properties. Eg turn on row animation by setting
+                    <code>animateRows = true</code>.
 
     </p>
     <p> <a href="../javascript-grid-properties/">Go to Grid Properties</a> </p>
@@ -104,7 +104,7 @@ var gridOptions = {
     columnDefs: myColDefs,
 
     // PROPERTIES - simple boolean / string / number properties
-    enableColResize: true,
+    pagination: true,
     rowSelection: 'single',
 
     // EVENTS - add event callback handlers
@@ -248,8 +248,8 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <p>
             All of the above (attributes, properties, callbacks and event handlers) are registered
-            using their 'dash' syntax and not camelcase. For example, the property enableSorting
-            is bound using enable-sorting. <code>enable-sorting</code>. The following example shows
+            using their 'dash' syntax and not camelcase. For example, the property rowAnimation
+            is bound using <code>row-animation</code>. The following example shows
             some bindings:
         </p>
 
@@ -260,8 +260,8 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
     // these are boolean values, which if included without a value, default to true
     // (which is different to leaving them out, in which case the default is false)
-    enable-sorting
-    enable-filter
+    row-animation
+    pagination
 
     // these are attributes, not bound, give explicit values here
     row-selection="multiple"
@@ -305,9 +305,9 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         <p>Properties on <code>ag-grid-polymer</code> can be provided in the following three ways:</p>
 
         <ul class="content">
-            <li>LowerCase: ie: <code>enablesorting</code></li>
-            <li>CamelCase: ie: <code>enableSorting</code></li>
-            <li>Hyphenated Lowercase: ie: <code>enable-sorting</code></li>
+            <li>LowerCase: ie: <code>rowanimation</code></li>
+            <li>CamelCase: ie: <code>rowAnimation</code></li>
+            <li>Hyphenated Lowercase: ie: <code>row-animation</code></li>
         </ul>
 
         <p>You can specify the properties in the following ways:</p>
@@ -321,14 +321,14 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <snippet language="html">
             &lt;ag-grid-polymer rowData="{{rowData}}"
-            enableSorting
-            enable-filtering
+            rowAnimation
+            pivot-mode
             &gt;&lt;/ag-grid-polymer&gt;
         </snippet>
 
         <p>Here we've specified 3 properties: <code>rowData</code> is provided with two-way binding.
-            <code>enableSorting</code>
-            and <code>enable-filtering</code> illustrate how you can specify properties in different cases.</p>
+            <code>rowAnimation</code>
+            and <code>pivot-mode</code> illustrate how you can specify properties in different cases.</p>
 
         <h3>Events</h3>
 
@@ -456,8 +456,8 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 
         <p>
             All of the above (attributes, properties, callbacks and event handlers) are registered
-            using their 'dash' syntax and not camelcase. For example, the property enableSorting
-            is bound using enable-sorting. <code>enable-sorting</code>. The following example shows
+            using their 'dash' syntax and not camelcase. For example, the property pivotMode
+            is bound using <code>pivot-mode</code>. The following example shows
             some bindings:
         </p>
 
@@ -468,8 +468,8 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 
     // these are boolean values
     // (leaving them out will default them to false)
-    :enableColResize="true"
-    :enableSorting="true"
+    :rowAnimation="true"
+    :pivot-mode="true"
 
     // these are bound properties
     :gridOptions="gridOptions"
@@ -516,7 +516,7 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 
         <p>
             Bindings are registered using their 'dash' syntax and not camelcase. For example,
-            the property enableSorting is bound using <code>enable-sorting</code>.
+            the property rowAnimation is bound using <code>row-animation</code>.
         </p>
 
         <p>
@@ -540,8 +540,7 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
     id="myGrid"
 
     // these are boolean values, which if included without a value, default to Yes
-    enable-sorting
-    enable-filter
+    row-animation
 
     // these are attributes, not bound, give explicit values here
     row-height="22"

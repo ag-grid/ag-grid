@@ -1,23 +1,23 @@
-import {RowNode} from "./entities/rowNode";
-import {Column} from "./entities/column";
-import {ColDef} from "./entities/colDef";
-import {GridApi} from "./gridApi";
-import {ColumnApi} from "./columnController/columnApi";
-import {OriginalColumnGroup} from "./entities/originalColumnGroup";
-import {FilterRequestSource} from "./filter/filterManager";
+import { RowNode } from "./entities/rowNode";
+import { Column } from "./entities/column";
+import { ColDef } from "./entities/colDef";
+import { GridApi } from "./gridApi";
+import { ColumnApi } from "./columnController/columnApi";
+import { OriginalColumnGroup } from "./entities/originalColumnGroup";
+import { FilterRequestSource } from "./filter/filterManager";
 
 export {Events} from './eventKeys';
 
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
-    animate: boolean;
+    animate: boolean | undefined;
     /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
      * it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
-    keepRenderedRows: boolean;
+    keepRenderedRows: boolean | undefined;
     /** If true, then this update was a result of setRowData() getting called. This
      * gets the grid to scroll to the top again. */
-    newData: boolean;
+    newData: boolean | undefined;
     /** True when pagination and a new page is navigated to. */
     newPage: boolean;
 }
@@ -179,9 +179,9 @@ export interface FlashCellsEvent extends AgGridEvent {
 }
 
 export interface PaginationChangedEvent extends AgGridEvent {
-    animate: boolean;
-    keepRenderedRows: boolean;
-    newData: boolean;
+    animate?: boolean;
+    keepRenderedRows?: boolean;
+    newData?: boolean;
     newPage: boolean;
 }
 
@@ -268,7 +268,7 @@ export interface RowEvent extends AgGridEvent {
     rowIndex: number;
     rowPinned: string;
     context: any;
-    event?: Event;
+    event?: Event | null;
 }
 
 export interface RowGroupOpenedEvent extends RowEvent {

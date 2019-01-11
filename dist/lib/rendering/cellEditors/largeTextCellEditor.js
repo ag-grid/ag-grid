@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -34,7 +34,7 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
         this.textarea.maxLength = params.maxLength ? params.maxLength : "200";
         this.textarea.cols = params.cols ? params.cols : "60";
         this.textarea.rows = params.rows ? params.rows : "10";
-        if (utils_1.Utils.exists(params.value)) {
+        if (utils_1._.exists(params.value)) {
             this.textarea.value = params.value.toString();
         }
         this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);

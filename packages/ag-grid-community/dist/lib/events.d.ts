@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -11,14 +11,14 @@ import { FilterRequestSource } from "./filter/filterManager";
 export { Events } from './eventKeys';
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
-    animate: boolean;
+    animate: boolean | undefined;
     /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
      * it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
-    keepRenderedRows: boolean;
+    keepRenderedRows: boolean | undefined;
     /** If true, then this update was a result of setRowData() getting called. This
      * gets the grid to scroll to the top again. */
-    newData: boolean;
+    newData: boolean | undefined;
     /** True when pagination and a new page is navigated to. */
     newPage: boolean;
 }
@@ -135,9 +135,9 @@ export interface FlashCellsEvent extends AgGridEvent {
     cells: any;
 }
 export interface PaginationChangedEvent extends AgGridEvent {
-    animate: boolean;
-    keepRenderedRows: boolean;
-    newData: boolean;
+    animate?: boolean;
+    keepRenderedRows?: boolean;
+    newData?: boolean;
     newPage: boolean;
 }
 export interface CellFocusedEvent extends AgGridEvent {
@@ -186,7 +186,7 @@ export interface RowEvent extends AgGridEvent {
     rowIndex: number;
     rowPinned: string;
     context: any;
-    event?: Event;
+    event?: Event | null;
 }
 export interface RowGroupOpenedEvent extends RowEvent {
 }
@@ -246,4 +246,3 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 }
 export interface ScrollVisibilityChangedEvent extends AgGridEvent {
 }
-//# sourceMappingURL=events.d.ts.map

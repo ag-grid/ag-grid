@@ -1,81 +1,81 @@
-import {GridOptions} from "./entities/gridOptions";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {SelectionController} from "./selectionController";
-import {ColumnApi} from "./columnController/columnApi";
-import {ColumnController} from "./columnController/columnController";
-import {RowRenderer} from "./rendering/rowRenderer";
-import {HeaderRootComp} from "./headerRendering/headerRootComp";
-import {FilterManager} from "./filter/filterManager";
-import {ValueService} from "./valueService/valueService";
-import {EventService} from "./eventService";
-import {GridPanel} from "./gridPanel/gridPanel";
-import {GridApi} from "./gridApi";
-import {ColumnFactory} from "./columnController/columnFactory";
-import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
-import {ExpressionService} from "./valueService/expressionService";
-import {TemplateService} from "./templateService";
-import {PopupService} from "./widgets/popupService";
-import {Logger, LoggerFactory} from "./logger";
-import {ColumnUtils} from "./columnController/columnUtils";
-import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
-import {HorizontalResizeService} from "./headerRendering/horizontalResizeService";
-import {Context} from "./context/context";
-import {CsvCreator} from "./exporter/csvCreator";
-import {GridCore} from "./gridCore";
-import {StandardMenuFactory} from "./headerRendering/standardMenu";
-import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
-import {DragService} from "./dragAndDrop/dragService";
-import {SortController} from "./sortController";
-import {FocusedCellController} from "./focusedCellController";
-import {MouseEventService} from "./gridPanel/mouseEventService";
-import {CellNavigationService} from "./cellNavigationService";
-import {Utils as _} from "./utils";
-import {FilterStage} from "./rowModels/clientSide/filterStage";
-import {SortStage} from "./rowModels/clientSide/sortStage";
-import {FlattenStage} from "./rowModels/clientSide/flattenStage";
-import {CellEditorFactory} from "./rendering/cellEditorFactory";
-import {Events, GridReadyEvent} from "./events";
-import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
-import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
-import {CellRendererFactory} from "./rendering/cellRendererFactory";
-import {CellRendererService} from "./rendering/cellRendererService";
-import {ValueFormatterService} from "./rendering/valueFormatterService";
-import {AgCheckbox} from "./widgets/agCheckbox";
-import {BaseFrameworkFactory} from "./baseFrameworkFactory";
-import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
-import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
-import {Downloader} from "./exporter/downloader";
-import {XmlFactory} from "./exporter/xmlFactory";
-import {GridSerializer} from "./exporter/gridSerializer";
-import {StylingService} from "./styling/stylingService";
-import {ColumnHoverService} from "./rendering/columnHoverService";
-import {ColumnAnimationService} from "./rendering/columnAnimationService";
-import {SortService} from "./rowNodes/sortService";
-import {FilterService} from "./rowNodes/filterService";
-import {AutoGroupColService} from "./columnController/autoGroupColService";
-import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
-import {ImmutableService} from "./rowModels/clientSide/immutableService";
-import {IRowModel} from "./interfaces/iRowModel";
-import {Constants} from "./constants";
-import {ValueCache} from "./valueService/valueCache";
-import {ChangeDetectionService} from "./valueService/changeDetectionService";
-import {AlignedGridsService} from "./alignedGridsService";
-import {PinnedRowModel} from "./rowModels/pinnedRowModel";
-import {ComponentResolver} from "./components/framework/componentResolver";
-import {ComponentRecipes} from "./components/framework/componentRecipes";
-import {ComponentProvider} from "./components/framework/componentProvider";
-import {AgComponentUtils} from "./components/framework/agComponentUtils";
-import {ComponentMetadataProvider} from "./components/framework/componentMetadataProvider";
-import {Beans} from "./rendering/beans";
-import {Environment} from "./environment";
-import {AnimationFrameService} from "./misc/animationFrameService";
-import {NavigationService} from "./gridPanel/navigationService";
-import {HeightScaler} from "./rendering/heightScaler";
-import {SelectableService} from "./rowNodes/selectableService";
-import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
-import {PaginationComp} from "./rowModels/pagination/paginationComp";
-import {ResizeObserverService} from "./misc/resizeObserverService";
-import {ZipContainer} from "./exporter/files/zip/zipContainer";
+import { GridOptions } from "./entities/gridOptions";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { SelectionController } from "./selectionController";
+import { ColumnApi } from "./columnController/columnApi";
+import { ColumnController } from "./columnController/columnController";
+import { RowRenderer } from "./rendering/rowRenderer";
+import { HeaderRootComp } from "./headerRendering/headerRootComp";
+import { FilterManager } from "./filter/filterManager";
+import { ValueService } from "./valueService/valueService";
+import { EventService } from "./eventService";
+import { GridPanel } from "./gridPanel/gridPanel";
+import { GridApi } from "./gridApi";
+import { ColumnFactory } from "./columnController/columnFactory";
+import { DisplayedGroupCreator } from "./columnController/displayedGroupCreator";
+import { ExpressionService } from "./valueService/expressionService";
+import { TemplateService } from "./templateService";
+import { PopupService } from "./widgets/popupService";
+import { Logger, LoggerFactory } from "./logger";
+import { ColumnUtils } from "./columnController/columnUtils";
+import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
+import { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
+import { Context } from "./context/context";
+import { CsvCreator } from "./exporter/csvCreator";
+import { GridCore } from "./gridCore";
+import { StandardMenuFactory } from "./headerRendering/standardMenu";
+import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
+import { DragService } from "./dragAndDrop/dragService";
+import { SortController } from "./sortController";
+import { FocusedCellController } from "./focusedCellController";
+import { MouseEventService } from "./gridPanel/mouseEventService";
+import { CellNavigationService } from "./cellNavigationService";
+import { FilterStage } from "./rowModels/clientSide/filterStage";
+import { SortStage } from "./rowModels/clientSide/sortStage";
+import { FlattenStage } from "./rowModels/clientSide/flattenStage";
+import { CellEditorFactory } from "./rendering/cellEditorFactory";
+import { Events, GridReadyEvent } from "./events";
+import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
+import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
+import { CellRendererFactory } from "./rendering/cellRendererFactory";
+import { CellRendererService } from "./rendering/cellRendererService";
+import { ValueFormatterService } from "./rendering/valueFormatterService";
+import { AgCheckbox } from "./widgets/agCheckbox";
+import { BaseFrameworkFactory } from "./baseFrameworkFactory";
+import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
+import { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
+import { Downloader } from "./exporter/downloader";
+import { XmlFactory } from "./exporter/xmlFactory";
+import { GridSerializer } from "./exporter/gridSerializer";
+import { StylingService } from "./styling/stylingService";
+import { ColumnHoverService } from "./rendering/columnHoverService";
+import { ColumnAnimationService } from "./rendering/columnAnimationService";
+import { SortService } from "./rowNodes/sortService";
+import { FilterService } from "./rowNodes/filterService";
+import { AutoGroupColService } from "./columnController/autoGroupColService";
+import { PaginationAutoPageSizeService, PaginationProxy } from "./rowModels/paginationProxy";
+import { ImmutableService } from "./rowModels/clientSide/immutableService";
+import { IRowModel } from "./interfaces/iRowModel";
+import { Constants } from "./constants";
+import { ValueCache } from "./valueService/valueCache";
+import { ChangeDetectionService } from "./valueService/changeDetectionService";
+import { AlignedGridsService } from "./alignedGridsService";
+import { PinnedRowModel } from "./rowModels/pinnedRowModel";
+import { ComponentResolver } from "./components/framework/componentResolver";
+import { ComponentRecipes } from "./components/framework/componentRecipes";
+import { ComponentProvider } from "./components/framework/componentProvider";
+import { AgComponentUtils } from "./components/framework/agComponentUtils";
+import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
+import { Beans } from "./rendering/beans";
+import { Environment } from "./environment";
+import { AnimationFrameService } from "./misc/animationFrameService";
+import { NavigationService } from "./gridPanel/navigationService";
+import { HeightScaler } from "./rendering/heightScaler";
+import { SelectableService } from "./rowNodes/selectableService";
+import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
+import { PaginationComp } from "./rowModels/pagination/paginationComp";
+import { ResizeObserverService } from "./misc/resizeObserverService";
+import { ZipContainer } from "./exporter/files/zip/zipContainer";
+import { _ } from "./utils";
 
 export interface GridParams {
     // used by Web Components
@@ -114,7 +114,7 @@ export class Grid {
         this.enterpriseBeans = enterpriseBeans;
 
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
-        _.iterateObject(rowModelClasses, (key: string, value: any)=> Grid.RowModelClasses[key] = value );
+        _.iterateObject(rowModelClasses, (key: string, value: any) => Grid.RowModelClasses[key] = value);
     }
 
     public static setEnterpriseComponents(components: any[]): void {
@@ -138,16 +138,16 @@ export class Grid {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
 
-        let rowModelClass = this.getRowModelClass(gridOptions);
+        const rowModelClass = this.getRowModelClass(gridOptions);
 
-        let enterprise = _.exists(Grid.enterpriseBeans);
+        const enterprise = _.exists(Grid.enterpriseBeans);
 
         let frameworkFactory = params ? params.frameworkFactory : null;
         if (_.missing(frameworkFactory)) {
             frameworkFactory = new BaseFrameworkFactory();
         }
 
-        let overrideBeans:any[]= [];
+        let overrideBeans:any[] = [];
 
         if (Grid.enterpriseBeans) {
             overrideBeans = overrideBeans.concat(Grid.enterpriseBeans);
@@ -157,7 +157,7 @@ export class Grid {
             overrideBeans = overrideBeans.concat(Grid.frameworkBeans);
         }
 
-        let seed = {
+        const seed = {
             enterprise: enterprise,
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
@@ -182,7 +182,7 @@ export class Grid {
             components = components.concat(Grid.enterpriseComponents);
         }
 
-        let contextParams = {
+        const contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
@@ -216,29 +216,29 @@ export class Grid {
 
     private setColumnsAndData(): void {
 
-        let gridOptionsWrapper: GridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
-        let columnController: ColumnController = this.context.getBean('columnController');
-        let rowModel: IRowModel = this.context.getBean('rowModel');
+        const gridOptionsWrapper: GridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
+        const columnController: ColumnController = this.context.getBean('columnController');
+        const rowModel: IRowModel = this.context.getBean('rowModel');
 
-        let columnDefs = gridOptionsWrapper.getColumnDefs();
-        let rowData = gridOptionsWrapper.getRowData();
+        const columnDefs = gridOptionsWrapper.getColumnDefs();
+        const rowData = gridOptionsWrapper.getRowData();
 
-        let nothingToSet = _.missing(columnDefs) && _.missing(rowData);
+        const nothingToSet = _.missing(columnDefs) && _.missing(rowData);
         if (nothingToSet) { return; }
 
         if (_.exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs, "gridInitializing");
         }
 
-        if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            let clientSideRowModel = <ClientSideRowModel> rowModel;
+        if (_.exists(rowData) && rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            const clientSideRowModel = rowModel as ClientSideRowModel;
             clientSideRowModel.setRowData(rowData);
         }
     }
 
     private dispatchGridReadyEvent(gridOptions: GridOptions): void {
-        let eventService: EventService = this.context.getBean('eventService');
-        let readyEvent: GridReadyEvent = {
+        const eventService: EventService = this.context.getBean('eventService');
+        const readyEvent: GridReadyEvent = {
             type: Events.EVENT_GRID_READY,
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
@@ -253,19 +253,19 @@ export class Grid {
         rowModelType = rowModelType === 'enterprise' ? Constants.ROW_MODEL_TYPE_SERVER_SIDE : rowModelType;
 
         if (_.exists(rowModelType)) {
-            let rowModelClass = Grid.RowModelClasses[rowModelType];
+            const rowModelClass = Grid.RowModelClasses[rowModelType];
             if (_.exists(rowModelClass)) {
                 return rowModelClass;
             } else {
-                if (rowModelType==='normal') {
+                if (rowModelType === 'normal') {
                     console.warn(`ag-Grid: normal rowModel deprecated. Should now be called client side row model instead.`);
                     return ClientSideRowModel;
                 }
                 console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
-                if (rowModelType===Constants.ROW_MODEL_TYPE_VIEWPORT) {
+                if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
-                if (rowModelType===Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+                if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
                     console.error('ag-Grid: rowModelType server side is only available in ag-Grid Enterprise');
                 }
             }

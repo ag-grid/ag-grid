@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.4
-import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowNode, RowBounds } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode } from "ag-grid-community";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
     private eventService;
@@ -41,7 +41,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     updateRowIndexesAndBounds(): void;
     private setDisplayIndexes;
     private resetRowTops;
-    getRow(index: number): RowNode;
+    getRow(index: number): RowNode | null;
     getPageFirstRow(): number;
     getPageLastRow(): number;
     getRowCount(): number;
@@ -57,12 +57,12 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     removeFromCache(route: string[], items: any[]): void;
     addToCache(route: string[], items: any[], index: number): void;
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
-    getRowNode(id: string): RowNode;
+    getRowNode(id: string): RowNode | null;
     getBlockState(): any;
     isRowPresent(rowNode: RowNode): boolean;
     private extractSortModel;
     private isSortingWithValueColumn;
     private isSortingWithSecondaryColumn;
     private cacheExists;
+    private createDetailNode;
 }
-//# sourceMappingURL=serverSideRowModel.d.ts.map

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -23,7 +23,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid-community/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var HorizontalResizeComp = /** @class */ (function (_super) {
     __extends(HorizontalResizeComp, _super);
     function HorizontalResizeComp() {
@@ -32,6 +32,7 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
     HorizontalResizeComp.prototype.postConstruct = function () {
         var finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
+            dragStartPixels: 1,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this),
             onResizeEnd: this.onResizing.bind(this)
@@ -39,33 +40,33 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         this.addDestroyFunc(finishedWithResizeFunc);
     };
     HorizontalResizeComp.prototype.onResizeStart = function () {
-        this.startingWidth = this.props.componentToResize.getGui().clientWidth;
+        this.startingWidth = this.props.componentToResize.getGui().offsetWidth;
     };
     HorizontalResizeComp.prototype.onResizing = function (delta) {
-        var newWidth = this.startingWidth - delta;
-        if (newWidth < 100) {
-            newWidth = 100;
-        }
-        this.props.componentToResize.getGui().style.width = newWidth + 'px';
+        var direction = this.gridOptionsWrapper.isEnableRtl() ? -1 : 1;
+        var newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
+        // tslint:disable-next-line
+        this.gridOptionsWrapper.isEnableRtl;
+        this.props.componentToResize.getGui().style.width = newWidth + "px";
     };
     __decorate([
-        main_1.Autowired('horizontalResizeService'),
-        __metadata("design:type", main_1.HorizontalResizeService)
+        ag_grid_community_1.Autowired('horizontalResizeService'),
+        __metadata("design:type", ag_grid_community_1.HorizontalResizeService)
     ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], HorizontalResizeComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], HorizontalResizeComp.prototype, "eventService", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], HorizontalResizeComp.prototype, "postConstruct", null);
     return HorizontalResizeComp;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.HorizontalResizeComp = HorizontalResizeComp;

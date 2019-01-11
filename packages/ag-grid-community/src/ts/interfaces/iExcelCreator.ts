@@ -1,5 +1,5 @@
-import {ExportParams} from "../exporter/exportParams";
-import {XmlElement} from '../exporter/xmlFactory';
+import { ExportParams } from "../exporter/exportParams";
+import { XmlElement } from '../exporter/xmlFactory';
 
 // Common
 export interface ExcelWorksheet {
@@ -13,8 +13,8 @@ export interface ExcelTable {
 }
 
 export interface ExcelColumn {
-    min?: number;
-    max?: number;
+    min: number;
+    max: number;
     width: number;
     s?: number;
     hidden?: boolean;
@@ -33,14 +33,14 @@ export interface ExcelRow {
 
 export interface ExcelCell {
     ref?: string;
-    styleId: string;
+    styleId?: string;
     data: ExcelData;
     mergeAcross?: number;
 }
 
 export interface ExcelData {
     type: ExcelDataType | ExcelOOXMLDataType;
-    value: string;
+    value: string | null;
 }
 
 export type ExcelDataType = 'String' | "Number" | "Boolean" | "DateTime" | "Error";
@@ -49,6 +49,8 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     sheetName?: string;
     suppressTextAsCDATA?:boolean;
     exportMode?: "xlsx" | "xml";
+    rowHeight?: number;
+    headerRowHeight?: number;
 }
 
 export interface IExcelCreator {
@@ -58,14 +60,14 @@ export interface IExcelCreator {
 
 // XML
 export interface ExcelStyle {
-    id?: string;
+    id: string;
     name?: string;
-    alignment?: ExcelAlignment;
-    borders?: ExcelBorders;
-    font?: ExcelFont;
-    interior?: ExcelInterior;
-    numberFormat?: ExcelNumberFormat;
-    protection?: ExcelProtection;
+    alignment: ExcelAlignment;
+    borders: ExcelBorders;
+    font: ExcelFont;
+    interior: ExcelInterior;
+    numberFormat: ExcelNumberFormat;
+    protection: ExcelProtection;
     dataType?: string;
 }
 
@@ -146,7 +148,7 @@ export interface ExcelContentType {
  * (d) Date
  * (e) Error
 */
-export type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e';
+export type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty';
 
 export interface ExcelOOXMLTemplate {
     getTemplate(config?: any, idx?: number): XmlElement;

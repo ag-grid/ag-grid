@@ -120,9 +120,8 @@ for configuring and using Angular components in ag-Grid.</p>
     [rowData]="rowData"
 
     // boolean values 'turned on'
-    enableColResize
-    enableSorting
-    enableFilter
+    animateRows
+    pagination
 
     // simple values, not bound
     rowHeight="22"
@@ -179,10 +178,10 @@ this.params.context.componentParent</snippet>
     <ul class="content">
         <li>
             <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/dynamic.component.ts"
-               target="_blank"><i class="fa fa-external-link"></i> Parent Component</a></li>
+               target="_blank"><i class="fa fa-external-link-alt"></i> Parent Component</a></li>
         <li>
             <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/child-message.component.ts"
-               target="_blank"><i class="fa fa-external-link"></i> Child Component</a></li>
+               target="_blank"><i class="fa fa-external-link-alt"></i> Child Component</a></li>
     </ul>
 
     <h3 id="building-bundling">Building & Bundling</h3>
@@ -277,7 +276,7 @@ private getCountryFilterParams():any {
     <p>To specify a Grouped Column, you can nest a column defintion:</p>
     <snippet>
 &lt;ag-grid-column headerName="IT Skills"&gt;
-    &lt;ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true" [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()"&gt;&lt;/ag-grid-column&gt;
+    &lt;ag-grid-column headerName="Skills" [width]="125" [sortable]="false" [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()"&gt;&lt;/ag-grid-column&gt;
     &lt;ag-grid-column headerName="Proficiency" field="proficiency" [width]="120" [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()"&gt;&lt;/ag-grid-column&gt;
 &lt;/ag-grid-column&gt;</snippet>
     <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>

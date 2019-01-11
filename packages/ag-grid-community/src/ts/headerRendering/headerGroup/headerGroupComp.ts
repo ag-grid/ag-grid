@@ -1,6 +1,5 @@
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
-import { Utils as _ } from "../../utils";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
@@ -10,6 +9,7 @@ import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
 import { GridApi } from "../../gridApi";
+import { _ } from "../../utils";
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -56,18 +56,18 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addInIcon("columnGroupOpened", "agOpened");
         this.addInIcon("columnGroupClosed", "agClosed");
 
-        let expandAction = (event: MouseEvent) => {
+        const expandAction = (event: MouseEvent) => {
             if (_.isStopPropagationForAgGrid(event)) {
                 return;
             }
-            let newExpandedValue = !this.params.columnGroup.isExpanded();
+            const newExpandedValue = !this.params.columnGroup.isExpanded();
             this.columnController.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
 
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
 
-        let stopPropagationAction = (event: MouseEvent) => {
+        const stopPropagationAction = (event: MouseEvent) => {
             _.stopPropagationForAgGrid(event);
         };
 
@@ -83,13 +83,13 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         this.updateIconVisibility();
 
-        let originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
+        const originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
         this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
         this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
-        let touchListener = new TouchListener(this.eCloseIcon);
+        const touchListener = new TouchListener(this.eCloseIcon);
 
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(() => touchListener.destroy());
@@ -97,9 +97,9 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private updateIconVisibility(): void {
-        let columnGroup = this.params.columnGroup;
+        const columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
-            let expanded = this.params.columnGroup.isExpanded();
+            const expanded = this.params.columnGroup.isExpanded();
             _.setVisible(this.eOpenIcon, !expanded);
             _.setVisible(this.eCloseIcon, expanded);
         } else {
@@ -109,7 +109,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addInIcon(iconName: string, refName: string): void {
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
+        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
         this.getRefElement(refName).appendChild(eIcon);
     }
 
@@ -124,7 +124,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private setupLabel(): void {
         // no renderer, default text render
         if (this.params.displayName && this.params.displayName !== "") {
-            let eInnerText = this.getRefElement("agLabel");
+            const eInnerText = this.getRefElement("agLabel");
             eInnerText.innerHTML = this.params.displayName;
         }
     }

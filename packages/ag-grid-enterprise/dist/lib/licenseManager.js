@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
-var ag_grid_community_2 = require("ag-grid-community");
 var md5_1 = require("./license/md5");
 var LicenseManager = /** @class */ (function () {
     function LicenseManager() {
@@ -22,7 +21,7 @@ var LicenseManager = /** @class */ (function () {
         var valid = false;
         var current = false;
         var expiry = null;
-        if (!ag_grid_community_2.Utils.missingOrEmpty(LicenseManager_1.licenseKey) && LicenseManager_1.licenseKey.length > 32) {
+        if (!ag_grid_community_1._.missingOrEmpty(LicenseManager_1.licenseKey) && LicenseManager_1.licenseKey.length > 32) {
             var _a = LicenseManager_1.extractLicenseComponents(LicenseManager_1.licenseKey), md5 = _a.md5, license = _a.license;
             if (md5 === this.md5.md5(license)) {
                 expiry = LicenseManager_1.extractExpiry(license);
@@ -55,7 +54,7 @@ var LicenseManager = /** @class */ (function () {
     LicenseManager.prototype.getLicenseDetails = function (licenseKey) {
         var _a = LicenseManager_1.extractLicenseComponents(licenseKey), md5 = _a.md5, license = _a.license;
         var valid = (md5 === this.md5.md5(license));
-        var expiry;
+        var expiry = null;
         if (valid) {
             expiry = LicenseManager_1.extractExpiry(license);
             valid = !isNaN(expiry.getTime());
@@ -139,7 +138,7 @@ var LicenseManager = /** @class */ (function () {
         LicenseManager_1.licenseKey = licenseKey;
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU0Mjg4MjgwMDQ0OA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU0Njk2NjI4MDE0OA==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)

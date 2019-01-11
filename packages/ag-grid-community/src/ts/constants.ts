@@ -45,7 +45,7 @@ export class Constants {
     static ROW_MODEL_TYPE_CLIENT_SIDE = 'clientSide';
     static ROW_MODEL_TYPE_SERVER_SIDE = 'serverSide';
 
-    static DEPRECATED_ROW_MODEL_TYPE_NORMAL= 'normal';
+    static DEPRECATED_ROW_MODEL_TYPE_NORMAL = 'normal';
 
     static ALWAYS = 'always';
     static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
@@ -56,4 +56,6 @@ export class Constants {
     static DOM_LAYOUT_NORMAL = 'normal';
     static DOM_LAYOUT_PRINT = 'print';
     static DOM_LAYOUT_AUTO_HEIGHT = 'autoHeight';
+
+    static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 }

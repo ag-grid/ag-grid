@@ -1,10 +1,9 @@
-
-import {DraggingEvent, DragAndDropService} from "../dragAndDrop/dragAndDropService";
-import {Column} from "../entities/column";
-import {ColumnController} from "../columnController/columnController";
-import {Autowired} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {DropListener} from "./bodyDropTarget";
+import { DraggingEvent, DragAndDropService } from "../dragAndDrop/dragAndDropService";
+import { Column } from "../entities/column";
+import { ColumnController } from "../columnController/columnController";
+import { Autowired } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { DropListener } from "./bodyDropTarget";
 
 export class BodyDropPivotTarget implements DropListener {
 
@@ -28,9 +27,9 @@ export class BodyDropPivotTarget implements DropListener {
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return; }
 
-        let dragColumns: Column[] = draggingEvent.dragItem.columns;
+        const dragColumns: Column[] = draggingEvent.dragItem.columns;
 
-        dragColumns.forEach( column => {
+        dragColumns.forEach(column => {
             // we don't allow adding secondary columns
             if (!column.isPrimary()) { return; }
 
@@ -48,7 +47,7 @@ export class BodyDropPivotTarget implements DropListener {
     }
 
     public getIconName(): string {
-        let totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
+        const totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
         if (totalColumns > 0) {
             return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
         } else {
@@ -74,13 +73,13 @@ export class BodyDropPivotTarget implements DropListener {
 
     /** Callback for when drag stops */
     public onDragStop(draggingEvent: DraggingEvent): void {
-        if (this.columnsToAggregate.length>0) {
+        if (this.columnsToAggregate.length > 0) {
             this.columnController.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
         }
-        if (this.columnsToGroup.length>0) {
+        if (this.columnsToGroup.length > 0) {
             this.columnController.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
         }
-        if (this.columnsToPivot.length>0) {
+        if (this.columnsToPivot.length > 0) {
             this.columnController.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
         }
     }

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SerializedFilter } from "../interfaces/iFilter";
@@ -41,4 +41,3 @@ export declare class NumberFilter extends ScalarBaseFilter<number, INumberFilter
     resetState(): void;
     setType(filterType: string, type: FilterConditionType): void;
 }
-//# sourceMappingURL=numberFilter.d.ts.map

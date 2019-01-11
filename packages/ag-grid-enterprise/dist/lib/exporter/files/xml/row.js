@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -8,7 +8,7 @@ var row = {
         var cells = r.cells;
         return {
             name: "Row",
-            children: ag_grid_community_1.Utils.map(cells, function (it) {
+            children: ag_grid_community_1._.map(cells, function (it) {
                 return cell_1.default.getTemplate(it);
             })
         };

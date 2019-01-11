@@ -16,14 +16,16 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     groupSuppressAutoColumn: true,
     enableRangeSelection: true,
     columnDefs: columnDefs,
     rowData: null,
     groupHideOpenParents: true,
-    animateRows: true,
-    enableColResize: true,
-    enableSorting: true
+    animateRows: true
 };
 
 // setup the grid after the page has finished loading

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -13,7 +13,6 @@ export declare class HeaderRootComp extends Component {
     private columnController;
     private context;
     private eventService;
-    private scrollVisibleService;
     private gridApi;
     private autoWidthCalculator;
     private pinnedLeftContainer;
@@ -33,7 +32,7 @@ export declare class HeaderRootComp extends Component {
     private onPivotModeChanged;
     setHeight(height: number): void;
     private addPreventHeaderScroll;
+    setHeaderContainerWidth(width: number): void;
     setLeftVisible(visible: boolean): void;
     setRightVisible(visible: boolean): void;
 }
-//# sourceMappingURL=headerRootComp.d.ts.map

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { BaseCreator, ExcelExportParams, GridOptionsWrapper, IExcelCreator, ZipContainer } from 'ag-grid-community';
 import { ExcelCell, ExcelStyle } from 'ag-grid-community';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
@@ -27,7 +27,7 @@ export declare class ExcelCreator extends BaseCreator<ExcelCell[][], Serializing
     getMimeType(): string;
     getDefaultFileName(): string;
     getDefaultFileExtension(): string;
-    createSerializingSession(params?: ExcelExportParams): SerializingSession;
+    createSerializingSession(params: ExcelExportParams): SerializingSession;
     private styleLinker;
     isExportSuppressed(): boolean;
     private setExportMode;
@@ -35,4 +35,3 @@ export declare class ExcelCreator extends BaseCreator<ExcelCell[][], Serializing
     protected packageFile(data: string): Blob;
 }
 export {};
-//# sourceMappingURL=excelCreator.d.ts.map

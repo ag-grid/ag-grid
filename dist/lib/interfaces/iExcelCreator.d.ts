@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExportParams } from "../exporter/exportParams";
@@ -12,8 +12,8 @@ export interface ExcelTable {
     rows: ExcelRow[];
 }
 export interface ExcelColumn {
-    min?: number;
-    max?: number;
+    min: number;
+    max: number;
     width: number;
     s?: number;
     hidden?: boolean;
@@ -30,33 +30,35 @@ export interface ExcelRow {
 }
 export interface ExcelCell {
     ref?: string;
-    styleId: string;
+    styleId?: string;
     data: ExcelData;
     mergeAcross?: number;
 }
 export interface ExcelData {
     type: ExcelDataType | ExcelOOXMLDataType;
-    value: string;
+    value: string | null;
 }
 export declare type ExcelDataType = 'String' | "Number" | "Boolean" | "DateTime" | "Error";
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     sheetName?: string;
     suppressTextAsCDATA?: boolean;
     exportMode?: "xlsx" | "xml";
+    rowHeight?: number;
+    headerRowHeight?: number;
 }
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;
     getDataAsExcelXml(params?: ExcelExportParams): string;
 }
 export interface ExcelStyle {
-    id?: string;
+    id: string;
     name?: string;
-    alignment?: ExcelAlignment;
-    borders?: ExcelBorders;
-    font?: ExcelFont;
-    interior?: ExcelInterior;
-    numberFormat?: ExcelNumberFormat;
-    protection?: ExcelProtection;
+    alignment: ExcelAlignment;
+    borders: ExcelBorders;
+    font: ExcelFont;
+    interior: ExcelInterior;
+    numberFormat: ExcelNumberFormat;
+    protection: ExcelProtection;
     dataType?: string;
 }
 export interface ExcelProtection {
@@ -115,7 +117,7 @@ export interface ExcelContentType {
     Extension?: string;
     PartName?: string;
 }
-export declare type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e';
+export declare type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty';
 export interface ExcelOOXMLTemplate {
     getTemplate(config?: any, idx?: number): XmlElement;
     convertType?(type: string): string;
@@ -125,4 +127,3 @@ export interface ExcelRelationship {
     Type: string;
     Target: string;
 }
-//# sourceMappingURL=iExcelCreator.d.ts.map

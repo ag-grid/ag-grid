@@ -1,13 +1,13 @@
-import {RowNodeBlock} from "./rowNodeBlock";
-import {Logger, LoggerFactory} from "../../logger";
-import {Qualifier} from "../../context/context";
-import {_} from "../../utils";
+import { RowNodeBlock } from "./rowNodeBlock";
+import { Logger, LoggerFactory } from "../../logger";
+import { Qualifier } from "../../context/context";
+import { _ } from "../../utils";
 
 export class RowNodeBlockLoader {
 
     private readonly maxConcurrentRequests: number;
 
-    private readonly checkBlockToLoadDebounce: ()=>void;
+    private readonly checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
 
@@ -17,11 +17,11 @@ export class RowNodeBlockLoader {
 
     private active = true;
 
-    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number) {
+    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number | undefined) {
         this.maxConcurrentRequests = maxConcurrentRequests;
 
-        if (blockLoadDebounceMillis>0) {
-            this.checkBlockToLoadDebounce = _.debounce( this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+        if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
+            this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
     }
 
@@ -63,7 +63,7 @@ export class RowNodeBlockLoader {
             return;
         }
 
-        let blockToLoad: RowNodeBlock = null;
+        let blockToLoad: RowNodeBlock | null = null;
         this.blocks.forEach(block => {
             if (block.getState() === RowNodeBlock.STATE_DIRTY) {
                 blockToLoad = block;
@@ -71,9 +71,9 @@ export class RowNodeBlockLoader {
         });
 
         if (blockToLoad) {
-            blockToLoad.load();
+            blockToLoad!.load();
             this.activeBlockLoadsCount++;
-            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad.getBlockNumber()}`);
+            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad!.getBlockNumber()}`);
             this.printCacheStatus();
         } else {
             this.logger.log(`checkBlockToLoad: no pages to load`);
@@ -81,10 +81,10 @@ export class RowNodeBlockLoader {
     }
 
     public getBlockState(): any {
-        let result: any = {};
-        this.blocks.forEach( (block: RowNodeBlock) => {
-            let nodeIdPrefix = block.getNodeIdPrefix();
-            let stateItem = {
+        const result: any = {};
+        this.blocks.forEach((block: RowNodeBlock) => {
+            const nodeIdPrefix = block.getNodeIdPrefix();
+            const stateItem = {
                 blockNumber: block.getBlockNumber(),
                 startRow: block.getStartRow(),
                 endRow: block.getEndRow(),

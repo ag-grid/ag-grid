@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { IRowNodeStage, StageExecuteParams } from "ag-grid-community";
 export declare class AggregationStage implements IRowNodeStage {
     private gridOptionsWrapper;
@@ -17,4 +17,3 @@ export declare class AggregationStage implements IRowNodeStage {
     private getValuesNormal;
     private aggregateValues;
 }
-//# sourceMappingURL=aggregationStage.d.ts.map

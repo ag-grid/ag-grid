@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 export declare class MD5 {
     private ieCompatibility;
     private init;
@@ -17,4 +17,3 @@ export declare class MD5 {
     private add32Std;
     private add32Compat;
 }
-//# sourceMappingURL=md5.d.ts.map

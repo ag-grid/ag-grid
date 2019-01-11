@@ -25,7 +25,10 @@ var gridOptions = {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        width: 100
+        width: 100,
+        sortable: true,
+        resizable: true,
+        filter: true
     },
     isFullWidthCell: function(rowNode) {
         return rowNode.data.fullWidth;
@@ -62,9 +65,6 @@ var gridOptions = {
         ]
     },
     enableRangeSelection: true,
-    enableColResize: true,
-    enableSorting: true,
-    enableFilter: true,
     domLayout: 'autoHeight'
 };
 

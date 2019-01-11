@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -48,7 +48,9 @@ export interface GridOptions {
     suppressMultiSort?: boolean;
     multiSortKey?: string;
     accentedSort?: boolean;
+    deltaSort?: boolean;
     suppressHorizontalScroll?: boolean;
+    alwaysShowVerticalScroll?: boolean;
     suppressTabbing?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
@@ -87,6 +89,7 @@ export interface GridOptions {
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
     suppressCopyRowsToClipboard?: boolean;
+    copyHeadersToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressClipboardPaste?: boolean;
     suppressAggFuncInHeader?: boolean;
@@ -150,7 +153,6 @@ export interface GridOptions {
     maxColWidth?: number;
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
-    reduxStore?: any;
     reactNext?: boolean;
     statusBar?: {
         statusPanels: StatusPanelDef[];
@@ -183,6 +185,7 @@ export interface GridOptions {
     autoGroupColumnDef?: ColDef;
     forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
+    enableCharts?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -263,7 +266,7 @@ export interface GridOptions {
     };
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
-    processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][];
+    processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
     navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams) => GridCellDef;
     getDocument?: () => Document;
@@ -396,12 +399,12 @@ export interface NodeChildDetails {
     key?: any;
 }
 export interface GetContextMenuItemsParams {
-    defaultItems: string[];
+    defaultItems: string[] | undefined;
     column: Column;
     node: RowNode;
     value: any;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
 }
 export interface GetContextMenuItems {
@@ -420,8 +423,8 @@ export interface MenuItemDef {
 }
 export interface GetMainMenuItemsParams {
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
     defaultItems: string[];
 }
@@ -457,7 +460,7 @@ export interface TabToNextCellParams {
 export interface PostProcessPopupParams {
     column?: Column | null;
     rowNode?: RowNode;
-    ePopup: HTMLElement;
+    ePopup: HTMLElement | null;
     type: string;
     eventSource?: HTMLElement | null;
     mouseEvent?: MouseEvent | Touch | null;
@@ -468,4 +471,3 @@ export interface PaginationNumberFormatterParams {
 export interface ProcessDataFromClipboardParams {
     data: string[][];
 }
-//# sourceMappingURL=gridOptions.d.ts.map

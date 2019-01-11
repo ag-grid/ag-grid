@@ -38,7 +38,7 @@ export default class MoodEditor extends Component {
     }
 
     focus() {
-        setTimeout(() => {
+        window.setTimeout(() => {
             let container = ReactDOM.findDOMNode(this.refs.container);
             if (container) {
                 container.focus();

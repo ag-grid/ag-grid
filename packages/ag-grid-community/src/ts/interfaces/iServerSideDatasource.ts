@@ -1,8 +1,8 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
-import {RowNode} from "../entities/rowNode";
-import {ColumnVO} from "./iColumnVO";
+import { RowNode } from "../entities/rowNode";
+import { ColumnVO } from "./iColumnVO";
 
 export interface IServerSideGetRowsRequest {
     // columns that are currently row grouped

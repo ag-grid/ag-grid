@@ -1,15 +1,15 @@
-import {XmlElement} from 'ag-grid-community';
-import {ExcelCell, ExcelXMLTemplate} from 'ag-grid-community';
+import { XmlElement } from 'ag-grid-community';
+import { ExcelCell, ExcelXMLTemplate } from 'ag-grid-community';
 
 const cell: ExcelXMLTemplate = {
     getTemplate(c: ExcelCell): XmlElement {
         const {mergeAcross, styleId, data} = c;
-        const properties : {[id:string]:string|number}= {};
+        const properties : {[id:string]:string | number} = {};
         if (mergeAcross) {
-            properties['MergeAcross'] = mergeAcross;
+            properties.MergeAcross = mergeAcross;
         }
         if (styleId) {
-            properties['StyleID'] = styleId;
+            properties.StyleID = styleId;
         }
 
         return {

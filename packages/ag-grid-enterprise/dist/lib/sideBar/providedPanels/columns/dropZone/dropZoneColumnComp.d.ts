@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { PopupService, Component, ColumnController, Context, EventService, DragAndDropService, GridOptionsWrapper, DropTarget, Column, AgEvent } from "ag-grid-community";
 import { AggFuncService } from "../../../../aggregation/aggFuncService";
 export interface ColumnRemoveEvent extends AgEvent {
@@ -34,4 +34,3 @@ export declare class DropZoneColumnComp extends Component {
     private onShowAggFuncSelection;
     private createAggSelect;
 }
-//# sourceMappingURL=dropZoneColumnComp.d.ts.map

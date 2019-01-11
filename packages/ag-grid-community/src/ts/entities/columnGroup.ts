@@ -1,14 +1,14 @@
-import {ColumnGroupChild} from "./columnGroupChild";
-import {ColGroupDef} from "./colDef";
-import {Column} from "./column";
-import {AbstractColDef} from "./colDef";
-import {OriginalColumnGroup} from "./originalColumnGroup";
-import {EventService} from "../eventService";
-import {Autowired} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {AgEvent} from "../events";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
+import { ColumnGroupChild } from "./columnGroupChild";
+import { ColGroupDef } from "./colDef";
+import { Column } from "./column";
+import { AbstractColDef } from "./colDef";
+import { OriginalColumnGroup } from "./originalColumnGroup";
+import { EventService } from "../eventService";
+import { Autowired } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { AgEvent } from "../events";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
 
 export class ColumnGroup implements ColumnGroupChild {
 
@@ -76,11 +76,11 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public isMoving(): boolean {
-        let allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
-        if (!allLeafColumns || allLeafColumns.length===0) { return false; }
+        const allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
+        if (!allLeafColumns || allLeafColumns.length === 0) { return false; }
 
         let allMoving = true;
-        allLeafColumns.forEach( col => {
+        allLeafColumns.forEach(col => {
             if (!col.isMoving()) {
                 allMoving = false;
             }
@@ -90,20 +90,20 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
-        this.displayedChildren.forEach( (child: ColumnGroupChild) => {
+        this.displayedChildren.forEach((child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                (<ColumnGroup>child).checkLeft();
+                (child as ColumnGroup).checkLeft();
             }
         });
 
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                let lastChild = this.displayedChildren[this.displayedChildren.length-1];
-                let lastChildLeft = lastChild.getLeft();
+                const lastChild = this.displayedChildren[this.displayedChildren.length - 1];
+                const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             } else {
-                let firstChildLeft = this.displayedChildren[0].getLeft();
+                const firstChildLeft = this.displayedChildren[0].getLeft();
                 this.setLeft(firstChildLeft);
             }
         } else {
@@ -158,12 +158,12 @@ export class ColumnGroup implements ColumnGroupChild {
     public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {
         let result = false;
 
-        this.children.forEach( (foundChild: ColumnGroupChild) => {
+        this.children.forEach((foundChild: ColumnGroupChild) => {
             if (wantedChild === foundChild) {
                 result = true;
             }
             if (foundChild instanceof ColumnGroup) {
-                if ((<ColumnGroup>foundChild).isChildInThisGroupDeepSearch(wantedChild)) {
+                if ((foundChild as ColumnGroup).isChildInThisGroupDeepSearch(wantedChild)) {
                     result = true;
                 }
             }
@@ -175,7 +175,7 @@ export class ColumnGroup implements ColumnGroupChild {
     public getActualWidth(): number {
         let groupActualWidth = 0;
         if (this.displayedChildren) {
-            this.displayedChildren.forEach( (child: ColumnGroupChild)=> {
+            this.displayedChildren.forEach((child: ColumnGroupChild) => {
                 groupActualWidth += child.getActualWidth();
             });
         }
@@ -187,7 +187,7 @@ export class ColumnGroup implements ColumnGroupChild {
 
         // if at least one child is resizable, then the group is resizable
         let result = false;
-        this.displayedChildren.forEach( (child: ColumnGroupChild)=> {
+        this.displayedChildren.forEach((child: ColumnGroupChild) => {
             if (child.isResizable()) {
                 result = true;
             }
@@ -198,7 +198,7 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public getMinWidth(): number {
         let result = 0;
-        this.displayedChildren.forEach( (groupChild: ColumnGroupChild) => {
+        this.displayedChildren.forEach((groupChild: ColumnGroupChild) => {
             result += groupChild.getMinWidth();
         });
         return result;
@@ -216,13 +216,13 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public getLeafColumns(): Column[] {
-        let result: Column[] = [];
+        const result: Column[] = [];
         this.addLeafColumns(result);
         return result;
     }
 
     public getDisplayedLeafColumns(): Column[] {
-        let result: Column[] = [];
+        const result: Column[] = [];
         this.addDisplayedLeafColumns(result);
         return result;
     }
@@ -253,21 +253,21 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     private addDisplayedLeafColumns(leafColumns: Column[]): void {
-        this.displayedChildren.forEach( (child: ColumnGroupChild) => {
+        this.displayedChildren.forEach((child: ColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(<Column>child);
+                leafColumns.push(child as Column);
             } else if (child instanceof ColumnGroup) {
-                (<ColumnGroup>child).addDisplayedLeafColumns(leafColumns);
+                (child as ColumnGroup).addDisplayedLeafColumns(leafColumns);
             }
         });
     }
 
     private addLeafColumns(leafColumns: Column[]): void {
-        this.children.forEach( (child: ColumnGroupChild) => {
+        this.children.forEach((child: ColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(<Column>child);
+                leafColumns.push(child as Column);
             } else if (child instanceof ColumnGroup) {
-                (<ColumnGroup>child).addLeafColumns(leafColumns);
+                (child as ColumnGroup).addLeafColumns(leafColumns);
             }
         });
     }
@@ -292,8 +292,8 @@ export class ColumnGroup implements ColumnGroupChild {
             this.displayedChildren = this.children;
         } else {
             // and calculate again
-            this.children.forEach( abstractColumn => {
-                let headerGroupShow = abstractColumn.getColumnGroupShow();
+            this.children.forEach(abstractColumn => {
+                const headerGroupShow = abstractColumn.getColumnGroupShow();
                 switch (headerGroupShow) {
                     case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
                         // when set to open, only show col if group is open

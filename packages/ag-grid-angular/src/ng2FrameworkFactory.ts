@@ -16,7 +16,7 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public setTimeout(action: any, timeout?: any): void {
         this._ngZone.runOutsideAngular(() => {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 action();
             }, timeout);
         });

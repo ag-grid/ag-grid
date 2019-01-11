@@ -6,7 +6,7 @@ function removeFunction(code) {
 
 function getFunctionName(code) {
     let matches = /function ([^\(]*)/.exec(code);
-    return matches && matches.length === 2 ?  matches[1] : null;
+    return matches && matches.length === 2 ? matches[1] : null;
 }
 
 function onGridReadyTemplate(readyCode: string,
@@ -26,9 +26,13 @@ function onGridReadyTemplate(readyCode: string,
 
     if (data) {
         let setRowDataBlock = data.callback;
-        if(data.callback.indexOf('api.setRowData') !== -1) {
-            propertyAttributes.push(':rowData="rowData"');
-            propertyVars.push('rowData: []');
+        if (data.callback.indexOf('api.setRowData') !== -1) {
+            if (propertyAttributes.filter(item => item.indexOf(':rowData') !== -1).length === 0) {
+                propertyAttributes.push(':rowData="rowData"');
+            }
+            if (propertyVars.filter(item => item.indexOf('rowData') !== -1).length === 0) {
+                propertyVars.push('rowData: null');
+            }
 
             setRowDataBlock = data.callback.replace("params.api.setRowData(data);", "this.rowData = data;");
         }
@@ -53,19 +57,20 @@ function onGridReadyTemplate(readyCode: string,
     }`;
 }
 
+
+function kebabProperty(property: string) {
+    return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
 const toInput = property => `:${property.name}="${property.name}"`;
 const toConst = property => `:${property.name}="${property.value}"`;
 
-const toOutput = event => `:${event.name}="${event.handlerName}"`;
+const toOutput = event => `@${kebabProperty(event.name)}="${event.handlerName}"`;
 
 const toMember = property => `${property.name}: null`;
 
-const toAssignment = (property, methodNames: string[]) => {
+const toAssignment = (property) => {
     let value = property.value;
-
-    for (let methodName of methodNames) {
-        value = value.replace(new RegExp(`\\b${methodName}\\b`, 'g'), `this.${methodName}`);
-    }
 
     // convert to arrow functions
     value = value.replace(/function\s*\(([^\)]+)\)/, '($1) =>');
@@ -73,13 +78,13 @@ const toAssignment = (property, methodNames: string[]) => {
     return `this.${property.name} = ${value}`;
 };
 
-function componentTemplate(bindings, componentFileNames) {
+function createComponentImports(bindings, componentFileNames: any) {
     const imports = [];
-    const additional = [];
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
     }
+
 
     if (componentFileNames) {
         let titleCase = (s) => {
@@ -93,79 +98,108 @@ function componentTemplate(bindings, componentFileNames) {
         });
     }
 
+    return imports;
+}
+
+function isInstanceMethod(instance: any, property: any) {
+    const instanceMethods = instance.map(getFunctionName);
+    return instanceMethods.filter(methodName => methodName === property.name).length > 0;
+}
+
+function getPropertyBindings(bindings, componentFileNames) {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
 
-    const utilMethodNames = bindings.utils.map(getFunctionName);
     bindings.properties
         .filter(property => property.name !== "onGridReady")
         .forEach(property => {
-            if (property.value === 'null') {
-                return;
-            }
-
             if (componentFileNames.length > 0 && property.name === "components") {
                 property.name = "frameworkComponents";
             }
 
             if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
-            } else {
+            } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
-                propertyVars.push(toMember(property));
-                propertyAssignments.push(toAssignment(property, utilMethodNames));
+            } else {
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the react component
+                if(!isInstanceMethod(bindings.instance, property)) {
+                    propertyAttributes.push(toInput(property));
+                    propertyVars.push(toMember(property));
+                }
+                propertyAssignments.push(toAssignment(property));
             }
         });
 
-    const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
-    const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
-    const utilsMethods = bindings.utils.map(removeFunction);
+    return [propertyAssignments, propertyVars, propertyAttributes];
+}
 
-    additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data));
+let parseTemplateFromBinding = function (bindings, agGridTag: string) {
+    let template = bindings.template;
+
+    recognizedDomEvents.forEach(event => {
+        template = template.replace(new RegExp(`on${event}=`, 'g'), `v-on:${event}=`);
+    });
+
+    template = template.replace("$$GRID$$", agGridTag);
+    template = template.split("\n").filter((line) => line.length > 0).map((line) => `${line}`).join("\n            ");
+    return template;
+};
+
+function parseAllMethods(bindings) {
+    const eventHandlers = bindings.eventHandlers.filter(event => event.name != 'onGridReady')
+        .map(event => event.handler)
+        .map(removeFunction);
+    const externalEventHandlers = bindings.externalEventHandlers.map(event => event.body).map(removeFunction);
+    const instanceFunctions = bindings.instance.map(removeFunction);
+    const utilFunctions = bindings.utils.map(body => {
+        const funcName = getFunctionName(body);
+        if (funcName) {
+            `window.${funcName} = ${body}`;
+        }
+
+        // probably a var
+        return body;
+    });
+
+    return [eventHandlers, externalEventHandlers, instanceFunctions, utilFunctions];
+}
+
+function componentTemplate(bindings, componentFileNames) {
+    const imports = createComponentImports(bindings, componentFileNames);
+    const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
+    const gridReadyTemplate = onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
+    const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
+    const [eventHandlers, externalEventHandlers, instanceFunctions, utilFunctions] = parseAllMethods(bindings);
 
     const style = bindings.gridSettings.noStyle ? '' : `style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"`;
 
-    const agGridTag = `      <ag-grid-vue ${style} class="${bindings.gridSettings.theme}"
-              :gridOptions="gridOptions"
-              :gridReady="onGridReady" 
-              ${propertyAttributes.concat(eventAttributes).map((line) => `${line}`).join('\n              ')}></ag-grid-vue>`;
+    const agGridTag = `      <ag-grid-vue ${style} class="${bindings.gridSettings.theme}" id="myGrid"
+               :gridOptions="gridOptions"
+               @grid-ready="onGridReady"
+               ${propertyAttributes.concat(eventAttributes).map((line) => `${line}`).join('\n              ')}></ag-grid-vue>`;
 
-    let template;
-    if (bindings.template) {
-        template = bindings.template;
 
-        recognizedDomEvents.forEach(event => {
-            template = template.replace(new RegExp(`on${event}=`, 'g'), `v-on:${event}=`);
-        });
-
-        template = template.replace("$$GRID$$", agGridTag);
-        template = template.split("\n").filter((line) => line.length > 0).map((line) => `${line}`).join("\n            ");
-    } else {
-        template = agGridTag;
-    }
-
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunction(handler.body));
-
+    const template = bindings.template ? parseTemplateFromBinding(bindings, agGridTag) : agGridTag;
     return `
 import Vue from "vue";
 import {AgGridVue} from "ag-grid-vue";
-
-// import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-// import "../node_modules/ag-grid-community/dist/styles/${bindings.gridSettings.theme}";
 
 ${imports.join('\n')}
 
 const VueExample = {
     template: \`
-        <div style="height: 100%">   
+        <div style="height: 100%">
             ${template}
         </div>
     \`,
     components: {
         'ag-grid-vue': AgGridVue
     },
-    data: function() { 
+    data: function() {
         return {
             gridOptions: null,
             gridApi: null,
@@ -179,18 +213,19 @@ const VueExample = {
     },
     mounted() {
         this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.api.columnApi;
+        this.gridColumnApi = this.gridOptions.columnApi;
     },
     methods: {
         ${eventHandlers
         .concat(externalEventHandlers)
-        .concat(additional)
-        .concat(utilsMethods)
-        .concat(bindings.instance)
+        .concat(gridReadyTemplate)
+        .concat(instanceFunctions)
         .map(snippet => `${snippet.trim()},`)
         .join('\n')}
-    }    
+    }
 }
+
+${utilFunctions.map(snippet => `${snippet.trim()}`).join('\n\n')}
 
 new Vue({
     el: '#app',
@@ -201,8 +236,8 @@ new Vue({
 `;
 }
 
-export function vanillaToVue(src, gridSettings, componentFileNames) {
-    const bindings = parser(src, gridSettings);
+export function vanillaToVue(js, html, exampleSettings, componentFileNames) {
+    const bindings = parser(js, html, exampleSettings);
     return componentTemplate(bindings, componentFileNames);
 }
 

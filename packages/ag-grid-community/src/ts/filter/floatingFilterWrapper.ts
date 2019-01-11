@@ -1,19 +1,19 @@
-import {Autowired, Context} from "../context/context";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {Column} from "../entities/column";
-import {_, Promise} from "../utils";
-import {SetLeftFeature} from "../rendering/features/setLeftFeature";
-import {IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange} from "./floatingFilter";
-import {Component} from "../widgets/component";
-import {RefSelector} from "../widgets/componentAnnotations";
-import {IComponent} from "../interfaces/iComponent";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Beans} from "../rendering/beans";
-import {HoverFeature} from "../headerRendering/hoverFeature";
-import {Events} from "../events";
-import {EventService} from "../eventService";
-import {ColumnHoverService} from "../rendering/columnHoverService";
-import {CombinedFilter} from "./baseFilter";
+import { Autowired, Context } from "../context/context";
+import { IMenuFactory } from "../interfaces/iMenuFactory";
+import { Column } from "../entities/column";
+import { SetLeftFeature } from "../rendering/features/setLeftFeature";
+import { IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange } from "./floatingFilter";
+import { Component } from "../widgets/component";
+import { RefSelector } from "../widgets/componentAnnotations";
+import { IComponent } from "../interfaces/iComponent";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Beans } from "../rendering/beans";
+import { HoverFeature } from "../headerRendering/hoverFeature";
+import { Events } from "../events";
+import { EventService } from "../eventService";
+import { ColumnHoverService } from "../rendering/columnHoverService";
+import { CombinedFilter } from "./baseFilter";
+import { _, Promise } from "../utils";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column: Column;
@@ -40,7 +40,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     init(params: P): void | Promise<void> {
         this.column = params.column;
 
-        let base: HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
+        const base: HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
         this.setTemplateFromElement(base);
@@ -49,7 +49,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
         this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
 
-        let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
+        const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
@@ -60,7 +60,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     }
 
     private onColumnHover(): void {
-        let isHovered = this.columnHoverService.isHovered(this.column);
+        const isHovered = this.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
@@ -108,8 +108,8 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 
     enrichBody(body: HTMLElement): void {
         this.floatingFilterCompPromise.then(floatingFilterComp => {
-            let floatingFilterBody: HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
-            let floatingFilterCompUi = floatingFilterComp.getGui();
+            const floatingFilterBody: HTMLElement = body.querySelector('.ag-floating-filter-body') as HTMLElement;
+            const floatingFilterCompUi = floatingFilterComp.getGui();
             if (this.suppressFilterButton) {
                 floatingFilterBody.appendChild(floatingFilterCompUi);
                 _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
@@ -120,8 +120,8 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
                         <button type="button" ref="eButtonShowMainFilter"></button>
                 </div>`));
 
-                let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-                body.querySelector('button').appendChild(eIcon);
+                const eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
+                body.querySelector('button[ref="eButtonShowMainFilter"]').appendChild(eIcon);
             }
             if (floatingFilterComp.afterGuiAttached) {
                 floatingFilterComp.afterGuiAttached();
@@ -135,11 +135,11 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     onParentModelChanged(parentModel: M | CombinedFilter<M>): void {
         let combinedFilter: CombinedFilter<M>;
         let mainModel: M = null;
-        if (parentModel && (<CombinedFilter<M>>parentModel).operator) {
-            combinedFilter = (<CombinedFilter<M>>parentModel);
+        if (parentModel && (parentModel as CombinedFilter<M>).operator) {
+            combinedFilter = (parentModel as CombinedFilter<M>);
             mainModel = combinedFilter.condition1;
         } else {
-            mainModel = <M>parentModel;
+            mainModel = parentModel as M;
         }
         this.floatingFilterCompPromise.then(floatingFilterComp => {
             floatingFilterComp.onParentModelChanged(mainModel, combinedFilter);

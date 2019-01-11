@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator, GridSerializingSession, GridSerializingParams } from "./gridSerializer";
@@ -37,7 +37,7 @@ export declare abstract class BaseCreator<T, S extends GridSerializingSession<T>
     private beans;
     protected setBeans(beans: BaseCreatorBeans): void;
     export(userParams?: P): string;
-    getData(params: P): string;
+    getData(params?: P): string;
     private getMergedParamsAndData;
     private mergeDefaultParams;
     protected packageFile(data: string): Blob;
@@ -62,4 +62,3 @@ export declare class CsvCreator extends BaseCreator<string, CsvSerializingSessio
     createSerializingSession(params?: CsvExportParams): CsvSerializingSession;
     isExportSuppressed(): boolean;
 }
-//# sourceMappingURL=csvCreator.d.ts.map

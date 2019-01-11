@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { ExcelStyle, ExcelWorksheet } from 'ag-grid-community';
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
@@ -19,4 +19,3 @@ export declare class ExcelXlsxFactory {
     createWorkbookRels(): string;
     createWorksheet(worksheets: ExcelWorksheet[]): string;
 }
-//# sourceMappingURL=excelXlsxFactory.d.ts.map

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,10 +17,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
-var utils_1 = require("../../utils");
 var componentProvider_1 = require("./componentProvider");
 var agComponentUtils_1 = require("./agComponentUtils");
 var componentMetadataProvider_1 = require("./componentMetadataProvider");
+var utils_1 = require("../../utils");
 var ComponentType;
 (function (ComponentType) {
     ComponentType[ComponentType["AG_GRID"] = 0] = "AG_GRID";
@@ -68,9 +68,15 @@ var ComponentResolver = /** @class */ (function () {
         var dynamicComponentFn;
         if (holder != null) {
             var componentPropertyValue = holder[propertyName];
-            if (componentPropertyValue != null) {
+            // for filters only, we allow 'true' for the component, which means default filter to be used
+            var usingDefaultComponent = componentPropertyValue === true;
+            if (componentPropertyValue != null && !usingDefaultComponent) {
                 if (typeof componentPropertyValue === 'string') {
                     hardcodedNameComponent = componentPropertyValue;
+                }
+                else if (typeof componentPropertyValue === 'boolean') {
+                    // never happens, as we test for usingDefaultComponent above,
+                    // however it's needed for the next block to compile
                 }
                 else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
                     HardcodedJsComponent = componentPropertyValue;
@@ -157,8 +163,9 @@ var ComponentResolver = /** @class */ (function () {
     ComponentResolver.prototype.resolveByName = function (propertyName, componentNameOpt) {
         var componentName = componentNameOpt != null ? componentNameOpt : propertyName;
         var registeredComponent = this.componentProvider.retrieve(componentName);
-        if (registeredComponent == null)
+        if (registeredComponent == null) {
             return null;
+        }
         //If it is a FW it has to be registered as a component
         if (registeredComponent.type == ComponentType.FRAMEWORK) {
             return {
@@ -235,8 +242,9 @@ var ComponentResolver = /** @class */ (function () {
         var holder = holderOpt == null ? this.gridOptions : holderOpt;
         //Create the component instance
         var componentAndParams = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory);
-        if (!componentAndParams)
+        if (!componentAndParams) {
             return null;
+        }
         // Wire the component and call the init method with the correct params
         var finalParams = this.mergeParams(holder, propertyName, agGridParams, dynamicComponentParams, componentAndParams[1]);
         // a temporary fix for AG-1574
@@ -292,8 +300,9 @@ var ComponentResolver = /** @class */ (function () {
     };
     ComponentResolver.prototype.initialiseComponent = function (component, agGridParams, customInitParamsCb) {
         this.context.wireBean(component);
-        if (component.init == null)
+        if (component.init == null) {
             return;
+        }
         if (customInitParamsCb == null) {
             return component.init(agGridParams);
         }

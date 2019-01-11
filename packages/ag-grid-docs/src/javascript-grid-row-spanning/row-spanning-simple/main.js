@@ -30,12 +30,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    suppressRowTransform: true,
-    columnDefs: columnDefs,
-    enableColResize: true,
     defaultColDef: {
-        width: 100
-    }
+        width: 100,
+        resizable: true
+    },
+    suppressRowTransform: true,
+    columnDefs: columnDefs
 };
 
 // setup the grid after the page has finished loading

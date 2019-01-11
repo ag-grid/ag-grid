@@ -1,4 +1,4 @@
-// ag-grid-aurelia v19.1.4
+// ag-grid-aurelia v20.0.0
 import { ComponentAttached, ComponentDetached, Container, TaskQueue, ViewResources } from "aurelia-framework";
 import { ColumnApi, GridApi, GridOptions } from "ag-grid-community";
 import { AureliaFrameworkFactory } from "./aureliaFrameworkFactory";
@@ -32,4 +32,3 @@ export declare class AgGridAurelia implements ComponentAttached, ComponentDetach
     detached(): void;
     private globalEventListener;
 }
-//# sourceMappingURL=agGridAurelia.d.ts.map

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,8 +8,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var events_1 = require("../events");
 var propertyKeys_1 = require("../propertyKeys");
-var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var utils_1 = require("../utils");
 var ComponentUtil = /** @class */ (function () {
     function ComponentUtil() {
     }
@@ -155,13 +155,16 @@ var ComponentUtil = /** @class */ (function () {
         if (changes.sideBar) {
             api.setSideBar(changes.sideBar.currentValue);
         }
+        if (changes.datasource) {
+            api.setDatasource(changes.datasource.currentValue);
+        }
         // copy changes into an event for dispatch
         var event = {
             type: events_1.Events.EVENT_COMPONENT_STATE_CHANGED,
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
-        utils_1.Utils.iterateObject(changes, function (key, value) {
+        utils_1._.iterateObject(changes, function (key, value) {
             event[key] = value;
         });
         api.dispatchEvent(event);
@@ -202,7 +205,7 @@ var ComponentUtil = /** @class */ (function () {
     return ComponentUtil;
 }());
 exports.ComponentUtil = ComponentUtil;
-utils_1.Utils.iterateObject(events_1.Events, function (key, value) {
+utils_1._.iterateObject(events_1.Events, function (key, value) {
     ComponentUtil.EVENTS.push(value);
 });
 function checkForDeprecated(changes) {

@@ -58,7 +58,7 @@ colDef: {
 <p>The parameters for the filter must be specified in the property filterParams inside the column definition object</p>
 
 <snippet>
-colDef:{
+colDef: {
     filter: 'agNumberColumnFilter',
     filterParams: {
         ...

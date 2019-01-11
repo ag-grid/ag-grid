@@ -37,15 +37,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
-    rowData: null,
-    enableFilter: true,
-    enableSorting: true,
-
-    throttleScroll: true,
-    // these hide enterprise features, so they are not confusing
-    // you if using ag-Grid standard
-    suppressMenu: true
+    rowData: null
 };
 
 function clearFilters() {

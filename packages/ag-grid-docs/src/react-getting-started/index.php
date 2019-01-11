@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: Getting Started with the React Datagrid";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration.";
+$pageTitle = "Getting started with React Grid | ag-Grid Reference";
+$pageDescription = "Get started with ag-Grid's React Grid component in this guide. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration. ag-Grid is a feature-rich datagrid available in Free or Enterprise versions.";
 $pageKeyboards = "React Datagrid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
@@ -8,7 +8,7 @@ include '../getting-started/header.php';
 
 <div>
 
-<h1>Get Started with ag-Grid in Your React Project</h1>
+<h1>Get started with ag-Grid React Grid component in your project</h1>
 
 <p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. 
 ag-Grid supports React through a <strong>wrapper component</strong>. The React wrapper lets you use ag-Grid in your application like any other React component &ndash; you pass configuration through properties and handle events through callbacks. 
@@ -140,29 +140,28 @@ each column entry specifies the header label and the data field to be displayed 
 
 <h2>Enable Sorting And Filtering</h2>
 
-<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>enableSorting</code> property to the <code>AgGridReact</code> component.</p> 
+<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>sort</code> property to the column definitions.</p>
 
-<snippet language="jsx">
-&lt;AgGridReact
-    enableSorting={true}
-    columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}&gt;
-&lt;/AgGridReact&gt;
+<snippet language="js">
+columnDefs: [
+    {headerName: "Make", field: "make", sortable=true },
+    {headerName: "Model", field: "model", sortable=true },
+    {headerName: "Price", field: "price", sortable=true }
+]
 </snippet>
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
 <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this filtering is your friend.</p>
 
-<p>As with sorting, enabling filtering is as easy as setting the <code>enableFilter</code> property:</p>
+<p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 
-<snippet language="jsx">
-&lt;AgGridReact
-    enableSorting={true}
-    enableFilter={true}
-    columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}&gt;
-&lt;/AgGridReact&gt;
+<snippet language="js">
+columnDefs: [
+    {headerName: "Make", field: "make", sortable=true, filter=true },
+    {headerName: "Model", field: "model", sortable=true, filter=true },
+    {headerName: "Price", field: "price", sortable=true, filter=true }
+]
 </snippet>
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
@@ -217,7 +216,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
 <snippet language="diff">
              &lt;AgGridReact
-                 enableSorting={true}
 +                rowSelection="multiple"
 </snippet>
 
@@ -293,7 +291,7 @@ Then, add the import to your file:
 <snippet language="jsx">
 this.state = {
     columnDefs: [
-        {headerName: "Make", field: "make", rowGroupIndex: 0 },
+        {headerName: "Make", field: "make", rowGroup: true },
         {headerName: "Price", field: "price"}
     ],
     autoGroupColumnDef: {
@@ -370,8 +368,6 @@ While doing so, we learned how to configure the grid, how to access its API obje
 
 <p>You are hungry for more? Head over to the <a href="../react-more-details/">React guides section</a> for more in-depth information about the React flavor of ag-Grid. To learn more about the features used in this tutorial, you can go through the following help articles:</p>
 
-<p>You can go through the following help articles to learn more about the features we enabled:</p>
-
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
@@ -379,12 +375,20 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
 <br><br>
 <p>In addition to that, if you are using Redux, make sure to check out the <a href="../react-redux-integration-pt1/">Integrating ag-Grid with Redux guide</a>.</p>
-
+<hr>
+<h2>Test our React Grid component</h2>
+<br>
+<ul>
+<li>Stress-test the grid with 100,000 rows on our <a href="">React Grid Demo</a>.</li>
+<br>
+<li>Have a play with our <a href="">API</a>.</li>
+<br>
+<li>Test <a href="">ag-Grid React's features</a> before implementing.</li>
+<br>
+</ul>
+<hr>
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
 
-</div>
-<div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

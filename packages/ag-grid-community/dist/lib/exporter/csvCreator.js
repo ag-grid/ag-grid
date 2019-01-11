@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -57,18 +57,21 @@ var CsvSerializingSession = /** @class */ (function (_super) {
     CsvSerializingSession.prototype.prepare = function (columnsToExport) {
     };
     CsvSerializingSession.prototype.addCustomHeader = function (customHeader) {
-        if (!customHeader)
+        if (!customHeader) {
             return;
+        }
         this.result += customHeader + LINE_SEPARATOR;
     };
     CsvSerializingSession.prototype.addCustomFooter = function (customFooter) {
-        if (!customFooter)
+        if (!customFooter) {
             return;
+        }
         this.result += customFooter + LINE_SEPARATOR;
     };
     CsvSerializingSession.prototype.onNewHeaderGroupingRow = function () {
-        if (this.lineOpened)
+        if (this.lineOpened) {
             this.result += LINE_SEPARATOR;
+        }
         return {
             onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
         };
@@ -84,8 +87,9 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         this.lineOpened = true;
     };
     CsvSerializingSession.prototype.onNewHeaderRow = function () {
-        if (this.lineOpened)
+        if (this.lineOpened) {
             this.result += LINE_SEPARATOR;
+        }
         return {
             onColumn: this.onNewHeaderRowColumn.bind(this)
         };
@@ -98,8 +102,9 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         this.lineOpened = true;
     };
     CsvSerializingSession.prototype.onNewBodyRow = function () {
-        if (this.lineOpened)
+        if (this.lineOpened) {
             this.result += LINE_SEPARATOR;
+        }
         return {
             onColumn: this.onNewBodyRowColumn.bind(this)
         };
@@ -211,14 +216,14 @@ var CsvCreator = /** @class */ (function (_super) {
     };
     CsvCreator.prototype.createSerializingSession = function (params) {
         var _a = this, columnController = _a.columnController, valueService = _a.valueService, gridOptionsWrapper = _a.gridOptionsWrapper;
-        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, suppressQuotes = params.suppressQuotes, columnSeparator = params.columnSeparator;
+        var _b = params, processCellCallback = _b.processCellCallback, processHeaderCallback = _b.processHeaderCallback, suppressQuotes = _b.suppressQuotes, columnSeparator = _b.columnSeparator;
         return new CsvSerializingSession({
             columnController: columnController,
             valueService: valueService,
             gridOptionsWrapper: gridOptionsWrapper,
-            processCellCallback: processCellCallback || null,
-            processHeaderCallback: processHeaderCallback || null,
-            suppressQuotes: suppressQuotes,
+            processCellCallback: processCellCallback || undefined,
+            processHeaderCallback: processHeaderCallback || undefined,
+            suppressQuotes: suppressQuotes || false,
             columnSeparator: columnSeparator || ','
         });
     };

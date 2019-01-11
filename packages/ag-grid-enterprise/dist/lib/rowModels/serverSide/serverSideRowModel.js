@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -48,7 +48,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         if (this.datasource && this.datasource.destroy) {
             this.datasource.destroy();
         }
-        this.datasource = null;
+        this.datasource = undefined;
     };
     ServerSideRowModel.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideRowModel');
@@ -137,8 +137,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         });
     };
     ServerSideRowModel.prototype.onSortChanged = function () {
-        if (!this.cacheExists())
+        if (!this.cacheExists()) {
             return;
+        }
         var newSortModel = this.extractSortModel();
         var oldSortModel = this.cacheParams.sortModel;
         var changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
@@ -168,9 +169,13 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.reset();
     };
     ServerSideRowModel.prototype.onRowGroupOpened = function (event) {
+        var _this = this;
         var rowNode = event.node;
         if (rowNode.expanded) {
-            if (ag_grid_community_1._.missing(rowNode.childrenCache)) {
+            if (rowNode.master) {
+                this.createDetailNode(rowNode);
+            }
+            else if (ag_grid_community_1._.missing(rowNode.childrenCache)) {
                 this.createNodeCache(rowNode);
             }
         }
@@ -180,6 +185,12 @@ var ServerSideRowModel = /** @class */ (function (_super) {
                 rowNode.childrenCache = null;
             }
         }
+        var shouldAnimate = function () {
+            var rowAnimationEnabled = _this.gridOptionsWrapper.isAnimateRows();
+            if (rowNode.master)
+                return rowAnimationEnabled && rowNode.expanded;
+            return rowAnimationEnabled;
+        };
         this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = {
             type: ag_grid_community_1.Events.EVENT_MODEL_UPDATED,
@@ -187,7 +198,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             newPage: false,
             newData: false,
-            animate: true,
+            animate: shouldAnimate(),
             keepRenderedRows: true
         };
         this.eventService.dispatchEvent(modelUpdatedEvent);
@@ -234,7 +245,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.destroyRowNodeBlockLoader = function () {
         if (this.rowNodeBlockLoader) {
             this.rowNodeBlockLoader.destroy();
-            this.rowNodeBlockLoader = null;
+            this.rowNodeBlockLoader = undefined;
         }
     };
     ServerSideRowModel.prototype.toValueObjects = function (columns) {
@@ -276,7 +287,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             lastAccessedSequence: new ag_grid_community_1.NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
-            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
+            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests() || 0,
             maxBlocksInCache: maxBlocksInCache,
             blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
             rowHeight: this.rowHeight,
@@ -314,7 +325,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             type: ag_grid_community_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            animate: true,
+            animate: this.gridOptionsWrapper.isAnimateRows(),
             keepRenderedRows: true,
             newPage: false,
             newData: false
@@ -344,9 +355,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         if (this.cacheExists()) {
             return this.rootNode.childrenCache.getRow(index);
         }
-        else {
-            return null;
-        }
+        return null;
     };
     ServerSideRowModel.prototype.getPageFirstRow = function () {
         return 0;
@@ -377,10 +386,12 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         return serverSideCache.getRowBounds(index);
     };
     ServerSideRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-        if (pixel === 0)
+        if (pixel === 0) {
             return 0;
-        if (!this.cacheExists())
+        }
+        if (!this.cacheExists()) {
             return 0;
+        }
         var serverSideCache = this.rootNode.childrenCache;
         return serverSideCache.getRowIndexAtPixel(pixel);
     };
@@ -422,8 +433,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.executeOnCache(route, function (cache) { return cache.addToCache(items, index); });
     };
     ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        if (ag_grid_community_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent)
+        if (ag_grid_community_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
+        }
         return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
     };
     ServerSideRowModel.prototype.getRowNode = function (id) {
@@ -459,7 +471,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         // find index of auto group column in sort model
         var autoGroupIndex = -1;
         for (var i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+            if (sortModel[i].colId === ag_grid_community_1.Constants.GROUP_AUTO_COLUMN_ID) {
                 autoGroupIndex = i;
                 break;
             }
@@ -478,13 +490,23 @@ var ServerSideRowModel = /** @class */ (function (_super) {
                 var individualGroupCol = individualGroupCols[i];
                 // don't add individual group column if non group column already exists as it gets precedence
                 var sameNonGroupColumnExists = sortModel.some(function (sm) { return sm.colId === individualGroupCol.colId; });
-                if (sameNonGroupColumnExists)
+                if (sameNonGroupColumnExists) {
                     return "continue";
+                }
                 sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
             };
             // insert individual group columns
             for (var i = 0; i < individualGroupCols.length; i++) {
                 _loop_1(i);
+            }
+        }
+        // strip out multi-column prefix on colId's
+        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+            var multiColumnPrefix = ag_grid_community_1.Constants.GROUP_AUTO_COLUMN_ID + "-";
+            for (var i = 0; i < sortModel.length; ++i) {
+                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
+                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
+                }
             }
         }
         return sortModel;
@@ -499,8 +521,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         return false;
     };
     ServerSideRowModel.prototype.isSortingWithSecondaryColumn = function (changedColumnsInSort) {
-        if (!this.columnController.getSecondaryColumns())
+        if (!this.columnController.getSecondaryColumns()) {
             return false;
+        }
         var secondaryColIds = this.columnController.getSecondaryColumns().map(function (col) { return col.getColId(); });
         for (var i = 0; i < changedColumnsInSort.length; i++) {
             if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
@@ -511,6 +534,28 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     };
     ServerSideRowModel.prototype.cacheExists = function () {
         return ag_grid_community_1._.exists(this.rootNode) && ag_grid_community_1._.exists(this.rootNode.childrenCache);
+    };
+    ServerSideRowModel.prototype.createDetailNode = function (masterNode) {
+        if (ag_grid_community_1._.exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
+        }
+        else {
+            var detailNode = new ag_grid_community_1.RowNode();
+            this.context.wireBean(detailNode);
+            detailNode.detail = true;
+            detailNode.selectable = false;
+            detailNode.parent = masterNode;
+            if (ag_grid_community_1._.exists(masterNode.id)) {
+                detailNode.id = 'detail_' + masterNode.id;
+            }
+            detailNode.data = masterNode.data;
+            detailNode.level = masterNode.level + 1;
+            var defaultDetailRowHeight = 200;
+            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode);
+            detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
+            masterNode.detailNode = detailNode;
+            return detailNode;
+        }
     };
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),

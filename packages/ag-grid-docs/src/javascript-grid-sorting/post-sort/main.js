@@ -13,10 +13,10 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 150
+        width: 150,
+        sortable: true
     },
     columnDefs: columnDefs,
-    enableSorting: true,
     postSort(rowNodes) {
       // here we put Ireland rows on top while preserving the sort order
 

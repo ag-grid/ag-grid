@@ -2,17 +2,17 @@ import {
     DragAndDropService, DraggingEvent, DragSourceType, DropTarget,
     VDirection
 } from "../dragAndDrop/dragAndDropService";
-import {Autowired, Optional, PostConstruct} from "../context/context";
-import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
-import {FocusedCellController} from "../focusedCellController";
-import {IRangeController} from "../interfaces/iRangeController";
-import {GridPanel} from "./gridPanel";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {EventService} from "../eventService";
-import {RowDragEvent} from "../events";
-import {Events} from "../eventKeys";
-import {IRowModel} from "../interfaces/iRowModel";
-import {Constants} from "../constants";
+import { Autowired, Optional, PostConstruct } from "../context/context";
+import { ClientSideRowModel } from "../rowModels/clientSide/clientSideRowModel";
+import { FocusedCellController } from "../focusedCellController";
+import { IRangeController } from "../interfaces/iRangeController";
+import { GridPanel } from "./gridPanel";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { EventService } from "../eventService";
+import { RowDragEvent } from "../events";
+import { Events } from "../eventKeys";
+import { IRowModel } from "../interfaces/iRowModel";
+import { Constants } from "../constants";
 
 export class RowDragFeature implements DropTarget {
 
@@ -46,7 +46,7 @@ export class RowDragFeature implements DropTarget {
     @PostConstruct
     private postConstruct(): void {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.clientSideRowModel = <ClientSideRowModel> this.rowModel;
+            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
         }
     }
 
@@ -55,7 +55,7 @@ export class RowDragFeature implements DropTarget {
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
-        return type===DragSourceType.RowDrag;
+        return type === DragSourceType.RowDrag;
     }
 
     public getIconName(): string {
@@ -80,9 +80,9 @@ export class RowDragFeature implements DropTarget {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
         this.lastDraggingEvent = draggingEvent;
-        let pixel = this.normaliseForScroll(draggingEvent.y);
+        const pixel = this.normaliseForScroll(draggingEvent.y);
 
-        let managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+        const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
         }
@@ -91,8 +91,8 @@ export class RowDragFeature implements DropTarget {
     }
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
-        let rowNode = draggingEvent.dragItem.rowNode;
-        let rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
+        const rowNode = draggingEvent.dragItem.rowNode;
+        const rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
 
         if (rowWasMoved) {
             this.focusedCellController.clearFocusedCell();
@@ -103,9 +103,9 @@ export class RowDragFeature implements DropTarget {
     }
 
     private normaliseForScroll(pixel: number): number {
-        let gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_NORMAL;
+        const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         if (gridPanelHasScrolls) {
-            let pixelRange = this.gridPanel.getVScrollPosition();
+            const pixelRange = this.gridPanel.getVScrollPosition();
             return pixel + pixelRange.top;
         } else {
             return pixel;
@@ -115,7 +115,7 @@ export class RowDragFeature implements DropTarget {
     private checkCenterForScrolling(pixel: number): void {
 
         // scroll if the mouse is within 50px of the grid edge
-        let pixelRange = this.gridPanel.getVScrollPosition();
+        const pixelRange = this.gridPanel.getVScrollPosition();
 
         // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
 
@@ -135,13 +135,13 @@ export class RowDragFeature implements DropTarget {
     private ensureIntervalStarted(): void {
         if (!this.movingIntervalId) {
             this.intervalCount = 0;
-            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
         }
     }
 
     private ensureIntervalCleared(): void {
         if (this.moveInterval) {
-            clearInterval(this.movingIntervalId);
+            window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
         }
     }
@@ -173,11 +173,11 @@ export class RowDragFeature implements DropTarget {
     // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
     public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
 
-        let yNormalised = this.normaliseForScroll(draggingEvent.y);
+        const yNormalised = this.normaliseForScroll(draggingEvent.y);
 
         let overIndex = -1;
         let overNode = null;
-        let mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
+        const mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
 
         if (!mouseIsPastLastRow) {
             overIndex = this.rowModel.getRowIndexAtPixel(yNormalised);
@@ -197,7 +197,7 @@ export class RowDragFeature implements DropTarget {
                 break;
         }
 
-        let event: RowDragEvent = {
+        const event: RowDragEvent = {
             type: type,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),

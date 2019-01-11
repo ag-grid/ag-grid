@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -51,12 +51,17 @@ var ServerSideCache = /** @class */ (function (_super) {
         var _this = this;
         this.logger.log("getRowBounds(" + index + ")");
         // we return null if row not found
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be RowBounds
         var result;
         var blockFound = false;
-        var lastBlock;
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be ServerSideBlock
+        var lastBlock = null;
         this.forEachBlockInOrder(function (block) {
-            if (blockFound)
+            if (blockFound) {
                 return;
+            }
             if (block.isDisplayIndexInBlock(index)) {
                 result = block.getRowBounds(index, _this.getVirtualRowCount());
                 blockFound = true;
@@ -68,7 +73,7 @@ var ServerSideCache = /** @class */ (function (_super) {
         if (!blockFound) {
             var nextRowTop = void 0;
             var nextRowIndex = void 0;
-            if (lastBlock) {
+            if (lastBlock !== null) {
                 nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
                 nextRowIndex = lastBlock.getDisplayIndexEnd();
             }
@@ -93,12 +98,17 @@ var ServerSideCache = /** @class */ (function (_super) {
         var _this = this;
         this.logger.log("getRowIndexAtPixel(" + pixel + ")");
         // we return null if row not found
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be number
         var result;
         var blockFound = false;
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be ServerSideBlock
         var lastBlock;
         this.forEachBlockInOrder(function (block) {
-            if (blockFound)
+            if (blockFound) {
                 return;
+            }
             if (block.isPixelInRange(pixel)) {
                 result = block.getRowIndexAtPixel(pixel, _this.getVirtualRowCount());
                 blockFound = true;
@@ -144,7 +154,7 @@ var ServerSideCache = /** @class */ (function (_super) {
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
             var blocksSkippedCount = blockId - lastBlockId - 1;
-            var rowsSkippedCount = blocksSkippedCount * _this.cacheParams.blockSize;
+            var rowsSkippedCount = blocksSkippedCount * (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0);
             if (rowsSkippedCount > 0) {
                 displayIndexSeq.skip(rowsSkippedCount);
             }
@@ -154,7 +164,7 @@ var ServerSideCache = /** @class */ (function (_super) {
                     nextRowTop.value += _this.blockHeights[blockToAddId];
                 }
                 else {
-                    nextRowTop.value += _this.cacheParams.blockSize * _this.cacheParams.rowHeight;
+                    nextRowTop.value += (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0) * _this.cacheParams.rowHeight;
                 }
             }
             lastBlockId = blockId;
@@ -165,7 +175,7 @@ var ServerSideCache = /** @class */ (function (_super) {
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
-        var lastVisitedRow = ((lastBlockId + 1) * this.cacheParams.blockSize) - 1;
+        var lastVisitedRow = ((lastBlockId + 1) * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0)) - 1;
         var rowCount = this.getVirtualRowCount();
         var rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
@@ -188,6 +198,8 @@ var ServerSideCache = /** @class */ (function (_super) {
         // if we have the block, then this is the block
         var block = null;
         // this is the last block that we have BEFORE the right block
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be ServerSideBlock
         var beforeBlock = null;
         this.forEachBlockInOrder(function (currentBlock) {
             if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
@@ -216,30 +228,30 @@ var ServerSideCache = /** @class */ (function (_super) {
                 displayIndexStart_1 = beforeBlock.getDisplayIndexEnd();
                 nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
                 var isInRange = function () {
-                    return displayRowIndex >= displayIndexStart_1 && displayRowIndex < (displayIndexStart_1 + _this.cacheParams.blockSize);
+                    return displayRowIndex >= displayIndexStart_1 && displayRowIndex < (displayIndexStart_1 + (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0));
                 };
                 while (!isInRange()) {
-                    displayIndexStart_1 += this.cacheParams.blockSize;
+                    displayIndexStart_1 += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
                     var cachedBlockHeight = this.blockHeights[blockNumber];
                     if (ag_grid_community_1._.exists(cachedBlockHeight)) {
                         nextRowTop += cachedBlockHeight;
                     }
                     else {
-                        nextRowTop += this.cacheParams.rowHeight * this.cacheParams.blockSize;
+                        nextRowTop += this.cacheParams.rowHeight * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
                     }
                     blockNumber++;
                 }
             }
             else {
                 var localIndex = displayRowIndex - this.displayIndexStart;
-                blockNumber = Math.floor(localIndex / this.cacheParams.blockSize);
-                displayIndexStart_1 = this.displayIndexStart + (blockNumber * this.cacheParams.blockSize);
-                nextRowTop = this.cacheTop + (blockNumber * this.cacheParams.blockSize * this.cacheParams.rowHeight);
+                blockNumber = Math.floor(localIndex / (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
+                displayIndexStart_1 = this.displayIndexStart + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
+                nextRowTop = this.cacheTop + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight);
             }
             block = this.createBlock(blockNumber, displayIndexStart_1, { value: nextRowTop });
             this.logger.log("block missing, rowIndex = " + displayRowIndex + ", creating #" + blockNumber + ", displayIndexStart = " + displayIndexStart_1);
         }
-        var rowNode = block.getRow(displayRowIndex);
+        var rowNode = block ? block.getRow(displayRowIndex) : null;
         return rowNode;
     };
     ServerSideCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
@@ -276,7 +288,7 @@ var ServerSideCache = /** @class */ (function (_super) {
         });
         if (nextServerSideCache) {
             var keyListForNextLevel = keys.slice(1, keys.length);
-            return nextServerSideCache.getChildCache(keyListForNextLevel);
+            return nextServerSideCache ? nextServerSideCache.getChildCache(keyListForNextLevel) : null;
         }
         else {
             return null;
@@ -294,8 +306,10 @@ var ServerSideCache = /** @class */ (function (_super) {
         var itemsToDeleteById = {};
         var idForNodeFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         items.forEach(function (item) {
-            var id = idForNodeFunc(item);
-            itemsToDeleteById[id] = item;
+            if (idForNodeFunc !== undefined) {
+                var id = idForNodeFunc(item);
+                itemsToDeleteById[id] = item;
+            }
         });
         var deletedCount = 0;
         this.forEachBlockInOrder(function (block) {
@@ -320,7 +334,7 @@ var ServerSideCache = /** @class */ (function (_super) {
                 if (deletedCount > 0) {
                     block.setDirty();
                     var newIndex = rowIndex - deletedCount;
-                    var blockId = Math.floor(newIndex / _this.cacheParams.blockSize);
+                    var blockId = Math.floor(newIndex / (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0));
                     var blockToInsert = _this.getBlock(blockId);
                     if (blockToInsert) {
                         blockToInsert.setRowNode(newIndex, rowNode);

@@ -461,9 +461,9 @@ if (instances.length > 0) {
 
 <?php include './react.php'; ?>
 
-<?php include './polymer.php'; ?>
-
 <?php include './vuejs.php'; ?>
+
+<?php include './polymer.php'; ?>
 
 <?php include './aurelia.php'; ?>
 

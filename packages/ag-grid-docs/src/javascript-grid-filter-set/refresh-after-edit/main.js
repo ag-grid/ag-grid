@@ -9,12 +9,12 @@ var columnDefs = [{field: 'col1'}, {field: 'col2'}, {field: 'col3'}, {field: 'co
 
 var gridOptions = {
     defaultColDef: {
-        editable: true
+        editable: true,
+        resizable: true,
+        filter: true
     },
     columnDefs: columnDefs,
     rowData: rowData,
-    enableFilter: true,
-    enableColResize: true,
     onCellValueChanged: onCellValueChanged,
     onGridReady: function(params) {
         // initialise all the filters - as this example demonstrates

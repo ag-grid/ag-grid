@@ -1,6 +1,6 @@
-import {Column} from "./column";
-import {Utils as _} from "../utils";
-import {GridRow} from "./gridRow";
+import { Column } from "./column";
+import { GridRow } from "./gridRow";
+import { _ } from "../utils";
 
 // this is what gets pass into and out of the api, as JavaScript users
 export interface GridCellDef {
@@ -10,7 +10,6 @@ export interface GridCellDef {
 }
 
 export class GridCell {
-
     floating: string;
     rowIndex: number;
     column: Column;
@@ -41,10 +40,10 @@ export class GridCell {
         return `${this.rowIndex}.${this.floating}.${this.column.getId()}`;
     }
 
-    public equals(other: GridCell): boolean {
-        let colsMatch = this.column === other.column;
-        let floatingMatch = this.floating === other.floating;
-        let indexMatch = this.rowIndex === other.rowIndex;
+    public equals(other: GridCell | null): boolean {
+        const colsMatch = this.column === other.column;
+        const floatingMatch = this.floating === other.floating;
+        const indexMatch = this.rowIndex === other.rowIndex;
         return colsMatch && floatingMatch && indexMatch;
     }
 }

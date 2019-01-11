@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../../entities/column";
@@ -31,13 +31,13 @@ export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorPara
 }
 export interface ICellEditorParams {
     value: any;
-    keyPress: number;
-    charPress: string;
+    keyPress: number | null;
+    charPress: string | null;
     column: Column;
     node: RowNode;
     rowIndex: number;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     cellStartedEdit: boolean;
     context: any;
     $scope: any;
@@ -47,4 +47,3 @@ export interface ICellEditorParams {
     parseValue: (value: any) => any;
     formatValue: (value: any) => any;
 }
-//# sourceMappingURL=iCellEditor.d.ts.map

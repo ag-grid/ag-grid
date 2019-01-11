@@ -1,16 +1,16 @@
-import {Autowired, PostConstruct} from "../context/context";
-import {Logger, LoggerFactory} from "../logger";
-import {ColumnController} from "../columnController/columnController";
-import {Column} from "../entities/column";
-import {Utils as _} from "../utils";
+import { Autowired, PostConstruct } from "../context/context";
+import { Logger, LoggerFactory } from "../logger";
+import { ColumnController } from "../columnController/columnController";
+import { Column } from "../entities/column";
+import { _ } from "../utils";
 import {
-    DragAndDropService, DraggingEvent, DragItem, DragSourceType,
+    DragAndDropService, DraggingEvent, DragSourceType,
     HDirection
 } from "../dragAndDrop/dragAndDropService";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {DropListener} from "./bodyDropTarget";
-import {ColumnEventType} from "../events";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { DropListener } from "./bodyDropTarget";
+import { ColumnEventType } from "../events";
 
 export class MoveColumnController implements DropListener {
 
@@ -61,8 +61,8 @@ export class MoveColumnController implements DropListener {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
 
-        let columns = draggingEvent.dragItem.columns;
-        let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
+        const columns = draggingEvent.dragItem.columns;
+        const dragCameFromToolPanel = draggingEvent.dragSource.type === DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
             this.setColumnsVisible(columns, true, "uiColumnDragged");
@@ -71,8 +71,8 @@ export class MoveColumnController implements DropListener {
             // a group out, and then drags the group back in, only columns that were originally visible
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
-            let visibleState = draggingEvent.dragItem.visibleState;
-            let visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()] );
+            const visibleState = draggingEvent.dragItem.visibleState;
+            const visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()]);
             this.setColumnsVisible(visibleColumns, true, "uiColumnDragged");
         }
 
@@ -81,10 +81,10 @@ export class MoveColumnController implements DropListener {
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        let hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
+        const hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
         if (hideColumnOnExit) {
-            let dragItem = draggingEvent.dragSource.dragItemCallback();
-            let columns = dragItem.columns;
+            const dragItem = draggingEvent.dragSource.dragItemCallback();
+            const columns = dragItem.columns;
             this.setColumnsVisible(columns, false, "uiColumnDragged");
         }
         this.ensureIntervalCleared();
@@ -92,14 +92,14 @@ export class MoveColumnController implements DropListener {
 
     public setColumnsVisible(columns: Column[], visible: boolean, source: ColumnEventType = "api") {
         if (columns) {
-            let allowedCols = columns.filter( c => !c.isLockVisible() );
+            const allowedCols = columns.filter(c => !c.isLockVisible());
             this.columnController.setColumnsVisible(allowedCols, visible, source);
         }
     }
 
     public setColumnsPinned(columns: Column[], pinned: string, source: ColumnEventType = "api") {
         if (columns) {
-            let allowedCols = columns.filter( c => !c.isLockPinned() );
+            const allowedCols = columns.filter(c => !c.isLockPinned());
             this.columnController.setColumnsPinned(allowedCols, pinned, source);
         }
     }
@@ -111,16 +111,16 @@ export class MoveColumnController implements DropListener {
     private normaliseX(x: number): number {
 
         // flip the coordinate if doing RTL
-        let flipHorizontallyForRtl = this.gridOptionsWrapper.isEnableRtl();
+        const flipHorizontallyForRtl = this.gridOptionsWrapper.isEnableRtl();
         if (flipHorizontallyForRtl) {
-            let clientWidth = this.eContainer.clientWidth;
+            const clientWidth = this.eContainer.clientWidth;
             x = clientWidth - x;
         }
 
         // adjust for scroll only if centre container (the pinned containers dont scroll)
-        let adjustForScroll = this.centerContainer;
+        const adjustForScroll = this.centerContainer;
         if (adjustForScroll) {
-            x += this.gridPanel.getBodyViewportScrollLeft();
+            x += this.gridPanel.getCenterViewportScrollLeft();
         }
 
         return x;
@@ -130,8 +130,8 @@ export class MoveColumnController implements DropListener {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            let firstVisiblePixel = this.gridPanel.getBodyViewportScrollLeft();
-            let lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
+            const firstVisiblePixel = this.gridPanel.getCenterViewportScrollLeft();
+            const lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
 
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
@@ -158,7 +158,7 @@ export class MoveColumnController implements DropListener {
             return;
         }
 
-        let xNormalised = this.normaliseX(draggingEvent.x);
+        const xNormalised = this.normaliseX(draggingEvent.x);
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
@@ -167,12 +167,12 @@ export class MoveColumnController implements DropListener {
             this.checkCenterForScrolling(xNormalised);
         }
 
-        let hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
+        const hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
 
-        let dragSourceType: DragSourceType = draggingEvent.dragSource.type;
+        const dragSourceType: DragSourceType = draggingEvent.dragSource.type;
         let columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
 
-        columnsToMove = columnsToMove.filter( col => {
+        columnsToMove = columnsToMove.filter(col => {
             if (col.isLockPinned()) {
                 // if locked return true only if both col and container are same pin type.
                 // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
@@ -201,32 +201,32 @@ export class MoveColumnController implements DropListener {
     // returns the index of the first column in the list ONLY if the cols are all beside
     // each other. if the cols are not beside each other, then returns null
     private calculateOldIndex(movingCols: Column[]): number {
-        let gridCols: Column[] = this.columnController.getAllGridColumns();
-        let indexes: number[] = [];
-        movingCols.forEach( col => indexes.push(gridCols.indexOf(col)));
+        const gridCols: Column[] = this.columnController.getAllGridColumns();
+        const indexes: number[] = [];
+        movingCols.forEach(col => indexes.push(gridCols.indexOf(col)));
         _.sortNumberArray(indexes);
-        let firstIndex = indexes[0];
-        let lastIndex = indexes[indexes.length-1];
-        let spread = lastIndex - firstIndex;
-        let gapsExist = spread !== indexes.length - 1;
+        const firstIndex = indexes[0];
+        const lastIndex = indexes[indexes.length - 1];
+        const spread = lastIndex - firstIndex;
+        const gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
     }
 
     private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HDirection, xAdjusted: number, fromEnter: boolean): void {
 
-        let draggingLeft = hDirection === HDirection.Left;
-        let draggingRight = hDirection === HDirection.Right;
+        const draggingLeft = hDirection === HDirection.Left;
+        const draggingRight = hDirection === HDirection.Right;
 
-        let validMoves: number[] = this.calculateValidMoves(allMovingColumns, draggingRight, xAdjusted);
+        const validMoves: number[] = this.calculateValidMoves(allMovingColumns, draggingRight, xAdjusted);
 
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
-        let oldIndex = this.calculateOldIndex(allMovingColumns);
+        const oldIndex = this.calculateOldIndex(allMovingColumns);
 
         // fromEnter = false;
 
-        for (let i = 0; i<validMoves.length; i++) {
-            let newIndex: number = validMoves[i];
+        for (let i = 0; i < validMoves.length; i++) {
+            const newIndex: number = validMoves[i];
 
             // the two check below stop an error when the user grabs a group my a middle column, then
             // it is possible the mouse pointer is to the right of a column while been dragged left.
@@ -241,16 +241,16 @@ export class MoveColumnController implements DropListener {
             let constrainDirection = oldIndex !== null && !fromEnter;
 
             // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
-            if(dragSourceType == DragSourceType.HeaderCell) {
+            if (dragSourceType == DragSourceType.HeaderCell) {
                 constrainDirection = oldIndex !== null;
             }
 
             if (constrainDirection) {
                 // only allow left drag if this column is moving left
-                if (draggingLeft && newIndex>=oldIndex) { continue; }
+                if (draggingLeft && newIndex >= oldIndex) { continue; }
 
                 // only allow right drag if this column is moving right
-                if (draggingRight && newIndex<=oldIndex) { continue; }
+                if (draggingRight && newIndex <= oldIndex) { continue; }
             }
 
             if (!this.columnController.doesMovePassRules(allMovingColumns, newIndex)) {
@@ -267,17 +267,17 @@ export class MoveColumnController implements DropListener {
     private calculateValidMoves(movingCols: Column[], draggingRight: boolean, x: number): number[] {
 
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-        let allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
+        const allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
-        let allGridCols = this.columnController.getAllGridColumns();
+        const allGridCols = this.columnController.getAllGridColumns();
 
-        let colIsMovingFunc = (col: Column) => movingCols.indexOf(col) >= 0;
-        let colIsNotMovingFunc = (col: Column) => movingCols.indexOf(col) < 0;
+        const colIsMovingFunc = (col: Column) => movingCols.indexOf(col) >= 0;
+        const colIsNotMovingFunc = (col: Column) => movingCols.indexOf(col) < 0;
 
-        let movingDisplayedCols = allDisplayedCols.filter(colIsMovingFunc);
-        let otherDisplayedCols = allDisplayedCols.filter(colIsNotMovingFunc);
-        let otherGridCols = allGridCols.filter(colIsNotMovingFunc);
+        const movingDisplayedCols = allDisplayedCols.filter(colIsMovingFunc);
+        const otherDisplayedCols = allDisplayedCols.filter(colIsNotMovingFunc);
+        const otherGridCols = allGridCols.filter(colIsNotMovingFunc);
 
         // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
         // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving
@@ -289,13 +289,13 @@ export class MoveColumnController implements DropListener {
         // include the width of the moving columns
         if (draggingRight) {
             let widthOfMovingDisplayedCols = 0;
-            movingDisplayedCols.forEach( col => widthOfMovingDisplayedCols += col.getActualWidth() );
+            movingDisplayedCols.forEach(col => widthOfMovingDisplayedCols += col.getActualWidth());
             availableWidth -= widthOfMovingDisplayedCols;
         }
 
         // now count how many of the displayed columns will fit to the left
         for (let i = 0; i < otherDisplayedCols.length; i++) {
-            let col = otherDisplayedCols[i];
+            const col = otherDisplayedCols[i];
             availableWidth -= col.getActualWidth();
             if (availableWidth < 0) { break; }
             displayIndex++;
@@ -311,13 +311,13 @@ export class MoveColumnController implements DropListener {
 
         let gridColIndex: number;
         if (displayIndex > 0) {
-            let leftColumn = otherDisplayedCols[displayIndex-1];
+            const leftColumn = otherDisplayedCols[displayIndex - 1];
             gridColIndex = otherGridCols.indexOf(leftColumn) + 1;
         } else {
             gridColIndex = 0;
         }
 
-        let validMoves = [gridColIndex];
+        const validMoves = [gridColIndex];
 
         // add in all adjacent empty columns as other valid moves. this allows us to try putting the new
         // column in any place of a hidden column, to try different combinations so that we don't break
@@ -335,14 +335,14 @@ export class MoveColumnController implements DropListener {
 
     // isHidden takes into account visible=false and group=closed, ie it is not displayed
     private isColumnHidden(displayedColumns: Column[], col: Column) {
-        return displayedColumns.indexOf(col)<0;
+        return displayedColumns.indexOf(col) < 0;
     }
 
     private ensureIntervalStarted(): void {
         if (!this.movingIntervalId) {
             this.intervalCount = 0;
             this.failedMoveAttempts = 0;
-            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
             if (this.needToMoveLeft) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_LEFT, true);
             } else {
@@ -353,7 +353,7 @@ export class MoveColumnController implements DropListener {
 
     private ensureIntervalCleared(): void {
         if (this.moveInterval) {
-            clearInterval(this.movingIntervalId);
+            window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
         }
@@ -384,13 +384,13 @@ export class MoveColumnController implements DropListener {
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
 
-            let columns = this.lastDraggingEvent.dragItem.columns;
-            let columnsThatCanPin = columns.filter( c => !c.isLockPinned() );
+            const columns = this.lastDraggingEvent.dragItem.columns;
+            const columnsThatCanPin = columns.filter(c => !c.isLockPinned());
 
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
                 if (this.failedMoveAttempts > 7) {
-                    let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
+                    const pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
                     this.setColumnsPinned(columnsThatCanPin, pinType, "uiColumnDragged");
                     this.dragAndDropService.nudge();
                 }

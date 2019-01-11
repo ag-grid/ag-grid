@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Change Detection: A Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Change Detection. As you change data inside the grid, the grid runs Change Detection to check if any other cells need to be updated to reflect the change. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Change Detection. As you change data inside the grid, the grid runs Change Detection to check if any other cells need to be updated to reflect the change. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Change Detection";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>1. Value Change Detection</h2>
 
@@ -201,7 +201,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= example('Change Detection with Groups', 'change-detection-groups', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Change Detection with Groups', 'change-detection-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <p>
         Notice above that the group column is also editable (eg you can change one of the rows from group 'A'
@@ -286,7 +286,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Aggregation Path Selection</h2>
 
@@ -370,7 +370,7 @@ colDef = {
         </ul>
 
 
-    <?= example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2>Change Detection and Pivot</h2>
@@ -427,6 +427,6 @@ colDef = {
         </li>
     </ul>
 
-    <?= example('Change Detection Pivot', 'change-detection-pivot', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Change Detection Pivot', 'change-detection-pivot', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

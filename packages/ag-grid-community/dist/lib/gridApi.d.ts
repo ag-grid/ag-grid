@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -48,8 +48,8 @@ export interface RedrawRowsParams {
 }
 export interface DetailGridInfo {
     id: string;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
 }
 export declare class GridApi {
     private immutableService;
@@ -119,7 +119,15 @@ export declare class GridApi {
     getPinnedBottomRow(index: number): RowNode;
     setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
     expireValueCache(): void;
-    getVerticalPixelRange(): any;
+    getVerticalPixelRange(): {
+        top: number;
+        bottom: number;
+    };
+    getHorizontalPixelRange(): {
+        left: number;
+        right: number;
+    };
+    setAlwaysShowVerticalScroll(show: boolean): void;
     refreshToolPanel(): void;
     refreshCells(params?: RefreshCellsParams): void;
     flashCells(params?: FlashCellsParams): void;
@@ -134,6 +142,7 @@ export declare class GridApi {
     refreshHeader(): void;
     isAnyFilterPresent(): boolean;
     isAdvancedFilterPresent(): boolean;
+    isColumnFilterPresent(): boolean;
     isQuickFilterPresent(): boolean;
     getModel(): IRowModel;
     onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any): void;
@@ -288,4 +297,3 @@ export declare class GridApi {
     paginationGoToLastPage(): void;
     paginationGoToPage(page: number): void;
 }
-//# sourceMappingURL=gridApi.d.ts.map

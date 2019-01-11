@@ -20,16 +20,18 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
     //floatingFilter:true,
     groupHeaderHeight:75,
     headerHeight: 150,
     floatingFiltersHeight:50,
     pivotGroupHeaderHeight:50,
     pivotHeaderHeight:100,
-    enableSorting:true,
     showToolPanel:true
 };
 

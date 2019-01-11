@@ -148,6 +148,8 @@ var AgGridColumn = /** @class */ (function () {
         'enableCellChangeFlash': [{ type: core_1.Input },],
         'rowDrag': [{ type: core_1.Input },],
         'autoHeight': [{ type: core_1.Input },],
+        'sortable': [{ type: core_1.Input },],
+        'resizable': [{ type: core_1.Input },],
     };
     return AgGridColumn;
 }());

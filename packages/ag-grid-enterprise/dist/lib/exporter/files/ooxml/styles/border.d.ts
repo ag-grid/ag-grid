@@ -1,17 +1,16 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { ExcelOOXMLTemplate } from 'ag-grid-community';
 declare const borderFactory: ExcelOOXMLTemplate;
 export default borderFactory;
 export declare const convertLegacyBorder: (type: string, weight: number) => string;
 export interface Border {
-    style: string;
-    color: string;
+    style: string | undefined;
+    color: string | undefined;
 }
 export interface BorderSet {
-    left: Border;
-    right: Border;
-    top: Border;
-    bottom: Border;
-    diagonal: Border;
+    left: Border | undefined;
+    right: Border | undefined;
+    top: Border | undefined;
+    bottom: Border | undefined;
+    diagonal: Border | undefined;
 }
-//# sourceMappingURL=border.d.ts.map

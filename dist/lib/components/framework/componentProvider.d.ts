@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -51,4 +51,3 @@ export declare class ComponentProvider {
     retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B>;
     private translateIfDeprecated;
 }
-//# sourceMappingURL=componentProvider.d.ts.map

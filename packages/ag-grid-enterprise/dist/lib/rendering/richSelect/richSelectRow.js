@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -36,12 +36,12 @@ var RichSelectRow = /** @class */ (function (_super) {
         if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, valueFormatted);
         }
-        ag_grid_community_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
+        ag_grid_community_1._.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
     };
     RichSelectRow.prototype.populateWithoutRenderer = function (value, valueFormatted) {
         var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
         var valueToRender = valueFormattedExits ? valueFormatted : value;
-        if (ag_grid_community_1.Utils.exists(valueToRender) && valueToRender !== '') {
+        if (ag_grid_community_1._.exists(valueToRender) && valueToRender !== '') {
             // not using innerHTML to prevent injection of HTML
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
             this.getGui().textContent = valueToRender.toString();
@@ -63,9 +63,7 @@ var RichSelectRow = /** @class */ (function (_super) {
             });
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     };
     __decorate([
         ag_grid_community_1.Autowired('cellRendererService'),

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,7 @@ var Context = /** @class */ (function () {
         this.logger.log(">> creating ag-Application Context");
         this.setupComponents();
         this.createBeans();
-        var beans = utils_1.Utils.mapObject(this.beans, function (beanEntry) { return beanEntry.beanInstance; });
+        var beans = utils_1._.mapObject(this.beans, function (beanEntry) { return beanEntry.beanInstance; });
         this.wireBeans(beans);
         this.logger.log(">> ag-Application Context ready - component is alive");
     }
@@ -64,7 +64,7 @@ var Context = /** @class */ (function () {
         this.preConstruct(beans);
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed
-        if (utils_1.Utils.exists(afterPreCreateCallback)) {
+        if (utils_1._.exists(afterPreCreateCallback)) {
             beans.forEach(afterPreCreateCallback);
         }
         this.postConstruct(beans);
@@ -78,7 +78,7 @@ var Context = /** @class */ (function () {
             this.contextParams.overrideBeans.forEach(this.createBeanEntry.bind(this));
         }
         // instantiate all beans - overridden beans will be left out
-        utils_1.Utils.iterateObject(this.beans, function (key, beanEntry) {
+        utils_1._.iterateObject(this.beans, function (key, beanEntry) {
             var constructorParamsMeta;
             if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
@@ -89,6 +89,7 @@ var Context = /** @class */ (function () {
             _this.logger.log("bean " + _this.getBeanName(newInstance) + " created");
         });
     };
+    // tslint:disable-next-line
     Context.prototype.createBeanEntry = function (Bean) {
         var metaData = Bean.__agBeanMetaData;
         if (!metaData) {
@@ -161,7 +162,7 @@ var Context = /** @class */ (function () {
         if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.autowireMethods) {
             autowiredMethods = bean.constructor.__agBeanMetaData.autowireMethods;
         }
-        utils_1.Utils.iterateObject(autowiredMethods, function (methodName, wireParams) {
+        utils_1._.iterateObject(autowiredMethods, function (methodName, wireParams) {
             // skip constructor, as this is dealt with elsewhere
             if (methodName === "agConstructor") {
                 return;
@@ -175,7 +176,7 @@ var Context = /** @class */ (function () {
         var _this = this;
         var beansList = [];
         if (parameters) {
-            utils_1.Utils.iterateObject(parameters, function (paramIndex, otherBeanName) {
+            utils_1._.iterateObject(parameters, function (paramIndex, otherBeanName) {
                 var otherBean = _this.lookupBeanInstance(beanName, otherBeanName);
                 beansList[Number(paramIndex)] = otherBean;
             });
@@ -204,8 +205,10 @@ var Context = /** @class */ (function () {
     Context.prototype.postConstruct = function (beans) {
         beans.forEach(function (bean) {
             // try calling init methods
-            if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.postConstructMethods) {
-                bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.postConstructMethods.forEach(function (methodName) { return bean[methodName](); });
+            var agBeanMetaData = bean.constructor.__agBeanMetaData;
+            var postConstructMethods = agBeanMetaData && agBeanMetaData.postConstructMethods;
+            if (postConstructMethods) {
+                postConstructMethods.forEach(function (methodName) { return bean[methodName](); });
             }
         });
     };
@@ -230,12 +233,13 @@ var Context = /** @class */ (function () {
         }
         this.logger.log(">> Shutting down ag-Application Context");
         // try calling destroy methods
-        utils_1.Utils.iterateObject(this.beans, function (key, beanEntry) {
+        utils_1._.iterateObject(this.beans, function (key, beanEntry) {
             var bean = beanEntry.beanInstance;
             if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.preDestroyMethods) {
                 bean.constructor.__agBeanMetaData.preDestroyMethods.forEach(function (methodName) { return bean[methodName](); });
             }
         });
+        this.contextParams.seed = null;
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
     };

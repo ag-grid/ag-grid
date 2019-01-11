@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,8 +54,11 @@ var ExpressionService = /** @class */ (function () {
         catch (e) {
             // the expression failed, which can happen, as it's the client that
             // provides the expression. so print a nice message
+            // tslint:disable-next-line
             console.log('Processing of the expression failed');
+            // tslint:disable-next-line
             console.log('Expression = ' + expression);
+            // tslint:disable-next-line
             console.log('Exception = ' + e);
             return null;
         }

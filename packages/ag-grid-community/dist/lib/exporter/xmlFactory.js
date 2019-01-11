@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,12 +22,15 @@ var XmlFactory = /** @class */ (function () {
         var headerStart = '<?';
         var headerEnd = '?>';
         var keys = ['version'];
-        if (!headerElement.version)
+        if (!headerElement.version) {
             headerElement.version = "1.0";
-        if (headerElement.encoding)
+        }
+        if (headerElement.encoding) {
             keys.push('encoding');
-        if (headerElement.standalone)
+        }
+        if (headerElement.standalone) {
             keys.push('standalone');
+        }
         var att = keys.map(function (key) { return key + "=\"" + headerElement[key] + "\""; }).join(' ');
         return headerStart + "xml " + att + " " + headerEnd;
     };
@@ -56,9 +59,11 @@ var XmlFactory = /** @class */ (function () {
             return result + '>' + xmlElement.textNode + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
         }
         result += '>' + LINE_SEPARATOR;
-        xmlElement.children.forEach(function (it) {
-            result += _this.createXml(it, booleanTransformer);
-        });
+        if (xmlElement.children) {
+            xmlElement.children.forEach(function (it) {
+                result += _this.createXml(it, booleanTransformer);
+            });
+        }
         return result + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
     };
     XmlFactory.prototype.returnAttributeIfPopulated = function (key, value, booleanTransformer) {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -158,7 +158,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         if (column.isAllowValue()) {
             if (functionPassive) {
                 var copyOfValueColumns = this.columnController.getValueColumns().slice();
-                main_1.Utils.removeFromArray(copyOfValueColumns, column);
+                main_1._.removeFromArray(copyOfValueColumns, column);
                 var event_4 = {
                     type: main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                     api: this.gridApi,
@@ -174,7 +174,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         else if (column.isAllowRowGroup()) {
             if (functionPassive) {
                 var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
-                main_1.Utils.removeFromArray(copyOfRowGroupColumns, column);
+                main_1._.removeFromArray(copyOfRowGroupColumns, column);
                 var event_5 = {
                     type: main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                     api: this.gridApi,
@@ -190,7 +190,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         else if (column.isAllowPivot()) {
             if (functionPassive) {
                 var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
-                main_1.Utils.removeFromArray(copyOfPivotColumns, column);
+                main_1._.removeFromArray(copyOfPivotColumns, column);
                 var event_6 = {
                     type: main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                     api: this.gridApi,

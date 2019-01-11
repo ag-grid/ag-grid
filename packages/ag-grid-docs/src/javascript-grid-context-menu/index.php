@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Context Menu: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Context Menu. The Context Menu appears when you right click on a cell. Use the default options or provide your own. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Context Menu. The Context Menu appears when you right click on a cell. Use the default options or provide your own. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Javascript Grid Context Menu";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -92,10 +92,10 @@ MenuItemDef {
         <li><code>copyWithHeaders</code>Copy selected value to clipboard with headers.</li>
         <li><code>paste</code>: Always disabled (see note in clipboard section).</li>
         <li><code>resetColumns</code>: Reset all columns.</li>
-        <li><code>toolPanel</code>: Show / hide the toolpanel.</li>
         <li><code>export</code>: Export sub menu (containing csvExport and excelExport).</li>
         <li><code>csvExport</code>: Export to CSV using all default export values.</li>
-        <li><code>excelExport</code>: Export to Excel using all default export values.</li>
+        <li><code>excelExport</code>: Export to Excel (.xlsx) using all default export values.</li>
+        <li><code>excelXMLExport</code>: Export to Excel (.xml) using all default export values.</li>
     </ul>
 
     <h2>Default Context Menu</h2>
@@ -135,7 +135,7 @@ MenuItemDef {
         <li>The second menu item ('Always Disabled') has a tooltip.</li>
     </ul>
 
-    <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="popup-parent">Popup Parent</h2>
 
@@ -152,7 +152,7 @@ MenuItemDef {
         </ul>
     </p>
 
-    <?= example('Small Grid Problem', 'popup-parent-problem', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Small Grid Problem', 'popup-parent-problem', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <p>
         The solution is to set the <code>popupParent</code> element which can be set in the following ways:
@@ -176,7 +176,7 @@ MenuItemDef {
         to the document body.
     </p>
 
-    <?= example('Small Grid Solution', 'popup-parent-solution', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Small Grid Solution', 'popup-parent-solution', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
 

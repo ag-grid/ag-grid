@@ -1,26 +1,26 @@
-import {GridOptions} from "./entities/gridOptions";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColumnApi} from "./columnController/columnApi";
-import {ColumnController} from "./columnController/columnController";
-import {RowRenderer} from "./rendering/rowRenderer";
-import {FilterManager} from "./filter/filterManager";
-import {EventService} from "./eventService";
-import {GridPanel} from "./gridPanel/gridPanel";
-import {Logger, LoggerFactory} from "./logger";
-import {PopupService} from "./widgets/popupService";
-import {Utils as _} from "./utils";
-import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy} from "./context/context";
-import {IRowModel} from "./interfaces/iRowModel";
-import {FocusedCellController} from "./focusedCellController";
-import {Component} from "./widgets/component";
-import {ICompFactory} from "./interfaces/iCompFactory";
-import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
-import {GridApi} from "./gridApi";
-import {ISideBar} from "./interfaces/ISideBar";
-import {RefSelector} from "./widgets/componentAnnotations";
-import {Events, GridSizeChangedEvent} from "./events";
-import {ResizeObserverService} from "./misc/resizeObserverService";
-import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
+import { GridOptions } from "./entities/gridOptions";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { ColumnApi } from "./columnController/columnApi";
+import { ColumnController } from "./columnController/columnController";
+import { RowRenderer } from "./rendering/rowRenderer";
+import { FilterManager } from "./filter/filterManager";
+import { EventService } from "./eventService";
+import { GridPanel } from "./gridPanel/gridPanel";
+import { Logger, LoggerFactory } from "./logger";
+import { PopupService } from "./widgets/popupService";
+import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
+import { IRowModel } from "./interfaces/iRowModel";
+import { FocusedCellController } from "./focusedCellController";
+import { Component } from "./widgets/component";
+import { ICompFactory } from "./interfaces/iCompFactory";
+import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
+import { GridApi } from "./gridApi";
+import { ISideBar } from "./interfaces/ISideBar";
+import { RefSelector } from "./widgets/componentAnnotations";
+import { Events, GridSizeChangedEvent } from "./events";
+import { ResizeObserverService } from "./misc/resizeObserverService";
+import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
+import { _ } from "./utils";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -88,7 +88,7 @@ export class GridCore extends Component {
 
         this.logger = this.loggerFactory.create('GridCore');
 
-        let template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
+        const template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
         this.instantiate(this.context);
 
@@ -108,7 +108,7 @@ export class GridCore extends Component {
 
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
-            let quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter));
+            const quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter));
             this.addDestroyFunc(quickFilterUnregisterFn);
         }
 
@@ -129,7 +129,7 @@ export class GridCore extends Component {
     }
 
     private onGridSizeChanged(): void {
-        let event: GridSizeChangedEvent = {
+        const event: GridSizeChangedEvent = {
             type: Events.EVENT_GRID_SIZE_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -141,15 +141,15 @@ export class GridCore extends Component {
 
     // this was deprecated in v19, we can drop in v20
     public getPreferredWidth(): number {
-        let widthForCols = this.columnController.getBodyContainerWidth()
+        const widthForCols = this.columnController.getBodyContainerWidth()
             + this.columnController.getPinnedLeftContainerWidth()
             + this.columnController.getPinnedRightContainerWidth();
-        let widthForToolpanel = this.sideBarComp ? this.sideBarComp.getPreferredWidth() : 0;
+        const widthForToolpanel = this.sideBarComp ? this.sideBarComp.getPreferredWidth() : 0;
         return widthForCols + widthForToolpanel;
     }
 
     private addRtlSupport(): void {
-        let cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
+        const cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
         _.addCssClass(this.getGui(), cssClass);
     }
 
@@ -186,7 +186,7 @@ export class GridCore extends Component {
     }
 
     public getSideBar(): SideBarDef {
-        return <SideBarDef>this.gridOptions.sideBar;
+        return this.gridOptions.sideBar as SideBarDef;
     }
 
     public setSideBar(def: SideBarDef | string | boolean): void {
@@ -230,12 +230,12 @@ export class GridCore extends Component {
             throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
         }
         // look for the node index we want to display
-        let rowCount = this.rowModel.getPageLastRow() + 1;
-        let comparatorIsAFunction = typeof comparator === 'function';
+        const rowCount = this.rowModel.getPageLastRow() + 1;
+        const comparatorIsAFunction = typeof comparator === 'function';
         let indexToSelect = -1;
         // go through all the nodes, find the one we want to show
         for (let i = 0; i < rowCount; i++) {
-            let node = this.rowModel.getRow(i);
+            const node = this.rowModel.getRow(i);
             if (comparatorIsAFunction) {
                 if (comparator(node)) {
                     indexToSelect = i;

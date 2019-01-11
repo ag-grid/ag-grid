@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,26 +16,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var linkedList_1 = require("./linkedList");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var eventKeys_1 = require("../eventKeys");
 var eventService_1 = require("../eventService");
-var utils_1 = require("../utils");
 var AnimationFrameService = /** @class */ (function () {
     function AnimationFrameService() {
-        this.p1Tasks = new linkedList_1.LinkedList();
-        this.p2Tasks = new linkedList_1.LinkedList();
+        // create tasks are to do with row creation. for them we want to execute according to row order, so we use
+        // TaskItem so we know what index the item is for.
+        this.createRowTasks = [];
+        // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
+        // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
+        // important.
+        this.destroyRowTasks = [];
         this.ticking = false;
+        // we need to know direction of scroll, to build up rows in the direction of
+        // the scroll. eg if user scrolls down, we extend the rows by building down.
+        this.scrollGoingDown = true;
+        this.lastScrollTop = 0;
     }
-    AnimationFrameService.prototype.registerGridComp = function (gridPanel) {
-        this.gridPanel = gridPanel;
-    };
-    AnimationFrameService.prototype.isSupportsOverflowScrolling = function () {
-        return this.supportsOverflowScrolling;
+    AnimationFrameService.prototype.setScrollTop = function (scrollTop) {
+        this.scrollGoingDown = scrollTop > this.lastScrollTop;
+        this.lastScrollTop = scrollTop;
     };
     AnimationFrameService.prototype.init = function () {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
-        this.supportsOverflowScrolling = utils_1._.hasOverflowScrolling();
     };
     // this method is for our ag-Grid sanity only - if animation frames are turned off,
     // then no place in the code should be looking to add any work to be done in animation
@@ -46,33 +50,36 @@ var AnimationFrameService = /** @class */ (function () {
             console.warn("ag-Grid: AnimationFrameService." + methodName + " called but animation frames are off");
         }
     };
-    AnimationFrameService.prototype.addP1Task = function (task) {
+    AnimationFrameService.prototype.addP1Task = function (task, index) {
         this.verifyAnimationFrameOn('addP1Task');
-        this.p1Tasks.add(task);
+        var taskItem = { task: task, index: index };
+        this.createRowTasks.push(taskItem);
         this.schedule();
     };
     AnimationFrameService.prototype.addP2Task = function (task) {
         this.verifyAnimationFrameOn('addP2Task');
-        this.p2Tasks.add(task);
+        this.destroyRowTasks.push(task);
         this.schedule();
     };
     AnimationFrameService.prototype.executeFrame = function (millis) {
         this.verifyAnimationFrameOn('executeFrame');
+        if (this.scrollGoingDown) {
+            this.createRowTasks.sort(function (a, b) { return b.index - a.index; });
+        }
+        else {
+            this.createRowTasks.sort(function (a, b) { return a.index - b.index; });
+        }
         var frameStart = new Date().getTime();
         var duration = (new Date().getTime()) - frameStart;
-        var gridPanelNeedsAFrame = true;
         // 16ms is 60 fps
         var noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (gridPanelNeedsAFrame) {
-                gridPanelNeedsAFrame = this.gridPanel.executeFrame();
+            if (this.createRowTasks.length > 0) {
+                var taskItem = this.createRowTasks.pop();
+                taskItem.task();
             }
-            else if (!this.p1Tasks.isEmpty()) {
-                var task = this.p1Tasks.remove();
-                task();
-            }
-            else if (!this.p2Tasks.isEmpty()) {
-                var task = this.p2Tasks.remove();
+            else if (this.destroyRowTasks.length > 0) {
+                var task = this.destroyRowTasks.pop();
                 task();
             }
             else {
@@ -80,7 +87,7 @@ var AnimationFrameService = /** @class */ (function () {
             }
             duration = (new Date().getTime()) - frameStart;
         }
-        if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
+        if (this.createRowTasks.length > 0 || this.destroyRowTasks.length > 0) {
             this.requestFrame();
         }
         else {
@@ -122,7 +129,7 @@ var AnimationFrameService = /** @class */ (function () {
             window.webkitRequestAnimationFrame(callback);
         }
         else {
-            setTimeout(callback, 0);
+            window.setTimeout(callback, 0);
         }
     };
     AnimationFrameService.prototype.isQueueEmpty = function () {

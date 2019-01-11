@@ -7,6 +7,8 @@
 
     nav {
         @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
+        padding: 0 10px;
+        height: 65px;
     }
 
     &.compact {
@@ -41,42 +43,48 @@
         }
     }
 
-    #main-nav ul {
-        @extend .navbar-nav, .ml-md-auto;
+    #main-nav {
+        height: 100%;
+        ul {
+            @extend .navbar-nav, .ml-md-auto;
+            height: 100%;
+            li {
+                @extend .nav-item, .ml-3;
+                height: calc(100% - 1px);
+                line-height: 65px;
+                a {
+                    color: lighten($blue-3, 10);
+                    padding: 0.5rem 1rem;
+                }
 
-        li {
-            @extend .nav-item, .ml-3;
+                a:hover {
+                    color: $white;
+                    text-decoration: none;
+                }
 
-            a {
-                color: lighten($blue-3, 10);
-                display: block;
-                padding: 0.5rem 1rem;
+                &.active {
+                    border-bottom: 3px solid white;
+                    a {
+                        color: $white;
+                    }
+                }
             }
 
-            a:hover {
-                color: $white;
-                text-decoration: none;
+            .medium {
+                background-image: url("../svg/medium.svg");
+                background-position-x: right;
+                background-position-y: 8px;
+                background-repeat: no-repeat;
+
+                padding-right: 20px;
             }
 
-            &.active a {
-                color: $white;
+            #trial a {
+                @extend .rounded;
+
+                background-color: $offwhite;
+                color: $blue-2 !important;
             }
-        }
-
-        .medium {
-            background-image: url("../svg/medium.svg");
-            background-position-x: right;
-            background-position-y: 8px;
-            background-repeat: no-repeat;
-
-            padding-right: 20px;
-        }
-
-        #trial a {
-            @extend .rounded;
-
-            background-color: $offwhite;
-            color: $blue-2 !important;
         }
     }
 }

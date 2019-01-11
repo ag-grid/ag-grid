@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Resizing: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Resizing. Resize columns by dragging the edge of the column header, Auto Fill to fill the grid width, or Auto Size columns to fit their content. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Resizing. Resize columns by dragging the edge of the column header, Auto Fill to fill the grid width, or Auto Size columns to fit their content. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Resizing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -17,14 +17,41 @@ include '../documentation-main/documentation_header.php';
     <h2>Enable Resizing</h2>
 
     <p>
-        Turn column resizing on for the grid by enabling resizing in the grid options.
+        Turn column resizing on for the grid by setting <code>resizable=true</code> for each column.
+        To set resizing for each column, set <code>resizable=true</code> on the
+        <a href="/javascript-grid-column-definitions/#default-column-definitions">default column definition</a>.
     </p>
 
     <p>
-        If you wish only some columns to be resizable, enable resizing for the grid,
-        then suppress resizing for the particular column by setting <code>suppressResize=true</code>
-        on the column definition.
+        The snippet below allows all columns except Address to be resized by explicitly setting each column.
     </p>
+<snippet>
+gridOptions: {
+    columnDefs: [
+        {field: 'name', resizable: true},
+        {field: 'age', resizable: true},
+        {field: 'address'},
+    ]
+}
+</snippet>
+
+    <p>
+        The snippet below allows all columns except Address to be resized by setting <code>resizable=true</code>
+        on the default column definition and then <code>resizable=false</code> on the Address column.
+    </p>
+
+<snippet>
+gridOptions: {
+    defaultColDef: {
+        resizable: true
+    },
+    columnDefs: [
+        {field: 'name'},
+        {field: 'age'},
+        {field: 'address', resizable: false},
+    ]
+}
+</snippet>
 
     <h2>Size Columns to Fit</h2>
 
@@ -97,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         after you press the button.
     </p>
 
-    <?= example('Column Resizing', 'column-resizing', 'generated') ?>
+    <?= example('Column Resizing', 'column-resizing', 'generated', array("processVue" => true)) ?>
 
     <h2>Sizing Columns By Default</h2>
 
@@ -109,12 +136,12 @@ include '../documentation-main/documentation_header.php';
     <p>
         Note that <code>api.sizeColumnsToFit()</code> needs to know the grid width in order to do its
         maths. If the grid is not attached to the DOM, then this will be unknown. In the example
-        below, the grid is not attached to the DOM when it is created (and hence <code>api.sizeColumnsToFix()</code>
+        below, the grid is not attached to the DOM when it is created (and hence <code>api.sizeColumnsToFit()</code>
         should fail). The grid checks again after 100ms, and tries to resize again. This is needed
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
 
-    <?= example('Default Resizing', 'default-resizing', 'generated') ?>
+    <?= example('Default Resizing', 'default-resizing', 'generated', array("processVue" => true)) ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 
@@ -142,7 +169,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <?= example('Shift Resizing', 'shift-resizing', 'generated') ?>
+    <?= example('Shift Resizing', 'shift-resizing', 'generated', array("processVue" => true)) ?>
     <h2>Resizing Groups</h2>
 
     <p>
@@ -150,14 +177,14 @@ include '../documentation-main/documentation_header.php';
         The example below the groups can be resizes as follows:
     </p>
         <ul class="content">
-            <li>The group 'Everything Resizes' will resize all columns.</li>:-
+            <li>The group 'Everything Resizes' will resize all columns.</li>
             <li>The group 'Only Year Resizes' will resize only year, because the other columns
-                have <code>suppressResize=true</code>.</li>
+                have <code>resizable=false</code>.</li>
             <li>The group 'Nothing Resizes' cannot be resized at all because all the columns
-                in the groups have <code>suppressResize=true</code>.</li>
+                in the groups have <code>resizable=false</code>.</li>
         </ul>
 
-    <?= example('Resizing Groups', 'resizing-groups', 'generated') ?>
+    <?= example('Resizing Groups', 'resizing-groups', 'generated', array("processVue" => true)) ?>
 
 <h2 id="resize-after-data">Resizing Columns When Data Is Renderered</h2>
 <p>There are two scenarios main where scenarios where you might want to resize columns based on grid data:</p>

@@ -1,7 +1,8 @@
-import {Bean, Autowired, PostConstruct} from "../context/context";
-import {RowNode} from "../entities/rowNode";
-import {FilterManager} from "../filter/filterManager";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { RowNode } from "../entities/rowNode";
+import { FilterManager } from "../filter/filterManager";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+
 @Bean("filterService")
 export class FilterService {
 
@@ -15,28 +16,28 @@ export class FilterService {
         this.doingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
-    public filterAccordingToColumnState(rowNode: RowNode): void {
-        let filterActive: boolean = this.filterManager.isAnyFilterPresent();
-        this.filter (rowNode, filterActive);
+    public filter(rowNode: RowNode): void {
+        const filterActive: boolean = this.filterManager.isAnyFilterPresent();
+        this.filterNode(rowNode, filterActive);
     }
 
-    public filter(rowNode: RowNode, filterActive: boolean): void {
+    private filterNode(rowNode: RowNode, filterActive: boolean): void {
 
         // recursively get all children that are groups to also filter
         if (rowNode.hasChildren()) {
 
-            rowNode.childrenAfterGroup.forEach( node => this.filter(node, filterActive));
+            rowNode.childrenAfterGroup.forEach(node => this.filterNode(node, filterActive));
 
             // result of filter for this node
             if (filterActive) {
                 rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(childNode => {
                     // a group is included in the result if it has any children of it's own.
                     // by this stage, the child groups are already filtered
-                    let passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
+                    const passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
 
                     // both leaf level nodes and tree data nodes have data. these get added if
                     // the data passes the filter
-                    let passBecauseDataPasses = childNode.data && this.filterManager.doesRowPassFilter(childNode);
+                    const passBecauseDataPasses = childNode.data && this.filterManager.doesRowPassFilter(childNode);
 
                     // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
 
@@ -62,7 +63,7 @@ export class FilterService {
             // include child itself
             allChildrenCount++;
             // include children of children
-            allChildrenCount += child.allChildrenCount;
+            allChildrenCount += child.allChildrenCount as any;
         });
         rowNode.setAllChildrenCount(allChildrenCount);
     }
@@ -72,7 +73,7 @@ export class FilterService {
         let allChildrenCount = 0;
         rowNode.childrenAfterFilter.forEach((child: RowNode) => {
             if (child.group) {
-                allChildrenCount += child.allChildrenCount;
+                allChildrenCount += child.allChildrenCount as any;
             } else {
                 allChildrenCount++;
             }

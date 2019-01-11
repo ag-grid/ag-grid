@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -28,7 +28,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var context_1 = require("../../context/context");
 var eventService_1 = require("../../eventService");
@@ -43,6 +42,7 @@ var rowNodeCache_1 = require("../cache/rowNodeCache");
 var rowNodeBlockLoader_1 = require("../cache/rowNodeBlockLoader");
 var gridApi_1 = require("../../gridApi");
 var columnApi_1 = require("../../columnController/columnApi");
+var utils_1 = require("../../utils");
 var InfiniteRowModel = /** @class */ (function (_super) {
     __extends(InfiniteRowModel, _super);
     function InfiniteRowModel() {
@@ -79,36 +79,29 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
     };
     InfiniteRowModel.prototype.onFilterChanged = function () {
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            this.reset();
-        }
+        this.reset();
     };
     InfiniteRowModel.prototype.onSortChanged = function () {
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            this.reset();
-        }
+        this.reset();
     };
     InfiniteRowModel.prototype.onColumnEverything = function () {
-        // if the columns get reset, then this means the sort order could be impacted
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            var resetRequired = void 0;
-            // if cache params, we require reset only if sort model has changed. we don't need to check
-            // for filter model, as the filter manager will fire an event when columns change that result
-            // in the filter changing.
-            if (this.cacheParams) {
-                resetRequired = this.isSortModelDifferent();
-            }
-            else {
-                // if no cacheParams, means first time creating the cache, so always create one
-                resetRequired = true;
-            }
-            if (resetRequired) {
-                this.reset();
-            }
+        var resetRequired;
+        // if cache params, we require reset only if sort model has changed. we don't need to check
+        // for filter model, as the filter manager will fire an event when columns change that result
+        // in the filter changing.
+        if (this.cacheParams) {
+            resetRequired = this.isSortModelDifferent();
+        }
+        else {
+            // if no cacheParams, means first time creating the cache, so always create one
+            resetRequired = true;
+        }
+        if (resetRequired) {
+            this.reset();
         }
     };
     InfiniteRowModel.prototype.isSortModelDifferent = function () {
-        return !utils_1.Utils.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+        return !utils_1._.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     };
     InfiniteRowModel.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -128,38 +121,38 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     InfiniteRowModel.prototype.checkForDeprecated = function () {
         var ds = this.datasource;
         // the number of concurrent loads we are allowed to the server
-        if (utils_1.Utils.exists(ds.maxConcurrentRequests)) {
+        if (utils_1._.exists(ds.maxConcurrentRequests)) {
             console.error('ag-Grid: since version 5.1.x, maxConcurrentRequests is replaced with grid property maxConcurrentDatasourceRequests');
         }
-        if (utils_1.Utils.exists(ds.maxPagesInCache)) {
+        if (utils_1._.exists(ds.maxPagesInCache)) {
             console.error('ag-Grid: since version 5.1.x, maxPagesInCache is replaced with grid property maxPagesInPaginationCache');
         }
-        if (utils_1.Utils.exists(ds.overflowSize)) {
+        if (utils_1._.exists(ds.overflowSize)) {
             console.error('ag-Grid: since version 5.1.x, overflowSize is replaced with grid property paginationOverflowSize');
         }
-        if (utils_1.Utils.exists(ds.blockSize)) {
+        if (utils_1._.exists(ds.blockSize)) {
             console.error('ag-Grid: since version 5.1.x, pageSize/blockSize is replaced with grid property infinitePageSize');
         }
     };
     InfiniteRowModel.prototype.isEmpty = function () {
-        return utils_1.Utils.missing(this.infiniteCache);
+        return utils_1._.missing(this.infiniteCache);
     };
     InfiniteRowModel.prototype.isRowsToRender = function () {
-        return utils_1.Utils.exists(this.infiniteCache);
+        return utils_1._.exists(this.infiniteCache);
     };
     InfiniteRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        return this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange);
+        return this.infiniteCache ? this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange) : [];
     };
     InfiniteRowModel.prototype.reset = function () {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
-        if (utils_1.Utils.missing(this.datasource)) {
+        if (utils_1._.missing(this.datasource)) {
             return;
         }
         // if user is providing id's, then this means we can keep the selection between datsource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        var userGeneratingIds = utils_1.Utils.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
+        var userGeneratingIds = utils_1._.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
         if (!userGeneratingIds) {
             this.selectionController.reset();
         }
@@ -210,12 +203,12 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             lastAccessedSequence: new utils_1.NumberSequence()
         };
         // set defaults
-        if (!(this.cacheParams.maxConcurrentRequests >= 1)) {
+        if (!this.cacheParams.maxConcurrentRequests || !(this.cacheParams.maxConcurrentRequests >= 1)) {
             this.cacheParams.maxConcurrentRequests = 2;
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
-        if (!(this.cacheParams.blockSize >= 1)) {
+        if (!this.cacheParams.blockSize || !(this.cacheParams.blockSize >= 1)) {
             this.cacheParams.blockSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
@@ -289,11 +282,11 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
     };
     InfiniteRowModel.prototype.updateRowData = function (transaction) {
-        if (utils_1.Utils.exists(transaction.remove) || utils_1.Utils.exists(transaction.update)) {
+        if (utils_1._.exists(transaction.remove) || utils_1._.exists(transaction.update)) {
             console.warn('ag-Grid: updateRowData for InfiniteRowModel does not support remove or update, only add');
             return;
         }
-        if (utils_1.Utils.missing(transaction.addIndex)) {
+        if (utils_1._.missing(transaction.addIndex)) {
             console.warn('ag-Grid: updateRowData for InfiniteRowModel requires add and addIndex to be set');
             return;
         }

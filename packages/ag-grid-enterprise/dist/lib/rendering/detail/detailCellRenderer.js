@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -39,7 +39,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             this.createDetailsGrid(params);
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
-            setTimeout(function () {
+            window.setTimeout(function () {
                 // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
                 if (_this.detailGridOptions.api) {
                     _this.detailGridOptions.api.doLayout();
@@ -109,7 +109,10 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         }
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = ag_grid_community_1._.cloneObject(gridOptions);
+        // tslint:disable-next-line
         new ag_grid_community_1.Grid(this.eDetailGrid, this.detailGridOptions, {
+            $scope: params.$scope,
+            $compile: params.$compile,
             seedBeanInstances: {
                 // a temporary fix for AG-1574
                 // AG-1715 raised to do a wider ranging refactor to improve this
@@ -118,7 +121,11 @@ var DetailCellRenderer = /** @class */ (function (_super) {
                 frameworkComponentWrapper: params.frameworkComponentWrapper
             }
         });
-        this.addDestroyFunc(function () { return _this.detailGridOptions.api.destroy(); });
+        this.addDestroyFunc(function () {
+            if (_this.detailGridOptions.api) {
+                _this.detailGridOptions.api.destroy();
+            }
+        });
     };
     DetailCellRenderer.prototype.loadRowData = function (params) {
         var userFunc = params.getDetailRowData;

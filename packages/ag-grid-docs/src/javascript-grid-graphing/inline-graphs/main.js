@@ -12,7 +12,7 @@ let columnDefs = [
         headerName: 'Close Trend',
         field: 'CloseTrends',
         width: 115,
-        suppressResize: true,
+        resizable: false,
         suppressSizeToFit: true,
         cellRenderer: 'lineChartLineRenderer'
     },
@@ -20,7 +20,7 @@ let columnDefs = [
         headerName: 'Avg Volume',
         field: 'AverageVolume',
         width: 115,
-        suppressResize: true,
+        resizable: false,
         suppressSizeToFit: true,
         cellRenderer: 'barChartLineRenderer'
     },
@@ -43,7 +43,7 @@ let columnDefs = [
         headerName: 'Expenditure',
         field: 'Expenditure',
         width: 110,
-        suppressResize: true,
+        resizable: false,
         suppressSizeToFit: true,
         cellRenderer: 'pieChartLineRenderer',
         cellRendererParams: {
@@ -57,8 +57,11 @@ let columnDefs = [
 ];
 
 let gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
-    enableSorting: true,
     rowSelection: 'single',
     rowHeight: 95,
     onCellClicked: (params) => {

@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.4
-import { MenuItemDef, Component } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { Component, MenuItemDef } from "ag-grid-community";
 export declare class MenuList extends Component {
     private context;
     private popupService;
@@ -12,7 +12,7 @@ export declare class MenuList extends Component {
     private subMenuParentDef;
     constructor();
     clearActiveItem(): void;
-    addMenuItems(menuItems: (MenuItemDef | string)[]): void;
+    addMenuItems(menuItems: (MenuItemDef | string)[] | undefined): void;
     addItem(menuItemDef: MenuItemDef): void;
     private mouseEnterItem;
     private removeActiveItem;
@@ -22,4 +22,3 @@ export declare class MenuList extends Component {
     private removeChildPopup;
     destroy(): void;
 }
-//# sourceMappingURL=menuList.d.ts.map

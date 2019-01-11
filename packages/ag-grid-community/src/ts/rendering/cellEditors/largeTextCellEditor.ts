@@ -1,11 +1,8 @@
-import {ICellEditorComp} from "./iCellEditor";
-import {ICellEditorParams} from "./iCellEditor";
-import {Component} from "../../widgets/component";
-import {ICellRenderer} from "../cellRenderers/iCellRenderer";
-import {ICellRendererFunc} from "../cellRenderers/iCellRenderer";
-import {Constants} from "../../constants";
-import {Utils as _} from "../../utils";
-
+import { ICellEditorComp } from "./iCellEditor";
+import { ICellEditorParams } from "./iCellEditor";
+import { Component } from "../../widgets/component";
+import { Constants } from "../../constants";
+import { _ } from "../../utils";
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
@@ -48,7 +45,7 @@ export class LargeTextCellEditor extends Component implements ICellEditorComp {
     }
 
     private onKeyDown(event:KeyboardEvent): void {
-        let key = event.which || event.keyCode;
+        const key = event.which || event.keyCode;
         if (key == Constants.KEY_LEFT ||
             key == Constants.KEY_UP ||
             key == Constants.KEY_RIGHT ||

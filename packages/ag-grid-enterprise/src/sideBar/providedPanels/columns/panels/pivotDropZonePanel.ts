@@ -1,5 +1,4 @@
 import {
-    Utils,
     Autowired,
     ColumnController,
     EventService,
@@ -10,12 +9,12 @@ import {
     PostConstruct,
     Events,
     Column,
-    Bean,
     ColumnPivotChangeRequestEvent,
     ColumnApi,
-    GridApi
+    GridApi,
+    _
 } from "ag-grid-community/main";
-import {BaseDropZonePanel} from "../dropZone/baseDropZonePanel";
+import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
 
 export class PivotDropZonePanel extends BaseDropZonePanel {
 
@@ -43,13 +42,13 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
-        let title = localeTextFunc('pivots', 'Column Labels');
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
+        const title = localeTextFunc('pivots', 'Column Labels');
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
+            icon: _.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
@@ -67,7 +66,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     private checkVisibility(): void {
-        let pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnController.isPivotMode();
 
         if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
@@ -77,7 +76,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
                     this.setVisible(pivotMode);
                     break;
                 case 'onlyWhenPivoting':
-                    let pivotActive = this.columnController.isPivotActive();
+                    const pivotActive = this.columnController.isPivotActive();
                     this.setVisible(pivotMode && pivotActive);
                     break;
                 default:
@@ -97,14 +96,14 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) { return false; }
 
-        let allowPivot = column.isAllowPivot();
-        let columnNotAlreadyPivoted = !column.isPivotActive();
+        const allowPivot = column.isAllowPivot();
+        const columnNotAlreadyPivoted = !column.isPivotActive();
         return allowPivot && columnNotAlreadyPivoted;
     }
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            let event: ColumnPivotChangeRequestEvent = {
+            const event: ColumnPivotChangeRequestEvent = {
                 type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,

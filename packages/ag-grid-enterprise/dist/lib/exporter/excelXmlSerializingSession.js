@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -29,13 +29,15 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         _this.mixedStyles = {};
         _this.mixedStyleCounter = 0;
         _this.rows = [];
-        var sheetName = config.sheetName, excelFactory = config.excelFactory, baseExcelStyles = config.baseExcelStyles, styleLinker = config.styleLinker, suppressTextAsCDATA = config.suppressTextAsCDATA;
+        var sheetName = config.sheetName, excelFactory = config.excelFactory, baseExcelStyles = config.baseExcelStyles, styleLinker = config.styleLinker, suppressTextAsCDATA = config.suppressTextAsCDATA, rowHeight = config.rowHeight, headerRowHeight = config.headerRowHeight;
         _this.sheetName = sheetName;
         _this.excelFactory = excelFactory;
         _this.baseExcelStyles = baseExcelStyles || [];
         _this.styleLinker = styleLinker;
         _this.suppressTextAsCDATA = suppressTextAsCDATA;
         _this.stylesByIds = {};
+        _this.rowHeight = rowHeight;
+        _this.headerRowHeight = headerRowHeight;
         _this.baseExcelStyles.forEach(function (it) {
             _this.stylesByIds[it.id] = it;
         });
@@ -49,7 +51,8 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         this.customFooter = customFooter;
     };
     ExcelXmlSerializingSession.prototype.prepare = function (columnsToExport) {
-        this.cols = ag_grid_community_1.Utils.map(columnsToExport, function (it) {
+        this.cols = ag_grid_community_1._.map(columnsToExport, function (it) {
+            // tslint:disable-next-line
             it.getColDef().cellStyle;
             return {
                 width: it.getActualWidth()
@@ -60,25 +63,27 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var currentCells = [];
         var that = this;
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height: this.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {
-                var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
-                currentCells.push(that.createMergedCell(styleIds.length > 0 ? styleIds[0] : null, "String", header, span));
+                var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
+                currentCells.push(that.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, "String", header, span));
             }
         };
     };
     ExcelXmlSerializingSession.prototype.onNewHeaderRow = function () {
-        return this.onNewRow(this.onNewHeaderColumn);
+        return this.onNewRow(this.onNewHeaderColumn, this.headerRowHeight);
     };
     ExcelXmlSerializingSession.prototype.onNewBodyRow = function () {
-        return this.onNewRow(this.onNewBodyColumn);
+        return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
     };
-    ExcelXmlSerializingSession.prototype.onNewRow = function (onNewColumnAccumulator) {
+    ExcelXmlSerializingSession.prototype.onNewRow = function (onNewColumnAccumulator, height) {
         var currentCells = [];
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height: height
         });
         return {
             onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()
@@ -89,8 +94,8 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var that = this;
         return function (column, index, node) {
             var nameForCol = _this.extractHeaderValue(column);
-            var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER, rowIndex, index, nameForCol, column, null);
-            currentCells.push(_this.createCell(styleIds.length > 0 ? styleIds[0] : null, 'String', nameForCol));
+            var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            currentCells.push(_this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 'String', nameForCol));
         };
     };
     ExcelXmlSerializingSession.prototype.parse = function () {
@@ -120,7 +125,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         return function (column, index, node) {
             var valueForCell = _this.extractRowCellValue(column, index, ag_grid_community_1.Constants.EXPORT_TYPE_EXCEL, node);
             var styleIds = that.styleLinker(ag_grid_community_1.RowType.BODY, rowIndex, index, valueForCell, column, node);
-            var excelStyleId = null;
+            var excelStyleId;
             if (styleIds && styleIds.length == 1) {
                 excelStyleId = styleIds[0];
             }
@@ -131,7 +136,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
                 }
                 excelStyleId = _this.mixedStyles[key].excelID;
             }
-            var type = ag_grid_community_1.Utils.isNumeric(valueForCell) ? 'Number' : 'String';
+            var type = ag_grid_community_1._.isNumeric(valueForCell) ? 'Number' : 'String';
             currentCells.push(that.createCell(excelStyleId, type, valueForCell));
         };
     };
@@ -143,12 +148,12 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         styleIds.forEach(function (styleId) {
             _this.excelStyles.forEach(function (excelStyle) {
                 if (excelStyle.id === styleId) {
-                    ag_grid_community_1.Utils.mergeDeep(resultantStyle, ag_grid_community_1.Utils.deepCloneObject(excelStyle));
+                    ag_grid_community_1._.mergeDeep(resultantStyle, ag_grid_community_1._.deepCloneObject(excelStyle));
                 }
             });
         });
-        resultantStyle['id'] = excelId;
-        resultantStyle['name'] = excelId;
+        resultantStyle.id = excelId;
+        resultantStyle.name = excelId;
         var key = styleIds.join("-");
         this.mixedStyles[key] = {
             excelID: excelId,
@@ -159,17 +164,18 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         this.stylesByIds[excelId] = resultantStyle;
     };
     ExcelXmlSerializingSession.prototype.styleExists = function (styleId) {
-        if (styleId == null)
+        if (styleId == null) {
             return false;
+        }
         return this.stylesByIds[styleId];
     };
     ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
         var _this = this;
-        var actualStyle = this.stylesByIds[styleId];
-        var styleExists = actualStyle != null;
+        var actualStyle = styleId && this.stylesByIds[styleId];
+        var styleExists = actualStyle !== undefined;
         function getType() {
             if (styleExists &&
-                actualStyle.dataType)
+                actualStyle.dataType) {
                 switch (actualStyle.dataType) {
                     case 'string':
                         return 'String';
@@ -184,17 +190,19 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
                     default:
                         console.warn("ag-grid: Unrecognized data type for excel export [" + actualStyle.id + ".dataType=" + actualStyle.dataType + "]");
                 }
+            }
             return type;
         }
         var typeTransformed = getType();
         var massageText = function (val) { return _this.suppressTextAsCDATA ? ag_grid_community_1._.escape(val) : "<![CDATA[" + val + "]]>"; };
         var convertBoolean = function (val) {
-            if (!val || val === '0' || val === 'false')
+            if (!val || val === '0' || val === 'false') {
                 return '0';
+            }
             return '1';
         };
         return {
-            styleId: styleExists ? styleId : null,
+            styleId: styleExists ? styleId : undefined,
             data: {
                 type: typeTransformed,
                 value: typeTransformed === 'String' ? massageText(value) :
@@ -206,7 +214,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     };
     ExcelXmlSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
         return {
-            styleId: this.styleExists(styleId) ? styleId : null,
+            styleId: this.styleExists(styleId) ? styleId : undefined,
             data: {
                 type: type,
                 value: value

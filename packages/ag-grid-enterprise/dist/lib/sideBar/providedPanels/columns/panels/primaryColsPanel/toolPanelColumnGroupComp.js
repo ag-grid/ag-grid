@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -42,10 +42,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var eText = this.queryForHtmlElement('#eText');
         // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
-        if (main_1.Utils.missing(this.displayName)) {
+        if (main_1._.missing(this.displayName)) {
             this.displayName = '>>';
         }
-        eText.innerHTML = this.displayName;
+        eText.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
@@ -92,8 +92,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.setupExpandContract = function () {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
         this.eGroupOpenedIcon = this.queryForHtmlElement('#eGroupOpenedIcon');
-        this.eGroupClosedIcon.appendChild(main_1.Utils.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
-        this.eGroupOpenedIcon.appendChild(main_1.Utils.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
+        this.eGroupClosedIcon.appendChild(main_1._.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
+        this.eGroupOpenedIcon.appendChild(main_1._.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         var eColumnGroupIcons = this.queryForHtmlElement('#eColumnGroupIcons');
@@ -258,8 +258,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnGroupComp.prototype.setOpenClosedIcons = function () {
         var folderOpen = this.expanded;
-        main_1.Utils.setVisible(this.eGroupClosedIcon, !folderOpen);
-        main_1.Utils.setVisible(this.eGroupOpenedIcon, folderOpen);
+        main_1._.setVisible(this.eGroupClosedIcon, !folderOpen);
+        main_1._.setVisible(this.eGroupOpenedIcon, folderOpen);
     };
     ToolPanelColumnGroupComp.prototype.isExpanded = function () {
         return this.expanded;

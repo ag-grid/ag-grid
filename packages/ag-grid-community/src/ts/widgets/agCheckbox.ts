@@ -1,9 +1,9 @@
-import {Component} from "./component";
-import {Listener, QuerySelector} from "./componentAnnotations";
-import {Utils as _} from "../utils";
-import {Autowired, PostConstruct, PreConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {AgEvent} from "../events";
+import { Component } from "./component";
+import { Listener, QuerySelector } from "./componentAnnotations";
+import { Autowired, PostConstruct, PreConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { AgEvent } from "../events";
+import { _ } from "../utils";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
@@ -107,10 +107,10 @@ export class AgCheckbox extends Component {
     }
 
     public toggle(): void {
-        let nextValue = this.getNextValue();
+        const nextValue = this.getNextValue();
 
         if (this.passive) {
-            let event: ChangeEvent = {
+            const event: ChangeEvent = {
                 type: AgCheckbox.EVENT_CHANGED,
                 selected: nextValue
             };
@@ -133,7 +133,7 @@ export class AgCheckbox extends Component {
 
         this.updateIcons();
 
-        let event: ChangeEvent = {
+        const event: ChangeEvent = {
             type: AgCheckbox.EVENT_CHANGED,
             selected: this.selected
         };

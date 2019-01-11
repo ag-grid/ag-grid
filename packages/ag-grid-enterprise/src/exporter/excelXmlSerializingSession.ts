@@ -2,53 +2,53 @@ import {
     BaseGridSerializingSession,
     Column,
     Constants,
+    ExcelCell,
+    ExcelColumn,
+    ExcelDataType,
+    ExcelOOXMLDataType,
+    ExcelRow,
+    ExcelStyle,
+    ExcelWorksheet,
     GridSerializingParams,
     RowAccumulator,
     RowNode,
     RowSpanningAccumulator,
     RowType,
-    Utils,
-    _,
-    ExcelOOXMLDataType
+    _
 } from 'ag-grid-community';
 
-import {
-    ExcelCell,
-    ExcelColumn,
-    ExcelDataType,
-    ExcelRow,
-    ExcelStyle,
-    ExcelWorksheet,
-} from 'ag-grid-community';
-
-import {ExcelMixedStyle} from './excelCreator';
-import {ExcelXmlFactory} from './excelXmlFactory';
-import {ExcelXlsxFactory} from './excelXlsxFactory';
+import { ExcelMixedStyle } from './excelCreator';
+import { ExcelXmlFactory } from './excelXmlFactory';
+import { ExcelXlsxFactory } from './excelXlsxFactory';
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
-    sheetName:string;
+    sheetName: string;
     excelFactory: ExcelXmlFactory | ExcelXlsxFactory;
     baseExcelStyles: ExcelStyle[];
     styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[];
     suppressTextAsCDATA: boolean;
+    rowHeight?: number;
+    headerRowHeight?: number;
 }
 
 export class ExcelXmlSerializingSession extends BaseGridSerializingSession<ExcelCell[][]> {
-    protected stylesByIds: any;
+    protected stylesByIds: any | undefined;
     protected mixedStyles: { [key: string]: ExcelMixedStyle } = {};
     protected mixedStyleCounter: number = 0;
     protected excelStyles: ExcelStyle[];
     protected customHeader: ExcelCell[][];
     protected customFooter: ExcelCell[][];
-    protected sheetName:string;
-    protected suppressTextAsCDATA:boolean;
+    protected sheetName: string;
+    protected suppressTextAsCDATA: boolean;
+    protected rowHeight: number | undefined;
+    protected headerRowHeight: number | undefined;
 
     protected rows: ExcelRow[] = [];
     protected cols: ExcelColumn[];
 
     protected excelFactory: ExcelXmlFactory | ExcelXlsxFactory;
     baseExcelStyles: ExcelStyle[];
-    protected styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[];
+    protected styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
 
     constructor(config: ExcelGridSerializingParams) {
         super({
@@ -60,7 +60,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
             cellAndHeaderEscaper: (raw: string) => raw
         });
 
-        const {sheetName, excelFactory, baseExcelStyles, styleLinker, suppressTextAsCDATA} = config;
+        const {sheetName, excelFactory, baseExcelStyles, styleLinker, suppressTextAsCDATA, rowHeight, headerRowHeight} = config;
 
         this.sheetName = sheetName;
         this.excelFactory = excelFactory;
@@ -68,6 +68,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         this.styleLinker = styleLinker;
         this.suppressTextAsCDATA = suppressTextAsCDATA;
         this.stylesByIds = {};
+        this.rowHeight = rowHeight;
+        this.headerRowHeight = headerRowHeight;
 
         this.baseExcelStyles.forEach((it: ExcelStyle) => {
             this.stylesByIds[it.id] = it;
@@ -84,40 +86,43 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     }
 
     public prepare(columnsToExport: Column[]): void {
-        this.cols = Utils.map(columnsToExport, (it: Column) => {
+        this.cols = _.map(columnsToExport, (it: Column) => {
+            // tslint:disable-next-line
             it.getColDef().cellStyle;
             return {
                 width: it.getActualWidth()
-            };
+            } as ExcelColumn;
         });
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        let currentCells: ExcelCell[] = [];
-        let that = this;
+        const currentCells: ExcelCell[] = [];
+        const that = this;
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height: this.headerRowHeight
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
-                let styleIds: string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
-                currentCells.push(that.createMergedCell(styleIds.length > 0 ? styleIds[0] : null, "String", header, span));
+                const styleIds: string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
+                currentCells.push(that.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, "String", header, span));
             }
         };
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        return this.onNewRow(this.onNewHeaderColumn);
+        return this.onNewRow(this.onNewHeaderColumn, this.headerRowHeight);
     }
 
     public onNewBodyRow(): RowAccumulator {
-        return this.onNewRow(this.onNewBodyColumn);
+        return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
     }
 
-    onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node?: RowNode) => void): RowAccumulator {
-        let currentCells: ExcelCell[] = [];
+    onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node?: RowNode) => void, height?: number): RowAccumulator {
+        const currentCells: ExcelCell[] = [];
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height
         });
         return {
             onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()
@@ -125,17 +130,17 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     }
 
     onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
-        let that = this;
+        const that = this;
         return (column: Column, index: number, node?: RowNode) => {
-            let nameForCol = this.extractHeaderValue(column);
-            let styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, null);
-            currentCells.push(this.createCell(styleIds.length > 0 ? styleIds[0] : null, 'String', nameForCol));
+            const nameForCol = this.extractHeaderValue(column);
+            const styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 'String', nameForCol));
         };
     }
 
     public parse(): string {
         function join(header: ExcelCell[][], body: ExcelRow[], footer: ExcelCell[][]): ExcelRow[] {
-            let all: ExcelRow[] = [];
+            const all: ExcelRow[] = [];
             if (header) {
                 header.forEach(rowArray => all.push({cells: rowArray}));
             }
@@ -146,7 +151,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
             return all;
         }
 
-        let data: ExcelWorksheet [] = [{
+        const data: ExcelWorksheet [] = [{
             name: this.sheetName,
             table: {
                 columns: this.cols,
@@ -157,42 +162,42 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         return this.excelFactory.createExcel(this.excelStyles, data, []);
     }
 
-    onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
-        let that = this;
-        return (column: Column, index: number, node?: RowNode) => {
-            let valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
-            let styleIds: string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
-            let excelStyleId: string = null;
+    onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
+        const that = this;
+        return (column: Column, index: number, node: RowNode) => {
+            const valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
+            const styleIds: string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
+            let excelStyleId: string | undefined;
             if (styleIds && styleIds.length == 1) {
                 excelStyleId = styleIds [0];
             } else if (styleIds && styleIds.length > 1) {
-                let key: string = styleIds.join("-");
+                const key: string = styleIds.join("-");
                 if (!this.mixedStyles[key]) {
                     this.addNewMixedStyle(styleIds);
                 }
                 excelStyleId = this.mixedStyles[key].excelID;
             }
-            let type: ExcelDataType = Utils.isNumeric(valueForCell) ? 'Number' : 'String';
+            const type: ExcelDataType = _.isNumeric(valueForCell) ? 'Number' : 'String';
             currentCells.push(that.createCell(excelStyleId, type, valueForCell));
         };
     }
 
     addNewMixedStyle(styleIds: string[]): void {
         this.mixedStyleCounter += 1;
-        let excelId = 'mixedStyle' + this.mixedStyleCounter;
-        let resultantStyle: ExcelStyle = {};
+        const excelId = 'mixedStyle' + this.mixedStyleCounter;
+        const resultantStyle: ExcelStyle = {} as ExcelStyle;
 
         styleIds.forEach((styleId: string) => {
             this.excelStyles.forEach((excelStyle: ExcelStyle) => {
                 if (excelStyle.id === styleId) {
-                    Utils.mergeDeep(resultantStyle, Utils.deepCloneObject(excelStyle));
+                    _.mergeDeep(resultantStyle, _.deepCloneObject(excelStyle));
                 }
             });
         });
 
-        resultantStyle['id'] = excelId;
-        resultantStyle['name'] = excelId;
-        let key: string = styleIds.join("-");
+        resultantStyle.id = excelId;
+        resultantStyle.name = excelId;
+        const key: string = styleIds.join("-");
         this.mixedStyles[key] = {
             excelID: excelId,
             key: key,
@@ -202,21 +207,21 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         this.stylesByIds[excelId] = resultantStyle;
     }
 
-    protected styleExists(styleId: string): boolean {
-        if (styleId == null) return false;
+    protected styleExists(styleId?: string): boolean {
+        if (styleId == null) { return false; }
 
         return this.stylesByIds[styleId];
     }
 
-    protected createCell(styleId: string, type: ExcelDataType | ExcelOOXMLDataType, value: string): ExcelCell {
-        let actualStyle: ExcelStyle = this.stylesByIds[styleId];
-        let styleExists: boolean = actualStyle != null;
+    protected createCell(styleId: string | undefined, type: ExcelDataType | ExcelOOXMLDataType, value: string): ExcelCell {
+        const actualStyle: ExcelStyle = styleId && this.stylesByIds[styleId];
+        const styleExists: boolean = actualStyle !== undefined;
 
         function getType(): ExcelDataType {
             if (
                 styleExists &&
                 actualStyle.dataType
-            ) switch (actualStyle.dataType) {
+            ) { switch (actualStyle.dataType) {
                 case 'string':
                     return 'String';
                 case 'number':
@@ -230,34 +235,35 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
                 default:
                     console.warn(`ag-grid: Unrecognized data type for excel export [${actualStyle.id}.dataType=${actualStyle.dataType}]`);
             }
+            }
 
             return type as ExcelDataType;
         }
 
-        let typeTransformed: ExcelDataType = getType();
+        const typeTransformed: ExcelDataType = getType();
 
-        let massageText = (val:string) =>  this.suppressTextAsCDATA ? _.escape(val) : `<![CDATA[${val}]]>`;
-        let convertBoolean = (val: boolean | string): string => {
-            if (!val || val === '0' || val ===  'false') return  '0';
+        const massageText = (val: string) => this.suppressTextAsCDATA ? _.escape(val) : `<![CDATA[${val}]]>`;
+        const convertBoolean = (val: boolean | string): string => {
+            if (!val || val === '0' || val === 'false') { return '0'; }
             return '1';
         };
 
         return {
-            styleId: styleExists ? styleId : null,
+            styleId: styleExists ? styleId : undefined,
             data: {
                 type: typeTransformed,
                 value:
-                    typeTransformed === 'String' ? massageText(value):
-                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
-                    typeTransformed === 'Boolean' ? convertBoolean(value) :
-                    value
+                    typeTransformed === 'String' ? massageText(value) :
+                        typeTransformed === 'Number' ? Number(value).valueOf() + '' :
+                            typeTransformed === 'Boolean' ? convertBoolean(value) :
+                                value
             }
         };
     }
 
-    protected createMergedCell(styleId: string, type: ExcelDataType | ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
+    protected createMergedCell(styleId: string | undefined, type: ExcelDataType | ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
         return {
-            styleId: this.styleExists(styleId) ? styleId : null,
+            styleId: this.styleExists(styleId) ? styleId : undefined,
             data: {
                 type: type,
                 value: value

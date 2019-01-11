@@ -5,10 +5,6 @@ ClickableStatusBarComponent.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('div');
-    this.eGui.setAttribute("style",
-        'display: flex; justify-content: center; flex-direction: column;margin: 5px;' +
-        'background-color: lightgrey; padding-left: 5px; padding-right: 5px; border-radius: 5px'
-    );
 
     var content = document.createElement('div');
     var span = document.createElement('span');
@@ -16,7 +12,6 @@ ClickableStatusBarComponent.prototype.init = function (params) {
     content.appendChild(span);
 
     this.eButton = document.createElement('button');
-    this.eButton.setAttribute("style", 'margin-left: 5px; padding-top: 0; padding-bottom: 0');
 
     this.buttonListener = this.onButtonClicked.bind(this);
     this.eButton.addEventListener("click", this.buttonListener);

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Custom Icons: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Custom Icons. All the icons in the grid can be replaced with your own Custom Icons. You can either use CSS or provide your own images. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Custom Icons. All the icons in the grid can be replaced with your own Custom Icons. You can either use CSS or provide your own images. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Pinning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -174,7 +174,7 @@ valuePanel // beside where to drop columns for value</snippet>
         (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
     </p>
 
-    <?= example('Icons', 'icons', 'generated', array('enterprise' => true, 'extras' => array('fontawesome') )) ?>
+    <?= example('Icons', 'icons', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome') )) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

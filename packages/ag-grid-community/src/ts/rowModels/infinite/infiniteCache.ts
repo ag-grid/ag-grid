@@ -1,14 +1,13 @@
-import {Utils as _} from "../../utils";
-import {RowNode} from "../../entities/rowNode";
-import {Autowired, Context, PostConstruct, Qualifier} from "../../context/context";
-import {EventService} from "../../eventService";
-import {Events, ItemsAddedEvent, RowDataUpdatedEvent} from "../../events";
-import {Logger, LoggerFactory} from "../../logger";
-import {IDatasource} from "../iDatasource";
-import {InfiniteBlock} from "./infiniteBlock";
-import {RowNodeCache, RowNodeCacheParams} from "../cache/rowNodeCache";
-import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnApi";
+import { RowNode } from "../../entities/rowNode";
+import { Autowired, Context, PostConstruct, Qualifier } from "../../context/context";
+import { EventService } from "../../eventService";
+import { Events, RowDataUpdatedEvent } from "../../events";
+import { LoggerFactory } from "../../logger";
+import { IDatasource } from "../iDatasource";
+import { InfiniteBlock } from "./infiniteBlock";
+import { RowNodeCache, RowNodeCacheParams } from "../cache/rowNodeCache";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;
@@ -38,9 +37,9 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     private moveItemsDown(block: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
-        let startRow = block.getStartRow();
-        let endRow = block.getEndRow();
-        let indexOfLastRowToMove = moveFromIndex + moveCount;
+        const startRow = block.getStartRow();
+        const endRow = block.getEndRow();
+        const indexOfLastRowToMove = moveFromIndex + moveCount;
 
         // all rows need to be moved down below the insertion index
         for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
@@ -49,8 +48,8 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
                 continue;
             }
 
-            let indexOfNodeWeWant = currentRowIndex - moveCount;
-            let nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
+            const indexOfNodeWeWant = currentRowIndex - moveCount;
+            const nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
 
             if (nodeForThisIndex) {
                 block.setRowNode(currentRowIndex, nodeForThisIndex);
@@ -62,19 +61,19 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     private insertItems(block: InfiniteBlock, indexToInsert: number, items: any[]): RowNode[] {
-        let pageStartRow = block.getStartRow();
-        let pageEndRow = block.getEndRow();
-        let newRowNodes: RowNode[] = [];
+        const pageStartRow = block.getStartRow();
+        const pageEndRow = block.getEndRow();
+        const newRowNodes: RowNode[] = [];
 
         // next stage is insert the rows into this page, if applicable
         for (let index = 0; index < items.length; index++) {
-            let rowIndex = indexToInsert + index;
+            const rowIndex = indexToInsert + index;
 
-            let currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
+            const currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
 
             if (currentRowInThisPage) {
-                let dataItem = items[index];
-                let newRowNode = block.setNewData(rowIndex, dataItem);
+                const dataItem = items[index];
+                const newRowNode = block.setNewData(rowIndex, dataItem);
                 newRowNodes.push(newRowNode);
             }
         }
@@ -82,12 +81,12 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         return newRowNodes;
     }
 
-    public insertItemsAtIndex(indexToInsert: number, items: any[]): void {
+    public insertItemsAtIndex(indexToInsert: number | undefined, items: any[] | undefined): void {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
 
-        let newNodes: RowNode[] = [];
-        this.forEachBlockInReverseOrder( block => {
-            let pageEndRow = block.getEndRow();
+        const newNodes: RowNode[] = [];
+        this.forEachBlockInReverseOrder(block => {
+            const pageEndRow = block.getEndRow();
 
             // if the insertion is after this page, then this page is not impacted
             if (pageEndRow <= indexToInsert) {
@@ -95,7 +94,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
             }
 
             this.moveItemsDown(block, indexToInsert, items.length);
-            let newNodesThisPage = this.insertItems(block, indexToInsert, items);
+            const newNodesThisPage = this.insertItems(block, indexToInsert, items);
             newNodesThisPage.forEach(rowNode => newNodes.push(rowNode));
         });
 
@@ -105,7 +104,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
         this.onCacheUpdated();
 
-        let event: RowDataUpdatedEvent = {
+        const event: RowDataUpdatedEvent = {
             type: Events.EVENT_ROW_DATA_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -118,7 +117,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
     public getRow(rowIndex: number, dontCreatePage = false): RowNode {
-        let blockId = Math.floor(rowIndex / this.cacheParams.blockSize);
+        const blockId = Math.floor(rowIndex / this.cacheParams.blockSize);
         let block = this.getBlock(blockId);
 
         if (!block) {
@@ -133,7 +132,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     private createBlock(blockNumber: number): InfiniteBlock {
-        let newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
+        const newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
         this.context.wireBean(newBlock);
 
         this.postCreateBlock(newBlock);
@@ -146,7 +145,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     // state - eg if a node had children, but after the refresh it had data
     // for a different row, then the children would be with the wrong row node.
     public refreshCache(): void {
-        this.forEachBlockInOrder(block => block.setDirty() );
+        this.forEachBlockInOrder(block => block.setDirty());
         this.checkBlockToLoad();
     }
 

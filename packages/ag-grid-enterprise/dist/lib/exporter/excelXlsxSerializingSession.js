@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -21,18 +21,20 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
     function ExcelXlsxSerializingSession() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.stringList = [];
+        _this.stringMap = {};
         return _this;
     }
     ExcelXlsxSerializingSession.prototype.onNewHeaderGroupingRow = function () {
         var currentCells = [];
         var that = this;
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height: this.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {
-                var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
-                currentCells.push(that.createMergedCell(styleIds.length > 0 ? styleIds[0] : null, 's', header, span));
+                var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
+                currentCells.push(that.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 's', header, span));
             }
         };
     };
@@ -41,8 +43,8 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         var that = this;
         return function (column, index, node) {
             var nameForCol = _this.extractHeaderValue(column);
-            var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER, rowIndex, index, nameForCol, column, null);
-            currentCells.push(_this.createCell(styleIds.length > 0 ? styleIds[0] : null, 's', nameForCol));
+            var styleIds = that.styleLinker(ag_grid_community_1.RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            currentCells.push(_this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 's', nameForCol));
         };
     };
     ExcelXlsxSerializingSession.prototype.parse = function () {
@@ -72,7 +74,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         return function (column, index, node) {
             var valueForCell = _this.extractRowCellValue(column, index, ag_grid_community_1.Constants.EXPORT_TYPE_EXCEL, node);
             var styleIds = that.styleLinker(ag_grid_community_1.RowType.BODY, rowIndex, index, valueForCell, column, node);
-            var excelStyleId = null;
+            var excelStyleId;
             if (styleIds && styleIds.length == 1) {
                 excelStyleId = styleIds[0];
             }
@@ -83,24 +85,24 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
                 }
                 excelStyleId = _this.mixedStyles[key].excelID;
             }
-            var type = ag_grid_community_1.Utils.isNumeric(valueForCell) ? 'n' : 's';
+            var type = ag_grid_community_1._.isNumeric(valueForCell) ? 'n' : 's';
             currentCells.push(that.createCell(excelStyleId, type, valueForCell));
         };
     };
     ExcelXlsxSerializingSession.prototype.getStringPosition = function (val) {
-        var pos = this.stringList.indexOf(val);
-        if (pos < 0) {
+        var pos = this.stringMap[val];
+        if (pos === undefined) {
+            pos = this.stringMap[val] = this.stringList.length;
             this.stringList.push(val);
-            return this.stringList.length - 1;
         }
         return pos;
     };
     ExcelXlsxSerializingSession.prototype.createCell = function (styleId, type, value) {
-        var actualStyle = this.stylesByIds[styleId];
-        var styleExists = actualStyle != null;
+        var actualStyle = styleId && this.stylesByIds[styleId];
+        var styleExists = actualStyle !== undefined;
         function getType() {
             if (styleExists &&
-                actualStyle.dataType)
+                actualStyle.dataType) {
                 switch (actualStyle.dataType) {
                     case 'string':
                         return 's';
@@ -115,11 +117,12 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
                     default:
                         console.warn("ag-grid: Unrecognized data type for excel export [" + actualStyle.id + ".dataType=" + actualStyle.dataType + "]");
                 }
+            }
             return type;
         }
         var typeTransformed = getType();
         return {
-            styleId: styleExists ? styleId : null,
+            styleId: styleExists ? styleId : undefined,
             data: {
                 type: typeTransformed,
                 value: typeTransformed === 's' ? this.getStringPosition(value == null ? '' : value).toString() :
@@ -130,7 +133,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
     };
     ExcelXlsxSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
         return {
-            styleId: this.styleExists(styleId) ? styleId : null,
+            styleId: this.styleExists(styleId) ? styleId : undefined,
             data: {
                 type: type,
                 value: type === 's' ? this.getStringPosition(value == null ? '' : value).toString() : value

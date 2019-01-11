@@ -1,0 +1,59 @@
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 40px;
+    margin: 0 auto;
+}
+
+.features .img-container {
+    position: relative;
+    border: 1px solid #dbdada;
+}
+
+.features .img-container:after {
+    position: absolute;
+    content: '';
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, .5) url("best-angular-grid/assets/images/play-button.png") no-repeat center center;
+    background-size: 75px;
+    size: 50px
+}
+
+.features .img-container:hover:after {
+    background: transparent;
+}
+
+.features-grid figcaption {
+    display: none;
+}
+
+.features-grid video {
+max-width: 100%
+
+}
+
+.features-grid article p {
+    line-height: 25px;
+    margin-top: 20px;
+}
+
+@media only screen and (max-width: 500px) {
+    .features-grid .img-container {
+        display: none;
+    }
+
+    .features-grid article p {
+        margin-top: 0;
+    }
+}
+
+@media only screen and (min-width: 900px) {
+    .features-grid {
+        grid-template-columns: repeat(2, minmax(350px, 550px));
+        grid-row-gap: 20px;
+    }
+}

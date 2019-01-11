@@ -43,9 +43,11 @@ function monthToComparableNumber(date) {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: columnDefs,
-    rowData: null,
-    enableSorting: true
+    rowData: null
 };
 
 // setup the grid after the page has finished loading

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,10 +21,10 @@ var constants_1 = require("../constants");
 var mouseEventService_1 = require("./mouseEventService");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
 var focusedCellController_1 = require("../focusedCellController");
-var utils_1 = require("../utils");
 var animationFrameService_1 = require("../misc/animationFrameService");
 var columnController_1 = require("../columnController/columnController");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var utils_1 = require("../utils");
 var NavigationService = /** @class */ (function () {
     function NavigationService() {
         this.timeLastPageEventProcessed = 0;

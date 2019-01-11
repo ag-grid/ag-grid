@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,7 +36,7 @@ var AutoHeightCalculator = /** @class */ (function () {
         }
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        var eBodyContainer = this.gridPanel.getBodyContainer();
+        var eBodyContainer = this.gridPanel.getCenterContainer();
         eBodyContainer.appendChild(this.eDummyContainer);
         var cellComps = [];
         var cols = this.columnController.getAllAutoRowHeightCols();

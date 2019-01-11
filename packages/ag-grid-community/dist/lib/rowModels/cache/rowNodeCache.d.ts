@@ -1,24 +1,24 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { NumberSequence } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
+import { NumberSequence } from "../../utils";
 export interface RowNodeCacheParams {
     initialRowCount: number;
-    blockSize: number;
+    blockSize?: number;
     overflowSize: number;
     sortModel: any;
     filterModel: any;
-    maxBlocksInCache: number;
+    maxBlocksInCache?: number;
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
-    maxConcurrentRequests: number;
-    rowNodeBlockLoader: RowNodeBlockLoader;
+    maxConcurrentRequests?: number;
+    rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
 }
 export interface CacheUpdatedEvent extends AgEvent {
@@ -35,7 +35,7 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     };
     private blockCount;
     protected logger: Logger;
-    abstract getRow(rowIndex: number): RowNode;
+    abstract getRow(rowIndex: number): RowNode | null;
     protected constructor(cacheParams: P);
     destroy(): void;
     protected init(): void;
@@ -62,4 +62,3 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     purgeCache(): void;
     getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
 }
-//# sourceMappingURL=rowNodeCache.d.ts.map

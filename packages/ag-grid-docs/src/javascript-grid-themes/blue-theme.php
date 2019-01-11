@@ -22,6 +22,6 @@ To use a theme, add the theme class name to the div element where the ag-Grid di
 
 <p>This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel.</p>
 
-<?= example('Blue Theme', 'theme-blue', 'generated', array( "enterprise" => true )) ?>
+<?= example('Blue Theme', 'theme-blue', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

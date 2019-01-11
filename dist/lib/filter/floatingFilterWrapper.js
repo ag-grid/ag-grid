@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -30,7 +30,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var column_1 = require("../entities/column");
-var utils_1 = require("../utils");
 var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
@@ -40,6 +39,7 @@ var hoverFeature_1 = require("../headerRendering/hoverFeature");
 var events_1 = require("../events");
 var eventService_1 = require("../eventService");
 var columnHoverService_1 = require("../rendering/columnHoverService");
+var utils_1 = require("../utils");
 var BaseFilterWrapperComp = /** @class */ (function (_super) {
     __extends(BaseFilterWrapperComp, _super);
     function BaseFilterWrapperComp() {
@@ -121,7 +121,7 @@ var FloatingFilterWrapperComp = /** @class */ (function (_super) {
                 floatingFilterBody.appendChild(floatingFilterCompUi);
                 body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                        <button type=\"button\" ref=\"eButtonShowMainFilter\"></button>\n                </div>"));
                 var eIcon = utils_1._.createIconNoSpan('filter', _this.gridOptionsWrapper, _this.column);
-                body.querySelector('button').appendChild(eIcon);
+                body.querySelector('button[ref="eButtonShowMainFilter"]').appendChild(eIcon);
             }
             if (floatingFilterComp.afterGuiAttached) {
                 floatingFilterComp.afterGuiAttached();

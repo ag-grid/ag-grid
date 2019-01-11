@@ -1,15 +1,15 @@
-// ag-grid-enterprise v19.1.4
-import { MenuItemDef, Component, AgEvent } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { AgEvent, Component, MenuItemDef } from "ag-grid-community";
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
-    disabled: boolean;
-    shortcut: string;
-    action: () => void;
-    checked: boolean;
-    icon: HTMLElement | string;
-    subMenu: (MenuItemDef | string)[];
-    cssClasses: string[];
-    tooltip: string;
+    disabled?: boolean;
+    shortcut?: string;
+    action?: () => void;
+    checked?: boolean;
+    icon?: HTMLElement | string;
+    subMenu?: (MenuItemDef | string)[];
+    cssClasses?: string[];
+    tooltip?: string;
     mouseEvent: MouseEvent;
 }
 export declare class MenuItemComponent extends Component {
@@ -22,4 +22,3 @@ export declare class MenuItemComponent extends Component {
     private onOptionSelected;
     destroy(): void;
 }
-//# sourceMappingURL=menuItemComponent.d.ts.map

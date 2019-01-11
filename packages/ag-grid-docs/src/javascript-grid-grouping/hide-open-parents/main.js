@@ -14,14 +14,16 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    enableFilter: true,
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     enableRangeSelection: true,
     columnDefs: columnDefs,
     rowData: null,
     groupHideOpenParents: true,
     animateRows: true,
-    enableColResize: true,
-    enableSorting: true,
     autoGroupColumnDef: {
         filterValueGetter: function(params) {
             var colGettingGrouped = params.colDef.showRowGroup;

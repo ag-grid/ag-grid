@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -95,4 +95,3 @@ export declare class ColumnApi {
     setColumnAggFunction(column: Column, aggFunc: string): void;
     getDisplayNameForCol(column: any): string;
 }
-//# sourceMappingURL=columnApi.d.ts.map

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -42,8 +42,8 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         this.guiDestroyFunctions.forEach(function (func) { return func(); });
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        main_1.Utils.removeAllChildren(this.getGui());
-        main_1.Utils.removeAllChildren(this.eColumnDropList);
+        main_1._.removeAllChildren(this.getGui());
+        main_1._.removeAllChildren(this.eColumnDropList);
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
@@ -91,7 +91,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return changed;
     };
     BaseDropZonePanel.prototype.getNewHorizontalInsertIndex = function (draggingEvent) {
-        if (main_1.Utils.missing(draggingEvent.hDirection)) {
+        if (main_1._.missing(draggingEvent.hDirection)) {
             return -1;
         }
         var newIndex = 0;
@@ -110,7 +110,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return newIndex;
     };
     BaseDropZonePanel.prototype.getNewVerticalInsertIndex = function (draggingEvent) {
-        if (main_1.Utils.missing(draggingEvent.vDirection)) {
+        if (main_1._.missing(draggingEvent.vDirection)) {
             return -1;
         }
         var newIndex = 0;
@@ -154,7 +154,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var dragColumns = draggingEvent.dragSource.dragItemCallback().columns || [];
         this.state = BaseDropZonePanel.STATE_NEW_COLUMNS_IN;
         // take out columns that are not groupable
-        var goodDragColumns = main_1.Utils.filter(dragColumns, this.isColumnDroppable.bind(this));
+        var goodDragColumns = main_1._.filter(dragColumns, this.isColumnDroppable.bind(this));
         var weHaveColumnsToDrag = goodDragColumns.length > 0;
         if (weHaveColumnsToDrag) {
             this.potentialDndColumns = goodDragColumns;
@@ -163,7 +163,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
     };
     BaseDropZonePanel.prototype.isPotentialDndColumns = function () {
-        return main_1.Utils.existsAndNotEmpty(this.potentialDndColumns);
+        return main_1._.existsAndNotEmpty(this.potentialDndColumns);
     };
     BaseDropZonePanel.prototype.onDragLeave = function (draggingEvent) {
         // if the dragging started from us, we remove the group, however if it started
@@ -209,18 +209,18 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.removeColumns = function (columnsToRemove) {
         var newColumnList = this.getExistingColumns().slice();
-        columnsToRemove.forEach(function (column) { return main_1.Utils.removeFromArray(newColumnList, column); });
+        columnsToRemove.forEach(function (column) { return main_1._.removeFromArray(newColumnList, column); });
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.addColumns = function (columnsToAdd) {
         var newColumnList = this.getExistingColumns().slice();
-        main_1.Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        main_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.rearrangeColumns = function (columnsToAdd) {
         var newColumnList = this.getNonGhostColumns().slice();
-        main_1.Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        var noChangeDetected = main_1.Utils.shallowCompare(newColumnList, this.getExistingColumns());
+        main_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        var noChangeDetected = main_1._.shallowCompare(newColumnList, this.getExistingColumns());
         if (noChangeDetected) {
             return false;
         }
@@ -250,7 +250,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var existingColumns = this.getExistingColumns();
         var nonGhostColumns;
         if (this.isPotentialDndColumns()) {
-            nonGhostColumns = main_1.Utils.filter(existingColumns, function (column) { return _this.potentialDndColumns.indexOf(column) < 0; });
+            nonGhostColumns = main_1._.filter(existingColumns, function (column) { return _this.potentialDndColumns.indexOf(column) < 0; });
         }
         else {
             nonGhostColumns = existingColumns;
@@ -305,14 +305,14 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var iconFaded = this.horizontal && this.isExistingColumnsEmpty();
         var eGroupIcon = this.params.icon;
         var eContainer = document.createElement('div');
-        main_1.Utils.addCssClass(eGroupIcon, 'ag-column-drop-icon');
-        main_1.Utils.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
+        main_1._.addCssClass(eGroupIcon, 'ag-column-drop-icon');
+        main_1._.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
         eContainer.appendChild(eGroupIcon);
         if (!this.horizontal) {
             var eTitle = document.createElement('span');
             eTitle.innerHTML = this.params.title;
-            main_1.Utils.addCssClass(eTitle, 'ag-column-drop-title');
-            main_1.Utils.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
+            main_1._.addCssClass(eTitle, 'ag-column-drop-title');
+            main_1._.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
             eContainer.appendChild(eTitle);
         }
         this.getGui().appendChild(eContainer);
@@ -321,13 +321,13 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return this.getExistingColumns().length === 0;
     };
     BaseDropZonePanel.prototype.addEmptyMessageToGui = function () {
-        var showEmptyMessage = this.isExistingColumnsEmpty() && !this.potentialDndColumns;
+        var showEmptyMessage = this.isExistingColumnsEmpty() && !this.isPotentialDndColumns();
         if (!showEmptyMessage) {
             return;
         }
         var eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
-        main_1.Utils.addCssClass(eMessage, 'ag-column-drop-empty-message');
+        main_1._.addCssClass(eMessage, 'ag-column-drop-empty-message');
         this.getGui().appendChild(eMessage);
     };
     BaseDropZonePanel.prototype.addArrow = function (eParent) {

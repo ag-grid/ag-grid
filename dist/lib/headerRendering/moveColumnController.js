@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ var MoveColumnController = /** @class */ (function () {
         this.needToMoveRight = false;
         this.pinned = pinned;
         this.eContainer = eContainer;
-        this.centerContainer = !utils_1.Utils.exists(pinned);
+        this.centerContainer = !utils_1._.exists(pinned);
     }
     MoveColumnController.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
@@ -95,7 +95,7 @@ var MoveColumnController = /** @class */ (function () {
         // adjust for scroll only if centre container (the pinned containers dont scroll)
         var adjustForScroll = this.centerContainer;
         if (adjustForScroll) {
-            x += this.gridPanel.getBodyViewportScrollLeft();
+            x += this.gridPanel.getCenterViewportScrollLeft();
         }
         return x;
     };
@@ -103,7 +103,7 @@ var MoveColumnController = /** @class */ (function () {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            var firstVisiblePixel = this.gridPanel.getBodyViewportScrollLeft();
+            var firstVisiblePixel = this.gridPanel.getCenterViewportScrollLeft();
             var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
@@ -126,7 +126,7 @@ var MoveColumnController = /** @class */ (function () {
         if (fromEnter === void 0) { fromEnter = false; }
         this.lastDraggingEvent = draggingEvent;
         // if moving up or down (ie not left or right) then do nothing
-        if (utils_1.Utils.missing(draggingEvent.hDirection)) {
+        if (utils_1._.missing(draggingEvent.hDirection)) {
             return;
         }
         var xNormalised = this.normaliseX(draggingEvent.x);
@@ -170,7 +170,7 @@ var MoveColumnController = /** @class */ (function () {
         var gridCols = this.columnController.getAllGridColumns();
         var indexes = [];
         movingCols.forEach(function (col) { return indexes.push(gridCols.indexOf(col)); });
-        utils_1.Utils.sortNumberArray(indexes);
+        utils_1._.sortNumberArray(indexes);
         var firstIndex = indexes[0];
         var lastIndex = indexes[indexes.length - 1];
         var spread = lastIndex - firstIndex;
@@ -270,7 +270,7 @@ var MoveColumnController = /** @class */ (function () {
         // married children. in other words, maybe the new index breaks a group, but only because some
         // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
         var nextCol = allGridCols[gridColIndex];
-        while (utils_1.Utils.exists(nextCol) && this.isColumnHidden(allDisplayedCols, nextCol)) {
+        while (utils_1._.exists(nextCol) && this.isColumnHidden(allDisplayedCols, nextCol)) {
             gridColIndex++;
             validMoves.push(gridColIndex);
             nextCol = allGridCols[gridColIndex];
@@ -285,7 +285,7 @@ var MoveColumnController = /** @class */ (function () {
         if (!this.movingIntervalId) {
             this.intervalCount = 0;
             this.failedMoveAttempts = 0;
-            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
             if (this.needToMoveLeft) {
                 this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_LEFT, true);
             }
@@ -296,7 +296,7 @@ var MoveColumnController = /** @class */ (function () {
     };
     MoveColumnController.prototype.ensureIntervalCleared = function () {
         if (this.moveInterval) {
-            clearInterval(this.movingIntervalId);
+            window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
             this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_MOVE);
         }

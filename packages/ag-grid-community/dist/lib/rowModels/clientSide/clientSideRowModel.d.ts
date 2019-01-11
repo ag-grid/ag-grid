@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -10,11 +10,12 @@ export interface RefreshModelParams {
     keepRenderedRows?: boolean;
     animate?: boolean;
     keepEditingRows?: boolean;
-    rowNodeTransactions?: RowNodeTransaction[];
+    rowNodeTransactions?: (RowNodeTransaction | null)[];
     rowNodeOrder?: {
         [id: string]: number;
     };
     newData?: boolean;
+    afterColumnsChanged?: boolean;
 }
 export interface RowDataTransaction {
     addIndex?: number;
@@ -29,7 +30,10 @@ export interface RowNodeTransaction {
 }
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;
-    callback: (res: RowNodeTransaction) => void;
+    callback: ((res: RowNodeTransaction) => void) | undefined;
+}
+export interface RowNodeMap {
+    [id: string]: RowNode;
 }
 export declare class ClientSideRowModel {
     private gridOptionsWrapper;
@@ -57,7 +61,7 @@ export declare class ClientSideRowModel {
     ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean;
     isLastRowFound(): boolean;
     getRowCount(): number;
-    getRowBounds(index: number): RowBounds;
+    getRowBounds(index: number): RowBounds | null;
     private onRowGroupOpened;
     private onFilterChanged;
     private onSortChanged;
@@ -102,10 +106,9 @@ export declare class ClientSideRowModel {
     private executeBatchUpdateRowData;
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
         [id: string]: number;
-    }): RowNodeTransaction;
+    }): RowNodeTransaction | null;
     private commonUpdateRowData;
     private doRowsToDisplay;
     onRowHeightChanged(): void;
     resetRowHeights(): void;
 }
-//# sourceMappingURL=clientSideRowModel.d.ts.map

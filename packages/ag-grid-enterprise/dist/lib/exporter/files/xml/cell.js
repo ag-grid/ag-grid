@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cell = {
@@ -6,10 +6,10 @@ var cell = {
         var mergeAcross = c.mergeAcross, styleId = c.styleId, data = c.data;
         var properties = {};
         if (mergeAcross) {
-            properties['MergeAcross'] = mergeAcross;
+            properties.MergeAcross = mergeAcross;
         }
         if (styleId) {
-            properties['StyleID'] = styleId;
+            properties.StyleID = styleId;
         }
         return {
             name: "Cell",

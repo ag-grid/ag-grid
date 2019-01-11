@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -14,4 +14,3 @@ export declare class LoadingOverlayComponent extends Component implements ILoadi
     constructor();
     init(params: ILoadingOverlayParams): void;
 }
-//# sourceMappingURL=loadingOverlayComponent.d.ts.map

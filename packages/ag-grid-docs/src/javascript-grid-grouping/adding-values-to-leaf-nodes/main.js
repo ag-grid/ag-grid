@@ -12,13 +12,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    enableColResize: true,
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
     enableRangeSelection: true,
     rowData: null,
-    enableSorting:true,
-    enableFilter:true,
     autoGroupColumnDef: {
         headerName:'Group',
         field: 'athlete'

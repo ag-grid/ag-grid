@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Pinning: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Pinning. Use Columm Pinning to pin one or more columns to the left or to the right. Pinned columns are always present and not impacted by horizontal scroll. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Pinning. Use Columm Pinning to pin one or more columns to the left or to the right. Pinned columns are always present and not impacted by horizontal scroll. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Pinning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -40,7 +40,7 @@ colDef = {
 
     <h2>Example Pinning</h2>
 
-    <?= example('Column Pinning', 'column-pinning', 'generated') ?>
+    <?= example('Column Pinning', 'column-pinning', 'generated', array("processVue" => true)) ?>
 
     <note>
         If you pin too many columns, so that the pinned columns take up the whole width of the grid,
@@ -99,7 +99,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= example('Lock Pinned', 'lock-pinned', 'generated') ?>
+    <?= example('Lock Pinned', 'lock-pinned', 'generated', array("processVue" => true)) ?>
 
 
 

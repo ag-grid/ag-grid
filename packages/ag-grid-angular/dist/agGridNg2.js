@@ -191,6 +191,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.suppressMovableColumns = undefined;
         this.suppressFieldDotNotation = undefined;
         this.enableRangeSelection = undefined;
+        this.deltaSort = undefined;
         this.suppressTouch = undefined;
         this.suppressAsyncEvents = undefined;
         this.allowContextMenuWithControlKey = undefined;
@@ -205,6 +206,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.suppressPreventDefaultOnMouseWheel = undefined;
         this.suppressUseColIdForGroups = undefined;
         this.suppressCopyRowsToClipboard = undefined;
+        this.copyHeadersToClipboard = undefined;
         this.pivotMode = undefined;
         this.suppressAggFuncInHeader = undefined;
         this.suppressColumnVirtualisation = undefined;
@@ -261,10 +263,12 @@ var AgGridNg2 = /** @class */ (function () {
         this.serverSideSortingAlwaysResets = undefined;
         this.reactNext = undefined;
         this.suppressSetColumnStateEvents = undefined;
+        this.enableCharts = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
         this.columnRowGroupChanged = new core_1.EventEmitter();
+        this.expandOrCollapseAll = new core_1.EventEmitter();
         this.columnPivotChanged = new core_1.EventEmitter();
         this.gridColumnsChanged = new core_1.EventEmitter();
         this.columnValueChanged = new core_1.EventEmitter();
@@ -330,7 +334,6 @@ var AgGridNg2 = /** @class */ (function () {
         this.columnPivotChangeRequest = new core_1.EventEmitter();
         this.columnValueChangeRequest = new core_1.EventEmitter();
         this.columnAggFuncChangeRequest = new core_1.EventEmitter();
-        this.expandOrCollapseAll = new core_1.EventEmitter();
         this._nativeElement = elementDef.nativeElement;
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
@@ -609,6 +612,7 @@ var AgGridNg2 = /** @class */ (function () {
         'suppressMovableColumns': [{ type: core_1.Input },],
         'suppressFieldDotNotation': [{ type: core_1.Input },],
         'enableRangeSelection': [{ type: core_1.Input },],
+        'deltaSort': [{ type: core_1.Input },],
         'suppressTouch': [{ type: core_1.Input },],
         'suppressAsyncEvents': [{ type: core_1.Input },],
         'allowContextMenuWithControlKey': [{ type: core_1.Input },],
@@ -623,6 +627,7 @@ var AgGridNg2 = /** @class */ (function () {
         'suppressPreventDefaultOnMouseWheel': [{ type: core_1.Input },],
         'suppressUseColIdForGroups': [{ type: core_1.Input },],
         'suppressCopyRowsToClipboard': [{ type: core_1.Input },],
+        'copyHeadersToClipboard': [{ type: core_1.Input },],
         'pivotMode': [{ type: core_1.Input },],
         'suppressAggFuncInHeader': [{ type: core_1.Input },],
         'suppressColumnVirtualisation': [{ type: core_1.Input },],
@@ -679,10 +684,12 @@ var AgGridNg2 = /** @class */ (function () {
         'serverSideSortingAlwaysResets': [{ type: core_1.Input },],
         'reactNext': [{ type: core_1.Input },],
         'suppressSetColumnStateEvents': [{ type: core_1.Input },],
+        'enableCharts': [{ type: core_1.Input },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
         'columnPivotModeChanged': [{ type: core_1.Output },],
         'columnRowGroupChanged': [{ type: core_1.Output },],
+        'expandOrCollapseAll': [{ type: core_1.Output },],
         'columnPivotChanged': [{ type: core_1.Output },],
         'gridColumnsChanged': [{ type: core_1.Output },],
         'columnValueChanged': [{ type: core_1.Output },],
@@ -748,7 +755,6 @@ var AgGridNg2 = /** @class */ (function () {
         'columnPivotChangeRequest': [{ type: core_1.Output },],
         'columnValueChangeRequest': [{ type: core_1.Output },],
         'columnAggFuncChangeRequest': [{ type: core_1.Output },],
-        'expandOrCollapseAll': [{ type: core_1.Output },],
     };
     return AgGridNg2;
 }());

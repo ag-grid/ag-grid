@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {ReactPortal} from 'react';
+import { ReactPortal } from 'react';
 import * as ReactDOM from 'react-dom';
 import * as AgGrid from 'ag-grid-community';
-import {Promise} from 'ag-grid-community';
-import {AgGridReact} from "./agGridReact";
+import { Promise } from 'ag-grid-community';
+import { AgGridReact } from "./agGridReact";
 
 export class AgReactComponent {
 
@@ -12,6 +12,7 @@ export class AgReactComponent {
 
     private reactComponent: any;
     private parentComponent: AgGridReact;
+    private portal: ReactPortal;
 
     constructor(reactComponent: any, parentComponent?: AgGridReact) {
         this.reactComponent = reactComponent;
@@ -55,6 +56,9 @@ export class AgReactComponent {
     }
 
     public destroy(): void {
+        if (!this.useLegacyReact()) {
+            return this.parentComponent.destroyPortal(this.portal);
+        }
         ReactDOM.unmountComponentAtNode(this.eParentElement);
     }
 
@@ -64,14 +68,14 @@ export class AgReactComponent {
         if (!this.parentComponent) {
 
             // MUST be a function, not an arrow function
-            ReactDOM.render(ReactComponent, this.eParentElement, function () {
+            ReactDOM.render(ReactComponent, this.eParentElement, function() {
                 self.componentInstance = this;
                 resolve(null);
             });
         } else {
 
             // MUST be a function, not an arrow function
-            ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function () {
+            ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function() {
                 self.componentInstance = this;
                 resolve(null);
             });
@@ -79,13 +83,6 @@ export class AgReactComponent {
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
-        // when using portals & redux with HOCs you need to manually add the store to the props
-        // wrapping the component with connect isn't sufficient
-        const {reduxStore} = params.agGridReact.props;
-        if (reduxStore) {
-            params.store = reduxStore;
-        }
-
         // grab hold of the actual instance created - we use a react ref for this as there is no other mechanism to
         // retrieve the created instance from either createPortal or render
         params.ref = element => {
@@ -97,10 +94,7 @@ export class AgReactComponent {
             ReactComponent,
             this.eParentElement
         );
-
-        // MUST be a function, not an arrow function
-        ReactDOM.render(<any>portal, this.eParentElement, function () {
-            resolve(null);
-        });
+        this.portal = portal;
+        this.parentComponent.mountReactPortal(portal, resolve);
     }
 }

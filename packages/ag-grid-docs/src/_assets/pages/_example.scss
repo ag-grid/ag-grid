@@ -1,3 +1,49 @@
+#example-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+
+    #grid-wrapper {
+        flex: 1;
+        overflow: hidden;
+    }
+}
+.good-score {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+.bad-score {
+    background-color: rgba(200, 0, 0, 0.4);
+}
+
+.dark .star {
+    filter: invert(100%);
+}
+
+.ag-theme-material, .ag-theme-balham { 
+    .good-score {
+        background-color: rgba(185, 246, 202, 0.4);
+    }
+    .bad-score {
+        background-color: rgba(255, 128, 171, 0.4);
+    }
+}
+
+.dark {
+    background-color:#222;
+    color: white;
+     .good-score {
+        background-color: lightgreen;
+        color: #000;
+    }
+    .bad-score {
+        background-color: transparentize(#e84393, 0.3);
+    }
+}
+
 .blue {
     background-color: darkblue;
     color: lightblue;
@@ -7,91 +53,74 @@ button[disabled] {
     opacity: 0.5;
 }
 
-.ag-theme-fresh .good-score {
-    background-color: rgba(0, 200, 0, 0.4);
-}
-
-.ag-theme-blue .good-score {
-    background-color: rgba(0, 200, 0, 0.4);
-}
-
-.ag-theme-dark .good-score {
-    background-color: rgba(0, 100, 0, 0.4);
-}
-
-.ag-theme-fresh .bad-score {
-    background-color: rgba(200, 0, 0, 0.4);
-}
-
-.ag-theme-blue .bad-score {
-    background-color: rgba(200, 0, 0, 0.4);
-}
-
-.ag-theme-dark .bad-score {
-    background-color: rgba(100, 0, 0, 0.4);
-}
-
-.ag-theme-dark .star,
-.ag-theme-balham-dark .star {
-    filter: invert(100%);
-}
-
-.ag-theme-material .good-score {
-    background-color: rgba(185, 246, 202, 0.4);
-}
-
-.ag-theme-material .bad-score {
-    background-color: rgba(255, 128, 171, 0.4);
-}
-
-.ag-theme-balham .good-score {
-    background-color: rgba(185, 246, 202, 0.4);
-}
-
-.ag-theme-balham .bad-score {
-    background-color: rgba(255, 128, 171, 0.4);
-}
-
-.ag-theme-balham-dark .good-score {
-    background-color: transparentize(#76ff03, 0.2);
-    color: #000;
-}
-
-.ag-theme-balham-dark .bad-score {
-    background-color: transparentize(#e84393, 0.3);
-}
-
 #example-toolbar {
-    @extend .container-fluid;
+    display: flex;
+    justify-content: center;
+
     background: $blue-4;
     border-bottom: 1px solid $blue-3;
+    select {
+        height: 35px;
+        outline: none;
+    }
+    .dark & {
+        background-color: #34343c;
+        border-bottom-color: #666;
+        a {
+            color: lightblue;
+            &:hover{
+                color: white;
+            }
+        }
+    }
     margin-bottom: 2rem;
     padding-top: 1rem;
     padding-bottom: 1rem;
 
     > div {
-        @extend .full-width-row, .row;
+        display: flex;
+        flex-wrap: wrap;
+        flex: 1 0 auto;
+        
+        max-width: 1400px;
+        width: 100%;
+
+        justify-content: space-between;
 
         > div {
-            @extend .col-md-3;
-        }
-
-        #features-overlay {
-            > a {
-                @extend .text-right;
-                background: transparent url("./feature-walkthrough.svg") left center no-repeat;
-                float: right;
-                padding-left: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            > div {
+                white-space: nowrap;
+                padding-left: 15px;
+                padding-right: 15px;
             }
         }
+        .link-container {
+            display: flex;
 
-        > div:last-child {
-            @extend .col-md-3, .text-right;
-
-            a {
-                background: transparent url("./youtube.svg") left center no-repeat;
-                float: right;
-                padding-left: 2rem;
+            line-height: 35px;
+            > div {
+                width: 35px;
+                height: 35px;
+                background-color: transparent;
+                background-position-x: left;
+                background-position-y: center;
+                background-repeat:  no-repeat;
+                background-size: contain;
+            }
+            > a {
+                white-space: nowrap;
+                margin-left: 5px;
+            }
+            
+            .features {
+                background-image: url("./feature-walkthrough.svg");
+                
+            }
+            .youtube {
+                background-image: url("./youtube.svg");
             }
         }
     }
@@ -107,22 +136,16 @@ button[disabled] {
     }
 }
 
-#example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    #grid-wrapper {
-        flex: 1;
-        overflow: hidden;
-    }
-}
-
 .stretch-html {
     height: 100%;
-
+    width: 100%;
+    position: fixed;
+    border: 0;
+    margin: 0;
+    padding: 0;
     body {
         height: 100%;
+        width: 100%;
     }
 }
 

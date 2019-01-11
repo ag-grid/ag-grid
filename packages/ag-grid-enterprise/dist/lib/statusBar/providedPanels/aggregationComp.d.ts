@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Component, IStatusPanelComp } from 'ag-grid-community';
 export declare class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE;
@@ -27,4 +27,3 @@ export declare class AggregationComp extends Component implements IStatusPanelCo
     private onRangeSelectionChanged;
     private getRowNode;
 }
-//# sourceMappingURL=aggregationComp.d.ts.map

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -51,6 +51,8 @@ export declare class RowComp extends Component {
     private fullWidthRow;
     private editingRow;
     private rowFocused;
+    private rowContainerReadyCount;
+    private refreshNeeded;
     private columnRefreshPending;
     private cellComps;
     private createSecondPassFuncs;
@@ -74,6 +76,7 @@ export declare class RowComp extends Component {
     private executeProcessRowPostCreateFunc;
     private getInitialRowTopStyle;
     private getRowBusinessKey;
+    private areAllContainersReady;
     private lazyCreateCells;
     private createRowContainer;
     private createChildScopeOrNull;
@@ -122,7 +125,7 @@ export declare class RowComp extends Component {
     private processRowClassRules;
     stopEditing(cancel?: boolean): void;
     private setEditingRow;
-    startRowEditing(keyPress?: number, charPress?: string, sourceRenderedCell?: CellComp): void;
+    startRowEditing(keyPress?: number | null, charPress?: string | null, sourceRenderedCell?: CellComp | null): void;
     forEachCellComp(callback: (renderedCell: CellComp) => void): void;
     private postProcessClassesFromGridOptions;
     private postProcessRowClassRules;
@@ -158,4 +161,3 @@ export declare class RowComp extends Component {
     getBodyRowElement(): HTMLElement;
     getFullWidthRowElement(): HTMLElement;
 }
-//# sourceMappingURL=rowComp.d.ts.map

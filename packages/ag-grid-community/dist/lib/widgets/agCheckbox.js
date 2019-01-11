@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -30,9 +30,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("./component");
 var componentAnnotations_1 = require("./componentAnnotations");
-var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var utils_1 = require("../utils");
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
@@ -53,25 +53,25 @@ var AgCheckbox = /** @class */ (function (_super) {
         }
     };
     AgCheckbox.prototype.loadIcons = function () {
-        utils_1.Utils.removeAllChildren(this.eChecked);
-        utils_1.Utils.removeAllChildren(this.eUnchecked);
-        utils_1.Utils.removeAllChildren(this.eIndeterminate);
+        utils_1._.removeAllChildren(this.eChecked);
+        utils_1._.removeAllChildren(this.eUnchecked);
+        utils_1._.removeAllChildren(this.eIndeterminate);
         if (this.readOnly) {
-            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
-            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
-            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null));
+            this.eChecked.appendChild(utils_1._.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(utils_1._.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(utils_1._.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null));
         }
         else {
-            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null));
-            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null));
-            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
+            this.eChecked.appendChild(utils_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(utils_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(utils_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
         }
     };
     AgCheckbox.prototype.onClick = function (event) {
         // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
         // it's not possible to calculate the path by following the parent's chain. in other browser (eg
         // chrome) there is event.path for this purpose, but missing in Edge.
-        utils_1.Utils.addAgGridEventPath(event);
+        utils_1._.addAgGridEventPath(event);
         if (!this.readOnly) {
             this.toggle();
         }
@@ -128,9 +128,9 @@ var AgCheckbox = /** @class */ (function (_super) {
         this.dispatchEvent(event);
     };
     AgCheckbox.prototype.updateIcons = function () {
-        utils_1.Utils.setVisible(this.eChecked, this.selected === true);
-        utils_1.Utils.setVisible(this.eUnchecked, this.selected === false);
-        utils_1.Utils.setVisible(this.eIndeterminate, this.selected === undefined);
+        utils_1._.setVisible(this.eChecked, this.selected === true);
+        utils_1._.setVisible(this.eUnchecked, this.selected === false);
+        utils_1._.setVisible(this.eIndeterminate, this.selected === undefined);
     };
     AgCheckbox.EVENT_CHANGED = 'change';
     AgCheckbox.TEMPLATE = '<span class="ag-checkbox" role="presentation">' +

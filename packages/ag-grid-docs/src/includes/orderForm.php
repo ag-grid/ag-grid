@@ -88,7 +88,7 @@ Thank you.
 
         <div class="form-group text-right" style="margin-top: 10px;">
             <?php if ($startTrial) { ?>
-                <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-primary" value="Request Trial"/>
+                <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-block btn-primary" value="Start Your Free Trial"/>
             <?php } else { ?>
                 <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-primary" value="Send your info to ag-Grid"/>
             <?php } ?>

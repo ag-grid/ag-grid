@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -34,4 +34,3 @@ export declare class HeightScaler extends BeanStub {
     private getUiBodyHeight;
     getScrollPositionForPixel(rowTop: number): number;
 }
-//# sourceMappingURL=heightScaler.d.ts.map

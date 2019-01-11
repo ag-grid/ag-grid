@@ -1,22 +1,22 @@
-import {NumberSequence, Utils as _} from "../../utils";
-import {RowNode} from "../../entities/rowNode";
-import {BeanStub} from "../../context/beanStub";
-import {RowNodeBlock} from "./rowNodeBlock";
-import {Logger} from "../../logger";
-import {RowNodeBlockLoader} from "./rowNodeBlockLoader";
-import {AgEvent} from "../../events";
+import { RowNode } from "../../entities/rowNode";
+import { BeanStub } from "../../context/beanStub";
+import { RowNodeBlock } from "./rowNodeBlock";
+import { Logger } from "../../logger";
+import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
+import { AgEvent } from "../../events";
+import { NumberSequence,  _ } from "../../utils";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
-    blockSize: number;
+    blockSize?: number;
     overflowSize: number;
     sortModel: any;
     filterModel: any;
-    maxBlocksInCache: number;
+    maxBlocksInCache?: number;
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
-    maxConcurrentRequests: number;
-    rowNodeBlockLoader: RowNodeBlockLoader;
+    maxConcurrentRequests?: number;
+    rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
 }
 
@@ -45,7 +45,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     protected logger: Logger;
 
-    public abstract getRow(rowIndex: number): RowNode;
+    public abstract getRow(rowIndex: number): RowNode | null;
 
     protected constructor(cacheParams: P) {
         super();
@@ -55,12 +55,12 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     public destroy(): void {
         super.destroy();
-        this.forEachBlockInOrder( block => this.destroyBlock(block) );
+        this.forEachBlockInOrder(block => this.destroyBlock(block));
     }
 
     protected init(): void {
         this.active = true;
-        this.addDestroyFunc( ()=> this.active = false );
+        this.addDestroyFunc(() => this.active = false);
     }
 
     public isActive(): boolean {
@@ -99,8 +99,8 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     private purgeBlocksIfNeeded(blockToExclude: T): void {
         // put all candidate blocks into a list for sorting
-        let blocksForPurging: T[] = [];
-        this.forEachBlockInOrder( (block: T)=> {
+        const blocksForPurging: T[] = [];
+        this.forEachBlockInOrder((block: T) => {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
             if (block === blockToExclude) {
@@ -111,20 +111,20 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         });
 
         // note: need to verify that this sorts items in the right order
-        blocksForPurging.sort( (a: T, b: T) => b.getLastAccessed() - a.getLastAccessed());
+        blocksForPurging.sort((a: T, b: T) => b.getLastAccessed() - a.getLastAccessed());
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
         // we want to keep, which means we are left with blocks that we can potentially purge
-        let maxBlocksProvided = this.cacheParams.maxBlocksInCache > 0;
-        let blocksToKeep = maxBlocksProvided ? this.cacheParams.maxBlocksInCache - 1 : null;
-        let emptyBlocksToKeep = RowNodeCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const maxBlocksProvided = this.cacheParams.maxBlocksInCache > 0;
+        const blocksToKeep = maxBlocksProvided ? this.cacheParams.maxBlocksInCache - 1 : null;
+        const emptyBlocksToKeep = RowNodeCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
-        blocksForPurging.forEach( (block: T, index: number) => {
+        blocksForPurging.forEach((block: T, index: number) => {
 
-            let purgeBecauseBlockEmpty = block.getState() === RowNodeBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === RowNodeBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
 
-            let purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
+            const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
 
             if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
 
@@ -175,8 +175,8 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
             this.onCacheUpdated();
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
-            let lastRowIndex = (block.getBlockNumber() + 1) * this.cacheParams.blockSize;
-            let lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
+            const lastRowIndex = (block.getBlockNumber() + 1) * this.cacheParams.blockSize;
+            const lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
@@ -210,37 +210,37 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         this.onCacheUpdated();
     }
 
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence): void {
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence): void {
         this.forEachBlockInOrder(block => {
             block.forEachNodeDeep(callback, sequence, this.virtualRowCount);
         });
     }
 
-    public forEachBlockInOrder(callback: (block: T, id: number)=>void): void {
-        let ids = this.getBlockIdsSorted();
+    public forEachBlockInOrder(callback: (block: T, id: number) => void): void {
+        const ids = this.getBlockIdsSorted();
         this.forEachBlockId(ids, callback);
     }
 
-    protected forEachBlockInReverseOrder(callback: (block: T, id: number)=>void): void {
-        let ids = this.getBlockIdsSorted().reverse();
+    protected forEachBlockInReverseOrder(callback: (block: T, id: number) => void): void {
+        const ids = this.getBlockIdsSorted().reverse();
         this.forEachBlockId(ids, callback);
     }
 
-    private forEachBlockId(ids: number[], callback: (block: T, id: number)=>void): void {
-        ids.forEach( id => {
-            let block = this.blocks[id];
+    private forEachBlockId(ids: number[], callback: (block: T, id: number) => void): void {
+        ids.forEach(id => {
+            const block = this.blocks[id];
             callback(block, id);
         });
     }
 
     protected getBlockIdsSorted(): number[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        let numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
-        let blockIds = Object.keys(this.blocks).map(idStr => parseInt(idStr, 10)).sort(numberComparator);
+        const numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
+        const blockIds = Object.keys(this.blocks).map(idStr => parseInt(idStr, 10)).sort(numberComparator);
         return blockIds;
     }
 
-    protected getBlock(blockId: string|number): T {
+    protected getBlock(blockId: string | number): T {
         return this.blocks[blockId];
     }
 
@@ -262,7 +262,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         if (this.isActive()) {
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
-            let event: CacheUpdatedEvent = {
+            const event: CacheUpdatedEvent = {
                 type: RowNodeCache.EVENT_CACHE_UPDATED
             };
             this.dispatchEvent(event);
@@ -280,11 +280,11 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     }
 
     public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        let result: RowNode[] = [];
+        const result: RowNode[] = [];
 
         let lastBlockId = -1;
         let inActiveRange = false;
-        let numberSequence: NumberSequence = new NumberSequence();
+        const numberSequence: NumberSequence = new NumberSequence();
 
         // if only one node passed, we start the selection at the top
         if (_.missing(firstInRange)) {
@@ -294,7 +294,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         let foundGapInSelection = false;
 
         this.forEachBlockInOrder((block: RowNodeBlock, id: number) => {
-            if (foundGapInSelection) return;
+            if (foundGapInSelection) { return; }
 
             if (inActiveRange && (lastBlockId + 1 !== id)) {
                 foundGapInSelection = true;
@@ -304,7 +304,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
             lastBlockId = id;
 
             block.forEachNodeShallow(rowNode => {
-                let hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
                 if (inActiveRange || hitFirstOrLast) {
                     result.push(rowNode);
                 }
@@ -317,7 +317,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         });
 
         // inActiveRange will be still true if we never hit the second rowNode
-        let invalidRange = foundGapInSelection || inActiveRange;
+        const invalidRange = foundGapInSelection || inActiveRange;
         return invalidRange ? [] : result;
     }
 }

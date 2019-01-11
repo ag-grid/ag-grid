@@ -176,9 +176,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>isAdvancedFilterPresent()</th>
+            <th>isColumnFilterPresent()</th>
             <td>
-                Returns true if the advanced filter is set, otherwise false.
+                Returns true if any column filter is set, otherwise false.
             </td>
         </tr>
         <tr>
@@ -377,7 +377,12 @@ include '../documentation-main/documentation_header.php';
     </table>
 <h2>Scrolling</h2>
     <table class="table reference">
-
+        <tr>
+            <th>setAlwaysShowVerticalScroll(show)</th>
+            <td>If true, the vertical scrollbar will always be present even if not required, otherwise, it will only be 
+                displayed when necessary.
+            </td>
+        </tr>
         <tr>
             <th>ensureIndexVisible(index, position)</th>
             <td>Ensures the row index is visible by vertically scrolling the grid. The valid values for positions are
@@ -399,6 +404,19 @@ include '../documentation-main/documentation_header.php';
             <th>ensureColumnVisible(colId)</th>
             <td>Ensures the column is visible, scrolling the table if needed.</td>
         </tr>
+        <tr id="getHorizontalPixelRange">
+            <th>getHorizontalPixelRange()</th>
+            <td>Returns a JSON object with two properties:
+                <ul class="content">
+                    <li>
+                        left: The left pixel position of the current scroll in the grid
+                    </li>
+                    <li>
+                        right: The right pixel position of the current scroll in the grid
+                    </li>
+                </ul>
+            </td>
+        </tr>
         <tr id="getVerticalPixelRange">
             <th>getVerticalPixelRange()</th>
             <td>Returns a JSON object with two properties:
@@ -412,7 +430,6 @@ include '../documentation-main/documentation_header.php';
                 </ul>
             </td>
         </tr>
-
     </table>
 <h2>Overlays</h2>
     <table class="table reference">

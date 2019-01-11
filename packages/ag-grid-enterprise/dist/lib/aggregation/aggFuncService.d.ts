@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.4
-import { IAggFuncService, IAggFunc, GridOptionsWrapper, Column } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { Column, GridOptionsWrapper, IAggFunc, IAggFuncService } from "ag-grid-community";
 export declare class AggFuncService implements IAggFuncService {
     private static AGG_SUM;
     private static AGG_FIRST;
@@ -13,13 +13,12 @@ export declare class AggFuncService implements IAggFuncService {
     private initialised;
     private init;
     private initialiseWithDefaultAggregations;
-    getDefaultAggFunc(column: Column): string;
+    getDefaultAggFunc(column: Column): string | null;
     addAggFuncs(aggFuncs: {
         [key: string]: IAggFunc;
-    }): void;
+    } | undefined): void;
     addAggFunc(key: string, aggFunc: IAggFunc): void;
     getAggFunc(name: string): IAggFunc;
     getFuncNames(column: Column): string[];
     clear(): void;
 }
-//# sourceMappingURL=aggFuncService.d.ts.map

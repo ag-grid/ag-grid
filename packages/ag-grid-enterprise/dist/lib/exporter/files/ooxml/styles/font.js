@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var fontFactory = {
@@ -15,16 +15,21 @@ var fontFactory = {
         if (scheme) {
             children.push({ name: 'scheme', properties: { rawMap: { val: scheme } } });
         }
-        if (italic)
+        if (italic) {
             children.push({ name: 'i' });
-        if (bold)
+        }
+        if (bold) {
             children.push({ name: 'b' });
-        if (strike)
+        }
+        if (strike) {
             children.push({ name: 'strike' });
-        if (outline)
+        }
+        if (outline) {
             children.push({ name: 'outline' });
-        if (shadow)
+        }
+        if (shadow) {
             children.push({ name: 'shadow' });
+        }
         if (underline) {
             var lUnder = underline.toLocaleLowerCase();
             children.push({ name: 'u', properties: { rawMap: { val: lUnder === 'double' ? 'double' : 'single' } } });

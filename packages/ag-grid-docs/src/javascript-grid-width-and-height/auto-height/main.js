@@ -84,7 +84,10 @@ var gridOptions = {
     defaultColDef: {
         enableRowGroup: true,
         enablePivot: true,
-        enableValue: true
+        enableValue: true,
+        sortable: true,
+        filter: true,
+        resizable: true
     },
     rowData: getData(5),
     columnDefs: columnDefs,
@@ -94,9 +97,6 @@ var gridOptions = {
         ]
     },
     enableRangeSelection: true,
-    enableColResize: true,
-    enableSorting: true,
-    enableFilter: true,
     domLayout: 'autoHeight',
     animateRows: true,
     onGridReady: function() {

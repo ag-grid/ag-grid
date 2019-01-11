@@ -1,11 +1,11 @@
-import {Utils as _} from "../utils";
-import {Autowired, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Constants} from "../constants";
+import { Autowired, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from "../utils";
 
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
+    eWrapper?: HTMLElement;
     hideWhenNoChildren?: boolean;
 }
 
@@ -20,6 +20,7 @@ export class RowContainerComponent {
 
     private readonly eContainer: HTMLElement;
     private readonly eViewport: HTMLElement;
+    private readonly eWrapper: HTMLElement;
 
     // full width containers only show when no children, because they float above the normal rows,
     // it adds complexity that can be confusing when inspecting the dom when they are not needed.
@@ -44,6 +45,9 @@ export class RowContainerComponent {
     constructor(params: RowContainerComponentParams) {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
+        if (params.eWrapper) {
+            this.eWrapper = params.eWrapper;
+        }
         this.hideWhenNoChildren = params.hideWhenNoChildren;
     }
 
@@ -63,14 +67,19 @@ export class RowContainerComponent {
     }
 
     public getRowElement(compId: number): HTMLElement {
-        return <HTMLElement> this.eContainer.querySelector(`[comp-id="${compId}"]`);
+        return this.eContainer.querySelector(`[comp-id="${compId}"]`) as HTMLElement;
     }
 
     public setHeight(height: number): void {
-        if (height===null || height===undefined) {
+        if (height == null) {
             this.eContainer.style.height = '';
-        } else {
-            this.eContainer.style.height = height + "px";
+            return;
+        }
+
+        this.eContainer.style.height = `${height}px`;
+        if (this.eWrapper) {
+             this.eWrapper.style.height = `${height}px`;
+             this.eWrapper.style.minHeight = '100%';
         }
     }
 
@@ -78,22 +87,22 @@ export class RowContainerComponent {
 
         // if doing dom order, then rowTemplates will be empty,
         // or if no rows added since last time also empty.
-        if (this.rowTemplatesToAdd.length!==0) {
-            let htmlToAdd = this.rowTemplatesToAdd.join('');
+        if (this.rowTemplatesToAdd.length !== 0) {
+            const htmlToAdd = this.rowTemplatesToAdd.join('');
             _.appendHtml(this.eContainer, htmlToAdd);
             this.rowTemplatesToAdd.length = 0;
         }
 
         // this only empty if no rows since last time, as when
         // doing dom order, we still have callbacks to process
-        this.afterGuiAttachedCallbacks.forEach( func => func() );
+        this.afterGuiAttachedCallbacks.forEach(func => func());
         this.afterGuiAttachedCallbacks.length = 0;
 
         this.lastPlacedElement = null;
     }
 
     public appendRowTemplate(rowTemplate: string,
-                             callback: ()=>void) {
+                             callback: () => void) {
 
         if (this.domOrder) {
             this.lastPlacedElement = _.insertTemplateWithDomOrder(this.eContainer, rowTemplate, this.lastPlacedElement);
@@ -128,8 +137,8 @@ export class RowContainerComponent {
     private checkVisibility(): void {
         if (!this.hideWhenNoChildren) { return; }
 
-        let eGui = this.eViewport ? this.eViewport : this.eContainer;
-        let visible = this.childCount > 0;
+        const eGui = this.eViewport ? this.eViewport : this.eContainer;
+        const visible = this.childCount > 0;
 
         if (this.visible !== visible) {
             this.visible = visible;
@@ -150,8 +159,8 @@ export class RowContainerComponent {
     }
 
     public isMadeVisibleRecently(): boolean {
-        let now = new Date().getTime();
-        let millisSinceVisible = now - this.lastMadeVisibleTime;
+        const now = new Date().getTime();
+        const millisSinceVisible = now - this.lastMadeVisibleTime;
         return millisSinceVisible < 500;
     }
 }

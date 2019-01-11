@@ -78,7 +78,9 @@ var gridOptions = {
     components:{
         simpleCellRenderer: getSimpleCellRenderer()
     },
-    defaultColDef: {},
+    defaultColDef: {
+        resizable: true
+    },
     // we don't want the auto column here, as we are providing our own cols
     groupSuppressAutoColumn: true,
     suppressRowClickSelection: true,
@@ -87,8 +89,7 @@ var gridOptions = {
     groupSelectsChildren: true,
     animateRows: true,
     columnDefs: columnDefs,
-    rowData: createRowData(),
-    enableColResize: true
+    rowData: createRowData()
 };
 
 // setup the grid after the page has finished loading

@@ -5,7 +5,7 @@ import {
     GridOptionsWrapper,
     HorizontalResizeService,
     PostConstruct
-} from "ag-grid-community/main";
+} from "ag-grid-community";
 
 export class HorizontalResizeComp extends Component {
 
@@ -25,8 +25,9 @@ export class HorizontalResizeComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        let finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+        const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
+            dragStartPixels: 1,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this),
             onResizeEnd: this.onResizing.bind(this)
@@ -36,14 +37,14 @@ export class HorizontalResizeComp extends Component {
     }
 
     private onResizeStart(): void {
-        this.startingWidth = this.props.componentToResize.getGui().clientWidth;
+        this.startingWidth = this.props.componentToResize.getGui().offsetWidth;
     }
 
     private onResizing(delta: number): void {
-        let newWidth = this.startingWidth - delta;
-        if (newWidth < 100) {
-            newWidth = 100;
-        }
-        this.props.componentToResize.getGui().style.width = newWidth + 'px';
+        const direction = this.gridOptionsWrapper.isEnableRtl() ? -1 : 1;
+        const newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
+        // tslint:disable-next-line
+        this.gridOptionsWrapper.isEnableRtl
+        this.props.componentToResize.getGui().style.width = `${newWidth}px`;
     }
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -31,14 +31,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var dateFilter_1 = require("./dateFilter");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
-var utils_1 = require("../utils");
 var componentRecipes_1 = require("../components/framework/componentRecipes");
 var component_1 = require("../widgets/component");
 var constants_1 = require("../constants");
+var utils_1 = require("../utils");
 var InputTextFloatingFilterComp = /** @class */ (function (_super) {
     __extends(InputTextFloatingFilterComp, _super);
     function InputTextFloatingFilterComp() {
-        var _this = _super.call(this, "<div><input ref=\"eColumnFloatingFilter\" class=\"ag-floating-filter-input\"></div>") || this;
+        var _this = _super.call(this, "<div class=\"ag-input-text-wrapper\"><input ref=\"eColumnFloatingFilter\" class=\"ag-floating-filter-input\"></div>") || this;
         _this.lastKnownModel = null;
         return _this;
     }
@@ -168,7 +168,7 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
-        var body = utils_1._.loadTemplate("<div></div>");
+        var body = utils_1._.loadTemplate('<div></div>');
         this.dateComponentPromise.then(function (dateComponent) {
             body.appendChild(dateComponent.getGui());
             var columnDef = params.column.getDefinition();
@@ -180,6 +180,8 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
                 dateComponent.eDateInput.disabled = isInRange;
             }
         });
+        body.style.width = '100%';
+        body.style.height = '100%';
         this.setTemplateFromElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
@@ -328,8 +330,9 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     };
     SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
         this.eColumnFloatingFilter.disabled = true;
-        if (!parentModel)
+        if (!parentModel) {
             return '';
+        }
         // also supporting old filter model for backwards compatibility
         var values = (parentModel instanceof Array) ? parentModel : parentModel.values;
         if (values.length === 0) {

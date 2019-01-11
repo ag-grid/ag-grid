@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -20,7 +20,7 @@ var cellFactory = {
             properties: {
                 rawMap: {
                     r: ref,
-                    t: convertedType,
+                    t: convertedType === 'empty' ? undefined : convertedType,
                     s: styleId ? stylesheet_1.getStyleId(styleId) : undefined
                 }
             }

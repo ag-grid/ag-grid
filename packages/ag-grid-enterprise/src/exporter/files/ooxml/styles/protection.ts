@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelProtection} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelProtection } from 'ag-grid-community';
 
 const protectionFactory: ExcelOOXMLTemplate = {
     getTemplate(protection: ExcelProtection) {

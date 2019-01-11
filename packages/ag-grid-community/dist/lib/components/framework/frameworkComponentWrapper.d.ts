@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -9,7 +9,7 @@ import { IComponent } from "../../interfaces/iComponent";
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(frameworkComponent: {
         new (): any;
-    }, methodList: string[], optionalMethodList?: string[], componentName?: string): A;
+    }, methodList: string[], optionalMethodList: string[], componentName?: string): A;
 }
 export interface WrapableInterface {
     hasMethod(name: string): boolean;
@@ -24,6 +24,5 @@ export declare abstract class BaseComponentWrapper<F extends WrapableInterface> 
         new (): any;
     }, componentName?: string): F;
     private createMethod;
-    private createMethodProxy;
+    protected createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): Function;
 }
-//# sourceMappingURL=frameworkComponentWrapper.d.ts.map

@@ -80,7 +80,7 @@ interface RowSpanParams {
 
     <ul class="content">
         <li>
-            The athlete column is configured to span 2 rows for 'Aleksey Nemov' and 3 rows
+            The athlete column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows
             for 'Ryan Lochte'.
         </li>
         <li>
@@ -90,7 +90,7 @@ interface RowSpanParams {
         </li>
     </ul>
 
-    <?= example('Row Spanning Simple', 'row-spanning-simple', 'generated') ?>
+    <?= example('Row Spanning Simple', 'row-spanning-simple', 'generated', array('processVue' => true)) ?>
 
     <h2>Row Spanning Complex Example</h2>
 
@@ -106,7 +106,7 @@ interface RowSpanParams {
         <li>Column <b>Show</b> has a custom cell renderer to make use of the extra space.</li>
     </ul>
 
-    <?= example('Row Spanning Complex', 'row-spanning-complex', 'generated') ?>
+    <?= example('Row Spanning Complex', 'row-spanning-complex', 'generated', array('processVue' => true)) ?>
 
     <h2>Constraints with Row Spanning</h2>
 

@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.4
-import { IClipboardService, Column } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { Column, IClipboardService } from "ag-grid-community";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
     private loggerFactory;
@@ -27,7 +27,7 @@ export declare class ClipboardService implements IClipboardService {
     private multipleCellRange;
     private singleCellRange;
     private updateCellValue;
-    copyToClipboard(includeHeaders?: boolean): void;
+    copyToClipboard(includeHeaders: boolean): void;
     private iterateActiveRanges;
     private iterateActiveRange;
     copySelectedRangeToClipboard(includeHeaders?: boolean): void;
@@ -42,4 +42,3 @@ export declare class ClipboardService implements IClipboardService {
     private dataToArray;
     private rangeSize;
 }
-//# sourceMappingURL=clipboardService.d.ts.map

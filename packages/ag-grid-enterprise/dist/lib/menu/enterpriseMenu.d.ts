@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { AgEvent, BeanStub, Column, IMenuFactory } from "ag-grid-community";
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -64,4 +64,3 @@ export declare class EnterpriseMenu extends BeanStub {
     afterGuiAttached(params: any): void;
     getGui(): HTMLElement;
 }
-//# sourceMappingURL=enterpriseMenu.d.ts.map

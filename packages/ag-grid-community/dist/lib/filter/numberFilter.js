@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -28,9 +28,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var baseFilter_1 = require("./baseFilter");
+var utils_1 = require("../utils");
 var NumberFilter = /** @class */ (function (_super) {
     __extends(NumberFilter, _super);
     function NumberFilter() {
@@ -53,7 +53,7 @@ var NumberFilter = /** @class */ (function (_super) {
         var fieldId = type == baseFilter_1.FilterConditionType.MAIN ? "filterText" : "filterConditionText";
         var filterNumberToPanelId = type == baseFilter_1.FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";
         var fieldToId = type == baseFilter_1.FilterConditionType.MAIN ? "filterToText" : "filterToConditionText";
-        return "<div class=\"ag-filter-body\">\n            <div>\n                <input class=\"ag-filter-filter\" id=\"" + fieldId + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-filter-number-to\" id=\"" + filterNumberToPanelId + "\">\n                <input class=\"ag-filter-filter\" id=\"" + fieldToId + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\">\n            <div class=\"ag-input-text-wrapper\">\n                <input class=\"ag-filter-filter\" id=\"" + fieldId + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-input-text-wrapper ag-filter-number-to\" id=\"" + filterNumberToPanelId + "\">\n                <input class=\"ag-filter-filter\" id=\"" + fieldToId + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
     };
     NumberFilter.prototype.initialiseFilterBodyUi = function (type) {
         _super.prototype.initialiseFilterBodyUi.call(this, type);
@@ -72,7 +72,7 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.addFilterChangedEventListeners = function (type, filterElement, filterToElement) {
         var _this = this;
         var debounceMs = this.getDebounceMs(this.filterParams);
-        var toDebounce = utils_1.Utils.debounce(function () { return _this.onTextFieldsChanged(type, filterElement, filterToElement); }, debounceMs);
+        var toDebounce = utils_1._.debounce(function () { return _this.onTextFieldsChanged(type, filterElement, filterToElement); }, debounceMs);
         this.addDestroyableEventListener(filterElement, "input", toDebounce);
         this.addDestroyableEventListener(filterToElement, "input", toDebounce);
     };
@@ -121,10 +121,10 @@ var NumberFilter = /** @class */ (function (_super) {
             [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     };
     NumberFilter.prototype.asNumber = function (value) {
-        return utils_1.Utils.isNumeric(value) ? value : null;
+        return utils_1._.isNumeric(value) ? value : null;
     };
     NumberFilter.prototype.stringToFloat = function (value) {
-        var filterText = utils_1.Utils.makeNull(value);
+        var filterText = utils_1._.makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
@@ -138,38 +138,42 @@ var NumberFilter = /** @class */ (function (_super) {
         return newFilter;
     };
     NumberFilter.prototype.setFilter = function (filter, type) {
-        filter = utils_1.Utils.makeNull(filter);
+        filter = utils_1._.makeNull(filter);
         if (filter !== null && !(typeof filter === 'number')) {
             filter = parseFloat(filter);
         }
         if (type === baseFilter_1.FilterConditionType.MAIN) {
             this.filterNumber = filter;
-            if (!this.eFilterTextField)
+            if (!this.eFilterTextField) {
                 return;
+            }
             this.eFilterTextField.value = filter;
         }
         else {
             this.filterNumberCondition = filter;
-            if (!this.eFilterTextConditionField)
+            if (!this.eFilterTextConditionField) {
                 return;
+            }
             this.eFilterTextConditionField.value = filter;
         }
     };
     NumberFilter.prototype.setFilterTo = function (filter, type) {
-        filter = utils_1.Utils.makeNull(filter);
+        filter = utils_1._.makeNull(filter);
         if (filter !== null && !(typeof filter === 'number')) {
             filter = parseFloat(filter);
         }
         if (type === baseFilter_1.FilterConditionType.MAIN) {
             this.filterNumberTo = filter;
-            if (!this.eFilterToTextField)
+            if (!this.eFilterToTextField) {
                 return;
+            }
             this.eFilterToTextField.value = filter;
         }
         else {
             this.filterNumberConditionTo = filter;
-            if (!this.eFilterToConditionText)
+            if (!this.eFilterToConditionText) {
                 return;
+            }
             this.eFilterToConditionText.value = filter;
         }
     };
@@ -195,10 +199,11 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.refreshFilterBodyUi = function (type) {
         var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.filter : this.filterCondition;
         var panel = type === baseFilter_1.FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
-        if (!panel)
+        if (!panel) {
             return;
+        }
         var visible = filterType === NumberFilter.IN_RANGE;
-        utils_1.Utils.setVisible(panel, visible);
+        utils_1._.setVisible(panel, visible);
     };
     NumberFilter.prototype.resetState = function () {
         this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.MAIN);

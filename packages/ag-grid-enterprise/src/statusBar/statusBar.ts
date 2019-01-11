@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Component,
     ComponentProvider,
@@ -10,9 +9,10 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     Promise,
-    RefSelector
+    RefSelector,
+    _
 } from 'ag-grid-community';
-import {StatusBarService} from "./statusBarService";
+import { StatusBarService } from "./statusBarService";
 
 export class StatusBar extends Component {
 
@@ -41,25 +41,25 @@ export class StatusBar extends Component {
     @PostConstruct
     private postConstruct(): void {
         if (this.gridOptions.statusBar && this.gridOptions.statusBar.statusPanels) {
-            let leftStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+            const leftStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => componentConfig.align === 'left');
             this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft);
 
-            let centerStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+            const centerStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => componentConfig.align === 'center');
             this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter);
 
-            let rightStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+            const rightStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
             this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
         }
     }
 
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
-        let componentDetails: { key: string; promise: Promise<any> }[] = [];
+        const componentDetails: { key: string; promise: Promise<any> }[] = [];
 
         _.forEach(statusBarComponents, (componentConfig) => {
-                let params = {
+                const params = {
                     api: this.gridOptionsWrapper.getApi(),
                     columnApi: this.gridOptionsWrapper.getColumnApi(),
                     context: this.gridOptionsWrapper.getContext()

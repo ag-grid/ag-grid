@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./entities/column";
@@ -11,7 +11,7 @@ export declare class SortController {
     private columnApi;
     private gridApi;
     progressSort(column: Column, multiSort: boolean, source?: ColumnEventType): void;
-    setSortForColumn(column: Column, sort: string, multiSort: boolean, source?: ColumnEventType): void;
+    setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source?: ColumnEventType): void;
     onSortChanged(): void;
     private dispatchSortChangedEvents;
     private clearSortBarThisColumn;
@@ -25,4 +25,3 @@ export declare class SortController {
     getColumnsWithSortingOrdered(): Column[];
     getSortForRowController(): any[];
 }
-//# sourceMappingURL=sortController.d.ts.map

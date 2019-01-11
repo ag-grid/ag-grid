@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -48,7 +48,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     SelectedRowsComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
         var rowModelType = this.gridApi.getModel().getType();
-        return rowModelType === 'clientSide' || rowModelType !== 'serverSide';
+        return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     };
     SelectedRowsComp.prototype.onRowSelectionChanged = function () {
         var selectedRowCount = this.gridApi.getSelectedRows().length;

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Cell Styles: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Styling. Use CSS rules to define Cell Style based on data content, e.g. put a red background onto cells that have negative values, and green on values greater than 100. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Styling. Use CSS rules to define Cell Style based on data content, e.g. put a red background onto cells that have negative values, and green on values greater than 100. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Cell Styles";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -208,7 +208,7 @@ cellClassRules: {
             Editing will update the cellStyle.</li>
         </ul>
 
-    <?= example('Cell Styling', 'cell-styling', 'generated') ?>
+    <?= example('Cell Styling', 'cell-styling', 'generated', array('enterprise' => false, "processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

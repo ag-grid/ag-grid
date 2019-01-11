@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var utils_1 = require("../utils");
 var compIdSequence = new utils_1.NumberSequence();
 var Component = /** @class */ (function (_super) {
     __extends(Component, _super);
@@ -48,7 +48,7 @@ var Component = /** @class */ (function (_super) {
         var _this = this;
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        var childNodeList = utils_1.Utils.copyNodeList(parentNode.childNodes);
+        var childNodeList = utils_1._.copyNodeList(parentNode.childNodes);
         childNodeList.forEach(function (childNode) {
             var childComp = context.createComponent(childNode, function (childComp) {
                 var attrList = _this.getAttrLists(childNode);
@@ -76,7 +76,7 @@ var Component = /** @class */ (function (_super) {
             events: [],
             normal: []
         };
-        utils_1.Utils.iterateNamedNodeMap(child.attributes, function (name, value) {
+        utils_1._.iterateNamedNodeMap(child.attributes, function (name, value) {
             var firstCharacter = name.substr(0, 1);
             if (firstCharacter === '(') {
                 var eventName = name.replace('(', '').replace(')', '');
@@ -118,14 +118,14 @@ var Component = /** @class */ (function (_super) {
         var methodAliases = this.getAgComponentMetaData('methods');
         attrLists.events.forEach(function (nameValue) {
             var methodName = nameValue.value;
-            var methodAlias = utils_1.Utils.find(methodAliases, 'alias', methodName);
-            var methodNameToUse = utils_1.Utils.exists(methodAlias) ? methodAlias.methodName : methodName;
+            var methodAlias = utils_1._.find(methodAliases, 'alias', methodName);
+            var methodNameToUse = utils_1._.exists(methodAlias) ? methodAlias.methodName : methodName;
             var listener = _this[methodNameToUse];
             if (typeof listener !== 'function') {
                 console.warn('ag-Grid: count not find callback ' + methodName);
                 return;
             }
-            var eventCamelCase = utils_1.Utils.hyphenToCamelCase(nameValue.name);
+            var eventCamelCase = utils_1._.hyphenToCamelCase(nameValue.name);
             callback(eventCamelCase, listener.bind(_this));
         });
     };
@@ -133,11 +133,11 @@ var Component = /** @class */ (function (_super) {
         var _this = this;
         var childAttributes = {};
         attrLists.normal.forEach(function (nameValue) {
-            var nameCamelCase = utils_1.Utils.hyphenToCamelCase(nameValue.name);
+            var nameCamelCase = utils_1._.hyphenToCamelCase(nameValue.name);
             childAttributes[nameCamelCase] = nameValue.value;
         });
         attrLists.bindings.forEach(function (nameValue) {
-            var nameCamelCase = utils_1.Utils.hyphenToCamelCase(nameValue.name);
+            var nameCamelCase = utils_1._.hyphenToCamelCase(nameValue.name);
             childAttributes[nameCamelCase] = _this[nameValue.value];
         });
         child.props = childAttributes;
@@ -171,7 +171,7 @@ var Component = /** @class */ (function (_super) {
         }
     };
     Component.prototype.setTemplate = function (template) {
-        var eGui = utils_1.Utils.loadTemplate(template);
+        var eGui = utils_1._.loadTemplate(template);
         this.setTemplateFromElement(eGui);
     };
     Component.prototype.setTemplateFromElement = function (element) {
@@ -221,7 +221,7 @@ var Component = /** @class */ (function (_super) {
             return;
         }
         var listenerMethods = this.getAgComponentMetaData('listenerMethods');
-        if (utils_1.Utils.missingOrEmpty(listenerMethods)) {
+        if (utils_1._.missingOrEmpty(listenerMethods)) {
             return;
         }
         if (!this.annotatedEventListeners) {
@@ -274,7 +274,7 @@ var Component = /** @class */ (function (_super) {
         return this.eGui.querySelector(cssSelector);
     };
     Component.prototype.appendChild = function (newChild) {
-        if (utils_1.Utils.isNodeOrElement(newChild)) {
+        if (utils_1._.isNodeOrElement(newChild)) {
             this.eGui.appendChild(newChild);
         }
         else {
@@ -292,10 +292,11 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.isVisible = function () {
         return this.visible;
     };
-    Component.prototype.setVisible = function (visible) {
+    Component.prototype.setVisible = function (visible, visibilityMode) {
+        var isDisplay = visibilityMode !== 'visibility';
         if (visible !== this.visible) {
             this.visible = visible;
-            utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+            utils_1._.addOrRemoveCssClass(this.eGui, isDisplay ? 'ag-hidden' : 'ag-invisible', !visible);
             var event_1 = {
                 type: Component.EVENT_VISIBLE_CHANGED,
                 visible: this.visible
@@ -304,7 +305,7 @@ var Component = /** @class */ (function (_super) {
         }
     };
     Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
-        utils_1.Utils.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+        utils_1._.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     };
     Component.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -322,10 +323,10 @@ var Component = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.getGui().removeEventListener(event, listener); });
     };
     Component.prototype.addCssClass = function (className) {
-        utils_1.Utils.addCssClass(this.getGui(), className);
+        utils_1._.addCssClass(this.getGui(), className);
     };
     Component.prototype.removeCssClass = function (className) {
-        utils_1.Utils.removeCssClass(this.getGui(), className);
+        utils_1._.removeCssClass(this.getGui(), className);
     };
     Component.prototype.getAttribute = function (key) {
         var eGui = this.getGui();

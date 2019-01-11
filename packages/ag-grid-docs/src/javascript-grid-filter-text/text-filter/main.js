@@ -54,10 +54,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableSorting: true,
 
     // these hide enterprise features, so they are not confusing
     // you if using ag-Grid standard

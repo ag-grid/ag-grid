@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -69,7 +69,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         this.setTextValue();
         this.setupRemove();
         if (this.ghost) {
-            ag_grid_community_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+            ag_grid_community_1._.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
@@ -77,7 +77,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
-        ag_grid_community_1.Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        ag_grid_community_1._.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
         this.addDestroyableEventListener(this.btRemove, 'click', function (mouseEvent) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
@@ -119,7 +119,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             getRowCount: function () { return rows.length; }
         });
         this.context.wireBean(virtualList);
-        var ePopup = ag_grid_community_1.Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
+        var ePopup = ag_grid_community_1._.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualList.getGui());

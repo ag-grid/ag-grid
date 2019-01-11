@@ -1,12 +1,12 @@
 import {
-    _,
     Autowired,
     Component,
     EventService,
     GridOptionsWrapper,
     GridPanel,
     PostConstruct,
-    ToolPanelDef
+    ToolPanelDef,
+    _
 } from "ag-grid-community";
 
 export class SideBarButtonsComp extends Component {
@@ -35,8 +35,8 @@ export class SideBarButtonsComp extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        let buttons: { [p: string]: ToolPanelDef } = {};
-        let toolPanels: ToolPanelDef[] = _.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []);
+        const buttons: { [p: string]: ToolPanelDef } = {};
+        const toolPanels: ToolPanelDef[] = _.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []);
         toolPanels.forEach((toolPanel: ToolPanelDef) => {
             buttons[toolPanel.id] = toolPanel;
         });
@@ -45,12 +45,12 @@ export class SideBarButtonsComp extends Component {
     }
 
     private createButtonsHtml(componentButtons: { [p: string]: ToolPanelDef }): void {
-        let translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         let html: string = '';
-        let keys = Object.keys(componentButtons);
+        const keys = Object.keys(componentButtons);
         keys.forEach(key => {
-            let def: ToolPanelDef = componentButtons[key];
+            const def: ToolPanelDef = componentButtons[key];
             html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}"><div><span class="ag-icon-${def.iconKey}"></span></div><span>${translate(def.labelKey, def.labelDefault)}</span></button></div>`
         });
 
@@ -61,14 +61,14 @@ export class SideBarButtonsComp extends Component {
         });
 
         this.defaultPanelKey = _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
-        let defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${this.defaultPanelKey}`);
+        const defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${this.defaultPanelKey}`);
         if (defaultButtonElement && defaultButtonElement.parentElement) {
             _.addOrRemoveCssClass(defaultButtonElement.parentElement, 'ag-selected', true);
         }
     }
 
     private addButtonEvents(keyToProcess: string) {
-        let btShow = this.getRefElement(`toggle-button-${keyToProcess}`);
+        const btShow = this.getRefElement(`toggle-button-${keyToProcess}`);
         this.addDestroyableEventListener(btShow, 'click', () => this.onButtonPressed(keyToProcess));
     }
 
@@ -79,14 +79,14 @@ export class SideBarButtonsComp extends Component {
     }
 
     private processKeyAfterKeyPressed(keyToProcess: string, keyPressed: string) {
-        let panelToProcess = this.panels[keyToProcess];
-        let clickingThisPanel = keyToProcess === keyPressed;
-        let showThisPanel = clickingThisPanel ? !panelToProcess.isVisible() : false;
+        const panelToProcess = this.panels[keyToProcess];
+        const clickingThisPanel = keyToProcess === keyPressed;
+        const showThisPanel = clickingThisPanel ? !panelToProcess.isVisible() : false;
         this.setPanelVisibility(keyToProcess, showThisPanel);
     }
 
     public setPanelVisibility(key: string, show: boolean) {
-        let panelToProcess = this.panels[key];
+        const panelToProcess = this.panels[key];
 
         if (!panelToProcess) {
             console.warn(`ag-grid: can't change the visibility for the non existing tool panel item [${key}]`)
@@ -94,7 +94,7 @@ export class SideBarButtonsComp extends Component {
         }
 
         panelToProcess.setVisible(show);
-        let button: HTMLElement = this.getRefElement(`toggle-button-${key}`);
+        const button: HTMLElement = this.getRefElement(`toggle-button-${key}`);
         if (button.parentElement) {
             _.addOrRemoveCssClass(button.parentElement, 'ag-selected', show);
         }

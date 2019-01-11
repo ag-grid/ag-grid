@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -33,8 +33,8 @@ var context_1 = require("../context/context");
 var rowNode_1 = require("../entities/rowNode");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var eventKeys_1 = require("../eventKeys");
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var utils_1 = require("../utils");
 var RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
     function RowDragComp(rowNode, column, cellValue, beans) {
@@ -114,11 +114,11 @@ var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
         // only show the drag if both sort and filter are not present
         var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
         if (suppressRowDrag) {
-            this.parent.setVisible(false);
+            this.parent.setVisible(false, 'visibility');
         }
         else {
             var visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible);
+            this.parent.setVisible(visible, 'visibility');
         }
     };
     __decorate([
@@ -186,11 +186,11 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
         var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
         var alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
         if (alwaysHide) {
-            this.parent.setVisible(false);
+            this.parent.setVisible(false, 'visibility');
         }
         else {
             var visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible);
+            this.parent.setVisible(visible, 'visibility');
         }
     };
     __decorate([

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { IStatusPanelComp } from 'ag-grid-community';
 import { NameValueComp } from "./nameValueComp";
 export declare class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -10,4 +10,3 @@ export declare class SelectedRowsComp extends NameValueComp implements IStatusPa
     private onRowSelectionChanged;
     init(): void;
 }
-//# sourceMappingURL=selectedRowsComp.d.ts.map

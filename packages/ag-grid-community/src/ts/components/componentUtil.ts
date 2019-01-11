@@ -1,10 +1,10 @@
-import {GridOptions} from '../entities/gridOptions';
-import {GridApi} from '../gridApi';
-import {ComponentStateChangedEvent, Events} from '../events';
-import {PropertyKeys} from '../propertyKeys';
-import {Utils as _} from '../utils';
-import {ColumnApi} from '../columnController/columnApi';
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import { GridOptions } from '../entities/gridOptions';
+import { GridApi } from '../gridApi';
+import { ComponentStateChangedEvent, Events } from '../events';
+import { PropertyKeys } from '../propertyKeys';
+import { ColumnApi } from '../columnController/columnApi';
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from '../utils';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
@@ -47,10 +47,10 @@ export class ComponentUtil {
         checkForDeprecated(component);
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
-            gridOptions = <GridOptions>{};
+            gridOptions = {} as GridOptions;
         }
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        let pGridOptions = <any>gridOptions;
+        const pGridOptions = gridOptions as any;
         // add in all the simple properties
         ComponentUtil.ARRAY_PROPERTIES
             .concat(ComponentUtil.STRING_PROPERTIES)
@@ -109,7 +109,7 @@ export class ComponentUtil {
         checkForDeprecated(changes);
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        let pGridOptions = <any>gridOptions;
+        const pGridOptions = gridOptions as any;
 
         // check if any change for the simple types, and if so, then just copy in the new value
         ComponentUtil.ARRAY_PROPERTIES
@@ -196,14 +196,18 @@ export class ComponentUtil {
             api.setSideBar(changes.sideBar.currentValue);
         }
 
+        if (changes.datasource) {
+            api.setDatasource(changes.datasource.currentValue);
+        }
+
         // copy changes into an event for dispatch
-        let event: ComponentStateChangedEvent = {
+        const event: ComponentStateChangedEvent = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED,
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
         _.iterateObject(changes, (key: string, value: any) => {
-            (<any>event)[key] = value;
+            (event as any)[key] = value;
         });
 
         api.dispatchEvent(event);
@@ -232,7 +236,7 @@ export class ComponentUtil {
     }
 }
 
-_.iterateObject<any>(Events, function (key, value) {
+_.iterateObject<any>(Events, function(key, value) {
     ComponentUtil.EVENTS.push(value);
 });
 

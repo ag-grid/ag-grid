@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,12 +17,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var logger_1 = require("../logger");
-var utils_1 = require("../utils");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
+var utils_1 = require("../utils");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = /** @class */ (function () {
@@ -52,18 +52,18 @@ var DragService = /** @class */ (function () {
         }
     };
     DragService.prototype.removeDragSource = function (params) {
-        var dragSourceAndListener = utils_1.Utils.find(this.dragSources, function (item) { return item.dragSource === params; });
+        var dragSourceAndListener = utils_1._.find(this.dragSources, function (item) { return item.dragSource === params; });
         if (!dragSourceAndListener) {
             return;
         }
         this.removeListener(dragSourceAndListener);
-        utils_1.Utils.removeFromArray(this.dragSources, dragSourceAndListener);
+        utils_1._.removeFromArray(this.dragSources, dragSourceAndListener);
     };
     DragService.prototype.setNoSelectToBody = function (noSelect) {
-        var usrDocument = this.gridOptionsWrapper.getDocument();
-        var eBody = usrDocument.querySelector('body');
-        if (utils_1.Utils.exists(eBody)) {
-            utils_1.Utils.addOrRemoveCssClass(eBody, 'ag-body-no-select', noSelect);
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var eBody = eDocument.querySelector('body');
+        if (utils_1._.exists(eBody)) {
+            utils_1._.addOrRemoveCssClass(eBody, 'ag-body-no-select', noSelect);
         }
     };
     DragService.prototype.addDragSource = function (params, includeTouch) {
@@ -72,8 +72,7 @@ var DragService = /** @class */ (function () {
         params.eElement.addEventListener('mousedown', mouseListener);
         var touchListener = null;
         var suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
-        var reallyIncludeTouch = includeTouch && !suppressTouch;
-        if (reallyIncludeTouch) {
+        if (includeTouch && !suppressTouch) {
             touchListener = this.onTouchStart.bind(this, params);
             params.eElement.addEventListener('touchstart', touchListener, { passive: false });
         }
@@ -134,16 +133,16 @@ var DragService = /** @class */ (function () {
         this.dragging = false;
         this.mouseEventLastTime = mouseEvent;
         this.mouseStartEvent = mouseEvent;
-        var usrDocument = this.gridOptionsWrapper.getDocument();
+        var eDocument = this.gridOptionsWrapper.getDocument();
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in mouseup handling.
-        usrDocument.addEventListener('mousemove', this.onMouseMoveListener);
-        usrDocument.addEventListener('mouseup', this.onMouseUpListener);
+        eDocument.addEventListener('mousemove', this.onMouseMoveListener);
+        eDocument.addEventListener('mouseup', this.onMouseUpListener);
         this.dragEndFunctions.push(function () {
-            usrDocument.removeEventListener('mousemove', _this.onMouseMoveListener);
-            usrDocument.removeEventListener('mouseup', _this.onMouseUpListener);
+            eDocument.removeEventListener('mousemove', _this.onMouseMoveListener);
+            eDocument.removeEventListener('mouseup', _this.onMouseUpListener);
         });
-        // see if we want to start dragging straight away
+        //see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
             this.onMouseMove(mouseEvent);
         }
@@ -152,13 +151,13 @@ var DragService = /** @class */ (function () {
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     DragService.prototype.isEventNearStartEvent = function (currentEvent, startEvent) {
         // by default, we wait 4 pixels before starting the drag
-        var requiredPixelDiff = utils_1.Utils.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
-        return utils_1.Utils.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
+        var dragStartPixels = this.currentDragParams.dragStartPixels;
+        var requiredPixelDiff = utils_1._.exists(dragStartPixels) ? dragStartPixels : 4;
+        return utils_1._.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     };
     DragService.prototype.getFirstActiveTouch = function (touchList) {
         for (var i = 0; i < touchList.length; i++) {
-            var matches = touchList[i].identifier === this.touchStart.identifier;
-            if (matches) {
+            if (touchList[i].identifier === this.touchStart.identifier) {
                 return touchList[i];
             }
         }
@@ -167,22 +166,18 @@ var DragService = /** @class */ (function () {
     DragService.prototype.onCommonMove = function (currentEvent, startEvent) {
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
-            var toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(currentEvent, startEvent);
-            if (toEarlyToDrag) {
+            if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) {
                 return;
             }
-            else {
-                // alert(`started`);
-                this.dragging = true;
-                var event_1 = {
-                    type: events_1.Events.EVENT_DRAG_STARTED,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.eventService.dispatchEvent(event_1);
-                this.currentDragParams.onDragStart(startEvent);
-                this.setNoSelectToBody(true);
-            }
+            this.dragging = true;
+            var event_1 = {
+                type: events_1.Events.EVENT_DRAG_STARTED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_1);
+            this.currentDragParams.onDragStart(startEvent);
+            this.setNoSelectToBody(true);
         }
         this.currentDragParams.onDragging(currentEvent);
     };

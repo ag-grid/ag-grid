@@ -24,11 +24,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true,
-    enableSorting: true,
-    enableFilter: true,
     getRowStyle: function (params) {
         if (params.node.rowPinned) {
             return {'font-weight': 'bold'};
@@ -47,6 +49,7 @@ var gridOptions = {
 
 function onPinnedRowTopCount() {
     var headerRowsToFloat = document.getElementById('top-row-count').value;
+    console.log('xxxx', headerRowsToFloat);
     var count = Number(headerRowsToFloat);
     var rows = createData(count, 'Top');
     gridOptions.api.setPinnedTopRowData(rows);

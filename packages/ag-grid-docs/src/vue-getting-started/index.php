@@ -23,7 +23,29 @@ Let's follow the <a href="https://github.com/angular/angular-cli#installation">V
 
 <snippet language="sh">
 npm install -g @vue/cli
-vue create my-project    # accept the defaults for all prompts
+vue create my-project
+</snippet>
+
+<p>When prompted choose "Manually select features":</p>
+
+<img class="img-fluid" src="./cli-step1.png" alt="Manually Select Features" />
+
+<p>Next, select <code>Babel</code> and <code>CSS Pre-processors</code> (we've also deselected <code>Linter</code> here, but
+this is optional):</p>
+
+<img class="img-fluid" src="./cli-step2.png" alt="Select Features" />
+
+<p>Next select <code>SASS/SCSS</code> as the CSS Pre-processor:</p>
+
+<img class="img-fluid" src="./cli-step3.png" alt="CSS Pre-processor" />
+
+<p>Finally choose where to store the configuration data - we've opted for <code>dedicated config files</code>:</p>
+
+<img class="img-fluid" src="./cli-step4.png" alt="Config files" />
+
+<p>We're not ready to start our application:</p>
+
+<snippet language="sh">
 cd my-project
 npm run serve
 </snippet>
@@ -33,14 +55,17 @@ npm run serve
 <p>As a next step, let's add the ag-Grid NPM packages. run the following command in <code>my-project</code> (you may need a new instance of the terminal):</p>
 
 <snippet language="sh">
-npm install --save ag-grid-community ag-grid-vue
+npm install --save ag-grid-community ag-grid-vue vue-property-decorator
 </snippet>
 
-<p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid the ag-Grid styles - import them in <code>src/main.js</code>:</p>
+<p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, 
+    let's add the ag-Grid the ag-Grid styles - import them in the style section of <code>src/App.vue</code>:</p>
 
 <snippet>
-import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
+&lt;style lang="scss"&gt;
+  @import "~ag-grid-community/dist/styles/ag-grid.css";
+  @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+&lt;/style&gt;
 </snippet>
 
 <p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
@@ -112,33 +137,31 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <h2>Enable Sorting And Filtering</h2>
 
-<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>enableSorting</code> property to the component.</p> 
+<p>So far, so good. But wouldn't it be nice to be able to sort the data to
+    help us see which car is the least/most expensive? Well, enabling sorting
+    in ag-Grid is actually quite simple - all you need to do is set
+    the <code>sortable</code> property to the column definitions.</p>
 
-<snippet language="html">
-&lt;ag-grid-vue style="width: 500px; height: 500px;"
-             class="ag-theme-balham"
-             :columnDefs="columnDefs"
-             :rowData="rowData"
-
-             :enableSorting="true"&gt;
-&lt;/ag-grid-vue&gt;
+<snippet language="js">
+this.columnDefs = [
+    {headerName: 'Make', field: 'make', sortable: true },
+    {headerName: 'Model', field: 'model', sortable: true },
+    {headerName: 'Price', field: 'price', sortable: true }
+];
 </snippet>
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
 <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
 
-<p>As with sorting, enabling filtering is as easy as setting the <code>enableFilter</code> property:</p>
+<p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 
-<snippet language="html">
-&lt;ag-grid-vue style="width: 500px; height: 500px;"
-             class="ag-theme-balham"
-             :columnDefs="columnDefs"
-             :rowData="rowData"
-
-             :enableSorting="true"
-             :enableFilter="true"&gt;
-&lt;/ag-grid-vue&gt;
+<snippet language="js">
+this.columnDefs = [
+    {headerName: 'Make', field: 'make', sortable: true, filter: true },
+    {headerName: 'Model', field: 'model', sortable: true, filter: true },
+    {headerName: 'Price', field: 'price', sortable: true, filter: true }
+];
 </snippet>
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
@@ -183,8 +206,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
                  :rowData="rowData"
-                 :enableSorting="true"
-                 :enableFilter="true"
                  rowSelection="multiple"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
@@ -229,8 +250,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
              :columnDefs="columnDefs"
              :rowData="rowData"
 
-             :enableSorting="true"
-             :enableFilter="true"
              rowSelection="multiple"&gt;
 &lt;/ag-grid-vue&gt;
 </snippet>
@@ -253,8 +272,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
-                     :enableSorting="true"
-                     :enableFilter="true"
                      rowSelection="multiple"
 
                      :gridReady="onGridReady"&gt;
@@ -343,9 +360,6 @@ npm install --save ag-grid-enterprise
 <snippet language="diff">
 import Vue from 'vue'
 
-import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
-
 +import 'ag-grid-enterprise';
 
 import App from './App'
@@ -355,7 +369,7 @@ import App from './App'
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
-<p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property, bind to it, and update the <code>columnDefs</code> with a <code>rowGroupIndex</code>:</p>
+<p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property, bind to it, and update the <code>columnDefs</code> with a <code>rowGroup</code>:</p>
 
 <snippet language="html">
 &lt;template&gt;
@@ -365,8 +379,6 @@ import App from './App'
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
-                     :enableSorting="true"
-                     :enableFilter="true"
                      rowSelection="multiple"
 
                      :gridReady="onGridReady"&gt;
@@ -405,7 +417,7 @@ import App from './App'
         },
         beforeMount() {
             this.columnDefs = [
-                {headerName: 'Make', field: 'make', rowGroupIndex: 0},
+                {headerName: 'Make', field: 'make', rowGroup: true},
                 {headerName: 'Model', field: 'model'},
                 {headerName: 'Price', field: 'price'}
             ];
@@ -443,14 +455,16 @@ The grouping documentation section contains plenty of real-world runnable exampl
 <p>By default, ag-Grid ships a set of <a href="https://www.ag-grid.com/javascript-grid-styling/">pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, 
 override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
 
-<p>The <code>vue cli</code> did a lot of for us (<code>vue init webpack my-project</code>), including providing support for Sass. Let's switch to using the provided ag-Grid SCSS files - first, let's create a new
-file: <code>src/styles.scss</code>:</p>
+<p>The <code>vue cli</code> did a lot of for us including providing support for Sass. Let's switch to using the provided 
+ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</code> with:</p>
 
 <snippet language="scss">
-$ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
+&lt;style lang="scss"&gt;
+  $ag-icons-path: "~ag-grid-community/src/styles/icons/";
 
-@import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-balham.scss";
+  @import "~ag-grid-community/src/styles/ag-grid.scss";
+  @import "~ag-grid-community/src/styles/ag-theme-balham.scss";
+&lt;/style&gt;
 </snippet>
 
 <p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
@@ -459,20 +473,11 @@ In fact, by specifying the icons path, we also made our first theme override! We
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
 
 <snippet language="diff">
- $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
+  $ag-icons-path: "~ag-grid-community/src/styles/icons/";
 +$odd-row-background-color: #CFD8DC;
 </snippet>
 
-<p>We now need to reference this new file in <code>src/main.js</code>:</p>
-
-<snippet language="diff">
--import "../node_modules/ag-grid/dist/styles/ag-grid.css";
--import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
-
-+import './styles.scss';
-</snippet>
-
-<p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations! 
+<p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color, 
 header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables">Sass variable list</a> is available in the themes documentation section.</p> 
 

@@ -1,0 +1,6 @@
+@import "../vars/ag-theme-fresh-vars";
+@import "../../ag-theme-classic/sass/ag-theme-classic";
+
+.ag-theme-fresh {
+    @include ag-theme-classic($params);
+}

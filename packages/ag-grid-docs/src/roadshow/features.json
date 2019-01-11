@@ -48,7 +48,7 @@
             "<span class=\"feature-highlight\">Column Filters</span> appear in the column menu.\n        The grid comes with filters out of the box: text, number, date and set filters. You can also create your\n        own customer filter.",
         "src": "javascript-grid-features/images/columnFilter.gif",
         "snippet":
-            "gridOptions = {\n    // turn on filtering\n    enableFilter: true,\n    ...\n    columnDefs: [\n    {field: \"athlete\", filter: \"text\"},\n    {field: \"age\",     filter: \"number\"},\n    {field: \"sport\",   filter: MyCustomerFilter}\n]}",
+            "colDef.filter = true",
         "level": 0,
         "url": "javascript-grid-filtering/"
     },
@@ -86,7 +86,7 @@
         "enterprise": true,
         "description": "<span class=\"feature-highlight\">Set Filter</span> works like Excel, providing checkboxes to select values from a set.",
         "src": "javascript-grid-features/images/setFilter.gif",
-        "snippet": "colDef = {\n    field: 'country',\n    filter: 'set'\n}",
+        "snippet": "colDef = {\n    field: 'country',\n    filter: 'agSetColumnFilter'\n}",
         "level": 1,
         "url": "javascript-grid-filter-set/"
     },
@@ -133,7 +133,7 @@
         "description":
             "<span class=\"feature-highlight\">Row Sorting</span> will sort the data. Sort a column by clicking the header. \nSort multiple columns by holding down shift.",
         "src": "javascript-grid-features/images/rowSorting.gif",
-        "snippet": "// enable filtering with grid option\ngridOptions = {\n    enableSorting: true,\n    ...\n}",
+        "snippet": "// enable sorting with column option\ncolDef.sortable=true\n",
         "level": 0,
         "url": "javascript-grid-sorting/"
     },
@@ -153,7 +153,7 @@
         "description":
             "Drag the mouse over cells to create a <span class=\"feature-highlight\">Range Selection</span>. \nThis is handy for highlighting data or for copying to the clipboard.",
         "src": "javascript-grid-features/images/rangeSelection.gif",
-        "snippet": "// enable sorting with grid option\ngridOptions = {\n    enableRangeSelection: true,\n    ...\n}",
+        "snippet": "// enable range selection with grid option\ngridOptions = {\n    enableRangeSelection: true,\n    ...\n}",
         "level": 0,
         "url": "javascript-grid-range-selection/"
     },
@@ -491,7 +491,7 @@
             "All the icons in the grid can be replaced with your own <span class=\"feature-highlight\">Custom Icons</span>.\nYou can either use CSS or provide your own images.",
         "src": "javascript-grid-features/images/customIcons.gif",
         "snippet":
-            "gridOptions = {\n    icons: {\n        // use font awesome for menu icons\n        menu: '<i class=\"fa fa-bath\"/>',\n        filter: '<i class=\"fa fa-long-arrow-down\"/>',\n        columns: '<i class=\"fa fa-handshake-o\"/>'\n    }\n    ...\n}",
+            "gridOptions = {\n    icons: {\n        // use font awesome for menu icons\n        menu: '<i class=\"fa fa-bath\"/>',\n        filter: '<i class=\"fa fa-long-arrow-alt-down\"/>',\n        columns: '<i class=\"far fa-handshake\"/>'\n    }\n    ...\n}",
         "level": 0,
         "url": "javascript-grid-icons/"
     },

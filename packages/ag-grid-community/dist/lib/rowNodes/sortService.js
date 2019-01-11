@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,49 +17,127 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var sortController_1 = require("../sortController");
-var utils_1 = require("../utils");
 var valueService_1 = require("../valueService/valueService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnController_1 = require("../columnController/columnController");
+var utils_1 = require("../utils");
 var SortService = /** @class */ (function () {
     function SortService() {
     }
     SortService.prototype.init = function () {
         this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
     };
-    SortService.prototype.sortAccordingToColumnsState = function (rowNode) {
-        var sortOptions = this.sortController.getSortForRowController();
-        this.sort(rowNode, sortOptions);
-    };
-    SortService.prototype.sort = function (rowNode, sortOptions) {
+    SortService.prototype.sort = function (rowNode, sortOptions, sortActive, deltaSort, dirtyLeafNodes, changedPath) {
         var _this = this;
-        rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
         // we clear out the 'pull down open parents' first, as the values mix up the sorting
-        this.pullDownDataForHideOpenParents(rowNode, true);
-        var sortActive = utils_1._.exists(sortOptions) && sortOptions.length > 0;
+        this.pullDownDataForHideOpenParents(rowNode.childrenAfterFilter, true);
+        // RE https://ag-grid.atlassian.net/browse/AG-444
+        // Javascript sort is non deterministic when all the array items are equals
+        // ie Comparator always returns 0, so if you want to ensure the array keeps its
+        // order, then you need to add an additional sorting condition manually, in this
+        // case we are going to inspect the original array position. This is what SortedRowNode
+        // object is for
         if (sortActive) {
-            // RE https://ag-grid.atlassian.net/browse/AG-444
-            //Javascript sort is non deterministic when all the array items are equals
-            //ie Comparator always returns 0, so if you want to ensure the array keeps its
-            //order, then you need to add an additional sorting condition manually, in this
-            //case we are going to inspect the original array position
-            var sortedRowNodes = rowNode.childrenAfterSort.map(function (it, pos) {
-                return { currentPos: pos, rowNode: it };
-            });
-            sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+            var sortedRowNodes = deltaSort ?
+                this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath)
+                : this.doFullSort(rowNode, sortOptions);
             rowNode.childrenAfterSort = sortedRowNodes.map(function (sorted) { return sorted.rowNode; });
         }
+        else {
+            rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
+        }
         this.updateChildIndexes(rowNode);
-        this.pullDownDataForHideOpenParents(rowNode, false);
+        this.pullDownDataForHideOpenParents(rowNode.childrenAfterSort, false);
         // sort any groups recursively
         rowNode.childrenAfterFilter.forEach(function (child) {
             if (child.hasChildren()) {
-                _this.sort(child, sortOptions);
+                _this.sort(child, sortOptions, sortActive, deltaSort, dirtyLeafNodes, changedPath);
             }
         });
         if (this.postSortFunc) {
             this.postSortFunc(rowNode.childrenAfterSort);
         }
+    };
+    SortService.prototype.doFullSort = function (rowNode, sortOptions) {
+        var sortedRowNodes = rowNode.childrenAfterFilter
+            .map(this.mapNodeToSortedNode.bind(this));
+        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+        return sortedRowNodes;
+    };
+    SortService.prototype.mapNodeToSortedNode = function (rowNode, pos) {
+        return { currentPos: pos, rowNode: rowNode };
+    };
+    SortService.prototype.doDeltaSort = function (rowNode, sortOptions, dirtyLeafNodes, changedPath) {
+        // clean nodes will be a list of all row nodes that remain in the set
+        // and ordered. we start with the old sorted set and take out any nodes
+        // that were removed or changed (but not added, added doesn't make sense,
+        // if a node was added, there is no way it could be here from last time).
+        var cleanNodes = rowNode.childrenAfterSort
+            .filter(function (rowNode) {
+            // take out all nodes that were changed as part of the current transaction.
+            // a changed node could a) be in a different sort position or b) may
+            // no longer be in this set as the changed node may not pass filtering,
+            // or be in a different group.
+            var passesDirtyNodesCheck = !dirtyLeafNodes[rowNode.id];
+            // also remove group nodes in the changed path, as they can have different aggregate
+            // values which could impact the sort order.
+            // note: changed path is not active if a) no value columns or b) no transactions. it is never
+            // (b) in deltaSort as we only do deltaSort for transactions. for (a) if no value columns, then
+            // there is no value in the group that could of changed (ie no aggregate values)
+            var passesChangedPathCheck = changedPath.isActive() ? !changedPath.isInPath(rowNode) : true;
+            return passesDirtyNodesCheck && passesChangedPathCheck;
+        })
+            .map(this.mapNodeToSortedNode.bind(this));
+        // for fast access below, we map them
+        var cleanNodesMapped = {};
+        cleanNodes.forEach(function (sortedRowNode) { return cleanNodesMapped[sortedRowNode.rowNode.id] = sortedRowNode.rowNode; });
+        // these are all nodes that need to be placed
+        var changedNodes = rowNode.childrenAfterFilter
+            // ignore nodes in the clean list
+            .filter(function (rowNode) { return !cleanNodesMapped[rowNode.id]; })
+            .map(this.mapNodeToSortedNode.bind(this));
+        // sort changed nodes. note that we don't need to sort cleanNodes as they are
+        // already sorted from last time.
+        changedNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+        if (changedNodes.length === 0) {
+            return cleanNodes;
+        }
+        else if (cleanNodes.length === 0) {
+            return changedNodes;
+        }
+        else {
+            return this.mergeSortedArrays(sortOptions, cleanNodes, changedNodes);
+        }
+    };
+    // Merge two sorted arrays into each other
+    SortService.prototype.mergeSortedArrays = function (sortOptions, arr1, arr2) {
+        var res = [];
+        var i = 0;
+        var j = 0;
+        // Traverse both array, adding them in order
+        while (i < arr1.length && j < arr2.length) {
+            // Check if current element of first
+            // array is smaller than current element
+            // of second array. If yes, store first
+            // array element and increment first array
+            // index. Otherwise do same with second array
+            var compareResult = this.compareRowNodes(sortOptions, arr1[i], arr2[j]);
+            if (compareResult < 0) {
+                res.push(arr1[i++]);
+            }
+            else {
+                res.push(arr2[j++]);
+            }
+        }
+        // add remaining from arr1
+        while (i < arr1.length) {
+            res.push(arr1[i++]);
+        }
+        // add remaining from arr2
+        while (j < arr2.length) {
+            res.push(arr2[j++]);
+        }
+        return res;
     };
     SortService.prototype.compareRowNodes = function (sortOptions, sortedNodeA, sortedNodeB) {
         var nodeA = sortedNodeA.rowNode;
@@ -102,15 +180,15 @@ var SortService = /** @class */ (function () {
             child.setChildIndex(index);
         });
     };
-    SortService.prototype.pullDownDataForHideOpenParents = function (rowNode, clearOperation) {
+    SortService.prototype.pullDownDataForHideOpenParents = function (rowNodes, clearOperation) {
         var _this = this;
-        if (utils_1._.missing(rowNode.childrenAfterSort)) {
+        if (utils_1._.missing(rowNodes)) {
             return;
         }
         if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
             return;
         }
-        rowNode.childrenAfterSort.forEach(function (childRowNode) {
+        rowNodes.forEach(function (childRowNode) {
             var groupDisplayCols = _this.columnController.getGroupDisplayColumns();
             groupDisplayCols.forEach(function (groupDisplayCol) {
                 var showRowGroup = groupDisplayCol.getColDef().showRowGroup;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -30,7 +30,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var column_1 = require("../../entities/column");
-var utils_1 = require("../../utils");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var sortController_1 = require("../../sortController");
@@ -38,6 +37,7 @@ var touchListener_1 = require("../../widgets/touchListener");
 var eventService_1 = require("../../eventService");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var events_1 = require("../../events");
+var utils_1 = require("../../utils");
 var HeaderComp = /** @class */ (function (_super) {
     __extends(HeaderComp, _super);
     function HeaderComp() {
@@ -46,7 +46,7 @@ var HeaderComp = /** @class */ (function (_super) {
         return _this;
     }
     HeaderComp.prototype.init = function (params) {
-        var template = utils_1.Utils.firstExistingValue(params.template, HeaderComp.TEMPLATE);
+        var template = utils_1._.firstExistingValue(params.template, HeaderComp.TEMPLATE);
         // take account of any newlines & whitespace before/after the actual template
         template = template && template.trim ? template.trim() : template;
         this.setTemplate(template);
@@ -59,7 +59,7 @@ var HeaderComp = /** @class */ (function (_super) {
         this.setupText(params.displayName);
     };
     HeaderComp.prototype.setupText = function (displayName) {
-        var displayNameSanitised = utils_1.Utils.escape(displayName);
+        var displayNameSanitised = utils_1._.escape(displayName);
         if (this.eText) {
             this.eText.innerHTML = displayNameSanitised;
         }
@@ -72,9 +72,10 @@ var HeaderComp = /** @class */ (function (_super) {
         this.addInIcon('filter', this.eFilter, column);
     };
     HeaderComp.prototype.addInIcon = function (iconName, eParent, column) {
-        if (eParent == null)
+        if (eParent == null) {
             return;
-        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        }
+        var eIcon = utils_1._.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     };
     HeaderComp.prototype.setupTap = function () {
@@ -98,8 +99,9 @@ var HeaderComp = /** @class */ (function (_super) {
                 var target = event.touchStart.target;
                 // When suppressMenuHide is true, a tap on the menu icon will bubble up
                 // to the header container, in that case we should not sort
-                if (suppressMenuHide && _this.eMenu.contains(target))
+                if (suppressMenuHide && _this.eMenu.contains(target)) {
                     return;
+                }
                 _this.sortController.progressSort(_this.params.column, false, "uiColumnSorted");
             };
             this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
@@ -119,9 +121,9 @@ var HeaderComp = /** @class */ (function (_super) {
         // Note: If supressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         var suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        var dontShowMenu = !this.params.enableMenu || (utils_1.Utils.isUserAgentIPad() && !suppressMenuHide);
+        var dontShowMenu = !this.params.enableMenu || (utils_1._.isUserAgentIPad() && !suppressMenuHide);
         if (dontShowMenu) {
-            utils_1.Utils.removeFromParent(this.eMenu);
+            utils_1._.removeFromParent(this.eMenu);
             return;
         }
         this.addDestroyableEventListener(this.eMenu, 'click', function () { return _this.showMenu(_this.eMenu); });
@@ -135,17 +137,17 @@ var HeaderComp = /** @class */ (function (_super) {
             });
         }
         var style = this.eMenu.style;
-        style['transition'] = 'opacity 0.2s, border 0.2s';
+        style.transition = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     };
     HeaderComp.prototype.showMenu = function (eventSource) {
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     };
     HeaderComp.prototype.removeSortIcons = function () {
-        utils_1.Utils.removeFromParent(this.eSortAsc);
-        utils_1.Utils.removeFromParent(this.eSortDesc);
-        utils_1.Utils.removeFromParent(this.eSortNone);
-        utils_1.Utils.removeFromParent(this.eSortOrder);
+        utils_1._.removeFromParent(this.eSortAsc);
+        utils_1._.removeFromParent(this.eSortDesc);
+        utils_1._.removeFromParent(this.eSortNone);
+        utils_1._.removeFromParent(this.eSortOrder);
     };
     HeaderComp.prototype.setupSort = function () {
         var _this = this;
@@ -182,18 +184,18 @@ var HeaderComp = /** @class */ (function (_super) {
         this.setMultiSortOrder();
     };
     HeaderComp.prototype.onSortChanged = function () {
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
         if (this.eSortAsc) {
-            utils_1.Utils.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
+            utils_1._.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
         }
         if (this.eSortDesc) {
-            utils_1.Utils.addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.params.column.isSortDescending());
+            utils_1._.addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.params.column.isSortDescending());
         }
         if (this.eSortNone) {
             var alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
-            utils_1.Utils.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
+            utils_1._.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
         }
     };
     // we listen here for global sort events, NOT column sort events, as we want to do this
@@ -208,12 +210,12 @@ var HeaderComp = /** @class */ (function (_super) {
         var indexThisCol = allColumnsWithSorting.indexOf(col);
         var moreThanOneColSorting = allColumnsWithSorting.length > 1;
         var showIndex = col.isSorting() && moreThanOneColSorting;
-        utils_1.Utils.setVisible(this.eSortOrder, showIndex);
+        utils_1._.setVisible(this.eSortOrder, showIndex);
         if (indexThisCol >= 0) {
             this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
         }
         else {
-            this.eSortOrder.innerHTML = '';
+            utils_1._.clearElement(this.eSortOrder);
         }
     };
     HeaderComp.prototype.setupFilterIcon = function () {
@@ -225,7 +227,7 @@ var HeaderComp = /** @class */ (function (_super) {
     };
     HeaderComp.prototype.onFilterChanged = function () {
         var filterPresent = this.params.column.isFilterActive();
-        utils_1.Utils.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
+        utils_1._.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     };
     HeaderComp.TEMPLATE = '<div class="ag-cell-label-container" role="presentation">' +
         '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>' +

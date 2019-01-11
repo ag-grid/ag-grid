@@ -1,4 +1,4 @@
-import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector} from 'ag-grid-community';
+import { Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector } from 'ag-grid-community';
 
 export class NameValueComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -27,7 +27,7 @@ export class NameValueComp extends Component {
         // we want to hide until the first value comes in
         this.setVisible(false);
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLabel.innerHTML = localeTextFunc(this.key, this.defaultValue);
     }
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -28,12 +28,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
 var componentRecipes_1 = require("../../components/framework/componentRecipes");
 var constants_1 = require("../../constants");
+var utils_1 = require("../../utils");
 var OverlayWrapperComponent = /** @class */ (function (_super) {
     __extends(OverlayWrapperComponent, _super);
     function OverlayWrapperComponent() {
@@ -45,7 +45,7 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         this.setTemplate(OverlayWrapperComponent.LOADING_WRAPPER_OVERLAY_TEMPLATE);
         this.componentRecipes.newLoadingOverlayComponent().then(function (renderer) {
             var loadingOverlayWrapper = _this.getRefElement("loadingOverlayWrapper");
-            utils_1.Utils.removeAllChildren(loadingOverlayWrapper);
+            utils_1._.removeAllChildren(loadingOverlayWrapper);
             loadingOverlayWrapper.appendChild(renderer.getGui());
         });
         this.showOverlay(eOverlayWrapper, this.getGui());
@@ -60,24 +60,24 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         var domLayoutAutoHeight = domLayout === constants_1.Constants.DOM_LAYOUT_AUTO_HEIGHT;
         var domLayoutPrint = domLayout === constants_1.Constants.DOM_LAYOUT_PRINT;
         var domLayoutNormal = domLayout === constants_1.Constants.DOM_LAYOUT_NORMAL;
-        utils_1.Utils.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', domLayoutAutoHeight);
-        utils_1.Utils.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', domLayoutNormal);
-        utils_1.Utils.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-print', domLayoutPrint);
+        utils_1._.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', domLayoutAutoHeight);
+        utils_1._.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', domLayoutNormal);
+        utils_1._.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-print', domLayoutPrint);
         this.componentRecipes.newNoRowsOverlayComponent().then(function (renderer) {
             var noRowsOverlayWrapper = _this.getRefElement("noRowsOverlayWrapper");
-            utils_1.Utils.removeAllChildren(noRowsOverlayWrapper);
+            utils_1._.removeAllChildren(noRowsOverlayWrapper);
             noRowsOverlayWrapper.appendChild(renderer.getGui());
         });
         this.showOverlay(eOverlayWrapper, this.getGui());
     };
     OverlayWrapperComponent.prototype.hideOverlay = function (eOverlayWrapper) {
-        utils_1.Utils.removeAllChildren(eOverlayWrapper);
-        utils_1.Utils.setVisible(eOverlayWrapper, false);
+        utils_1._.removeAllChildren(eOverlayWrapper);
+        utils_1._.setVisible(eOverlayWrapper, false);
     };
     OverlayWrapperComponent.prototype.showOverlay = function (eOverlayWrapper, overlay) {
         if (overlay) {
-            utils_1.Utils.removeAllChildren(eOverlayWrapper);
-            utils_1.Utils.setVisible(eOverlayWrapper, true);
+            utils_1._.removeAllChildren(eOverlayWrapper);
+            utils_1._.setVisible(eOverlayWrapper, true);
             eOverlayWrapper.appendChild(overlay);
         }
         else {

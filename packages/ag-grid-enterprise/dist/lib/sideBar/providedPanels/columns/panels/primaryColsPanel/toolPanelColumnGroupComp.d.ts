@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Component, OriginalColumnGroup } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
@@ -38,11 +38,10 @@ export declare class ToolPanelColumnGroupComp extends Component implements BaseC
     private onExpandOrContractClicked;
     private setOpenClosedIcons;
     isExpanded(): boolean;
-    getDisplayName(): string;
+    getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;
     isSelected(): boolean;
     isSelectable(): boolean;
     isExpandable(): boolean;
     setExpanded(value: boolean): void;
 }
-//# sourceMappingURL=toolPanelColumnGroupComp.d.ts.map

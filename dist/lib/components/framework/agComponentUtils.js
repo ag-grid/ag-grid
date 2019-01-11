@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,13 +22,14 @@ var AgComponentUtils = /** @class */ (function () {
     function AgComponentUtils() {
     }
     AgComponentUtils.prototype.adaptFunction = function (propertyName, hardcodedJsFunction, type, source) {
-        if (hardcodedJsFunction == null)
+        if (hardcodedJsFunction == null) {
             return {
                 component: null,
                 type: type,
                 source: source,
                 dynamicParams: null
             };
+        }
         var metadata = this.componentMetadataProvider.retrieve(propertyName);
         if (metadata && metadata.functionAdapter) {
             return {
@@ -65,8 +66,9 @@ var AgComponentUtils = /** @class */ (function () {
         return Adapter;
     };
     AgComponentUtils.prototype.doesImplementIComponent = function (candidate) {
-        if (!candidate)
+        if (!candidate) {
             return false;
+        }
         return candidate.prototype && 'getGui' in candidate.prototype;
     };
     __decorate([

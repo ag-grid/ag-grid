@@ -36,11 +36,11 @@ var gridOptions = {
             return formatNumber(params.value);
         },
         cellClass: 'align-right',
-        enableCellChangeFlash: true
+        enableCellChangeFlash: true,
+        resizable: true
     },
     columnDefs: columnDefs,
-    rowData: createRowData(),
-    enableColResize: true
+    rowData: createRowData()
 };
 
 function onUpdateSomeValues() {

@@ -1,9 +1,8 @@
-
-import {IEventEmitter} from "../interfaces/iEventEmitter";
-import {EventService} from "../eventService";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {_} from "../utils";
-import {AgEvent} from "../events";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { EventService } from "../eventService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { AgEvent } from "../events";
+import { _ } from "../utils";
 
 export class BeanStub implements IEventEmitter {
 
@@ -11,12 +10,12 @@ export class BeanStub implements IEventEmitter {
 
     private localEventService: EventService;
 
-    private destroyFunctions: (()=>void)[] = [];
+    private destroyFunctions: (() => void)[] = [];
 
     private destroyed = false;
 
     public destroy(): void {
-        this.destroyFunctions.forEach( func => func() );
+        this.destroyFunctions.forEach(func => func());
         this.destroyFunctions.length = 0;
         this.destroyed = true;
 
@@ -37,7 +36,7 @@ export class BeanStub implements IEventEmitter {
     }
 
     public dispatchEventAsync(event: AgEvent): void {
-        setTimeout( ()=> this.dispatchEvent(event), 0);
+        window.setTimeout(() => this.dispatchEvent(event), 0);
     }
 
     public dispatchEvent<T extends AgEvent>(event: T): void {
@@ -46,28 +45,28 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public addDestroyableEventListener(eElement: Window|HTMLElement|IEventEmitter|GridOptionsWrapper, event: string, listener: (event?: any)=>void): void {
+    public addDestroyableEventListener(eElement: Window | HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): void {
         if (this.destroyed) { return; }
 
         if (eElement instanceof HTMLElement) {
-            _.addSafePassiveEventListener((<HTMLElement>eElement), event, listener);
+            _.addSafePassiveEventListener((eElement as HTMLElement), event, listener);
         } else if (eElement instanceof Window) {
-            (<Window>eElement).addEventListener(event, listener);
+            (eElement as Window).addEventListener(event, listener);
         } else if (eElement instanceof GridOptionsWrapper) {
-            (<GridOptionsWrapper>eElement).addEventListener(event, listener);
+            (eElement as GridOptionsWrapper).addEventListener(event, listener);
         } else {
-            (<IEventEmitter>eElement).addEventListener(event, listener);
+            (eElement as IEventEmitter).addEventListener(event, listener);
         }
 
-        this.destroyFunctions.push( ()=> {
+        this.destroyFunctions.push(() => {
             if (eElement instanceof HTMLElement) {
-                (<HTMLElement>eElement).removeEventListener(event, listener);
+                (eElement as HTMLElement).removeEventListener(event, listener);
             } else if (eElement instanceof Window) {
-                (<Window>eElement).removeEventListener(event, listener);
+                (eElement as Window).removeEventListener(event, listener);
             } else if (eElement instanceof GridOptionsWrapper) {
-                (<GridOptionsWrapper>eElement).removeEventListener(event, listener);
+                (eElement as GridOptionsWrapper).removeEventListener(event, listener);
             } else {
-                (<IEventEmitter>eElement).removeEventListener(event, listener);
+                (eElement as IEventEmitter).removeEventListener(event, listener);
             }
         });
     }
@@ -76,7 +75,7 @@ export class BeanStub implements IEventEmitter {
         return !this.destroyed;
     }
 
-    public addDestroyFunc(func: ()=>void ): void {
+    public addDestroyFunc(func: () => void): void {
         // if we are already destroyed, we execute the func now
         if (this.isAlive()) {
             this.destroyFunctions.push(func);

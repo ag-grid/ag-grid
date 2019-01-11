@@ -1,5 +1,5 @@
-import {ExcelOOXMLTemplate, _} from 'ag-grid-community';
-import fontFactory, {Font} from './font';
+import { ExcelOOXMLTemplate, _ } from 'ag-grid-community';
+import fontFactory, { Font } from './font';
 
 const fontsFactory: ExcelOOXMLTemplate = {
     getTemplate(fonts: Font[]) {

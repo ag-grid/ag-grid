@@ -1,31 +1,31 @@
-import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
+import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
 
-import {Autowired, Bean, Context, PostConstruct} from "../../context/context";
-import {IComponent} from "../../interfaces/iComponent";
-import {DateFilter, DefaultDateComponent} from "../../filter/dateFilter";
-import {HeaderComp} from "../../headerRendering/header/headerComp";
-import {HeaderGroupComp} from "../../headerRendering/headerGroup/headerGroupComp";
+import { Autowired, Bean, Context, PostConstruct } from "../../context/context";
+import { IComponent } from "../../interfaces/iComponent";
+import { DateFilter, DefaultDateComponent } from "../../filter/dateFilter";
+import { HeaderComp } from "../../headerRendering/header/headerComp";
+import { HeaderGroupComp } from "../../headerRendering/headerGroup/headerGroupComp";
 import {
     DateFloatingFilterComp,
     NumberFloatingFilterComp,
     SetFloatingFilterComp,
     TextFloatingFilterComp
 } from "../../filter/floatingFilter";
-import {ComponentType} from "./componentResolver";
-import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer";
-import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
-import {AnimateSlideCellRenderer} from "../../rendering/cellRenderers/animateSlideCellRenderer";
-import {LoadingCellRenderer} from "../../rendering/rowComp";
-import {SelectCellEditor} from "../../rendering/cellEditors/selectCellEditor";
-import {PopupTextCellEditor} from "../../rendering/cellEditors/popupTextCellEditor";
-import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCellEditor";
-import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
-import {TextFilter} from "../../filter/textFilter";
-import {NumberFilter} from "../../filter/numberFilter";
-import {LoadingOverlayComponent} from "../../rendering/overlays/loadingOverlayComponent";
-import {NoRowsOverlayComponent} from "../../rendering/overlays/noRowsOverlayComponent";
-import {GridOptions} from "../../entities/gridOptions";
-import {_} from "../../utils";
+import { ComponentType } from "./componentResolver";
+import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
+import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
+import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
+import { LoadingCellRenderer } from "../../rendering/rowComp";
+import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
+import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
+import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
+import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEditor";
+import { TextFilter } from "../../filter/textFilter";
+import { NumberFilter } from "../../filter/numberFilter";
+import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
+import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
+import { GridOptions } from "../../entities/gridOptions";
+import { _ } from "../../utils";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -164,7 +164,7 @@ export class ComponentProvider {
     @PostConstruct
     private init(): void {
         const enterpriseDefaultComponents = this.context.getEnterpriseDefaultComponents();
-        if(enterpriseDefaultComponents) {
+        if (enterpriseDefaultComponents) {
             _.forEach(enterpriseDefaultComponents, (config) => {
                 this.registerDefaultComponent(config.componentName, config.theClass);
             });
@@ -182,7 +182,7 @@ export class ComponentProvider {
     }
 
     public registerDefaultComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>, overridable: boolean = true) {
-        let name: string = this.translateIfDeprecated(rawName);
+        const name: string = this.translateIfDeprecated(rawName);
         if (this.agGridDefaults[name]) {
             console.error(`Trying to overwrite a default component. You should call registerComponent`);
             return;
@@ -192,7 +192,7 @@ export class ComponentProvider {
     }
 
     public registerComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>) {
-        let name: string = this.translateIfDeprecated(rawName);
+        const name: string = this.translateIfDeprecated(rawName);
         if (this.frameworkComponents[name]) {
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -206,7 +206,7 @@ export class ComponentProvider {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     public registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B> }) {
-        let name: string = this.translateIfDeprecated(rawName);
+        const name: string = this.translateIfDeprecated(rawName);
         if (this.jsComponents[name]) {
             console.error(`Trying to register a component that you have already registered for plain javascript: ${name}`);
             return;
@@ -220,18 +220,18 @@ export class ComponentProvider {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     public retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B> {
-        let name: string = this.translateIfDeprecated(rawName);
+        const name: string = this.translateIfDeprecated(rawName);
         if (this.frameworkComponents[name]) {
             return {
                 type: ComponentType.FRAMEWORK,
-                component: <{ new(): B }>this.frameworkComponents[name],
+                component: this.frameworkComponents[name] as { new(): B },
                 source: RegisteredComponentSource.REGISTERED
             };
         }
         if (this.jsComponents[name]) {
             return {
                 type: ComponentType.AG_GRID,
-                component: <{ new(): A }>this.jsComponents[name],
+                component: this.jsComponents[name] as { new(): A },
                 source: RegisteredComponentSource.REGISTERED
             };
         }
@@ -239,7 +239,7 @@ export class ComponentProvider {
             return this.agGridDefaults[name] ?
                 {
                     type: ComponentType.AG_GRID,
-                    component: <{ new(): A }>this.agGridDefaults[name],
+                    component: this.agGridDefaults[name] as { new(): A },
                     source: RegisteredComponentSource.DEFAULT
                 } :
                 null;
@@ -252,7 +252,7 @@ export class ComponentProvider {
     }
 
     private translateIfDeprecated(raw: string): string {
-        let deprecatedInfo: DeprecatedComponentName = this.agDeprecatedNames[raw];
+        const deprecatedInfo: DeprecatedComponentName = this.agDeprecatedNames[raw];
         if (deprecatedInfo != null) {
             _.doOnce(() => {
                 console.warn(`ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);

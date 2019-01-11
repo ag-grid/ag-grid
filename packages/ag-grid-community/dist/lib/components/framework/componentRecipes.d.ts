@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
@@ -38,4 +38,3 @@ export declare class ComponentRecipes {
     private getFilterComponentPrototype;
     private newEmptyFloatingFilterWrapperComponent;
 }
-//# sourceMappingURL=componentRecipes.d.ts.map

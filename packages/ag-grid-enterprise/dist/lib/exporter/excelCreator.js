@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -47,7 +47,11 @@ var ExcelCreator = /** @class */ (function (_super) {
         return this.export(params);
     };
     ExcelCreator.prototype.getDataAsExcelXml = function (params) {
-        return this.getData(ag_grid_community_1._.assign({}, params, { exportMode: 'xml' }));
+        if (params && params.exportMode) {
+            delete params.exportMode;
+        }
+        this.setExportMode('xml');
+        return this.getData(params || {});
     };
     ExcelCreator.prototype.getMimeType = function () {
         return this.getExportMode() === 'xml' ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -60,29 +64,34 @@ var ExcelCreator = /** @class */ (function (_super) {
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
         var _a = this, columnController = _a.columnController, valueService = _a.valueService, gridOptionsWrapper = _a.gridOptionsWrapper;
-        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, sheetName = params.sheetName, suppressTextAsCDATA = params.suppressTextAsCDATA;
+        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, sheetName = params.sheetName, suppressTextAsCDATA = params.suppressTextAsCDATA, rowHeight = params.rowHeight, headerRowHeight = params.headerRowHeight;
         var isXlsx = this.getExportMode() === 'xlsx';
         var excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
         var config = {
             columnController: columnController,
             valueService: valueService,
             gridOptionsWrapper: gridOptionsWrapper,
-            processCellCallback: processCellCallback || null,
-            processHeaderCallback: processHeaderCallback || null,
-            sheetName: sheetName != null && sheetName !== '' ? (sheetName.toString()).substr(0, 31) : 'ag-grid',
+            processCellCallback: processCellCallback,
+            processHeaderCallback: processHeaderCallback,
+            rowHeight: rowHeight,
+            headerRowHeight: headerRowHeight || rowHeight,
+            sheetName: ag_grid_community_1._.exists(sheetName) ? sheetName.toString().substr(0, 31) : 'ag-grid',
             excelFactory: excelFactory,
-            baseExcelStyles: this.gridOptions.excelStyles,
+            baseExcelStyles: this.gridOptions.excelStyles || undefined,
             styleLinker: this.styleLinker.bind(this),
             suppressTextAsCDATA: suppressTextAsCDATA || false
         };
         return new (isXlsx ? excelXlsxSerializingSession_1.ExcelXlsxSerializingSession : excelXmlSerializingSession_1.ExcelXmlSerializingSession)(config);
     };
     ExcelCreator.prototype.styleLinker = function (rowType, rowIndex, colIndex, value, column, node) {
-        if ((rowType === ag_grid_community_1.RowType.HEADER) || (rowType === ag_grid_community_1.RowType.HEADER_GROUPING))
+        if ((rowType === ag_grid_community_1.RowType.HEADER) || (rowType === ag_grid_community_1.RowType.HEADER_GROUPING)) {
             return ["header"];
-        if (!this.gridOptions.excelStyles || this.gridOptions.excelStyles.length === 0)
+        }
+        var styles = this.gridOptions.excelStyles;
+        if (!styles || !styles.length) {
             return null;
-        var styleIds = this.gridOptions.excelStyles.map(function (it) {
+        }
+        var styleIds = styles.map(function (it) {
             return it.id;
         });
         var applicableStyles = [];
@@ -117,16 +126,23 @@ var ExcelCreator = /** @class */ (function (_super) {
             return _super.prototype.packageFile.call(this, data);
         }
         var _a = this, zipContainer = _a.zipContainer, xlsxFactory = _a.xlsxFactory;
-        zipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
-        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
-        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
-        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
+        zipContainer.addFolders([
+            'xl/worksheets/',
+            'xl/',
+            'xl/theme/',
+            'xl/_rels/',
+            'docProps/',
+            '_rels/'
+        ]);
+        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
         zipContainer.addFile('xl/workbook.xml', xlsxFactory.createWorkbook());
         zipContainer.addFile('xl/styles.xml', xlsxFactory.createStylesheet());
         zipContainer.addFile('xl/sharedStrings.xml', xlsxFactory.createSharedStrings());
         zipContainer.addFile('xl/theme/theme1.xml', xlsxFactory.createTheme());
         zipContainer.addFile('xl/_rels/workbook.xml.rels', xlsxFactory.createWorkbookRels());
-        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
+        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
+        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
+        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
         return zipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     };
     __decorate([

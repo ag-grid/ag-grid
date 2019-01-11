@@ -40,13 +40,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     components:{
         countryCellRenderer: countryCellRenderer
     },
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableColResize: true,
     floatingFilter: true
 };
 

@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate} from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 const coreFactory: ExcelOOXMLTemplate = {
     getTemplate() {
@@ -24,7 +24,7 @@ const coreFactory: ExcelOOXMLTemplate = {
             }, {
                 name: 'dc:title',
                 textNode: 'Workbook'
-            },{
+            }, {
                 name: 'dcterms:created',
                 properties: {
                     rawMap: {
@@ -32,7 +32,7 @@ const coreFactory: ExcelOOXMLTemplate = {
                     }
                 },
                 textNode: jsonDate
-            },{
+            }, {
                 name: 'dcterms:modified',
                 properties: {
                     rawMap: {

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -16,4 +16,3 @@ export declare class FlattenStage implements IRowNodeStage {
     private ensureFooterNodeExists;
     private createDetailNode;
 }
-//# sourceMappingURL=flattenStage.d.ts.map

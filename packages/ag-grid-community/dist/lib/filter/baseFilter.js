@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -260,8 +260,9 @@ var BaseFilter = /** @class */ (function (_super) {
         return false;
     };
     BaseFilter.prototype.wrapCondition = function (mainCondition) {
-        if (!this.isFilterActive())
+        if (!this.isFilterActive()) {
             return mainCondition;
+        }
         return "" + mainCondition + this.createConditionTemplate(FilterConditionType.CONDITION);
     };
     BaseFilter.prototype.createConditionTemplate = function (type) {
@@ -402,14 +403,16 @@ var ComparableBaseFilter = /** @class */ (function (_super) {
     ComparableBaseFilter.prototype.setFilterType = function (filterType, type) {
         if (type === FilterConditionType.MAIN) {
             this.filter = filterType;
-            if (!this.eTypeSelector)
+            if (!this.eTypeSelector) {
                 return;
+            }
             this.eTypeSelector.value = filterType;
         }
         else {
             this.filterCondition = filterType;
-            if (!this.eTypeConditionSelector)
+            if (!this.eTypeConditionSelector) {
                 return;
+            }
             this.eTypeConditionSelector.value = filterType;
         }
     };

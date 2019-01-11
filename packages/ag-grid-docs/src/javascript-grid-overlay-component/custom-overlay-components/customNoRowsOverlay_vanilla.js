@@ -4,7 +4,7 @@ CustomNoRowsOverlay.prototype.init = function(params) {
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
         '<div class="ag-overlay-loading-center" style="background-color: lightcoral; height: 9%">' +
-        '   <i class="fa fa-frown-o"> ' + params.noRowsMessageFunc() + ' </i>' +
+        '   <i class="far fa-frown"> ' + params.noRowsMessageFunc() + ' </i>' +
         '</div>';
 };
 

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -27,11 +27,11 @@ var getMergedCells = function (rows, cols) {
         var lastCol;
         cells.forEach(function (currentCell, cellIdx) {
             var min = cellIdx + merges + 1;
-            var start = getExcelColumnName(min);
+            var start = exports.getExcelColumnName(min);
             var outputRow = rowIdx + 1;
             if (currentCell.mergeAcross) {
                 merges += currentCell.mergeAcross;
-                var end = getExcelColumnName(cellIdx + merges + 1);
+                var end = exports.getExcelColumnName(cellIdx + merges + 1);
                 mergedCells.push("" + start + outputRow + ":" + end + outputRow);
             }
             updateColMinMax(cols[min - 1], min, merges, lastCol);
@@ -41,40 +41,52 @@ var getMergedCells = function (rows, cols) {
     });
     return mergedCells;
 };
-var getExcelColumnName = function (colIdx) {
+exports.getExcelColumnName = function (colIdx) {
     var startCode = 65;
     var tableWidth = 26;
     var fromCharCode = String.fromCharCode;
     var pos = Math.floor(colIdx / tableWidth);
     var tableIdx = colIdx % tableWidth;
-    if (!pos || colIdx === tableWidth)
+    if (!pos || colIdx === tableWidth) {
         return fromCharCode(startCode + colIdx - 1);
-    if (!tableIdx)
-        return getExcelColumnName(pos - 1) + 'Z';
-    if (pos < tableWidth)
+    }
+    if (!tableIdx) {
+        return exports.getExcelColumnName(pos - 1) + 'Z';
+    }
+    if (pos < tableWidth) {
         return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1);
-    return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
+    }
+    return exports.getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 var worksheetFactory = {
     getTemplate: function (config) {
         var table = config.table;
         var rows = table.rows, columns = table.columns;
         var mergedCells = getMergedCells(rows, columns);
-        var children = [].concat(columns.length ? {
-            name: 'cols',
-            children: ag_grid_community_1._.map(columns, column_1.default.getTemplate)
-        } : []).concat(rows.length ? {
-            name: 'sheetData',
-            children: ag_grid_community_1._.map(rows, row_1.default.getTemplate)
-        } : []).concat(mergedCells.length ? {
-            name: 'mergeCells',
-            properties: {
-                rawMap: {
-                    count: mergedCells.length
-                }
-            },
-            children: ag_grid_community_1._.map(mergedCells, mergeCell_1.default.getTemplate)
-        } : []);
+        var children = [];
+        if (columns.length) {
+            children.push({
+                name: 'cols',
+                children: ag_grid_community_1._.map(columns, column_1.default.getTemplate)
+            });
+        }
+        if (rows.length) {
+            children.push({
+                name: 'sheetData',
+                children: ag_grid_community_1._.map(rows, row_1.default.getTemplate)
+            });
+        }
+        if (mergedCells.length) {
+            children.push({
+                name: 'mergeCells',
+                properties: {
+                    rawMap: {
+                        count: mergedCells.length
+                    }
+                },
+                children: ag_grid_community_1._.map(mergedCells, mergeCell_1.default.getTemplate)
+            });
+        }
         return {
             name: "worksheet",
             properties: {

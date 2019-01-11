@@ -17,12 +17,12 @@ var gridOptions = {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        width: 100
+        width: 100,
+        sortable: true,
+        resizable: true,
+        filter: true
     },
     columnDefs: columnDefs,
-    enableColResize: true,
-    enableSorting: true,
-    enableFilter: true,
     animateRows: true,
     sideBar: {
         toolPanels: ['filters','columns']

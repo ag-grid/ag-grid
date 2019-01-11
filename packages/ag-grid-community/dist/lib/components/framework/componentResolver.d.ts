@@ -1,10 +1,9 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColDef, ColGroupDef } from "../../entities/colDef";
-import { Promise } from "../../utils";
 import { AgGridRegisteredComponentInput } from "./componentProvider";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
@@ -13,8 +12,9 @@ import { Column } from "../../entities/column";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ToolPanelDef } from "../../entities/sideBar";
+import { Promise } from "../../utils";
 export declare type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelDef;
-export declare type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
+export declare type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string | boolean;
 export declare enum ComponentType {
     AG_GRID = 0,
     FRAMEWORK = 1
@@ -124,4 +124,3 @@ export declare class ComponentResolver {
     private newAgGridComponent;
     private initialiseComponent;
 }
-//# sourceMappingURL=componentResolver.d.ts.map

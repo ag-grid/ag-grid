@@ -1,19 +1,19 @@
-import {Utils as _} from '../../utils';
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, PostConstruct} from "../../context/context";
-import {Component} from "../../widgets/component";
-import {IComponent} from "../../interfaces/iComponent";
-import {ComponentRecipes} from "../../components/framework/componentRecipes";
-import {Constants} from "../../constants";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Autowired } from "../../context/context";
+import { Component } from "../../widgets/component";
+import { IComponent } from "../../interfaces/iComponent";
+import { ComponentRecipes } from "../../components/framework/componentRecipes";
+import { Constants } from "../../constants";
+import { _ } from '../../utils';
 
 export interface IOverlayWrapperParams {}
 
 export interface IOverlayWrapperComp extends IComponent<IOverlayWrapperParams> {
-    showLoadingOverlay(eOverlayWrapper: HTMLElement): void
+    showLoadingOverlay(eOverlayWrapper: HTMLElement): void;
 
-    showNoRowsOverlay(eOverlayWrapper: HTMLElement): void
+    showNoRowsOverlay(eOverlayWrapper: HTMLElement): void;
 
-    hideOverlay(eOverlayWrapper: HTMLElement): void
+    hideOverlay(eOverlayWrapper: HTMLElement): void;
 }
 
 export class OverlayWrapperComponent extends Component implements IOverlayWrapperComp {
@@ -42,7 +42,7 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
         this.setTemplate(OverlayWrapperComponent.LOADING_WRAPPER_OVERLAY_TEMPLATE);
 
         this.componentRecipes.newLoadingOverlayComponent().then(renderer => {
-            let loadingOverlayWrapper: HTMLElement = this.getRefElement("loadingOverlayWrapper");
+            const loadingOverlayWrapper: HTMLElement = this.getRefElement("loadingOverlayWrapper");
             _.removeAllChildren(loadingOverlayWrapper);
             loadingOverlayWrapper.appendChild(renderer.getGui());
         });
@@ -55,19 +55,19 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
 
         // we don't use gridOptionsWrapper.addLayoutElement here because this component
         // is passive, we don't want to add a new element each time it is created.
-        let eNoRowsOverlayWrapper = this.getRefElement('noRowsOverlayWrapper');
+        const eNoRowsOverlayWrapper = this.getRefElement('noRowsOverlayWrapper');
 
-        let domLayout = this.gridOptionsWrapper.getDomLayout();
-        let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        let domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
-        let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
+        const domLayout = this.gridOptionsWrapper.getDomLayout();
+        const domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
+        const domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
+        const domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
         _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', domLayoutAutoHeight);
         _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', domLayoutNormal);
         _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-print', domLayoutPrint);
 
         this.componentRecipes.newNoRowsOverlayComponent().then(renderer => {
-            let noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");
+            const noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");
             _.removeAllChildren(noRowsOverlayWrapper);
             noRowsOverlayWrapper.appendChild(renderer.getGui());
         });

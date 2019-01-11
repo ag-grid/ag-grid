@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,9 +22,8 @@ var columnApi_1 = require("./columnController/columnApi");
 var columnController_1 = require("./columnController/columnController");
 var eventService_1 = require("./eventService");
 var events_1 = require("./events");
-var context_2 = require("./context/context");
-var utils_1 = require("./utils");
 var gridApi_1 = require("./gridApi");
+var utils_1 = require("./utils");
 var SortController = /** @class */ (function () {
     function SortController() {
     }
@@ -93,7 +92,7 @@ var SortController = /** @class */ (function () {
         }
         if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
             console.warn("ag-grid: sortingOrder must be an array with at least one element, currently it's " + sortingOrder);
-            return;
+            return null;
         }
         var currentIndex = sortingOrder.indexOf(column.getSort());
         var notInArray = currentIndex < 0;
@@ -115,7 +114,7 @@ var SortController = /** @class */ (function () {
     // used by the public api, for saving the sort model
     SortController.prototype.getSortModel = function () {
         var columnsWithSorting = this.getColumnsWithSortingOrdered();
-        return utils_1.Utils.map(columnsWithSorting, function (column) {
+        return utils_1._.map(columnsWithSorting, function (column) {
             return {
                 colId: column.getColId(),
                 sort: column.getSort()
@@ -125,17 +124,13 @@ var SortController = /** @class */ (function () {
     SortController.prototype.setSortModel = function (sortModel, source) {
         var _this = this;
         if (source === void 0) { source = "api"; }
-        if (!this.gridOptionsWrapper.isEnableSorting()) {
-            console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
-            return;
-        }
         // first up, clear any previous sort
         var sortModelProvided = sortModel && sortModel.length > 0;
         var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         allColumnsIncludingAuto.forEach(function (column) {
             var sortForCol = null;
             var sortedAt = -1;
-            if (sortModelProvided && !column.getColDef().suppressSorting) {
+            if (sortModelProvided && column.getColDef().sortable) {
                 for (var j = 0; j < sortModel.length; j++) {
                     var sortModelEntry = sortModel[j];
                     if (typeof sortModelEntry.colId === 'string'
@@ -163,7 +158,7 @@ var SortController = /** @class */ (function () {
     SortController.prototype.getColumnsWithSortingOrdered = function () {
         // pull out all the columns that have sorting set
         var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        var columnsWithSorting = utils_1.Utils.filter(allColumnsIncludingAuto, function (column) { return !!column.getSort(); });
+        var columnsWithSorting = utils_1._.filter(allColumnsIncludingAuto, function (column) { return !!column.getSort(); });
         // put the columns in order of which one got sorted first
         columnsWithSorting.sort(function (a, b) { return a.sortedAt - b.sortedAt; });
         return columnsWithSorting;
@@ -171,7 +166,7 @@ var SortController = /** @class */ (function () {
     // used by row controller, when doing the sorting
     SortController.prototype.getSortForRowController = function () {
         var columnsWithSorting = this.getColumnsWithSortingOrdered();
-        return utils_1.Utils.map(columnsWithSorting, function (column) {
+        return utils_1._.map(columnsWithSorting, function (column) {
             var ascending = column.getSort() === column_1.Column.SORT_ASC;
             return {
                 inverter: ascending ? 1 : -1,
@@ -202,7 +197,7 @@ var SortController = /** @class */ (function () {
         __metadata("design:type", gridApi_1.GridApi)
     ], SortController.prototype, "gridApi", void 0);
     SortController = SortController_1 = __decorate([
-        context_2.Bean('sortController')
+        context_1.Bean('sortController')
     ], SortController);
     return SortController;
 }());

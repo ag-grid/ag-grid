@@ -19,7 +19,7 @@ $generated = isset($_GET['generated']);
 
     <!-- Polyfills -->
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
-    <script src="https://unpkg.com/zone.js@0.8.17?main=browser"></script>
+    <script src="https://unpkg.com/zone.js@0.8.17/dist/zone.js"></script>
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
 
     <script>

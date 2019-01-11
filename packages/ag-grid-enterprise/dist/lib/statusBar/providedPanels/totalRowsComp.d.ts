@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { IStatusPanelComp } from 'ag-grid-community';
 import { NameValueComp } from "./nameValueComp";
 export declare class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -10,4 +10,3 @@ export declare class TotalRowsComp extends NameValueComp implements IStatusPanel
     private getRowCountValue;
     init(): void;
 }
-//# sourceMappingURL=totalRowsComp.d.ts.map

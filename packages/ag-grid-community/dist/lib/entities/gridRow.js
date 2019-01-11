@@ -1,18 +1,18 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var constants_1 = require("../constants");
-var utils_1 = require("../utils");
 var gridCell_1 = require("./gridCell");
+var utils_1 = require("../utils");
 var GridRow = /** @class */ (function () {
     function GridRow(rowIndex, floating) {
         this.rowIndex = rowIndex;
-        this.floating = utils_1.Utils.makeNull(floating);
+        this.floating = utils_1._.makeNull(floating);
     }
     GridRow.prototype.isFloatingTop = function () {
         return this.floating === constants_1.Constants.PINNED_TOP;
@@ -52,7 +52,7 @@ var GridRow = /** @class */ (function () {
                 break;
             default:
                 // if we are not floating, but the other one is floating...
-                if (utils_1.Utils.exists(otherFloating)) {
+                if (utils_1._.exists(otherFloating)) {
                     if (otherFloating === constants_1.Constants.PINNED_TOP) {
                         // we are not floating, other is floating top, we are first
                         return false;

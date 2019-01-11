@@ -69,9 +69,11 @@ function createRowData() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableColResize: true,
     enableRangeSelection: true,
     onCellValueChanged: function(event) {
         console.log('data after changes is: ', event.data);

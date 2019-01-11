@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { ExcelOOXMLTemplate } from 'ag-grid-community';
 declare const protectionFactory: ExcelOOXMLTemplate;
 export interface Protection {
@@ -6,4 +6,3 @@ export interface Protection {
     hidden: boolean;
 }
 export default protectionFactory;
-//# sourceMappingURL=protection.d.ts.map

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid - Styling & Appearance: Animation";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Animation. Rows in the grid will Animate into place after the user sorts or filters. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Animation. Rows in the grid will Animate into place after the user sorts or filters. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "Javascript Grid Animation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -86,7 +86,6 @@ include '../documentation-main/documentation_header.php';
         The example below shows the animations by the JavaScript calling the grid's api. So no touching, just looking!!!
     </p>
 
-    <!--spl todo - problematic in vue -->
-    <?= example('Animation', 'animation', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Animation', 'animation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

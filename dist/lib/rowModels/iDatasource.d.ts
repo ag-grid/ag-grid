@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Datasource used by both PaginationController and InfiniteRowModel */
@@ -26,4 +26,3 @@ export interface IGetRowsParams {
     /** The grid context object */
     context: any;
 }
-//# sourceMappingURL=iDatasource.d.ts.map

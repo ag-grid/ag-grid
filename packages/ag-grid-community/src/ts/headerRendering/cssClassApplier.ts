@@ -1,9 +1,9 @@
-import {AbstractColDef} from "../entities/colDef";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Utils as _} from '../utils';
-import {ColumnGroup} from "../entities/columnGroup";
-import {Column} from "../entities/column";
-import {OriginalColumnGroup} from "../entities/originalColumnGroup";
+import { AbstractColDef } from "../entities/colDef";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnGroup } from "../entities/columnGroup";
+import { Column } from "../entities/column";
+import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { _ } from '../utils';
 
 export class CssClassApplier {
 
@@ -32,7 +32,7 @@ export class CssClassApplier {
         }
         let classToUse: string | string[];
         if (typeof classesOrFunc === 'function') {
-            let params = {
+            const params = {
                 // bad naming, as colDef here can be a group or a column,
                 // however most people won't appreciate the difference,
                 // so keeping it as colDef to avoid confusion.
@@ -42,10 +42,10 @@ export class CssClassApplier {
                 context: gridOptionsWrapper.getContext(),
                 api: gridOptionsWrapper.getApi()
             };
-            let headerClassFunc = <(params: any) => string | string[]> classesOrFunc;
+            const headerClassFunc = classesOrFunc as (params: any) => string | string[];
             classToUse = headerClassFunc(params);
         } else {
-            classToUse = <string | string[]> classesOrFunc;
+            classToUse = classesOrFunc as string | string[];
         }
 
         if (typeof classToUse === 'string') {

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,7 +36,6 @@ var sortController_1 = require("./sortController");
 var focusedCellController_1 = require("./focusedCellController");
 var mouseEventService_1 = require("./gridPanel/mouseEventService");
 var cellNavigationService_1 = require("./cellNavigationService");
-var utils_1 = require("./utils");
 var filterStage_1 = require("./rowModels/clientSide/filterStage");
 var sortStage_1 = require("./rowModels/clientSide/sortStage");
 var flattenStage_1 = require("./rowModels/clientSide/flattenStage");
@@ -81,6 +80,7 @@ var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var paginationComp_1 = require("./rowModels/pagination/paginationComp");
 var resizeObserverService_1 = require("./misc/resizeObserverService");
 var zipContainer_1 = require("./exporter/files/zip/zipContainer");
+var utils_1 = require("./utils");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -90,9 +90,9 @@ var Grid = /** @class */ (function () {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
         var rowModelClass = this.getRowModelClass(gridOptions);
-        var enterprise = utils_1.Utils.exists(Grid.enterpriseBeans);
+        var enterprise = utils_1._.exists(Grid.enterpriseBeans);
         var frameworkFactory = params ? params.frameworkFactory : null;
-        if (utils_1.Utils.missing(frameworkFactory)) {
+        if (utils_1._.missing(frameworkFactory)) {
             frameworkFactory = new baseFrameworkFactory_1.BaseFrameworkFactory();
         }
         var overrideBeans = [];
@@ -113,7 +113,7 @@ var Grid = /** @class */ (function () {
             frameworkFactory: frameworkFactory
         };
         if (params && params.seedBeanInstances) {
-            utils_1.Utils.assign(seed, params.seedBeanInstances);
+            utils_1._.assign(seed, params.seedBeanInstances);
         }
         var components = [
             { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox },
@@ -156,7 +156,7 @@ var Grid = /** @class */ (function () {
     Grid.setEnterpriseBeans = function (enterpriseBeans, rowModelClasses) {
         this.enterpriseBeans = enterpriseBeans;
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
-        utils_1.Utils.iterateObject(rowModelClasses, function (key, value) { return Grid.RowModelClasses[key] = value; });
+        utils_1._.iterateObject(rowModelClasses, function (key, value) { return Grid.RowModelClasses[key] = value; });
     };
     Grid.setEnterpriseComponents = function (components) {
         this.enterpriseComponents = components;
@@ -173,14 +173,14 @@ var Grid = /** @class */ (function () {
         var rowModel = this.context.getBean('rowModel');
         var columnDefs = gridOptionsWrapper.getColumnDefs();
         var rowData = gridOptionsWrapper.getRowData();
-        var nothingToSet = utils_1.Utils.missing(columnDefs) && utils_1.Utils.missing(rowData);
+        var nothingToSet = utils_1._.missing(columnDefs) && utils_1._.missing(rowData);
         if (nothingToSet) {
             return;
         }
-        if (utils_1.Utils.exists(columnDefs)) {
+        if (utils_1._.exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs, "gridInitializing");
         }
-        if (utils_1.Utils.exists(rowData) && rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (utils_1._.exists(rowData) && rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             var clientSideRowModel = rowModel;
             clientSideRowModel.setRowData(rowData);
         }
@@ -198,9 +198,9 @@ var Grid = /** @class */ (function () {
         var rowModelType = gridOptions.rowModelType;
         //TODO: temporary measure before 'enterprise' is completely removed (similar handling in gridOptionsWrapper is also required)
         rowModelType = rowModelType === 'enterprise' ? constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE : rowModelType;
-        if (utils_1.Utils.exists(rowModelType)) {
+        if (utils_1._.exists(rowModelType)) {
             var rowModelClass = Grid.RowModelClasses[rowModelType];
-            if (utils_1.Utils.exists(rowModelClass)) {
+            if (utils_1._.exists(rowModelClass)) {
                 return rowModelClass;
             }
             else {

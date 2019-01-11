@@ -79,6 +79,11 @@ var groupColumn = {
 };
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        sortable: true,
+        filter: true
+    },
     components: {
         personFilter: PersonFilter
     },
@@ -88,9 +93,6 @@ var gridOptions = {
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     enableRtl: true,
     animateRows: true,
-    enableColResize: true, //one of [true, false]
-    enableSorting: true, //one of [true, false]
-    enableFilter: true, //one of [true, false]
     statusBar: {
         items: [
             { component: 'agAggregationComponent' }
@@ -205,8 +207,8 @@ var firstColumn = {
     },
     headerCheckboxSelectionFilteredOnly: true,
     icons: {
-        sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-        sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+        sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+        sortDescending: '<i class="fa fa-sort-alpha-down"/>'
     }
 };
 
@@ -273,8 +275,8 @@ var defaultCols = [
                 pinned: 'left',
                 // rowGroupIndex: 1,
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+                    sortDescending: '<i class="fa fa-sort-alpha-down"/>'
                 }
             },
             {
@@ -305,18 +307,18 @@ var defaultCols = [
                 // valueGetter: '55',
                 // aggFunc: 'sum',
                 icons: {
-                    sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+                    sortAscending: '<i class="fa fa-sort-amount-up"/>',
+                    sortDescending: '<i class="fa fa-sort-amount-down"/>'
                 }
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "right" },
+                sortable: false, suppressMenu: true, cellStyle: { "text-align": "right" },
                 cellRenderer: function () { return 'Abra...'; }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "left" },
+                sortable: false, suppressMenu: true, cellStyle: { "text-align": "left" },
                 cellRenderer: function () { return '...cadabra!'; }
             }
         ],
@@ -336,8 +338,8 @@ var defaultCols = [
         enableValue: true,
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
         icons: {
-            sortAscending: '<i class="fa fa-sort-amount-asc"/>',
-            sortDescending: '<i class="fa fa-sort-amount-desc"/>'
+            sortAscending: '<i class="fa fa-sort-amount-up"/>',
+            sortDescending: '<i class="fa fa-sort-amount-down"/>'
         }
     }
 ];

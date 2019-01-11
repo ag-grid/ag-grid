@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var BaseFrameworkFactory = /** @class */ (function () {
         return gridOptions.groupRowInnerRenderer;
     };
     BaseFrameworkFactory.prototype.setTimeout = function (action, timeout) {
-        setTimeout(action, timeout);
+        window.setTimeout(action, timeout);
     };
     return BaseFrameworkFactory;
 }());

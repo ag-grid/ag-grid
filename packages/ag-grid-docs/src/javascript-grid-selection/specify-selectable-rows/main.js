@@ -12,19 +12,19 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef : {
+        width: 200,
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
     rowSelection: 'multiple',
     rowDeselection: true,
-    enableSorting: true,
-    enableColResize: true,
     suppressMenuHide: true,
     isRowSelectable: function(rowNode) {
         return rowNode.data ? rowNode.data.year < 2007 : false;
-    },
-    defaultColDef : {
-        width: 200
     }
 };
 

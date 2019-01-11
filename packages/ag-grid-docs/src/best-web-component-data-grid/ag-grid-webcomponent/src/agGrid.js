@@ -53,7 +53,7 @@ class AgGrid extends HTMLElement {
 
     static get observedAttributes() {
         // allow properties to be supplied either lowercased or hyphenated
-        // this allows the user to either supply (for example) enableSorting or enabled-sorting
+        // this allows the user to either supply (for example) rowAnimation or row-animation
 
         // properties lowercased
         let lowerCasedPropertyNames = agGrid.ComponentUtil.ALL_PROPERTIES

@@ -1,11 +1,11 @@
-import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community/main";
-import {PrimaryColsListPanel} from "./primaryColsListPanel";
-import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
-import {ToolPanelColumnCompParams} from "../../columnToolPanel";
+import { Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector } from "ag-grid-community/main";
+import { PrimaryColsListPanel } from "./primaryColsListPanel";
+import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
+import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 
 export interface BaseColumnItem {
 
-    getDisplayName(): string;
+    getDisplayName(): string | null;
 
     onSelectAllChanged(value: boolean): void;
 
@@ -63,9 +63,9 @@ export class PrimaryColsPanel extends Component {
     public init(): void {
         this.instantiate(this.context);
 
-        let hideFilter = this.params.suppressColumnFilter;
-        let hideSelect = this.params.suppressColumnSelectAll;
-        let hideExpand = this.params.suppressColumnExpandAll;
+        const hideFilter = this.params.suppressColumnFilter;
+        const hideSelect = this.params.suppressColumnSelectAll;
+        const hideExpand = this.params.suppressColumnExpandAll;
 
         if (hideExpand && hideFilter && hideSelect) {
             this.columnSelectHeaderComp.setVisible(false);

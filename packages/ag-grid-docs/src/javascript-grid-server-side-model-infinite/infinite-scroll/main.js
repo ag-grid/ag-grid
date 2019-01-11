@@ -13,7 +13,7 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 120,
-        suppressFilter: true
+        resizable: true
     },
     columnDefs: columnDefs,
 
@@ -26,7 +26,6 @@ var gridOptions = {
     // only keep 10 blocks of rows
     maxBlocksInCache: 10,
 
-    enableColResize: true,
     animateRows: true,
     debug: true
 };

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from '../entities/gridOptions';
@@ -22,4 +22,3 @@ export declare class ComponentUtil {
     static toBoolean(value: any): boolean;
     static toNumber(value: any): number;
 }
-//# sourceMappingURL=componentUtil.d.ts.map

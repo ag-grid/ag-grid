@@ -1,13 +1,13 @@
-import {ColumnUtils} from "./columnUtils";
-import {Column} from "../entities/column";
-import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
-import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnGroup} from "../entities/columnGroup";
-import {OriginalColumnGroup} from "../entities/originalColumnGroup";
-import {Bean, Context} from "../context/context";
-import {Utils as _} from "../utils";
-import {Autowired} from "../context/context";
+import { Autowired } from "../context/context";
+import { ColumnUtils } from "./columnUtils";
+import { Column } from "../entities/column";
+import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
+import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
+import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { ColumnGroup } from "../entities/columnGroup";
+import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { Bean, Context } from "../context/context";
+import { _ } from "../utils";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')
@@ -24,36 +24,36 @@ export class DisplayedGroupCreator {
         // create's unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
-        pinned: string,
+        pinned: string | null,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: ColumnGroupChild[]): ColumnGroupChild[] {
 
-        let result: ColumnGroupChild[] = [];
+        const result: ColumnGroupChild[] = [];
 
         let previousRealPath: ColumnGroup[];
         let previousOriginalPath: OriginalColumnGroup[];
 
-        let oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups);
+        const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups);
 
         // go through each column, then do a bottom up comparison to the previous column, and start
         // to share groups if they converge at any point.
-        sortedVisibleColumns.forEach( (currentColumn: Column)=> {
+        sortedVisibleColumns.forEach((currentColumn: Column) => {
 
-            let currentOriginalPath = this.getOriginalPathForColumn(balancedColumnTree, currentColumn);
-            let currentRealPath: ColumnGroup[] = [];
-            let firstColumn = !previousOriginalPath;
+            const currentOriginalPath = this.getOriginalPathForColumn(balancedColumnTree, currentColumn);
+            const currentRealPath: ColumnGroup[] = [];
+            const firstColumn = !previousOriginalPath;
 
-            for (let i = 0; i<currentOriginalPath.length; i++) {
-                if (firstColumn || currentOriginalPath[i]!==previousOriginalPath[i]) {
+            for (let i = 0; i < currentOriginalPath.length; i++) {
+                if (firstColumn || currentOriginalPath[i] !== previousOriginalPath[i]) {
                     // new group needed
-                    let newGroup = this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator,
+                    const newGroup = this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator,
                         oldColumnsMapped, pinned);
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
-                    if (i==0) {
+                    if (i == 0) {
                         result.push(newGroup);
                     } else {
-                        currentRealPath[i-1].addChild(newGroup);
+                        currentRealPath[i - 1].addChild(newGroup);
                     }
                 } else {
                     // reuse old group
@@ -61,13 +61,13 @@ export class DisplayedGroupCreator {
                 }
             }
 
-            let noColumnGroups = currentRealPath.length===0;
+            const noColumnGroups = currentRealPath.length === 0;
             if (noColumnGroups) {
                 // if we are not grouping, then the result of the above is an empty
                 // path (no groups), and we just add the column to the root list.
                 result.push(currentColumn);
             } else {
-                let leafGroup = currentRealPath[currentRealPath.length-1];
+                const leafGroup = currentRealPath[currentRealPath.length - 1];
                 leafGroup.addChild(currentColumn);
             }
 
@@ -85,16 +85,16 @@ export class DisplayedGroupCreator {
                               oldColumnsMapped: {[key: string]: ColumnGroup},
                               pinned: string): ColumnGroup {
 
-        let groupId = originalGroup.getGroupId();
-        let instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
-        let uniqueId = ColumnGroup.createUniqueId(groupId, instanceId);
+        const groupId = originalGroup.getGroupId();
+        const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
+        const uniqueId = ColumnGroup.createUniqueId(groupId, instanceId);
 
         let columnGroup = oldColumnsMapped[uniqueId];
 
         // if the user is setting new colDefs, it is possible that the id's overlap, and we
         // would have a false match from above. so we double check we are talking about the
         // same original column group.
-        if (columnGroup && columnGroup.getOriginalColumnGroup()!==originalGroup) {
+        if (columnGroup && columnGroup.getOriginalColumnGroup() !== originalGroup) {
             columnGroup = null;
         }
 
@@ -111,12 +111,12 @@ export class DisplayedGroupCreator {
 
     // returns back a 2d map of ColumnGroup as follows: groupId -> instanceId -> ColumnGroup
     private mapOldGroupsById(displayedGroups: ColumnGroupChild[]): {[uniqueId: string]: ColumnGroup} {
-        let result: {[uniqueId: string]: ColumnGroup} = {};
+        const result: {[uniqueId: string]: ColumnGroup} = {};
 
-        let recursive = (columnsOrGroups: ColumnGroupChild[])=> {
-            columnsOrGroups.forEach( columnOrGroup => {
+        const recursive = (columnsOrGroups: ColumnGroupChild[]) => {
+            columnsOrGroups.forEach(columnOrGroup => {
                 if (columnOrGroup instanceof ColumnGroup) {
-                    let columnGroup = <ColumnGroup> columnOrGroup;
+                    const columnGroup = columnOrGroup;
                     result[columnOrGroup.getUniqueId()] = columnGroup;
                     recursive(columnGroup.getChildren());
                 }
@@ -131,10 +131,10 @@ export class DisplayedGroupCreator {
     }
 
     private setupParentsIntoColumns(columnsOrGroups: ColumnGroupChild[], parent: ColumnGroup): void {
-        columnsOrGroups.forEach( columnsOrGroup => {
+        columnsOrGroups.forEach(columnsOrGroup => {
             columnsOrGroup.setParent(parent);
             if (columnsOrGroup instanceof ColumnGroup) {
-                let columnGroup = <ColumnGroup> columnsOrGroup;
+                const columnGroup = columnsOrGroup;
                 this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
             }
         });
@@ -168,7 +168,7 @@ export class DisplayedGroupCreator {
 
     private getOriginalPathForColumn(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] {
 
-        let result: OriginalColumnGroup[] = [];
+        const result: OriginalColumnGroup[] = [];
         let found = false;
 
         recursePath(balancedColumnTree, 0);
@@ -179,22 +179,22 @@ export class DisplayedGroupCreator {
         if (found) {
             return result;
         } else {
-            console.log('could not get path');
+            console.warn('could not get path');
             return null;
             // return this.createFakePath(balancedColumnTree, column);
         }
 
         function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
 
-            for (let i = 0; i<balancedColumnTree.length; i++) {
+            for (let i = 0; i < balancedColumnTree.length; i++) {
                 if (found) {
                     // quit the search, so 'result' is kept with the found result
                     return;
                 }
-                let node = balancedColumnTree[i];
+                const node = balancedColumnTree[i];
                 if (node instanceof OriginalColumnGroup) {
-                    let nextNode = <OriginalColumnGroup> node;
-                    recursePath(nextNode.getChildren(), dept+1);
+                    const nextNode = node;
+                    recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;
                 } else {
                     if (node === column) {

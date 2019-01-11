@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -8,8 +8,8 @@ var worksheet = {
     getTemplate: function (ws) {
         var table = ws.table, name = ws.name;
         var columns = table.columns, rows = table.rows;
-        var c = ag_grid_community_1.Utils.map(columns, function (it) { return column_1.default.getTemplate(it); });
-        var r = ag_grid_community_1.Utils.map(rows, function (it) { return row_1.default.getTemplate(it); });
+        var c = ag_grid_community_1._.map(columns, function (it) { return column_1.default.getTemplate(it); });
+        var r = ag_grid_community_1._.map(rows, function (it) { return row_1.default.getTemplate(it); });
         return {
             name: "Worksheet",
             children: [{

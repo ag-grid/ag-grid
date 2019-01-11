@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -35,13 +35,12 @@ var context_1 = require("../context/context");
 var headerContainer_1 = require("./headerContainer");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
-var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
-var utils_1 = require("../utils");
 var gridApi_1 = require("../gridApi");
 var autoWidthCalculator_1 = require("../rendering/autoWidthCalculator");
 var constants_1 = require("../constants");
+var utils_1 = require("../utils");
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
     function HeaderRootComp() {
@@ -84,7 +83,7 @@ var HeaderRootComp = /** @class */ (function (_super) {
         }
     };
     HeaderRootComp.prototype.setHorizontalScroll = function (offset) {
-        this.eHeaderContainer.style.left = offset + 'px';
+        this.eHeaderContainer.style.transform = "translateX(" + offset + "px)";
     };
     HeaderRootComp.prototype.forEachHeaderElement = function (callback) {
         this.childContainers.forEach(function (childContainer) { return childContainer.forEachHeaderElement(callback); });
@@ -97,12 +96,13 @@ var HeaderRootComp = /** @class */ (function (_super) {
     };
     HeaderRootComp.prototype.onPivotModeChanged = function () {
         var pivotMode = this.columnController.isPivotMode();
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     };
     HeaderRootComp.prototype.setHeight = function (height) {
-        this.getGui().style.height = height + 'px';
-        this.getGui().style.minHeight = height + 'px';
+        var px = height + "px";
+        this.getGui().style.height = px;
+        this.getGui().style.minHeight = px;
     };
     // if the user is in floating filter and hits tab a few times, the header can
     // end up scrolling to show items off the screen, leaving the grid and header
@@ -120,11 +120,14 @@ var HeaderRootComp = /** @class */ (function (_super) {
             }
         });
     };
+    HeaderRootComp.prototype.setHeaderContainerWidth = function (width) {
+        this.eHeaderContainer.style.width = width + "px";
+    };
     HeaderRootComp.prototype.setLeftVisible = function (visible) {
-        utils_1.Utils.setVisible(this.ePinnedLeftHeader, visible);
+        utils_1._.setVisible(this.ePinnedLeftHeader, visible);
     };
     HeaderRootComp.prototype.setRightVisible = function (visible) {
-        utils_1.Utils.setVisible(this.ePinnedRightHeader, visible);
+        utils_1._.setVisible(this.ePinnedRightHeader, visible);
     };
     HeaderRootComp.TEMPLATE = "<div class=\"ag-header\" role=\"row\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
     __decorate([
@@ -159,10 +162,6 @@ var HeaderRootComp = /** @class */ (function (_super) {
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], HeaderRootComp.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('scrollVisibleService'),
-        __metadata("design:type", scrollVisibleService_1.ScrollVisibleService)
-    ], HeaderRootComp.prototype, "scrollVisibleService", void 0);
     __decorate([
         context_1.Autowired('gridApi'),
         __metadata("design:type", gridApi_1.GridApi)

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Column, Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnComp extends Component implements BaseColumnItem {
@@ -30,11 +30,10 @@ export declare class ToolPanelColumnComp extends Component implements BaseColumn
     private setupDragging;
     private createDragItem;
     private onColumnStateChanged;
-    getDisplayName(): string;
+    getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;
     isSelected(): boolean;
     isSelectable(): boolean;
     isExpandable(): boolean;
     setExpanded(value: boolean): void;
 }
-//# sourceMappingURL=toolPanelColumnComp.d.ts.map

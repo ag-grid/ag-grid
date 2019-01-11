@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
@@ -27,13 +27,10 @@ export declare class GridPanel extends Component {
     private columnApi;
     private gridApi;
     private dragService;
-    private selectionController;
-    private csvCreator;
     private mouseEventService;
     private focusedCellController;
     private $scope;
     private scrollVisibleService;
-    private frameworkFactory;
     private valueService;
     private componentRecipes;
     private dragAndDropService;
@@ -43,19 +40,18 @@ export declare class GridPanel extends Component {
     private rangeController;
     private contextMenuFactory;
     private clipboardService;
-    private eBody;
     private eBodyViewport;
-    private eBodyContainer;
-    private eBodyViewportWrapper;
+    private eCenterContainer;
+    private eCenterViewport;
     private eLeftContainer;
     private eRightContainer;
-    private eFullWidthViewportWrapper;
-    private eFullWidthViewport;
+    private eCenterColsClipper;
+    private eHorizontalScrollBody;
+    private eHorizontalLeftSpacer;
+    private eHorizontalRightSpacer;
+    private eBodyHorizontalScrollViewport;
+    private eBodyHorizontalScrollContainer;
     private eFullWidthContainer;
-    private eLeftViewport;
-    private eLeftViewportWrapper;
-    private eRightViewport;
-    private eRightViewportWrapper;
     private eTop;
     private eLeftTop;
     private eRightTop;
@@ -73,20 +69,15 @@ export declare class GridPanel extends Component {
     private eAllCellContainers;
     private eOverlay;
     private scrollLeft;
-    private nextScrollLeft;
     private scrollTop;
-    private nextScrollTop;
-    private verticalRedrawNeeded;
+    private lastHorizontalScrollElement;
+    private readonly resetLastHorizontalScrollElementDebounce;
     private bodyHeight;
     private enableRtl;
     private scrollWidth;
-    private scrollClipWidth;
     private pinningRight;
     private pinningLeft;
-    private useAnimationFrame;
     private overlayWrapper;
-    private lastVScrollElement;
-    private recentScrolls;
     private printLayout;
     constructor();
     getVScrollPosition(): {
@@ -103,7 +94,7 @@ export declare class GridPanel extends Component {
     private onNewColumnsLoaded;
     private init;
     private onDomLayoutChanged;
-    private onBodyViewportResized;
+    private onCenterViewportResized;
     setColumnMovingCss(moving: boolean): void;
     private setupOverlay;
     private addRowDragListener;
@@ -131,19 +122,19 @@ export declare class GridPanel extends Component {
     private onCtrlAndD;
     ensureIndexVisible(index: any, position?: string): void;
     getCenterWidth(): number;
+    isVerticalScrollShowing(): boolean;
     isHorizontalScrollShowing(): boolean;
-    private isVerticalScrollShowing;
     checkViewportAndScrolls(): void;
     private updateScrollVisibleService;
-    private setBottomPaddingOnPinned;
-    private hideFullWidthViewportScrollbars;
+    private updateScrollVisibleServiceImpl;
+    private setHorizontalScrollVisible;
+    private setVerticalScrollPaddingVisible;
     ensureColumnVisible(key: any): void;
     showLoadingOverlay(): void;
     showNoRowsOverlay(): void;
     hideOverlay(): void;
-    private getWidthForSizeColsToFit;
     sizeColumnsToFit(nextTimeout?: number): void;
-    getBodyContainer(): HTMLElement;
+    getCenterContainer(): HTMLElement;
     getDropTargetBodyContainers(): HTMLElement[];
     getDropTargetLeftContainers(): HTMLElement[];
     getDropTargetRightContainers(): HTMLElement[];
@@ -157,28 +148,28 @@ export declare class GridPanel extends Component {
     private setCenterWidth;
     private setPinnedLeftWidth;
     private setPinnedRightWidth;
-    private setPinnedContainersVisible;
-    private hideVerticalScrollOnCenter;
+    private setPinnedContainerSize;
+    private setFakeHScrollSpacerWidths;
     private checkBodyHeight;
-    setBodyAndHeaderHeights(): void;
+    setHeaderAndFloatingHeights(): void;
     getBodyHeight(): number;
     setHorizontalScrollPosition(hScrollPosition: number): void;
     setVerticalScrollPosition(vScrollPosition: number): void;
     scrollHorizontally(pixels: number): number;
     scrollVertically(pixels: number): number;
     private addScrollListener;
-    private eventDueToMakingContainerVisible;
-    private onAnyBodyScroll;
+    private onVerticalScroll;
+    private isControllingScroll;
+    private onFakeHorizontalScroll;
+    private onCenterViewportScroll;
     private onBodyHorizontalScroll;
+    private resetLastHorizontalScrollElement;
     private doHorizontalScroll;
-    executeFrame(): boolean;
     private redrawRowsAfterScroll;
     private onHorizontalViewportChanged;
-    getBodyViewportScrollLeft(): number;
-    setBodyViewportScrollLeft(value: number): void;
-    horizontallyScrollHeaderCenterAndFloatingCenter(): void;
-    private synchroniseVerticalScrollPositions;
+    getCenterViewportScrollLeft(): number;
+    private setCenterViewportScrollLeft;
+    horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void;
     addScrollEventListener(listener: () => void): void;
     removeScrollEventListener(listener: () => void): void;
 }
-//# sourceMappingURL=gridPanel.d.ts.map

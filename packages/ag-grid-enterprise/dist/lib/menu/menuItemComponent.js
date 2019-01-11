@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -37,7 +37,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
             this.queryForHtmlElement('#eIcon').innerHTML = '<span class="ag-icon ag-icon-tick"></span>';
         }
         else if (this.params.icon) {
-            if (ag_grid_community_1.Utils.isNodeOrElement(this.params.icon)) {
+            if (ag_grid_community_1._.isNodeOrElement(this.params.icon)) {
                 this.queryForHtmlElement('#eIcon').appendChild(this.params.icon);
             }
             else if (typeof this.params.icon === 'string') {
@@ -74,13 +74,13 @@ var MenuItemComponent = /** @class */ (function (_super) {
         }
         this.queryForHtmlElement('#eName').innerHTML = this.params.name;
         if (this.params.disabled) {
-            ag_grid_community_1.Utils.addCssClass(this.getGui(), 'ag-menu-option-disabled');
+            ag_grid_community_1._.addCssClass(this.getGui(), 'ag-menu-option-disabled');
         }
         else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
         if (this.params.cssClasses) {
-            this.params.cssClasses.forEach(function (it) { return ag_grid_community_1.Utils.addCssClass(_this.getGui(), it); });
+            this.params.cssClasses.forEach(function (it) { return ag_grid_community_1._.addCssClass(_this.getGui(), it); });
         }
     };
     MenuItemComponent.prototype.onOptionSelected = function (mouseEvent) {

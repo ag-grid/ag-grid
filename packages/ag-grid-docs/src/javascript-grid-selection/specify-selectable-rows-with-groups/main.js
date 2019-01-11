@@ -11,6 +11,10 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+  defaultColDef: {
+    sortable: true, 
+    filter: true
+  },
   columnDefs: columnDefs,
   rowData: null,
   rowSelection: 'multiple',
@@ -20,8 +24,6 @@ var gridOptions = {
   },
   groupSelectsChildren: true,
   groupSelectsFiltered: true,
-  enableSorting: true,
-  enableFilter: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
   autoGroupColumnDef: {

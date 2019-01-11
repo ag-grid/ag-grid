@@ -25,7 +25,9 @@ var gridOptions = {
     defaultColDef: {
         enableRowGroup: true,
         enablePivot: true,
-        enableValue: true
+        enableValue: true,
+        sortable: true,
+        filter: true
     },
     pivotMode: true,
     groupDefaultExpanded: 9,
@@ -33,7 +35,6 @@ var gridOptions = {
     groupHideOpenParents: true,
     groupMultiAutoColumn: true,
     animateRows: true,
-    enableSorting: true,
     sideBar: true,
 };
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -35,13 +35,13 @@ var columnController_1 = require("../columnController/columnController");
 var column_1 = require("../entities/column");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
-var utils_1 = require("../utils");
 var headerWrapperComp_1 = require("./header/headerWrapperComp");
 var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var filterManager_1 = require("../filter/filterManager");
 var componentRecipes_1 = require("../components/framework/componentRecipes");
 var gridApi_1 = require("../gridApi");
 var constants_1 = require("../constants");
+var utils_1 = require("../utils");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -141,7 +141,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
     HeaderRowComp.prototype.getWidthForRow = function () {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT;
         if (printLayout) {
-            var centerRow = utils_1.Utils.missing(this.pinned);
+            var centerRow = utils_1._.missing(this.pinned);
             if (centerRow) {
                 return this.columnController.getContainerWidth(column_1.Column.PINNED_RIGHT)
                     + this.columnController.getContainerWidth(column_1.Column.PINNED_LEFT)
@@ -172,7 +172,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT;
         if (printLayout) {
             // for print layout, we add all columns into the center
-            var centerContainer = utils_1.Utils.missing(this.pinned);
+            var centerContainer = utils_1._.missing(this.pinned);
             if (centerContainer) {
                 var result_1 = [];
                 [column_1.Column.PINNED_LEFT, null, column_1.Column.PINNED_RIGHT].forEach(function (pinned) {
@@ -215,11 +215,11 @@ var HeaderRowComp = /** @class */ (function (_super) {
             var headerComp;
             var eHeaderCompGui;
             if (colAlreadyInDom) {
-                utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
+                utils_1._.removeFromArray(currentChildIds, idOfChild);
                 headerComp = _this.headerComps[idOfChild];
                 eHeaderCompGui = headerComp.getGui();
                 if (ensureDomOrder) {
-                    utils_1.Utils.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                    utils_1._.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 }
                 eBefore = eHeaderCompGui;
             }
@@ -228,7 +228,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
                 _this.headerComps[idOfChild] = headerComp;
                 eHeaderCompGui = headerComp.getGui();
                 if (ensureDomOrder) {
-                    utils_1.Utils.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                    utils_1._.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 }
                 else {
                     eParentContainer.appendChild(eHeaderCompGui);
@@ -314,7 +314,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
                         captureModelChangedResolveFunc(true);
                     }
                 });
-                return modelChanged.resolveNow(true, function (modelChanged) { return modelChanged; });
+                return modelChanged.resolveNow(true, function (changed) { return changed; });
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false

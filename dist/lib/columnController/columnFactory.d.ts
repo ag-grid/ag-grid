@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -10,11 +10,11 @@ export declare class ColumnFactory {
     private context;
     private logger;
     private setBeans;
-    createColumnTree(defs: (ColDef | ColGroupDef)[], primaryColumns: boolean, existingColumns?: Column[]): {
+    createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingColumns?: Column[]): {
         columnTree: OriginalColumnGroupChild[];
         treeDept: number;
     };
-    createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[];
+    createForAutoGroups(autoGroupCols: Column[] | null, gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[];
     private createAutoGroupTreeItem;
     private findDept;
     private balanceColumnTree;
@@ -29,4 +29,3 @@ export declare class ColumnFactory {
     private checkForDeprecatedItems;
     private isColumnGroup;
 }
-//# sourceMappingURL=columnFactory.d.ts.map

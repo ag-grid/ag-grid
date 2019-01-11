@@ -1,31 +1,31 @@
-import {Component} from "../../widgets/component";
-import {Autowired, Context, PostConstruct} from "../../context/context";
-import {Column} from "../../entities/column";
-import {Utils as _} from "../../utils";
+import { Component } from "../../widgets/component";
+import { Autowired, Context, PostConstruct } from "../../context/context";
+import { Column } from "../../entities/column";
 import {
     DragAndDropService, DragItem, DragSource, DragSourceType,
     DropTarget
 } from "../../dragAndDrop/dragAndDropService";
-import {IHeaderComp, IHeaderParams} from "./headerComp";
-import {ColumnApi} from "../../columnController/columnApi";
-import {ColumnController} from "../../columnController/columnController";
-import {HorizontalResizeService} from "../horizontalResizeService";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {CssClassApplier} from "../cssClassApplier";
-import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {IMenuFactory} from "../../interfaces/iMenuFactory";
-import {GridApi} from "../../gridApi";
-import {SortController} from "../../sortController";
-import {EventService} from "../../eventService";
-import {ComponentRecipes} from "../../components/framework/componentRecipes";
-import {AgCheckbox} from "../../widgets/agCheckbox";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {SelectAllFeature} from "./selectAllFeature";
-import {Events} from "../../events";
-import {ColumnHoverService} from "../../rendering/columnHoverService";
-import {Beans} from "../../rendering/beans";
-import {HoverFeature} from "../hoverFeature";
-import {TouchListener} from "../../widgets/touchListener";
+import { IHeaderComp, IHeaderParams } from "./headerComp";
+import { ColumnApi } from "../../columnController/columnApi";
+import { ColumnController } from "../../columnController/columnController";
+import { HorizontalResizeService } from "../horizontalResizeService";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { CssClassApplier } from "../cssClassApplier";
+import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
+import { IMenuFactory } from "../../interfaces/iMenuFactory";
+import { GridApi } from "../../gridApi";
+import { SortController } from "../../sortController";
+import { EventService } from "../../eventService";
+import { ComponentRecipes } from "../../components/framework/componentRecipes";
+import { AgCheckbox } from "../../widgets/agCheckbox";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { SelectAllFeature } from "./selectAllFeature";
+import { Events } from "../../events";
+import { ColumnHoverService } from "../../rendering/columnHoverService";
+import { Beans } from "../../rendering/beans";
+import { HoverFeature } from "../hoverFeature";
+import { TouchListener } from "../../widgets/touchListener";
+import { _ } from "../../utils";
 
 export class HeaderWrapperComp extends Component {
 
@@ -75,9 +75,9 @@ export class HeaderWrapperComp extends Component {
     public init(): void {
         this.instantiate(this.context);
 
-        let displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
-        let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-        let enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
+        const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
+        const enableSorting = this.column.getColDef().sortable;
+        const enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
 
         this.appendHeaderComp(displayName, enableSorting, enableMenu);
 
@@ -96,7 +96,7 @@ export class HeaderWrapperComp extends Component {
 
         this.addFeature(this.context, new SelectAllFeature(this.cbSelectAll, this.column));
 
-        let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
+        const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 
@@ -110,24 +110,24 @@ export class HeaderWrapperComp extends Component {
     }
 
     private onColumnHover(): void {
-        let isHovered = this.columnHoverService.isHovered(this.column);
+        const isHovered = this.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
     private setupSortableClass(enableSorting:boolean):void {
         if (enableSorting) {
-            let element = this.getGui();
+            const element = this.getGui();
             _.addCssClass(element, 'ag-header-cell-sortable');
         }
     }
 
     private onFilterChanged(): void {
-        let filterPresent = this.column.isFilterActive();
+        const filterPresent = this.column.isFilterActive();
         _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     }
 
     private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): void {
-        let params = <IHeaderParams> {
+        const params = {
             column: this.column,
             displayName: displayName,
             enableSorting: enableSorting,
@@ -144,9 +144,9 @@ export class HeaderWrapperComp extends Component {
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
-        };
+        } as IHeaderParams;
 
-        let callback = this.afterHeaderCompCreated.bind(this, displayName);
+        const callback = this.afterHeaderCompCreated.bind(this, displayName);
 
         this.componentRecipes.newHeaderComponent(params).then(callback);
     }
@@ -172,14 +172,14 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupMove(eHeaderCellLabel: HTMLElement, displayName: string): void {
-        let suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
+        const suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.column.getColDef().suppressMovable
             || this.column.isLockPosition();
 
         if (suppressMove) { return; }
 
         if (eHeaderCellLabel) {
-            let dragSource: DragSource = {
+            const dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
                 dragItemCallback: () => this.createDragItem(),
@@ -189,12 +189,12 @@ export class HeaderWrapperComp extends Component {
                 dragStopped: () => this.column.setMoving(false, "uiColumnMoved")
             };
             this.dragAndDropService.addDragSource(dragSource, true);
-            this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+            this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
         }
     }
 
     private createDragItem(): DragItem {
-        let visibleState: { [key: string]: boolean } = {};
+        const visibleState: { [key: string]: boolean } = {};
         visibleState[this.column.getId()] = this.column.isVisible();
 
         return {
@@ -204,7 +204,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupResize(): void {
-        let colDef = this.column.getColDef();
+        const colDef = this.column.getColDef();
 
         // if no eResize in template, do nothing
         if (!this.eResize) {
@@ -216,7 +216,7 @@ export class HeaderWrapperComp extends Component {
             return;
         }
 
-        let finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+        const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.eResize,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this, false),
@@ -225,13 +225,13 @@ export class HeaderWrapperComp extends Component {
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        let weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
+        const weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column, "uiColumnResized");
             });
-            let touchListener: TouchListener = new TouchListener(this.eResize);
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, ()=> {
+            const touchListener: TouchListener = new TouchListener(this.eResize);
+            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, () => {
                 this.columnController.autoSizeColumn(this.column, "uiColumnResized");
             });
             this.addDestroyFunc(touchListener.destroy.bind(touchListener));
@@ -239,18 +239,22 @@ export class HeaderWrapperComp extends Component {
     }
 
     public onResizing(finished: boolean, resizeAmount: number): void {
-        let resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        let newWidth = this.resizeStartWidth + resizeAmountNormalised;
+        const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
+        const newWidth = this.resizeStartWidth + resizeAmountNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        if (finished) {
+            _.removeCssClass(this.getGui(), 'ag-column-resizing');
+        }
     }
 
     public onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeWithShiftKey = shiftKey;
+        _.addCssClass(this.getGui(), 'ag-column-resizing');
     }
 
     private setupTooltip(): void {
-        let colDef = this.column.getColDef();
+        const colDef = this.column.getColDef();
 
         // add tooltip if exists
         if (colDef.headerTooltip) {

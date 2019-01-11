@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
@@ -24,7 +24,7 @@ export declare class BaseFrameworkFactory implements IFrameworkFactory {
     } | string | undefined;
     colDefFilter(colDef: ColDef): {
         new (): IFilterComp;
-    } | string | undefined;
+    } | string | boolean | undefined;
     gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string | undefined;
@@ -36,4 +36,3 @@ export declare class BaseFrameworkFactory implements IFrameworkFactory {
     } | ICellRendererFunc | string | undefined;
     setTimeout(action: any, timeout?: any): void;
 }
-//# sourceMappingURL=baseFrameworkFactory.d.ts.map

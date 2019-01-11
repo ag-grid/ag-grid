@@ -1,17 +1,17 @@
 
-import {AgCheckbox} from "../../widgets/agCheckbox";
-import {BeanStub} from "../../context/beanStub";
-import {PostConstruct, Autowired} from "../../context/context";
-import {ColumnApi} from "../../columnController/columnApi";
-import {GridApi} from "../../gridApi";
-import {Events} from "../../events";
-import {EventService} from "../../eventService";
-import {IRowModel} from "../../interfaces/iRowModel";
-import {Constants} from "../../constants";
-import {Column} from "../../entities/column";
-import {RowNode} from "../../entities/rowNode";
-import {SelectionController} from "../../selectionController";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import { AgCheckbox } from "../../widgets/agCheckbox";
+import { BeanStub } from "../../context/beanStub";
+import { PostConstruct, Autowired } from "../../context/context";
+import { ColumnApi } from "../../columnController/columnApi";
+import { GridApi } from "../../gridApi";
+import { Events } from "../../events";
+import { EventService } from "../../eventService";
+import { IRowModel } from "../../interfaces/iRowModel";
+import { Constants } from "../../constants";
+import { Column } from "../../entities/column";
+import { RowNode } from "../../entities/rowNode";
+import { SelectionController } from "../../selectionController";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -34,7 +34,7 @@ export class SelectAllFeature extends BeanStub {
         this.cbSelectAll = cbSelectAll;
         this.column = column;
 
-        let colDef = column.getColDef();
+        const colDef = column.getColDef();
         this.filteredOnly = colDef ? !!colDef.headerCheckboxSelectionFilteredOnly : false;
     }
 
@@ -75,13 +75,13 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private getNextCheckboxState(selectionCount: SelectionCount): boolean {
-        if (selectionCount.selected===0 && selectionCount.notSelected===0) {
+        if (selectionCount.selected === 0 && selectionCount.notSelected === 0) {
             // if no rows, always have it unselected
             return false;
-        } else if (selectionCount.selected>0 && selectionCount.notSelected>0) {
+        } else if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
             // if mix of selected and unselected, this is the tri-state
             return null;
-        } else if (selectionCount.selected>0) {
+        } else if (selectionCount.selected > 0) {
             // only selected
             return true;
         } else {
@@ -96,9 +96,9 @@ export class SelectAllFeature extends BeanStub {
 
         this.processingEventFromCheckbox = true;
 
-        let selectionCount = this.getSelectionCount();
+        const selectionCount = this.getSelectionCount();
 
-        let allSelected = this.getNextCheckboxState(selectionCount);
+        const allSelected = this.getNextCheckboxState(selectionCount);
 
         this.cbSelectAll.setSelected(allSelected);
 
@@ -109,7 +109,7 @@ export class SelectAllFeature extends BeanStub {
         let selectedCount = 0;
         let notSelectedCount = 0;
 
-        let callback = (node: RowNode) => {
+        const callback = (node: RowNode) => {
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) { return; }
 
@@ -135,8 +135,8 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private checkRightRowModelType(): void {
-        let rowModelType = this.rowModel.getType();
-        let rowModelMatches = rowModelType===Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        const rowModelType = this.rowModel.getType();
+        const rowModelMatches = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (!rowModelMatches) {
             console.warn(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }
@@ -146,7 +146,7 @@ export class SelectAllFeature extends BeanStub {
         if (this.processingEventFromCheckbox) { return; }
         if (!this.cbSelectAllVisible) { return; }
 
-        let value = this.cbSelectAll.isSelected();
+        const value = this.cbSelectAll.isSelected();
         if (value) {
             this.selectionController.selectAllRowNodes(this.filteredOnly);
         } else {
@@ -158,7 +158,7 @@ export class SelectAllFeature extends BeanStub {
         let result = this.column.getColDef().headerCheckboxSelection;
 
         if (typeof result === 'function') {
-            let func = <(params: any)=>boolean> result;
+            const func = result as (params: any) => boolean;
             result = func({
                 column: this.column,
                 colDef: this.column.getColDef(),

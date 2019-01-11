@@ -1,16 +1,16 @@
-import {Utils as _} from "../utils";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {DragAndDropService, DropTarget} from "../dragAndDrop/dragAndDropService";
-import {ColumnController} from "../columnController/columnController";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {EventService} from "../eventService";
-import {Events} from "../events";
-import {HeaderRowComp, HeaderRowType} from "./headerRowComp";
-import {BodyDropTarget} from "./bodyDropTarget";
-import {Column} from "../entities/column";
-import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
-import {Component} from "../widgets/component";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Autowired, Context, PostConstruct } from "../context/context";
+import { DragAndDropService, DropTarget } from "../dragAndDrop/dragAndDropService";
+import { ColumnController } from "../columnController/columnController";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { EventService } from "../eventService";
+import { Events } from "../events";
+import { HeaderRowComp, HeaderRowType } from "./headerRowComp";
+import { BodyDropTarget } from "./bodyDropTarget";
+import { Column } from "../entities/column";
+import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
+import { Component } from "../widgets/component";
+import { _ } from "../utils";
 
 export class HeaderContainer {
 
@@ -43,8 +43,8 @@ export class HeaderContainer {
         this.setupDragAndDrop(gridPanel);
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
-        this.headerRowComps.forEach( headerRowComp => headerRowComp.forEachHeaderElement(callback) );
+    public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
+        this.headerRowComps.forEach(headerRowComp => headerRowComp.forEachHeaderElement(callback));
     }
 
     @PostConstruct
@@ -86,28 +86,24 @@ export class HeaderContainer {
     }
 
     private setWidthOfPinnedContainer(): void {
-
-        let pinningLeft = this.pinned === Column.PINNED_LEFT;
-        let pinningRight = this.pinned === Column.PINNED_RIGHT;
+        const pinningLeft = this.pinned === Column.PINNED_LEFT;
+        const pinningRight = this.pinned === Column.PINNED_RIGHT;
+        const controller = this.columnController;
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
 
         if (pinningLeft || pinningRight) {
-
             // size to fit all columns
-            let width = pinningLeft ?
-                this.columnController.getPinnedLeftContainerWidth()
-                : this.columnController.getPinnedRightContainerWidth();
+            let width = controller[pinningLeft ? 'getPinnedLeftContainerWidth' : 'getPinnedRightContainerWidth']();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
             // as body width fits the cols and the scrollbar
-            let addPaddingForScrollbar = pinningLeft ?
-                this.scrollVisibleService.isLeftVerticalScrollShowing()
-                : this.scrollVisibleService.isRightVerticalScrollShowing();
+            const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             if (addPaddingForScrollbar) {
                 width += this.scrollWidth;
             }
 
-            this.eContainer.style.width = width + 'px';
+            _.setFixedWidth(this.eContainer, width);
         }
     }
 
@@ -132,14 +128,14 @@ export class HeaderContainer {
     }
 
     private setupDragAndDrop(gridComp: GridPanel): void {
-        let dropContainer = this.eViewport ? this.eViewport : this.eContainer;
-        let bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
+        const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
+        const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.context.wireBean(bodyDropTarget);
         bodyDropTarget.registerGridComp(gridComp);
     }
 
     private removeHeaderRowComps(): void {
-        this.headerRowComps.forEach( headerRowComp => {
+        this.headerRowComps.forEach(headerRowComp => {
             headerRowComp.destroy();
         });
         this.headerRowComps.length = 0;
@@ -149,21 +145,21 @@ export class HeaderContainer {
     private createHeaderRowComps(): void {
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
-        let rowCount = this.columnController.getHeaderRowCount();
+        const rowCount = this.columnController.getHeaderRowCount();
 
-        for (let dept = 0; dept<rowCount; dept++) {
-            let groupRow = dept !== (rowCount - 1);
-            let type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
-            let headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
+        for (let dept = 0; dept < rowCount; dept++) {
+            const groupRow = dept !== (rowCount - 1);
+            const type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
+            const headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());
         }
 
-        let includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
+        const includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
 
         if (includeFloatingFilterRow) {
-            let headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned,  this.dropTarget);
+            const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned,  this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());

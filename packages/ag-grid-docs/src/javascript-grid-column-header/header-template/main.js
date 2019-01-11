@@ -1,24 +1,24 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", suppressMenu: true},
-    {headerName: "Age", field: "age", suppressSorting: true},
+    {headerName: "Age", field: "age", sortable: false},
     {headerName: "Country", field: "country", suppressMenu: true},
-    {headerName: "Year", field: "year", suppressSorting: true},
+    {headerName: "Year", field: "year", sortable: false},
     {headerName: "Date", field: "date", suppressMenu: true},
-    {headerName: "Sport", field: "sport", suppressSorting: true},
+    {headerName: "Sport", field: "sport", sortable: false},
     {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver", suppressSorting: true},
+    {headerName: "Silver", field: "silver", sortable: false},
     {headerName: "Bronze", field: "bronze", suppressMenu: true},
-    {headerName: "Total", field: "total", suppressSorting: true}
+    {headerName: "Total", field: "total", sortable: false}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableSorting: true,
-    enableColResize: true,
     suppressMenuHide: true,
     defaultColDef : {
+        sortable: true,
+        resizable: true,
+        filter: true,
         width: 100,
         headerComponentParams : {
             menuIcon: 'fa-bars',

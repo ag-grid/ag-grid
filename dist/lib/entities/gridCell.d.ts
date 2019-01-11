@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./column";
@@ -17,6 +17,5 @@ export declare class GridCell {
     getGridRow(): GridRow;
     toString(): string;
     createId(): string;
-    equals(other: GridCell): boolean;
+    equals(other: GridCell | null): boolean;
 }
-//# sourceMappingURL=gridCell.d.ts.map

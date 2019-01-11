@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -28,11 +28,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var context_1 = require("../../context/context");
 var rowNodeBlock_1 = require("../cache/rowNodeBlock");
 var rowRenderer_1 = require("../../rendering/rowRenderer");
+var utils_1 = require("../../utils");
 var InfiniteBlock = /** @class */ (function (_super) {
     __extends(InfiniteBlock, _super);
     function InfiniteBlock(pageNumber, params) {
@@ -47,7 +47,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
         return rowNode;
     };
     InfiniteBlock.prototype.setDataAndId = function (rowNode, data, index) {
-        if (utils_1.Utils.exists(data)) {
+        if (utils_1._.exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
             // on index) as long user is not inserting or deleting rows,
@@ -93,18 +93,18 @@ var InfiniteBlock = /** @class */ (function (_super) {
             filterModel: this.cacheParams.filterModel,
             context: this.gridOptionsWrapper.getContext()
         };
-        if (utils_1.Utils.missing(this.cacheParams.datasource.getRows)) {
+        if (utils_1._.missing(this.cacheParams.datasource.getRows)) {
             console.warn("ag-Grid: datasource is missing getRows method");
             return;
         }
         // check if old version of datasource used
-        var getRowsParams = utils_1.Utils.getFunctionParameters(this.cacheParams.datasource.getRows);
+        var getRowsParams = utils_1._.getFunctionParameters(this.cacheParams.datasource.getRows);
         if (getRowsParams.length > 1) {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
         }
         // put in timeout, to force result to be async
-        setTimeout(function () {
+        window.setTimeout(function () {
             _this.cacheParams.datasource.getRows(params);
         }, 0);
     };

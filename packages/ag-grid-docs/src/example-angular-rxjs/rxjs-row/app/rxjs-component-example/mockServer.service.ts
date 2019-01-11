@@ -23,7 +23,7 @@ export class MockServerService {
     // only returns the changed data rows
     byRowupdates() : any {
         return Observable.create((observer) => {
-            const interval = setInterval(() => {
+            const interval = window.setInterval(() => {
                 let changes = [];
 
                 // make some mock changes to the data
@@ -32,7 +32,7 @@ export class MockServerService {
                 observer.next(changes);
             }, 1000);
 
-            return () => clearInterval(interval);
+            return () => window.clearInterval(interval);
         });
     }
 
@@ -40,7 +40,7 @@ export class MockServerService {
     // only all the row data (with some rows changed)
     allDataUpdates()  : any{
         return Observable.create((observer) => {
-            const interval = setInterval(() => {
+            const interval = window.setInterval(() => {
                 let changes = [];
 
                 // make some mock changes to the data
@@ -52,7 +52,7 @@ export class MockServerService {
                 observer.next(cloneDeep(this.rowData));
             }, 1000);
 
-            return () => clearInterval(interval);
+            return () => window.clearInterval(interval);
         });
     }
 

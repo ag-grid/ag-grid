@@ -1,4 +1,4 @@
-import {Promise} from "../utils";
+import { Promise } from "../utils";
 
 export interface IAfterGuiAttachedParams {
     hidePopup: () => void;

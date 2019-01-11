@@ -64,7 +64,7 @@ export class MatSliderComponent implements ICellEditorAngularComp {
     ngAfterViewInit() {
         let sliderThumb = this.elRef.nativeElement.querySelector(".mat-slider-thumb");
         sliderThumb.tabIndex = 0;
-        setTimeout(() => {
+        window.setTimeout(() => {
             sliderThumb.focus();
         });
     }

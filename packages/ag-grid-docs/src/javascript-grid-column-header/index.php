@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Header: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Headers. The display of column headers can be fine-tuned to change Header Height and Text Orientation for example. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Headers. The display of column headers can be fine-tuned to change Header Height and Text Orientation for example. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "grid header";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -116,9 +116,9 @@ include '../documentation-main/documentation_header.php';
         Note that specifying your own templates is compatible with other configurations: 
     </p>
 <ul class="content">
-        <li>suppressMenu is especified in: Athlete, Country, Date and Bronze columns</li>
-        <li>suppressSorting is especified in: Age, Year, Sport Silver and Total columns</li>
-        <li>Gold is the only column that doesn't have suppressSorting or suppressSort</li>
+        <li>suppressMenu is specified in: Athlete, Country, Date and Bronze columns</li>
+        <li>sortable=false is specified in: Age, Year, Sport, Silver and Total columns</li>
+        <li>Gold is the only column that doesn't have sortable=false or suppressSort</li>
     </ul>
 
     <?= example('Header template', 'header-template', 'vanilla', array("extras" => array("fontawesome"))) ?>
@@ -240,7 +240,7 @@ pivotGroupHeaderHeight:100,
         </li>
     </ul>
 
-    <?= example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="headerHeight">Dynamic Header Heights</h2>
 
@@ -250,7 +250,7 @@ pivotGroupHeaderHeight:100,
         descriptions at the top of the page
     </p>
 
-    <?= example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="customHeader">Custom Header</h2>
     <p>

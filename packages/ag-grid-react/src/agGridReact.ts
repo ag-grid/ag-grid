@@ -12,8 +12,8 @@ import {
     WrapableInterface
 } from "ag-grid-community";
 
-import {AgGridColumn} from "./agGridColumn";
-import {AgReactComponent} from "./agReactComponent";
+import { AgGridColumn } from "./agGridColumn";
+import { AgReactComponent } from "./agReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -25,6 +25,8 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     gridOptions: AgGrid.GridOptions;
     api: AgGrid.GridApi;
     columnApi: AgGrid.ColumnApi;
+    portals = [];
+    hasPendingPortalUpdate = false;
 
     protected eGridDiv: HTMLElement;
 
@@ -38,7 +40,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             ref: e => {
                 this.eGridDiv = e;
             }
-        });
+        }, this.portals);
     }
 
     createStyleForDiv() {
@@ -81,22 +83,54 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         return false;
     }
 
+    /**
+     * Mounts a react portal for components registered under the componentFramework.
+     * We do this because we want all portals to be in the same tree - in order to get
+     * Context to work properly.
+     */
+    mountReactPortal(portal, resolve) {
+        this.portals = [...this.portals, portal];
+        this.batchUpdate(() => resolve(null));
+    }
+
+    batchUpdate(callback?) {
+        if (this.hasPendingPortalUpdate) {
+            return callback && callback();
+        }
+        setTimeout(() => {
+            this.forceUpdate(() => {
+                callback && callback();
+                this.hasPendingPortalUpdate = false;
+            });
+        });
+        this.hasPendingPortalUpdate = true;
+    }
+
+
+    destroyPortal(portal) {
+        this.portals = this.portals.filter(curPortal => curPortal !== portal);
+        this.batchUpdate();
+    }
+
     componentWillReceiveProps(nextProps: any) {
         let debugLogging = !!nextProps.debug;
 
-        // keeping consistent with web components, put changing
-        // values in currentValue and previousValue pairs and
-        // not include items that have not changed.
         const changes = <any>{};
-        AgGrid.ComponentUtil.ALL_PROPERTIES.forEach((propKey: string) => {
-            if (!this.areEquivalent(this.props[propKey], nextProps[propKey])) {
-                if (debugLogging) {
-                    console.log(`agGridReact: [${propKey}] property changed`);
+        const changedKeys = Object.keys(nextProps);
+        changedKeys.forEach((propKey) => {
+            if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+                if (this.skipPropertyCheck(propKey) ||
+                    !this.areEquivalent(this.props[propKey], nextProps[propKey])) {
+
+                    if (debugLogging) {
+                        console.log(`agGridReact: [${propKey}] property changed`);
+                    }
+
+                    changes[propKey] = {
+                        previousValue: this.props[propKey],
+                        currentValue: nextProps[propKey]
+                    };
                 }
-                changes[propKey] = {
-                    previousValue: this.props[propKey],
-                    currentValue: nextProps[propKey]
-                };
             }
         });
         AgGrid.ComponentUtil.getEventCallbacks().forEach((funcName: string) => {
@@ -111,7 +145,12 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             }
         });
 
+
         AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+    }
+
+    private skipPropertyCheck(propKey) {
+        return this.props['deltaRowDataMode'] && propKey === 'rowData';
     }
 
     componentWillUnmount() {
@@ -149,7 +188,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         }
 
         return [{}, value].reduce((r, o) => {
-            Object.keys(o).forEach(function (k) {
+            Object.keys(o).forEach(function(k) {
                 r[k] = o[k];
             });
             return r;
@@ -190,7 +229,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             if (newA) {
                 a.areEquivPropertyTracking = [];
             } else if (
-                a.areEquivPropertyTracking.some(function (other) {
+                a.areEquivPropertyTracking.some(function(other) {
                     return other === b;
                 })
             )
@@ -272,7 +311,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
                 let frameworkComponentInstance = this.getFrameworkComponentInstance();
 
                 if (frameworkComponentInstance == null) {
-                    setTimeout(() => this.callMethod(name, args), 100);
+                    window.setTimeout(() => this.callMethod(name, args), 100);
                 } else {
                     let method = wrapper.getFrameworkComponentInstance()[name];
                     if (method == null) return null;

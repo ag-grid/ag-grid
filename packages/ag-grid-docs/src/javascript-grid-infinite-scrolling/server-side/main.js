@@ -122,11 +122,10 @@ var columnDefs = [
         cellRenderer: 'loadingCellRenderer',
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
-        suppressSorting: true,
-        suppressMenu: true,
-        suppressFilter: true
+        sortable: false,
+        suppressMenu: true
     },
-    {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true, suppressFilter: true},
+    {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true},
     {
         headerName: 'Age',
         field: 'age',
@@ -151,20 +150,21 @@ var columnDefs = [
         filter: 'agSetColumnFilter',
         filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
     },
-    {headerName: 'Date', field: 'date', width: 110, suppressFilter: true},
-    {headerName: 'Sport', field: 'sport', width: 110, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Gold', field: 'gold', width: 100, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Silver', field: 'silver', width: 100, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Bronze', field: 'bronze', width: 100, suppressMenu: true, suppressFilter: true},
-    {headerName: 'Total', field: 'total', width: 100, suppressMenu: true, suppressFilter: true}
+    {headerName: 'Date', field: 'date', width: 110},
+    {headerName: 'Sport', field: 'sport', width: 110, suppressMenu: true},
+    {headerName: 'Gold', field: 'gold', width: 100, suppressMenu: true},
+    {headerName: 'Silver', field: 'silver', width: 100, suppressMenu: true},
+    {headerName: 'Bronze', field: 'bronze', width: 100, suppressMenu: true,},
+    {headerName: 'Total', field: 'total', width: 100, suppressMenu: true}
 ];
 
 var gridOptions = {
     floatingFilter: true,
     debug: true,
-    enableServerSideSorting: true,
-    enableServerSideFilter: true,
-    enableColResize: true,
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,
@@ -253,14 +253,14 @@ function filterData(filterModel, data) {
         }
 
         if (filterModel.year) {
-            if (filterModel.year.indexOf(item.year.toString()) < 0) {
+            if (filterModel.year.values.indexOf(item.year.toString()) < 0) {
                 // year didn't match, so skip this record
                 continue;
             }
         }
 
         if (filterModel.country) {
-            if (filterModel.country.indexOf(item.country) < 0) {
+            if (filterModel.country.values.indexOf(item.country) < 0) {
                 continue;
             }
         }

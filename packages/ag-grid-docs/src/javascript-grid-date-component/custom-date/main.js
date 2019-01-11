@@ -3,14 +3,14 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 160, filter:'agDateColumnFilter', filterParams:{
+    {headerName: "Date", field: "date", width: 190, filter:'agDateColumnFilter', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");
             var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
             if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-                return 0
+                return 0;
             }
 
             if (cellDate < filterLocalDateAtMidnight) {
@@ -26,16 +26,18 @@ var columnDefs = [
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter', suppressFilter: true}
+    {headerName: "Total", field: "total", width: 100, filter: false}
 ];
 
 var gridOptions = {
-    floatingFilter:true,
+    defaultColDef: {
+        filter: true
+    },
+    floatingFilter: true,
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
     // Here is where we specify the component to be used as the date picker widget
-    components:{
+    components: {
         agDateInput: CustomDateComponent
     }
 };

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Printing: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Layout For Print. Use For Print to have the grid render without using any scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's visible on the screen. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Layout For Print. Use For Print to have the grid render without using any scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's visible on the screen. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Printing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1>Printing</h1>
 
     <p class="lead">
-        This section explains how to user the Print Layout feature of the grid.
+        This section explains how to use the Print Layout feature of the grid.
     </p>
 
     <p>
@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('For Print Simple', 'for-print-simple', 'generated') ?>
+    <?= example('For Print Simple', 'for-print-simple', 'generated', array("processVue" => true)) ?>
 
     <h2>Toggling Print Layout</h2>
 
@@ -101,7 +101,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('For Print Complex', 'for-print-complex', 'generated', array("enterprise" => 1)) ?>
+    <?= example('For Print Complex', 'for-print-complex', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Animations & Redraw</h2>
 

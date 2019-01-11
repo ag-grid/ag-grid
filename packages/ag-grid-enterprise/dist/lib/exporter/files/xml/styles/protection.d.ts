@@ -1,5 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { ExcelXMLTemplate } from 'ag-grid-community';
 declare const protection: ExcelXMLTemplate;
 export default protection;
-//# sourceMappingURL=protection.d.ts.map

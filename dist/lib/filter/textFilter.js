@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -28,9 +28,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var baseFilter_1 = require("./baseFilter");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
+var utils_1 = require("../utils");
 var TextFilter = /** @class */ (function (_super) {
     __extends(TextFilter, _super);
     function TextFilter() {
@@ -61,7 +61,7 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.bodyTemplate = function (type) {
         var translate = this.translate.bind(this);
         var fieldId = type == baseFilter_1.FilterConditionType.MAIN ? "filterText" : "filterConditionText";
-        return "<div class=\"ag-filter-body\">\n            <input class=\"ag-filter-filter\" id=" + fieldId + " type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n        </div>";
+        return "<div class=\"ag-filter-body\">\n            <div class=\"ag-input-text-wrapper\">\n                <input class=\"ag-filter-filter\" id=" + fieldId + " type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n            </div>\n        </div>";
     };
     TextFilter.prototype.initialiseFilterBodyUi = function (type) {
         _super.prototype.initialiseFilterBodyUi.call(this, type);
@@ -73,7 +73,7 @@ var TextFilter = /** @class */ (function (_super) {
         var _this = this;
         var eElement = type === baseFilter_1.FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
         var debounceMs = this.getDebounceMs(this.filterParams);
-        var toDebounce = utils_1.Utils.debounce(function () { return _this.onFilterTextFieldChanged(type); }, debounceMs);
+        var toDebounce = utils_1._.debounce(function () { return _this.onFilterTextFieldChanged(type); }, debounceMs);
         this.addDestroyableEventListener(eElement, 'input', toDebounce);
     };
     TextFilter.prototype.refreshFilterBodyUi = function (type) {
@@ -109,7 +109,7 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.onFilterTextFieldChanged = function (type) {
         var value = type === baseFilter_1.FilterConditionType.MAIN ? this.eFilterTextField.value : this.eFilterConditionTextField.value;
         var current = type === baseFilter_1.FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
-        var filterText = utils_1.Utils.makeNull(value);
+        var filterText = utils_1._.makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
@@ -130,32 +130,36 @@ var TextFilter = /** @class */ (function (_super) {
         }
     };
     TextFilter.prototype.setFilter = function (filter, type) {
-        filter = utils_1.Utils.makeNull(filter);
+        filter = utils_1._.makeNull(filter);
         if (type === baseFilter_1.FilterConditionType.MAIN) {
             if (filter) {
                 this.filterText = this.formatter(filter);
-                if (!this.eFilterTextField)
+                if (!this.eFilterTextField) {
                     return;
+                }
                 this.eFilterTextField.value = filter;
             }
             else {
                 this.filterText = null;
-                if (!this.eFilterTextField)
+                if (!this.eFilterTextField) {
                     return;
+                }
                 this.eFilterTextField.value = null;
             }
         }
         else {
             if (filter) {
                 this.filterConditionText = this.formatter(filter);
-                if (!this.eFilterConditionTextField)
+                if (!this.eFilterConditionTextField) {
                     return;
+                }
                 this.eFilterConditionTextField.value = filter;
             }
             else {
                 this.filterConditionText = null;
-                if (!this.eFilterConditionTextField)
+                if (!this.eFilterConditionTextField) {
                     return;
+                }
                 this.eFilterConditionTextField.value = null;
             }
         }

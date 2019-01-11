@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Set Filter: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -57,7 +57,7 @@ columnDefinition = {
             longer available (like what Excel does).</li>
         <li><code>comparator(a,b):</code> Comparator for sorting. If not provided, the colDef comparator is used. If colDef
             also not provided, the default (agGrid provided) comparator is used.</li>
-        <li><code>suppressSorting:</code> If true, sorting will not be done on the set filter values. Use this is providing
+        <li><code>suppressSorting:</code> If true, sorting will not be done on the set filter values. Use this if providing
             your own values and don't want them sorted as you are providing in the order you want.</li>
         <li><code>suppressMiniFilter:</code> Set to false(default)/true to show/hide the input text box to filter the set
             entries displayed in the filter .</li>
@@ -129,7 +129,7 @@ columnDefinition = {
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Asynchronous Values</h2>
 
@@ -172,7 +172,7 @@ filterParams: {
             the values are not loaded again.</li>
         </ul>
 
-    <?= example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Sorting And Formatting Set Filter Values List</h2>
 
@@ -188,11 +188,11 @@ filterParams: {
     </p>
 
     <p>
-        It also shows the athlete column using a text formatter so that 'o' will match 'Bj&oslash;rk' in the mini filter. You 
+        It also shows the athlete column using a text formatter so that 'o' will match 'Bj&oslash;rk' in the mini filter. You
         can check this by searching for 'bjo'in the mini-filter box.
     </p>
 
-    <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Refresh After Edit</h2>
 
@@ -242,7 +242,7 @@ filterParams: {
             </li>
         </ul>
 
-    <?= example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <p>
         Why do we do this? The reason is if the filters were changing as the editing was happening, then
@@ -288,7 +288,7 @@ filterParams: {
         no longer exist in the new set.
     </note>
 
-    <?= example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Set Filter Model</h2>
 
@@ -379,7 +379,7 @@ countryFilterComponent.onFilterChanged()</snippet>
         end of the interaction a call to gridOptions.api.onFilterChanged() is performed.
     </p>
 
-    <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Floating Set Filter</h2>
     <p>

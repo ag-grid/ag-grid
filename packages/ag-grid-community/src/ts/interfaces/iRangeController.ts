@@ -1,6 +1,6 @@
-import {Column} from "../entities/column";
-import {GridCell} from "../entities/gridCell";
-import {GridPanel} from "../gridPanel/gridPanel";
+import { Column } from "../entities/column";
+import { GridCell } from "../entities/gridCell";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 export interface IRangeController {
     clearSelection(): void;
@@ -9,7 +9,7 @@ export interface IRangeController {
     onDragStart(mouseEvent: MouseEvent): void;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
-    getCellRanges(): RangeSelection[];
+    getCellRanges(): RangeSelection[] | null;
     setRangeToCell(cell: GridCell, appendRange?: boolean): void;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
@@ -21,7 +21,7 @@ export interface IRangeController {
 export interface RangeSelection {
     start: GridCell;
     end: GridCell;
-    columns: Column[];
+    columns: Column[] | null;
 }
 
 export interface AddRangeSelectionParams {
@@ -29,6 +29,6 @@ export interface AddRangeSelectionParams {
     floatingStart: string;
     rowEnd: number;
     floatingEnd: string;
-    columnStart: string|Column;
-    columnEnd: string|Column;
+    columnStart: string | Column;
+    columnEnd: string | Column;
 }

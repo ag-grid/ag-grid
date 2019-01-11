@@ -12,7 +12,7 @@ if ($generated) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style> html, body, #root { margin: 0; padding: 0; height: 100%; } </style>
-<?php renderExampleExtras($_GET) ?>
+<?php renderExampleExtras($_GET); ?>
 <?php renderStyles($example['styles']); ?>
 <?php renderNonGeneratedScripts($example['scripts']); ?>
 </head>
@@ -22,7 +22,7 @@ if ($generated) {
     <script>
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
-        var systemJsMap = <?= json_encode($systemJsMap) ?>
+        var systemJsMap = <?= json_encode($systemJsMap); ?>
     </script>
 
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>

@@ -114,29 +114,28 @@ each column entry specifies the header label and the data field to be displayed 
 <h2>Enable Sorting And Filtering</h2>
 
 <p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? 
-Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is add <code>enableSorting</code> to the <code>gridOptions</code>.</p> 
+Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is add <code>sortable</code> to each column.</p>
 
 <snippet language="js">
-    var gridOptions = {
-      columnDefs: columnDefs,
-      rowData: rowData,
-      enableSorting: true
-    };
+var columnDefs = [
+    {headerName: "Make", field: "make", sortable=true },
+    {headerName: "Model", field: "model", sortable=true },
+    {headerName: "Price", field: "price", sortable=true }
+];
 </snippet>
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
 <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this filtering is your friend.</p>
 
-<p>As with sorting, enabling filtering is as easy as adding the <code>enableFilter</code> property:</p>
+<p>As with sorting, enabling filtering is as easy as adding the <code>filter</code> property:</p>
 
 <snippet language="js">
-    var gridOptions = {
-      columnDefs: columnDefs,
-      rowData: rowData,
-      enableSorting: true,
-      enableFilter: true
-    };
+var columnDefs = [
+    {headerName: "Make", field: "make", sortable=true, filter=true },
+    {headerName: "Model", field: "model", sortable=true, filter=true },
+    {headerName: "Price", field: "price", sortable=true, filter=true }
+];
 </snippet>
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
@@ -172,13 +171,10 @@ Notice that the actual data fetching is performed outside of the grid component 
       {headerName: &quot;Price&quot;, field: &quot;price&quot;}
     ];
 
-    // let the grid know which columns and what data to use
+    // let the grid know which columns to use
     var gridOptions = {
-      columnDefs: columnDefs,
-      enableSorting: true,
-      enableFilter: true
+      columnDefs: columnDefs
     };
-
 
   // lookup the container we want the Grid to use
   var eGridDiv = document.querySelector('#myGrid');
@@ -186,7 +182,7 @@ Notice that the actual data fetching is performed outside of the grid component 
   // create the grid passing in the div to use together with the columns &amp; data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
   
-  fetch('https://api.myjson.com/bins/15psn9').then(function(response) {
+  fetch('https://api.myjson.com/bins/ly7d1').then(function(response) {
     return response.json();
   }).then(function(data) {
     gridOptions.api.setRowData(data);
@@ -219,8 +215,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
     // let the grid know which columns and what data to use
     var gridOptions = {
       columnDefs: columnDefs,
-      enableSorting: true,
-      enableFilter: true,
       rowSelection: 'multiple'
     };
 </snippet>
@@ -259,8 +253,8 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 <p>In addition to filtering and sorting, <a href="../javascript-grid-grouping">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
 <snippet language="diff">
--        fetch('https://api.myjson.com/bins/15psn9')
-+        fetch('https://api.myjson.com/bins/ly7d1')
+-        fetch('https://api.myjson.com/bins/ly7d1')
++        fetch('https://api.myjson.com/bins/15psn9')
 </snippet>
 
 <p>Now, let's use ag-grid-enterprise! Replace the ag-grid script reference in the <code>head</code> with this one:</p>
@@ -277,7 +271,7 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 
 <snippet language="js">
 var columnDefs = [
-    {headerName: "Make", field: "make", rowGroupIndex: 0 },
+    {headerName: "Make", field: "make", rowGroup: true },
     {headerName: "Price", field: "price"}
 ];
 
@@ -293,8 +287,6 @@ var autoGroupColumnDef = {
 // let the grid know which columns and what data to use
 var gridOptions = {
     columnDefs: columnDefs,
-    enableSorting: true,
-    enableFilter: true,
     autoGroupColumnDef: autoGroupColumnDef,
     groupSelectsChildren: true,
     rowSelection: 'multiple'
@@ -323,7 +315,7 @@ var gridOptions = {
   &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
     // specify the columns
     var columnDefs = [
-      {headerName: &quot;Make&quot;, field: &quot;make&quot;, rowGroupIndex: 0 },
+      {headerName: &quot;Make&quot;, field: &quot;make&quot;, rowGroup: true },
       {headerName: &quot;Price&quot;, field: &quot;price&quot;}
     ];
 
@@ -339,8 +331,6 @@ var gridOptions = {
     // let the grid know which columns and what data to use
     var gridOptions = {
       columnDefs: columnDefs,
-      enableSorting: true,
-      enableFilter: true,
       autoGroupColumnDef: autoGroupColumnDef,
       groupSelectsChildren: true,
       rowSelection: 'multiple'
@@ -352,7 +342,7 @@ var gridOptions = {
   // create the grid passing in the div to use together with the columns &amp; data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
   
-  fetch('https://api.myjson.com/bins/ly7d1').then(function(response) {
+  fetch('https://api.myjson.com/bins/15psn9').then(function(response) {
     return response.json();
   }).then(function(data) {
     gridOptions.api.setRowData(data);
@@ -391,7 +381,7 @@ While doing so, we learned how to configure the grid and how how to use its api 
 </div>
 
 <div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

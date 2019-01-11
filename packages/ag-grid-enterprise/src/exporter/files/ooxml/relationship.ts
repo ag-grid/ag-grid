@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelRelationship} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelRelationship } from 'ag-grid-community';
 
 const relationshipFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelRelationship) {

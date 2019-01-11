@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,8 +16,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var utils_1 = require("../utils");
 var SelectableService = /** @class */ (function () {
     function SelectableService() {
     }
@@ -54,7 +54,7 @@ var SelectableService = /** @class */ (function () {
             }
             else {
                 // directly retrieve selectable value from user callback
-                rowSelectable = _this.isRowSelectableFunc(child);
+                rowSelectable = _this.isRowSelectableFunc ? _this.isRowSelectableFunc(child) : false;
             }
             child.setRowSelectable(rowSelectable);
         });

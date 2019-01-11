@@ -33,9 +33,11 @@ function onClicked() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableFilter: true,
     components: {
         partialMatchFilter: PartialMatchFilter
     }

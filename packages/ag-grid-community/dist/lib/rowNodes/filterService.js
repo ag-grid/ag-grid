@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,15 +24,15 @@ var FilterService = /** @class */ (function () {
     FilterService.prototype.postConstruct = function () {
         this.doingTreeData = this.gridOptionsWrapper.isTreeData();
     };
-    FilterService.prototype.filterAccordingToColumnState = function (rowNode) {
+    FilterService.prototype.filter = function (rowNode) {
         var filterActive = this.filterManager.isAnyFilterPresent();
-        this.filter(rowNode, filterActive);
+        this.filterNode(rowNode, filterActive);
     };
-    FilterService.prototype.filter = function (rowNode, filterActive) {
+    FilterService.prototype.filterNode = function (rowNode, filterActive) {
         var _this = this;
         // recursively get all children that are groups to also filter
         if (rowNode.hasChildren()) {
-            rowNode.childrenAfterGroup.forEach(function (node) { return _this.filter(node, filterActive); });
+            rowNode.childrenAfterGroup.forEach(function (node) { return _this.filterNode(node, filterActive); });
             // result of filter for this node
             if (filterActive) {
                 rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(function (childNode) {

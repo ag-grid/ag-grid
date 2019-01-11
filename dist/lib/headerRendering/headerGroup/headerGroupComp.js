@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -29,13 +29,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
-var utils_1 = require("../../utils");
 var columnController_1 = require("../../columnController/columnController");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var context_1 = require("../../context/context");
 var touchListener_1 = require("../../widgets/touchListener");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var originalColumnGroup_1 = require("../../entities/originalColumnGroup");
+var utils_1 = require("../../utils");
 var HeaderGroupComp = /** @class */ (function (_super) {
     __extends(HeaderGroupComp, _super);
     function HeaderGroupComp() {
@@ -52,7 +52,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addInIcon("columnGroupOpened", "agOpened");
         this.addInIcon("columnGroupClosed", "agClosed");
         var expandAction = function (event) {
-            if (utils_1.Utils.isStopPropagationForAgGrid(event)) {
+            if (utils_1._.isStopPropagationForAgGrid(event)) {
                 return;
             }
             var newExpandedValue = !_this.params.columnGroup.isExpanded();
@@ -61,7 +61,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
         var stopPropagationAction = function (event) {
-            utils_1.Utils.stopPropagationForAgGrid(event);
+            utils_1._.stopPropagationForAgGrid(event);
         };
         // adding stopPropagation to the double click for the icons prevents double click action happening
         // when the icons are clicked. if the icons are double clicked, then the groups should open and
@@ -86,22 +86,22 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         var columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             var expanded = this.params.columnGroup.isExpanded();
-            utils_1.Utils.setVisible(this.eOpenIcon, !expanded);
-            utils_1.Utils.setVisible(this.eCloseIcon, expanded);
+            utils_1._.setVisible(this.eOpenIcon, !expanded);
+            utils_1._.setVisible(this.eCloseIcon, expanded);
         }
         else {
-            utils_1.Utils.setVisible(this.eOpenIcon, false);
-            utils_1.Utils.setVisible(this.eCloseIcon, false);
+            utils_1._.setVisible(this.eOpenIcon, false);
+            utils_1._.setVisible(this.eCloseIcon, false);
         }
     };
     HeaderGroupComp.prototype.addInIcon = function (iconName, refName) {
-        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
+        var eIcon = utils_1._.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
         this.getRefElement(refName).appendChild(eIcon);
     };
     HeaderGroupComp.prototype.addGroupExpandIcon = function () {
         if (!this.params.columnGroup.isExpandable()) {
-            utils_1.Utils.setVisible(this.eOpenIcon, false);
-            utils_1.Utils.setVisible(this.eCloseIcon, false);
+            utils_1._.setVisible(this.eOpenIcon, false);
+            utils_1._.setVisible(this.eCloseIcon, false);
             return;
         }
     };

@@ -1,12 +1,12 @@
-import {Utils as _} from "../../utils";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {RowNode} from "../../entities/rowNode";
-import {Autowired, Context, PostConstruct} from "../../context/context";
-import {IGetRowsParams} from "../iDatasource";
-import {IEventEmitter} from "../../interfaces/iEventEmitter";
-import {InfiniteCacheParams} from "./infiniteCache";
-import {RowNodeBlock} from "../cache/rowNodeBlock";
-import {RowRenderer} from "../../rendering/rowRenderer";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { RowNode } from "../../entities/rowNode";
+import { Autowired, Context, PostConstruct } from "../../context/context";
+import { IGetRowsParams } from "../iDatasource";
+import { IEventEmitter } from "../../interfaces/iEventEmitter";
+import { InfiniteCacheParams } from "./infiniteCache";
+import { RowNodeBlock } from "../cache/rowNodeBlock";
+import { RowRenderer } from "../../rendering/rowRenderer";
+import { _ } from "../../utils";
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 
@@ -23,7 +23,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     }
 
     protected createBlankRowNode(rowIndex: number): RowNode {
-        let rowNode = super.createBlankRowNode(rowIndex);
+        const rowNode = super.createBlankRowNode(rowIndex);
 
         rowNode.uiLevel = 0;
 
@@ -74,7 +74,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         // is executing before the sort is set up, so server is not getting the sort
         // model. need to change with regards order - so the server side request is
         // AFTER thus it gets the right sort model.
-        let params: IGetRowsParams = {
+        const params: IGetRowsParams = {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
@@ -90,14 +90,14 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         }
 
         // check if old version of datasource used
-        let getRowsParams = _.getFunctionParameters(this.cacheParams.datasource.getRows);
+        const getRowsParams = _.getFunctionParameters(this.cacheParams.datasource.getRows);
         if (getRowsParams.length > 1) {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
         }
 
         // put in timeout, to force result to be async
-        setTimeout(()=> {
+        window.setTimeout(() => {
             this.cacheParams.datasource.getRows(params);
         }, 0);
 

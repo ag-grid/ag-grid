@@ -1,5 +1,5 @@
-import {XmlElement} from 'ag-grid-community';
-import {ExcelXMLTemplate} from 'ag-grid-community';
+import { XmlElement } from 'ag-grid-community';
+import { ExcelXMLTemplate } from 'ag-grid-community';
 
 const documentProperties: ExcelXMLTemplate = {
     getTemplate(): XmlElement {

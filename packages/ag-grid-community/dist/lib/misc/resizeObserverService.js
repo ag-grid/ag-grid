@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,9 +15,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var utils_1 = require("../utils");
 var ResizeObserverService = /** @class */ (function () {
     function ResizeObserverService() {
     }
@@ -31,14 +31,14 @@ var ResizeObserverService = /** @class */ (function () {
         };
         var usePolyfill = function () {
             // initialise to the current width and height, so first call will have no changes
-            var widthLastTime = utils_1.Utils.offsetWidth(element);
-            var heightLastTime = utils_1.Utils.offsetHeight(element);
+            var widthLastTime = utils_1._.offsetWidth(element);
+            var heightLastTime = utils_1._.offsetHeight(element);
             // when finished, this gets turned to false.
             var running = true;
             var periodicallyCheckWidthAndHeight = function () {
                 if (running) {
-                    var newWidth = utils_1.Utils.offsetWidth(element);
-                    var newHeight = utils_1.Utils.offsetHeight(element);
+                    var newWidth = utils_1._.offsetWidth(element);
+                    var newHeight = utils_1._.offsetHeight(element);
                     var changed = newWidth !== widthLastTime || newHeight !== heightLastTime;
                     if (changed) {
                         widthLastTime = newWidth;

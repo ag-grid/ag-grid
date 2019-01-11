@@ -1,31 +1,28 @@
 const gulp = require('gulp');
-const babel = require('gulp-babel');
-const rename = require('gulp-rename');
+const gulpTypescript = require('gulp-typescript');
+const typescript = require('typescript');
+const merge = require('merge2');
 
-gulp.task('default', ['src', 'exports']);
+gulp.task('default', ['src']);
 
-gulp.task('src', () =>
-    gulp.src('src/*.js')
-        .pipe(babel({
-            presets: ['@babel/env']
-        }))
-        .pipe(gulp.dest('dist'))
-);
+gulp.task('src', () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig-lib.json');
 
-gulp.task('exports', () => {
-    return gulp.src('./exports.js')
-        .pipe(babel({
-            presets: ['@babel/env']
-        }))
-        .pipe(rename('main.js'))
-        .pipe(gulp.dest('./'));
+    const tsResult = gulp
+        .src('./src/**/*.ts', {typescript: typescript})
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.dts
+            .pipe(gulp.dest('./lib')),
+        tsResult.js
+            .pipe(gulp.dest('./lib'))
+    ]);
 });
 
 gulp.task('watch', ['src'], () => {
     gulp.watch([
-        './src/*',
-        './node_modules/ag-grid-community/dist/lib/**/*'],
-    ['src']);
+            './src/*',
+            './node_modules/ag-grid-community/dist/lib/**/*'],
+        ['src']);
 });
-
-

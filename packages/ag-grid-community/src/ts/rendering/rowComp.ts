@@ -1,8 +1,7 @@
-import {_} from "../utils";
-import {CellComp} from "./cellComp";
-import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Column} from "../entities/column";
+import { CellComp } from "./cellComp";
+import { CellChangedEvent, DataChangedEvent, RowNode } from "../entities/rowNode";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Column } from "../entities/column";
 import {
     Events,
     RowClickedEvent,
@@ -13,14 +12,19 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import {Autowired} from "../context/context";
-import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {RowContainerComponent} from "./rowContainerComponent";
-import {Component} from "../widgets/component";
-import {RefSelector} from "../widgets/componentAnnotations";
-import {Beans} from "./beans";
-import {ProcessRowParams} from "../entities/gridOptions";
-import {Constants} from "../constants";
+import { Autowired } from "../context/context";
+import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
+import { RowContainerComponent } from "./rowContainerComponent";
+import { Component } from "../widgets/component";
+import { RefSelector } from "../widgets/componentAnnotations";
+import { Beans } from "./beans";
+import { ProcessRowParams } from "../entities/gridOptions";
+import { _ } from "../utils";
+
+interface CellTemplate {
+    template: string;
+    cellComps: CellComp[];
+}
 
 export class LoadingCellRenderer extends Component {
 
@@ -40,10 +44,10 @@ export class LoadingCellRenderer extends Component {
     }
 
     public init(params: ICellRendererParams): void {
-        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
+        const eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         this.eLoadingIcon.appendChild(eLoadingIcon);
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
 
@@ -101,6 +105,8 @@ export class RowComp extends Component {
     private editingRow: boolean;
     private rowFocused: boolean;
 
+    private rowContainerReadyCount = 0;
+    private refreshNeeded = false;
     private columnRefreshPending = false;
 
     private cellComps: {[key: string]: CellComp} = {};
@@ -173,31 +179,26 @@ export class RowComp extends Component {
         this.addListeners();
 
         if (this.slideRowIn) {
-            this.createSecondPassFuncs.push( () => {
+            this.createSecondPassFuncs.push(() => {
                 this.onTopChanged();
             });
         }
         if (this.fadeRowIn) {
-            this.createSecondPassFuncs.push( () => {
+            this.createSecondPassFuncs.push(() => {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
     }
 
     private createTemplate(contents: string, extraCssClass: string = null): string {
-        let templateParts: string[] = [];
-
-        let rowHeight = this.rowNode.rowHeight;
-        let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
-
-        let rowIdSanitised = _.escape(this.rowNode.id);
-
-        let userRowStyles = this.preProcessStylesFromGridOptions();
-
-        let businessKey = this.getRowBusinessKey();
-        let businessKeySanitised = _.escape(businessKey);
-
-        let rowTopStyle = this.getInitialRowTopStyle();
+        const templateParts: string[] = [];
+        const rowHeight = this.rowNode.rowHeight;
+        const rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
+        const rowIdSanitised = _.escape(this.rowNode.id);
+        const userRowStyles = this.preProcessStylesFromGridOptions();
+        const businessKey = this.getRowBusinessKey();
+        const businessKeySanitised = _.escape(businessKey);
+        const rowTopStyle = this.getInitialRowTopStyle();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
@@ -210,44 +211,40 @@ export class RowComp extends Component {
 
         // add in the template for the cells
         templateParts.push(contents);
-
         templateParts.push(`</div>`);
 
         return templateParts.join('');
     }
 
     public getCellForCol(column: Column): HTMLElement {
-        let cellComp = this.cellComps[column.getColId()];
-        if (cellComp) {
-            return cellComp.getGui();
-        } else {
-            return null;
-        }
+        const cellComp = this.cellComps[column.getColId()];
+
+        return cellComp ? cellComp.getGui() : null;
     }
 
     public afterFlush(): void {
-        if (!this.initialised) {
-            this.initialised = true;
-            this.executeProcessRowPostCreateFunc();
-        }
+        if (this.initialised) { return; }
+
+        this.initialised = true;
+        this.executeProcessRowPostCreateFunc();
     }
 
     private executeProcessRowPostCreateFunc(): void {
-        let func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
-        if (func) {
-            let params: ProcessRowParams = {
-                eRow: this.eBodyRow,
-                ePinnedLeftRow: this.ePinnedLeftRow,
-                ePinnedRightRow: this.ePinnedRightRow,
-                node: this.rowNode,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                rowIndex: this.rowNode.rowIndex,
-                addRenderedRowListener: this.addEventListener.bind(this),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-                context: this.beans.gridOptionsWrapper.getContext()
-            };
-            func(params);
-        }
+        const func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
+        if (!func) { return; }
+
+        const params: ProcessRowParams = {
+            eRow: this.eBodyRow,
+            ePinnedLeftRow: this.ePinnedLeftRow,
+            ePinnedRightRow: this.ePinnedRightRow,
+            node: this.rowNode,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            rowIndex: this.rowNode.rowIndex,
+            addRenderedRowListener: this.addEventListener.bind(this),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext()
+        };
+        func(params);
     }
 
     private getInitialRowTopStyle() {
@@ -255,84 +252,93 @@ export class RowComp extends Component {
         if (this.printLayout) { return ''; }
 
         // if sliding in, we take the old row top. otherwise we just set the current row top.
-        let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-        let afterPaginationPixels = this.applyPaginationOffset(pixels);
-        let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+        const afterPaginationPixels = this.applyPaginationOffset(pixels);
+        const afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
 
-        if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
-            return `top: ${afterScalingPixels}px; `;
-        } else {
-            return `transform: translateY(${afterScalingPixels}px); `;
-        }
+        return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
     }
 
     private getRowBusinessKey(): string {
-        if (typeof this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
-            let businessKey = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
-            return businessKey;
-        }
+        const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
+        if (typeof businessKeyForNodeFunc !== 'function') { return ; }
+
+        return businessKeyForNodeFunc(this.rowNode);
+    }
+
+    private areAllContainersReady(): boolean {
+        return this.rowContainerReadyCount === 3;
     }
 
     private lazyCreateCells(cols: Column[], eRow: HTMLElement): void {
-        if (this.active) {
-            let cellTemplatesAndComps = this.createCells(cols);
-            eRow.innerHTML = cellTemplatesAndComps.template;
-            this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+        if (!this.active) { return; }
+
+        const cellTemplatesAndComps = this.createCells(cols);
+        eRow.innerHTML = cellTemplatesAndComps.template;
+        this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+
+        this.rowContainerReadyCount++;
+
+        if (this.areAllContainersReady() && this.refreshNeeded) {
+            this.refreshCells();
         }
     }
 
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
                                callback: (eRow: HTMLElement) => void): void {
 
-        let cellTemplatesAndComps: {template: string, cellComps: CellComp[]};
-        if (this.useAnimationFrameForCreate) {
-            cellTemplatesAndComps = {cellComps: [], template: ''};
-        } else {
-            cellTemplatesAndComps = this.createCells(cols);
-        }
+        const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
+        const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? {cellComps: [], template: ''} : this.createCells(cols);
+        const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
 
-        let rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
-        rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
-            let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
+        // the RowRenderer is probably inserting many rows. rather than inserting each template one
+        // at a time, the grid inserts all rows together - so the callback here is called by the
+        // rowRenderer when all RowComps are created, then all the HTML is inserted in one go,
+        // and then all the callbacks are called. this is NOT done in an animation frame.
+        rowContainerComp.appendRowTemplate(rowTemplate, () => {
+            const eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
             this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
 
-            if (this.useAnimationFrameForCreate) {
-                this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow));
+            // console.log(`createRowContainer ${this.getCompId()}`);
+
+            if (useAnimationsFrameForCreate) {
+                this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow), this.rowNode.rowIndex);
             } else {
                 this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+                this.rowContainerReadyCount = 3;
             }
         });
     }
 
     private createChildScopeOrNull(data: any) {
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            let newChildScope = this.parentScope.$new();
-            newChildScope.data = data;
-            newChildScope.rowNode = this.rowNode;
-            newChildScope.context = this.beans.gridOptionsWrapper.getContext();
+        const isAngularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
 
-            this.addDestroyFunc(() => {
-                newChildScope.$destroy();
-                newChildScope.data = null;
-                newChildScope.rowNode = null;
-                newChildScope.context = null;
-            });
-
-            return newChildScope;
-        } else {
+        if (!isAngularCompileRows) {
             return null;
         }
+
+        const newChildScope = this.parentScope.$new();
+        newChildScope.data = data;
+        newChildScope.rowNode = this.rowNode;
+        newChildScope.context = this.beans.gridOptionsWrapper.getContext();
+
+        this.addDestroyFunc(() => {
+            newChildScope.$destroy();
+            newChildScope.data = null;
+            newChildScope.rowNode = null;
+            newChildScope.context = null;
+        });
+
+        return newChildScope;
     }
 
     private setupRowContainers(): void {
-
-        let isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
-        let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
-
-        let isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
-
-        let isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
+        const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
+        const isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+        const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
+        const isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
 
         if (this.rowNode.stub) {
             this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME);
@@ -368,11 +374,9 @@ export class RowComp extends Component {
     }
 
     private createFullWidthRows(type: string, name: string): void {
-
         this.fullWidthRow = true;
 
         if (this.embedFullWidth) {
-
             this.createFullWidthRowContainer(this.bodyContainerComp, null,
                 null, type, name,
                 (eRow: HTMLElement) => {
@@ -384,7 +388,6 @@ export class RowComp extends Component {
 
             // printLayout doesn't put components into the pinned sections
             if (!this.printLayout) {
-
                 this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Column.PINNED_LEFT,
                     'ag-cell-last-left-pinned', type, name,
                     (eRow: HTMLElement) => {
@@ -401,11 +404,8 @@ export class RowComp extends Component {
                     (cellRenderer: ICellRendererComp) => {
                         this.fullWidthRowComponentRight = cellRenderer;
                     });
-
             }
-
         } else {
-
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.createFullWidthRowContainer(this.fullWidthContainerComp, null,
@@ -415,13 +415,14 @@ export class RowComp extends Component {
                 },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponent = cellRenderer;
-                });
+                }
+            );
         }
     }
 
     private setAnimateFlags(animateIn: boolean): void {
         if (animateIn) {
-            let oldRowTopExists = _.exists(this.rowNode.oldRowTop);
+            const oldRowTopExists = _.exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
             // if the row had no previous position, we fade it in (animate
@@ -454,7 +455,7 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
-        let eventService = this.beans.eventService;
+        const eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
@@ -468,8 +469,7 @@ export class RowComp extends Component {
     // when grid columns change, then all cells should be cleaned out,
     // as the new columns could have same id as the previous columns and may conflict
     private onGridColumnsChanged(): void {
-        let allRenderedCellIds = Object.keys(this.cellComps);
-        this.removeRenderedCells(allRenderedCellIds);
+        this.removeRenderedCells(Object.keys(this.cellComps));
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
@@ -511,22 +511,22 @@ export class RowComp extends Component {
     }
 
     private postProcessRowDragging(): void {
-        let dragging = this.rowNode.dragging;
-        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-dragging', dragging) );
+        const dragging = this.rowNode.dragging;
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-dragging', dragging));
     }
 
     private onExpandedChanged(): void {
         if (this.rowNode.group && !this.rowNode.footer) {
-            let expanded = this.rowNode.expanded;
-            this.eAllRowContainers.forEach( row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded));
-            this.eAllRowContainers.forEach( row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded));
+            const expanded = this.rowNode.expanded;
+            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded));
+            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded));
         }
     }
 
     private onDisplayedColumnsChanged(): void {
-        if (!this.fullWidthRow) {
-            this.refreshCells();
-        }
+        if (this.fullWidthRow) { return; }
+
+        this.refreshCells();
     }
 
     private destroyFullWidthComponents(): void {
@@ -565,30 +565,35 @@ export class RowComp extends Component {
     }
 
     private onVirtualColumnsChanged(): void {
-        if (!this.fullWidthRow) {
-            this.refreshCells();
-        }
+        if (this.fullWidthRow) { return; }
+
+        this.refreshCells();
     }
 
     private onColumnResized(): void {
-        if (!this.fullWidthRow) {
-            this.refreshCells();
-        }
+        if (this.fullWidthRow) { return; }
+
+        this.refreshCells();
     }
 
     private refreshCells() {
-        let suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
-        let skipAnimationFrame = suppressAnimationFrame || this.printLayout;
+        if (!this.areAllContainersReady()) {
+            this.refreshNeeded = true;
+            return;
+        }
+
+        const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
+        const skipAnimationFrame = suppressAnimationFrame || this.printLayout;
+
         if (skipAnimationFrame) {
             this.refreshCellsInAnimationFrame();
         } else {
             if (this.columnRefreshPending) { return; }
-            this.beans.taskQueue.addP1Task(this.refreshCellsInAnimationFrame.bind(this));
+            this.beans.taskQueue.addP1Task(this.refreshCellsInAnimationFrame.bind(this), this.rowNode.rowIndex);
         }
     }
 
     private refreshCellsInAnimationFrame() {
-
         if (!this.active) { return; }
         this.columnRefreshPending = false;
 
@@ -610,22 +615,22 @@ export class RowComp extends Component {
         this.insertCellsIntoContainer(this.ePinnedLeftRow, leftCols);
         this.insertCellsIntoContainer(this.ePinnedRightRow, rightCols);
 
-        let colIdsToRemove = Object.keys(this.cellComps);
-        centerCols.forEach( (col: Column) => _.removeFromArray(colIdsToRemove, col.getId()));
-        leftCols.forEach( (col: Column) => _.removeFromArray(colIdsToRemove, col.getId()));
-        rightCols.forEach( (col: Column) => _.removeFromArray(colIdsToRemove, col.getId()));
+        const colIdsToRemove = Object.keys(this.cellComps);
+        centerCols.forEach(col => _.removeFromArray(colIdsToRemove, col.getId()));
+        leftCols.forEach(col => _.removeFromArray(colIdsToRemove, col.getId()));
+        rightCols.forEach(col => _.removeFromArray(colIdsToRemove, col.getId()));
 
         // we never remove editing cells, as this would cause the cells to loose their values while editing
         // as the grid is scrolling horizontally.
-        colIdsToRemove = _.filter(colIdsToRemove, this.isCellEligibleToBeRemoved.bind(this));
+        const eligibleToBeRemoved = _.filter(colIdsToRemove, this.isCellEligibleToBeRemoved.bind(this));
 
         // remove old cells from gui, but we don't destroy them, we might use them again
-        this.removeRenderedCells(colIdsToRemove);
+        this.removeRenderedCells(eligibleToBeRemoved);
     }
 
     private removeRenderedCells(colIds: string[]): void {
-        colIds.forEach( (key: string)=> {
-            let cellComp = this.cellComps[key];
+        colIds.forEach((key: string) => {
+            const cellComp = this.cellComps[key];
             // could be old reference, ie removed cell
             if (_.missing(cellComp)) { return; }
 
@@ -636,11 +641,11 @@ export class RowComp extends Component {
     }
 
     private isCellEligibleToBeRemoved(indexStr: string): boolean {
-        let displayedColumns = this.beans.columnController.getAllDisplayedColumns();
+        const displayedColumns = this.beans.columnController.getAllDisplayedColumns();
 
-        let REMOVE_CELL: boolean = true;
-        let KEEP_CELL: boolean = false;
-        let renderedCell = this.cellComps[indexStr];
+        const REMOVE_CELL = true;
+        const KEEP_CELL = false;
+        const renderedCell = this.cellComps[indexStr];
 
         if (!renderedCell) { return REMOVE_CELL; }
 
@@ -648,32 +653,33 @@ export class RowComp extends Component {
         if (this.isCellInWrongRow(renderedCell)) { return REMOVE_CELL; }
 
         // we want to try and keep editing and focused cells
-        let editing = renderedCell.isEditing();
-        let focused = this.beans.focusedCellController.isCellFocused(renderedCell.getGridCell());
+        const editing = renderedCell.isEditing();
+        const focused = this.beans.focusedCellController.isCellFocused(renderedCell.getGridCell());
 
-        let mightWantToKeepCell = editing || focused;
+        const mightWantToKeepCell = editing || focused;
 
         if (mightWantToKeepCell) {
-            let column = renderedCell.getColumn();
-            let cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+            const column = renderedCell.getColumn();
+            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
-        } else {
-            return REMOVE_CELL;
         }
+
+        return REMOVE_CELL;
+
     }
 
     private ensureCellInCorrectContainer(cellComp: CellComp): void {
         // for print layout, we always put cells into centre, otherwise we put in correct pinned section
         if (this.printLayout) { return; }
 
-        let element = cellComp.getGui();
-        let column = cellComp.getColumn();
-        let pinnedType = column.getPinned();
-        let eContainer = this.getContainerForCell(pinnedType);
+        const element = cellComp.getGui();
+        const column = cellComp.getColumn();
+        const pinnedType = column.getPinned();
+        const eContainer = this.getContainerForCell(pinnedType);
 
         // if in wrong container, remove it
-        let eOldContainer = cellComp.getParentRow();
-        let inWrongRow = eOldContainer !== eContainer;
+        const eOldContainer = cellComp.getParentRow();
+        const inWrongRow = eOldContainer !== eContainer;
         if (inWrongRow) {
             // take out from old row
             if (eOldContainer) {
@@ -686,50 +692,49 @@ export class RowComp extends Component {
     }
 
     private isCellInWrongRow(cellComp: CellComp): boolean {
-        let column = cellComp.getColumn();
-        let rowWeWant = this.getContainerForCell(column.getPinned());
+        const column = cellComp.getColumn();
+        const rowWeWant = this.getContainerForCell(column.getPinned());
 
         // if in wrong container, remove it
-        let oldRow = cellComp.getParentRow();
+        const oldRow = cellComp.getParentRow();
         return oldRow !== rowWeWant;
     }
 
     private insertCellsIntoContainer(eRow: HTMLElement, cols: Column[]): void {
         if (!eRow) { return; }
 
-        let cellTemplates: string[] = [];
-        let newCellComps: CellComp[] = [];
+        const cellTemplates: string[] = [];
+        const newCellComps: CellComp[] = [];
 
-        cols.forEach( col => {
+        cols.forEach(col => {
+            const colId = col.getId();
+            const existingCell = this.cellComps[colId];
 
-            let colId = col.getId();
-            let oldCell = this.cellComps[colId];
-
-            if (oldCell) {
-                this.ensureCellInCorrectContainer(oldCell);
+            if (existingCell) {
+                this.ensureCellInCorrectContainer(existingCell);
             } else {
                 this.createNewCell(col, eRow, cellTemplates, newCellComps);
             }
 
         });
 
-        if (cellTemplates.length>0) {
+        if (cellTemplates.length > 0) {
             _.appendHtml(eRow, cellTemplates.join(''));
             this.callAfterRowAttachedOnCells(newCellComps, eRow);
         }
     }
 
     private addDomData(eRowContainer: Element): void {
-        let gow = this.beans.gridOptionsWrapper;
+        const gow = this.beans.gridOptionsWrapper;
         gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
-        this.addDestroyFunc( ()=> {
+        this.addDestroyFunc(() => {
             gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null); }
         );
     }
 
     private createNewCell(col: Column, eContainer: HTMLElement, cellTemplates: string[], newCellComps: CellComp[]): void {
-        let newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this, false, this.printLayout);
-        let cellTemplate = newCellComp.getCreateTemplate();
+        const newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this, false, this.printLayout);
+        const cellTemplate = newCellComp.getCreateTemplate();
         cellTemplates.push(cellTemplate);
         newCellComps.push(newCellComp);
         this.cellComps[col.getId()] = newCellComp;
@@ -758,73 +763,58 @@ export class RowComp extends Component {
     }
 
     private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
-        let event = this.createRowEvent(type, domEvent);
+        const event = this.createRowEvent(type, domEvent);
         // when first developing this, we included the rowComp in the event.
         // this seems very weird. so when introducing the event types, i left the 'source'
         // out of the type, and just include the source in the two places where this event
         // was fired (rowClicked and rowDoubleClicked). it doesn't make sense for any
         // users to be using this, as the rowComp isn't an object we expose, so would be
         // very surprising if a user was using it.
-        (<any>event).source = this;
+        (event as any).source = this;
         return event;
     }
 
     private onRowDblClick(mouseEvent: MouseEvent): void {
         if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
-        let agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
+        const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
+        const stop = _.isStopPropagationForAgGrid(mouseEvent);
+        if (stop) { return; }
 
-        let stop = _.isStopPropagationForAgGrid(mouseEvent);
-        if (stop) {
-            return;
-        }
-
-        let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
+        const agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
 
         this.beans.eventService.dispatchEvent(agEvent);
 
         // ctrlKey for windows, metaKey for Apple
-        let multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        const multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        const shiftKeyPressed = mouseEvent.shiftKey;
 
-        let shiftKeyPressed = mouseEvent.shiftKey;
-
-        // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
-        // so return if it's a group row
-        if (this.rowNode.group) {
+        if (
+            // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
+            // so return if it's a group row
+            this.rowNode.group ||
+            // this is needed so we don't unselect other rows when we click this row, eg if this row is not selectable,
+            // and we click it, the selection should not change (ie any currently selected row should stay selected)
+            !this.rowNode.selectable ||
+            // we also don't allow selection of pinned rows
+            this.rowNode.rowPinned ||
+            // if no selection method enabled, do nothing
+            !this.beans.gridOptionsWrapper.isRowSelection() ||
+            // if click selection suppressed, do nothing
+            this.beans.gridOptionsWrapper.isSuppressRowClickSelection()
+        ) {
             return;
         }
 
-        // this is needed so we don't unselect other rows when we click this row, eg if this row is not selectable,
-        // and we click it, the selection should not change (ie any currently selected row should stay selected)
-        if (!this.rowNode.selectable) {
-            return;
-        }
-
-        // we also don't allow selection of pinned rows
-        if (this.rowNode.rowPinned) {
-            return;
-        }
-
-        // if no selection method enabled, do nothing
-        if (!this.beans.gridOptionsWrapper.isRowSelection()) {
-            return;
-        }
-
-        // if click selection suppressed, do nothing
-        if (this.beans.gridOptionsWrapper.isSuppressRowClickSelection()) {
-            return;
-        }
-
-        let multiSelectOnClick = this.beans.gridOptionsWrapper.isRowMultiSelectWithClick();
-        let rowDeselectionWithCtrl = this.beans.gridOptionsWrapper.isRowDeselection();
+        const multiSelectOnClick = this.beans.gridOptionsWrapper.isRowMultiSelectWithClick();
+        const rowDeselectionWithCtrl = this.beans.gridOptionsWrapper.isRowDeselection();
 
         if (this.rowNode.isSelected()) {
-
             if (multiSelectOnClick) {
                 this.rowNode.setSelectedParams({newValue: false});
             } else if (multiSelectKeyPressed) {
@@ -836,7 +826,7 @@ export class RowComp extends Component {
                 this.rowNode.setSelectedParams({newValue: true, clearSelection: true});
             }
         } else {
-            let clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
+            const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
             this.rowNode.setSelectedParams({newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed});
         }
     }
@@ -846,16 +836,15 @@ export class RowComp extends Component {
                                         eRowCallback: (eRow: HTMLElement) => void,
                                         cellRendererCallback: (comp: ICellRendererComp) => void): void {
 
-        let rowTemplate = this.createTemplate('', extraCssClass);
-        rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
+        const rowTemplate = this.createTemplate('', extraCssClass);
+        rowContainerComp.appendRowTemplate(rowTemplate, () => {
 
-            let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
+            const eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
+            const params = this.createFullWidthParams(eRow, pinned);
 
-            let params = this.createFullWidthParams(eRow, pinned);
-
-            let callback = (cellRenderer: ICellRendererComp)=> {
+            const callback = (cellRenderer: ICellRendererComp) => {
                 if (this.isAlive()) {
-                    let gui = cellRenderer.getGui();
+                    const gui = cellRenderer.getGui();
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
                 } else {
@@ -865,7 +854,7 @@ export class RowComp extends Component {
                 }
             };
 
-            let res = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType, params, cellRendererName);
+            const res = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType, params, cellRendererName);
             if (!res) {
                 console.error('ag-Grid: fullWidthCellRenderer not defined');
                 return;
@@ -880,18 +869,19 @@ export class RowComp extends Component {
     }
 
     private angular1Compile(element: Element): void {
-        if (this.scope) {
-            this.beans.$compile(element)(this.scope);
-        }
+        if (!this.scope) { return ; }
+
+        this.beans.$compile(element)(this.scope);
     }
 
     private createFullWidthParams(eRow: HTMLElement, pinned: string): any {
-        let params = {
+        const params = {
             fullWidth: true,
             data: this.rowNode.data,
             node: this.rowNode,
             value: this.rowNode.key,
-            $scope: this.scope,
+            $scope: this.scope ? this.scope : this.parentScope,
+            $compile: this.beans.$compile,
             rowIndex: this.rowNode.rowIndex,
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
@@ -907,7 +897,7 @@ export class RowComp extends Component {
     }
 
     private getInitialRowClasses(extraCssClass: string): string[] {
-        let classes: string[] = [];
+        const classes: string[] = [];
 
         if (_.exists(extraCssClass)) {
             classes.push(extraCssClass);
@@ -920,11 +910,7 @@ export class RowComp extends Component {
             classes.push('ag-opacity-zero');
         }
 
-        if (this.rowIsEven) {
-            classes.push('ag-row-even');
-        } else {
-            classes.push('ag-row-odd');
-        }
+        classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
 
         if (this.rowNode.isSelected()) {
             classes.push('ag-row-selected');
@@ -940,11 +926,7 @@ export class RowComp extends Component {
             }
         } else {
             // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            if (this.rowNode.parent) {
-                classes.push('ag-row-level-' + (this.rowNode.parent.level + 1));
-            } else {
-                classes.push('ag-row-level-0');
-            }
+            classes.push('ag-row-level-' + (this.rowNode.parent ? (this.rowNode.parent.level + 1) : '0'));
         }
 
         if (this.rowNode.stub) {
@@ -984,35 +966,35 @@ export class RowComp extends Component {
     }
 
     private isFirstRowOnPage(): boolean {
-        return this.rowNode.rowIndex===this.beans.paginationProxy.getPageFirstRow();
+        return this.rowNode.rowIndex === this.beans.paginationProxy.getPageFirstRow();
     }
 
     private isLastRowOnPage(): boolean {
-        return this.rowNode.rowIndex===this.beans.paginationProxy.getPageLastRow();
+        return this.rowNode.rowIndex === this.beans.paginationProxy.getPageLastRow();
     }
 
     private onModelUpdated(): void {
-        let newFirst = this.isFirstRowOnPage();
-        let newLast = this.isLastRowOnPage();
+        const newFirst = this.isFirstRowOnPage();
+        const newLast = this.isLastRowOnPage();
 
-        if (this.firstRowOnPage!==newFirst) {
+        if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-first', newFirst) );
+            this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-first', newFirst));
         }
-        if (this.lastRowOnPage!==newLast) {
+        if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-last', newLast) );
+            this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-last', newLast));
         }
     }
 
     private preProcessRowClassRules(): string[] {
-        let res: string[] = [];
+        const res: string[] = [];
 
         this.processRowClassRules(
-            (className: string)=> {
+            (className: string) => {
                 res.push(className);
             },
-            (className: string)=> {
+            (className: string) => {
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }
@@ -1021,7 +1003,7 @@ export class RowComp extends Component {
         return res;
     }
 
-    private processRowClassRules(onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void): void {
+    private processRowClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
         this.beans.stylingService.processClassRules(
             this.beans.gridOptionsWrapper.rowClassRules(),
             {
@@ -1040,32 +1022,33 @@ export class RowComp extends Component {
         this.forEachCellComp(renderedCell => {
             renderedCell.stopEditing(cancel);
         });
-        if (this.editingRow) {
-            if (!cancel) {
-                let event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
-                this.beans.eventService.dispatchEvent(event);
-            }
-            this.setEditingRow(false);
+
+        if (!this.editingRow) { return; }
+
+        if (!cancel) {
+            const event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
+            this.beans.eventService.dispatchEvent(event);
         }
+        this.setEditingRow(false);
     }
 
     private setEditingRow(value: boolean): void {
         this.editingRow = value;
-        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-editing', value) );
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-editing', value));
 
-        let event: RowEvent = value ?
-            <RowEditingStartedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED)
-            : <RowEditingStoppedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED);
+        const event: RowEvent = value ?
+            this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED) as RowEditingStartedEvent
+            : this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED) as RowEditingStoppedEvent;
 
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: CellComp = null): void {
+    public startRowEditing(keyPress: number | null = null, charPress: string | null = null, sourceRenderedCell: CellComp | null = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
         this.forEachCellComp(renderedCell => {
-            let cellStartedEdit = renderedCell === sourceRenderedCell;
+            const cellStartedEdit = renderedCell === sourceRenderedCell;
             if (cellStartedEdit) {
                 renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
             } else {
@@ -1075,47 +1058,47 @@ export class RowComp extends Component {
         this.setEditingRow(true);
     }
 
-    public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
-        _.iterateObject(this.cellComps, (key: any, cellComp: CellComp)=> {
-            if (cellComp) {
-                callback(cellComp);
-            }
+    public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
+        _.iterateObject(this.cellComps, (key: any, cellComp: CellComp) => {
+            if (!cellComp) { return; }
+
+            callback(cellComp);
         });
     }
 
     private postProcessClassesFromGridOptions(): void {
-        let cssClasses = this.processClassesFromGridOptions();
-        if (cssClasses) {
-            cssClasses.forEach( (classStr: string) => {
-                this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
-            });
-        }
+        const cssClasses = this.processClassesFromGridOptions();
+        if (!cssClasses || !cssClasses.length) { return; }
+
+        cssClasses.forEach(classStr => {
+            this.eAllRowContainers.forEach(row => _.addCssClass(row, classStr));
+        });
     }
 
     private postProcessRowClassRules(): void {
         this.processRowClassRules(
-            (className: string)=> {
-                this.eAllRowContainers.forEach( row => _.addCssClass(row, className));
+            (className: string) => {
+                this.eAllRowContainers.forEach(row => _.addCssClass(row, className));
             },
-            (className: string)=> {
-                this.eAllRowContainers.forEach( row => _.removeCssClass(row, className));
+            (className: string) => {
+                this.eAllRowContainers.forEach(row => _.removeCssClass(row, className));
             }
         );
     }
 
     private processClassesFromGridOptions(): string[] {
-        let res: string[] = [];
+        const res: string[] = [];
 
-        let process = (rowCls: string | string[]) => {
+        const process = (rowCls: string | string[]) => {
             if (typeof rowCls === 'string') {
                 res.push(rowCls);
             } else if (Array.isArray(rowCls)) {
-                rowCls.forEach( e => res.push(e) );
+                rowCls.forEach(e => res.push(e));
             }
         };
 
         // part 1 - rowClass
-        let rowClass = this.beans.gridOptionsWrapper.getRowClass();
+        const rowClass = this.beans.gridOptionsWrapper.getRowClass();
         if (rowClass) {
             if (typeof rowClass === 'function') {
                 console.warn('ag-Grid: rowClass should not be a function, please use getRowClass instead');
@@ -1125,16 +1108,16 @@ export class RowComp extends Component {
         }
 
         // part 2 - rowClassFunc
-        let rowClassFunc = this.beans.gridOptionsWrapper.getRowClassFunc();
+        const rowClassFunc = this.beans.gridOptionsWrapper.getRowClassFunc();
         if (rowClassFunc) {
-            let params = {
+            const params = {
                 node: this.rowNode,
                 data: this.rowNode.data,
                 rowIndex: this.rowNode.rowIndex,
                 context: this.beans.gridOptionsWrapper.getContext(),
                 api: this.beans.gridOptionsWrapper.getApi()
             };
-            let rowClassFuncResult = rowClassFunc(params);
+            const rowClassFuncResult = rowClassFunc(params);
             process(rowClassFuncResult);
         }
 
@@ -1142,19 +1125,18 @@ export class RowComp extends Component {
     }
 
     private preProcessStylesFromGridOptions(): string {
-        let rowStyles = this.processStylesFromGridOptions();
+        const rowStyles = this.processStylesFromGridOptions();
         return _.cssStyleObjectToMarkup(rowStyles);
     }
 
     private postProcessStylesFromGridOptions(): void {
-        let rowStyles = this.processStylesFromGridOptions();
-        this.eAllRowContainers.forEach( row => _.addStylesToElement(row, rowStyles));
+        const rowStyles = this.processStylesFromGridOptions();
+        this.eAllRowContainers.forEach(row => _.addStylesToElement(row, rowStyles));
     }
 
     private processStylesFromGridOptions(): any {
-
         // part 1 - rowStyle
-        let rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
+        const rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
 
         if (rowStyle && typeof rowStyle === 'function') {
             console.warn('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
@@ -1162,10 +1144,11 @@ export class RowComp extends Component {
         }
 
         // part 1 - rowStyleFunc
-        let rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
+        const rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
         let rowStyleFuncResult: any;
+
         if (rowStyleFunc) {
-            let params = {
+            const params = {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 api: this.beans.gridOptionsWrapper.getApi(),
@@ -1179,17 +1162,19 @@ export class RowComp extends Component {
     }
 
     private createCells(cols: Column[]): {template: string, cellComps: CellComp[]} {
-        let templateParts: string[] = [];
-        let newCellComps: CellComp[] = [];
-        cols.forEach( col => {
-            let newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this,
+        const templateParts: string[] = [];
+        const newCellComps: CellComp[] = [];
+
+        cols.forEach(col => {
+            const newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this,
                 false, this.printLayout);
-            let cellTemplate = newCellComp.getCreateTemplate();
+            const cellTemplate = newCellComp.getCreateTemplate();
             templateParts.push(cellTemplate);
             newCellComps.push(newCellComp);
             this.cellComps[col.getId()] = newCellComp;
         });
-        let templateAndComps = {
+
+        const templateAndComps = {
             template: templateParts.join(''),
             cellComps: newCellComps
         };
@@ -1197,15 +1182,15 @@ export class RowComp extends Component {
     }
 
     private onRowSelected(): void {
-        let selected = this.rowNode.isSelected();
-        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
+        const selected = this.rowNode.isSelected();
+        this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected));
     }
 
     // called:
     // + after row created for first time
     // + after horizontal scroll, so new cells due to column virtualisation
     private callAfterRowAttachedOnCells(newCellComps: CellComp[], eRow: HTMLElement): void {
-        newCellComps.forEach( cellComp => {
+        newCellComps.forEach(cellComp => {
             cellComp.setParentRow(eRow);
             cellComp.afterAttached();
 
@@ -1218,20 +1203,20 @@ export class RowComp extends Component {
     }
 
     private afterRowAttached(rowContainerComp: RowContainerComponent, eRow: HTMLElement): void {
-
         this.addDomData(eRow);
 
-        this.removeSecondPassFuncs.push( ()=> {
+        this.removeSecondPassFuncs.push(() => {
             // console.log(eRow);
             rowContainerComp.removeRowElement(eRow);
         });
-        this.removeFirstPassFuncs.push( ()=> {
+
+        this.removeFirstPassFuncs.push(() => {
             if (_.exists(this.rowNode.rowTop)) {
                 // the row top is updated anyway, however we set it here again
                 // to something more reasonable for the animation - ie if the
                 // row top is 10000px away, the row will flash out, so this
                 // gives it a rounded value, so row animates out more slowly
-                let rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
+                const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
                 this.setRowTop(rowTop);
             } else {
                 _.addCssClass(eRow, 'ag-opacity-zero');
@@ -1243,19 +1228,16 @@ export class RowComp extends Component {
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
         if (this.useAnimationFrameForCreate) {
-            this.beans.taskQueue.addP1Task(this.addHoverFunctionality.bind(this, eRow));
+            this.beans.taskQueue.addP2Task(this.addHoverFunctionality.bind(this, eRow));
         } else {
             this.addHoverFunctionality(eRow);
         }
     }
 
     private addHoverFunctionality(eRow: HTMLElement): void {
-
         // because we use animation frames to do this, it's possible the row no longer exists
         // by the time we get to add it
-        if (!this.active) {
-            return;
-        }
+        if (!this.active) { return; }
 
         // because mouseenter and mouseleave do not propagate, we cannot listen on the gridPanel
         // like we do for all the other mouse events.
@@ -1266,11 +1248,11 @@ export class RowComp extends Component {
         // all are listening for event on the row node.
 
         // step 1 - add listener, to set flag on row node
-        this.addDestroyableEventListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter() );
-        this.addDestroyableEventListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave() );
+        this.addDestroyableEventListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
+        this.addDestroyableEventListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
 
         // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, ()=> {
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
@@ -1278,7 +1260,8 @@ export class RowComp extends Component {
                 _.addCssClass(eRow, 'ag-row-hover');
             }
         });
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, ()=> {
+
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
             _.removeCssClass(eRow, 'ag-row-hover');
         });
     }
@@ -1288,18 +1271,11 @@ export class RowComp extends Component {
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
     private roundRowTopToBounds(rowTop: number): number {
-        let range = this.beans.gridPanel.getVScrollPosition();
+        const range = this.beans.gridPanel.getVScrollPosition();
+        const minPixel = this.applyPaginationOffset(range.top, true) - 100;
+        const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
-        let minPixel = this.applyPaginationOffset(range.top, true) - 100;
-        let maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
-
-        if (rowTop < minPixel) {
-            return minPixel;
-        } else if (rowTop > maxPixel) {
-            return maxPixel;
-        } else {
-            return rowTop;
-        }
+        return Math.min(Math.max(minPixel, rowTop), maxPixel);
     }
 
     private onRowHeightChanged(): void {
@@ -1307,13 +1283,14 @@ export class RowComp extends Component {
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
         if (_.exists(this.rowNode.rowHeight)) {
-            let heightPx = this.rowNode.rowHeight + 'px';
-            this.eAllRowContainers.forEach( row => row.style.height = heightPx);
+            const heightPx = `${this.rowNode.rowHeight}px`;
+
+            this.eAllRowContainers.forEach(row => row.style.height = heightPx);
         }
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        if (eventType==='renderedRowRemoved' || eventType==='rowRemoved') {
+        if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
             eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
             console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
@@ -1321,7 +1298,7 @@ export class RowComp extends Component {
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        if (eventType==='renderedRowRemoved' || eventType==='rowRemoved') {
+        if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
             eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
             console.warn('ag-Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
@@ -1339,42 +1316,41 @@ export class RowComp extends Component {
         this.destroyFullWidthComponents();
 
         if (animate) {
-
-            this.removeFirstPassFuncs.forEach( func => func() );
+            this.removeFirstPassFuncs.forEach(func => func());
             this.removeSecondPassFuncs.push(this.destroyContainingCells.bind(this));
-
         } else {
             this.destroyContainingCells();
 
             // we are not animating, so execute the second stage of removal now.
             // we call getAndClear, so that they are only called once
-            let delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
-            delayedDestroyFunctions.forEach( func => func() );
+            const delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
+            delayedDestroyFunctions.forEach(func => func());
         }
 
-        let event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
+        const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
         this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
     }
 
     private destroyContainingCells(): void {
-        this.forEachCellComp(renderedCell => renderedCell.destroy() );
+        this.forEachCellComp(renderedCell => renderedCell.destroy());
         this.destroyFullWidthComponents();
     }
 
     // we clear so that the functions are never executed twice
     public getAndClearDelayedDestroyFunctions(): Function[] {
-        let result = this.removeSecondPassFuncs;
+        const result = this.removeSecondPassFuncs;
         this.removeSecondPassFuncs = [];
         return result;
     }
 
     private onCellFocusChanged(): void {
-        let rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        const rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+
         if (rowFocused !== this.rowFocused) {
-            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
-            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
+            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
+            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused));
             this.rowFocused = rowFocused;
         }
 
@@ -1385,10 +1361,10 @@ export class RowComp extends Component {
     }
 
     private onPaginationChanged(): void {
-        let currentPage = this.beans.paginationProxy.getCurrentPage();
+        const currentPage = this.beans.paginationProxy.getCurrentPage();
         // it is possible this row is in the new page, but the page number has changed, which means
         // it needs to reposition itself relative to the new page
-        if (this.paginationPage!==currentPage) {
+        if (this.paginationPage !== currentPage) {
             this.paginationPage = currentPage;
             this.onTopChanged();
         }
@@ -1404,14 +1380,12 @@ export class RowComp extends Component {
     private applyPaginationOffset(topPx: number, reverse = false): number {
         if (this.rowNode.isRowPinned()) {
             return topPx;
-        } else {
-            let pixelOffset = this.beans.paginationProxy.getPixelOffset();
-            if (reverse) {
-                return topPx + pixelOffset;
-            } else {
-                return topPx - pixelOffset;
-            }
         }
+
+        const pixelOffset = this.beans.paginationProxy.getPixelOffset();
+        const multiplier = reverse ? 1 : -1;
+
+        return topPx + (pixelOffset * multiplier);
     }
 
     private setRowTop(pixels: number): void {
@@ -1421,22 +1395,21 @@ export class RowComp extends Component {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
-            let afterPaginationPixels = this.applyPaginationOffset(pixels);
+            const afterPaginationPixels = this.applyPaginationOffset(pixels);
+            const afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+            const topPx = `${afterScalingPixels}px`;
 
-            let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
-
-            let topPx = afterScalingPixels + "px";
             if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
-                this.eAllRowContainers.forEach( row => row.style.top = `${topPx}` );
+                this.eAllRowContainers.forEach(row => row.style.top = topPx);
             } else {
-                this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
+                this.eAllRowContainers.forEach(row => row.style.transform = `translateY(${topPx})`);
             }
         }
     }
 
     // we clear so that the functions are never executed twice
     public getAndClearNextVMTurnFunctions(): Function[] {
-        let result = this.createSecondPassFuncs;
+        const result = this.createSecondPassFuncs;
         this.createSecondPassFuncs = [];
         return result;
     }
@@ -1455,44 +1428,45 @@ export class RowComp extends Component {
     }
 
     private updateRowIndexes(): void {
-        let rowIndexStr = this.rowNode.getRowIndexString();
+        const rowIndexStr = this.rowNode.getRowIndexString();
+        const rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
 
-        let rowIsEven = this.rowNode.rowIndex % 2 === 0;
-        let rowIsEvenChanged = this.rowIsEven !== rowIsEven;
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;
         }
 
-        this.eAllRowContainers.forEach( eRow => {
+        this.eAllRowContainers.forEach(eRow => {
             eRow.setAttribute('row-index', rowIndexStr);
 
-            if (rowIsEvenChanged) {
-                _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
-                _.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
-            }
+            if (!rowIsEvenChanged) { return; }
+            _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
+            _.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
         });
     }
 
     public ensureDomOrder(): void {
-        let body = this.getBodyRowElement();
-        if (body) {
-            this.bodyContainerComp.ensureDomOrder(body);
-        }
+        const sides = [
+            {
+                el: this.getBodyRowElement(),
+                ct: this.bodyContainerComp
+            },
+            {
+                el: this.getPinnedLeftRowElement(),
+                ct: this.pinnedLeftContainerComp
+            }, {
+                el: this.getPinnedRightRowElement(),
+                ct: this.pinnedRightContainerComp
+            }, {
+                el: this.getFullWidthRowElement(),
+                ct: this.fullWidthContainerComp
+            }
+        ];
 
-        let left = this.getPinnedLeftRowElement();
-        if (left) {
-            this.pinnedLeftContainerComp.ensureDomOrder(left);
-        }
-
-        let right = this.getPinnedRightRowElement();
-        if (right) {
-            this.pinnedRightContainerComp.ensureDomOrder(right);
-        }
-
-        let fullWidth = this.getFullWidthRowElement();
-        if (fullWidth) {
-            this.fullWidthContainerComp.ensureDomOrder(fullWidth);
-        }
+        sides.forEach(side => {
+            if (!side.el) { return; }
+            side.ct.ensureDomOrder(side.el);
+        });
     }
 
     // returns the pinned left container, either the normal one, or the embedded full with one if exists

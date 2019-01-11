@@ -5,7 +5,6 @@
     height: 100%;
     width: 100%;
     padding: 5px;
-    box-sizing: border-box;
 }
 
 .call-record-cell {
@@ -26,7 +25,6 @@
 .full-width-grid {
     margin-left: 150px;
     padding-top: 25px;
-    box-sizing: border-box;
     display: block;
     height: 100%;
 }

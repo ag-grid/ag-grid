@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -14,8 +14,8 @@ export declare class PinnedRowModel {
     isEmpty(floating: string): boolean;
     isRowsToRender(floating: string): boolean;
     getRowAtPixel(pixel: number, floating: string): number;
-    setPinnedTopRowData(rowData: any[]): void;
-    setPinnedBottomRowData(rowData: any[]): void;
+    setPinnedTopRowData(rowData: any[] | undefined): void;
+    setPinnedBottomRowData(rowData: any[] | undefined): void;
     private createNodesFromData;
     getPinnedTopRowData(): RowNode[];
     getPinnedBottomRowData(): RowNode[];
@@ -29,4 +29,3 @@ export declare class PinnedRowModel {
     getPinnedBottomTotalHeight(): number;
     private getTotalHeight;
 }
-//# sourceMappingURL=pinnedRowModel.d.ts.map

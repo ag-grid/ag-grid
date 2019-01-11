@@ -8,11 +8,11 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true,
         width: 100
     },
-    enableServerSideSorting: true,
-    enableServerSideFilter: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     rowModelType: 'infinite'
 };

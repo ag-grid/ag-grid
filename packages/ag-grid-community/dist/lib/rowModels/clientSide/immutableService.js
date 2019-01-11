@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,8 +17,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var constants_1 = require("../../constants");
-var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
+var utils_1 = require("../../utils");
 var ImmutableService = /** @class */ (function () {
     function ImmutableService() {
     }
@@ -34,7 +34,7 @@ var ImmutableService = /** @class */ (function () {
             return;
         }
         var getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-        if (utils_1._.missing(getRowNodeIdFunc)) {
+        if (!getRowNodeIdFunc || utils_1._.missing(getRowNodeIdFunc)) {
             console.error('ag-Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
             return;
         }

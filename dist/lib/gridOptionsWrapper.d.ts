@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -94,6 +94,7 @@ export declare class GridOptionsWrapper {
     isSuppressRowDrag(): boolean;
     getDomLayout(): string;
     isSuppressHorizontalScroll(): boolean;
+    isAlwaysShowVerticalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
     isSuppressFieldDotNotation(): boolean;
@@ -131,13 +132,13 @@ export declare class GridOptionsWrapper {
     getColumnApi(): ColumnApi | undefined | null;
     isDeltaRowDataMode(): boolean;
     isEnsureDomOrder(): boolean;
-    isEnableColResize(): boolean;
+    isEnableCharts(): boolean;
     getColResizeDefault(): string;
     isSingleClickEdit(): boolean;
     isSuppressClickEdit(): boolean;
     isStopEditingWhenGridLosesFocus(): boolean;
     getGroupDefaultExpanded(): number | undefined;
-    getMaxConcurrentDatasourceRequests(): number | undefined;
+    getMaxConcurrentDatasourceRequests(): number;
     getMaxBlocksInCache(): number | undefined;
     getCacheOverflowSize(): number | undefined;
     getPaginationPageSize(): number | undefined;
@@ -161,9 +162,8 @@ export declare class GridOptionsWrapper {
         [key: string]: ColDef;
     } | undefined;
     getDatasource(): IDatasource | undefined;
-    getViewportDatasource(): IViewportDatasource | undefined;
+    getViewportDatasource(): IViewportDatasource;
     getServerSideDatasource(): IServerSideDatasource | undefined;
-    isEnableSorting(): boolean;
     isAccentedSort(): boolean;
     isEnableCellExpressions(): boolean;
     isEnableGroupEdit(): boolean;
@@ -173,14 +173,12 @@ export declare class GridOptionsWrapper {
     isSuppressContextMenu(): boolean;
     isAllowContextMenuWithControlKey(): boolean;
     isSuppressCopyRowsToClipboard(): boolean;
+    isCopyHeadersToClipboard(): boolean;
     isSuppressClipboardPaste(): boolean;
-    isEnableFilter(): boolean;
     isPagination(): boolean;
     isSuppressEnterpriseResetOnNewColumns(): boolean;
     getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][]) | undefined;
     getBatchUpdateWaitMillis(): number | undefined;
-    isEnableServerSideFilter(): boolean;
-    isEnableServerSideSorting(): boolean;
     isSuppressMovableColumns(): boolean;
     isAnimateRows(): boolean;
     isSuppressColumnMoveAnimation(): boolean;
@@ -226,6 +224,7 @@ export declare class GridOptionsWrapper {
     isTreeData(): boolean;
     isValueCache(): boolean;
     isValueCacheNeverExpires(): boolean;
+    isDeltaSort(): boolean;
     isAggregateOnlyChangedColumns(): boolean;
     getProcessSecondaryColDefFunc(): ((colDef: ColDef) => void) | undefined;
     getProcessSecondaryColGroupDefFunc(): ((colGroupDef: ColGroupDef) => void) | undefined;
@@ -272,4 +271,3 @@ export declare class GridOptionsWrapper {
     private specialForNewMaterial;
     private getDefaultRowHeight;
 }
-//# sourceMappingURL=gridOptionsWrapper.d.ts.map

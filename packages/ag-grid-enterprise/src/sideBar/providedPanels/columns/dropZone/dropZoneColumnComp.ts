@@ -1,6 +1,5 @@
 import {
     PopupService,
-    Utils,
     DragSourceType,
     Component,
     Autowired,
@@ -25,8 +24,8 @@ import {
     RefSelector,
     _
 } from "ag-grid-community";
-import {AggFuncService} from "../../../../aggregation/aggFuncService";
-import {VirtualList} from "../../../../rendering/virtualList";
+import { AggFuncService } from "../../../../aggregation/aggFuncService";
+import { VirtualList } from "../../../../rendering/virtualList";
 
 export interface ColumnRemoveEvent extends AgEvent {}
 
@@ -59,7 +58,7 @@ export class DropZoneColumnComp extends Component {
     private column: Column;
     private dragSourceDropTarget: DropTarget;
     private ghost: boolean;
-    private displayName: string;
+    private displayName: string | null;
     private valueColumn: boolean;
 
     private popupShowing = false;
@@ -84,7 +83,7 @@ export class DropZoneColumnComp extends Component {
     }
 
     private addDragSource(): void {
-        let dragSource: DragSource = {
+        const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemCallback: () => this.createDragItem(),
@@ -92,11 +91,11 @@ export class DropZoneColumnComp extends Component {
             dragSourceDropTarget: this.dragSourceDropTarget
         };
         this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
 
     private createDragItem() {
-        let visibleState: { [key: string]: boolean } = {};
+        const visibleState: { [key: string]: boolean } = {};
         visibleState[this.column.getId()] = this.column.isVisible();
         return {
             columns: [this.column],
@@ -111,48 +110,48 @@ export class DropZoneColumnComp extends Component {
         this.setupRemove();
 
         if (this.ghost) {
-            Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+            _.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
 
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
-            this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this) );
+            this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
 
     private setupRemove(): void {
 
-        Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        _.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
 
-        this.addDestroyableEventListener(this.btRemove, 'click', (mouseEvent: MouseEvent)=> {
-            let agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
+        this.addDestroyableEventListener(this.btRemove, 'click', (mouseEvent: MouseEvent) => {
+            const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             this.dispatchEvent(agEvent);
             mouseEvent.stopPropagation();
         });
 
-        let touchListener = new TouchListener(this.btRemove);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, (event: TapEvent)=> {
-            let agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
+        const touchListener = new TouchListener(this.btRemove);
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, (event: TapEvent) => {
+            const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             this.dispatchEvent(agEvent);
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 
     private setTextValue(): void {
-        let displayValue: string;
+        let displayValue: string | null;
 
         if (this.valueColumn) {
-            let aggFunc = this.column.getAggFunc();
+            const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
-            let aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'agg';
-            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            let aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
+            const aggFuncString = (typeof aggFunc === 'string') ? aggFunc as string : 'agg';
+            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
 
             displayValue = `${aggFuncStringTranslated}(${this.displayName})`;
         } else {
             displayValue = this.displayName;
         }
 
-        let displayValueSanitised = _.escape(displayValue);
+        const displayValueSanitised : any = _.escape(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     }
 
@@ -162,9 +161,9 @@ export class DropZoneColumnComp extends Component {
 
         this.popupShowing = true;
 
-        let virtualList = new VirtualList();
+        const virtualList = new VirtualList();
 
-        let rows = this.aggFuncService.getFuncNames(this.column);
+        const rows = this.aggFuncService.getFuncNames(this.column);
 
         virtualList.setModel({
             getRow: function(index: number) { return rows[index]; },
@@ -173,19 +172,19 @@ export class DropZoneColumnComp extends Component {
 
         this.context.wireBean(virtualList);
 
-        let ePopup = Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
+        const ePopup = _.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualList.getGui());
         // ePopup.style.height = this.gridOptionsWrapper.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = this.getGui().clientWidth + 'px';
 
-        let popupHiddenFunc = () => {
+        const popupHiddenFunc = () => {
             virtualList.destroy();
             this.popupShowing = false;
         };
 
-        let hidePopup = this.popupService.addAsModalPopup(
+        const hidePopup = this.popupService.addAsModalPopup(
             ePopup,
             true,
             popupHiddenFunc
@@ -204,12 +203,12 @@ export class DropZoneColumnComp extends Component {
         virtualList.refresh();
     }
 
-    private createAggSelect(hidePopup: ()=>void, value: any): Component {
+    private createAggSelect(hidePopup: () => void, value: any): Component {
 
-        let itemSelected = ()=> {
+        const itemSelected = () => {
             hidePopup();
             if (this.gridOptionsWrapper.isFunctionsPassive()) {
-                let event: ColumnAggFuncChangeRequestEvent = {
+                const event: ColumnAggFuncChangeRequestEvent = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],
                     aggFunc: value,
@@ -222,10 +221,10 @@ export class DropZoneColumnComp extends Component {
             }
         };
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let aggFuncString = value.toString();
-        let aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
-        let comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const aggFuncString = value.toString();
+        const aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
+        const comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
         return comp;
     }
 }
@@ -234,7 +233,7 @@ class AggItemComp extends Component {
 
     private value: string;
 
-    constructor(itemSelected: ()=>void, value: string) {
+    constructor(itemSelected: () => void, value: string) {
         super('<div class="ag-select-agg-func-item"/>');
         this.getGui().innerText = value;
         this.value = value;

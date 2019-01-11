@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,10 +21,10 @@ var events_1 = require("./events");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var columnApi_1 = require("./columnController/columnApi");
 var columnController_1 = require("./columnController/columnController");
-var utils_1 = require("./utils");
 var gridCell_1 = require("./entities/gridCell");
 var gridApi_1 = require("./gridApi");
 var cellComp_1 = require("./rendering/cellComp");
+var utils_1 = require("./utils");
 var FocusedCellController = /** @class */ (function () {
     function FocusedCellController() {
     }
@@ -79,14 +79,14 @@ var FocusedCellController = /** @class */ (function () {
     };
     FocusedCellController.prototype.setFocusedCell = function (rowIndex, colKey, floating, forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        var column = utils_1.Utils.makeNull(this.columnController.getGridColumn(colKey));
+        var column = utils_1._.makeNull(this.columnController.getGridColumn(colKey));
         this.focusedCell = new gridCell_1.GridCell({ rowIndex: rowIndex,
-            floating: utils_1.Utils.makeNull(floating),
+            floating: utils_1._.makeNull(floating),
             column: column });
         this.onCellFocused(forceBrowserFocus);
     };
     FocusedCellController.prototype.isCellFocused = function (gridCell) {
-        if (utils_1.Utils.missing(this.focusedCell)) {
+        if (utils_1._.missing(this.focusedCell)) {
             return false;
         }
         return this.focusedCell.column === gridCell.column && this.isRowFocused(gridCell.rowIndex, gridCell.floating);
@@ -98,10 +98,10 @@ var FocusedCellController = /** @class */ (function () {
         return !!this.focusedCell;
     };
     FocusedCellController.prototype.isRowFocused = function (rowIndex, floating) {
-        if (utils_1.Utils.missing(this.focusedCell)) {
+        if (utils_1._.missing(this.focusedCell)) {
             return false;
         }
-        var floatingOrNull = utils_1.Utils.makeNull(floating);
+        var floatingOrNull = utils_1._.makeNull(floating);
         return this.focusedCell.rowIndex === rowIndex && this.focusedCell.floating === floatingOrNull;
     };
     FocusedCellController.prototype.onCellFocused = function (forceBrowserFocus) {

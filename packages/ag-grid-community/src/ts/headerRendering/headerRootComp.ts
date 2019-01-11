@@ -1,18 +1,17 @@
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {Column} from "../entities/column";
-import {Bean, Autowired, Context, PostConstruct, PreDestroy} from "../context/context";
-import {HeaderContainer} from "./headerContainer";
-import {EventService} from "../eventService";
-import {Events} from "../events";
-import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
-import {Component} from "../widgets/component";
-import {RefSelector} from "../widgets/componentAnnotations";
-import {Utils as _} from "../utils";
-import {GridApi} from "../gridApi";
-import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
-import {Constants} from "../constants";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnController } from "../columnController/columnController";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { Column } from "../entities/column";
+import { Autowired, Context, PostConstruct, PreDestroy } from "../context/context";
+import { HeaderContainer } from "./headerContainer";
+import { EventService } from "../eventService";
+import { Events } from "../events";
+import { Component } from "../widgets/component";
+import { RefSelector } from "../widgets/componentAnnotations";
+import { GridApi } from "../gridApi";
+import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
+import { Constants } from "../constants";
+import { _ } from "../utils";
 
 export class HeaderRootComp extends Component {
 
@@ -34,7 +33,6 @@ export class HeaderRootComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
 
@@ -75,7 +73,7 @@ export class HeaderRootComp extends Component {
         this.childContainers.push(this.pinnedLeftContainer);
         this.childContainers.push(this.pinnedRightContainer);
 
-        this.childContainers.forEach( container => this.context.wireBean(container) );
+        this.childContainers.forEach(container => this.context.wireBean(container));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
@@ -84,8 +82,8 @@ export class HeaderRootComp extends Component {
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.onPivotModeChanged();
 
+        this.onPivotModeChanged();
         this.addPreventHeaderScroll();
 
         if (this.columnController.isReady()) {
@@ -94,7 +92,7 @@ export class HeaderRootComp extends Component {
     }
 
     private onDomLayoutChanged(): void {
-        let newValue = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        const newValue = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         if (this.printLayout !== newValue) {
             this.printLayout = newValue;
             this.refreshHeader();
@@ -102,47 +100,52 @@ export class HeaderRootComp extends Component {
     }
 
     public setHorizontalScroll(offset: number): void {
-        this.eHeaderContainer.style.left = offset + 'px';
+        this.eHeaderContainer.style.transform = `translateX(${offset}px)`;
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
-        this.childContainers.forEach( childContainer => childContainer.forEachHeaderElement(callback) );
+    public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
+        this.childContainers.forEach(childContainer => childContainer.forEachHeaderElement(callback));
     }
 
     @PreDestroy
     public destroy(): void {
-        this.childContainers.forEach( container => container.destroy() );
+        this.childContainers.forEach(container => container.destroy());
     }
 
     public refreshHeader() {
-        this.childContainers.forEach( container => container.refresh() );
+        this.childContainers.forEach(container => container.refresh());
     }
 
     private onPivotModeChanged(): void {
-        let pivotMode = this.columnController.isPivotMode();
-        _.addOrRemoveCssClass(this.getGui(),'ag-pivot-on', pivotMode);
-        _.addOrRemoveCssClass(this.getGui(),'ag-pivot-off', !pivotMode);
+        const pivotMode = this.columnController.isPivotMode();
+        _.addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     }
 
     public setHeight(height: number): void {
-        this.getGui().style.height = height + 'px';
-        this.getGui().style.minHeight = height + 'px';
+        const px = `${height}px`;
+        this.getGui().style.height = px;
+        this.getGui().style.minHeight = px;
     }
 
     // if the user is in floating filter and hits tab a few times, the header can
     // end up scrolling to show items off the screen, leaving the grid and header
     // and the grid columns no longer in sync.
     private addPreventHeaderScroll() {
-        this.addDestroyableEventListener(this.eHeaderViewport, 'scroll', ()=> {
+        this.addDestroyableEventListener(this.eHeaderViewport, 'scroll', () => {
             // if the header scrolls, the header will be out of sync. so we reset the
             // header scroll, and then scroll the body, which will in turn set the offset
             // on the header, giving the impression that the header scrolled as expected.
-            let scrollLeft = this.eHeaderViewport.scrollLeft;
-            if (scrollLeft!==0) {
+            const scrollLeft = this.eHeaderViewport.scrollLeft;
+            if (scrollLeft !== 0) {
                 this.gridPanel.scrollHorizontally(scrollLeft);
                 this.eHeaderViewport.scrollLeft = 0;
             }
         });
+    }
+
+    public setHeaderContainerWidth(width: number) {
+        this.eHeaderContainer.style.width = `${width}px`;
     }
 
     public setLeftVisible(visible: boolean): void {

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,7 +15,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_1 = require("../context/context");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
@@ -26,6 +25,7 @@ var headerRowComp_1 = require("./headerRowComp");
 var bodyDropTarget_1 = require("./bodyDropTarget");
 var column_1 = require("../entities/column");
 var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
+var utils_1 = require("../utils");
 var HeaderContainer = /** @class */ (function () {
     function HeaderContainer(eContainer, eViewport, pinned) {
         this.headerRowComps = [];
@@ -71,21 +71,19 @@ var HeaderContainer = /** @class */ (function () {
     HeaderContainer.prototype.setWidthOfPinnedContainer = function () {
         var pinningLeft = this.pinned === column_1.Column.PINNED_LEFT;
         var pinningRight = this.pinned === column_1.Column.PINNED_RIGHT;
+        var controller = this.columnController;
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
         if (pinningLeft || pinningRight) {
             // size to fit all columns
-            var width = pinningLeft ?
-                this.columnController.getPinnedLeftContainerWidth()
-                : this.columnController.getPinnedRightContainerWidth();
+            var width = controller[pinningLeft ? 'getPinnedLeftContainerWidth' : 'getPinnedRightContainerWidth']();
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
             // as body width fits the cols and the scrollbar
-            var addPaddingForScrollbar = pinningLeft ?
-                this.scrollVisibleService.isLeftVerticalScrollShowing()
-                : this.scrollVisibleService.isRightVerticalScrollShowing();
+            var addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             if (addPaddingForScrollbar) {
                 width += this.scrollWidth;
             }
-            this.eContainer.style.width = width + 'px';
+            utils_1._.setFixedWidth(this.eContainer, width);
         }
     };
     HeaderContainer.prototype.destroy = function () {
@@ -115,7 +113,7 @@ var HeaderContainer = /** @class */ (function () {
             headerRowComp.destroy();
         });
         this.headerRowComps.length = 0;
-        utils_1.Utils.removeAllChildren(this.eContainer);
+        utils_1._.removeAllChildren(this.eContainer);
     };
     HeaderContainer.prototype.createHeaderRowComps = function () {
         // if we are displaying header groups, then we have many rows here.

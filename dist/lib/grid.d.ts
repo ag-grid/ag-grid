@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
@@ -32,4 +32,3 @@ export declare class Grid {
     private getRowModelClass;
     destroy(): void;
 }
-//# sourceMappingURL=grid.d.ts.map

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -72,7 +72,7 @@ export declare class RowNode implements IEventEmitter {
      * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */
     rowGroupIndex: number | null;
     /** True if this node is a group node (ie has children) */
-    group: boolean;
+    group: boolean | undefined;
     /** True if this row is getting dragged */
     dragging: boolean;
     /** True if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
@@ -82,7 +82,7 @@ export declare class RowNode implements IEventEmitter {
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     detailNode: RowNode;
     /** If master detail, this contains details about the detail grid */
-    detailGridInfo: DetailGridInfo;
+    detailGridInfo: DetailGridInfo | null;
     /** Same as master, kept for legacy reasons */
     canFlower: boolean;
     /** Same as detail, kept for legacy reasons */
@@ -122,13 +122,13 @@ export declare class RowNode implements IEventEmitter {
     /** Groups only - Sorted children of this group */
     childrenAfterSort: RowNode[];
     /** Groups only - Number of children and grand children */
-    allChildrenCount: number;
+    allChildrenCount: number | null;
     /** Children mapped by the pivot columns */
     childrenMapped: {
         [key: string]: any;
     } | null;
     /** Server Side Row Model Only - the children are in an infinite cache */
-    childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams>;
+    childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams> | null;
     /** Groups only - True if group is expanded, otherwise false */
     expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
@@ -163,7 +163,7 @@ export declare class RowNode implements IEventEmitter {
     updateData(data: any): void;
     getRowIndexString(): string;
     private createDaemonNode;
-    setDataAndId(data: any, id: string): void;
+    setDataAndId(data: any, id: string | undefined): void;
     private checkRowSelectable;
     setRowSelectable(newVal: boolean): void;
     setId(id: string): void;
@@ -174,8 +174,8 @@ export declare class RowNode implements IEventEmitter {
     setChildIndex(childIndex: number): void;
     setRowTop(rowTop: number | null): void;
     setDragging(dragging: boolean): void;
-    setAllChildrenCount(allChildrenCount: number): void;
-    setRowHeight(rowHeight: number): void;
+    setAllChildrenCount(allChildrenCount: number | null): void;
+    setRowHeight(rowHeight: number | undefined | null): void;
     setRowIndex(rowIndex: number): void;
     setUiLevel(uiLevel: number): void;
     setExpanded(expanded: boolean): void;
@@ -204,6 +204,5 @@ export declare class RowNode implements IEventEmitter {
     removeEventListener(eventType: string, listener: Function): void;
     onMouseEnter(): void;
     onMouseLeave(): void;
-    getFirstChildOfFirstChild(rowGroupColumn: Column): RowNode;
+    getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode;
 }
-//# sourceMappingURL=rowNode.d.ts.map

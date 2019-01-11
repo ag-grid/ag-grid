@@ -27,7 +27,7 @@ const useHmr = argv.hmr;
 function addWebpackMiddleware(app, configPath, prefix) {
     const webpackConfig = require(path.resolve('./webpack-config/', configPath + '.js'));
 
-    webpackConfig.plugins.push( new realWebpack.DefinePlugin({ HMR: useHmr }));
+    webpackConfig.plugins.push(new realWebpack.DefinePlugin({HMR: useHmr}));
 
     // remove the HMR plugins - very "hardcoded" approach. 
     if (!useHmr) {
@@ -60,7 +60,7 @@ function launchPhpCP(app) {
     app.use(
         '/',
         proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+            proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
                 proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
                 return proxyReqOpts;
             }
@@ -107,13 +107,21 @@ function launchTSCCheck() {
         console.log('_dev not present, creating links...');
         mkdirp('_dev/ag-grid-community/dist');
 
-        if(WINDOWS) {
+        if (WINDOWS) {
             console.log('creating window links...');
             run('create-windows-links.bat').exec();
         } else {
             const linkType = 'symbolic';
-            lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {force: true, type: linkType, rename: 'main.ts'});
-            lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {force: true, type: linkType, rename: 'lib'});
+            lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {
+                force: true,
+                type: linkType,
+                rename: 'main.ts'
+            });
+            lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {
+                force: true,
+                type: linkType,
+                rename: 'lib'
+            });
             lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
             lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
             lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
@@ -141,6 +149,7 @@ function launchTSCCheck() {
 }
 
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
+
 function watchAndGenerateExamples() {
     const callback = file => {
         let dir;
@@ -166,7 +175,7 @@ module.exports = () => {
     const app = express();
 
     // necessary for plunkers
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         return next();
     });
@@ -191,16 +200,28 @@ module.exports = () => {
     // Watch TS for errors. No actual transpiling happens here, just errors
     launchTSCCheck();
 
-    app.listen(EXPRESS_PORT, function() {
+    app.listen(EXPRESS_PORT, function () {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
     });
 };
 
 //     node dev-server.js generate-examples [src directory]
 // eg: node dev-server.js generate-examples javascript-grid-accessing-data
-console.log(process.argv);
-if(process.argv.length >= 3 && process.argv[2] === 'generate-examples') {
-    console.log('regenerating examples...');
-    generateExamples(() => console.log('generation done.'), process.argv[3]);
+const genExamples = (exampleDir) => {
+    return () => {
+        console.log('regenerating examples...');
+        generateExamples(() => console.log('generation done.'), exampleDir);
+    };
+};
+
+const [execFunc, exampleDir, watch] = process.argv;
+if (process.argv.length >= 3 && execFunc === 'generate-examples') {
+    if (exampleDir && watch) {
+        const examplePath = path.resolve('./src/', exampleDir);
+        chokidar.watch(`${examplePath}/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
+    } else {
+        console.log('regenerating examples...');
+        generateExamples(() => console.log('generation done.'), exampleDir);
+    }
 }
 

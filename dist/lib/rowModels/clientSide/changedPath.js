@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -63,7 +63,7 @@ var ChangedPath = /** @class */ (function () {
     // if it is valid first, and not use it if it is not valid
     ChangedPath.prototype.validateActive = function () {
         if (!this.active) {
-            throw "ag-Grid: tried to work on an invalid changed path";
+            throw new Error("ag-Grid: tried to work on an invalid changed path");
         }
     };
     return ChangedPath;

@@ -1,4 +1,4 @@
-// ag-grid-aurelia v19.1.4
+// ag-grid-aurelia v20.0.0
 import { Container, ViewResources } from "aurelia-framework";
 import { IFrameworkFactory } from "ag-grid-community";
 export declare class AureliaFrameworkFactory implements IFrameworkFactory {
@@ -9,4 +9,3 @@ export declare class AureliaFrameworkFactory implements IFrameworkFactory {
     setViewResources(viewResources: ViewResources): void;
     setTimeout(action: any, timeout?: any): void;
 }
-//# sourceMappingURL=aureliaFrameworkFactory.d.ts.map

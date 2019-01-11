@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Column } from "ag-grid-community/main";
 import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
 export declare class PivotDropZonePanel extends BaseDropZonePanel {
@@ -19,4 +19,3 @@ export declare class PivotDropZonePanel extends BaseDropZonePanel {
     protected getIconName(): string;
     protected getExistingColumns(): Column[];
 }
-//# sourceMappingURL=pivotDropZonePanel.d.ts.map

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -25,11 +25,13 @@ var utils_1 = require("../../utils");
 var TextCellEditor = /** @class */ (function (_super) {
     __extends(TextCellEditor, _super);
     function TextCellEditor() {
-        return _super.call(this, TextCellEditor.TEMPLATE) || this;
+        var _this = _super.call(this, TextCellEditor.TEMPLATE) || this;
+        _this.eInput = _this.getGui().querySelector('input');
+        return _this;
     }
     TextCellEditor.prototype.init = function (params) {
         this.params = params;
-        var eInput = this.getGui();
+        var eInput = this.eInput;
         var startValue;
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
@@ -53,7 +55,7 @@ var TextCellEditor = /** @class */ (function (_super) {
             this.focusAfterAttached = false;
             startValue = this.getStartValue(params);
         }
-        if (utils_1.Utils.exists(startValue)) {
+        if (utils_1._.exists(startValue)) {
             eInput.value = startValue;
         }
         this.addDestroyableEventListener(eInput, 'keydown', function (event) {
@@ -81,7 +83,7 @@ var TextCellEditor = /** @class */ (function (_super) {
         if (!this.focusAfterAttached) {
             return;
         }
-        var eInput = this.getGui();
+        var eInput = this.eInput;
         eInput.focus();
         if (this.highlightAllOnFocus) {
             eInput.select();
@@ -99,19 +101,19 @@ var TextCellEditor = /** @class */ (function (_super) {
     };
     // gets called when tabbing trough cells and in full row edit mode
     TextCellEditor.prototype.focusIn = function () {
-        var eInput = this.getGui();
+        var eInput = this.eInput;
         eInput.focus();
         eInput.select();
     };
     TextCellEditor.prototype.getValue = function () {
-        var eInput = this.getGui();
+        var eInput = this.eInput;
         return this.params.parseValue(eInput.value);
     };
     TextCellEditor.prototype.getStartValue = function (params) {
         var formatValue = params.useFormatter || params.column.getColDef().refData;
         return formatValue ? params.formatValue(params.value) : params.value;
     };
-    TextCellEditor.TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
+    TextCellEditor.TEMPLATE = '<div class="ag-input-text-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
     return TextCellEditor;
 }(component_1.Component));
 exports.TextCellEditor = TextCellEditor;

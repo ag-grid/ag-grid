@@ -122,35 +122,32 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <h2>Enable Sorting And Filtering</h2>
 
-<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>enableSorting</code> property to the component.</p> 
+<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see
+    which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually
+    quite simple - all you need to do is set the <code>sortable</code> property to each
+    column you want to be able to sort by.</p>
 
-<snippet language="html">
-&lt;ag-grid-angular 
-    style="width: 500px; height: 500px;" 
-    class="ag-theme-balham"
-    [enableSorting]="true"
-    [rowData]="rowData" 
-    [columnDefs]="columnDefs"
-    &gt;
-&lt;/ag-grid-angular&gt;
+
+<snippet language="ts">
+columnDefs = [
+    {headerName: 'Make', field: 'make', sortable: true},
+    {headerName: 'Model', field: 'model', sortable: true},
+    {headerName: 'Price', field: 'price', sortable: true}
+];
 </snippet>
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
 <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
 
-<p>As with sorting, enabling filtering is as easy as setting the <code>enableFilter</code> property:</p>
+<p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 
-<snippet language="html">
-&lt;ag-grid-angular 
-    style="width: 500px; height: 500px;" 
-    class="ag-theme-balham"
-    [enableSorting]="true"
-    [enableFilter]="true"
-    [rowData]="rowData" 
-    [columnDefs]="columnDefs"
-    &gt;
-&lt;/ag-grid-angular&gt;
+<snippet language="ts">
+columnDefs = [
+    {headerName: 'Make', field: 'make', sortable: true, filter: true},
+    {headerName: 'Model', field: 'model', sortable: true, filter: true},
+    {headerName: 'Price', field: 'price', sortable: true, filter: true}
+];
 </snippet>
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
@@ -193,9 +190,9 @@ export class AppComponent implements OnInit {
     title = 'app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make' },
-        {headerName: 'Model', field: 'model' },
-        {headerName: 'Price', field: 'price'}
+        {headerName: 'Make', field: 'make', sortable: true, filter: true},
+        {headerName: 'Model', field: 'model', sortable: true, filter: true},
+        {headerName: 'Price', field: 'price', sortable: true, filter: true}
     ];
 
     rowData: any;
@@ -216,9 +213,7 @@ export class AppComponent implements OnInit {
 &lt;ag-grid-angular 
     style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
-    [enableSorting]="true"
-    [enableFilter]="true"
-    [rowData]="rowData | async" 
+    [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     &gt;
 &lt;/ag-grid-angular&gt;
@@ -249,9 +244,9 @@ export class AppComponent implements OnInit {
     title = 'app';
 
     columnDefs = [
-        {headerName: 'make', field: 'make', checkboxSelection: true },
-        {headerName: 'model', field: 'model' },
-        {headerName: 'price', field: 'price' }
+        {headerName: 'make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
+        {headerName: 'model', field: 'model', sortable: true, filter: true },
+        {headerName: 'price', field: 'price', sortable: true, filter: true }
     ];
 
     rowData: any;
@@ -273,9 +268,7 @@ export class AppComponent implements OnInit {
 &lt;ag-grid-angular 
     style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
-    [enableSorting]="true"
-    [enableFilter]="true"
-    [rowData]="rowData | async" 
+    [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
     &gt;
@@ -294,9 +287,7 @@ export class AppComponent implements OnInit {
     #agGrid
     style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
-    [enableSorting]="true"
-    [enableFilter]="true"
-    [rowData]="rowData | async" 
+    [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
     &gt;
@@ -321,9 +312,9 @@ export class AppComponent implements OnInit {
     title = 'app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make', checkboxSelection: true },
-        {headerName: 'Model', field: 'model' },
-        {headerName: 'Price', field: 'price'}
+        {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
+        {headerName: 'Model', field: 'model', sortable: true, filter: true },
+        {headerName: 'Price', field: 'price', sortable: true, filter: true }
     ];
 
     rowData: any;
@@ -347,9 +338,7 @@ export class AppComponent implements OnInit {
     #agGrid
     style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
-    [enableSorting]="true"
-    [enableFilter]="true"
-    [rowData]="rowData | async" 
+    [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
     &gt;
@@ -372,9 +361,9 @@ export class AppComponent implements OnInit {
     title = 'app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make', checkboxSelection: true },
-        {headerName: 'Model', field: 'model' },
-        {headerName: 'Price', field: 'price'}
+        {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
+        {headerName: 'Model', field: 'model', sortable: true, filter: true },
+        {headerName: 'Price', field: 'price', sortable: true, filter: true }
     ];
 
     rowData: any;
@@ -440,7 +429,7 @@ export class AppComponent implements OnInit {
     title = 'app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make', rowGroupIndex: 0 },
+        {headerName: 'Make', field: 'make', rowGroup: true },
         {headerName: 'Price', field: 'price'}
     ];
 
@@ -477,7 +466,6 @@ export class AppComponent implements OnInit {
 <snippet language="diff">
 class="ag-theme-balham"
 +[autoGroupColumnDef]="autoGroupColumnDef"
-[enableSorting]="true"
 </snippet>
 
 <p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded. 

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41,8 +41,8 @@ var ExcelXmlFactory = /** @class */ (function () {
             docProperties,
             eWorkbook,
             this.stylesXmlElement(styles)
-        ].concat(ag_grid_community_1.Utils.map(worksheets, function (it) { return worksheet_1.default.getTemplate(it); }));
-        return ag_grid_community_1.Utils.assign({}, workbook_1.default.getTemplate(), { children: children });
+        ].concat(ag_grid_community_1._.map(worksheets, function (it) { return worksheet_1.default.getTemplate(it); }));
+        return ag_grid_community_1._.assign({}, workbook_1.default.getTemplate(), { children: children });
     };
     ExcelXmlFactory.prototype.excelXmlHeader = function () {
         return "<?xml version=\"1.0\" ?>\n        <?mso-application progid=\"Excel.Sheet\" ?>\n        ";
@@ -51,19 +51,20 @@ var ExcelXmlFactory = /** @class */ (function () {
         var _this = this;
         return {
             name: 'Styles',
-            children: styles ? ag_grid_community_1.Utils.map(styles, function (it) {
+            children: styles ? ag_grid_community_1._.map(styles, function (it) {
                 return _this.styleXmlElement(it);
             }) : []
         };
     };
     ExcelXmlFactory.prototype.styleXmlElement = function (styleProperties) {
-        var children = ag_grid_community_1.Utils.compose(this.addProperty('alignment', styleProperties), this.addProperty('borders', styleProperties), this.addProperty('font', styleProperties), this.addProperty('interior', styleProperties), this.addProperty('protection', styleProperties), this.addProperty('numberFormat', styleProperties))([]);
-        return ag_grid_community_1.Utils.assign({}, style_1.default.getTemplate(styleProperties), { children: children });
+        var children = ag_grid_community_1._.compose(this.addProperty('alignment', styleProperties), this.addProperty('borders', styleProperties), this.addProperty('font', styleProperties), this.addProperty('interior', styleProperties), this.addProperty('protection', styleProperties), this.addProperty('numberFormat', styleProperties))([]);
+        return ag_grid_community_1._.assign({}, style_1.default.getTemplate(styleProperties), { children: children });
     };
     ExcelXmlFactory.prototype.addProperty = function (property, styleProperties) {
         return function (children) {
-            if (!styleProperties[property])
+            if (!styleProperties[property]) {
                 return children;
+            }
             var options = {
                 alignment: alignment_1.default,
                 borders: borders_1.default,

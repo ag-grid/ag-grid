@@ -24,6 +24,11 @@ var rowData = [
 
 var gridOptions = {
     rowData: rowData,
+    defaultColDef: {
+        filter: true,
+        width: 185,
+        editable: true
+    },
     columnDefs: [
         {
             headerName: "Make",
@@ -101,8 +106,6 @@ var gridOptions = {
             valueFormatter: currencyFormatter
         }
     ],
-    defaultColDef: {width: 185, editable: true},
-    enableFilter: true,
     onCellValueChanged: function (params) {
         // notice that the data always contains the keys rather than values after editing
         console.log("onCellValueChanged: ", params);

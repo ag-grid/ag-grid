@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         When you pass data to the grid, it wraps each data item in an node. This is explained
-        in the section <a href="../javascript-grid-model/">Grid Model</a>. When you query for
+        in the section <a href="../javascript-grid-client-side-model/">Client-side Row Model</a>. When you query for
         the selected rows, there are two method types, ones that return nodes, and ones that
         return data items. To get the selected nodes / rows from the grid, use the following
         API methods:
@@ -70,7 +70,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Single Row Selection', 'single-row-selection', 'generated') ?>
+    <?= example('Single Row Selection', 'single-row-selection', 'generated', array('processVue' => true)) ?>
 
     <h2 id="multi-row-selection">Example - Multiple Row Selection</h2>
 
@@ -85,7 +85,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Multiple Row Selection', 'multiple-row-selection', 'generated') ?>
+    <?= example('Multiple Row Selection', 'multiple-row-selection', 'generated', array('processVue' => true)) ?>
 
     <h2 id="multi-select-single-click">Example - Multi Select Single Click</h2>
 
@@ -110,7 +110,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </p>
 
-    <?= example('Multi Select Single Click', 'multi-select-single-click', 'generated') ?>
+    <?= example('Multi Select Single Click', 'multi-select-single-click', 'generated', array('processVue' => true)) ?>
 
     <h2>Checkbox Selection</h2>
 
@@ -172,7 +172,7 @@ include '../documentation-main/documentation_header.php';
         Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
-    <?= example('Group Selection', 'group-selection', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Group Selection', 'group-selection', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <h3>Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h3>
 
@@ -183,7 +183,7 @@ include '../documentation-main/documentation_header.php';
         <code>colDef.checkboxSelection</code> and <code>autoGroupColumnDef.cellRendererParams.checkbox</code>.
     </p>
 
-    <?= example('Selection Checkbox', 'selection-checkbox', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Selection Checkbox', 'selection-checkbox', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <h3>Groups & Checkbox Selection Example 3 - Only Filtered</h3>
 
@@ -204,7 +204,7 @@ include '../documentation-main/documentation_header.php';
     </ol>
     </p>
 
-    <?= example('Selection Checkbox Filtered', 'selection-checkbox-filtered', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Selection Checkbox Filtered', 'selection-checkbox-filtered', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <h2>Header Checkbox Selection</h2>
 
@@ -268,7 +268,7 @@ colDef = {
             <li>The checkbox is always on the athlete column, even if the athlete column is moved.</li>
         </ul>
 
-    <?= example('Header Checkbox', 'header-checkbox', 'generated') ?>
+    <?= example('Header Checkbox', 'header-checkbox', 'generated', array('processVue' => true)) ?>
 
     <h3>Header Checkbox Example 2 - Filtered Only = false</h3>
 
@@ -281,7 +281,7 @@ colDef = {
         This can be observed by dragging the columns to reorder them.</li>
     </ul>
 
-    <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set', 'generated') ?>
+    <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set', 'generated', array('processVue' => true)) ?>
 
 
     <h2 id="specify-selectable-rows">Specify Selectable Rows</h2>
@@ -312,7 +312,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
+    <?= example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', array('processVue' => true)) ?>
 
     <h3>Specifying Selectable Rows with Groups</h3>
 
@@ -333,7 +333,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <h2>Selection Events</h2>
 
@@ -349,7 +349,7 @@ colDef = {
                 if you want them.</li>
         </ul>
 
-    <?= example('Selection Events', 'selection-events', 'generated') ?>
+    <?= example('Selection Events', 'selection-events', 'generated', array('processVue' => true)) ?>
 
     <h2>Node Selection API</h2>
 
@@ -413,7 +413,7 @@ api.forEachNodeAfterFilter( function(node) {
         data for selection purposes.
     </p>
 
-    <?= example('Using forEachNode', 'using-foreachnode', 'generated') ?>
+    <?= example('Using forEachNode', 'using-foreachnode', 'generated', array('processVue' => true)) ?>
 
     <h2>Selection with Keyboard Arrow Keys</h2>
 

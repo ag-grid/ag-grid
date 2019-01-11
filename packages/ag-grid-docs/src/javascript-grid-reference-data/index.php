@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid Reference: Reference Data";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Reference Data. Use Reference Data for easier editing of data that uses reference data for display. For example, country codes e.g. {IE, UK, USA} with display values e.g. {Ireland, Great Britain, United States of America}). Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Reference Data. Use Reference Data for easier editing of data that uses reference data for display. For example, country codes e.g. {IE, UK, USA} with display values e.g. {Ireland, Great Britain, United States of America}). Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Value Handlers";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -151,7 +151,7 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= example('Value Handlers', 'ref-data-value-handler', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Value Handlers', 'ref-data-value-handler', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="example-reference-data-with-ref-data-prop">Example - 'refData' Property</h2>
 
@@ -182,6 +182,6 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= example('Ref Data Property', 'ref-data-property', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Ref Data Property', 'ref-data-property', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

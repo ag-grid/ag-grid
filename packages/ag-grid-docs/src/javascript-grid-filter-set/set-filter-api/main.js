@@ -28,10 +28,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    enableColResize: true,
     components: {
         countryCellRenderer: countryCellRenderer
     }
@@ -45,10 +47,6 @@ function countryKeyCreator(params) {
     var countryObject = params.value;
     var key = countryObject.name;
     return key;
-}
-
-function onFilterChanged(value) {
-    gridOptions.api.setQuickFilter(value);
 }
 
 function patchData(data) {

@@ -13,7 +13,7 @@ import {ILoadingOverlayComponentAngularComp} from "ag-grid-angular";
         `
         .customExpandButton{
             float:right;
-            margin-top: 5px;
+            margin-top: 2px;
             margin-left: 3px;
         }
 
@@ -34,42 +34,34 @@ import {ILoadingOverlayComponentAngularComp} from "ag-grid-angular";
             transform: rotate(0deg);
         }
 
-        .customHeaderMenuButton{
-            margin-top: 5px;
+        .customHeaderMenuButton,
+        .customHeaderLabel,
+        .customHeaderLabel,
+        .customSortDownLabel,
+        .customSortUpLabel,
+        .customSortRemoveLabel
+        {
+            margin-top: 2px;
             margin-left: 4px;
             float: left;
         }
 
-        .customHeaderLabel{
-            margin-left: 5px;
-            margin-top: 3px;
-            float: left;
-        }
-
         .customSortDownLabel{
-            float: left;
             margin-left: 10px;
-            margin-top: 5px;
         }
 
         .customSortUpLabel{
-            float: left;
-            margin-left: 3px;
-            margin-top: 4px;
+            margin-left: 1px;
         }
 
         .customSortRemoveLabel{
             float: left;
             font-size: 11px;
-            margin-left: 3px;
-            margin-top: 6px;
         }
 
         .active {
             color: cornflowerblue;
         }
-
-
 
         @keyframes  toExpanded{
             from {

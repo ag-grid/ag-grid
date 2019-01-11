@@ -1,8 +1,8 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Component } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export interface BaseColumnItem {
-    getDisplayName(): string;
+    getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;
     isSelected(): boolean;
     isSelectable(): boolean;
@@ -26,4 +26,3 @@ export declare class PrimaryColsPanel extends Component {
     private onCollapseAll;
     private onGroupExpanded;
 }
-//# sourceMappingURL=primaryColsPanel.d.ts.map

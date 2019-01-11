@@ -9,15 +9,14 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    // set rowData to null or undefined to show loading panel by default
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     pivotMode: true,
-    enableColResize: true,
     columnDefs: columnDefs,
     // we don't want the grid putting in 'sum' in the headers for us
     suppressAggFuncInHeader: true,
-    defaultColDef: {
-        // NEW PIECE - add headerValueGetter
-    },
     sideBar: true,
 
     // this is a callback that gets called on each column definition

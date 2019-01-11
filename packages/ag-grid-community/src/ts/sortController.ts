@@ -1,13 +1,12 @@
-import {Column} from "./entities/column";
-import {Autowired} from "./context/context";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColumnApi} from "./columnController/columnApi";
-import {ColumnController} from "./columnController/columnController";
-import {EventService} from "./eventService";
-import {ColumnEventType, Events, SortChangedEvent} from "./events";
-import {Bean} from "./context/context";
-import {Utils as _} from './utils';
-import {GridApi} from "./gridApi";
+import { Column } from "./entities/column";
+import { Autowired, Bean } from "./context/context";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { ColumnApi } from "./columnController/columnApi";
+import { ColumnController } from "./columnController/columnController";
+import { EventService } from "./eventService";
+import { ColumnEventType, Events, SortChangedEvent } from "./events";
+import { GridApi } from "./gridApi";
+import { _ } from './utils';
 
 @Bean('sortController')
 export class SortController {
@@ -21,27 +20,29 @@ export class SortController {
     @Autowired('gridApi') private gridApi: GridApi;
 
     public progressSort(column: Column, multiSort: boolean, source: ColumnEventType = "api"): void {
-        let nextDirection = this.getNextSortDirection(column);
+        const nextDirection = this.getNextSortDirection(column);
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: string, multiSort: boolean, source: ColumnEventType = "api"): void {
+    public setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source: ColumnEventType = "api"): void {
 
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort!==Column.SORT_ASC && sort!==Column.SORT_DESC) { sort = null; }
+        if (sort !== Column.SORT_ASC && sort !== Column.SORT_DESC) {
+            sort = null;
+        }
 
         // update sort on current col
         column.setSort(sort, source);
 
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.getSort()) {
-            let sortedAt = Number(new Date().valueOf());
+            const sortedAt = Number(new Date().valueOf());
             column.setSortedAt(sortedAt);
         } else {
             column.setSortedAt(null);
         }
 
-        let doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
+        const doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
 
         // clear sort on all columns except this one, and update the icons
         if (!doingMultiSort) {
@@ -58,7 +59,7 @@ export class SortController {
     }
 
     private dispatchSortChangedEvents(): void {
-        let event: SortChangedEvent = {
+        const event: SortChangedEvent = {
             type: Events.EVENT_SORT_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -67,7 +68,7 @@ export class SortController {
     }
 
     private clearSortBarThisColumn(columnToSkip: Column, source: ColumnEventType): void {
-        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach( (columnToClear: Column)=> {
+        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
@@ -77,9 +78,9 @@ export class SortController {
         });
     }
 
-    private getNextSortDirection(column: Column): string {
+    private getNextSortDirection(column: Column): string | null {
 
-        let sortingOrder: string[];
+        let sortingOrder: (string | null)[] | null | undefined;
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
         } else if (this.gridOptionsWrapper.getSortingOrder()) {
@@ -88,15 +89,15 @@ export class SortController {
             sortingOrder = SortController.DEFAULT_SORTING_ORDER;
         }
 
-        if ( !Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+        if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
             console.warn(`ag-grid: sortingOrder must be an array with at least one element, currently it\'s ${sortingOrder}`);
-            return;
+            return null;
         }
 
-        let currentIndex = sortingOrder.indexOf(column.getSort());
-        let notInArray = currentIndex < 0;
-        let lastItemInArray = currentIndex == sortingOrder.length - 1;
-        let result: string;
+        const currentIndex = sortingOrder.indexOf(column.getSort());
+        const notInArray = currentIndex < 0;
+        const lastItemInArray = currentIndex == sortingOrder.length - 1;
+        let result: string | null;
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
         } else {
@@ -114,7 +115,7 @@ export class SortController {
 
     // used by the public api, for saving the sort model
     public getSortModel() {
-        let columnsWithSorting = this.getColumnsWithSortingOrdered();
+        const columnsWithSorting = this.getColumnsWithSortingOrdered();
 
         return _.map(columnsWithSorting, (column: Column) => {
             return {
@@ -125,20 +126,16 @@ export class SortController {
     }
 
     public setSortModel(sortModel: any, source: ColumnEventType = "api") {
-        if (!this.gridOptionsWrapper.isEnableSorting()) {
-            console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
-            return;
-        }
         // first up, clear any previous sort
-        let sortModelProvided = sortModel && sortModel.length > 0;
+        const sortModelProvided = sortModel && sortModel.length > 0;
 
-        let allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allColumnsIncludingAuto.forEach( (column: Column)=> {
+        const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        allColumnsIncludingAuto.forEach((column: Column) => {
             let sortForCol: any = null;
             let sortedAt = -1;
-            if (sortModelProvided && !column.getColDef().suppressSorting) {
+            if (sortModelProvided && column.getColDef().sortable) {
                 for (let j = 0; j < sortModel.length; j++) {
-                    let sortModelEntry = sortModel[j];
+                    const sortModelEntry = sortModel[j];
                     if (typeof sortModelEntry.colId === 'string'
                         && typeof column.getColId() === 'string'
                         && this.compareColIds(sortModelEntry, column)) {
@@ -166,21 +163,21 @@ export class SortController {
 
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
-        let allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        let columnsWithSorting = <Column[]> _.filter(allColumnsIncludingAuto, (column:Column) => !!column.getSort());
+        const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        const columnsWithSorting = _.filter(allColumnsIncludingAuto, (column: Column) => !!column.getSort()) as Column[];
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort( (a: any, b: any) => a.sortedAt - b.sortedAt);
+        columnsWithSorting.sort((a: any, b: any) => a.sortedAt - b.sortedAt);
 
         return columnsWithSorting;
     }
 
     // used by row controller, when doing the sorting
     public getSortForRowController(): any[] {
-        let columnsWithSorting = this.getColumnsWithSortingOrdered();
+        const columnsWithSorting = this.getColumnsWithSortingOrdered();
 
         return _.map(columnsWithSorting, (column: Column) => {
-            let ascending = column.getSort() === Column.SORT_ASC;
+            const ascending = column.getSort() === Column.SORT_ASC;
             return {
                 inverter: ascending ? 1 : -1,
                 column: column

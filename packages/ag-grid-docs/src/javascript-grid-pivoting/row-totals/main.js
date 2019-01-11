@@ -1,4 +1,8 @@
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     columnDefs: [
         {headerName: "Athlete", field: "athlete",  minWidth: 150, enablePivot:true, enableRowGroup:true},
         {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup:true},
@@ -10,7 +14,6 @@ var gridOptions = {
         {headerName: "Silver", field: "silver", width: 150, aggFunc: 'sum'},
         {headerName: "Bronze", field: "bronze", width: 150, aggFunc: 'sum'}
     ],
-    enableColResize: true,
     pivotMode: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',

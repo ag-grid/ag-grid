@@ -1,11 +1,12 @@
-import {RowNode} from "../../entities/rowNode";
-import {Column} from "../../entities/column";
+import { RowNode } from "../../entities/rowNode";
+import { Column } from "../../entities/column";
+import {_} from "../../utils";
 
 export class ChangedPath {
 
-    private active = true;
+    private readonly keepingColumns: boolean;
 
-    private keepingColumns: boolean;
+    private active = true;
 
     private nodeIdsToBoolean: {[nodeId:string]: boolean} = {};
 
@@ -38,7 +39,7 @@ export class ChangedPath {
                 if (!this.nodeIdsToColumns[pointer.id]) {
                     this.nodeIdsToColumns[pointer.id] = {};
                 }
-                columns.forEach( col => this.nodeIdsToColumns[pointer.id][col.getId()] = true );
+                columns.forEach(col => this.nodeIdsToColumns[pointer.id][col.getId()] = true);
             }
 
             pointer = pointer.parent;
@@ -54,8 +55,8 @@ export class ChangedPath {
         this.validateActive();
         if (!this.keepingColumns) { return valueColumns; }
 
-        let colsForThisNode = this.nodeIdsToColumns[rowNode.id];
-        let result = valueColumns.filter( col => colsForThisNode[col.getId()]);
+        const colsForThisNode = this.nodeIdsToColumns[rowNode.id];
+        const result = valueColumns.filter(col => colsForThisNode[col.getId()]);
         return result;
     }
 
@@ -63,8 +64,8 @@ export class ChangedPath {
         this.validateActive();
         if (!this.keepingColumns) { return null; }
 
-        let colsForThisNode = this.nodeIdsToColumns[rowNode.id];
-        let result = valueColumns.filter( col => !colsForThisNode[col.getId()]);
+        const colsForThisNode = this.nodeIdsToColumns[rowNode.id];
+        const result = valueColumns.filter(col => !colsForThisNode[col.getId()]);
         return result;
     }
 
@@ -72,8 +73,7 @@ export class ChangedPath {
     // if it is valid first, and not use it if it is not valid
     private validateActive(): void {
         if (!this.active) {
-            throw "ag-Grid: tried to work on an invalid changed path";
+            throw new Error("ag-Grid: tried to work on an invalid changed path");
         }
     }
-
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var columnGroup_1 = require("../entities/columnGroup");
 var column_1 = require("../entities/column");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
@@ -38,6 +37,7 @@ var autoGroupColService_1 = require("./autoGroupColService");
 var valueCache_1 = require("../valueService/valueCache");
 var gridApi_1 = require("../gridApi");
 var columnApi_1 = require("./columnApi");
+var utils_1 = require("../utils");
 var ColumnController = /** @class */ (function () {
     function ColumnController() {
         // header row count, based on user provided columns
@@ -78,7 +78,13 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.setColumnDefs = function (columnDefs, source) {
         if (source === void 0) { source = "api"; }
         this.columnDefs = columnDefs;
-        this.beforeChangingColumns();
+        // always invalidate cache on changing columns, as the column id's for the new columns
+        // could overlap with the old id's, so the cache would return old values for new columns.
+        this.valueCache.expire();
+        // NOTE ==================
+        // we should be destroying the existing columns and groups if they exist, for example, the original column
+        // group adds a listener to the columns, it should be also removing the listeners
+        this.autoGroupsNeedBuilding = true;
         var oldPrimaryColumns = this.primaryColumns;
         var balancedTreeResult = this.columnFactory.createColumnTree(columnDefs, true, oldPrimaryColumns);
         this.primaryColumnTree = balancedTreeResult.columnTree;
@@ -105,15 +111,6 @@ var ColumnController = /** @class */ (function () {
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
     };
-    ColumnController.prototype.beforeChangingColumns = function () {
-        // always invalidate cache on changing columns, as the column id's for the new columns
-        // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
-        // NOTE ==================
-        // we should be destroying the existing columns and groups if they exist, for example, the original column
-        // group adds a listener to the columns, it should be also removing the listeners
-        this.autoGroupsNeedBuilding = true;
-    };
     ColumnController.prototype.isAutoRowHeightActive = function () {
         return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
     };
@@ -134,7 +131,7 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.getDisplayedColumnsStartingAt = function (column) {
         var currentColumn = column;
         var result = [];
-        while (utils_1.Utils.exists(currentColumn)) {
+        while (currentColumn && utils_1._.exists(currentColumn)) {
             result.push(currentColumn);
             currentColumn = this.getDisplayedColAfter(currentColumn);
         }
@@ -145,7 +142,7 @@ var ColumnController = /** @class */ (function () {
     // + setColumnWidth(), setVirtualViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     ColumnController.prototype.checkDisplayedVirtualColumns = function () {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
-        if (utils_1.Utils.exists(this.displayedCenterColumns)) {
+        if (utils_1._.exists(this.displayedCenterColumns)) {
             var hashBefore = this.allDisplayedVirtualColumns.map(function (column) { return column.getId(); }).join('#');
             this.updateVirtualSets();
             var hashAfter = this.allDisplayedVirtualColumns.map(function (column) { return column.getId(); }).join('#');
@@ -213,15 +210,17 @@ var ColumnController = /** @class */ (function () {
         }
         var valueColumnToFind = this.getPrimaryColumn(valueColKey);
         var foundColumn = null;
-        this.secondaryColumns.forEach(function (column) {
-            var thisPivotKeys = column.getColDef().pivotKeys;
-            var pivotValueColumn = column.getColDef().pivotValueColumn;
-            var pivotKeyMatches = utils_1.Utils.compareArrays(thisPivotKeys, pivotKeys);
-            var pivotValueMatches = pivotValueColumn === valueColumnToFind;
-            if (pivotKeyMatches && pivotValueMatches) {
-                foundColumn = column;
-            }
-        });
+        if (this.secondaryColumns) {
+            this.secondaryColumns.forEach(function (column) {
+                var thisPivotKeys = column.getColDef().pivotKeys;
+                var pivotValueColumn = column.getColDef().pivotValueColumn;
+                var pivotKeyMatches = utils_1._.compareArrays(thisPivotKeys, pivotKeys);
+                var pivotValueMatches = pivotValueColumn === valueColumnToFind;
+                if (pivotKeyMatches && pivotValueMatches) {
+                    foundColumn = column;
+                }
+            });
+        }
         return foundColumn;
     };
     ColumnController.prototype.setBeans = function (loggerFactory) {
@@ -291,7 +290,9 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.autoSizeColumn = function (key, source) {
         if (source === void 0) { source = "api"; }
-        this.autoSizeColumns([key], source);
+        if (key) {
+            this.autoSizeColumns([key], source);
+        }
     };
     ColumnController.prototype.autoSizeAllColumns = function (source) {
         if (source === void 0) { source = "api"; }
@@ -405,8 +406,9 @@ var ColumnController = /** @class */ (function () {
                 // if one or more of the columns spanned pass the filter.
                 filterPasses = false;
                 columnsToCheckFilter.forEach(function (colForFilter) {
-                    if (filterCallback(colForFilter))
+                    if (filterCallback(colForFilter)) {
                         filterPasses = true;
+                    }
                 });
             }
             else {
@@ -448,8 +450,14 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.isColumnInViewport = function (col) {
         var columnLeft = col.getLeft();
         var columnRight = col.getLeft() + col.getActualWidth();
-        var columnToMuchLeft = columnLeft < this.viewportLeft && columnRight < this.viewportLeft;
-        var columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
+        // adding 200 for buffer size, so some cols off viewport are rendered.
+        // this helps horizontal scrolling so user rarely sees white space (unless
+        // they scroll horizontally fast). however we are conservative, as the more
+        // buffer the slower the vertical redraw speed
+        var leftBounds = this.viewportLeft - 200;
+        var rightBounds = this.viewportRight + 200;
+        var columnToMuchLeft = columnLeft < leftBounds && columnRight < leftBounds;
+        var columnToMuchRight = columnLeft > rightBounds && columnRight > rightBounds;
         return !columnToMuchLeft && !columnToMuchRight;
     };
     // used by:
@@ -465,7 +473,7 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.updatePrimaryColumnList = function (keys, masterList, actionIsAdd, columnCallback, eventType, source) {
         var _this = this;
         if (source === void 0) { source = "api"; }
-        if (utils_1.Utils.missingOrEmpty(keys)) {
+        if (!keys || utils_1._.missingOrEmpty(keys)) {
             return;
         }
         var atLeastOne = false;
@@ -484,7 +492,7 @@ var ColumnController = /** @class */ (function () {
                 if (masterList.indexOf(columnToAdd) < 0) {
                     return;
                 }
-                utils_1.Utils.removeFromArray(masterList, columnToAdd);
+                utils_1._.removeFromArray(masterList, columnToAdd);
             }
             columnCallback(columnToAdd);
             atLeastOne = true;
@@ -522,7 +530,9 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.addRowGroupColumn = function (key, source) {
         if (source === void 0) { source = "api"; }
-        this.addRowGroupColumns([key], source);
+        if (key) {
+            this.addRowGroupColumns([key], source);
+        }
     };
     ColumnController.prototype.addRowGroupColumns = function (keys, source) {
         if (source === void 0) { source = "api"; }
@@ -536,7 +546,9 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.removeRowGroupColumn = function (key, source) {
         if (source === void 0) { source = "api"; }
-        this.removeRowGroupColumns([key], source);
+        if (key) {
+            this.removeRowGroupColumns([key], source);
+        }
     };
     ColumnController.prototype.addPivotColumns = function (keys, source) {
         if (source === void 0) { source = "api"; }
@@ -563,10 +575,12 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.setPrimaryColumnList = function (colKeys, masterList, eventName, columnCallback, source) {
         var _this = this;
         masterList.length = 0;
-        if (utils_1.Utils.exists(colKeys)) {
+        if (utils_1._.exists(colKeys)) {
             colKeys.forEach(function (key) {
                 var column = _this.getPrimaryColumn(key);
-                masterList.push(column);
+                if (column) {
+                    masterList.push(column);
+                }
             });
         }
         this.primaryColumns.forEach(function (column) {
@@ -607,7 +621,9 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.addValueColumn = function (colKey, source) {
         if (source === void 0) { source = "api"; }
-        this.addValueColumns([colKey], source);
+        if (colKey) {
+            this.addValueColumns([colKey], source);
+        }
     };
     ColumnController.prototype.removeValueColumn = function (colKey, source) {
         if (source === void 0) { source = "api"; }
@@ -699,7 +715,7 @@ var ColumnController = /** @class */ (function () {
     // then both the current group (grows), and the adjacent group (shrinks), will get resized,
     // so that's two sets for this method.
     ColumnController.prototype.resizeColumnSets = function (resizeSets, finished, source) {
-        var passMinMaxCheck = utils_1.Utils.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
+        var passMinMaxCheck = utils_1._.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
         if (!passMinMaxCheck) {
             // even though we are not going to resize beyond min/max size, we still need to raise event when finished
             if (finished) {
@@ -830,16 +846,18 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.setColumnAggFunc = function (column, aggFunc, source) {
         if (source === void 0) { source = "api"; }
-        column.setAggFunc(aggFunc);
-        var event = {
-            type: events_1.Events.EVENT_COLUMN_VALUE_CHANGED,
-            columns: [column],
-            column: column,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);
+        if (column) {
+            column.setAggFunc(aggFunc);
+            var event_5 = {
+                type: events_1.Events.EVENT_COLUMN_VALUE_CHANGED,
+                columns: [column],
+                column: column,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event_5);
+        }
     };
     ColumnController.prototype.moveRowGroupColumn = function (fromIndex, toIndex, source) {
         if (source === void 0) { source = "api"; }
@@ -870,7 +888,7 @@ var ColumnController = /** @class */ (function () {
         if (failedRules) {
             return;
         }
-        utils_1.Utils.moveInArray(this.gridColumns, columnsToMove, toIndex);
+        utils_1._.moveInArray(this.gridColumns, columnsToMove, toIndex);
         this.updateDisplayedColumns(source);
         var event = {
             type: events_1.Events.EVENT_COLUMN_MOVED,
@@ -887,7 +905,7 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.doesMovePassRules = function (columnsToMove, toIndex) {
         // make a copy of what the grid columns would look like after the move
         var proposedColumnOrder = this.gridColumns.slice();
-        utils_1.Utils.moveInArray(proposedColumnOrder, columnsToMove, toIndex);
+        utils_1._.moveInArray(proposedColumnOrder, columnsToMove, toIndex);
         // then check that the new proposed order of the columns passes all rules
         if (!this.doesMovePassMarryChildren(proposedColumnOrder)) {
             return false;
@@ -984,12 +1002,12 @@ var ColumnController = /** @class */ (function () {
             this.rightWidth = newRightWidth;
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setVirtualViewportPosition()
-            var event_5 = {
+            var event_6 = {
                 type: events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event_5);
+            this.eventService.dispatchEvent(event_6);
         }
     };
     // + rowController
@@ -1046,10 +1064,10 @@ var ColumnController = /** @class */ (function () {
         return this.gridColumns;
     };
     ColumnController.prototype.isEmpty = function () {
-        return utils_1.Utils.missingOrEmpty(this.gridColumns);
+        return utils_1._.missingOrEmpty(this.gridColumns);
     };
     ColumnController.prototype.isRowGroupEmpty = function () {
-        return utils_1.Utils.missingOrEmpty(this.rowGroupColumns);
+        return utils_1._.missingOrEmpty(this.rowGroupColumns);
     };
     ColumnController.prototype.setColumnVisible = function (key, visible, source) {
         if (source === void 0) { source = "api"; }
@@ -1083,11 +1101,17 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.setColumnPinned = function (key, pinned, source) {
         if (source === void 0) { source = "api"; }
-        this.setColumnsPinned([key], pinned, source);
+        if (key) {
+            this.setColumnsPinned([key], pinned, source);
+        }
     };
     ColumnController.prototype.setColumnsPinned = function (keys, pinned, source) {
         var _this = this;
         if (source === void 0) { source = "api"; }
+        if (this.gridOptionsWrapper.getDomLayout() === 'print') {
+            console.warn("Changing the column pinning status is not allowed with domLayout='print'");
+            return;
+        }
         this.columnAnimationService.start();
         var actualPinned;
         if (pinned === true || pinned === column_1.Column.PINNED_LEFT) {
@@ -1133,7 +1157,7 @@ var ColumnController = /** @class */ (function () {
     // should return back a column event of the right type
     source, createEvent) {
         var _this = this;
-        if (utils_1.Utils.missingOrEmpty(keys)) {
+        if (utils_1._.missingOrEmpty(keys)) {
             return;
         }
         var updatedColumns = [];
@@ -1153,11 +1177,11 @@ var ColumnController = /** @class */ (function () {
             return;
         }
         this.updateDisplayedColumns(source);
-        if (utils_1.Utils.exists(createEvent) && createEvent) {
-            var event_6 = createEvent();
-            event_6.columns = updatedColumns;
-            event_6.column = updatedColumns.length === 1 ? updatedColumns[0] : null;
-            this.eventService.dispatchEvent(event_6);
+        if (utils_1._.exists(createEvent) && createEvent) {
+            var event_7 = createEvent();
+            event_7.columns = updatedColumns;
+            event_7.column = updatedColumns.length === 1 ? updatedColumns[0] : null;
+            this.eventService.dispatchEvent(event_7);
         }
     };
     ColumnController.prototype.getDisplayedColBefore = function (col) {
@@ -1211,10 +1235,10 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.getPrimaryAndSecondaryAndAutoColumns = function () {
         var result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
-        if (utils_1.Utils.exists(this.groupAutoColumns)) {
+        if (this.groupAutoColumns && utils_1._.exists(this.groupAutoColumns)) {
             this.groupAutoColumns.forEach(function (col) { return result.push(col); });
         }
-        if (this.secondaryColumnsPresent) {
+        if (this.secondaryColumnsPresent && this.secondaryColumns) {
             this.secondaryColumns.forEach(function (column) { return result.push(column); });
         }
         return result;
@@ -1234,7 +1258,7 @@ var ColumnController = /** @class */ (function () {
         };
     };
     ColumnController.prototype.getColumnState = function () {
-        if (utils_1.Utils.missing(this.primaryColumns)) {
+        if (utils_1._.missing(this.primaryColumns)) {
             return [];
         }
         var primaryColumnState = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
@@ -1261,26 +1285,42 @@ var ColumnController = /** @class */ (function () {
         if (source === void 0) { source = "api"; }
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         var primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
-        var state = [];
+        var columnStates = [];
+        // we start at 1000, so if user has mix of rowGroup and group specified, it will work with both.
+        // eg IF user has ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=true,
+        // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=-1000
+        var letRowGroupIndex = 1000;
+        var letPivotIndex = 1000;
         if (primaryColumns) {
             primaryColumns.forEach(function (column) {
-                state.push({
+                var rowGroupIndex = column.getColDef().rowGroupIndex;
+                var rowGroup = column.getColDef().rowGroup;
+                var pivotIndex = column.getColDef().pivotIndex;
+                var pivot = column.getColDef().pivot;
+                var stateItem = {
                     colId: column.getColId(),
                     aggFunc: column.getColDef().aggFunc,
                     hide: column.getColDef().hide,
                     pinned: column.getColDef().pinned,
-                    rowGroupIndex: column.getColDef().rowGroupIndex,
+                    rowGroupIndex: rowGroupIndex,
                     pivotIndex: column.getColDef().pivotIndex,
                     width: column.getColDef().width
-                });
+                };
+                if (utils_1._.missing(rowGroupIndex) && rowGroup) {
+                    stateItem.rowGroupIndex = letRowGroupIndex++;
+                }
+                if (utils_1._.missing(pivotIndex) && pivot) {
+                    stateItem.pivotIndex = letPivotIndex++;
+                }
+                columnStates.push(stateItem);
             });
         }
-        this.setColumnState(state, source);
+        this.setColumnState(columnStates, source);
     };
     ColumnController.prototype.setColumnState = function (columnState, source) {
         var _this = this;
         if (source === void 0) { source = "api"; }
-        if (utils_1.Utils.missingOrEmpty(this.primaryColumns)) {
+        if (utils_1._.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
         var columnStateBefore = this.getColumnState();
@@ -1297,7 +1337,7 @@ var ColumnController = /** @class */ (function () {
         if (columnState) {
             columnState.forEach(function (stateItem) {
                 // auto group columns are re-created so deferring syncing with ColumnState
-                if (utils_1.Utils.exists(_this.getAutoColumn(stateItem.colId))) {
+                if (utils_1._.exists(_this.getAutoColumn(stateItem.colId))) {
                     autoGroupColumnStates.push(stateItem);
                     return;
                 }
@@ -1308,7 +1348,7 @@ var ColumnController = /** @class */ (function () {
                 }
                 else {
                     _this.syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes, source);
-                    utils_1.Utils.removeFromArray(columnsWithNoState, column);
+                    utils_1._.removeFromArray(columnsWithNoState, column);
                 }
             });
         }
@@ -1344,14 +1384,16 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.raiseColumnEvents = function (columnStateBefore, source) {
         var _this = this;
-        if (this.gridOptionsWrapper.isSuppressSetColumnStateEvents())
+        if (this.gridOptionsWrapper.isSuppressSetColumnStateEvents()) {
             return;
+        }
         var columnStateAfter = this.getColumnState();
         // raises generic ColumnEvents where all columns are returned rather than what has changed
         var raiseEventWithAllColumns = function (eventType, idMapper, columns) {
-            var unchanged = utils_1.Utils.compareArrays(columnStateBefore.map(idMapper).sort(), columnStateAfter.map(idMapper).sort());
-            if (unchanged)
+            var unchanged = utils_1._.compareArrays(columnStateBefore.map(idMapper).sort(), columnStateAfter.map(idMapper).sort());
+            if (unchanged) {
                 return;
+            }
             // returning all columns rather than what has changed!
             var event = {
                 type: eventType,
@@ -1397,23 +1439,9 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.raiseColumnPinnedEvent = function (changedColumns, source) {
         if (changedColumns.length > 0) {
-            var event_7 = {
+            var event_8 = {
                 type: events_1.Events.EVENT_COLUMN_PINNED,
                 pinned: null,
-                columns: changedColumns,
-                column: null,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: source
-            };
-            this.eventService.dispatchEvent(event_7);
-        }
-    };
-    ColumnController.prototype.raiseColumnVisibleEvent = function (changedColumns, source) {
-        if (changedColumns.length > 0) {
-            var event_8 = {
-                type: events_1.Events.EVENT_COLUMN_VISIBLE,
-                visible: undefined,
                 columns: changedColumns,
                 column: null,
                 api: this.gridApi,
@@ -1423,9 +1451,23 @@ var ColumnController = /** @class */ (function () {
             this.eventService.dispatchEvent(event_8);
         }
     };
-    ColumnController.prototype.raiseColumnResizeEvent = function (changedColumns, source) {
+    ColumnController.prototype.raiseColumnVisibleEvent = function (changedColumns, source) {
         if (changedColumns.length > 0) {
             var event_9 = {
+                type: events_1.Events.EVENT_COLUMN_VISIBLE,
+                visible: undefined,
+                columns: changedColumns,
+                column: null,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event_9);
+        }
+    };
+    ColumnController.prototype.raiseColumnResizeEvent = function (changedColumns, source) {
+        if (changedColumns.length > 0) {
+            var event_10 = {
                 type: events_1.Events.EVENT_COLUMN_RESIZED,
                 columns: changedColumns,
                 column: null,
@@ -1434,7 +1476,7 @@ var ColumnController = /** @class */ (function () {
                 columnApi: this.columnApi,
                 source: source
             };
-            this.eventService.dispatchEvent(event_9);
+            this.eventService.dispatchEvent(event_10);
         }
     };
     ColumnController.prototype.raiseColumnMovedEvent = function (columnStateBefore, source) {
@@ -1444,11 +1486,12 @@ var ColumnController = /** @class */ (function () {
             var before = columnStateBefore[i];
             var after = columnStateAfter[i];
             // don't consider column if reintroduced or hidden
-            if (!before || after.hide)
+            if (!before || after.hide) {
                 return "continue";
+            }
             if (before.colId !== after.colId) {
                 var predicate = function (column) { return column.getColId() === after.colId; };
-                var movedColumn = utils_1.Utils.find(this_1.allDisplayedColumns, predicate);
+                var movedColumn = utils_1._.find(this_1.allDisplayedColumns, predicate);
                 movedColumns.push(movedColumn);
             }
         };
@@ -1457,7 +1500,7 @@ var ColumnController = /** @class */ (function () {
             _loop_3(i);
         }
         if (movedColumns.length > 0) {
-            var event_10 = {
+            var event_11 = {
                 type: events_1.Events.EVENT_COLUMN_MOVED,
                 columns: movedColumns,
                 column: null,
@@ -1466,7 +1509,7 @@ var ColumnController = /** @class */ (function () {
                 columnApi: this.columnApi,
                 source: source
             };
-            this.eventService.dispatchEvent(event_10);
+            this.eventService.dispatchEvent(event_11);
         }
     };
     ColumnController.prototype.sortColumnListUsingIndexes = function (indexes, colA, colB) {
@@ -1483,6 +1526,9 @@ var ColumnController = /** @class */ (function () {
         column.setValueActive(false, source);
     };
     ColumnController.prototype.syncColumnWithStateItem = function (column, stateItem, rowGroupIndexes, pivotIndexes, source) {
+        if (!column) {
+            return;
+        }
         // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
         column.setVisible(!stateItem.hide, source);
         // sets pinned to 'left' or 'right'
@@ -1499,7 +1545,7 @@ var ColumnController = /** @class */ (function () {
             this.valueColumns.push(column);
         }
         else {
-            if (utils_1.Utils.exists(stateItem.aggFunc)) {
+            if (utils_1._.exists(stateItem.aggFunc)) {
                 console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
                     'functions, register the functions first before using them in get/set state. This is because it is' +
                     'intended for the column state to be stored and retrieved as simple JSON.');
@@ -1566,10 +1612,10 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.getAutoColumn = function (key) {
         var _this = this;
-        if (!utils_1.Utils.exists(this.groupAutoColumns) || utils_1.Utils.missing(this.groupAutoColumns)) {
+        if (!this.groupAutoColumns || !utils_1._.exists(this.groupAutoColumns) || utils_1._.missing(this.groupAutoColumns)) {
             return null;
         }
-        return utils_1.Utils.find(this.groupAutoColumns, function (groupCol) {
+        return utils_1._.find(this.groupAutoColumns, function (groupCol) {
             return _this.columnsMatch(groupCol, key);
         });
     };
@@ -1581,6 +1627,9 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.getDisplayNameForColumn = function (column, location, includeAggFunc) {
         if (includeAggFunc === void 0) { includeAggFunc = false; }
+        if (!column) {
+            return null;
+        }
         var headerName = this.getHeaderName(column.getColDef(), column, null, null, location);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);
@@ -1590,7 +1639,7 @@ var ColumnController = /** @class */ (function () {
         }
     };
     ColumnController.prototype.getDisplayNameForOriginalColumnGroup = function (columnGroup, originalColumnGroup, location) {
-        var colGroupDef = originalColumnGroup.getColGroupDef();
+        var colGroupDef = originalColumnGroup ? originalColumnGroup.getColGroupDef() : null;
         if (colGroupDef) {
             return this.getHeaderName(colGroupDef, null, columnGroup, originalColumnGroup, location);
         }
@@ -1631,7 +1680,7 @@ var ColumnController = /** @class */ (function () {
             return colDef.headerName;
         }
         else if (colDef.field) {
-            return utils_1.Utils.camelCaseToHumanText(colDef.field);
+            return utils_1._.camelCaseToHumanText(colDef.field);
         }
         else {
             return '';
@@ -1671,7 +1720,7 @@ var ColumnController = /** @class */ (function () {
         }
         // only columns with aggregation active can have aggregations
         var pivotValueColumn = column.getColDef().pivotValueColumn;
-        var pivotActiveOnThisColumn = utils_1.Utils.exists(pivotValueColumn);
+        var pivotActiveOnThisColumn = utils_1._.exists(pivotValueColumn);
         var aggFunc = null;
         var aggFuncFound;
         // otherwise we have a measure that is active, and we are doing aggregation on it
@@ -1762,7 +1811,7 @@ var ColumnController = /** @class */ (function () {
         var newPrimaryCols = this.primaryColumns.filter(colNewFunc);
         removedCols.forEach(function (col) { return setFlagFunc(col, false); });
         var newCols = [];
-        // we only want to work on new columns, as col columns already got processed first time around
+        // we only want to work on new columns, as old columns already got processed first time around
         // pull out items with xxxIndex
         newPrimaryCols.forEach(function (col) {
             var index = getIndexFunc(col.getColDef());
@@ -1774,7 +1823,15 @@ var ColumnController = /** @class */ (function () {
         newCols.sort(function (colA, colB) {
             var indexA = getIndexFunc(colA.getColDef());
             var indexB = getIndexFunc(colB.getColDef());
-            return indexA - indexB;
+            if (indexA === indexB) {
+                return 0;
+            }
+            else if (indexA < indexB) {
+                return -1;
+            }
+            else {
+                return 1;
+            }
         });
         // now just pull out items xxx (boolean value), they will be added at the end
         // after the indexed ones, but in the order the columns appear
@@ -1890,7 +1947,7 @@ var ColumnController = /** @class */ (function () {
         if (this.pivotMode && !this.secondaryColumnsPresent) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
-            columnsForDisplay = utils_1.Utils.filter(this.gridColumns, function (column) {
+            columnsForDisplay = utils_1._.filter(this.gridColumns, function (column) {
                 var isAutoGroupCol = _this.groupAutoColumns && _this.groupAutoColumns.indexOf(column) >= 0;
                 var isValueCol = _this.valueColumns && _this.valueColumns.indexOf(column) >= 0;
                 return isAutoGroupCol || isValueCol;
@@ -1899,7 +1956,7 @@ var ColumnController = /** @class */ (function () {
         else {
             // otherwise continue as normal. this can be working on the primary
             // or secondary columns, whatever the gridColumns are set to
-            columnsForDisplay = utils_1.Utils.filter(this.gridColumns, function (column) {
+            columnsForDisplay = utils_1._.filter(this.gridColumns, function (column) {
                 // keep col if a) it's auto-group or b) it's visible
                 var isAutoGroupCol = _this.groupAutoColumns && _this.groupAutoColumns.indexOf(column) >= 0;
                 return isAutoGroupCol || column.isVisible();
@@ -1910,7 +1967,7 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.checkColSpanActiveInCols = function (columns) {
         var result = false;
         columns.forEach(function (col) {
-            if (utils_1.Utils.exists(col.getColDef().colSpan)) {
+            if (utils_1._.exists(col.getColDef().colSpan)) {
                 result = true;
             }
         });
@@ -1921,7 +1978,7 @@ var ColumnController = /** @class */ (function () {
         this.groupDisplayColumns = [];
         var checkFunc = function (col) {
             var colDef = col.getColDef();
-            if (colDef && utils_1.Utils.exists(colDef.showRowGroup)) {
+            if (colDef && utils_1._.exists(colDef.showRowGroup)) {
                 _this.groupDisplayColumns.push(col);
             }
         };
@@ -1974,10 +2031,12 @@ var ColumnController = /** @class */ (function () {
         if (!columnCallback && !groupCallback) {
             return undefined;
         }
-        searchForColDefs(colDefs);
+        if (colDefs) {
+            searchForColDefs(colDefs);
+        }
         function searchForColDefs(colDefs2) {
             colDefs2.forEach(function (abstractColDef) {
-                var isGroup = utils_1.Utils.exists(abstractColDef.children);
+                var isGroup = utils_1._.exists(abstractColDef.children);
                 if (isGroup) {
                     var colGroupDef = abstractColDef;
                     if (groupCallback) {
@@ -1999,7 +2058,7 @@ var ColumnController = /** @class */ (function () {
         if (this.gridColsArePrimary) {
             this.lastPrimaryOrder = this.gridColumns;
         }
-        if (this.secondaryColumns) {
+        if (this.secondaryColumns && this.secondaryBalancedTree) {
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
@@ -2030,7 +2089,7 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.orderGridColsLikeLastPrimary = function () {
         var _this = this;
-        if (utils_1.Utils.missing(this.lastPrimaryOrder)) {
+        if (utils_1._.missing(this.lastPrimaryOrder)) {
             return;
         }
         // only do the sort if at least one column is accounted for. columns will be not accounted for
@@ -2096,10 +2155,10 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.addAutoGroupToGridColumns = function () {
         // add in auto-group here
         this.createGroupAutoColumnsIfNeeded();
-        if (utils_1.Utils.missing(this.groupAutoColumns)) {
+        if (utils_1._.missing(this.groupAutoColumns)) {
             return;
         }
-        this.gridColumns = this.groupAutoColumns.concat(this.gridColumns);
+        this.gridColumns = this.groupAutoColumns ? this.groupAutoColumns.concat(this.gridColumns) : this.gridColumns;
         var autoColBalancedTree = this.columnFactory.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
         this.gridBalancedTree = autoColBalancedTree.concat(this.gridBalancedTree);
     };
@@ -2181,7 +2240,7 @@ var ColumnController = /** @class */ (function () {
                     left_2 += column.getActualWidth();
                 });
             }
-            utils_1.Utils.removeAllFromArray(allColumns, columns);
+            utils_1._.removeAllFromArray(allColumns, columns);
         });
         // items left in allColumns are columns not displayed, so remove the left position. this is
         // important for the rows, as if a col is made visible, then taken out, then made visible again,
@@ -2242,7 +2301,7 @@ var ColumnController = /** @class */ (function () {
                 result = this.displayedCentreHeaderRows[dept];
                 break;
         }
-        if (utils_1.Utils.missing(result)) {
+        if (utils_1._.missing(result)) {
             result = [];
         }
         return result;
@@ -2287,7 +2346,7 @@ var ColumnController = /** @class */ (function () {
         this.updateDisplayedVirtualGroups(virtualColIds);
     };
     ColumnController.prototype.filterOutColumnsWithinViewport = function () {
-        return utils_1.Utils.filter(this.displayedCenterColumns, this.isColumnInViewport.bind(this));
+        return utils_1._.filter(this.displayedCenterColumns, this.isColumnInViewport.bind(this));
     };
     // called from api
     ColumnController.prototype.sizeColumnsToFit = function (gridWidth, source) {
@@ -2298,10 +2357,10 @@ var ColumnController = /** @class */ (function () {
         if (gridWidth <= 0 || allDisplayedColumns.length === 0) {
             return;
         }
-        var colsToNotSpread = utils_1.Utils.filter(allDisplayedColumns, function (column) {
+        var colsToNotSpread = utils_1._.filter(allDisplayedColumns, function (column) {
             return column.getColDef().suppressSizeToFit === true;
         });
-        var colsToSpread = utils_1.Utils.filter(allDisplayedColumns, function (column) {
+        var colsToSpread = utils_1._.filter(allDisplayedColumns, function (column) {
             return column.getColDef().suppressSizeToFit !== true;
         });
         // make a copy of the cols that are going to be resized
@@ -2363,18 +2422,18 @@ var ColumnController = /** @class */ (function () {
             _this.eventService.dispatchEvent(event);
         });
         function moveToNotSpread(column) {
-            utils_1.Utils.removeFromArray(colsToSpread, column);
+            utils_1._.removeFromArray(colsToSpread, column);
             colsToNotSpread.push(column);
         }
     };
     ColumnController.prototype.buildDisplayedTrees = function (visibleColumns) {
-        var leftVisibleColumns = utils_1.Utils.filter(visibleColumns, function (column) {
+        var leftVisibleColumns = utils_1._.filter(visibleColumns, function (column) {
             return column.getPinned() === 'left';
         });
-        var rightVisibleColumns = utils_1.Utils.filter(visibleColumns, function (column) {
+        var rightVisibleColumns = utils_1._.filter(visibleColumns, function (column) {
             return column.getPinned() === 'right';
         });
-        var centerVisibleColumns = utils_1.Utils.filter(visibleColumns, function (column) {
+        var centerVisibleColumns = utils_1._.filter(visibleColumns, function (column) {
             return column.getPinned() !== 'left' && column.getPinned() !== 'right';
         });
         var groupInstanceIdCreator = new groupInstanceIdCreator_1.GroupInstanceIdCreator();

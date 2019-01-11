@@ -50,8 +50,11 @@ function filterUsaAndCanadaEquestrian() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
-    enableColResize: true,
     pivotMode: true,
     sideBar: true,
 };

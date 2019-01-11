@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -41,6 +41,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
     }
     ServerSideBlock.prototype.init = function () {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
         if (!this.usingTreeData && this.groupLevel) {
             var groupColVo = this.params.rowGroupCols[this.level];
             this.groupField = groupColVo.field;
@@ -59,7 +60,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
         var parts = [];
         var rowNode = this.parentRowNode;
         // pull keys from all parent nodes, but do not include the root node
-        while (rowNode.level >= 0) {
+        while (rowNode && rowNode.level >= 0) {
             parts.push(rowNode.key);
             rowNode = rowNode.parent;
         }
@@ -79,8 +80,6 @@ var ServerSideBlock = /** @class */ (function (_super) {
         return this.nodeIdPrefix;
     };
     ServerSideBlock.prototype.getRow = function (displayRowIndex) {
-        // do binary search of tree
-        // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
         var bottomPointer = this.getStartRow();
         // the end row depends on whether all this block is used or not. if the virtual row count
         // is before the end, then not all the row is used
@@ -95,21 +94,30 @@ var ServerSideBlock = /** @class */ (function (_super) {
         while (true) {
             var midPointer = Math.floor((bottomPointer + topPointer) / 2);
             var currentRowNode = _super.prototype.getRowUsingLocalIndex.call(this, midPointer);
+            // first check current row for index
             if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             }
+            // then check if current row contains a detail row with the index
+            var expandedMasterRow = currentRowNode.master && currentRowNode.expanded;
+            if (expandedMasterRow && currentRowNode.detailNode.rowIndex === displayRowIndex) {
+                return currentRowNode.detailNode;
+            }
+            // then check if child cache contains index
             var childrenCache = currentRowNode.childrenCache;
-            if (currentRowNode.rowIndex === displayRowIndex) {
-                return currentRowNode;
-            }
-            else if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
+            if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
                 return childrenCache.getRow(displayRowIndex);
             }
-            else if (currentRowNode.rowIndex < displayRowIndex) {
+            // otherwise adjust pointers to continue searching for index
+            if (currentRowNode.rowIndex < displayRowIndex) {
                 bottomPointer = midPointer + 1;
             }
             else if (currentRowNode.rowIndex > displayRowIndex) {
                 topPointer = midPointer - 1;
+            }
+            else {
+                console.warn("ag-Grid: error: unable to locate rowIndex = " + displayRowIndex + " in cache");
+                return null;
             }
         }
     };
@@ -134,11 +142,11 @@ var ServerSideBlock = /** @class */ (function (_super) {
             rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
             if (this.usingTreeData) {
                 var getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
-                if (ag_grid_community_1._.exists(getServerSideGroupKey)) {
+                if (ag_grid_community_1._.exists(getServerSideGroupKey) && getServerSideGroupKey) {
                     rowNode.key = getServerSideGroupKey(rowNode.data);
                 }
                 var isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
-                if (ag_grid_community_1._.exists(isServerSideGroup)) {
+                if (ag_grid_community_1._.exists(isServerSideGroup) && isServerSideGroup) {
                     rowNode.group = isServerSideGroup(rowNode.data);
                 }
             }
@@ -152,6 +160,15 @@ var ServerSideBlock = /** @class */ (function (_super) {
                         }
                         console.warn("data is ", rowNode.data);
                     }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
+                }
+            }
+            else if (this.usingMasterDetail) {
+                var isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+                if (ag_grid_community_1._.exists(isRowMasterFunc) && isRowMasterFunc) {
+                    rowNode.master = isRowMasterFunc(rowNode.data);
+                }
+                else {
+                    rowNode.master = true;
                 }
             }
         }
@@ -193,8 +210,10 @@ var ServerSideBlock = /** @class */ (function (_super) {
     ServerSideBlock.prototype.loadFromDatasource = function () {
         var _this = this;
         var params = this.createLoadParams();
-        setTimeout(function () {
-            _this.params.datasource.getRows(params);
+        window.setTimeout(function () {
+            if (_this.params.datasource) {
+                _this.params.datasource.getRows(params);
+            }
         }, 0);
     };
     ServerSideBlock.prototype.createBlankRowNode = function (rowIndex) {
@@ -216,7 +235,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
     ServerSideBlock.prototype.createGroupKeys = function (groupNode) {
         var keys = [];
         var pointer = groupNode;
-        while (pointer.level >= 0) {
+        while (pointer && pointer.level >= 0) {
             keys.push(pointer.key);
             pointer = pointer.parent;
         }
@@ -229,6 +248,12 @@ var ServerSideBlock = /** @class */ (function (_super) {
     ServerSideBlock.prototype.getRowBounds = function (index, virtualRowCount) {
         var start = this.getStartRow();
         var end = this.getEndRow();
+        var extractRowBounds = function (rowNode) {
+            return {
+                rowHeight: rowNode.rowHeight,
+                rowTop: rowNode.rowTop
+            };
+        };
         for (var i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
@@ -238,10 +263,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
             var rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
                 if (rowNode.rowIndex === index) {
-                    return {
-                        rowHeight: rowNode.rowHeight,
-                        rowTop: rowNode.rowTop
-                    };
+                    return extractRowBounds(rowNode);
                 }
                 if (rowNode.group && rowNode.expanded && ag_grid_community_1._.exists(rowNode.childrenCache)) {
                     var serverSideCache = rowNode.childrenCache;
@@ -249,9 +271,14 @@ var ServerSideBlock = /** @class */ (function (_super) {
                         return serverSideCache.getRowBounds(index);
                     }
                 }
+                else if (rowNode.master && rowNode.expanded && ag_grid_community_1._.exists(rowNode.detailNode)) {
+                    if (rowNode.detailNode.rowIndex === index) {
+                        return extractRowBounds(rowNode.detailNode);
+                    }
+                }
             }
         }
-        console.error("ag-Grid: looking for invalid row index in Server Side Row Model, index=" + index);
+        console.error(" ag-Grid: looking for invalid row index in Server Side Row Model, index=" + index);
         return null;
     };
     ServerSideBlock.prototype.getRowIndexAtPixel = function (pixel, virtualRowCount) {
@@ -265,9 +292,16 @@ var ServerSideBlock = /** @class */ (function (_super) {
             }
             var rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
+                // first check if pixel is in range of current row
                 if (rowNode.isPixelInRange(pixel)) {
                     return rowNode.rowIndex;
                 }
+                // then check if current row contains a detail row with pixel in range
+                var expandedMasterRow = rowNode.master && rowNode.expanded;
+                if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
+                    return rowNode.rowIndex;
+                }
+                // then check if it's a group row with a child cache with pixel in range
                 if (rowNode.group && rowNode.expanded && ag_grid_community_1._.exists(rowNode.childrenCache)) {
                     var serverSideCache = rowNode.childrenCache;
                     if (serverSideCache.isPixelInRange(pixel)) {
@@ -293,10 +327,15 @@ var ServerSideBlock = /** @class */ (function (_super) {
         this.displayIndexStart = displayIndexSeq.peek();
         this.blockTop = nextRowTop.value;
         this.forEachRowNode(virtualRowCount, function (rowNode) {
-            var rowIndex = displayIndexSeq.next();
-            rowNode.setRowIndex(rowIndex);
+            rowNode.setRowIndex(displayIndexSeq.next());
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight;
+            var hasDetailRow = rowNode.master && rowNode.expanded;
+            if (hasDetailRow) {
+                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                rowNode.detailNode.setRowTop(nextRowTop.value);
+                nextRowTop.value += rowNode.detailNode.rowHeight;
+            }
             var hasChildCache = rowNode.group && ag_grid_community_1._.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 var serverSideCache = rowNode.childrenCache;

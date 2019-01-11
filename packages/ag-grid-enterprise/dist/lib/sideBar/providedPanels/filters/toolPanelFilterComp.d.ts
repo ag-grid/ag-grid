@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { Column, Component } from "ag-grid-community";
 export interface ToolPanelFilterCompParams {
     column: Column;
@@ -30,4 +30,3 @@ export declare class ToolPanelFilterComp extends Component {
     private doCollapse;
     private onFilterOpened;
 }
-//# sourceMappingURL=toolPanelFilterComp.d.ts.map

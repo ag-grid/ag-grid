@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -15,12 +15,15 @@ var getGs = function (props) {
     var pos = props[0], schemeColor = props[1], satMod = props[2], lumMod = props[3], tint = props[4], shade = props[5];
     var children = [];
     children.push(getPropertyVal('satMod', satMod));
-    if (lumMod)
+    if (lumMod) {
         children.push(getPropertyVal('lumMod', lumMod));
-    if (tint)
+    }
+    if (tint) {
         children.push(getPropertyVal('tint', tint));
-    if (shade)
+    }
+    if (shade) {
         children.push(getPropertyVal('shade', shade));
+    }
     return {
         name: 'a:gs',
         properties: {

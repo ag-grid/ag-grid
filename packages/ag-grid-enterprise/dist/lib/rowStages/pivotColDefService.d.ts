@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 import { ColDef, ColGroupDef } from "ag-grid-community";
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
@@ -18,4 +18,3 @@ export declare class PivotColDefService {
     private sameAggFuncs;
     private headerNameComparator;
 }
-//# sourceMappingURL=pivotColDefService.d.ts.map

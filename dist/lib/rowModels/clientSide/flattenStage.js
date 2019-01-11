@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,11 +17,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var rowNode_1 = require("../../entities/rowNode");
-var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var selectionController_1 = require("../../selectionController");
 var eventService_1 = require("../../eventService");
 var columnController_1 = require("../../columnController/columnController");
+var utils_1 = require("../../utils");
 var FlattenStage = /** @class */ (function () {
     function FlattenStage() {
     }
@@ -67,7 +67,7 @@ var FlattenStage = /** @class */ (function () {
         }
     };
     FlattenStage.prototype.recursivelyAddToRowsToDisplay = function (rowsToFlatten, result, nextRowTop, skipLeafNodes, uiLevel) {
-        if (utils_1.Utils.missingOrEmpty(rowsToFlatten)) {
+        if (utils_1._.missingOrEmpty(rowsToFlatten)) {
             return;
         }
         var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
@@ -110,8 +110,6 @@ var FlattenStage = /** @class */ (function () {
                         this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
                     }
                 }
-                else {
-                }
             }
             else if (rowNode.master && rowNode.expanded) {
                 var detailNode = this.createDetailNode(rowNode);
@@ -122,11 +120,12 @@ var FlattenStage = /** @class */ (function () {
     // duplicated method, it's also in floatingRowModel
     FlattenStage.prototype.addRowNodeToRowsToDisplay = function (rowNode, result, nextRowTop, uiLevel) {
         result.push(rowNode);
-        if (utils_1.Utils.missing(rowNode.rowHeight)) {
+        if (utils_1._.missing(rowNode.rowHeight)) {
             var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
             rowNode.setRowHeight(rowHeight);
         }
-        rowNode.setUiLevel(uiLevel);
+        var isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
+        rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
         rowNode.setRowTop(nextRowTop.value);
         rowNode.setRowIndex(result.length - 1);
         nextRowTop.value += rowNode.rowHeight;
@@ -134,7 +133,7 @@ var FlattenStage = /** @class */ (function () {
     FlattenStage.prototype.ensureFooterNodeExists = function (groupNode) {
         // only create footer node once, otherwise we have daemons and
         // the animate screws up with the daemons hanging around
-        if (utils_1.Utils.exists(groupNode.sibling)) {
+        if (utils_1._.exists(groupNode.sibling)) {
             return;
         }
         var footerNode = new rowNode_1.RowNode();
@@ -145,7 +144,7 @@ var FlattenStage = /** @class */ (function () {
         footerNode.footer = true;
         footerNode.rowTop = null;
         footerNode.oldRowTop = null;
-        if (utils_1.Utils.exists(footerNode.id)) {
+        if (utils_1._.exists(footerNode.id)) {
             footerNode.id = 'rowGroupFooter_' + footerNode.id;
         }
         // get both header and footer to reference each other as siblings. this is never undone,
@@ -155,7 +154,7 @@ var FlattenStage = /** @class */ (function () {
         groupNode.sibling = footerNode;
     };
     FlattenStage.prototype.createDetailNode = function (masterNode) {
-        if (utils_1.Utils.exists(masterNode.detailNode)) {
+        if (utils_1._.exists(masterNode.detailNode)) {
             return masterNode.detailNode;
         }
         else {
@@ -166,7 +165,7 @@ var FlattenStage = /** @class */ (function () {
             // flower was renamed to 'detail', but keeping for backwards compatibility
             detailNode.flower = detailNode.detail;
             detailNode.parent = masterNode;
-            if (utils_1.Utils.exists(masterNode.id)) {
+            if (utils_1._.exists(masterNode.id)) {
                 detailNode.id = 'detail_' + masterNode.id;
             }
             detailNode.data = masterNode.data;

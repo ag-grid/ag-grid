@@ -39,12 +39,12 @@ export default class PartialMatchFilter extends Component {
     }
 
     focus() {
-        setTimeout(() => {
+        window.setTimeout(() => {
             let container = ReactDOM.findDOMNode(this.refs.input);
             if (container) {
                 container.focus();
             }
-        })
+        });
     }
 
     componentMethod(message) {

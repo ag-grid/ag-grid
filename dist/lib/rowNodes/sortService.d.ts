@@ -1,8 +1,9 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
+import { ChangedPath } from "../rowModels/clientSide/changedPath";
 export interface SortOption {
     inverter: number;
     column: Column;
@@ -18,11 +19,15 @@ export declare class SortService {
     private gridOptionsWrapper;
     private postSortFunc;
     init(): void;
-    sortAccordingToColumnsState(rowNode: RowNode): void;
-    sort(rowNode: RowNode, sortOptions: SortOption[]): void;
+    sort(rowNode: RowNode, sortOptions: SortOption[], sortActive: boolean, deltaSort: boolean, dirtyLeafNodes: {
+        [nodeId: string]: boolean;
+    }, changedPath: ChangedPath): void;
+    private doFullSort;
+    private mapNodeToSortedNode;
+    private doDeltaSort;
+    private mergeSortedArrays;
     private compareRowNodes;
     private getValue;
     private updateChildIndexes;
     private pullDownDataForHideOpenParents;
 }
-//# sourceMappingURL=sortService.d.ts.map

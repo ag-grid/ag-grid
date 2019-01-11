@@ -55,9 +55,11 @@ function getColumnDefs() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true
+    },
     columnDefs: getColumnDefs(),
-    groupSuppressRow: true,
-    enableSorting: true
+    groupSuppressRow: true
 };
 
 // setup the grid after the page has finished loading

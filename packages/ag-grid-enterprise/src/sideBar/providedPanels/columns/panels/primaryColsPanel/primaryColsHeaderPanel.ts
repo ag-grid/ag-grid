@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Column,
     ColumnController,
@@ -10,9 +9,10 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     PreConstruct,
-    RefSelector
+    RefSelector,
+    _
 } from "ag-grid-community/main";
-import {ToolPanelColumnCompParams} from "../../columnToolPanel";
+import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 
 export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
 
@@ -48,11 +48,9 @@ export class PrimaryColsHeaderPanel extends Component {
         params: ToolPanelColumnCompParams;
     };
 
-
     @PreConstruct
     private preConstruct(): void {
-
-        let translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(
             `<div class="ag-primary-cols-header-panel">
@@ -66,7 +64,7 @@ export class PrimaryColsHeaderPanel extends Component {
                 <span class="ag-icon ag-icon-checkbox-unchecked" ref="eSelectUnchecked"></span>
                 <span class="ag-icon ag-icon-checkbox-indeterminate" ref="eSelectIndeterminate"></span>
             </a>
-            <div class="ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
+            <div class="ag-input-text-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
                 <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">        
             </div>
         </div>`);
@@ -87,11 +85,11 @@ export class PrimaryColsHeaderPanel extends Component {
     // we only show expand / collapse if we are showing columns
     private showOrHideOptions(): void {
 
-        let showFilter = !this.props.params.suppressColumnFilter;
-        let showSelect = !this.props.params.suppressColumnSelectAll;
-        let showExpand = !this.props.params.suppressColumnExpandAll;
+        const showFilter = !this.props.params.suppressColumnFilter;
+        const showSelect = !this.props.params.suppressColumnSelectAll;
+        const showExpand = !this.props.params.suppressColumnExpandAll;
 
-        let groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
+        const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
 
         _.setVisible(this.eFilterWrapper, showFilter);
         _.setVisible(this.eSelect, showSelect);
@@ -99,7 +97,7 @@ export class PrimaryColsHeaderPanel extends Component {
     }
 
     private addEventListeners(): void {
-        let eventsImpactingCheckedState: string[] = [
+        const eventsImpactingCheckedState: string[] = [
             Events.EVENT_COLUMN_EVERYTHING_CHANGED, // api.setColumnState() called
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
@@ -119,7 +117,7 @@ export class PrimaryColsHeaderPanel extends Component {
     private onFilterTextChanged(): void {
         if (!this.onFilterTextChangedDebounced) {
             this.onFilterTextChangedDebounced = _.debounce(() => {
-                let filterText = this.eFilterTextField.value;
+                const filterText = this.eFilterTextField.value;
                 this.dispatchEvent({type: 'filterChanged', filterText: filterText});
             }, 400);
         }
@@ -163,7 +161,7 @@ export class PrimaryColsHeaderPanel extends Component {
         if (allPrimaryColumns !== null) {
             columns = allPrimaryColumns.filter(col => !col.isLockVisible())
         }
-        let pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnController.isPivotMode();
 
         let checkedCount = 0;
         let uncheckedCount = 0;
@@ -176,14 +174,14 @@ export class PrimaryColsHeaderPanel extends Component {
             }
 
             // not not count columns not in tool panel
-            let colDef = col.getColDef();
+            const colDef = col.getColDef();
             if (colDef && colDef.suppressToolPanel) {
                 return;
             }
 
             let checked: boolean;
             if (pivotMode) {
-                let noPivotModeOptionsAllowed = !col.isAllowPivot() && !col.isAllowRowGroup() && !col.isAllowValue();
+                const noPivotModeOptionsAllowed = !col.isAllowPivot() && !col.isAllowRowGroup() && !col.isAllowValue();
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }

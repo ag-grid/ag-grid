@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -62,8 +62,8 @@ export declare class CellComp extends Component {
     getInitialValueToRender(): string;
     getRenderedRow(): RowComp;
     isSuppressNavigable(): boolean;
-    getCellRenderer(): ICellRendererComp;
-    getCellEditor(): ICellEditorComp;
+    getCellRenderer(): ICellRendererComp | null;
+    getCellEditor(): ICellEditorComp | null;
     refreshCell(params?: {
         suppressFlash?: boolean;
         newData?: boolean;
@@ -103,9 +103,9 @@ export declare class CellComp extends Component {
     private onMouseOut;
     private onMouseOver;
     private onCellDoubleClicked;
-    startRowOrCellEdit(keyPress?: number, charPress?: string): void;
+    startRowOrCellEdit(keyPress?: number | null, charPress?: string): void;
     isCellEditable(): boolean;
-    startEditingIfEnabled(keyPress?: number, charPress?: string, cellStartedEdit?: boolean): void;
+    startEditingIfEnabled(keyPress?: number | null, charPress?: string | null, cellStartedEdit?: boolean): void;
     private afterCellEditorCreated;
     private addInCellEditor;
     private addPopupCellEditor;
@@ -157,4 +157,3 @@ export declare class CellComp extends Component {
     stopRowOrCellEdit(cancel?: boolean): void;
     stopEditing(cancel?: boolean): void;
 }
-//# sourceMappingURL=cellComp.d.ts.map

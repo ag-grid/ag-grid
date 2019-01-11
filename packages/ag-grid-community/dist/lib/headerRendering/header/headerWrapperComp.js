@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -31,7 +31,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var context_1 = require("../../context/context");
 var column_1 = require("../../entities/column");
-var utils_1 = require("../../utils");
 var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
 var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
@@ -51,6 +50,7 @@ var columnHoverService_1 = require("../../rendering/columnHoverService");
 var beans_1 = require("../../rendering/beans");
 var hoverFeature_1 = require("../hoverFeature");
 var touchListener_1 = require("../../widgets/touchListener");
+var utils_1 = require("../../utils");
 var HeaderWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderWrapperComp, _super);
     function HeaderWrapperComp(column, dragSourceDropTarget, pinned) {
@@ -66,7 +66,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.init = function () {
         this.instantiate(this.context);
         var displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
-        var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+        var enableSorting = this.column.getColDef().sortable;
         var enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
         this.appendHeaderComp(displayName, enableSorting, enableMenu);
         this.setupWidth();
@@ -92,17 +92,17 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     };
     HeaderWrapperComp.prototype.onColumnHover = function () {
         var isHovered = this.columnHoverService.isHovered(this.column);
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
             var element = this.getGui();
-            utils_1.Utils.addCssClass(element, 'ag-header-cell-sortable');
+            utils_1._.addCssClass(element, 'ag-header-cell-sortable');
         }
     };
     HeaderWrapperComp.prototype.onFilterChanged = function () {
         var filterPresent = this.column.isFilterActive();
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     };
     HeaderWrapperComp.prototype.appendHeaderComp = function (displayName, enableSorting, enableMenu) {
         var _this = this;
@@ -139,10 +139,10 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1._.addCssClass(this.getGui(), 'ag-header-cell-moving');
         }
         else {
-            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1._.removeCssClass(this.getGui(), 'ag-header-cell-moving');
         }
     };
     HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
@@ -183,7 +183,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             return;
         }
         if (!this.column.isResizable()) {
-            utils_1.Utils.removeFromParent(this.eResize);
+            utils_1._.removeFromParent(this.eResize);
             return;
         }
         var finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
@@ -209,10 +209,14 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         var resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
         var newWidth = this.resizeStartWidth + resizeAmountNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        if (finished) {
+            utils_1._.removeCssClass(this.getGui(), 'ag-column-resizing');
+        }
     };
     HeaderWrapperComp.prototype.onResizeStart = function (shiftKey) {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeWithShiftKey = shiftKey;
+        utils_1._.addCssClass(this.getGui(), 'ag-column-resizing');
     };
     HeaderWrapperComp.prototype.setupTooltip = function () {
         var colDef = this.column.getColDef();

@@ -27,10 +27,12 @@ function onBtFullPivot() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     // set rowData to null or undefined to show loading panel by default
     columnDefs: columnDefs,
-    enableColResize: true,
-    enableSorting: true,
     sideBar: 'columns'
 };
 

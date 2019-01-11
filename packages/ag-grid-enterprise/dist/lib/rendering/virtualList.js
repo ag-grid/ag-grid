@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.4
+// ag-grid-enterprise v20.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -27,7 +27,7 @@ var ag_grid_community_1 = require("ag-grid-community");
 var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
     function VirtualList() {
-        var _this = _super.call(this, null) || this;
+        var _this = _super.call(this, undefined) || this;
         _this.rowsInBodyContainer = {};
         _this.rowHeight = 20;
         return _this;
@@ -76,7 +76,7 @@ var VirtualList = /** @class */ (function (_super) {
         this.refresh();
     };
     VirtualList.prototype.refresh = function () {
-        if (ag_grid_community_1.Utils.missing(this.model)) {
+        if (ag_grid_community_1._.missing(this.model)) {
             return;
         }
         this.eListContainer.style.height = (this.model.getRowCount() * this.rowHeight) + "px";
@@ -127,7 +127,7 @@ var VirtualList = /** @class */ (function (_super) {
     };
     VirtualList.prototype.insertRow = function (value, rowIndex) {
         var eDiv = document.createElement('div');
-        ag_grid_community_1.Utils.addCssClass(eDiv, 'ag-virtual-list-item');
+        ag_grid_community_1._.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
         eDiv.style.lineHeight = this.rowHeight + "px";
         var rowComponent = this.componentCreator(value);

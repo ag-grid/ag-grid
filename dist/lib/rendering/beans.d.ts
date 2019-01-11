@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -71,4 +71,3 @@ export declare class Beans {
     registerGridComp(gridPanel: GridPanel): void;
     private postConstruct;
 }
-//# sourceMappingURL=beans.d.ts.map

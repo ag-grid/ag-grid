@@ -88,6 +88,7 @@ include '../landing-pages/header.php';
                     <img src="/best-angular-2-data-grid/pivoting.gif" alt="pivoting">
                 </div>
             </div>
+            
             <div class="container" style="max-width: 100%">
                 <h3 class="text-center" style="background-color: #f5faff;padding-top: 10px;padding-bottom: 10px"><strong>Enterprise Grade Performance</strong></h3>
                 <div class="container" style="max-width: 100%">
@@ -112,7 +113,9 @@ include '../landing-pages/header.php';
                     <a href="https://www.ag-grid.com/example.php#/performance/1" target="_blank"><button type="button" class="btn btn-outline-primary btn-block">Test ag-Grid's Performance</button></a>
                 </div>
             </div>
+                
                 <hr>
+                
                 <div class="container" style="max-width: 100%">
                     <h1 class="text-center" style="background-color: aliceblue;padding-top: 30px;padding-bottom: 30px;margin-top: 30px"><strong>ag-Grid in Vue</strong></h1>
                     <div class="row">

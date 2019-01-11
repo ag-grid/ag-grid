@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, XmlElement} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 const fontFactory: ExcelOOXMLTemplate = {
     getTemplate(font: Font) {
@@ -21,11 +21,11 @@ const fontFactory: ExcelOOXMLTemplate = {
             children.push({ name: 'scheme', properties: { rawMap: { val: scheme }}});
         }
 
-        if (italic) children.push({name: 'i'});
-        if (bold) children.push({name: 'b'});
-        if (strike) children.push({name: 'strike'});
-        if (outline) children.push({name: 'outline'});
-        if (shadow) children.push({name: 'shadow'});
+        if (italic) { children.push({name: 'i'}); }
+        if (bold) { children.push({name: 'b'}); }
+        if (strike) { children.push({name: 'strike'}); }
+        if (outline) { children.push({name: 'outline'}); }
+        if (shadow) { children.push({name: 'shadow'}); }
         if (underline) {
             const lUnder = underline.toLocaleLowerCase();
             children.push({name: 'u', properties: {rawMap: {val: lUnder === 'double' ? 'double' : 'single'}}});

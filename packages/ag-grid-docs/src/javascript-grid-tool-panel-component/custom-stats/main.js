@@ -4,13 +4,16 @@ var columnDefs = [
   { field: "country", width: 120},
   { field: "year", width: 90 },
   { field: "date", width: 110 },
-  { field: "gold", width: 100, suppressFilter: true },
-  { field: "silver", width: 100, suppressFilter: true },
-  { field: "bronze", width: 100, suppressFilter: true },
-  { field: "total", width: 100, suppressFilter: true }
+  { field: "gold", width: 100, filter: false },
+  { field: "silver", width: 100, filter: false },
+  { field: "bronze", width: 100, filter: false },
+  { field: "total", width: 100, filter: false }
 ];
 
 var gridOptions = {
+  defaultColDef: {
+    filter: true
+  },
   columnDefs: columnDefs,
   sideBar: {
     toolPanels: [
@@ -40,8 +43,7 @@ var gridOptions = {
   },
   components: {
     customStatsToolPanel: CustomStatsToolPanel
-  },
-  enableFilter: true
+  }
 };
 
 // setup the grid after the page has finished loading

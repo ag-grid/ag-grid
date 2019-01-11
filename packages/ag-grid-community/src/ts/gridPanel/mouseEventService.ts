@@ -1,9 +1,9 @@
-import {Bean, PostConstruct} from "../context/context";
-import {Autowired} from "../context/context";
-import {NumberSequence, Utils as _} from '../utils';
-import {GridCell} from "../entities/gridCell";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {CellComp} from "../rendering/cellComp";
+import { Bean, PostConstruct } from "../context/context";
+import { Autowired } from "../context/context";
+import { GridCell } from "../entities/gridCell";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { CellComp } from "../rendering/cellComp";
+import { NumberSequence, _ } from '../utils';
 
 @Bean('mouseEventService')
 export class MouseEventService {
@@ -25,7 +25,7 @@ export class MouseEventService {
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
     // for where this is used.
     private stampDomElementWithGridInstance(): void {
-        (<any>this.eGridDiv)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
+        (this.eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
     }
 
     public getRenderedCellForEvent(event: Event): CellComp {
@@ -33,9 +33,9 @@ export class MouseEventService {
         let sourceElement = _.getTarget(event);
 
         while (sourceElement) {
-            let renderedCell = this.gridOptionsWrapper.getDomData(sourceElement, CellComp.DOM_DATA_KEY_CELL_COMP);
+            const renderedCell = this.gridOptionsWrapper.getDomData(sourceElement, CellComp.DOM_DATA_KEY_CELL_COMP);
             if (renderedCell) {
-                return <CellComp> renderedCell;
+                return renderedCell as CellComp;
             }
             sourceElement = sourceElement.parentElement;
         }
@@ -48,13 +48,13 @@ export class MouseEventService {
     // getting executed on many grids at the same time.
     public isEventFromThisGrid(event: MouseEvent | KeyboardEvent): boolean {
 
-        let path = _.getEventPath(event);
+        const path = _.getEventPath(event);
 
-        for (let i = 0; i<path.length; i++) {
-            let element = path[i];
-            let instanceId = (<any>element)[MouseEventService.GRID_DOM_KEY];
+        for (let i = 0; i < path.length; i++) {
+            const element = path[i];
+            const instanceId = (element as any)[MouseEventService.GRID_DOM_KEY];
             if (_.exists(instanceId)) {
-                let eventFromThisGrid = instanceId === this.gridInstanceId;
+                const eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }
         }
@@ -63,7 +63,7 @@ export class MouseEventService {
     }
 
     public getGridCellForEvent(event: MouseEvent | KeyboardEvent): GridCell {
-        let cellComp = this.getRenderedCellForEvent(event);
+        const cellComp = this.getRenderedCellForEvent(event);
         return cellComp ? cellComp.getGridCell() : null;
     }
 

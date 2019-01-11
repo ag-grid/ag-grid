@@ -29,16 +29,15 @@ var pinnedBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country: '
     date: '01-08-2030', sport: 'Floating Bottom Sport', gold: 222, silver: '005', bronze: 244, total: 255};
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     groupHeaders: true,
-    enableFilter: true,
-    enableSorting: true,
     rowSelection: 'multiple',
     pinnedTopRowData: [pinnedTopRow],
-    pinnedBottomRowData: [pinnedBottomRow],
-    defaultColDef: {
-
-    }
+    pinnedBottomRowData: [pinnedBottomRow]
 };
 
 function getBooleanValue(cssSelector) {

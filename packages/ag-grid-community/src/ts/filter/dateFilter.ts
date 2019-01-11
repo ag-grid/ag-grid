@@ -1,11 +1,11 @@
-import {SerializedFilter} from "../interfaces/iFilter";
-import {Component} from "../widgets/component";
-import {IDateComp, IDateParams} from "../rendering/dateComponent";
-import {QuerySelector} from "../widgets/componentAnnotations";
-import {Utils} from "../utils";
-import {BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter} from "./baseFilter";
-import {Autowired} from "../context/context";
-import {ComponentRecipes} from "../components/framework/componentRecipes";
+import { SerializedFilter } from "../interfaces/iFilter";
+import { Component } from "../widgets/component";
+import { IDateComp, IDateParams } from "../rendering/dateComponent";
+import { QuerySelector } from "../widgets/componentAnnotations";
+import { BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter } from "./baseFilter";
+import { Autowired } from "../context/context";
+import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { _ } from "../utils";
 
 export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
@@ -63,8 +63,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public bodyTemplate(type:FilterConditionType): string {
-        let fromPanelId = type == FilterConditionType.MAIN ? "filterDateFromPanel" : "filterDateFromConditionPanel";
-        let toPanelId = type == FilterConditionType.MAIN ? "filterDateToPanel" : "filterDateToConditionPanel";
+        const fromPanelId = type == FilterConditionType.MAIN ? "filterDateFromPanel" : "filterDateFromConditionPanel";
+        const toPanelId = type == FilterConditionType.MAIN ? "filterDateToPanel" : "filterDateToConditionPanel";
 
         return `<div class="ag-filter-body">
                     <div class="ag-filter-date-from" id="${fromPanelId}">
@@ -90,19 +90,19 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     private createComponents(type:FilterConditionType) {
-        let dateComponentParams: IDateParams = {
+        const dateComponentParams: IDateParams = {
             onDateChanged: () => { this.onDateChanged (type); },
             filterParams: this.filterParams
         };
 
-        this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent=> {
+        this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent => {
             if (type === FilterConditionType.MAIN) {
                 this.dateToComponent = dateToComponent;
             } else {
                 this.dateToConditionComponent = dateToComponent;
             }
 
-            let dateToElement = dateToComponent.getGui();
+            const dateToElement = dateToComponent.getGui();
 
             if (type === FilterConditionType.MAIN) {
                 this.eDateToPanel.appendChild(dateToElement);
@@ -123,7 +123,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
                 this.dateFromConditionComponent = dateComponent;
             }
 
-            let dateFromElement = dateComponent.getGui();
+            const dateFromElement = dateComponent.getGui();
 
             if (type === FilterConditionType.MAIN) {
                 this.eDateFromPanel.appendChild(dateFromElement);
@@ -161,10 +161,10 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             filterTypeValue = this.filterCondition;
         }
 
-        if (!panel) return;
+        if (!panel) { return; }
 
-        let visible = filterTypeValue === BaseFilter.IN_RANGE;
-        Utils.setVisible(panel, visible);
+        const visible = filterTypeValue === BaseFilter.IN_RANGE;
+        _.setVisible(panel, visible);
     }
 
     public comparator(): Comparator<Date> {
@@ -173,34 +173,34 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     private defaultComparator(filterDate: Date, cellValue: any): number {
         //The default comparator assumes that the cellValue is a date
-        let cellAsDate = <Date> cellValue;
+        const cellAsDate = cellValue as Date;
         if  (cellAsDate < filterDate) { return -1; }
         if  (cellAsDate > filterDate) { return 1; }
         return cellValue != null ? 0 : -1;
     }
 
     public serialize(type:FilterConditionType): SerializedDateFilter {
-        let dateToComponent = type === FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
-        let dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
-        let filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const dateToComponent = type === FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
+        const dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
+        const filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
         return {
-            dateTo: Utils.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
-            dateFrom: Utils.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
+            dateTo: _.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
+            dateFrom: _.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
             type: filterType ? filterType : this.defaultFilter,
             filterType: 'date'
         };
     }
 
-    public filterValues(type:FilterConditionType): Date|Date[] {
+    public filterValues(type:FilterConditionType): Date | Date[] {
         if (type === FilterConditionType.MAIN) {
-            if (!this.dateFromComponent) return null;
+            if (!this.dateFromComponent) { return null; }
 
             return this.filter !== BaseFilter.IN_RANGE ?
                 this.dateFromComponent.getDate() :
                 [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
         }
 
-        if (!this.dateFromConditionComponent) return null;
+        if (!this.dateFromConditionComponent) { return null; }
 
         return this.filterCondition !== BaseFilter.IN_RANGE ?
             this.dateFromConditionComponent.getDate() :
@@ -209,12 +209,12 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getDateFrom(): string {
-        return Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
+        return _.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getDateTo(): string {
-        return Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
+        return _.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
@@ -223,7 +223,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public setDateFrom(date: string, type:FilterConditionType): void {
-        let parsedDate = Utils.parseYyyyMmDdToDate(date, "-");
+        const parsedDate = _.parseYyyyMmDdToDate(date, "-");
         this.setDateFrom_date(parsedDate, type);
     }
 
@@ -231,18 +231,18 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         if (type === FilterConditionType.MAIN) {
             this.dateFrom = parsedDate;
 
-            if (!this.dateFromComponent) return;
+            if (!this.dateFromComponent) { return; }
             this.dateFromComponent.setDate(this.dateFrom);
         } else {
             this.dateFromCondition = parsedDate;
 
-            if (!this.dateFromConditionComponent) return;
+            if (!this.dateFromConditionComponent) { return; }
             this.dateFromConditionComponent.setDate(this.dateFromCondition);
         }
     }
 
     public setDateTo(date: string, type:FilterConditionType): void {
-        let parsedDate = Utils.parseYyyyMmDdToDate(date, "-");
+        const parsedDate = _.parseYyyyMmDdToDate(date, "-");
         this.setDateTo_date(parsedDate, type);
     }
 
@@ -250,12 +250,12 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         if (type === FilterConditionType.MAIN) {
             this.dateTo = parsedDate;
 
-            if (!this.dateToComponent) return;
+            if (!this.dateToComponent) { return; }
             this.dateToComponent.setDate(this.dateTo);
         } else {
             this.dateToCondition = parsedDate;
 
-            if (!this.dateToConditionComponent) return;
+            if (!this.dateToConditionComponent) { return; }
             this.dateToConditionComponent.setDate(this.dateToCondition);
         }
     }
@@ -289,17 +289,17 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 export class DefaultDateComponent extends Component implements IDateComp {
 
     private eDateInput: HTMLInputElement;
-    private listener: ()=>void;
+    private listener: () => void;
 
     constructor() {
-        super(`<input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd">`);
+        super(`<div class="ag-input-text-wrapper"><input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd"></div>`);
     }
 
     public init(params: IDateParams): void {
-        this.eDateInput = <HTMLInputElement> this.getGui();
+        this.eDateInput = this.getGui().querySelector('input') as HTMLInputElement;
 
-        if (Utils.isBrowserChrome() || params.filterParams.browserDatePicker) {
-            if (Utils.isBrowserIE()) {
+        if (_.isBrowserChrome() || params.filterParams.browserDatePicker) {
+            if (_.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             } else {
                 this.eDateInput.type = 'date';
@@ -312,11 +312,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public getDate(): Date {
-        return Utils.parseYyyyMmDdToDate(this.eDateInput.value, "-");
+        return _.parseYyyyMmDdToDate(this.eDateInput.value, "-");
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.value = Utils.serializeDateToYyyyMmDd(date, "-");
+        this.eDateInput.value = _.serializeDateToYyyyMmDd(date, "-");
     }
 
 }

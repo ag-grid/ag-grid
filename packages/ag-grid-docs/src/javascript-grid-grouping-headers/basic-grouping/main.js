@@ -20,12 +20,14 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     debug: true,
     columnDefs: columnDefs,
-    rowData: null,
-    enableSorting: true,
-    enableFilter: true,
-    enableColResize: true
+    rowData: null
 };
 
 // setup the grid after the page has finished loading

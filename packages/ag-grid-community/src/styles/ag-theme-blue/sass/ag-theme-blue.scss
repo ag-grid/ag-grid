@@ -1,0 +1,36 @@
+@import "../vars/ag-theme-blue-vars";
+@import "../../ag-theme-classic/sass/ag-theme-classic";
+
+.ag-theme-blue {
+    @include ag-theme-classic($params);
+
+    $inverted-icons: asc, desc, expanded, contracted, menu, filter;
+
+    .ag-header {
+        @each $icon in $inverted-icons {
+            .ag-icon-#{$icon} {
+                @include colorful-icon($icons-path, '#{$icon}', white, white);
+                display: inline-block;
+            }
+        }
+    }
+
+    $tab-icons: menu, filter, columns;
+
+    @each $icon in $tab-icons {
+        .ag-tab-header .ag-tab:not(.ag-tab-selected) .ag-icon-#{$icon} {
+            @include colorful-icon($icons-path, '#{$icon}', white, white);
+        }
+    }
+
+    input,
+    select {
+        background-color: $card-background-color;
+        color: $foreground-color;
+    }
+
+    .ag-row {
+        border-bottom-width: 1px;
+        border-bottom-style: dotted;
+    }
+}

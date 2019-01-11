@@ -1,13 +1,13 @@
-import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
-import {Autowired, Bean} from "../context/context";
-import {ComponentRecipes} from "../components/framework/componentRecipes";
-import {ColDef} from "../entities/colDef";
-import {GroupCellRendererParams} from "./cellRenderers/groupCellRenderer";
-import {ComponentResolver, ComponentSource, ResolvedComponent} from "../components/framework/componentResolver";
-import {_, Promise} from "../utils";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {IRichCellEditorParams} from "../interfaces/iRichCellEditorParams";
-import {ISetFilterParams} from "../interfaces/iSetFilterParams";
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { Autowired, Bean } from "../context/context";
+import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { ColDef } from "../entities/colDef";
+import { GroupCellRendererParams } from "./cellRenderers/groupCellRenderer";
+import { ComponentResolver, ComponentSource, ResolvedComponent } from "../components/framework/componentResolver";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { IRichCellEditorParams } from "../interfaces/iRichCellEditorParams";
+import { ISetFilterParams } from "../interfaces/iSetFilterParams";
+import { _, Promise } from "../utils";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
@@ -21,9 +21,9 @@ export class CellRendererService {
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer (target, params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer (target, params);
         if (cellRendererPromise != null) {
-            cellRendererPromise.then(cellRenderer=> {
+            cellRendererPromise.then(cellRenderer => {
                 if (cellRenderer == null) {
                     eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
                 } else {
@@ -41,12 +41,12 @@ export class CellRendererService {
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer((<ISetFilterParams>target.filterParams), params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer((target.filterParams as ISetFilterParams), params);
         if (cellRendererPromise != null) {
             this.bindToHtml(cellRendererPromise, eTarget);
         } else {
-            if(params.valueFormatted == null && params.value == null) {
-                let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            if (params.valueFormatted == null && params.value == null) {
+                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
                 eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
             } else {
                 eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
@@ -60,7 +60,7 @@ export class CellRendererService {
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer((<IRichCellEditorParams>target.cellEditorParams), params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer((target.cellEditorParams as IRichCellEditorParams), params);
         if (cellRendererPromise != null) {
             this.bindToHtml(cellRendererPromise, eTarget);
         } else {
@@ -76,13 +76,13 @@ export class CellRendererService {
         params: any
     ): Promise<ICellRendererComp> {
         let rendererToUsePromise: Promise<ICellRendererComp> = null;
-        let componentToUse: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", null);
+        const componentToUse: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", null);
 
         if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT) {
             //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
         } else {
-            let otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", null);
+            const otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", null);
             if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT) {
                 //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
                 //ignore it
@@ -98,7 +98,7 @@ export class CellRendererService {
             }
         }
         if (rendererToUsePromise != null) {
-            rendererToUsePromise.then(rendererToUse=> {
+            rendererToUsePromise.then(rendererToUse => {
                 if (rendererToUse == null) {
                     eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
                     return;
@@ -115,7 +115,7 @@ export class CellRendererService {
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newFullWidthGroupRowInnerCellRenderer (params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newFullWidthGroupRowInnerCellRenderer (params);
         if (cellRendererPromise != null) {
             this.bindToHtml(cellRendererPromise, eTarget);
         } else {
@@ -125,8 +125,8 @@ export class CellRendererService {
     }
 
     public bindToHtml(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
-        cellRendererPromise.then(cellRenderer=> {
-            let gui: HTMLElement|string = cellRenderer.getGui();
+        cellRendererPromise.then(cellRenderer => {
+            const gui: HTMLElement | string = cellRenderer.getGui();
             if (gui != null) {
                 if (typeof gui == 'object') {
                     eTarget.appendChild(gui);

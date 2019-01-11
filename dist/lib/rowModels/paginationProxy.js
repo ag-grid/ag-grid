@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -31,13 +31,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var beanStub_1 = require("../context/beanStub");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
-var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
 var selectionController_1 = require("../selectionController");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
+var utils_1 = require("../utils");
 var PaginationAutoPageSizeService = /** @class */ (function (_super) {
     __extends(PaginationAutoPageSizeService, _super);
     function PaginationAutoPageSizeService() {
@@ -64,7 +64,7 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
         }
         var rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         var bodyHeight = this.gridPanel.getBodyHeight();
-        if (this.scrollVisibleService.isBodyHorizontalScrollShowing()) {
+        if (this.scrollVisibleService.isHorizontalScrollShowing()) {
             bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
         }
         if (bodyHeight > 0) {

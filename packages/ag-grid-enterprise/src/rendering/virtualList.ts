@@ -1,7 +1,8 @@
-import {Environment, Autowired, Component, PostConstruct, Utils, GridOptionsWrapper} from "ag-grid-community";
+import { Autowired, Component, Environment, GridOptionsWrapper, PostConstruct, _ } from "ag-grid-community";
 
 export interface VirtualListModel {
     getRowCount(): number;
+
     getRow(index: number): any;
 }
 
@@ -17,15 +18,15 @@ export class VirtualList extends Component {
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
 
-    private componentCreator: (value:any)=>Component;
+    private componentCreator: (value: any) => Component;
 
     private rowHeight = 20;
 
-    @Autowired('environment') private environment:  Environment;
+    @Autowired('environment') private environment: Environment;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     constructor() {
-        super(null);
+        super(undefined);
     }
 
     @PostConstruct
@@ -40,34 +41,34 @@ export class VirtualList extends Component {
     }
 
     public ensureIndexVisible(index: number): void {
-        let lastRow = this.model.getRowCount();
+        const lastRow = this.model.getRowCount();
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 
         // let nodeAtIndex = this.rowModel.getRow(index);
-        let rowTopPixel = index * this.rowHeight;
-        let rowBottomPixel = rowTopPixel + this.rowHeight;
+        const rowTopPixel = index * this.rowHeight;
+        const rowBottomPixel = rowTopPixel + this.rowHeight;
 
-        let viewportTopPixel = this.getGui().scrollTop;
-        let viewportHeight = this.getGui().offsetHeight;
-        let viewportBottomPixel = viewportTopPixel + viewportHeight;
+        const viewportTopPixel = this.getGui().scrollTop;
+        const viewportHeight = this.getGui().offsetHeight;
+        const viewportBottomPixel = viewportTopPixel + viewportHeight;
 
-        let viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        let viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
+        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             this.getGui().scrollTop = rowTopPixel;
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
-            let newScrollPosition = rowBottomPixel - viewportHeight;
+            const newScrollPosition = rowBottomPixel - viewportHeight;
             this.getGui().scrollTop = newScrollPosition;
         }
     }
 
-    public setComponentCreator(componentCreator: (value:any)=>Component): void {
+    public setComponentCreator(componentCreator: (value: any) => Component): void {
         this.componentCreator = componentCreator;
     }
 
@@ -85,25 +86,23 @@ export class VirtualList extends Component {
     }
 
     public refresh(): void {
-        if (Utils.missing(this.model)) {
-            return;
-        }
+        if (_.missing(this.model)) { return; }
         this.eListContainer.style.height = (this.model.getRowCount() * this.rowHeight) + "px";
         this.clearVirtualRows();
         this.drawVirtualRows();
     }
 
     private clearVirtualRows() {
-        let rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
         this.removeVirtualRows(rowsToRemove);
     }
 
     private drawVirtualRows() {
-        let topPixel = this.getGui().scrollTop;
-        let bottomPixel = topPixel + this.getGui().offsetHeight;
+        const topPixel = this.getGui().scrollTop;
+        const bottomPixel = topPixel + this.getGui().offsetHeight;
 
-        let firstRow = Math.floor(topPixel / this.rowHeight);
-        let lastRow = Math.floor(bottomPixel / this.rowHeight);
+        const firstRow = Math.floor(topPixel / this.rowHeight);
+        const lastRow = Math.floor(bottomPixel / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow);
     }
@@ -111,7 +110,7 @@ export class VirtualList extends Component {
     private ensureRowsRendered(start: any, finish: any) {
 
         // at the end, this array will contain the items we need to remove
-        let rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
 
         // add in new rows
         for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
@@ -122,7 +121,7 @@ export class VirtualList extends Component {
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
             if (this.model.getRowCount() > rowIndex) {
-                let value = this.model.getRow(rowIndex);
+                const value = this.model.getRow(rowIndex);
                 this.insertRow(value, rowIndex);
             }
         }
@@ -133,8 +132,8 @@ export class VirtualList extends Component {
 
     // takes array of row id's
     private removeVirtualRows(rowsToRemove: any) {
-        rowsToRemove.forEach( (index: number) => {
-            let component = this.rowsInBodyContainer[index];
+        rowsToRemove.forEach((index: number) => {
+            const component = this.rowsInBodyContainer[index];
             this.eListContainer.removeChild(component.eDiv);
             if (component.rowComponent.destroy) {
                 component.rowComponent.destroy();
@@ -145,12 +144,12 @@ export class VirtualList extends Component {
 
     private insertRow(value: any, rowIndex: any) {
 
-        let eDiv = document.createElement('div');
-        Utils.addCssClass(eDiv, 'ag-virtual-list-item');
+        const eDiv = document.createElement('div');
+        _.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
         eDiv.style.lineHeight = this.rowHeight + "px";
 
-        let rowComponent = this.componentCreator(value);
+        const rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
 
         this.eListContainer.appendChild(eDiv);

@@ -23,11 +23,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
-    enableSorting: true,
-    enableFilter: true,
-    enableColResize: true,
     // call back function, to tell the grid what height
     // each row should be
     getRowHeight: function(params) {

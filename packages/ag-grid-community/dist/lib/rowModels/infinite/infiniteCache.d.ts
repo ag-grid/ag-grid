@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.4
+// Type definitions for ag-grid-community v20.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -18,9 +18,8 @@ export declare class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteC
     protected init(): void;
     private moveItemsDown;
     private insertItems;
-    insertItemsAtIndex(indexToInsert: number, items: any[]): void;
+    insertItemsAtIndex(indexToInsert: number | undefined, items: any[] | undefined): void;
     getRow(rowIndex: number, dontCreatePage?: boolean): RowNode;
     private createBlock;
     refreshCache(): void;
 }
-//# sourceMappingURL=infiniteCache.d.ts.map

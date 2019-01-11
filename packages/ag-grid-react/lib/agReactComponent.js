@@ -1,4 +1,4 @@
-// ag-grid-react v19.1.4
+// ag-grid-react v20.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
@@ -43,6 +43,9 @@ var AgReactComponent = /** @class */ (function () {
         return this.eParentElement;
     };
     AgReactComponent.prototype.destroy = function () {
+        if (!this.useLegacyReact()) {
+            return this.parentComponent.destroyPortal(this.portal);
+        }
         ReactDOM.unmountComponentAtNode(this.eParentElement);
     };
     AgReactComponent.prototype.createReactComponentLegacy = function (params, resolve) {
@@ -65,12 +68,6 @@ var AgReactComponent = /** @class */ (function () {
     };
     AgReactComponent.prototype.createReactComponent = function (params, resolve) {
         var _this = this;
-        // when using portals & redux with HOCs you need to manually add the store to the props
-        // wrapping the component with connect isn't sufficient
-        var reduxStore = params.agGridReact.props.reduxStore;
-        if (reduxStore) {
-            params.store = reduxStore;
-        }
         // grab hold of the actual instance created - we use a react ref for this as there is no other mechanism to
         // retrieve the created instance from either createPortal or render
         params.ref = function (element) {
@@ -78,10 +75,8 @@ var AgReactComponent = /** @class */ (function () {
         };
         var ReactComponent = React.createElement(this.reactComponent, params);
         var portal = ReactDOM.createPortal(ReactComponent, this.eParentElement);
-        // MUST be a function, not an arrow function
-        ReactDOM.render(portal, this.eParentElement, function () {
-            resolve(null);
-        });
+        this.portal = portal;
+        this.parentComponent.mountReactPortal(portal, resolve);
     };
     return AgReactComponent;
 }());

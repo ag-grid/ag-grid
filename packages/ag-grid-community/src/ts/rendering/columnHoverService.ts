@@ -1,10 +1,10 @@
-import {EventService} from "../eventService";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {Events, CellEvent, ColumnHoverChangedEvent} from "../events";
-import {Column} from "../entities/column";
-import {BeanStub} from "../context/beanStub";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
+import { EventService } from "../eventService";
+import { Autowired, Bean } from "../context/context";
+import { Events, ColumnHoverChangedEvent } from "../events";
+import { Column } from "../entities/column";
+import { BeanStub } from "../context/beanStub";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
 
 @Bean('columnHoverService')
 export class ColumnHoverService extends BeanStub {
@@ -17,7 +17,7 @@ export class ColumnHoverService extends BeanStub {
 
     public setMouseOver(columns: Column[]): void {
         this.selectedColumns = columns;
-        let event: ColumnHoverChangedEvent = {
+        const event: ColumnHoverChangedEvent = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -27,7 +27,7 @@ export class ColumnHoverService extends BeanStub {
 
     public clearMouseOver(): void {
         this.selectedColumns = null;
-        let event: ColumnHoverChangedEvent = {
+        const event: ColumnHoverChangedEvent = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi

@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The source code can be found here:
-        <a href="https://github.com/ag-grid/ag-grid-server-side-oracle-example">https://github.com/ag-grid/ag-grid-server-side-oracle-example</a>.
+        <a href="https://github.com/ag-grid/ag-grid-server-side-graphql-example">https://github.com/ag-grid/ag-grid-server-side-graphql-example</a>.
     </p>
 
     <h2>Overview</h2>

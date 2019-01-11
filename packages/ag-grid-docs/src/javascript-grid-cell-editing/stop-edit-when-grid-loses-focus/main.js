@@ -12,16 +12,16 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true,
+        width: 100,
+        filter: true
+    },
     components:{
         yearCellEditor: getYearCellEditor()
     },
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    defaultColDef: {
-        editable: true,
-        width: 100
-    },
     // this property tells grid to stop editing if the
     // grid loses focus
     stopEditingWhenGridLosesFocus: true

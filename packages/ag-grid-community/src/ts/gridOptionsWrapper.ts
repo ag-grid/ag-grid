@@ -1,4 +1,4 @@
-import {RowNode} from "./entities/rowNode";
+import { RowNode } from "./entities/rowNode";
 import {
     GetContextMenuItems,
     GetMainMenuItems,
@@ -13,33 +13,33 @@ import {
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
-import {EventService} from "./eventService";
-import {Constants} from "./constants";
-import {ComponentUtil} from "./components/componentUtil";
-import {GridApi} from "./gridApi";
-import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
-import {Autowired, Bean, PostConstruct, PreDestroy, Qualifier} from "./context/context";
-import {ColumnApi} from "./columnController/columnApi";
-import {ColumnController} from "./columnController/columnController";
-import {Utils as _} from "./utils";
-import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
-import {IDatasource} from "./rowModels/iDatasource";
-import {GridCellDef} from "./entities/gridCell";
-import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
-import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exporter/exportParams";
-import {AgEvent} from "./events";
-import {Environment} from "./environment";
-import {PropertyKeys} from "./propertyKeys";
-import {ColDefUtil} from "./components/colDefUtil";
-import {Events} from "./eventKeys";
-import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
-import {SideBarDef, SideBarDefParser, ToolPanelDef} from "./entities/sideBar";
+import { EventService } from "./eventService";
+import { Constants } from "./constants";
+import { ComponentUtil } from "./components/componentUtil";
+import { GridApi } from "./gridApi";
+import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
+import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import { ColumnApi } from "./columnController/columnApi";
+import { ColumnController } from "./columnController/columnController";
+import { IViewportDatasource } from "./interfaces/iViewportDatasource";
+import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
+import { IDatasource } from "./rowModels/iDatasource";
+import { GridCellDef } from "./entities/gridCell";
+import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
+import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
+import { AgEvent } from "./events";
+import { Environment } from "./environment";
+import { PropertyKeys } from "./propertyKeys";
+import { ColDefUtil } from "./components/colDefUtil";
+import { Events } from "./eventKeys";
+import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
+import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
+import { _ } from "./utils";
 
-let DEFAULT_ROW_HEIGHT = 25;
-let DEFAULT_DETAIL_ROW_HEIGHT = 300;
-let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
-let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+const DEFAULT_ROW_HEIGHT = 25;
+const DEFAULT_DETAIL_ROW_HEIGHT = 300;
+const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
+const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -129,7 +129,7 @@ export class GridOptionsWrapper {
             this.checkColumnDefProperties();
         }
 
-        let async = this.useAsyncEvents();
+        const async = this.useAsyncEvents();
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
@@ -155,11 +155,11 @@ export class GridOptionsWrapper {
     }
 
     private checkColumnDefProperties() {
-        if (this.gridOptions.columnDefs == null) return;
+        if (this.gridOptions.columnDefs == null) { return; }
 
         this.gridOptions.columnDefs.forEach(colDef => {
-            let userProperties: string [] = Object.getOwnPropertyNames(colDef);
-            let validProperties: string [] = ColDefUtil.ALL_PROPERTIES.concat(ColDefUtil.FRAMEWORK_PROPERTIES);
+            const userProperties: string [] = Object.getOwnPropertyNames(colDef);
+            const validProperties: string [] = ColDefUtil.ALL_PROPERTIES.concat(ColDefUtil.FRAMEWORK_PROPERTIES);
 
             this.checkProperties(
                 userProperties,
@@ -172,10 +172,10 @@ export class GridOptionsWrapper {
     }
 
     private checkGridOptionsProperties() {
-        let userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
-        let validProperties: string [] = PropertyKeys.ALL_PROPERTIES.concat(PropertyKeys.FRAMEWORK_PROPERTIES);
-        Object.keys(Events).forEach(it => validProperties.push(ComponentUtil.getCallbackForEvent((<any>Events)[it])));
-        let validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
+        const userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
+        const validProperties: string [] = PropertyKeys.ALL_PROPERTIES.concat(PropertyKeys.FRAMEWORK_PROPERTIES);
+        Object.keys(Events).forEach(it => validProperties.push(ComponentUtil.getCallbackForEvent((Events as any)[it])));
+        const validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
 
         this.checkProperties(
             userProperties,
@@ -191,15 +191,15 @@ export class GridOptionsWrapper {
                             validProperties: string[],
                             containerName: string,
                             docsUrl: string) {
-        let invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(
+        const invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(
             userProperties,
             validPropertiesAndExceptions,
             validProperties
         );
 
-        let invalidPropertyKeys = Object.keys(invalidProperties);
+        const invalidPropertyKeys = Object.keys(invalidProperties);
         invalidPropertyKeys.forEach(invalidPropertyKey => {
-            let fuzzySuggestions: string[] = invalidProperties [invalidPropertyKey];
+            const fuzzySuggestions: string[] = invalidProperties [invalidPropertyKey];
             console.warn(`ag-grid: invalid ${containerName} property '${invalidPropertyKey}' did you mean any of these: ${fuzzySuggestions.slice(0, 8).join(",")}`);
         });
 
@@ -210,7 +210,7 @@ export class GridOptionsWrapper {
 
 // returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
-        let domData = (<any>element)[this.domDataKey];
+        const domData = (element as any)[this.domDataKey];
         if (domData) {
             return domData[key];
         } else {
@@ -219,10 +219,10 @@ export class GridOptionsWrapper {
     }
 
     public setDomData(element: Element, key: string, value: any): any {
-        let domData = (<any>element)[this.domDataKey];
+        let domData = (element as any)[this.domDataKey];
         if (_.missing(domData)) {
             domData = {};
-            (<any>element)[this.domDataKey] = domData;
+            (element as any)[this.domDataKey] = domData;
         }
         domData[key] = value;
     }
@@ -298,7 +298,7 @@ export class GridOptionsWrapper {
     }
 
     public getSideBar(): SideBarDef {
-        return (<SideBarDef>this.gridOptions.sideBar);
+        return (this.gridOptions.sideBar as SideBarDef);
     }
 
     // public isToolPanelSuppressValues() {
@@ -360,7 +360,7 @@ export class GridOptionsWrapper {
     }
 
     public isGroupSelectsChildren() {
-        let result = isTrue(this.gridOptions.groupSelectsChildren);
+        const result = isTrue(this.gridOptions.groupSelectsChildren);
         if (result && this.isTreeData()) {
             console.warn('ag-Grid: groupSelectsChildren does not work with tree data');
             return false;
@@ -445,7 +445,7 @@ export class GridOptionsWrapper {
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     public getDomLayout(): string {
 
-        let domLayout = this.gridOptions.domLayout;
+        const domLayout = this.gridOptions.domLayout;
 
         if (domLayout === Constants.DOM_LAYOUT_PRINT
             || domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT
@@ -462,6 +462,10 @@ export class GridOptionsWrapper {
 
     public isSuppressHorizontalScroll() {
         return isTrue(this.gridOptions.suppressHorizontalScroll);
+    }
+
+    public isAlwaysShowVerticalScroll() {
+        return isTrue(this.gridOptions.alwaysShowVerticalScroll);
     }
 
     public isSuppressLoadingOverlay() {
@@ -604,8 +608,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.ensureDomOrder);
     }
 
-    public isEnableColResize() {
-        return isTrue(this.gridOptions.enableColResize);
+    public isEnableCharts() {
+        return isTrue(this.gridOptions.enableCharts);
     }
 
     public getColResizeDefault() {
@@ -628,7 +632,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.groupDefaultExpanded;
     }
 
-    public getMaxConcurrentDatasourceRequests(): number | undefined {
+    public getMaxConcurrentDatasourceRequests(): number  {
         return this.gridOptions.maxConcurrentDatasourceRequests;
     }
 
@@ -716,16 +720,12 @@ export class GridOptionsWrapper {
         return this.gridOptions.datasource;
     }
 
-    public getViewportDatasource(): IViewportDatasource | undefined {
+    public getViewportDatasource(): IViewportDatasource {
         return this.gridOptions.viewportDatasource;
     }
 
     public getServerSideDatasource(): IServerSideDatasource | undefined {
         return this.gridOptions.serverSideDatasource;
-    }
-
-    public isEnableSorting() {
-        return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting);
     }
 
     public isAccentedSort() {
@@ -764,12 +764,12 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressCopyRowsToClipboard);
     }
 
-    public isSuppressClipboardPaste() {
-        return isTrue(this.gridOptions.suppressClipboardPaste);
+    public isCopyHeadersToClipboard() {
+        return isTrue(this.gridOptions.copyHeadersToClipboard);
     }
 
-    public isEnableFilter() {
-        return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter);
+    public isSuppressClipboardPaste() {
+        return isTrue(this.gridOptions.suppressClipboardPaste);
     }
 
     public isPagination() {
@@ -786,15 +786,6 @@ export class GridOptionsWrapper {
 
     public getBatchUpdateWaitMillis(): number | undefined {
         return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
-    }
-
-    // these are deprecated, should remove them when we take out server side pagination
-    public isEnableServerSideFilter() {
-        return this.gridOptions.enableServerSideFilter;
-    }
-
-    public isEnableServerSideSorting() {
-        return isTrue(this.gridOptions.enableServerSideSorting);
     }
 
     public isSuppressMovableColumns() {
@@ -854,7 +845,7 @@ export class GridOptionsWrapper {
     }
 
     public isMasterDetail() {
-        let usingMasterDetail = isTrue(this.gridOptions.masterDetail);
+        const usingMasterDetail = isTrue(this.gridOptions.masterDetail);
 
         _.doOnce(() => {
             if (usingMasterDetail && !this.enterprise) {
@@ -904,8 +895,6 @@ export class GridOptionsWrapper {
     public isEnableOldSetFilterModel(): boolean {
         return isTrue(this.gridOptions.enableOldSetFilterModel);
     }
-
-    // public isFloatingFilter(): boolean { return true; }
 
     public getDefaultColDef(): ColDef | undefined {
         return this.gridOptions.defaultColDef;
@@ -983,6 +972,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.valueCacheNeverExpires);
     }
 
+    public isDeltaSort(): boolean {
+        return isTrue(this.gridOptions.deltaSort);
+    }
+
     public isAggregateOnlyChangedColumns(): boolean {
         return isTrue(this.gridOptions.aggregateOnlyChangedColumns);
     }
@@ -1039,12 +1032,12 @@ export class GridOptionsWrapper {
     }
 
     public setProperty(key: string, value: any): void {
-        let gridOptionsNoType = <any> this.gridOptions;
-        let previousValue = gridOptionsNoType[key];
+        const gridOptionsNoType = this.gridOptions as any;
+        const previousValue = gridOptionsNoType[key];
 
         if (previousValue !== value) {
             gridOptionsNoType[key] = value;
-            let event: PropertyChangedEvent = {
+            const event: PropertyChangedEvent = {
                 type: key,
                 currentValue: value,
                 previousValue: previousValue
@@ -1061,10 +1054,10 @@ export class GridOptionsWrapper {
     }
 
     private updateLayoutClasses(): void {
-        let domLayout = this.getDomLayout();
-        let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        let domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
-        let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
+        const domLayout = this.getDomLayout();
+        const domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
+        const domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
+        const domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
         this.layoutElements.forEach(e => {
             _.addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
@@ -1212,7 +1205,7 @@ export class GridOptionsWrapper {
     private checkForDeprecated() {
         // casting to generic object, so typescript compiles even though
         // we are looking for attributes that don't exist
-        let options: any = this.gridOptions;
+        const options: any = this.gridOptions;
         if (options.suppressUnSort) {
             console.warn('ag-grid: as of v1.12.4 suppressUnSort is not used. Please use sortingOrder instead.');
         }
@@ -1335,7 +1328,7 @@ export class GridOptionsWrapper {
             options.sideBar = options.sideBar || false;
         }
 
-        let oldToolPanelProperties: { [p: string]: string } = {
+        const oldToolPanelProperties: { [p: string]: string } = {
             toolPanelSuppressRowGroups: 'suppressRowGroups',
             toolPanelSuppressValues: 'suppressValues',
             toolPanelSuppressPivots: 'suppressPivots',
@@ -1347,10 +1340,10 @@ export class GridOptionsWrapper {
             contractColumnSelection: 'contractColumnSelection'
         };
 
-        let toolPanelColumnsCompProps: any = {};
+        const toolPanelColumnsCompProps: any = {};
         Object.keys(oldToolPanelProperties).forEach(key => {
-            let translation: any = oldToolPanelProperties[key];
-            let value: any = (<any>this.gridOptions)[key];
+            const translation: any = oldToolPanelProperties[key];
+            const value: any = (this.gridOptions as any)[key];
             if (value !== undefined) {
                 if (key === 'toolPanelSuppressSideButtons') {
                     console.warn('ag-grid: since v19.0 toolPanelSuppressSideButtons has been completely removed. See https://www.ag-grid.com/javascript-grid-tool-panel/');
@@ -1371,9 +1364,9 @@ export class GridOptionsWrapper {
             options.sideBar = SideBarDefParser.parse(options.sideBar);
         }
 
-        const sideBarDef = <SideBarDef>this.gridOptions.sideBar;
+        const sideBarDef = this.gridOptions.sideBar as SideBarDef;
         if (Object.keys(toolPanelColumnsCompProps).length > 0 && sideBarDef && sideBarDef.toolPanels) {
-            let columnsDef: ToolPanelDef[] = <ToolPanelDef[]>(sideBarDef.toolPanels.filter((it: ToolPanelDef) => it.id === 'columns'));
+            const columnsDef: ToolPanelDef[] = (sideBarDef.toolPanels.filter((it: ToolPanelDef) => it.id === 'columns')) as ToolPanelDef[];
             if (columnsDef.length === 1) {
                 _.mergeDeep(columnsDef[0], {
                     componentParams: toolPanelColumnsCompProps
@@ -1391,10 +1384,41 @@ export class GridOptionsWrapper {
         if (options.alwaysShowStatusBar) {
             console.warn(`ag-grid: since version 19.x, alwaysShowStatusBar is gone. Please specify a min-height on the ag-status-bar css class, eg .ag-status-bar {min-height: 35px; }`);
         }
+
+        if (options.enableServerSideSorting || options.enableSorting) {
+            console.warn(`ag-Grid: since v20, grid options enableSorting and enableServerSideSorting are gone. Instead set sortable=true on the column definition for the columns sorting are allowed on. To migrate from gridOption.enableSorting=true, set gridOptions.defaultColDef.sortable=true`);
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+            if (!options.defaultColDef.sortable) {
+                options.defaultColDef.sortable = true;
+            }
+        }
+
+        if (options.enableFilter || options.enableServerSideFilter) {
+            console.warn(`ag-Grid: since v20, grid options enableFilter and enableServerSideFilter are gone. Instead set filter=true (if not already specifying a specific filter) on the column definition for the columns filtering is allowed on. To migrate from gridOptions.enableFilter=true, set gridOptions.defaultColDef.filter=true. If you are explicitly setting specific filters for each column (ie colDef.filter is already set) the you don't need to do anything.`);
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+            if (!options.defaultColDef.filter) {
+                options.defaultColDef.filter = true;
+            }
+        }
+
+        if (options.enableColResize) {
+            console.warn(`ag-Grid: since v20, grid options enableColResize is gone. Instead set resizable=true on the column definition for the columns resizing are allowed on. To migrate from gridOption.enableColResize=true, set gridOptions.defaultColDef.resizable=true`);
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+            if (!options.defaultColDef.resizable) {
+                options.defaultColDef.resizable = true;
+            }
+        }
+
     }
 
     private checkForViolations() {
-        if (this.isTreeData()) this.treeDataViolations();
+        if (this.isTreeData()) { this.treeDataViolations(); }
     }
 
     private treeDataViolations() {
@@ -1420,9 +1444,9 @@ export class GridOptionsWrapper {
         if (this.gridOptions.localeTextFunc) {
             return this.gridOptions.localeTextFunc;
         }
-        let that = this;
-        return function (key: any, defaultValue: any) {
-            let localeText = that.gridOptions.localeText;
+        const that = this;
+        return function(key: any, defaultValue: any) {
+            const localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
             } else {
@@ -1433,9 +1457,9 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
-        let callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
-        if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
-            (<any>this.gridOptions)[callbackMethodName](event);
+        const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
+        if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
+            (this.gridOptions as any)[callbackMethodName](event);
         }
     }
 
@@ -1457,7 +1481,7 @@ export class GridOptionsWrapper {
         // used for pinned rows and the number for the body rows.
 
         if (typeof this.gridOptions.getRowHeight === 'function') {
-            let params = {
+            const params = {
                 node: rowNode,
                 data: rowNode.data,
                 api: this.gridOptions.api,
@@ -1471,10 +1495,10 @@ export class GridOptionsWrapper {
                 return DEFAULT_DETAIL_ROW_HEIGHT;
             }
         } else {
-            let defaultHeight:number = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
+            const defaultHeight:number = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
                 this.gridOptions.rowHeight : this.getDefaultRowHeight();
             if (this.columnController.isAutoRowHeightActive()) {
-                let autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
+                const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
                 // never return less than the default row height - covers when auto height
                 // cells are blank.
                 if (autoHeight > defaultHeight) {

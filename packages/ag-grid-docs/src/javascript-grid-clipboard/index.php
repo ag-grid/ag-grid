@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Clipboard: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Clipboard. Copy and paste data to and from the Clipboard. Users will be able to edit data in Excel, then copy the data back into the grid when done. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Clipboard. Copy and paste data to and from the Clipboard. Users will be able to edit data in Excel, then copy the data back into the grid when done. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "Javascript Grid Clipboard";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -26,6 +26,10 @@ include '../documentation-main/documentation_header.php';
     <p>
     The API calls take a boolean value <code>includeHeaders</code> which when true, will include column headers in what is
     copied.
+    </p>
+
+    <p>Headers can also be included when copying to clipboard using Ctrl+C by setting:
+        <code>gridOptions.copyHeadersToClipboard = true</code>.
     </p>
 
     <note>
@@ -163,7 +167,7 @@ include '../documentation-main/documentation_header.php';
         <code>suppressCopyRowsToClipboard:true</code>
     </p>
 
-    <?= example('Clipboard example', 'simple', 'generated', array("enterprise" => true)) ?>
+    <?= example('Clipboard example', 'simple', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h2>Controlling Clipboard Copy</h2>
 
@@ -179,7 +183,7 @@ include '../documentation-main/documentation_header.php';
         demonstrates the callback by just printing the data to the console.
     </p>
 
-    <?= example('Controlling Clipboard Copy', 'custom', 'generated', array("enterprise" => true)) ?>
+    <?= example('Controlling Clipboard Copy', 'custom', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h2>Processing Clipboard Data</h2>
 
@@ -268,7 +272,7 @@ export interface ProcessHeaderForExportParams {
         </ul>
     </p>
 
-    <?= example('Example Process', 'process', 'generated', array("enterprise" => true)) ?>
+    <?= example('Example Process', 'process', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h3>Processing Whole Paste Operation</h3>
 
@@ -314,7 +318,7 @@ export interface ProcessDataFromClipboardParams {
         </li>
     </ul>
 
-    <?= example('Example Process All', 'process-all', 'generated', array("enterprise" => true)) ?>
+    <?= example('Example Process All', 'process-all', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h2>Changing the Deliminator</h2>
 
@@ -349,6 +353,6 @@ export interface ProcessDataFromClipboardParams {
         </li>
     </ul>
 
-    <?= example('Complex Example', 'complex', 'generated', array("enterprise" => true)) ?>
+    <?= example('Complex Example', 'complex', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

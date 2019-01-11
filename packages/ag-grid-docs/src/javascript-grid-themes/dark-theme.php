@@ -21,6 +21,6 @@ include '../documentation-main/documentation_header.php';
 
     <p>This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel</p>
 
-    <?= example('Dark Theme', 'theme-dark', 'generated', array( 'enterprise' => true )) ?>
+    <?= example('Dark Theme', 'theme-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

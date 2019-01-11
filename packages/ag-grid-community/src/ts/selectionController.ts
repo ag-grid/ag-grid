@@ -1,19 +1,19 @@
-import {Utils as _} from './utils';
-import {RowNode} from "./entities/rowNode";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
-import {Logger} from "./logger";
-import {LoggerFactory} from "./logger";
-import {EventService} from "./eventService";
-import {Events, SelectionChangedEvent} from "./events";
-import {Autowired} from "./context/context";
-import {IRowModel} from "./interfaces/iRowModel";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {PostConstruct} from "./context/context";
-import {Constants} from "./constants";
-import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
-import {ColumnApi} from "./columnController/columnApi";
-import {GridApi} from "./gridApi";
+import { RowNode } from "./entities/rowNode";
+import { Bean } from "./context/context";
+import { Qualifier } from "./context/context";
+import { Logger } from "./logger";
+import { LoggerFactory } from "./logger";
+import { EventService } from "./eventService";
+import { Events, SelectionChangedEvent } from "./events";
+import { Autowired } from "./context/context";
+import { IRowModel } from "./interfaces/iRowModel";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { PostConstruct } from "./context/context";
+import { Constants } from "./constants";
+import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
+import { ColumnApi } from "./columnController/columnApi";
+import { GridApi } from "./gridApi";
+import { _ } from './utils';
 
 @Bean('selectionController')
 export class SelectionController {
@@ -24,11 +24,11 @@ export class SelectionController {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private selectedNodes: {[key: string]: RowNode};
+    private selectedNodes: { [key: string]: RowNode | undefined };
     private logger: Logger;
 
     // used for shift selection, so we know where to start the range selection from
-    private lastSelectedNode: RowNode;
+    private lastSelectedNode: RowNode | null;
 
     private groupSelectsChildren: boolean;
 
@@ -53,12 +53,12 @@ export class SelectionController {
         this.lastSelectedNode = rowNode;
     }
 
-    public getLastSelectedNode(): RowNode {
+    public getLastSelectedNode(): RowNode | null {
         return this.lastSelectedNode;
     }
 
     public getSelectedNodes() {
-        let selectedNodes: RowNode[] = [];
+        const selectedNodes: RowNode[] = [];
         _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
             if (rowNode) {
                 selectedNodes.push(rowNode);
@@ -68,7 +68,7 @@ export class SelectionController {
     }
 
     public getSelectedRows() {
-        let selectedRows: any[] = [];
+        const selectedRows: any[] = [];
         _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
             if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
@@ -88,13 +88,17 @@ export class SelectionController {
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(): void {
         // we only do this when group selection state depends on selected children
-        if (!this.gridOptionsWrapper.isGroupSelectsChildren()) { return; }
+        if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
+            return;
+        }
         // also only do it if CSRM (code should never allow this anyway)
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) { return; }
+        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            return;
+        }
 
-        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
-        clientSideRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
-            rowNode.depthFirstSearch((node)=> {
+        const clientSideRowModel = this.rowModel as ClientSideRowModel;
+        clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
+            rowNode.depthFirstSearch((node) => {
                 if (node.group) {
                     node.calculateSelectedFromChildren();
                 }
@@ -102,17 +106,21 @@ export class SelectionController {
         });
     }
 
-    public getNodeForIdIfSelected(id: number): RowNode {
+    public getNodeForIdIfSelected(id: number): RowNode | undefined {
         return this.selectedNodes[id];
     }
 
     public clearOtherNodes(rowNodeToKeepSelected: RowNode): number {
-        let groupsToRefresh: any = {};
+        const groupsToRefresh: any = {};
         let updatedCount = 0;
-        _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
+        _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                let rowNode = this.selectedNodes[otherRowNode.id];
-                updatedCount += rowNode.setSelectedParams({newValue: false, clearSelection: false, suppressFinishActions: true});
+                const rowNode = this.selectedNodes[otherRowNode.id];
+                updatedCount += rowNode!.setSelectedParams({
+                    newValue: false,
+                    clearSelection: false,
+                    suppressFinishActions: true
+                });
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }
@@ -125,10 +133,12 @@ export class SelectionController {
     }
 
     private onRowSelected(event: any): void {
-        let rowNode = event.node;
+        const rowNode = event.node;
 
         // we do not store the group rows when the groups select children
-        if (this.groupSelectsChildren && rowNode.group) { return; }
+        if (this.groupSelectsChildren && rowNode.group) {
+            return;
+        }
 
         if (rowNode.isSelected()) {
             this.selectedNodes[rowNode.id] = rowNode;
@@ -154,9 +164,9 @@ export class SelectionController {
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
     private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode): void {
-        let oldNodeHasDifferentId = _.exists(oldNode) && (rowNode.id !== oldNode.id);
+        const oldNodeHasDifferentId = _.exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId) {
-            let oldNodeSelected = _.exists(this.selectedNodes[oldNode.id]);
+            const oldNodeSelected = _.exists(this.selectedNodes[oldNode.id]);
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id] = oldNode;
             }
@@ -185,25 +195,25 @@ export class SelectionController {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection() {
 
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('getBestCostNodeSelection is only avilable when using normal row model');
         }
 
-        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
+        const clientSideRowModel = this.rowModel as ClientSideRowModel;
 
-        let topLevelNodes = clientSideRowModel.getTopLevelNodes();
+        const topLevelNodes = clientSideRowModel.getTopLevelNodes();
 
-        if (topLevelNodes===null) {
+        if (topLevelNodes === null) {
             console.warn('selectAll not available doing rowModel=virtual');
             return;
         }
 
-        let result: any = [];
+        const result: any = [];
 
         // recursive function, to find the selected nodes
         function traverse(nodes: any) {
             for (let i = 0, l = nodes.length; i < l; i++) {
-                let node = nodes[i];
+                const node = nodes[i];
                 if (node.isSelected()) {
                     result.push(node);
                 } else {
@@ -237,15 +247,15 @@ export class SelectionController {
 
     public deselectAllRowNodes(justFiltered = false) {
 
-        let callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
-        let rowModelClientSide = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        const callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
+        const rowModelClientSide = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         if (justFiltered) {
             if (!rowModelClientSide) {
                 console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
                 return;
             }
-            let clientSideRowModel = <ClientSideRowModel> this.rowModel;
+            const clientSideRowModel = this.rowModel as ClientSideRowModel;
             clientSideRowModel.forEachNodeAfterFilter(callback);
         } else {
             _.iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
@@ -263,7 +273,7 @@ export class SelectionController {
             this.updateGroupsFromChildrenSelections();
         }
 
-        let event: SelectionChangedEvent = {
+        const event: SelectionChangedEvent = {
             type: Events.EVENT_SELECTION_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -273,12 +283,12 @@ export class SelectionController {
     }
 
     public selectAllRowNodes(justFiltered = false) {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             throw new Error(`selectAll only available with normal row model, ie not ${this.rowModel.getType()}`);
         }
 
-        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
-        let callback = (rowNode: RowNode) => rowNode.selectThisNode(true);
+        const clientSideRowModel = this.rowModel as ClientSideRowModel;
+        const callback = (rowNode: RowNode) => rowNode.selectThisNode(true);
 
         if (justFiltered) {
             clientSideRowModel.forEachNodeAfterFilter(callback);
@@ -287,11 +297,11 @@ export class SelectionController {
         }
 
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE && this.groupSelectsChildren) {
+        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 
-        let event: SelectionChangedEvent = {
+        const event: SelectionChangedEvent = {
             type: Events.EVENT_SELECTION_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -300,24 +310,28 @@ export class SelectionController {
     }
 
     // Deprecated method
-    public selectNode(rowNode: RowNode, tryMulti: boolean) {
-        rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
+    public selectNode(rowNode: RowNode | null, tryMulti: boolean) {
+        if (rowNode) {
+            rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
+        }
     }
 
     // Deprecated method
     public deselectIndex(rowIndex: number) {
-        let node = this.rowModel.getRow(rowIndex);
+        const node = this.rowModel.getRow(rowIndex);
         this.deselectNode(node);
     }
 
     // Deprecated method
-    public deselectNode(rowNode: RowNode) {
-        rowNode.setSelectedParams({newValue: false, clearSelection: false});
+    public deselectNode(rowNode: RowNode | null) {
+        if (rowNode) {
+            rowNode.setSelectedParams({newValue: false, clearSelection: false});
+        }
     }
 
     // Deprecated method
     public selectIndex(index: any, tryMulti: boolean) {
-        let node = this.rowModel.getRow(index);
+        const node = this.rowModel.getRow(index);
         this.selectNode(node, tryMulti);
     }
 

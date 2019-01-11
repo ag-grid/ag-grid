@@ -1,36 +1,36 @@
-import {Autowired, Bean} from "../../context/context";
-import {IDateComp, IDateParams} from "../../rendering/dateComponent";
-import {GridOptions} from "../../entities/gridOptions";
-import {IComponent} from "../../interfaces/iComponent";
-import {ColDef} from "../../entities/colDef";
-import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
-import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
+import { Autowired, Bean } from "../../context/context";
+import { IDateComp, IDateParams } from "../../rendering/dateComponent";
+import { GridOptions } from "../../entities/gridOptions";
+import { IComponent } from "../../interfaces/iComponent";
+import { ColDef } from "../../entities/colDef";
+import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
+import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import {
     IFloatingFilterComp,
     IFloatingFilterParams,
     ReadModelAsStringFloatingFilterComp
 } from "../../filter/floatingFilter";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import {
     EmptyFloatingFilterWrapperComp,
     FloatingFilterWrapperComp,
     IFloatingFilterWrapperComp,
     IFloatingFilterWrapperParams
 } from "../../filter/floatingFilterWrapper";
-import {Column} from "../../entities/column";
-import {IFilterComp} from "../../interfaces/iFilter";
-import {FilterManager, FilterRequestSource} from "../../filter/filterManager";
-import {ComponentResolver} from "./componentResolver";
-import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
-import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
-import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
-import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
-import {Promise} from "../../utils";
-import {IOverlayWrapperComp, OverlayWrapperComponent} from "../../rendering/overlays/overlayWrapperComponent";
-import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
-import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnApi";
+import { Column } from "../../entities/column";
+import { IFilterComp } from "../../interfaces/iFilter";
+import { FilterManager } from "../../filter/filterManager";
+import { ComponentResolver } from "./componentResolver";
+import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+import { Promise } from "../../utils";
+import { IOverlayWrapperComp, OverlayWrapperComponent } from "../../rendering/overlays/overlayWrapperComponent";
+import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
 
 enum ComponentType {
     AG_GRID, FRAMEWORK
@@ -41,10 +41,9 @@ enum ComponentType {
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 interface ComponentToUse<A extends IComponent<any> & B, B> {
-    component:{new(): A}|{new(): B},
-    type:ComponentType
+    component:{new(): A} | {new(): B};
+    type:ComponentType;
 }
-
 
 @Bean('componentRecipes')
 export class ComponentRecipes {
@@ -80,7 +79,7 @@ export class ComponentRecipes {
         agTextColumnFilter:'agTextColumnFloatingFilter'
     };
 
-    public newDateComponent (params: IDateParams): Promise<IDateComp>{
+    public newDateComponent(params: IDateParams): Promise<IDateComp> {
         return this.componentResolver.createAgGridComponent<IDateComp>(
             this.gridOptions,
             params,
@@ -121,28 +120,30 @@ export class ComponentRecipes {
         );
     }
 
-    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
-        let colDef:ColDef = column.getColDef();
+    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>>(column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any> {
+        const colDef:ColDef = column.getColDef();
 
-        if (colDef.suppressFilter){
+        // if filter missing (undefined, null, or false)
+        // truthy values are string (filter name) or func / class (filter class provided explicitly)
+        if (!colDef.filter) {
             return this.newEmptyFloatingFilterWrapperComponent(column);
         }
 
         let defaultFloatingFilterType: string;
 
-        if (!colDef.filter && !colDef.filterFramework){
+        if (!colDef.filter && !colDef.filterFramework) {
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
-        } else if (typeof colDef.filter === 'string' && Object.keys(ComponentRecipes.filterToFloatingFilterNames).indexOf(colDef.filter) > -1){
-            defaultFloatingFilterType = ComponentRecipes.filterToFloatingFilterNames[colDef.filter]
+        } else if (typeof colDef.filter === 'string' && Object.keys(ComponentRecipes.filterToFloatingFilterNames).indexOf(colDef.filter) > -1) {
+            defaultFloatingFilterType = ComponentRecipes.filterToFloatingFilterNames[colDef.filter];
         }
 
-        let dynamicComponentParams = {
+        const dynamicComponentParams = {
             column: column,
             colDef: colDef,
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        let floatingFilter: Promise<IFloatingFilterComp<M, any, P>> = this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
+        const floatingFilter: Promise<IFloatingFilterComp<M, any, P>> = this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
             colDef,
             params,
             "floatingFilterComponent",
@@ -150,23 +151,24 @@ export class ComponentRecipes {
             defaultFloatingFilterType,
             false
         );
-        let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <M, any, any> = <any>{
+        const floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <M, any, any> = {
             column: column,
             floatingFilterComp: floatingFilter,
             suppressFilterButton: this.componentResolver.mergeParams(colDef, 'floatingFilterComponent', dynamicComponentParams, params).suppressFilterButton
-        };
+        } as any;
 
-        if (!floatingFilter){
-            let filterComponent:ComponentToUse<any, any> = this.getFilterComponentPrototype(colDef);
+        if (!floatingFilter) {
+            const filterComponent:ComponentToUse<any, any> = this.getFilterComponentPrototype(colDef);
 
-            if (filterComponent && !filterComponent.component.prototype.getModelAsString){
+            if (filterComponent &&
+                !(filterComponent.component && filterComponent.component.prototype && filterComponent.component.prototype.getModelAsString)) {
                 return this.newEmptyFloatingFilterWrapperComponent(column);
             }
 
-            let rawModelFn = params.currentParentModel;
-            params.currentParentModel = ():M=>{
-                let parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
-                return <any>parentPromise.resolveNow(null, parent=>parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null);
+            const rawModelFn = params.currentParentModel;
+            params.currentParentModel = ():M => {
+                const parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
+                return parentPromise.resolveNow(null, parent => parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null) as any;
             };
             floatingFilterWrapperComponentParams.floatingFilterComp = Promise.resolve(this.componentResolver.createInternalAgGridComponent<any, IFloatingFilterComp<M, any, any>>(
                 ReadModelAsStringFloatingFilterComp,
@@ -175,27 +177,26 @@ export class ComponentRecipes {
             ));
         }
 
-
         return this.componentResolver.createInternalAgGridComponent<any, IFloatingFilterWrapperComp<any, any, any, any>> (
             FloatingFilterWrapperComp,
             floatingFilterWrapperComponentParams
         );
     }
 
-    public newFullWidthGroupRowInnerCellRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
+    public newFullWidthGroupRowInnerCellRenderer(params:ICellRendererParams):Promise<ICellRendererComp> {
         return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", params, null, false);
     }
 
-    public newCellRenderer (target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "cellRenderer", params,null, false);
+    public newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp> {
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "cellRenderer", params, null, false);
     }
 
-    public newInnerCellRenderer (target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", params,null);
+    public newInnerCellRenderer(target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp> {
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", params, null);
     }
 
-    public newFullRowGroupRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", params,null);
+    public newFullRowGroupRenderer(params:ICellRendererParams):Promise<ICellRendererComp> {
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", params, null);
     }
 
     public newOverlayWrapperComponent(): IOverlayWrapperComp {
@@ -230,20 +231,19 @@ export class ComponentRecipes {
             "agNoRowsOverlay");
     }
 
-    private getFilterComponentPrototype<A extends IComponent<any> & B, B>
-    (colDef: ColDef): ComponentToUse<A, B> {
-        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filter", {
+    private getFilterComponentPrototype<A extends IComponent<any> & B, B>(colDef: ColDef): ComponentToUse<A, B> {
+        return this.componentResolver.getComponentToUse(colDef, "filter", {
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: colDef
-        });
+        }) as ComponentToUse<A, B>;
     }
 
     private newEmptyFloatingFilterWrapperComponent(column:Column): IFloatingFilterWrapperComp<any, any, any, any> {
-        let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <any, any, any> = <any>{
+        const floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <any, any, any> = {
             column: column,
             floatingFilterComp: null
-        };
+        } as any;
         return this.componentResolver.createInternalAgGridComponent (
             EmptyFloatingFilterWrapperComp,
             floatingFilterWrapperComponentParams

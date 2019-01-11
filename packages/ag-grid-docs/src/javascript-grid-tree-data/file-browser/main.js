@@ -17,7 +17,7 @@ var columnDefs = [
 
 function getNextId() {
     if (!window.nextId) {
-        window.nextId = 13;
+        window.nextId = 15;
     } else {
         window.nextId++;
     }
@@ -103,6 +103,11 @@ var rowData = [
     ];
 
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
     components: {
         fileCellRenderer: getFileCellRenderer()
     },
@@ -110,9 +115,6 @@ var gridOptions = {
     rowData: rowData,
     treeData: true,
     animateRows: true,
-    enableFilter: true,
-    enableSorting: true,
-    enableColResize: true,
     groupDefaultExpanded: -1,
     getDataPath: function(data) {
         return data.filePath;
@@ -227,8 +229,8 @@ function getRowsToUpdate(node, parentPath) {
 
 function getFileIcon(filename) {
     return filename.endsWith('.mp3') || filename.endsWith('.wav')
-        ? 'fa fa-file-audio-o'
-        : filename.endsWith('.xls') ? 'fa fa-file-excel-o' : filename.endsWith('.txt') ? 'fa fa fa-file-o' : filename.endsWith('.pdf') ? 'fa fa-file-pdf-o' : 'fa fa-folder';
+        ? 'far fa-file-audio'
+        : filename.endsWith('.xls') ? 'far fa-file-excel' : filename.endsWith('.txt') ? 'far fa fa-file' : filename.endsWith('.pdf') ? 'far fa-file-pdf' : 'far fa-folder';
 }
 
 // wait for the document to be loaded, otherwise

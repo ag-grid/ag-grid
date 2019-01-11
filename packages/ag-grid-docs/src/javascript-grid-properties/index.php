@@ -29,11 +29,6 @@ include '../documentation-main/documentation_header.php';
                 actual column group definition get precedence.</td>
         </tr>
         <tr>
-            <th>enableColResize</th>
-            <td>Set to true to allow <a href="../javascript-grid-resizing/">column resizing</a> by dragging the mouse
-                at a columns headers edge.</td>
-        </tr>
-        <tr>
             <th>colResizeDefault</th>
             <td>Set to 'shift' to have shift-resize as the default resize operation (same as user holding
                 down 'shift' while resizing).
@@ -98,35 +93,6 @@ include '../documentation-main/documentation_header.php';
     </table>
     <h2>Sort & Filter</h2>
     <table class="table content reference">
-
-        <tr>
-            <th>enableSorting</th>
-            <td>Set to true when using <a href="../javascript-grid-client-side-model/">Client-side</a> Row Model to enable
-                <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will cause the grid
-                to sort the data.</td>
-        </tr>
-        <tr>
-            <th>enableServerSideSorting</th>
-            <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-                <a href="../javascript-grid-server-side-model/">Server-side</a> or
-                <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
-                <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will
-                result in your datasource getting asked for the data again with the new sort order.</td>
-        </tr>
-        <tr>
-            <th>enableFilter</th>
-            <td>Set to true when using <a href="../javascript-grid-client-side-model/">Client-side</a> Row Model to enable
-                <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
-        </tr>
-        <tr>
-            <th>enableServerSideFilter</th>
-            <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-                <a href="../javascript-grid-server-side-model/">Server-side</a> or
-                <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
-                <a href="../javascript-grid-filtering/">Row Filtering</a>.
-                A change in filter will result in your datasource getting asked for the
-                data again with the new filter.</td>
-        </tr>
         <tr>
             <th>quickFilterText</th>
             <td>Rows are filtered using this text as a <a href="../javascript-grid-filter-quick/">quick filter</a>.</td>
@@ -379,12 +345,17 @@ include '../documentation-main/documentation_header.php';
     <h2>Scrolling</h2>
     <table class="table content reference">
         <tr>
+            <th>alwaysShowVerticalScroll</th>
+            <td>
+                Set to true to always show the vertical scrollbar.
+            </td>
+        </tr>
+        <tr>
             <th>suppressHorizontalScroll</th>
             <td>
                 Set to true to never show the horizontal scroll. This is useful if the grid is aligned with
                 another grid and will scroll when the other grid scrolls. See example
                 <a href="../javascript-grid-aligned-grids/#aligned-grid-as-footer">Aligned Grid as Footer</a>.
-                This property does not work in Edge.
             </td>
         </tr>
         <tr>
@@ -674,6 +645,13 @@ include '../documentation-main/documentation_header.php';
             <th>suppressCopyRowsToClipboard</th>
             <td>
                 Set to true to only have range selection, and not row selection, copied to
+                <a href="../javascript-grid-clipboard/">clipboard</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>copyHeadersToClipboard</th>
+            <td>
+                Set to true to also include headers when copying to clipboard using Ctrl+C
                 <a href="../javascript-grid-clipboard/">clipboard</a>.
             </td>
         </tr>

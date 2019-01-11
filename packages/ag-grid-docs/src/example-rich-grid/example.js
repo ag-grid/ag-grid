@@ -28,7 +28,7 @@
             headerName: "",
             width: 70,
             checkboxSelection: true,
-            suppressSorting: true,
+            sortable: false,
             suppressMenu: true
         },
         {
@@ -54,7 +54,7 @@
                 {
                     headerName: "Skills",
                     width: 125,
-                    suppressSorting: true,
+                    sortable: false,
                     cellRenderer: skillsCellRenderer,
                     filter: SkillFilter
                 },
@@ -79,11 +79,13 @@
     ];
 
     var gridOptions = {
+        defaultColDef: {
+            sortable: true,
+            resizable: true,
+            filter: true
+        },
         columnDefs: columnDefs,
         rowSelection: "multiple",
-        enableColResize: true,
-        enableSorting: true,
-        enableFilter: true,
         enableRangeSelection: true,
         suppressRowClickSelection: true,
         animateRows: true,

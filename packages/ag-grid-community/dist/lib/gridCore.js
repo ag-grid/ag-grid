@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.4
+ * @version v20.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
             function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
-    }
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -37,7 +37,6 @@ var eventService_1 = require("./eventService");
 var gridPanel_1 = require("./gridPanel/gridPanel");
 var logger_1 = require("./logger");
 var popupService_1 = require("./widgets/popupService");
-var utils_1 = require("./utils");
 var context_1 = require("./context/context");
 var focusedCellController_1 = require("./focusedCellController");
 var component_1 = require("./widgets/component");
@@ -46,6 +45,7 @@ var componentAnnotations_1 = require("./widgets/componentAnnotations");
 var events_1 = require("./events");
 var resizeObserverService_1 = require("./misc/resizeObserverService");
 var sideBar_1 = require("./entities/sideBar");
+var utils_1 = require("./utils");
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
@@ -103,7 +103,7 @@ var GridCore = /** @class */ (function (_super) {
     };
     GridCore.prototype.addRtlSupport = function () {
         var cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
-        utils_1.Utils.addCssClass(this.getGui(), cssClass);
+        utils_1._.addCssClass(this.getGui(), cssClass);
     };
     GridCore.prototype.getRootGui = function () {
         return this.getGui();

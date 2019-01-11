@@ -1,12 +1,12 @@
-import {Logger, LoggerFactory} from "../logger";
-import {Qualifier, PostConstruct, Bean, Autowired, PreDestroy} from "../context/context";
-import {Column} from "../entities/column";
-import {Utils as _} from "../utils";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {DragService, DragListenerParams} from "./dragService";
-import {ColumnController} from "../columnController/columnController";
-import {Environment} from "../environment";
-import {RowNode} from "../entities/rowNode";
+import { Logger, LoggerFactory } from "../logger";
+import { Qualifier, PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
+import { Column } from "../entities/column";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { DragService, DragListenerParams } from "./dragService";
+import { ColumnController } from "../columnController/columnController";
+import { Environment } from "../environment";
+import { RowNode } from "../entities/rowNode";
+import { _ } from "../utils";
 
 export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
 
@@ -27,16 +27,16 @@ export interface DragSource {
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
-    dragItemName: string;
+    dragItemName: string | null;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Callback for drag started */
-    dragStarted?: ()=>void;
+    dragStarted?: () => void;
     /** Callback for drag stopped */
-    dragStopped?: ()=>void;
+    dragStopped?: () => void;
 }
 
 export interface DropTarget {
@@ -157,7 +157,7 @@ export class DragAndDropService {
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
-        let params: DragListenerParams = {
+        const params: DragListenerParams = {
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
@@ -171,7 +171,7 @@ export class DragAndDropService {
     }
 
     public removeDragSource(dragSource: DragSource): void {
-        let sourceAndParams = _.find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
+        const sourceAndParams = _.find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
             _.removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
@@ -180,7 +180,7 @@ export class DragAndDropService {
 
     @PreDestroy
     private destroy(): void {
-        this.dragSourceAndParamsList.forEach( sourceAndParams => {
+        this.dragSourceAndParamsList.forEach(sourceAndParams => {
             this.dragService.removeDragSource(sourceAndParams.params);
         });
         this.dragSourceAndParamsList.length = 0;
@@ -214,7 +214,7 @@ export class DragAndDropService {
             this.dragSource.dragStopped();
         }
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
-            let draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
+            const draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
         }
         this.lastDropTarget = null;
@@ -224,22 +224,22 @@ export class DragAndDropService {
 
     private onDragging(mouseEvent: MouseEvent, fromNudge: boolean): void {
 
-        let hDirection = this.workOutHDirection(mouseEvent);
-        let vDirection = this.workOutVDirection(mouseEvent);
+        const hDirection = this.workOutHDirection(mouseEvent);
+        const vDirection = this.workOutVDirection(mouseEvent);
 
         this.eventLastTime = mouseEvent;
 
         this.positionGhost(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
-        let dropTarget = _.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
+        const dropTarget = _.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
 
-        if (dropTarget!==this.lastDropTarget) {
+        if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
         } else if (dropTarget) {
-            let draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+            const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
     }
@@ -247,7 +247,7 @@ export class DragAndDropService {
     private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
         if (!dropTarget) { return; }
 
-        let dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+        const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
         dropTarget.onDragEnter(dragEnterEvent);
         this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
@@ -255,14 +255,14 @@ export class DragAndDropService {
     private leaveLastTargetIfExists(mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
         if (!this.lastDropTarget) { return; }
 
-        let dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+        const dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
         this.lastDropTarget.onDragLeave(dragLeaveEvent);
         this.setGhostIcon(null);
     }
 
     private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[] {
         let containers = [dropTarget.getContainer()];
-        let secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
+        const secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
         if (secondaryContainers) {
             containers = containers.concat(secondaryContainers);
         }
@@ -271,19 +271,19 @@ export class DragAndDropService {
 
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
-        let allContainers = this.getAllContainersFromDropTarget(dropTarget);
+        const allContainers = this.getAllContainersFromDropTarget(dropTarget);
 
         let mouseOverTarget: boolean = false;
-        allContainers.forEach( (eContainer: HTMLElement) => {
+        allContainers.forEach((eContainer: HTMLElement) => {
             if (!eContainer) { return; } // secondary can be missing
-            let rect = eContainer.getBoundingClientRect();
+            const rect = eContainer.getBoundingClientRect();
 
             // if element is not visible, then width and height are zero
-            if (rect.width===0 || rect.height===0) {
+            if (rect.width === 0 || rect.height === 0) {
                 return;
             }
-            let horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
-            let verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+            const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
+            const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
 
             //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
 
@@ -293,7 +293,7 @@ export class DragAndDropService {
         });
 
         if (mouseOverTarget) {
-            let mouseOverTargetAndInterested = dropTarget.isInterestedIn(this.dragSource.type);
+            const mouseOverTargetAndInterested = dropTarget.isInterestedIn(this.dragSource.type);
             return mouseOverTargetAndInterested;
         } else {
             return false;
@@ -327,11 +327,11 @@ export class DragAndDropService {
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): DraggingEvent {
 
         // localise x and y to the target component
-        let rect = dropTarget.getContainer().getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
+        const rect = dropTarget.getContainer().getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
 
-        let dropTargetEvent: DraggingEvent = {
+        const dropTargetEvent: DraggingEvent = {
             event: event,
             x: x,
             y: y,
@@ -346,35 +346,35 @@ export class DragAndDropService {
     }
 
     private positionGhost(event: MouseEvent): void {
-        let ghostRect = this.eGhost.getBoundingClientRect();
-        let ghostHeight = ghostRect.height;
+        const ghostRect = this.eGhost.getBoundingClientRect();
+        const ghostHeight = ghostRect.height;
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
         // then brought in scrollbars to the browser. no idea why, but putting in -2 here
         // works around it which is good enough for me.
-        let browserWidth = _.getBodyWidth() - 2;
-        let browserHeight = _.getBodyHeight() - 2;
+        const browserWidth = _.getBodyWidth() - 2;
+        const browserHeight = _.getBodyHeight() - 2;
 
         // put ghost vertically in middle of cursor
         let top = event.pageY - (ghostHeight / 2);
         // horizontally, place cursor just right of icon
         let left = event.pageX - 30;
 
-        let usrDocument = this.gridOptionsWrapper.getDocument();
+        const usrDocument = this.gridOptionsWrapper.getDocument();
 
-        let windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
-        let windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
+        const windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
+        const windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
 
         // check ghost is not positioned outside of the browser
-        if (browserWidth>0) {
-            if ( (left + this.eGhost.clientWidth) > (browserWidth + windowScrollX) ) {
+        if (browserWidth > 0) {
+            if ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX)) {
                 left = browserWidth + windowScrollX - this.eGhost.clientWidth;
             }
         }
         if (left < 0) {
             left = 0;
         }
-        if (browserHeight>0) {
-            if ( (top + this.eGhost.clientHeight) > (browserHeight + windowScrollY) ) {
+        if (browserHeight > 0) {
+            if ((top + this.eGhost.clientHeight) > (browserHeight + windowScrollY)) {
                 top = browserHeight + windowScrollY - this.eGhost.clientHeight;
             }
         }
@@ -396,11 +396,11 @@ export class DragAndDropService {
     private createGhost(): void {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         _.addCssClass(this.eGhost, this.environment.getTheme());
-        this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
+        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
 
         this.setGhostIcon(null);
 
-        let eText = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-label');
+        const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         eText.innerHTML = _.escape(this.dragSource.dragItemName);
 
         this.eGhost.style.height = '25px';
@@ -408,8 +408,8 @@ export class DragAndDropService {
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
-        let usrDocument = this.gridOptionsWrapper.getDocument();
-        this.eGhostParent = <HTMLElement> usrDocument.querySelector('body');
+        const usrDocument = this.gridOptionsWrapper.getDocument();
+        this.eGhostParent = usrDocument.querySelector('body') as HTMLElement;
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         } else {

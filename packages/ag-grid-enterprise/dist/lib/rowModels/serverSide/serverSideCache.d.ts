@@ -1,12 +1,12 @@
-// ag-grid-enterprise v19.1.4
-import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid-community";
+// ag-grid-enterprise v20.0.0
+import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowBounds, RowNode, RowNodeCache, RowNodeCacheParams } from "ag-grid-community";
 import { ServerSideBlock } from "./serverSideBlock";
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
     pivotCols: ColumnVO[];
     pivotMode: boolean;
-    datasource: IServerSideDatasource;
+    datasource?: IServerSideDatasource;
     lastAccessedSequence: NumberSequence;
 }
 export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCacheParams> implements IServerSideCache {
@@ -29,11 +29,11 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: {
         value: number;
     }): void;
-    getRow(displayRowIndex: number, dontCreateBlock?: boolean): RowNode;
+    getRow(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
     private createBlock;
     getDisplayIndexEnd(): number;
     isDisplayIndexInCache(displayIndex: number): boolean;
-    getChildCache(keys: string[]): ServerSideCache;
+    getChildCache(keys: string[]): ServerSideCache | null;
     isPixelInRange(pixel: number): boolean;
     removeFromCache(items: any[]): void;
     addToCache(items: any[], indexToInsert: number): void;
@@ -41,4 +41,3 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
     private insertItems;
     refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
 }
-//# sourceMappingURL=serverSideCache.d.ts.map

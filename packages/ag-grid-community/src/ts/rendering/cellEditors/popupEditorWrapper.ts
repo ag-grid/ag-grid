@@ -1,8 +1,8 @@
-import {Component} from "../../widgets/component";
-import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
-import {Autowired} from "../../context/context";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {_} from "../../utils";
+import { Component } from "../../widgets/component";
+import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
+import { Autowired } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { _ } from "../../utils";
 
 export class PopupEditorWrapper extends Component implements ICellEditorComp {
 
@@ -40,7 +40,7 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
 
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
 
-        this.addDestroyFunc( ()=> {
+        this.addDestroyFunc(() => {
                 if (this.cellEditor.destroy) {
                     this.cellEditor.destroy();
                 }

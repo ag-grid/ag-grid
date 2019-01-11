@@ -13,10 +13,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    enableColResize: true,
+    defaultColDef: {
+        sortable: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     animateRows: true,
-    enableSorting: true,
     enableRangeSelection: true,
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
