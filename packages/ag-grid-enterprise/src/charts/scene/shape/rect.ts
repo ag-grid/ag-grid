@@ -32,7 +32,7 @@ export class Rect extends Shape {
 
     protected path = new Path();
 
-    _x: number = Rect.defaults.x;
+    private _x: number = Rect.defaults.x;
     set x(value: number) {
         this._x = value;
         this.dirty = true;
@@ -41,7 +41,7 @@ export class Rect extends Shape {
         return this._x;
     }
 
-    _y: number = Rect.defaults.y;
+    private _y: number = Rect.defaults.y;
     set y(value: number) {
         this._y = value;
         this.dirty = true;
@@ -50,7 +50,7 @@ export class Rect extends Shape {
         return this._y;
     }
 
-    _width: number = Rect.defaults.width;
+    private _width: number = Rect.defaults.width;
     set width(value: number) {
         this._width = value;
         this.dirty = true;
@@ -59,7 +59,7 @@ export class Rect extends Shape {
         return this._width;
     }
 
-    _height: number = Rect.defaults.height;
+    private _height: number = Rect.defaults.height;
     set height(value: number) {
         this._height = value;
         this.dirty = true;
@@ -68,7 +68,7 @@ export class Rect extends Shape {
         return this._height;
     }
 
-    _radius: number = Rect.defaults.radius;
+    private _radius: number = Rect.defaults.radius;
     set radius(value: number) {
         this._radius = value;
         this.dirty = true;
@@ -101,13 +101,20 @@ export class Rect extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.scene) {
-            this.updatePath();
-            this.applyContextAttributes(ctx);
-            this.scene.appendPath(this.path);
-            ctx.fill();
-            ctx.stroke();
+        if (!this.scene) {
+            return;
         }
+
+        if (this.dirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+
+        this.updatePath();
+        this.applyContextAttributes(ctx);
+        this.scene.appendPath(this.path);
+        ctx.fill();
+        ctx.stroke();
 
         this.dirty = false;
     }

@@ -26,8 +26,12 @@ export class OrdinalScale<D, R> implements Scale<D, R> {
 
     _range: R[] = [];
     set range(values: R[]) {
-        this._range.length = 0;
-        this._range.push(...values);
+        const n = values.length;
+        const range = this._range;
+        range.length = n;
+        for (let i = 0; i < n; i++) {
+            range[i] = values[i];
+        }
     }
     get range(): R[] {
         return this._range;

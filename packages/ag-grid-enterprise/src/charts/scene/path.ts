@@ -345,10 +345,12 @@ export class Path {
      * @param n
      */
     approximateCurve(points: number[], n: number) {
-        this.moveTo(...this.deCasteljau(points, 0));
+        const xy = this.deCasteljau(points, 0);
+        this.moveTo(xy[0], xy[1]);
         const step = 1 / n;
         for (let t = step; t <= 1; t += step) {
-            this.lineTo(...this.deCasteljau(points, t));
+            const xy = this.deCasteljau(points, t);
+            this.lineTo(xy[0], xy[1]);
         }
     }
 
@@ -453,6 +455,9 @@ export class Path {
             }
         }
 
+        // TODO: use the regular for loop for better performance
+        // But that will make compiler complain about x/y, cpx/cpy
+        // being used without being set first.
         parts.forEach(part => {
             const p = part.params;
             const n = p.length;

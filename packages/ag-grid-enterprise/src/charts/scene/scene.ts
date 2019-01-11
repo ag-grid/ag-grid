@@ -32,6 +32,8 @@ export class Scene {
             for (let i = 0; i < n; i++) {
                 const child = children[i];
                 if (child instanceof Shape) {
+                    // TODO: right now, setting these properties causes
+                    //       a scene to rerender, even if values are the same
                     if (child.isPointInPath(this.ctx, x, y)) {
                         child.fillStyle = 'yellow';
                     }
@@ -61,7 +63,7 @@ export class Scene {
     }
 
     set size(value: [number, number]) {
-        this.hdpiCanvas.resize(...value);
+        this.hdpiCanvas.resize(value[0], value[1]);
         [this._width, this._height] = value;
     }
 

@@ -8,9 +8,10 @@ export class Arc extends Shape {
         fillStyle: 'red',
         strokeStyle: 'black',
 
-        x: 0,
-        y: 0,
-        radius: 10,
+        centerX: 0,
+        centerY: 0,
+        radiusX: 10,
+        radiusY: 10,
         startAngle: 0,
         endAngle: Math.PI * 2,
         anticlockwise: false
@@ -26,31 +27,40 @@ export class Arc extends Shape {
     // using custom Path class. It's pure TypeScript and works in all browsers.
     protected path = new Path();
 
-    private _x: number = Arc.defaults.x;
-    set x(value: number) {
-        this._x = value;
+    private _centerX: number = Arc.defaults.centerX;
+    set centerX(value: number) {
+        this._centerX = value;
         this.dirty = true;
     }
-    get x(): number {
-        return this._x;
+    get centerX(): number {
+        return this._centerX;
     }
 
-    private _y: number = Arc.defaults.y;
-    set y(value: number) {
-        this._y = value;
+    private _centerY: number = Arc.defaults.centerY;
+    set centerY(value: number) {
+        this._centerY = value;
         this.dirty = true;
     }
-    get y(): number {
-        return this._y;
+    get centerY(): number {
+        return this._centerY;
     }
 
-    private _radius: number = Arc.defaults.radius;
-    set radius(value: number) {
-        this._radius = value;
+    private _radiusX: number = Arc.defaults.radiusX;
+    set radiusX(value: number) {
+        this._radiusX = value;
         this.dirty = true;
     }
-    get radius(): number {
-        return this._radius;
+    get radiusX(): number {
+        return this._radiusX;
+    }
+
+    private _radiusY: number = Arc.defaults.radiusY;
+    set radiusY(value: number) {
+        this._radiusY = value;
+        this.dirty = true;
+    }
+    get radiusY(): number {
+        return this._radiusY;
     }
 
     private _startAngle: number = Arc.defaults.startAngle;
@@ -89,7 +99,7 @@ export class Arc extends Shape {
         // where you can specify two radii and rotation, while Path2D's `arc` method simply produces
         // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
         // maybe it's because we have to create a new instance of it on each render, who knows...
-        path.cubicArc(this.x, this.y, this.radius, this.radius, 0, this.startAngle, this.endAngle, this.anticlockwise ? 1 : 0);
+        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.anticlockwise ? 1 : 0);
         path.closePath();
     }
 

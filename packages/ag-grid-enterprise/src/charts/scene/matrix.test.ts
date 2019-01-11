@@ -32,6 +32,22 @@ test('multiplySelf', () => {
     expect(C.f).toBe(36);
 });
 
+test('preMultiplySelf', () => {
+    const A = new Matrix([1, 2, 3, 4, 5, 6]);
+    const B = new Matrix([1, 4, 2, 5, 3, 6]);
+
+    const C = A.preMultiplySelf(B);
+
+    expect(C).toEqual(A);
+
+    expect(C.a).toBe(5);
+    expect(C.b).toBe(14);
+    expect(C.c).toBe(11);
+    expect(C.d).toBe(32);
+    expect(C.e).toBe(20);
+    expect(C.f).toBe(56);
+});
+
 test('inverse', () => {
     const A = new Matrix([1, 2, 3, 4, 5, 6]);
     const iA = A.inverse();

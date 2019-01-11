@@ -1,4 +1,5 @@
 import {Scene} from "./scene";
+import {Matrix} from "./matrix";
 
 /**
  * Abstract scene graph node.
@@ -17,7 +18,12 @@ export abstract class Node { // Don't confuse with `window.Node`.
     private _scene?: Scene;
     set scene(value: Scene | undefined) {
         this._scene = value;
-        this.children.forEach(child => child.scene = value);
+
+        const children = this.children;
+        const n = children.length;
+        for (let i = 0; i < n; i++) {
+            children[i].scene = value;
+        }
     }
     get scene(): Scene | undefined {
         return this._scene;
@@ -39,8 +45,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
     // Used to check for duplicate nodes.
     private childSet: { [key in string]: boolean } = {}; // new Set<Node>()
 
-    add(...args: Node[]) {
-        args.forEach(node => {
+    add(nodes: Node[]) {
+        const n = nodes.length;
+        for (let i = 0; i < n; i++) {
+            const node = nodes[i];
             if (!this.childSet[node.id]) {
                 this._children.push(node);
                 this.childSet[node.id] = true;
@@ -52,7 +60,184 @@ export abstract class Node { // Don't confuse with `window.Node`.
                 // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
                 throw new Error(`Duplicate ${(node.constructor as any).name} node: ${node}`);
             }
-        });
+        }
+        this.dirty = true;
+    }
+
+    protected matrix = new Matrix();
+    protected inverseMatrix = new Matrix();
+
+    private _dirtyTransform = false;
+    set dirtyTransform(value: boolean) {
+        this._dirtyTransform = value;
+        // TODO: replace this with simply `this.dirty = true`,
+        //       see `set dirty` method.
+        if (value) {
+            this.dirty = true;
+        }
+    }
+    get dirtyTransform(): boolean {
+        return this._dirtyTransform;
+    }
+
+    private _scalingX: number = 1;
+    set scalingX(value: number) {
+        this._scalingX = value;
+        this.dirtyTransform = true;
+    }
+    get scalingX(): number {
+        return this._scalingX;
+    }
+
+    private _scalingY: number = 1;
+    set scalingY(value: number) {
+        this._scalingY = value;
+        this.dirtyTransform = true;
+    }
+    get scalingY(): number {
+        return this._scalingY;
+    }
+
+    /**
+     * The center of scaling.
+     * The default value of `null` means the scaling center will be
+     * determined automatically, as the center of the bounding box
+     * of a node.
+     */
+    private _scalingCenterX: number | null = null;
+    set scalingCenterX(value: number | null) {
+        this._scalingCenterX = value;
+        this.dirtyTransform = true;
+    }
+    get scalingCenterX(): number | null {
+        return this._scalingCenterX;
+    }
+
+    private _scalingCenterY: number | null = null;
+    set scalingCenterY(value: number | null) {
+        this._scalingCenterY = value;
+        this.dirtyTransform = true;
+    }
+    get scalingCenterY(): number | null {
+        return this._scalingCenterY;
+    }
+
+    private _rotationCenterX: number | null = null;
+    set rotationCenterX(value: number | null) {
+        this._rotationCenterX = value;
+        this.dirtyTransform = true;
+    }
+    get rotationCenterX(): number | null {
+        return this._rotationCenterX;
+    }
+
+    private _rotationCenterY: number | null = null;
+    set rotationCenterY(value: number | null) {
+        this._rotationCenterY = value;
+        this.dirtyTransform = true;
+    }
+    get rotationCenterY(): number | null {
+        return this._rotationCenterY;
+    }
+
+    /**
+     * Rotation in radians.
+     */
+    private _rotation: number = 0;
+    set rotation(value: number) {
+        this._rotation = value;
+        this.dirtyTransform = true;
+    }
+    get rotation(): number {
+        return this._rotation;
+    }
+
+    set rotationDeg(value: number) {
+        this.rotation = value / 180 * Math.PI;
+    }
+    get rotationDeg(): number {
+        return this.rotation / Math.PI * 180;
+    }
+
+    private _translationX: number = 0;
+    set translationX(value: number) {
+        this._translationX = value;
+        this.dirtyTransform = true;
+    }
+    get translationX(): number {
+        return this._translationX;
+    }
+
+    private _translationY: number = 0;
+    set translationY(value: number) {
+        this._translationY = value;
+        this.dirtyTransform = true;
+    }
+    get translationY(): number {
+        return this._translationY;
+    }
+
+    protected computeTransformMatrix() {
+        // const [cx, cy] = this.getBBoxCenter();
+        const [bbcx, bbcy] = [0, 0];
+
+        const sx = this.scalingX;
+        const sy = this.scalingY;
+        let scx: number;
+        let scy: number;
+
+        if (sx === 1 && sy === 1) {
+            scx = 0;
+            scy = 0;
+        }
+        else {
+            scx = this.scalingCenterX === null ? bbcx : this.scalingCenterX;
+            scy = this.scalingCenterY === null ? bbcy : this.scalingCenterY;
+        }
+
+        const r = this.rotation;
+        const cos = Math.cos(r);
+        const sin = Math.sin(r);
+        let rcx: number;
+        let rcy: number;
+
+        if (r === 0) {
+            rcx = 0;
+            rcy = 0;
+        }
+        else {
+            rcx = this.rotationCenterX === null ? bbcx : this.rotationCenterX;
+            rcy = this.rotationCenterY === null ? bbcy : this.rotationCenterY;
+        }
+
+        const tx = this.translationX;
+        const ty = this.translationY;
+
+        // The transform matrix `M` is a result of the following transformations:
+        // 1) translate center of scaling to the origin
+        // 2) scale
+        // 3) translate back
+        // 4) translate center of rotation to the origin
+        // 5) rotate
+        // 6) translate back
+        // 7) translate
+        //         (7)          (6)             (5)             (4)           (3)           (2)           (1)
+        //     | 1 0 tx |   | 1 0 rcx |   | cos -sin 0 |   | 1 0 -rcx |   | 1 0 scx |   | sx 0 0 |   | 1 0 -scx |
+        // M = | 0 1 ty | * | 0 1 rcy | * | sin  cos 0 | * | 0 1 -rcy | * | 0 1 scy | * | 0 sy 0 | * | 0 1 -scy |
+        //     | 0 0  1 |   | 0 0  1  |   |  0    0  1 |   | 0 0  1   |   | 0 0  1  |   | 0  0 0 |   | 0 0  1   |
+
+        // Translation after steps 1-4 above:
+        const tx4 = scx * (1 - sx) - rcx;
+        const ty4 = scy * (1 - sy) - rcy;
+
+        this.dirtyTransform = false;
+
+        this.matrix.setElements([
+            cos * sx, sin * sx,
+            -sin * sy, cos * sy,
+            cos * tx4 - sin * ty4 + rcx + tx,
+            sin * tx4 + cos * ty4 + rcy + ty
+        ]).inverseTo(this.inverseMatrix);
     }
 
     abstract render(ctx: CanvasRenderingContext2D): void
@@ -77,6 +262,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
      */
     private _dirty = false;
     set dirty(dirty: boolean) {
+        // TODO: check if we are already dirty (e.g. if (this._dirty !== dirty))
+        //       if we are, then all parents and the scene have been
+        //       notified already, and we are doing redundant work
+        //       (but test if this is indeed the case)
         this._dirty = dirty;
         if (dirty) {
             if (this.parent) {

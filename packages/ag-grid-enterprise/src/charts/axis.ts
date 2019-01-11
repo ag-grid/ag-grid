@@ -26,7 +26,7 @@ export class Axis<D> {
     // To translate or rotate the axis the ctx can be transformed prior to render
     render(ctx: CanvasRenderingContext2D) {
         ctx.save();
-        ctx.translate(...this.translation);
+        ctx.translate(this.translation[0], this.translation[1]);
         ctx.rotate(this.rotation);
 
         const scale = this.scale;

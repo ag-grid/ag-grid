@@ -57,8 +57,10 @@ export abstract class Shape extends Node {
 
     private _fillStyle: string = Shape.defaults.fillStyle; //| CanvasGradient | CanvasPattern;
     set fillStyle(value: string) {
-        this._fillStyle = value;
-        this.dirty = true;
+        // if (this._fillStyle !== value) {
+            this._fillStyle = value;
+            this.dirty = true;
+        // }
     }
     get fillStyle(): string {
         return this._fillStyle;
@@ -66,8 +68,10 @@ export abstract class Shape extends Node {
 
     private _strokeStyle: string = Shape.defaults.strokeStyle;
     set strokeStyle(value: string) {
-        this._strokeStyle = value;
-        this.dirty = true;
+        // if (this._strokeStyle !== value) {
+            this._strokeStyle = value;
+            this.dirty = true;
+        // }
     }
     get strokeStyle(): string {
         return this._strokeStyle;
@@ -75,8 +79,10 @@ export abstract class Shape extends Node {
 
     private _lineWidth: number = Shape.defaults.lineWidth;
     set lineWidth(value: number) {
-        this._lineWidth = value;
-        this.dirty = true;
+        if (this._lineWidth !== value) {
+            this._lineWidth = value;
+            this.dirty = true;
+        }
     }
     get lineWidth(): number {
         return this._lineWidth;
@@ -84,8 +90,10 @@ export abstract class Shape extends Node {
 
     private _opacity: number = Shape.defaults.opacity;
     set opacity(value: number) {
-        this._opacity = value;
-        this.dirty = true;
+        if (this._opacity !== value) {
+            this._opacity = value;
+            this.dirty = true;
+        }
     }
     get opacity(): number {
         return this._opacity;
