@@ -5,6 +5,11 @@
 
     <ul>
         <li>
+            The structure of Containers and Viewports has changed to improve scroll performance, so
+            custom themes, will most likely need to be updated to reflect these changes.
+            See <a href="/javascript-grid-styling/">Themes</a> for more information.
+        </li>
+        <li>
             <code>ag-grid-vue</code> now has a dependency on <code>vue-property-decorator</code>
         </li>
         <li>
@@ -27,6 +32,9 @@
         <li>
             AG-2280 Allow event handler in Vue too support more idiomatic conventions
             <a href="https://www.ag-grid.com/best-vuejs-data-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
+        </li>
+        <li>
+            AG-939 Improve horizontal and vertical scrolling in other browsers.
         </li>
     </ul>
 
