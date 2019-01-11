@@ -5,7 +5,7 @@
 
     <ul>
         <li>
-            The structure of Containers and Viewports has changed to improve scroll performance, so
+            AG-939 - The structure of Containers and Viewports has changed to improve scroll performance, so
             custom themes, will most likely need to be updated to reflect these changes.
             See <a href="/javascript-grid-styling/">Themes</a> for more information.
         </li>
