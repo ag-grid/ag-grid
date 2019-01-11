@@ -323,7 +323,7 @@ GridComponent.contextTypes = {
 </snippet>
     <h3 id="higher-order-components">Higher Order Components</h3>
     <p>If you use <code>connect</code> to use Redux, or if you're using a Higher Order Component to wrap the React component at all,
-        you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>withRef</code>
+        you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>forwardRef</code>
     is set:</p>
     <snippet>
 export default connect(
