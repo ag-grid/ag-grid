@@ -79,7 +79,6 @@ export class RowContainerComponent {
         this.eContainer.style.height = `${height}px`;
         if (this.eWrapper) {
              this.eWrapper.style.height = `${height}px`;
-             this.eWrapper.style.minHeight = '100%';
         }
     }
 

@@ -217,14 +217,17 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     white-space: nowrap;
 }
 
-.ag-body-container {
-    // we do NOT use block with layout-print because it does not work with 
-    // page-break (to stop rows getting spread across printed pages).
-    &:not(.ag-layout-print) {
-        display: block;
+.ag-body-viewport {
+    .ag-center-cols-clipper {
+        min-height: 100%;
     }
-    .ag-layout-auto-height {
-        min-height: 50px;
+    &.ag-layout-auto-height {
+        .ag-center-cols-clipper, .ag-center-cols-container {
+            min-height: 50px;
+        }
+    }
+    &:not(.ag-layout-print) .ag-center-cols-container {
+        display: block;
     }
 }
 
