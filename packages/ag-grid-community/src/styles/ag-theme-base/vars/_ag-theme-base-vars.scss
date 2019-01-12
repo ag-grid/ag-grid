@@ -35,3 +35,4 @@ $row-group-indent-size: $grid-size * 3 + $icon-size !default;
 $header-cell-moving-background-color: rgb(190, 190, 190) !default;
 $input-disabled-background-color: #ebebeb !default;
 $cell-horizontal-border: none !default;
+$scroll-spacer-border: 1px solid if($border-color, $border-color, lightgrey) !default;

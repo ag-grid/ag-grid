@@ -856,10 +856,16 @@ export class GridPanel extends Component {
 
     private setHorizontalScrollVisible(visible: boolean): void {
         const height = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+        const isIE = _.isBrowserIE();
 
         this.eCenterViewport.style.height = `calc(100% + ${height}px)`;
         _.setFixedHeight(this.eHorizontalScrollBody, height);
-        _.setFixedHeight(this.eBodyHorizontalScrollViewport, height);
+        // we have to add an extra pixel to the scroller viewport on IE because
+        // if the container has the same size as the scrollbar, the scroll button won't work
+        _.setFixedHeight(this.eBodyHorizontalScrollViewport, height + (isIE ? 1 : 0));
+        if (isIE) {
+            this.eBodyHorizontalScrollViewport.style.bottom = '1px';
+        }
         _.setFixedHeight(this.eBodyHorizontalScrollContainer, height);
     }
 
@@ -1166,6 +1172,7 @@ export class GridPanel extends Component {
             rightSpacing += this.scrollWidth;
         }
         _.setFixedWidth(this.eHorizontalRightSpacer, rightSpacing);
+        _.addOrRemoveCssClass(this.eHorizontalRightSpacer, 'ag-scroller-corner', rightSpacing <= this.scrollWidth);
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
@@ -1176,6 +1183,7 @@ export class GridPanel extends Component {
             leftSpacing += this.scrollWidth;
         }
         _.setFixedWidth(this.eHorizontalLeftSpacer, leftSpacing);
+        _.addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= this.scrollWidth);
     }
 
     private checkBodyHeight(): void {

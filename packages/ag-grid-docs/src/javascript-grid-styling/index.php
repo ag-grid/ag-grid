@@ -591,6 +591,11 @@ window.addEventListener("load", function() {
                     <td>The color used for all borders.</td>
                 </tr>
                 <tr>
+                    <td>scroll-spacer-border</td>
+                    <td>1px solid <code>border-color</code></td>
+                    <td>The border that separates the pinned columns from the scrollable area within the horizontal scrollbar</td>
+                </tr>
+                <tr>
                     <td>primary-color</td>
                     <td><code>&lt;no default&gt;</code></td>
                     <td>The main color associated with selected cells and other items (eg. cell border color, sidbar selected tab border).</td>

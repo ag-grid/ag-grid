@@ -34,6 +34,7 @@
     $background-color: map-get($params, "background-color");
     $border-color: map-get($params, "border-color");
     $row-border-width: map-get($params, "row-border-width");
+    $scroll-spacer-border: map-get($params, "scroll-spacer-border");
 
     $button-background-color: map-get($params, "button-background-color");
 
@@ -223,6 +224,19 @@
 
         .ag-row-even {
             background-color: map-get($params, "background-color");
+        }
+    }
+
+    .ag-horizontal-left-spacer {
+        border-right: $scroll-spacer-border;
+        &.ag-scroller-corner {
+            border-right: none;
+        }
+    } 
+    .ag-horizontal-right-spacer  {
+        border-left: $scroll-spacer-border;
+        &.ag-scroller-corner {
+            border-left: none;
         }
     }
 

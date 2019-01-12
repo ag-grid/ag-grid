@@ -288,6 +288,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     height: 100%;
     min-width: 0;
     flex-grow: 1000;
+    overflow-x: scroll;
+    &.ag-scroller-corner {
+        overflow-x: hidden;
+    }
 }
 
 /**
