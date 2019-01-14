@@ -64,6 +64,8 @@ export abstract class Node { // Don't confuse with `window.Node`.
         this.dirty = true;
     }
 
+    // These matrices may need to have package level visibility
+    // for performance optimization purposes.
     protected matrix = new Matrix();
     protected inverseMatrix = new Matrix();
 
@@ -82,8 +84,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     private _scalingX: number = 1;
     set scalingX(value: number) {
-        this._scalingX = value;
-        this.dirtyTransform = true;
+        if (this._scalingX !== value) {
+            this._scalingX = value;
+            this.dirtyTransform = true;
+        }
     }
     get scalingX(): number {
         return this._scalingX;
@@ -91,8 +95,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     private _scalingY: number = 1;
     set scalingY(value: number) {
-        this._scalingY = value;
-        this.dirtyTransform = true;
+        if (this._scalingY !== value) {
+            this._scalingY = value;
+            this.dirtyTransform = true;
+        }
     }
     get scalingY(): number {
         return this._scalingY;
@@ -106,8 +112,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
      */
     private _scalingCenterX: number | null = null;
     set scalingCenterX(value: number | null) {
-        this._scalingCenterX = value;
-        this.dirtyTransform = true;
+        if (this._scalingCenterX !== value) {
+            this._scalingCenterX = value;
+            this.dirtyTransform = true;
+        }
     }
     get scalingCenterX(): number | null {
         return this._scalingCenterX;
@@ -115,8 +123,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     private _scalingCenterY: number | null = null;
     set scalingCenterY(value: number | null) {
-        this._scalingCenterY = value;
-        this.dirtyTransform = true;
+        if (this._scalingCenterY !== value) {
+            this._scalingCenterY = value;
+            this.dirtyTransform = true;
+        }
     }
     get scalingCenterY(): number | null {
         return this._scalingCenterY;
@@ -124,8 +134,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     private _rotationCenterX: number | null = null;
     set rotationCenterX(value: number | null) {
-        this._rotationCenterX = value;
-        this.dirtyTransform = true;
+        if (this._rotationCenterX !== value) {
+            this._rotationCenterX = value;
+            this.dirtyTransform = true;
+        }
     }
     get rotationCenterX(): number | null {
         return this._rotationCenterX;
@@ -133,8 +145,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     private _rotationCenterY: number | null = null;
     set rotationCenterY(value: number | null) {
-        this._rotationCenterY = value;
-        this.dirtyTransform = true;
+        if (this._rotationCenterY !== value) {
+            this._rotationCenterY = value;
+            this.dirtyTransform = true;
+        }
     }
     get rotationCenterY(): number | null {
         return this._rotationCenterY;
@@ -145,8 +159,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
      */
     private _rotation: number = 0;
     set rotation(value: number) {
-        this._rotation = value;
-        this.dirtyTransform = true;
+        if (this._rotation !== value) {
+            this._rotation = value;
+            this.dirtyTransform = true;
+        }
     }
     get rotation(): number {
         return this._rotation;
@@ -161,8 +177,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     private _translationX: number = 0;
     set translationX(value: number) {
-        this._translationX = value;
-        this.dirtyTransform = true;
+        if (this._translationX !== value) {
+            this._translationX = value;
+            this.dirtyTransform = true;
+        }
     }
     get translationX(): number {
         return this._translationX;
@@ -170,15 +188,24 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     private _translationY: number = 0;
     set translationY(value: number) {
-        this._translationY = value;
-        this.dirtyTransform = true;
+        if (this._translationY !== value) {
+            this._translationY = value;
+            this.dirtyTransform = true;
+        }
     }
     get translationY(): number {
         return this._translationY;
     }
 
     protected computeTransformMatrix() {
-        // const [cx, cy] = this.getBBoxCenter();
+        // TODO: transforms without center of scaling and rotation correspond directly
+        //       to `setAttribute('transform', 'translate(tx, ty) rotate(rDeg) scale(sx, sy)')`
+        //       in SVG. Our use cases will mostly require positioning elements (rects, circles)
+        //       within a group, rotating groups at right angles (e.g. for axis) and translating
+        //       groups. We shouldn't even need `scale(1, -1)` (invert vertically), since this
+        //       can be done using D3-like scales already by inverting the output range.
+        //       So for now, just assume that centers of scaling and rotation are at the origin.
+        // const [bbcx, bbcy] = this.getBBoxCenter();
         const [bbcx, bbcy] = [0, 0];
 
         const sx = this.scalingX;
@@ -214,10 +241,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
         const ty = this.translationY;
 
         // The transform matrix `M` is a result of the following transformations:
-        // 1) translate center of scaling to the origin
+        // 1) translate the center of scaling to the origin
         // 2) scale
         // 3) translate back
-        // 4) translate center of rotation to the origin
+        // 4) translate the center of rotation to the origin
         // 5) rotate
         // 6) translate back
         // 7) translate

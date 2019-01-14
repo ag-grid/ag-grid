@@ -29,8 +29,10 @@ export class Arc extends Shape {
 
     private _centerX: number = Arc.defaults.centerX;
     set centerX(value: number) {
-        this._centerX = value;
-        this.dirty = true;
+        if (this._centerX !== value) {
+            this._centerX = value;
+            this.dirty = true;
+        }
     }
     get centerX(): number {
         return this._centerX;
@@ -38,8 +40,10 @@ export class Arc extends Shape {
 
     private _centerY: number = Arc.defaults.centerY;
     set centerY(value: number) {
-        this._centerY = value;
-        this.dirty = true;
+        if (this._centerY !== value) {
+            this._centerY = value;
+            this.dirty = true;
+        }
     }
     get centerY(): number {
         return this._centerY;
@@ -47,8 +51,10 @@ export class Arc extends Shape {
 
     private _radiusX: number = Arc.defaults.radiusX;
     set radiusX(value: number) {
-        this._radiusX = value;
-        this.dirty = true;
+        if (this._radiusX !== value) {
+            this._radiusX = value;
+            this.dirty = true;
+        }
     }
     get radiusX(): number {
         return this._radiusX;
@@ -56,8 +62,10 @@ export class Arc extends Shape {
 
     private _radiusY: number = Arc.defaults.radiusY;
     set radiusY(value: number) {
-        this._radiusY = value;
-        this.dirty = true;
+        if (this._radiusY !== value) {
+            this._radiusY = value;
+            this.dirty = true;
+        }
     }
     get radiusY(): number {
         return this._radiusY;
@@ -65,8 +73,10 @@ export class Arc extends Shape {
 
     private _startAngle: number = Arc.defaults.startAngle;
     set startAngle(value: number) {
-        this._startAngle = value;
-        this.dirty = true;
+        if (this._startAngle !== value) {
+            this._startAngle = value;
+            this.dirty = true;
+        }
     }
     get startAngle(): number {
         return this._startAngle;
@@ -74,8 +84,10 @@ export class Arc extends Shape {
 
     private _endAngle: number = Arc.defaults.endAngle;
     set endAngle(value: number) {
-        this._endAngle = value;
-        this.dirty = true;
+        if (this._endAngle !== value) {
+            this._endAngle = value;
+            this.dirty = true;
+        }
     }
     get endAngle(): number {
         return this._endAngle;
@@ -83,8 +95,10 @@ export class Arc extends Shape {
 
     private _anticlockwise: boolean = Arc.defaults.anticlockwise;
     set anticlockwise(value: boolean) {
-        this._anticlockwise = value;
-        this.dirty = true;
+        if (this._anticlockwise !== value) {
+            this._anticlockwise = value;
+            this.dirty = true;
+        }
     }
     get anticlockwise(): boolean {
         return this._anticlockwise;
@@ -115,13 +129,20 @@ export class Arc extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.scene) {
-            this.updatePath();
-            this.applyContextAttributes(ctx);
-            this.scene.appendPath(this.path);
-            ctx.fill();
-            ctx.stroke();
+        if (!this.scene) {
+            return;
         }
+
+        if (this.dirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+
+        this.updatePath();
+        this.applyContextAttributes(ctx);
+        this.scene.appendPath(this.path);
+        ctx.fill();
+        ctx.stroke();
 
         this.dirty = false;
     }

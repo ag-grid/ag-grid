@@ -27,8 +27,10 @@ export class Arc extends Shape {
 
     private _x: number = Arc.defaults.x;
     set x(value: number) {
-        this._x = value;
-        this.dirty = true;
+        if (this._x !== value) {
+            this._x = value;
+            this.dirty = true;
+        }
     }
     get x(): number {
         return this._x;
@@ -36,8 +38,10 @@ export class Arc extends Shape {
 
     private _y: number = Arc.defaults.y;
     set y(value: number) {
-        this._y = value;
-        this.dirty = true;
+        if (this._y !== value) {
+            this._y = value;
+            this.dirty = true;
+        }
     }
     get y(): number {
         return this._y;
@@ -45,8 +49,10 @@ export class Arc extends Shape {
 
     private _radius: number = Arc.defaults.radius;
     set radius(value: number) {
-        this._radius = value;
-        this.dirty = true;
+        if (this._radius !== value) {
+            this._radius = value;
+            this.dirty = true;
+        }
     }
     get radius(): number {
         return this._radius;
@@ -54,8 +60,10 @@ export class Arc extends Shape {
 
     private _startAngle: number = Arc.defaults.startAngle;
     set startAngle(value: number) {
-        this._startAngle = value;
-        this.dirty = true;
+        if (this._startAngle !== value) {
+            this._startAngle = value;
+            this.dirty = true;
+        }
     }
     get startAngle(): number {
         return this._startAngle;
@@ -63,8 +71,10 @@ export class Arc extends Shape {
 
     private _endAngle: number = Arc.defaults.endAngle;
     set endAngle(value: number) {
-        this._endAngle = value;
-        this.dirty = true;
+        if (this._endAngle !== value) {
+            this._endAngle = value;
+            this.dirty = true;
+        }
     }
     get endAngle(): number {
         return this._endAngle;
@@ -72,8 +82,10 @@ export class Arc extends Shape {
 
     private _anticlockwise: boolean = Arc.defaults.anticlockwise;
     set anticlockwise(value: boolean) {
-        this._anticlockwise = value;
-        this.dirty = true;
+        if (this._anticlockwise !== value) {
+            this._anticlockwise = value;
+            this.dirty = true;
+        }
     }
     get anticlockwise(): boolean {
         return this._anticlockwise;

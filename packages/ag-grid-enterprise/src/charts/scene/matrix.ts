@@ -49,6 +49,19 @@ export class Matrix {
         return this;
     }
 
+    setIdentityElements() {
+        const e = this.elements;
+
+        e[0] = 1;
+        e[1] = 0;
+        e[2] = 0;
+        e[3] = 1;
+        e[4] = 0;
+        e[5] = 0;
+
+        return this;
+    }
+
     get isIdentity(): boolean {
         const e = this.elements;
         return e[0] === 1 && e[1] === 0 && e[2] === 0 &&
@@ -203,7 +216,48 @@ export class Matrix {
     }
 
     toContext(ctx: CanvasRenderingContext2D) {
+        // It's fair to say that matrix multiplications are not cheap.
+        // However, updating path definitions on every frame isn't either, so
+        // it may be cheaper to just translate paths. It's also fair to
+        // say, that most paths will have to be re-rendered anyway, say
+        // rectangle paths in a bar chart, where an animation would happen when
+        // the data set changes and existing bars are morphed into new ones.
+        // Or a pie chart, where old sectors are also morphed into new ones.
+        // Same for the line chart. The only plausible case where translating
+        // existing paths would be enough, is the scatter chart, where marker
+        // icons, typically circles, stay the same size. But if circle radii
+        // are bound to some data points, even circle paths would have to be
+        // updated. And thus it makes sense to optimize for fewer matrix
+        // transforms, where transform matrices of paths are mostly identity
+        // matrices and `x`/`y`, `centerX`/`centerY` and similar properties
+        // are used to define a path at specific coordinates. And only groups
+        // are used to collectively apply a transform to a set of nodes.
+
+        // If the matrix is mostly identity (95% of the time),
+        // the `if (this.isIdentity)` check can make this call 3-4 times
+        // faster on average: https://jsperf.com/matrix-check-first-vs-always-set
+        if (this.isIdentity)
+            return;
+
         const e = this.elements;
         ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);
     }
+
+    static flyweight: (elements?: number[]) => Matrix = (() => {
+        let matrix: Matrix;
+        return (elements?: number[]) => {
+            if (!matrix) {
+                matrix = new Matrix(elements);
+
+                Matrix.flyweight = (elements?: number[]) => {
+                    if (elements)
+                        matrix.setElements(elements);
+                    else
+                        matrix.setIdentityElements();
+                    return matrix;
+                }
+            }
+            return matrix;
+        };
+    })();
 }

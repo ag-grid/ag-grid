@@ -1,5 +1,6 @@
 import { Shape } from "./shape";
 import { Path } from "../path";
+import { Matrix } from "../matrix";
 import {chainObjects} from "../../util/object";
 
 export class Rect extends Shape {
@@ -34,8 +35,10 @@ export class Rect extends Shape {
 
     private _x: number = Rect.defaults.x;
     set x(value: number) {
-        this._x = value;
-        this.dirty = true;
+        if (this._x !== value) {
+            this._x = value;
+            this.dirty = true;
+        }
     }
     get x(): number {
         return this._x;
@@ -43,8 +46,10 @@ export class Rect extends Shape {
 
     private _y: number = Rect.defaults.y;
     set y(value: number) {
-        this._y = value;
-        this.dirty = true;
+        if (this._y !== value) {
+            this._y = value;
+            this.dirty = true;
+        }
     }
     get y(): number {
         return this._y;
@@ -52,8 +57,10 @@ export class Rect extends Shape {
 
     private _width: number = Rect.defaults.width;
     set width(value: number) {
-        this._width = value;
-        this.dirty = true;
+        if (this._width !== value) {
+            this._width = value;
+            this.dirty = true;
+        }
     }
     get width(): number {
         return this._width;
@@ -61,8 +68,10 @@ export class Rect extends Shape {
 
     private _height: number = Rect.defaults.height;
     set height(value: number) {
-        this._height = value;
-        this.dirty = true;
+        if (this._height !== value) {
+            this._height = value;
+            this.dirty = true;
+        }
     }
     get height(): number {
         return this._height;
@@ -70,8 +79,10 @@ export class Rect extends Shape {
 
     private _radius: number = Rect.defaults.radius;
     set radius(value: number) {
-        this._radius = value;
-        this.dirty = true;
+        if (this._radius !== value) {
+            this._radius = value;
+            this.dirty = true;
+        }
     }
     get radius(): number {
         return this._radius;
@@ -109,6 +120,14 @@ export class Rect extends Shape {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
+
+        // const matrix = Matrix.flyweight();
+        // let parent = this.parent;
+        // while (parent) {
+        //     matrix.preMultiplySelf(parent.matrix);
+        //     parent = parent.parent;
+        // }
+        // matrix.toContext(ctx);
 
         this.updatePath();
         this.applyContextAttributes(ctx);

@@ -120,10 +120,21 @@ export class Scene {
         }
     }
 
+    private renderCount = 0; // debug
+
     render = () => {
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        const ctx = this.ctx;
+
+        ctx.clearRect(0, 0, this.width, this.height);
+
+        // Keep this here for a while to make sure if a redundant
+        // render happens it won't go unnoticed.
+        ctx.fillText((this.renderCount++).toString(), 0, 10); // debug
+
         if (this.root) {
-            this.root.render(this.ctx);
+            ctx.save();
+            this.root.render(ctx);
+            ctx.restore();
         }
         this.dirty = false;
     };

@@ -57,10 +57,10 @@ export abstract class Shape extends Node {
 
     private _fillStyle: string = Shape.defaults.fillStyle; //| CanvasGradient | CanvasPattern;
     set fillStyle(value: string) {
-        // if (this._fillStyle !== value) {
+        if (this._fillStyle !== value) {
             this._fillStyle = value;
             this.dirty = true;
-        // }
+        }
     }
     get fillStyle(): string {
         return this._fillStyle;
@@ -68,10 +68,10 @@ export abstract class Shape extends Node {
 
     private _strokeStyle: string = Shape.defaults.strokeStyle;
     set strokeStyle(value: string) {
-        // if (this._strokeStyle !== value) {
+        if (this._strokeStyle !== value) {
             this._strokeStyle = value;
             this.dirty = true;
-        // }
+        }
     }
     get strokeStyle(): string {
         return this._strokeStyle;
