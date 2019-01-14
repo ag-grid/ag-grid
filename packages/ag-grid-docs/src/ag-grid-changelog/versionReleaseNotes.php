@@ -38,6 +38,10 @@
         </li>
     </ul>
 
+    <p>Deprecation:</p>
+    <ul>
+        <li>AG-644 Refactor of sorting, filtering and resizing properties</li>
+    </ul>
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_19_1_1">
