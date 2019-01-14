@@ -20,7 +20,7 @@ var gridOptions = {
             ],
             onGridReady: function (params) {
                 // using auto height to fit the height of the the detail grid
-                params.api.setGridAutoHeight(true);
+                params.api.setDomLayout('autoHeight');
             },
             onFirstDataRendered(params) {
                 params.api.sizeColumnsToFit();
