@@ -302,7 +302,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
         let selectedValue: boolean;
         if (visibleChildCount > 0 && hiddenChildCount > 0) {
-            selectedValue = false;
+            selectedValue = null;
         } else if (visibleChildCount > 0) {
             selectedValue = true;
         } else {

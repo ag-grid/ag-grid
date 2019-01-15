@@ -125,10 +125,12 @@ export class AgCheckbox extends Component {
             return;
         }
 
-        if (selected === true) {
+        if (selected===true) {
             this.selected = true;
-        } else if (selected === false) {
+        } else if (selected===false) {
             this.selected = false;
+        } else {
+            this.selected = undefined;
         }
 
         this.updateIcons();
