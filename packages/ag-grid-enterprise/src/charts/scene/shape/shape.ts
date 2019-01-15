@@ -8,76 +8,78 @@ import {chainObjects} from "../../util/object";
 // `updatePath` method.
 export abstract class Shape extends Node {
     /**
-     * Defaults for certain properties.
+     * Defaults for style properties. Note that properties that affect the position
+     * and shape of the node are not considered style properties, for example:
+     * `x`, `y`, `width`, `height`, `radius`, `rotation`, etc.
      * Can be used to reset to the original styling after some custom styling
-     * has been applied (using the `restoreOwnDefaults` and `restoreAllDefaults` methods).
+     * has been applied (using the `restoreOwnStyles` and `restoreAllStyles` methods).
      * These static defaults are meant to be inherited by subclasses.
      */
-    protected static defaults = chainObjects({}, {
-        fillStyle: 'none',
-        strokeStyle: 'none',
+    protected static defaultStyles = chainObjects({}, {
+        fillStyle: null,
+        strokeStyle: null,
         lineWidth: 1,
         opacity: 1
     });
 
     /**
-     * Restores the defaults introduced by this subclass.
+     * Restores the default styles introduced by this subclass.
      */
-    restoreOwnDefaults() {
-        const defaults = (this.constructor as any).defaults;
+    restoreOwnStyles() {
+        const styles = (this.constructor as any).defaultStyles;
 
-        for (const property in defaults) {
-            if (defaults.hasOwnProperty(property)) {
-                (this as any)[property] = defaults[property];
+        for (const property in styles) {
+            if (styles.hasOwnProperty(property)) {
+                (this as any)[property] = styles[property];
             }
         }
     }
 
-    restoreAllDefaults() {
-        const defaults = (this.constructor as any).defaults;
+    restoreAllStyles() {
+        const styles = (this.constructor as any).defaultStyles;
 
-        for (const property in defaults) {
-            (this as any)[property] = defaults[property];
+        for (const property in styles) {
+            (this as any)[property] = styles[property];
         }
     }
 
     /**
-     * Restores the base class defaults that have been overridden by this subclass.
+     * Restores the base class default styles that have been overridden by this subclass.
      */
-    restoreOverriddenDefaults() {
-        const defaults = (this.constructor as any).defaults;
-        const protoDefaults = Object.getPrototypeOf(defaults);
+    restoreOverriddenStyles() {
+        const styles = (this.constructor as any).defaultStyles;
+        const protoStyles = Object.getPrototypeOf(styles);
 
-        for (const property in defaults) {
-            if (defaults.hasOwnProperty(property) && protoDefaults.hasOwnProperty(property)) {
-                (this as any)[property] = defaults[property];
+        for (const property in styles) {
+            if (styles.hasOwnProperty(property) && protoStyles.hasOwnProperty(property)) {
+                (this as any)[property] = styles[property];
             }
         }
     }
 
-    private _fillStyle: string = Shape.defaults.fillStyle; //| CanvasGradient | CanvasPattern;
-    set fillStyle(value: string) {
+    private _fillStyle: string | null = Shape.defaultStyles.fillStyle; //| CanvasGradient | CanvasPattern;
+    set fillStyle(value: string | null) {
         if (this._fillStyle !== value) {
             this._fillStyle = value;
             this.dirty = true;
         }
     }
-    get fillStyle(): string {
+    get fillStyle(): string | null {
         return this._fillStyle;
     }
 
-    private _strokeStyle: string = Shape.defaults.strokeStyle;
-    set strokeStyle(value: string) {
+    private _strokeStyle: string | null = Shape.defaultStyles.strokeStyle;
+    set strokeStyle(value: string | null) {
         if (this._strokeStyle !== value) {
             this._strokeStyle = value;
             this.dirty = true;
         }
     }
-    get strokeStyle(): string {
+    get strokeStyle(): string | null {
         return this._strokeStyle;
     }
 
-    private _lineWidth: number = Shape.defaults.lineWidth;
+    private _lineWidth: number = Shape.defaultStyles.lineWidth;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;
@@ -88,7 +90,7 @@ export abstract class Shape extends Node {
         return this._lineWidth;
     }
 
-    private _opacity: number = Shape.defaults.opacity;
+    private _opacity: number = Shape.defaultStyles.opacity;
     set opacity(value: number) {
         if (this._opacity !== value) {
             this._opacity = value;
@@ -100,8 +102,12 @@ export abstract class Shape extends Node {
     }
 
     applyContextAttributes(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.fillStyle;
-        ctx.strokeStyle = this.strokeStyle;
+        if (this.fillStyle) {
+            ctx.fillStyle = this.fillStyle;
+        }
+        if (this.strokeStyle) {
+            ctx.strokeStyle = this.strokeStyle;
+        }
         ctx.lineWidth = this.lineWidth;
         ctx.globalAlpha = this.opacity;
     }

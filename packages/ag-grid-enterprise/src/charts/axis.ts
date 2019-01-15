@@ -1,6 +1,6 @@
 import Scale from "./scale/scale";
-import { pixelSnap } from "./canvas/canvas";
-import { normalizeAngle } from "./util/angle";
+import {pixelSnap, PixelSnapBias} from "./canvas/canvas";
+import {normalizeAngle} from "./util/angle";
 
 export class Axis<D> {
     constructor(scale: Scale<D, number>) {
@@ -68,7 +68,7 @@ export class Axis<D> {
 
         // Render axis line.
         {
-            const pxShift = pixelSnap(this.lineWidth, -1);
+            const pxShift = pixelSnap(this.lineWidth, PixelSnapBias.Negative);
             ctx.lineWidth = this.lineWidth;
             ctx.strokeStyle = this.lineColor;
             ctx.beginPath();

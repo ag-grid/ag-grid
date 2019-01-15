@@ -69,6 +69,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     protected matrix = new Matrix();
     protected inverseMatrix = new Matrix();
 
+    // TODO: should this be `true` by default as well?
     private _dirtyTransform = false;
     set dirtyTransform(value: boolean) {
         this._dirtyTransform = value;
@@ -287,7 +288,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
      * on the next animation frame callback.
      * The animation frame callback is only scheduled, if it hasn't been already.
      */
-    private _dirty = false;
+    private _dirty = true;
     set dirty(dirty: boolean) {
         // TODO: check if we are already dirty (e.g. if (this._dirty !== dirty))
         //       if we are, then all parents and the scene have been

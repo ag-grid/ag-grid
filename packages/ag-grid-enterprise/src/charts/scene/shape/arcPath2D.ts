@@ -1,31 +1,37 @@
 import {Shape} from "./shape";
 import {chainObjects} from "../../util/object";
 
+/**
+ * Circular arc node that uses the experimental `Path2D` class to define
+ * the arc path for further rendering and hit-testing.
+ */
 export class Arc extends Shape {
 
-    protected static defaults = chainObjects(Shape.defaults, {
+    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         fillStyle: 'red',
-        strokeStyle: 'black',
-
-        x: 0,
-        y: 0,
-        radius: 10,
-        startAngle: 0,
-        endAngle: Math.PI * 2,
-        anticlockwise: false
+        strokeStyle: 'black'
     });
 
-    constructor() {
+    constructor(x: number, y: number, radius: number,
+                startAngle: number, endAngle: number, anticlockwise = false) {
         super();
-        this.fillStyle = Arc.defaults.fillStyle;
-        this.strokeStyle = Arc.defaults.strokeStyle;
+
+        this._x = x;
+        this._y = y;
+        this._radius = radius;
+        this._startAngle = startAngle;
+        this._endAngle = endAngle;
+        this._anticlockwise = anticlockwise;
+
+        this.fillStyle = Arc.defaultStyles.fillStyle;
+        this.strokeStyle = Arc.defaultStyles.strokeStyle;
     }
 
     // Declare a path to feed to `context.fill/stroke` using experimental native Path2D class.
     // Doesn't work in IE.
     protected path = new Path2D();
 
-    private _x: number = Arc.defaults.x;
+    private _x: number;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
@@ -36,7 +42,7 @@ export class Arc extends Shape {
         return this._x;
     }
 
-    private _y: number = Arc.defaults.y;
+    private _y: number;
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
@@ -47,7 +53,7 @@ export class Arc extends Shape {
         return this._y;
     }
 
-    private _radius: number = Arc.defaults.radius;
+    private _radius: number;
     set radius(value: number) {
         if (this._radius !== value) {
             this._radius = value;
@@ -58,7 +64,7 @@ export class Arc extends Shape {
         return this._radius;
     }
 
-    private _startAngle: number = Arc.defaults.startAngle;
+    private _startAngle: number;
     set startAngle(value: number) {
         if (this._startAngle !== value) {
             this._startAngle = value;
@@ -69,7 +75,7 @@ export class Arc extends Shape {
         return this._startAngle;
     }
 
-    private _endAngle: number = Arc.defaults.endAngle;
+    private _endAngle: number;
     set endAngle(value: number) {
         if (this._endAngle !== value) {
             this._endAngle = value;
@@ -80,7 +86,7 @@ export class Arc extends Shape {
         return this._endAngle;
     }
 
-    private _anticlockwise: boolean = Arc.defaults.anticlockwise;
+    private _anticlockwise: boolean;
     set anticlockwise(value: boolean) {
         if (this._anticlockwise !== value) {
             this._anticlockwise = value;

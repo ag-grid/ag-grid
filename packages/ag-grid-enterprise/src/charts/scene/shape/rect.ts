@@ -5,23 +5,23 @@ import {chainObjects} from "../../util/object";
 
 export class Rect extends Shape {
 
-    protected static defaults = chainObjects(Shape.defaults, {
+    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         fillStyle: 'red',
-        strokeStyle: 'black',
-
-        x: 0,
-        y: 0,
-        width: 10,
-        height: 10,
-        radius: 0
+        strokeStyle: 'black'
     });
 
-    constructor() {
+    constructor(x: number, y: number, width: number, height: number, radius = 0) {
         super();
 
-        // Override the base class defaults.
-        this.fillStyle = Rect.defaults.fillStyle;
-        this.strokeStyle = Rect.defaults.strokeStyle;
+        this._x = x;
+        this._y = y;
+        this._width = width;
+        this._height = height;
+        this._radius = radius;
+
+        // Override the base class default styles.
+        this.fillStyle = Rect.defaultStyles.fillStyle;
+        this.strokeStyle = Rect.defaultStyles.strokeStyle;
         // Alternatively we can do:
         // this.restoreOverriddenDefaults();
         // This call can even happen in the base class constructor,
@@ -33,55 +33,73 @@ export class Rect extends Shape {
 
     protected path = new Path();
 
-    private _x: number = Rect.defaults.x;
+    /**
+     * TODO: create a common base class for all nodes that use the `Path`?
+     *       At least those that need a single path/fill/stroke,
+     *       which is likely all we'll ever need.
+     */
+    private _dirtyPath = true;
+    set dirtyPath(value: boolean) {
+        if (this._dirtyPath !== value) {
+            this._dirtyPath = value;
+            if (value) {
+                this.dirty = true;
+            }
+        }
+    }
+    get dirtyPath(): boolean {
+        return this._dirtyPath;
+    }
+
+    private _x: number;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get x(): number {
         return this._x;
     }
 
-    private _y: number = Rect.defaults.y;
+    private _y: number;
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get y(): number {
         return this._y;
     }
 
-    private _width: number = Rect.defaults.width;
+    private _width: number;
     set width(value: number) {
         if (this._width !== value) {
             this._width = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get width(): number {
         return this._width;
     }
 
-    private _height: number = Rect.defaults.height;
+    private _height: number;
     set height(value: number) {
         if (this._height !== value) {
             this._height = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get height(): number {
         return this._height;
     }
 
-    private _radius: number = Rect.defaults.radius;
+    private _radius: number;
     set radius(value: number) {
         if (this._radius !== value) {
             this._radius = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get radius(): number {
@@ -89,6 +107,9 @@ export class Rect extends Shape {
     }
 
     updatePath() {
+        if (!this.dirtyPath)
+            return;
+
         const path = this.path;
         const radius = this.radius;
 
@@ -129,11 +150,16 @@ export class Rect extends Shape {
         // }
         // matrix.toContext(ctx);
 
-        this.updatePath();
         this.applyContextAttributes(ctx);
+        this.updatePath();
         this.scene.appendPath(this.path);
-        ctx.fill();
-        ctx.stroke();
+
+        if (this.fillStyle) {
+            ctx.fill();
+        }
+        if (this.strokeStyle) {
+            ctx.stroke();
+        }
 
         this.dirty = false;
     }
