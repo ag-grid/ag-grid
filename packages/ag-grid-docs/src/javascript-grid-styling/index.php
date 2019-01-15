@@ -105,8 +105,7 @@ include '../documentation-main/documentation_header.php';
         You should only create your own theme when options 1 and 2 above don't suit, as it is
         the most difficult.
         If you do decide to create your own theme, then you can use one of the provided themes and
-        use that as a template. They can be found on GitHub here:
-        <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">https://github.com/ceolter/ag-grid/tree/master/src/styles</a>.
+        use that as a template. They can be found on GitHub <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community/src/styles">here</a>.
     </p>
 
     <p>
