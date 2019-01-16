@@ -46,6 +46,14 @@ export abstract class Node { // Don't confuse with `window.Node`.
     private childSet: { [key in string]: boolean } = {}; // new Set<Node>()
 
     add(nodes: Node[]) {
+        // The function takes an array rather than having open-ended
+        // arguments like `...nodes: Node[]` because the latter is
+        // transpiled to a function where the `arguments` object
+        // is copied to a temporary array inside a loop.
+        // So an array is created either way. And if we already have
+        // an array of nodes we want to add, we have to use the prohibitively
+        // expensive spread operator to pass it to the function,
+        // and, on top of that, the copy of the `arguments` is still made.
         const n = nodes.length;
         for (let i = 0; i < n; i++) {
             const node = nodes[i];

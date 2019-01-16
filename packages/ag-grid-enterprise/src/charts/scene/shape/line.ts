@@ -7,14 +7,14 @@ export class Line extends Shape {
         strokeStyle: 'black'
     });
 
-    constructor(coords: [number, number, number, number]) {
+    constructor(x1: number, y1: number, x2: number, y2: number) {
         super();
 
-        this._x1 = coords[0];
-        this._y1 = coords[1];
+        this._x1 = x1;
+        this._y1 = y1;
 
-        this._x2 = coords[2];
-        this._y2 = coords[3];
+        this._x2 = x2;
+        this._y2 = y2;
 
         this.strokeStyle = Line.defaultStyles.strokeStyle;
     }

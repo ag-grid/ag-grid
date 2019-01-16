@@ -13,9 +13,17 @@ export class Text extends Shape {
     constructor(text: string, x: number, y: number) {
         super();
 
-        this._text = text;
+        // The `dirty` flag is set to `true` initially for all nodes.
+        // So for properties that simply set it `true` when modified,
+        // we can skip going through their setter and set them directly,
+        // for a faster instance construction.
+        // But we can't do that for those properties have some extra
+        // logic in their setter, like the `text` property here.
+        this.text = text;
         this._x = x;
         this._y = y;
+
+        this.fillStyle = Text.defaultStyles.fillStyle;
     }
 
     private _x: number;
@@ -98,6 +106,7 @@ export class Text extends Shape {
 
     applyContextAttributes(ctx: CanvasRenderingContext2D) {
         super.applyContextAttributes(ctx);
+        ctx.font = this.font;
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
     }

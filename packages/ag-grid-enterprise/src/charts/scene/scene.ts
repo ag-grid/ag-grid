@@ -9,7 +9,7 @@ export class Scene {
         const canvas = this.hdpiCanvas.canvas;
         this.ctx = canvas.getContext('2d')!;
         parent.appendChild(canvas);
-        this.setupListeners(canvas);
+        // this.setupListeners(canvas); // debug
     }
 
     private readonly hdpiCanvas: HdpiCanvas;
@@ -19,7 +19,7 @@ export class Scene {
         canvas.addEventListener('mousemove', this.onMouseMove);
     }
 
-    private onMouseMove = (e: MouseEvent) => {
+    private onMouseMove = (e: MouseEvent) => { // debug
         const pixelRatio = this.hdpiCanvas.pixelRatio;
         const x = e.offsetX * pixelRatio;
         const y = e.offsetY * pixelRatio;
