@@ -409,29 +409,4 @@ Examples of state include column visibility, width, row groups and values.
 
 <?= example('Delta Columns', 'delta-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-<h2 id="group-changes">Group Changes</h2>
-
-<p>
-    Similar to adding and removing columns, you can also add and remove column groups.
-    If the column definitions passed in have column groups, then the columns will grouped
-    to the new configuration.
-</p>
-
-<p>
-    In the example below, note the following:
-    <ul>
-        <li>Select <b>No Groups</b> to show all columns without any grouping.</li>
-        <li>Select <b>Participant in Group</b> to show all participant columns only in a group.</li>
-        <li>Select <b>Medals in Group</b> to show all medal columns only in a group.</li>
-        <li>Select <b>Participant and Medals in Group</b> to show participant and medal columns in groups.</li>
-        <li>
-            As groups are added and removed, note that the state of the individual columns is preserved.
-            To observe this, try moving, resizing, sorting, filtering etc and then add and remove groups,
-            all the changed state will be preserved.
-        </li>
-    </ul>
-</p>
-
-<?= example('Column Changes 2', 'column-changes-2', 'generated', array("processVue" => true)) ?>
-
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -220,4 +220,29 @@ Change the theme class to the one you use.
     <?= example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"), "processVue" => true)) ?>
 
 
+    <h2 id="group-changes">Group Changes</h2>
+
+    <p>
+        Similar to adding and removing columns, you can also add and remove column groups.
+        If the column definitions passed in have column groups, then the columns will grouped
+        to the new configuration.
+    </p>
+
+    <p>
+        In the example below, note the following:
+    <ul>
+        <li>Select <b>No Groups</b> to show all columns without any grouping.</li>
+        <li>Select <b>Participant in Group</b> to show all participant columns only in a group.</li>
+        <li>Select <b>Medals in Group</b> to show all medal columns only in a group.</li>
+        <li>Select <b>Participant and Medals in Group</b> to show participant and medal columns in groups.</li>
+        <li>
+            As groups are added and removed, note that the state of the individual columns is preserved.
+            To observe this, try moving, resizing, sorting, filtering etc and then add and remove groups,
+            all the changed state will be preserved.
+        </li>
+    </ul>
+    </p>
+
+    <?= example('Group Changes', 'group-changes', 'generated', array("processVue" => true)) ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>

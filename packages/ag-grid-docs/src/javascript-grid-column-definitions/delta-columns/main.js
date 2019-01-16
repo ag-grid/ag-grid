@@ -1,167 +1,167 @@
-// var colDefAthlete = {headerName: 'Athlete', field: 'athlete'};
-// var colDefSport = {headerName: 'Sport', field: 'sport'};
-//
-// var colDefAge = {headerName: 'Age', field: 'age'};
-// var colDefYear = {headerName: 'Year', field: 'year'};
-//
-// var colDefDate = {headerName: 'Date', field: 'date'};
-//
-// var colDefGold = {headerName: 'Gold', field: 'gold'};
-// var colDefSilver = {headerName: 'Silver', field: 'silver'};
-// var colDefBronze = {headerName: 'Bronze', field: 'bronze'};
+function columnDefsNormal() {
+    return [
+        {
+            colId: 'athlete',
+            field: 'athlete'
+        },
+        {
+            colId: 'sport',
+            field: 'sport'
+        },
+        {
+            colId: 'age',
+            field: 'age'
+        },
+        {
+            colId: 'year',
+            field: 'year'
+        }
+    ];
+}
 
-var columnDefsNormal = [
-    {
-        colId: 'athlete',
-        field: 'athlete'
-    },
-    {
-        colId: 'sport',
-        field: 'sport'
-    },
-    {
-        colId: 'age',
-        field: 'age'
-    },
-    {
-        colId: 'year',
-        field: 'year'
-    }
-];
+function columnDefsReverseOrder() {
+    return [
+        {
+            colId: 'year',
+            field: 'year'
+        },
+        {
+            colId: 'age',
+            field: 'age'
+        },
+        {
+            colId: 'sport',
+            field: 'sport'
+        },
+        {
+            colId: 'athlete',
+            field: 'athlete'
+        },
+    ];
+}
 
-var columnDefsReverseOrder = [
-    {
-        colId: 'year',
-        field: 'year'
-    },
-    {
-        colId: 'age',
-        field: 'age'
-    },
-    {
-        colId: 'sport',
-        field: 'sport'
-    },
-    {
-        colId: 'athlete',
-        field: 'athlete'
-    },
-];
+function columnDefsWidths() {
+    return [
+        {
+            colId: 'athlete',
+            field: 'athlete',
+            headerName: 'The New Header',
+            width: 150
+        },
+        {
+            colId: 'sport',
+            field: 'sport',
+            width: 150
+        },
+        {
+            colId: 'age',
+            field: 'age',
+            width: 50
+        },
+        {
+            colId: 'year',
+            field: 'year',
+            width: 50
+        }
+    ];
+}
 
-var columnDefsWidths = [
-    {
-        colId: 'athlete',
-        field: 'athlete',
-        headerName: 'The New Header',
-        width: 150
-    },
-    {
-        colId: 'sport',
-        field: 'sport',
-        width: 150
-    },
-    {
-        colId: 'age',
-        field: 'age',
-        width: 50
-    },
-    {
-        colId: 'year',
-        field: 'year',
-        width: 50
-    }
-];
+function columnDefsVisibility() {
+    return [
+        {
+            colId: 'athlete',
+            field: 'athlete'
+        },
+        {
+            colId: 'sport',
+            field: 'sport'
+        },
+        {
+            colId: 'age',
+            field: 'age',
+            hide: true
+        },
+        {
+            colId: 'year',
+            field: 'year',
+            hide: true
+        }
+    ];
+}
 
-var columnDefsVisibility = [
-    {
-        colId: 'athlete',
-        field: 'athlete'
-    },
-    {
-        colId: 'sport',
-        field: 'sport'
-    },
-    {
-        colId: 'age',
-        field: 'age',
-        hide: true
-    },
-    {
-        colId: 'year',
-        field: 'year',
-        hide: true
-    }
-];
+function columnDefsGrouping() {
+    return [
+        {
+            colId: 'athlete',
+            field: 'athlete'
+        },
+        {
+            colId: 'sport',
+            field: 'sport',
+            rowGroup: true
+        },
+        {
+            colId: 'age',
+            field: 'age'
+        },
+        {
+            colId: 'year',
+            field: 'year'
+        }
+    ];
+}
 
+function columnDefsNoResizeOrSort() {
+    return [
+        {
+            colId: 'athlete',
+            field: 'athlete',
+            resizable: false,
+            sortable: false
+        },
+        {
+            colId: 'sport',
+            field: 'sport',
+            resizable: false,
+            sortable: false
+        },
+        {
+            colId: 'age',
+            field: 'age',
+            resizable: false,
+            sortable: false
+        },
+        {
+            colId: 'year',
+            field: 'year',
+            resizable: false,
+            sortable: false
+        }
+    ];
+}
 
-var columnDefsGrouping = [
-    {
-        colId: 'athlete',
-        field: 'athlete'
-    },
-    {
-        colId: 'sport',
-        field: 'sport',
-        rowGroup: true
-    },
-    {
-        colId: 'age',
-        field: 'age'
-    },
-    {
-        colId: 'year',
-        field: 'year'
-    }
-];
-
-var columnDefsNoResizeOrSort = [
-    {
-        colId: 'athlete',
-        field: 'athlete',
-        resizable: false,
-        sortable: false
-    },
-    {
-        colId: 'sport',
-        field: 'sport',
-        resizable: false,
-        sortable: false
-    },
-    {
-        colId: 'age',
-        field: 'age',
-        resizable: false,
-        sortable: false
-    },
-    {
-        colId: 'year',
-        field: 'year',
-        resizable: false,
-        sortable: false
-    }
-];
-
-
-var columnDefsPinned = [
-    {
-        colId: 'athlete',
-        field: 'athlete',
-        pinned: 'left'
-    },
-    {
-        colId: 'sport',
-        field: 'sport',
-        pinned: 'right'
-    },
-    {
-        colId: 'age',
-        field: 'age'
-    },
-    {
-        colId: 'year',
-        field: 'year'
-    }
-];
+function columnDefsPinned() {
+    return [
+        {
+            colId: 'athlete',
+            field: 'athlete',
+            pinned: 'left'
+        },
+        {
+            colId: 'sport',
+            field: 'sport',
+            pinned: 'right'
+        },
+        {
+            colId: 'age',
+            field: 'age'
+        },
+        {
+            colId: 'year',
+            field: 'year'
+        }
+    ];
+}
 
 var gridOptions = {
     defaultColDef: {
@@ -170,59 +170,49 @@ var gridOptions = {
         sortable: true
     },
     deltaColumnMode: true,
-    columnDefs: columnDefsNormal,
-    onColumnPinned: function(e) {
-        console.log('onColumnPinned', e)
-    },
-    onColumnVisible: function(e) {
-        console.log('onColumnVisible', e)
-    },
-    onColumnResized: function(e) {
-        console.log('onColumnResized', e)
-    },
-    onColumnMoved: function(e) {
-        console.log('onColumnMoved', e)
-    },
-    onColumnRowGroupChanged: function(e) {
-        console.log('onColumnRowGroupChanged', e)
-    },
-    onColumnPivotChanged: function(e) {
-        console.log('onColumnPivotChanged', e)
-    },
-    onNewColumnsLoaded: function(e) {
-        console.log('onNewColumnsLoaded', e)
-    },
+    columnDefs: columnDefsNormal(),
+    onColumnPinned: onColumnEvent,
+    onColumnVisible: onColumnEvent,
+    onColumnResized: onColumnEvent,
+    onColumnMoved: onColumnEvent,
+    onColumnRowGroupChanged: onColumnEvent,
+    onColumnPivotChanged: onColumnEvent,
+    onNewColumnsLoaded: onColumnEvent,
     sideBar: {
         toolPanels: ['columns']
     }
 };
 
-function onNormal() {
-    gridOptions.api.setColumnDefs(columnDefsNormal);
+function onColumnEvent(e) {
+    console.log('Column Event: ' + e.type, e);
 }
 
-function onReverseOrder() {
-    gridOptions.api.setColumnDefs(columnDefsReverseOrder);
+function onBtNormal() {
+    gridOptions.api.setColumnDefs(columnDefsNormal());
 }
 
-function onWidths() {
-    gridOptions.api.setColumnDefs(columnDefsWidths);
+function onBtReverseOrder() {
+    gridOptions.api.setColumnDefs(columnDefsReverseOrder());
 }
 
-function onVisibility() {
-    gridOptions.api.setColumnDefs(columnDefsVisibility);
+function onBtWidths() {
+    gridOptions.api.setColumnDefs(columnDefsWidths());
 }
 
-function onGrouping() {
-    gridOptions.api.setColumnDefs(columnDefsGrouping);
+function onBtVisibility() {
+    gridOptions.api.setColumnDefs(columnDefsVisibility());
 }
 
-function onNoResizeOrSort() {
-    gridOptions.api.setColumnDefs(columnDefsNoResizeOrSort);
+function onBtGrouping() {
+    gridOptions.api.setColumnDefs(columnDefsGrouping());
 }
 
-function onPinned() {
-    gridOptions.api.setColumnDefs(columnDefsPinned);
+function onBtNoResizeOrSort() {
+    gridOptions.api.setColumnDefs(columnDefsNoResizeOrSort());
+}
+
+function onBtPinned() {
+    gridOptions.api.setColumnDefs(columnDefsPinned());
 }
 
 // setup the grid after the page has finished loading
