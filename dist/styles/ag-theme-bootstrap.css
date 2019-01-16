@@ -1018,7 +1018,7 @@
     .ag-theme-bootstrap .ag-menu .ag-menu-separator {
       margin-left: -4px; }
       .ag-theme-bootstrap .ag-menu .ag-menu-separator > span {
-        background-image: url("data:image/svg+xml;utf8,<svg width='1' height='8px' viewBox='0 0 1 8px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='4px' x2='1' y2='4px' stroke-width='1' stroke='%23000000'/> </svg>");
+        background-image: url("data:image/svg+xml;utf8,<svg width='1' height='8px' viewBox='0 0 1 8px' xmlns='https://www.w3.org/2000/svg'> <line x1='0' y1='4px' x2='1' y2='4px' stroke-width='1' stroke='%23000000'/> </svg>");
         height: 8px; }
     .ag-theme-bootstrap .ag-menu .ag-menu-option-popup-pointer {
       width: 20px; }
