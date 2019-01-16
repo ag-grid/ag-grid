@@ -45,7 +45,14 @@ export abstract class Node { // Don't confuse with `window.Node`.
     // Used to check for duplicate nodes.
     private childSet: { [key in string]: boolean } = {}; // new Set<Node>()
 
-    add(nodes: Node[]) {
+    add(node: Node) {
+        // Passing a single parameter to an open-ended version of `addAll`
+        // would be 30-35% slower than this:
+        // https://jsperf.com/array-vs-var-arg
+        this.addAll([node]);
+    }
+
+    addAll(nodes: Node[]) {
         // The function takes an array rather than having open-ended
         // arguments like `...nodes: Node[]` because the latter is
         // transpiled to a function where the `arguments` object
