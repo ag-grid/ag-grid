@@ -171,19 +171,43 @@ var gridOptions = {
     },
     deltaColumnMode: true,
     columnDefs: columnDefsNormal(),
-    onColumnPinned: onColumnEvent,
-    onColumnVisible: onColumnEvent,
-    onColumnResized: onColumnEvent,
-    onColumnMoved: onColumnEvent,
-    onColumnRowGroupChanged: onColumnEvent,
-    onColumnPivotChanged: onColumnEvent,
-    onNewColumnsLoaded: onColumnEvent,
+    onColumnPinned: onColumnPinned,
+    onColumnVisible: onColumnVisible,
+    onColumnResized: onColumnResized,
+    onColumnMoved: onColumnMoved,
+    onColumnRowGroupChanged: onColumnRowGroupChanged,
+    onColumnPivotChanged: onColumnPivotChanged,
+    onNewColumnsLoaded: onNewColumnsLoaded,
     sideBar: {
         toolPanels: ['columns']
     }
 };
 
-function onColumnEvent(e) {
+function onColumnPinned(e) {
+    console.log('Column Event: ' + e.type, e);
+}
+
+function onColumnVisible(e) {
+    console.log('Column Event: ' + e.type, e);
+}
+
+function onColumnResized(e) {
+    console.log('Column Event: ' + e.type, e);
+}
+
+function onColumnMoved(e) {
+    console.log('Column Event: ' + e.type, e);
+}
+
+function onColumnRowGroupChanged(e) {
+    console.log('Column Event: ' + e.type, e);
+}
+
+function onColumnPivotChanged(e) {
+    console.log('Column Event: ' + e.type, e);
+}
+
+function onNewColumnsLoaded(e) {
     console.log('Column Event: ' + e.type, e);
 }
 
@@ -216,11 +240,11 @@ function onBtPinned() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function (data) {
         gridOptions.api.setRowData(data);
     });
 });

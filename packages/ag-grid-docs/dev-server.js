@@ -214,7 +214,8 @@ const genExamples = (exampleDir) => {
     };
 };
 
-const [execFunc, exampleDir, watch] = process.argv;
+// dont remove these unused vars
+const [cmd, script, execFunc, exampleDir, watch] = process.argv;
 if (process.argv.length >= 3 && execFunc === 'generate-examples') {
     if (exampleDir && watch) {
         const examplePath = path.resolve('./src/', exampleDir);

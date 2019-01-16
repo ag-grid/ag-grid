@@ -237,6 +237,7 @@ export default function parser(js, html, exampleSettings) {
     // all onXXX will be handled here
     // note: gridOptions = { onGridSizeChanged = function() {}  WILL NOT WORK
     // needs to be a separate function  gridOptions = { onGridSizeChanged = myGridSizeChangedFunc
+    // ALSO event must match function name: onColumnPinned: onColumnPinned (not onColumnPinned: someOtherFunc)
     EVENTS.forEach(eventName => {
         var onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
 
