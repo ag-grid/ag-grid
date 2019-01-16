@@ -280,7 +280,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         return colsThatCanAction === 0;
     }
 
-    private workOutSelectedValue(): boolean {
+    private workOutSelectedValue(): boolean | null {
         const pivotMode = this.columnController.isPivotMode();
 
         let visibleChildCount = 0;
@@ -300,7 +300,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             }
         });
 
-        let selectedValue: boolean;
+        let selectedValue: boolean | null;
         if (visibleChildCount > 0 && hiddenChildCount > 0) {
             selectedValue = null;
         } else if (visibleChildCount > 0) {

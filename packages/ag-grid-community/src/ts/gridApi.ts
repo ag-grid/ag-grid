@@ -49,6 +49,7 @@ import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
+import { IComponent } from "./interfaces/iComponent";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
@@ -118,6 +119,7 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
+    @Optional('watermark') private watermark: IComponent<any>;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
 
@@ -447,7 +449,7 @@ export class GridApi {
     }
 
     public isAdvancedFilterPresent(): boolean {
-        console.log('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
+        console.warn('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
         return this.isColumnFilterPresent();
     }
 

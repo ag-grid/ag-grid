@@ -961,14 +961,14 @@ export class GridOptionsWrapper {
     }
 
     public isTreeData(): boolean {
-        let usingTreeData = isTrue(this.gridOptions.treeData);
+        const usingTreeData = isTrue(this.gridOptions.treeData);
 
         _.doOnce(() => {
             if (usingTreeData && !this.enterprise) {
                 console.warn('ag-grid: TreeData is an Enterprise feature of ag-Grid.');
             }
         }, 'TreeDataEnterpriseCheck');
-        
+
         return usingTreeData;
     }
 

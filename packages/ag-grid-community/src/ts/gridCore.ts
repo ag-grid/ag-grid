@@ -16,6 +16,7 @@ import { ICompFactory } from "./interfaces/iCompFactory";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { GridApi } from "./gridApi";
 import { ISideBar } from "./interfaces/ISideBar";
+import { IComponent } from "./interfaces/iComponent";
 import { RefSelector } from "./widgets/componentAnnotations";
 import { Events, GridSizeChangedEvent } from "./events";
 import { ResizeObserverService } from "./misc/resizeObserverService";
@@ -42,6 +43,7 @@ export class GridCore extends Component {
             </div>
             <ag-status-bar ref="statusBar"></ag-status-bar>
             <ag-pagination></ag-pagination>
+            <ag-watermark ref="watermark"></ag-watermark>
         </div>`;
 
     @Autowired('enterprise') private enterprise: boolean;
@@ -72,6 +74,7 @@ export class GridCore extends Component {
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
+    @RefSelector('watermark') private watermark: IComponent<any>;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private finished: boolean;

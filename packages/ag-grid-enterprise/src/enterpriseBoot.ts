@@ -18,7 +18,5 @@ export class EnterpriseBoot {
         this.componentProvider.registerDefaultComponent('agRichSelectCellEditor', RichSelectCellEditor);
         this.componentProvider.registerDefaultComponent('agSetColumnFilter', SetFilter);
         this.componentProvider.registerDefaultComponent('agDetailCellRenderer', DetailCellRenderer);
-
-        this.licenseManager.validateLicense();
     }
 }

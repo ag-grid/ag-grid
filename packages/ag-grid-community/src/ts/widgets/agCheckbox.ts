@@ -120,14 +120,14 @@ export class AgCheckbox extends Component {
         }
     }
 
-    public setSelected(selected: boolean): void {
+    public setSelected(selected: boolean | null): void {
         if (this.selected === selected) {
             return;
         }
 
-        if (selected===true) {
+        if (selected === true) {
             this.selected = true;
-        } else if (selected===false) {
+        } else if (selected === false) {
             this.selected = false;
         } else {
             this.selected = undefined;

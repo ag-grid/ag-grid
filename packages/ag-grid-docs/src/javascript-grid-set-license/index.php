@@ -189,5 +189,10 @@ export function configure(aurelia: Aurelia) {
     // ...rest of function
 </snippet>
 
+    <h2>Invalid License</h2>
+    <p>If you have an enterprise grid running with an invalid license (no license, expired license) your console log will 
+        display a series of warnings and the grid will show a watermark for 5 seconds.</p>
+    
+    <?= example('Invalid License', 'forceWatermark', 'vanilla', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

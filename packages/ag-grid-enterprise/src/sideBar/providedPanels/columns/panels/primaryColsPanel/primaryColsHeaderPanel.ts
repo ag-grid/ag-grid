@@ -53,7 +53,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(
-            `<div class="ag-primary-cols-header-panel">
+        `<div class="ag-primary-cols-header-panel">
             <a href="javascript:void(0)" (click)="onExpandClicked" ref="eExpand">
                 <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
                 <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>

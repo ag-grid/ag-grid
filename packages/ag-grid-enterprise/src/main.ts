@@ -35,7 +35,8 @@ import { TotalAndFilteredRowsComp } from "./statusBar/providedPanels/totalAndFil
 import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
-import {ChartingService} from "./charts/chartingService";
+import { ChartingService } from "./charts/chartingService";
+import { Watermark } from "./license/watermark";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -73,6 +74,7 @@ export { ExcelCreator } from "./exporter/excelCreator";
 export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 export { ChartingService } from "./charts/chartingService";
+export { Watermark } from "./license/watermark";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
@@ -93,6 +95,7 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
 
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
+    {componentName: 'agWatermark', theClass: Watermark}
 ]);
 
 Grid.setEnterpriseDefaultComponents([
