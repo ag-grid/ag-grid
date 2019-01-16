@@ -24,8 +24,8 @@ $secondary-font-size: 14px !default;
 $secondary-font-weight: 400 !default;
 
 // Misc
-$card-shadow: none;
-$card-radius: 0;
+$card-shadow: none !default;
+$card-radius: 0 !default;
 $row-border-width: 0 !default;
 $transition-speed: 120ms !default;
 
