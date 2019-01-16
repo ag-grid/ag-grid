@@ -1007,7 +1007,7 @@
     .ag-theme-material .ag-menu .ag-menu-separator {
       margin-left: -8px; }
       .ag-theme-material .ag-menu .ag-menu-separator > span {
-        background-image: url("data:image/svg+xml;utf8,<svg width='1' height='16px' viewBox='0 0 1 16px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='8px' x2='1' y2='8px' stroke-width='1' stroke='%23E2E2E2'/> </svg>");
+        background-image: url("data:image/svg+xml;utf8,<svg width='1' height='16px' viewBox='0 0 1 16px' xmlns='https://www.w3.org/2000/svg'> <line x1='0' y1='8px' x2='1' y2='8px' stroke-width='1' stroke='%23E2E2E2'/> </svg>");
         height: 16px; }
     .ag-theme-material .ag-menu .ag-menu-option-popup-pointer {
       width: 34px; }
