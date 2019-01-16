@@ -604,6 +604,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.deltaRowDataMode);
     }
 
+    public isDeltaColumnMode() {
+        return isTrue(this.gridOptions.deltaColumnMode);
+    }
+
     public isEnsureDomOrder() {
         return isTrue(this.gridOptions.ensureDomOrder);
     }

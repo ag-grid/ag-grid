@@ -89,6 +89,7 @@ export interface GridOptions {
     suppressRowDrag?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
+    deltaColumnMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean; //deprecated
     toolPanelSuppressValues?: boolean; //deprecated

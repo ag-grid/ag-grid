@@ -201,14 +201,44 @@ export class ColumnFactory {
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
 
-        // no existing column, need to create one
         if (!column) {
+            // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.wireBean(column);
+        } else {
+            column.setColDef(colDefMerged, colDef);
+
+            // this.copyColumnAttributes(currentColDef, colDefMerged);
+            // if (this.gridOptionsWrapper.isDeltaColumnMode()) {
+            //     // this attributes only get copied if delta mode is on
+            //     this.copyDeltaColumnAttributes(currentColDef, colDefMerged);
+            // }
         }
 
         return column;
+    }
+
+    // we only copy these attributes for deltaMode, as they interfere with mutable
+    // state inside the grid
+    private copyDeltaColumnAttributes(dest: ColDef, src: ColDef): void {
+    }
+
+    private copyColumnAttributes(dest: ColDef, src: ColDef): void {
+        // copying these doesn't do anything, as they are managed by internal
+        // state in the grid. unless user has 'deltaColumnMode=true' will changing
+        // these make an impact
+        dest.aggFunc = src.aggFunc;
+        dest.hide = src.hide;
+        dest.pinned = src.pinned;
+        dest.rowGroupIndex = src.rowGroupIndex;
+        dest.pivotIndex = src.pivotIndex;
+        dest.width = src.width;
+
+        // this will get used next time the grid uses them
+        dest.headerName = src.headerName;
+        dest.resizable = src.resizable;
+        dest.sortable = src.sortable;
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {

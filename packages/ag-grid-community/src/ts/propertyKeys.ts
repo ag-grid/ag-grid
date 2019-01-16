@@ -59,7 +59,8 @@ export class PropertyKeys {
         'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
         'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel',
         'suppressRowHoverHighlight', 'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste',
-        'serverSideSortingAlwaysResets', 'reactNext', 'suppressSetColumnStateEvents', 'enableCharts'
+        'serverSideSortingAlwaysResets', 'reactNext', 'suppressSetColumnStateEvents', 'enableCharts',
+        'deltaColumnMode'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

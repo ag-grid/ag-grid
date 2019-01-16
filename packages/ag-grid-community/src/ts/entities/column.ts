@@ -70,14 +70,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private readonly colDef: ColDef;
     private readonly colId: any;
+    private colDef: ColDef;
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
     // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private readonly userProvidedColDef: ColDef;
+    private userProvidedColDef: ColDef;
 
     private actualWidth: any;
 
@@ -93,9 +93,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     // we copy this from col def, as if it's value changes are column is created,
     // it will break the logic in the column controller
-    private lockPosition: boolean;
-    private lockPinned: boolean;
-    private lockVisible: boolean;
+    private readonly lockPosition: boolean;
+    private readonly lockPinned: boolean;
+    private readonly lockVisible: boolean;
 
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
@@ -129,6 +129,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.lockPosition = colDef.lockPosition === true;
         this.lockPinned = colDef.lockPinned === true;
         this.lockVisible = colDef.lockVisible === true;
+    }
+
+    // gets called when user provides an alternative colDef, eg
+    public setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void {
+        this.colDef = colDef;
+        this.userProvidedColDef = userProvidedColDef;
     }
 
     public getUserProvidedColDef(): ColDef {

@@ -20,9 +20,9 @@ export class ColumnApi {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location); }
 
     public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
-    public setColumnState(columnState: ColumnState[]): boolean { return this.columnController.setColumnState(columnState, 'api'); }
+    public setColumnState(columnState: ColumnState[]): boolean { return this.columnController.setColumnState(columnState, false, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
-    public resetColumnState(): void { this.columnController.resetColumnState('api'); }
+    public resetColumnState(): void { this.columnController.resetColumnState(false, 'api'); }
     public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState(); }
     public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {this.columnController.setColumnGroupState(stateItems, 'api'); }
     public resetColumnGroupState(): void { this.columnController.resetColumnGroupState('api'); }

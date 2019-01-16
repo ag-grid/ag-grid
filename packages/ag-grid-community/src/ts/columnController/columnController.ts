@@ -180,6 +180,8 @@ export class ColumnController {
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
 
+        const colsPreviouslyExisted = !!this.columnDefs;
+
         this.columnDefs = columnDefs;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
@@ -209,6 +211,10 @@ export class ColumnController {
 
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
+
+        if (this.gridOptionsWrapper.isDeltaColumnMode() && colsPreviouslyExisted) {
+            this.resetColumnState(true, source);
+        }
 
         const eventEverythingChanged: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
@@ -1596,7 +1602,7 @@ export class ColumnController {
         });
     }
 
-    public resetColumnState(source: ColumnEventType = "api"): void {
+    public resetColumnState(suppressEverythingEvent = false, source: ColumnEventType = "api"): void {
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         const primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
         const columnStates: ColumnState[] = [];
@@ -1638,10 +1644,10 @@ export class ColumnController {
             });
         }
 
-        this.setColumnState(columnStates, source);
+        this.setColumnState(columnStates, suppressEverythingEvent, source);
     }
 
-    public setColumnState(columnState: ColumnState[], source: ColumnEventType = "api"): boolean {
+    public setColumnState(columnState: ColumnState[], suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
@@ -1709,13 +1715,15 @@ export class ColumnController {
 
         this.updateDisplayedColumns(source);
 
-        const event: ColumnEverythingChangedEvent = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);
+        if (!suppressEverythingEvent) {
+            const event: ColumnEverythingChangedEvent = {
+                type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event);
+        }
 
         this.raiseColumnEvents(columnStateBefore, source);
 
@@ -1755,7 +1763,7 @@ export class ColumnController {
                 columnStateBeforeMap[col.colId] = col;
             });
 
-            this.allDisplayedColumns.forEach(column => {
+            this.gridColumns.forEach(column => {
                 const colStateBefore = columnStateBeforeMap[column.getColId()];
                 if (!colStateBefore || changedPredicate(colStateBefore, column)) {
                     changedColumns.push(column);
@@ -1780,7 +1788,8 @@ export class ColumnController {
         this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
 
         const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide === c.isVisible();
-        this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
+        const cols = getChangedColumns(visibilityChangePredicate);
+        this.raiseColumnVisibleEvent(cols, source);
 
         const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width !== c.getActualWidth();
         this.raiseColumnResizeEvent(getChangedColumns(resizeChangePredicate), source);

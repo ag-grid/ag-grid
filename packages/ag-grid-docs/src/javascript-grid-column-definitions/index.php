@@ -323,6 +323,92 @@ Examples of state include column visibility, width, row groups and values.
 
 <?= example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+<h2 id="delta-columns">Delta Columns</h2>
+
+<p>
+    By default when new columns are loaded into the grid, the following properties are not used:
+    <ul>
+        <li>Column Order</li>
+        <li>Aggregation Function <code>(colDef.aggFunc)</code></li>
+        <li>Width (<code>colDef.width</code>)</li>
+        <li>Pivot (<code>colDef.pivot or colDef.pivotIndex</code>)</li>
+        <li>Row Group (<code>colDef.rowGroup or colDef.rowGroupIndex</code>)</li>
+        <li>Pinned (<code>colDef.pinned</code>)</li>
+    </ul>
+    This is done on purpose to avoid unexpected behaviour for the application user.
+</p>
+
+<p>
+    For example - suppose the application user rearranges the order of the columns. Then if the application
+    sets new column definitions for teh purposes of adding one extra column into the grid, then it would be
+    a bad user experience to reset the order of all the columns.
+</p>
+
+<p>
+    Likewise if the user change an aggregation function, or the width of a column, or whether a column was
+    pinned, all of these changes the user does should not get undone because the application decided
+    to update the column definitions.
+</p>
+
+<p>
+    To change this behaviour and have column attributes above (order, width, row group etc) take effect
+    each time the application updates the grid columns, then set <code>gridOption.deltaColumnMode=true</code>.
+    The responsibility is then on your application to make sure the provided column definitions are in sync
+    with what is in the grid if you don't want undesired visible changes - eg if the user changes the width
+    of a column, the application should listen to the grid event <code>columnWidthChanged</code> and update
+    the applications column definition with the new width - otherwise the width will reset back to the default
+    after the application updates the column definitions into the grid.
+</p>
+
+<p>
+    The example below demonstrates Delta Column Mode. Note the following:
+    <ul>
+        <li>
+            Grid property <code>deltaColumnMode</code> is set to true.
+        </li>
+        <li>
+            Each button sets a different list of columns into the grid. Because each column
+            definition provides an ID, the grid knows the instance of the column is to be kept.
+            This means any active sorting or filtering associated with the column will be kept
+            between column changes.
+        </li>
+        <li>
+            Each button changes the column definitions in a way that would be otherwise ignored
+            if <code>deltaColumnMode</code> was not set. The changes are as follows:
+            <ul>
+                <li>
+                    <b>Normal</b>: Columns are set as normal. This is the default. It will make
+                    the other button actions easier to understand if Normal is pressed before
+                    pushing the other buttons.
+                </li>
+                <li>
+                    <b>Reverse Order</b>: Columns are provided in reverse order.
+                </li>
+                <li>
+                    <b>Widths</b>: Columns are provided with different widths.
+                </li>
+                <li>
+                    <b>Visibility</b>: Columns are provided with <code>colDef.hidden=true</code>.
+                    The columns will still be in the grid and listed in the tool panel, however
+                    they will not be visible.
+                </li>
+                <li>
+                    <b>Grouping</b>: Rows will be grouped by Sport.
+                </li>
+                <li>
+                    <b>No Resize or Sort</b>: Clicking the columns will not sort and it will not be possible
+                    to resize the column via dragging it's edge.
+                </li>
+                <li>
+                    <b>Pinned</b>: Columns will be pinned to the left and right.
+                </li>
+            </ul>
+        </li>
+    </ul>
+</p>
+
+<?= example('Delta Columns', 'delta-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
 <h2 id="group-changes">Group Changes</h2>
 
 <p>
