@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Gridinstall ag-Grid" /></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community">Github</a>
             </td>
 
             <td style="width: 20px;">&nbsp;</td>

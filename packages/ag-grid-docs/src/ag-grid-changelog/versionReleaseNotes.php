@@ -10,7 +10,7 @@
             See <a href="/javascript-grid-styling/">Themes</a> for more information.
         </li>
         <li>
-            AG-2235 - AG-2235 - We have restructured our themes, so If you create custom themes extending 
+            AG-2235 - We have restructured our themes, so If you create custom themes extending
             our sass files, you will need to update the @import path.<br>
             See how to customise your themes <a href="https://github.com/ag-grid/ag-grid-customise-theme">here</a>
         </li>
