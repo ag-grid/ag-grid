@@ -163,7 +163,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.parent;
     }
 
-    public setOriginalParent(originalParent: OriginalColumnGroup): void {
+    public setOriginalParent(originalParent: OriginalColumnGroup | null): void {
         this.originalParent = originalParent;
     }
 

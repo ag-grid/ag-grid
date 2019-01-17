@@ -1199,7 +1199,7 @@ export class ColumnController {
     public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
         let rulePassed = true;
 
-        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, child => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, child => {
             if (!(child instanceof OriginalColumnGroup)) {
                 return;
             }
@@ -2274,7 +2274,7 @@ export class ColumnController {
     public resetColumnGroupState(source: ColumnEventType = "api"): void {
         const stateItems: { groupId: string, open: boolean | undefined }[] = [];
 
-        this.columnUtils.depthFirstOriginalTreeSearch(this.primaryColumnTree, child => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.primaryColumnTree, child => {
             if (child instanceof OriginalColumnGroup) {
                 const groupState = {
                     groupId: child.getGroupId(),
@@ -2289,7 +2289,7 @@ export class ColumnController {
 
     public getColumnGroupState(): { groupId: string, open: boolean }[] {
         const columnGroupState: { groupId: string, open: boolean }[] = [];
-        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof OriginalColumnGroup) {
                 const originalColumnGroup = node;
                 columnGroupState.push({
@@ -2361,7 +2361,7 @@ export class ColumnController {
 
         // otherwise, search for the column group by id
         let res: OriginalColumnGroup | null = null;
-        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof OriginalColumnGroup) {
                 const originalColumnGroup = node;
                 if (originalColumnGroup.getId() === key) {

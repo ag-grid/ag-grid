@@ -46,11 +46,15 @@ export class ColumnFactory {
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const res = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
-        this.columnUtils.depthFirstOriginalTreeSearch(res, (child: OriginalColumnGroupChild) => {
+        const deptFirstCallback = (child: OriginalColumnGroupChild, parent: OriginalColumnGroup) => {
             if (child instanceof OriginalColumnGroup) {
                 child.setupExpandable();
             }
-        });
+            // we set the original parents at the end, rather than when we go along, as balancing the tree
+            // adds extra levels into the tree. so we can only set parents when balancing is done.
+            child.setOriginalParent(parent);
+        };
+        this.columnUtils.depthFirstOriginalTreeSearch(null, res, deptFirstCallback);
 
         return {
             columnTree: res,
@@ -81,10 +85,10 @@ export class ColumnFactory {
                 null,
                 `FAKE_PATH_${column.getId()}}_${i}`,
                 true,
-                i,
-                null);
+                i);
             this.context.wireBean(autoGroup);
             autoGroup.setChildren([nextChild]);
+            nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
         }
 
@@ -121,7 +125,7 @@ export class ColumnFactory {
                 for (let i = columnDept - 1; i >= currentDept; i--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
-                    const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept, null);
+                    const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
@@ -162,7 +166,8 @@ export class ColumnFactory {
         defs.forEach((def: ColDef | ColGroupDef) => {
             let newGroupOrColumn: OriginalColumnGroupChild;
             if (this.isColumnGroup(def)) {
-                newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy, columnKeyCreator);
+                newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
+                    columnKeyCreator, parent);
             } else {
                 newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator, parent);
             }
@@ -173,11 +178,12 @@ export class ColumnFactory {
     }
 
     private createColumnGroup(primaryColumns: boolean, colGroupDef: ColGroupDef, level: number,
-                              existingColumns: Column[], columnKeyCreator: ColumnKeyCreator): OriginalColumnGroup {
+                              existingColumns: Column[], columnKeyCreator: ColumnKeyCreator,
+                              parent: OriginalColumnGroup | null): OriginalColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
 
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
-        const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level, null);
+        const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
             level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
@@ -212,10 +218,6 @@ export class ColumnFactory {
         } else {
             column.setColDef(colDefMerged, colDef);
         }
-
-        // even if the column is not new, we need to update the original parent, as the original
-        // parents are created from scratch each time there is a change to the columns.
-        column.setOriginalParent(parent);
 
         return column;
     }

@@ -31,13 +31,12 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
     private level: number;
 
-    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number, originalParent: OriginalColumnGroup | null) {
+    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
         this.level = level;
-        this.originalParent = originalParent;
     }
 
     public setOriginalParent(originalParent: OriginalColumnGroup | null): void {

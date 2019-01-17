@@ -96,15 +96,15 @@ export class ColumnUtils {
         }
     }*/
 
-    public depthFirstOriginalTreeSearch(tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild) => void): void {
+    public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup) => void): void {
 
         if (!tree) { return; }
 
         tree.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                this.depthFirstOriginalTreeSearch(child.getChildren(), callback);
+                this.depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
             }
-            callback(child);
+            callback(child, parent);
         });
 
     }
