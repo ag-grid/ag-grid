@@ -340,12 +340,12 @@ Examples of state include column visibility, width, row groups and values.
 
 <p>
     For example - suppose the application user rearranges the order of the columns. Then if the application
-    sets new column definitions for teh purposes of adding one extra column into the grid, then it would be
+    sets new column definitions for the purposes of adding one extra column into the grid, then it would be
     a bad user experience to reset the order of all the columns.
 </p>
 
 <p>
-    Likewise if the user change an aggregation function, or the width of a column, or whether a column was
+    Likewise if the user changes an aggregation function, or the width of a column, or whether a column was
     pinned, all of these changes the user does should not get undone because the application decided
     to update the column definitions.
 </p>
