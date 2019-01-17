@@ -1,6 +1,6 @@
-import {Node} from "./node";
+import {Parent} from "./parent";
 
-export class Group extends Node {
+export class Group extends Parent {
     render(ctx: CanvasRenderingContext2D) {
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,

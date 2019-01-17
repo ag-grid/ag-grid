@@ -2,6 +2,7 @@ import {HdpiCanvas} from "../canvas/hdpiCanvas";
 import {Node} from "./node";
 import {Path} from "./path";
 import {Shape} from "./shape/shape";
+import {Parent} from "./parent";
 
 export class Scene {
     constructor(parent: HTMLElement, width = 800, height = 600) {
@@ -26,7 +27,7 @@ export class Scene {
 
         const node = this.root;
 
-        if (node) {
+        if (node instanceof Parent) {
             const children = node.children;
             const n = children.length;
             for (let i = 0; i < n; i++) {

@@ -42,7 +42,6 @@ export class Arc extends Shape {
     set dirtyPath(value: boolean) {
         if (this._dirtyPath !== value) {
             this._dirtyPath = value;
-            // TODO: replace with `this.dirty = value`?
             if (value) {
                 this.dirty = true;
             }

@@ -1,10 +1,10 @@
 import {Scene} from "./scene";
 import {Matrix} from "./matrix";
+import {Parent} from "./parent";
 
 /**
  * Abstract scene graph node.
- * Each node can have zero or more children, zero or one parent
- * and belong to zero or one scene.
+ * Each node can have zero or one parent and belong to zero or one scene.
  */
 export abstract class Node { // Don't confuse with `window.Node`.
 
@@ -15,68 +15,20 @@ export abstract class Node { // Don't confuse with `window.Node`.
     };
     readonly id: string = this.createId();
 
-    private _scene?: Scene;
+    protected _scene?: Scene;
     set scene(value: Scene | undefined) {
         this._scene = value;
-
-        const children = this.children;
-        const n = children.length;
-        for (let i = 0; i < n; i++) {
-            children[i].scene = value;
-        }
     }
     get scene(): Scene | undefined {
         return this._scene;
     }
 
-    private _parent?: Node;
-    set parent(value: Node | undefined) {
+    private _parent?: Parent;
+    set parent(value: Parent | undefined) {
         this._parent = value;
     }
-    get parent(): Node | undefined {
+    get parent(): Parent | undefined {
         return this._parent;
-    }
-
-    private _children: Node[] = [];
-    get children(): Node[] {
-        return this._children;
-    }
-
-    // Used to check for duplicate nodes.
-    private childSet: { [key in string]: boolean } = {}; // new Set<Node>()
-
-    add(node: Node) {
-        // Passing a single parameter to an open-ended version of `addAll`
-        // would be 30-35% slower than this:
-        // https://jsperf.com/array-vs-var-arg
-        this.addAll([node]);
-    }
-
-    addAll(nodes: Node[]) {
-        // The function takes an array rather than having open-ended
-        // arguments like `...nodes: Node[]` because the latter is
-        // transpiled to a function where the `arguments` object
-        // is copied to a temporary array inside a loop.
-        // So an array is created either way. And if we already have
-        // an array of nodes we want to add, we have to use the prohibitively
-        // expensive spread operator to pass it to the function,
-        // and, on top of that, the copy of the `arguments` is still made.
-        const n = nodes.length;
-        for (let i = 0; i < n; i++) {
-            const node = nodes[i];
-            if (!this.childSet[node.id]) {
-                this._children.push(node);
-                this.childSet[node.id] = true;
-
-                node.parent = this;
-                node.scene = this.scene;
-            }
-            else {
-                // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
-                throw new Error(`Duplicate ${(node.constructor as any).name} node: ${node}`);
-            }
-        }
-        this.dirty = true;
     }
 
     // These matrices may need to have package level visibility
@@ -286,7 +238,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     abstract render(ctx: CanvasRenderingContext2D): void
 
     /**
-     * Determines the order of rendering of this node within the parent node.
+     * Determines the order of rendering of this node within its parent node.
      * By default the child nodes are rendered in the order in which they were added.
      */
     zIndex: number = 0;
