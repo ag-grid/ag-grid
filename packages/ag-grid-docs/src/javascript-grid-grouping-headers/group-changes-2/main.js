@@ -2,7 +2,7 @@ function createNormalColDefs() {
     return [
         {
             headerName: 'Athlete Details',
-            marryChildren: true,
+            headerClass: 'participant-group',
             children: [
                 {field: 'athlete', colId: 'athlete'},
                 {field: 'country', colId: 'country'}
@@ -11,16 +11,46 @@ function createNormalColDefs() {
         {field: 'age', colId: 'age'},
         {
             headerName: 'Sports Results',
-            marryChildren: true,
+            headerClass: 'medals-group',
             children: [
                 {field: 'sport', colId: 'sport'},
-                {field: 'total', colId: 'total'},
-                {field: 'gold', colId: 'gold'},
-                {field: 'silver', colId: 'silver'},
-                {field: 'bronze', colId: 'bronze'}
+                {field: 'gold', colId: 'gold'}
             ]
         }
     ];
+}
+
+function createExtraColDefs() {
+    return [
+        {
+            headerName: 'Athlete Details',
+            headerClass: 'participant-group',
+            children: [
+                {field: 'athlete', colId: 'athlete'},
+                {field: 'country', colId: 'country'},
+                {field: 'region1', colId: 'region1'},
+                {field: 'region2', colId: 'region2'}
+            ]
+        },
+        {field: 'age', colId: 'age'},
+        {field: 'distance', colId: 'distance'},
+        {
+            headerName: 'Sports Results',
+            headerClass: 'medals-group',
+            children: [
+                {field: 'sport', colId: 'sport'},
+                {field: 'gold', colId: 'gold'}
+            ]
+        }
+    ];
+}
+
+function onBtNormalCols() {
+    gridOptions.api.setColumnDefs(createNormalColDefs());
+}
+
+function onBtExtraCols() {
+    gridOptions.api.setColumnDefs(createExtraColDefs());
 }
 
 var gridOptions = {

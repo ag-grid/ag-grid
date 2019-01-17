@@ -181,7 +181,7 @@ Change the theme class to the one you use.
             'Athlete Details' group.
         </li>
         <li>
-            If you move a non group column, eg 'Extra 3', it will not be possible to place it in the
+            If you move a non group column, eg Age, it will not be possible to place it in the
             middle of a group and hence impossible to break the group apart.
         </li>
         <li>
@@ -229,7 +229,7 @@ Change the theme class to the one you use.
     </p>
 
     <p>
-        In the example below, note the following:
+        The example below shows adding and removing groups to columns. Note the following:
     <ul>
         <li>Select <b>No Groups</b> to show all columns without any grouping.</li>
         <li>Select <b>Participant in Group</b> to show all participant columns only in a group.</li>
@@ -244,5 +244,30 @@ Change the theme class to the one you use.
     </p>
 
     <?= example('Group Changes', 'group-changes', 'generated', array("processVue" => true)) ?>
+
+    <p>
+        The example above shows adding and removing groups. It is also possible to add and remove columns
+        from groups. This is demonstrated in the example below. Note the following:
+        <ul>
+            <li>The example has two groups: Athlete Details and Sports Results</li>
+            <li>The example has two sets of columns, Normal Cols and Extra Cols.</li>
+            <li>
+                When you moved from Normal Cols to Extra Cols, two new columns are
+                added to the list. One belongs to Athlete Details group, the other belongs to no group.
+            </li>
+            <li>
+                When a column is added to the grid that is not in a group, it is always added to the
+                end of the list of columns. In this example column Distance is always added to the end.
+            </li>
+            <li>
+                When a column is added to the grid that is part of a group, it is always added after
+                the last column belonging to that group. In this example columns Region1 and Region2
+                are always added after either Athlete or Age, which appears last in the grid.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Group Changes 2', 'group-changes-2', 'generated', array("processVue" => true)) ?>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

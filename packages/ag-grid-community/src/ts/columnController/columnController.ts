@@ -2564,34 +2564,52 @@ export class ColumnController {
             return;
         }
 
-        // order cols in teh same order as before. we need to make sure that all
+        // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
         const oldColsOrdered = this.lastPrimaryOrder.filter(col => this.gridColumns.indexOf(col) >= 0);
-        const newColsOrdered = this.gridColumns.filter(col => this.lastPrimaryOrder.indexOf(col) < 0);
-        this.gridColumns = oldColsOrdered.concat(newColsOrdered);
+        const newColsOrdered = this.gridColumns.filter(col => oldColsOrdered.indexOf(col) < 0);
 
-        // let gridColsBeforeSort = this.gridColumns.slice();
-        //
-        // this.gridColumns.sort( (colA: Column, colB: Column): number => {
-        //     let indexA = this.lastPrimaryOrder.indexOf(colA);
-        //     let indexB = this.lastPrimaryOrder.indexOf(colB);
-        //
-        //     let bothColsExistedBefore = indexA>=0 && indexB>=0;
-        //     let neitherColsExistedBefore = indexA<0 && indexB<0;
-        //
-        //     if (bothColsExistedBefore) {
-        //         return indexA - indexB;
-        //     } else if (neitherColsExistedBefore) {
-        //         // if both cols are new, keep current order
-        //         let currentIndexA = gridColsBeforeSort.indexOf(colA);
-        //         let currentIndexB = gridColsBeforeSort.indexOf(colB);
-        //         return currentIndexA - currentIndexB;
-        //     } else if (indexA>0) {
-        //         return -1;
-        //     } else {
-        //         return 1;
-        //     }
-        // });
+        // add in the new columns, at the end (if no group), or at the end of the group (if a group)
+        const newGridColumns = oldColsOrdered.slice();
+        newColsOrdered.forEach( newCol => {
+
+            let parent = newCol.getOriginalParent();
+
+            // if no parent, means we are not grouping, so just add the column to the end
+            if (!parent) {
+                newGridColumns.push(newCol);
+                return;
+            }
+
+            // find the group the column belongs to. if no siblings at the current level (eg col in group on it's
+            // own) then go up one level and look for siblings there.
+            const siblings: Column[] = [];
+            while (!siblings.length && parent) {
+                const leafCols = parent.getLeafColumns();
+                leafCols.forEach(leafCol => {
+                    const presentInNewGriColumns = newGridColumns.indexOf(leafCol) >= 0;
+                    const noYetInSiblings = siblings.indexOf(leafCol)<0;
+                    if (presentInNewGriColumns && noYetInSiblings) {
+                        siblings.push(leafCol);
+                    }
+                });
+                parent = parent.getOriginalParent();
+            }
+
+            // if no siblings exist at any level, this means the col is in a group (or parent groups) on it's own
+            if (!siblings.length) {
+                newGridColumns.push(newCol);
+                return;
+            }
+
+            // find index of last column in the group
+            let indexes = siblings.map( col => newGridColumns.indexOf(col) );
+            let lastIndex = Math.max(...indexes);
+
+            _.insertIntoArray(newGridColumns, newCol, lastIndex + 1);
+        });
+
+        this.gridColumns = newGridColumns;
     }
 
     public isPrimaryColumnGroupsPresent(): boolean {

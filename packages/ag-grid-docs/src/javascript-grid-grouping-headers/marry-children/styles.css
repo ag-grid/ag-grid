@@ -1,0 +1,21 @@
+.ag-header-group-cell-with-group {
+    background-color: #00E7B1;
+}
+
+.test-grid {
+    height: 1px;
+    min-height: 1px;
+    flex-grow: 1;
+}
+
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+}

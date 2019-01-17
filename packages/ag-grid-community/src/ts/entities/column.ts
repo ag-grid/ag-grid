@@ -22,6 +22,7 @@ import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
+import {OriginalColumnGroup} from "./originalColumnGroup";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -117,6 +118,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private readonly primary: boolean;
 
     private parent: ColumnGroup;
+    private originalParent: OriginalColumnGroup;
 
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
         this.colDef = colDef;
@@ -159,6 +161,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getParent(): ColumnGroup {
         return this.parent;
+    }
+
+    public setOriginalParent(originalParent: OriginalColumnGroup): void {
+        this.originalParent = originalParent;
+    }
+
+    public getOriginalParent(): OriginalColumnGroup | null {
+        return this.originalParent;
     }
 
     // this is done after constructor as it uses gridOptionsWrapper

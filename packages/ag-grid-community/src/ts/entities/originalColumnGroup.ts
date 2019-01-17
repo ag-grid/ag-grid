@@ -20,6 +20,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     private localEventService = new EventService();
 
     private colGroupDef: ColGroupDef;
+    private originalParent: OriginalColumnGroup;
 
     private children: OriginalColumnGroupChild[];
     private groupId: string;
@@ -30,12 +31,17 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
     private level: number;
 
-    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number) {
+    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number, originalParent: OriginalColumnGroup | null) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
         this.level = level;
+        this.originalParent = originalParent;
+    }
+
+    public getOriginalParent(): OriginalColumnGroup | null {
+        return this.originalParent;
     }
 
     public getLevel(): number {

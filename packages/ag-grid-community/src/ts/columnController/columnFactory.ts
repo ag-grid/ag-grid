@@ -41,7 +41,7 @@ export class ColumnFactory {
 
         // create am unbalanced tree that maps the provided definitions
         const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
-            existingColsCopy, columnKeyCreator);
+            existingColsCopy, columnKeyCreator, null);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const res = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -149,7 +149,8 @@ export class ColumnFactory {
 
     private recursivelyCreateColumns(defs: (ColDef | ColGroupDef)[], level: number,
                                      primaryColumns: boolean, existingColsCopy: Column[],
-                                     columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
+                                     columnKeyCreator: ColumnKeyCreator,
+                                     parent: OriginalColumnGroup | null): OriginalColumnGroupChild[] {
 
         const result: OriginalColumnGroupChild[] = [];
 
@@ -162,7 +163,7 @@ export class ColumnFactory {
             if (this.isColumnGroup(def)) {
                 newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy, columnKeyCreator);
             } else {
-                newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
+                newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator, parent);
             }
             result.push(newGroupOrColumn);
         });
@@ -178,7 +179,7 @@ export class ColumnFactory {
         const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
-            level + 1, primaryColumns, existingColumns, columnKeyCreator);
+            level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
 
         originalGroup.setChildren(children);
 
@@ -194,7 +195,8 @@ export class ColumnFactory {
     }
 
     private createColumn(primaryColumns: boolean, colDef: ColDef,
-                         existingColsCopy: Column[], columnKeyCreator: ColumnKeyCreator): Column {
+                         existingColsCopy: Column[], columnKeyCreator: ColumnKeyCreator,
+                         parent: OriginalColumnGroup | null): Column {
         const colDefMerged = this.mergeColDefs(colDef);
         this.checkForDeprecatedItems(colDefMerged);
 
@@ -208,37 +210,13 @@ export class ColumnFactory {
             this.context.wireBean(column);
         } else {
             column.setColDef(colDefMerged, colDef);
-
-            // this.copyColumnAttributes(currentColDef, colDefMerged);
-            // if (this.gridOptionsWrapper.isDeltaColumnMode()) {
-            //     // this attributes only get copied if delta mode is on
-            //     this.copyDeltaColumnAttributes(currentColDef, colDefMerged);
-            // }
         }
 
+        // even if the column is not new, we need to update the original parent, as the original
+        // parents are created from scratch each time there is a change to the columns.
+        column.setOriginalParent(parent);
+
         return column;
-    }
-
-    // we only copy these attributes for deltaMode, as they interfere with mutable
-    // state inside the grid
-    private copyDeltaColumnAttributes(dest: ColDef, src: ColDef): void {
-    }
-
-    private copyColumnAttributes(dest: ColDef, src: ColDef): void {
-        // copying these doesn't do anything, as they are managed by internal
-        // state in the grid. unless user has 'deltaColumnMode=true' will changing
-        // these make an impact
-        dest.aggFunc = src.aggFunc;
-        dest.hide = src.hide;
-        dest.pinned = src.pinned;
-        dest.rowGroupIndex = src.rowGroupIndex;
-        dest.pivotIndex = src.pivotIndex;
-        dest.width = src.width;
-
-        // this will get used next time the grid uses them
-        dest.headerName = src.headerName;
-        dest.resizable = src.resizable;
-        dest.sortable = src.sortable;
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
