@@ -456,7 +456,7 @@
             margin-left: -$grid-size;
 
             & > span {
-                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{encodecolor($border-color)}'/> </svg>");
+                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='https://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{encodecolor($border-color)}'/> </svg>");
                 height: $grid-size * 2;
             }
         }
