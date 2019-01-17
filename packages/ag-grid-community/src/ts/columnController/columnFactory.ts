@@ -81,7 +81,8 @@ export class ColumnFactory {
                 null,
                 `FAKE_PATH_${column.getId()}}_${i}`,
                 true,
-                i);
+                i,
+                null);
             this.context.wireBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild = autoGroup;
@@ -120,7 +121,7 @@ export class ColumnFactory {
                 for (let i = columnDept - 1; i >= currentDept; i--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
-                    const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
+                    const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept, null);
                     this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
@@ -176,7 +177,7 @@ export class ColumnFactory {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
 
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
-        const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
+        const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level, null);
         this.context.wireBean(originalGroup);
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
             level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);

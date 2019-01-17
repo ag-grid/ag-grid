@@ -40,6 +40,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         this.originalParent = originalParent;
     }
 
+    public setOriginalParent(originalParent: OriginalColumnGroup | null): void {
+        this.originalParent = this.originalParent;
+    }
+
     public getOriginalParent(): OriginalColumnGroup | null {
         return this.originalParent;
     }
