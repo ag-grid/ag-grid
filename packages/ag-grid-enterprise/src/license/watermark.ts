@@ -1,7 +1,7 @@
 import { Autowired, Component, PostConstruct, _ } from 'ag-grid-community';
 import { LicenseManager } from '../licenseManager';
 
-export class Watermark extends Component {
+export class WatermarkComp extends Component {
 
     @Autowired('licenseManager') licenseManager: LicenseManager;
 

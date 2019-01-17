@@ -119,7 +119,6 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
-    @Optional('watermark') private watermark: IComponent<any>;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
 

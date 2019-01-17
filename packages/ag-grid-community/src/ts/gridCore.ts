@@ -74,7 +74,6 @@ export class GridCore extends Component {
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
-    @RefSelector('watermark') private watermark: IComponent<any>;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private finished: boolean;
