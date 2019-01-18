@@ -1308,8 +1308,6 @@ export class RowComp extends Component {
     public destroy(animate = false): void {
         super.destroy();
 
-        console.log(`rowComp destory`);
-
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
