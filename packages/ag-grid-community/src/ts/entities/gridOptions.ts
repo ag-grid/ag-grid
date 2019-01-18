@@ -3,7 +3,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc } from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
@@ -347,8 +347,13 @@ export interface GridOptions {
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
+    loadingCellRenderer?: { new(): ICellRenderer } | string;
+    loadingCellRendererFramework?: any;
+    loadingCellRendererParams?: any;
+
     loadingOverlayComponent?: { new(): ILoadingOverlayComp } | string;
     loadingOverlayComponentFramework?: any;
+
     noRowsOverlayComponent?: { new(): INoRowsOverlayComp } | string;
     noRowsOverlayComponentFramework?: any;
 
