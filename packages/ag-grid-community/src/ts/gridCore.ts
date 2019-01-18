@@ -13,6 +13,7 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { FocusedCellController } from "./focusedCellController";
 import { Component } from "./widgets/component";
 import { ICompFactory } from "./interfaces/iCompFactory";
+import { IClipboardService } from "./interfaces/iClipboardService";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { GridApi } from "./gridApi";
 import { ISideBar } from "./interfaces/ISideBar";
@@ -21,7 +22,6 @@ import { Events, GridSizeChangedEvent } from "./events";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { _ } from "./utils";
-import {IClipboardService} from "./interfaces/iClipboardService";
 
 export class GridCore extends Component {
 
@@ -90,10 +90,12 @@ export class GridCore extends Component {
         this.instantiate(this.context);
 
         // register with services that need grid core
-        this.gridApi.registerGridCore(this);
-        this.filterManager.registerGridCore(this);
-        this.rowRenderer.registerGridCore(this);
-        this.popupService.registerGridCore(this);
+        [
+            this.gridApi,
+            this.filterManager,
+            this.rowRenderer,
+            this.popupService
+        ].forEach(service => service.registerGridCore(this));
 
         if (this.enterprise) {
             this.clipboardService.registerGridCore(this);
