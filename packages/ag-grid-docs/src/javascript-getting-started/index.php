@@ -118,9 +118,9 @@ Well, enabling sorting in ag-Grid is actually quite simple - all you need to do 
 
 <snippet language="js">
 var columnDefs = [
-    {headerName: "Make", field: "make", sortable=true },
-    {headerName: "Model", field: "model", sortable=true },
-    {headerName: "Price", field: "price", sortable=true }
+    {headerName: "Make", field: "make", sortable: true },
+    {headerName: "Model", field: "model", sortable: true },
+    {headerName: "Price", field: "price", sortable: true }
 ];
 </snippet>
 
@@ -132,9 +132,9 @@ var columnDefs = [
 
 <snippet language="js">
 var columnDefs = [
-    {headerName: "Make", field: "make", sortable=true, filter=true },
-    {headerName: "Model", field: "model", sortable=true, filter=true },
-    {headerName: "Price", field: "price", sortable=true, filter=true }
+    {headerName: "Make", field: "make", sortable: true, filter: true },
+    {headerName: "Model", field: "model", sortable: true, filter: true },
+    {headerName: "Price", field: "price", sortable: true, filter: true }
 ];
 </snippet>
 
