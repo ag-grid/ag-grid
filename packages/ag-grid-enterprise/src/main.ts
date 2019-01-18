@@ -88,22 +88,9 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgPrimaryColsList', theClass: PrimaryColsListPanel},
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgSideBar', theClass: SideBarComp},
-
     {componentName: 'AgStatusBar', theClass: StatusBar},
     {componentName: 'AgNameValue', theClass: NameValueComp},
-
     {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
-
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
     {componentName: 'AgWatermark', theClass: WatermarkComp}
-]);
-
-Grid.setEnterpriseDefaultComponents([
-    {componentName: 'agAggregationComponent', theClass: AggregationComp},
-    {componentName: 'agColumnsToolPanel', theClass: ColumnToolPanel},
-    {componentName: 'agFiltersToolPanel', theClass: FiltersToolPanel},
-    {componentName: 'agSelectedRowCountComponent', theClass: SelectedRowsComp},
-    {componentName: 'agTotalRowCountComponent', theClass: TotalRowsComp},
-    {componentName: 'agFilteredRowCountComponent', theClass: FilteredRowsComp},
-    {componentName: 'agTotalAndFilteredRowCountComponent', theClass: TotalAndFilteredRowsComp}
 ]);

@@ -95,7 +95,6 @@ export class GridApi {
     @Autowired('immutableService') private immutableService: ImmutableService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
-    @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnController') private columnController: ColumnController;
@@ -123,16 +122,21 @@ export class GridApi {
     @Optional('statusBarService') private statusBarService: IStatusBarService;
 
     private gridPanel: GridPanel;
-    private headerRootComp: HeaderRootComp;
+    private gridCore: GridCore;
 
+    private headerRootComp: HeaderRootComp;
     private clientSideRowModel: ClientSideRowModel;
     private infinitePageRowModel: InfiniteRowModel;
+
     private serverSideRowModel: IServerSideRowModel;
 
     private detailGridInfoMap: {[id: string]: DetailGridInfo} = {};
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
+    }
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
     }
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
@@ -906,6 +910,9 @@ export class GridApi {
     }
 
     public destroy(): void {
+        // destroy the UI first (as they use the services)
+        this.gridCore.destroy();
+        // destroy the services
         this.context.destroy();
     }
 

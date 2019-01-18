@@ -103,6 +103,8 @@ export class Grid {
     private static enterpriseDefaultComponents: any[];
     protected logger: Logger;
 
+    private gridOptions: GridOptions;
+
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
@@ -137,6 +139,8 @@ export class Grid {
         if (!gridOptions) {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
+
+        this.gridOptions = gridOptions;
 
         const rowModelClass = this.getRowModelClass(gridOptions);
 
@@ -194,7 +198,7 @@ export class Grid {
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
                 ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
                 NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
-                LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
+                LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, StandardMenuFactory,
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
@@ -208,6 +212,9 @@ export class Grid {
         this.logger = new Logger('ag-Grid', () => gridOptions.debug);
         const contextLogger = new Logger('Context', () => contextParams.debug);
         this.context = new Context(contextParams, contextLogger);
+
+        const gridCore = new GridCore();
+        this.context.wireBean(gridCore);
 
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
@@ -274,7 +281,7 @@ export class Grid {
     }
 
     public destroy(): void {
-        this.context.destroy();
+        this.gridOptions.api.destroy();
     }
 
 }

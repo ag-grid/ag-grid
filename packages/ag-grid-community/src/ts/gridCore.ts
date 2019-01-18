@@ -8,7 +8,7 @@ import { EventService } from "./eventService";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
-import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
+import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { FocusedCellController } from "./focusedCellController";
 import { Component } from "./widgets/component";
@@ -16,14 +16,13 @@ import { ICompFactory } from "./interfaces/iCompFactory";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { GridApi } from "./gridApi";
 import { ISideBar } from "./interfaces/ISideBar";
-import { IComponent } from "./interfaces/iComponent";
 import { RefSelector } from "./widgets/componentAnnotations";
 import { Events, GridSizeChangedEvent } from "./events";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { _ } from "./utils";
+import {IClipboardService} from "./interfaces/iClipboardService";
 
-@Bean('gridCore')
 export class GridCore extends Component {
 
     private static TEMPLATE_NORMAL =
@@ -43,7 +42,7 @@ export class GridCore extends Component {
             </div>
             <ag-status-bar ref="statusBar"></ag-status-bar>
             <ag-pagination></ag-pagination>
-            <ag-watermark ref="watermark"></ag-watermark>
+            <ag-watermark></ag-watermark>
         </div>`;
 
     @Autowired('enterprise') private enterprise: boolean;
@@ -71,19 +70,15 @@ export class GridCore extends Component {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
+    @Optional('clipboardService') private clipboardService: IClipboardService;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
-    private finished: boolean;
     private doingVirtualPaging: boolean;
 
     private logger: Logger;
-
-    constructor() {
-        super();
-    }
 
     @PostConstruct
     public init(): void {
@@ -94,7 +89,14 @@ export class GridCore extends Component {
         this.setTemplate(template);
         this.instantiate(this.context);
 
+        // register with services that need grid core
+        this.gridApi.registerGridCore(this);
+        this.filterManager.registerGridCore(this);
+        this.rowRenderer.registerGridCore(this);
+        this.popupService.registerGridCore(this);
+
         if (this.enterprise) {
+            this.clipboardService.registerGridCore(this);
             this.sideBarComp.registerGridComp(this.gridPanel);
         }
 
@@ -117,9 +119,6 @@ export class GridCore extends Component {
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
         // which doLayout indirectly depends on
         this.addRtlSupport();
-
-        this.finished = false;
-        this.addDestroyFunc(() => this.finished = true);
 
         this.logger.log('ready');
 

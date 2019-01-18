@@ -15,12 +15,17 @@ export class PopupService {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
     @Autowired('eventService') private eventService: EventService;
 
     private activePopupElements: HTMLElement[] = [];
+
+    private gridCore: GridCore;
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+    }
 
     private getDocument(): Document {
         return this.gridOptionsWrapper.getDocument();

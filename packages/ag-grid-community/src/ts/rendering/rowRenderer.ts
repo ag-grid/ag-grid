@@ -38,7 +38,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired("gridCore") private gridCore: GridCore;
     @Autowired("$scope") private $scope: any;
     @Autowired("expressionService") private expressionService: ExpressionService;
     @Autowired("templateService") private templateService: TemplateService;
@@ -82,6 +81,12 @@ export class RowRenderer extends BeanStub {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
+
+    private gridCore: GridCore;
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+    }
 
     public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");

@@ -62,11 +62,16 @@ export class ClipboardService implements IClipboardService {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
     private logger: Logger;
+
+    private gridCore: GridCore;
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+    }
 
     @PostConstruct
     private init(): void {
