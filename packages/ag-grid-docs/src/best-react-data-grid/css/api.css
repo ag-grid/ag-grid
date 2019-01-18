@@ -55,8 +55,8 @@
     .api-methods-container img {
         width: 170px;
         position: absolute;
-        right: 20px;
-        top: 210px;
+        right: 0;
+        top: 240px;
     }
 
     .api-code {

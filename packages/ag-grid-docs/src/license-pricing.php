@@ -65,7 +65,7 @@ s.parentNode.insertBefore(b, s);})();
 
             <h1>ag-Grid Pricing</h1> 
 <hr>
-            <p class="lead">ag-Grid comes in two versions &ndash; <strong>Community</strong> and <strong>Enterprise</strong>. Let's go over the differences between the two, so you can pick the one that is most suitable for your project.</p>
+            <p class="lead">ag-Grid comes in two versions – <strong>Community</strong> and <strong>Enterprise</strong>. Let's go over the differences between the two, so you can pick the one that is most suitable for your project.</p>
 <!--
             <p class="lead">Ag-Grid comes in two versions &ndash; <strong>Community</strong> and <strong>Enterprise</strong>. The document outlines the important differences between the two.</p>
                 <p class="lead">The Community eddition is <strong>MIT licensed</strong>, supports all major JavaScript frameworks, includes all essential datagrid features and can be used free of charge.</p> 
@@ -114,7 +114,7 @@ s.parentNode.insertBefore(b, s);})();
             <p>
                 ag-Grid Enterprise is our commercial product that is designed for Enterprise development teams. 
                 The commercial licenses are <strong>perpetual</strong> and include <strong>one year</strong> of support, maintenance and upgrades.
-We offer three flavors &ndash; <strong>Single Application Developer</strong>, <strong>Multiple Application Developer</strong> and <strong>SaaS / OEM</strong>.
+We offer three flavors – <strong>Single Application Developer</strong>, <strong>Multiple Application Developer</strong> and <strong>a Deployment License.</strong>.
             </p>   
 
                 <div class="inline-container">
@@ -132,11 +132,7 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                     </div>
 
                     <div class="card-footer">
-                        <a class="btn" 
-                            data-product-type="single-developer" 
-                            href="#" 
-                            data-toggle="modal" 
-                            data-target=".orderForm-applicationDeveloper">Enquire</a>
+                        <a class="btn" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-applicationDeveloper">Enquire</a>
                     </div>
                 </div>
 
@@ -164,11 +160,11 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                 <div class="col-md-4">
                 <div class="license">
                     <div class="card-body">
-                        <h3>SaaS and OEM</h3>
-                        <h4>POA
-                            <span>price on asking</span>
+                        <h3>Deployment License</h3>
+                        <h4>$750 USD
+                            <span>per Production Environment</span>
                         </h4>
-                        <p>Usage of ag-Grid Enterprise in <br><strong>SaaS/OEM Applications</strong></p>
+                        <p>Usage of ag-Grid Enterprise in <br><strong>external facing Applications</strong></p>
                         <p><a href="start-trial.php">Sign up for a free trial</a></p>
                     </div>
 
@@ -185,13 +181,13 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
 
                 <p>To pick the correct license, answer these simple questions: </p>
 
-                <h3 class="license-question">&mdash; Are you using ag-Grid Enterprise in one application? </h3>
+                <h3 class="license-question">— Are you using ag-Grid Enterprise in one application? </h3>
 
                 <p>If it's one application, a Single Application License is correct. Otherwise a Multiple Application License is best.</p>
 
-                <h3 class="license-question">&mdash; Is your application for an internal or external end-user?</h3>
+                <h3 class="license-question">— Is your application for an internal or external end-user?</h3>
 
-                <p>If external, then you also need SaaS or OEM licensing.</p>
+                <p>If external, then you also need a Deployment License (in addition to a Developer License).</p>
 
                 <p>If you still need help figuring out which one of the above is most suitable for your case, <a href="mailto:info@ag-grid.com?Subject=ag-Grid%20Enquiry">contact us.</a></p>
 
@@ -225,26 +221,22 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                     <p>
                         Multiple Application developer license allows unlimited applications to be developed by a fixed number of developers.
                         A typical example is 5 license to cover an <strong>unlimited number of applications</strong> with 5 developers working
-                        across all applications concurrently. Use site license if you want to cover a group
-                        of developers developing any number of applications.
+                        across all applications concurrently.
                     </p>
                 </dd>
-
-                <dt>What are OEM and SaaS Licenses?</dt>
+                <dt>When do you need a Deployment license and how many?</dt>
                 <dd>
                     <p>
-                        SaaS is <a href="https://en.wikipedia.org/wiki/Software_as_a_service">Software as a Service</a>.
-                        If you will be <strong>selling
-                        ag-Grid</strong> as part of a SaaS then you require an additional SaaS license.
+                        A Deployment License is only required if you are making your application/s available to users external to your organisation.
+                        To calculate how many licenses you need we ask about the number of production environments you need to maintain. In a cloud-based app your application instance will count as one regardless of the number of servers. In an on-premise install we'll count the number of load-balanced environments serving the app rather than end point devices that access it.
                     </p>
 
                     <p>
-                        OEM is <a href="https://en.wikipedia.org/wiki/Original_equipment_manufacturer">Original Equipment
-                            Manufacturer</a>. If you will be <strong>selling
-                        ag-Grid</strong> as part of your product then you require additional OEM license.
+                        Multiple Application developer license allows unlimited applications to be developed by a fixed number of developers.
+                        A typical example is 5 license to cover an <strong>unlimited number of applications</strong> with 5 developers working
+                        across all applications concurrently.
                     </p>
                 </dd>
-
                 <dt>Do developers have to be named?</dt>
                 <dd>
                     <p>
@@ -268,7 +260,7 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                 <dt>Do you provide bulk or other license types?</dt>
                 <dd>
                     <p>
-                        Yes. Get in touch and tell us what you are looking for. We are always open to dicussion and will propose what we think is fair.
+                        Yes. Get in touch and tell us what you are looking for. We are always open to discussion and will propose what we think is fair.
                     </p>
                 </dd>
 

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: Getting Started with Angular";
-$pageDescription = "ag-Grid is a feature-rich Angular datagrid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Angular application.";
+$pageTitle = "Get Started with Angular Grid: ag-Grid Reference";
+$pageDescription = "ag-Grid is a feature-rich Angular Grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Angular application.";
 $pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
