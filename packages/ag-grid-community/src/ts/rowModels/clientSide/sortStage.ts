@@ -7,6 +7,7 @@ import {SortController} from "../../sortController";
 import {_} from "../../utils";
 import {RowNodeTransaction} from "./clientSideRowModel";
 import {ChangedPath} from "./changedPath";
+import {ColumnController} from "../../columnController/columnController";
 
 @Bean('sortStage')
 export class SortStage {
@@ -14,6 +15,7 @@ export class SortStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortService') private sortService: SortService;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): void {
         const sortOptions: SortOption[] = this.sortController.getSortForRowController();
@@ -31,7 +33,11 @@ export class SortStage {
         const dirtyLeafNodes = deltaSort ?
             this.calculateDirtyNodes(params.rowNodeTransactions) : null;
 
-        this.sortService.sort(params.rowNode, sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath);
+        const valueColumns = this.columnController.getValueColumns();
+        const noAggregations = _.missingOrEmpty(valueColumns);
+
+        this.sortService.sort(params.rowNode, sortOptions, sortActive, deltaSort, dirtyLeafNodes,
+            params.changedPath, noAggregations);
     }
 
     private calculateDirtyNodes(rowNodeTransactions: RowNodeTransaction[]): {[nodeId: string]: boolean} {

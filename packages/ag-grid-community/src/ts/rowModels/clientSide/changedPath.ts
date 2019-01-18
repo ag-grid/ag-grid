@@ -16,6 +16,9 @@ export class ChangedPath {
         this.keepingColumns = keepingColumns;
     }
 
+    // can be set inactive by:
+    // a) ClientSideRowModel, if no transactions or
+    // b) PivotService, if secondary columns changed
     public setInactive(): void {
         this.active = false;
     }
@@ -24,6 +27,7 @@ export class ChangedPath {
         return this.active;
     }
 
+    // used by change detection (provides cols) and groupStage (doesn't provide cols)
     public addParentNode(rowNode: RowNode | null, columns?: Column[]): void {
         this.validateActive();
 
@@ -49,6 +53,10 @@ export class ChangedPath {
     public isInPath(rowNode: RowNode): boolean {
         this.validateActive();
         return this.nodeIdsToBoolean[rowNode.id];
+    }
+
+    public canSkip(rowNode: RowNode): boolean {
+        return this.active && !this.nodeIdsToBoolean[rowNode.id];
     }
 
     public getValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] {

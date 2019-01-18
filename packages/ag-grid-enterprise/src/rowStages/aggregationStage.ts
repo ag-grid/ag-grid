@@ -38,6 +38,15 @@ export class AggregationStage implements IRowNodeStage {
         const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) { return null; }
 
+        // if changed path is active, it means we came from a) change detection or b) transaction update.
+        // for both of these, if no value columns are present, it means there is nothing to aggregate now
+        // and there is no cleanup to be done (as value columns don't change between transactions or change
+        // detections). if no value columns and no changed path, means we have to go through all nodes in
+        // case we need to clean up agg data from before.
+        const noValueColumns = _.missingOrEmpty(this.columnController.getValueColumns());
+        const changedPathActive = params.changedPath && params.changedPath.isActive();
+        if (!noValueColumns && changedPathActive) { return; }
+
         const aggDetails = this.createAggDetails(params);
 
         this.recursivelyCreateAggData(params.rowNode, aggDetails);
@@ -82,8 +91,7 @@ export class AggregationStage implements IRowNodeStage {
             if (suppressAggAtRootLevel && notPivoting) { return; }
         }
 
-        const skipBecauseNoChangedPath = aggDetails.changedPath.isActive()
-            && !aggDetails.changedPath.isInPath(rowNode);
+        const skipBecauseNoChangedPath = aggDetails.changedPath.canSkip(rowNode);
 
         if (skipBecauseNoChangedPath) { return; }
 

@@ -221,14 +221,17 @@ export class ClientSideRowModel {
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        const valueColumns = this.columnController.getValueColumns();
+        // const valueColumns = this.columnController.getValueColumns();
 
-        const noValueColumns = _.missingOrEmpty(valueColumns);
+        // const noValueColumns = _.missingOrEmpty(valueColumns);
         const noTransactions = _.missingOrEmpty(rowNodeTransactions);
 
         const changedPath = new ChangedPath(false);
 
-        if (noValueColumns || noTransactions) {
+        // if (noValueColumns || noTransactions) {
+        //     changedPath.setInactive();
+        // }
+        if (noTransactions) {
             changedPath.setInactive();
         }
 

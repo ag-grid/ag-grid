@@ -142,11 +142,14 @@ export class GroupStage implements IRowNodeStage {
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private recursiveSortChildren(node: RowNode, details: GroupingDetails): void {
         _.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
-        node.childrenAfterGroup.forEach((childNode: RowNode) => {
-            if (childNode.childrenAfterGroup) {
+        let childNode: RowNode;
+
+        for (let i = 0; i<node.childrenAfterGroup.length; i++) {
+            childNode = node.childrenAfterGroup[i];
+            if (childNode.childrenAfterGroup && !details.changedPath.canSkip(childNode)) {
                 this.recursiveSortChildren(childNode, details);
             }
-        });
+        }
     }
 
     private sortGroupsWithComparator(rootNode: RowNode): void {

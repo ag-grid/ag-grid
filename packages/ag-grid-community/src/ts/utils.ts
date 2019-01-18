@@ -1802,7 +1802,8 @@ export class Utils {
         if (!rowNodes) {
             return;
         }
-        rowNodes.sort((nodeA: RowNode, nodeB: RowNode) => {
+
+        const comparator = (nodeA: RowNode, nodeB: RowNode) => {
             const positionA = rowNodeOrder[nodeA.id];
             const positionB = rowNodeOrder[nodeB.id];
 
@@ -1829,7 +1830,24 @@ export class Utils {
             } else {
                 return -1;
             }
-        });
+        };
+
+        // check if the list first needs sorting
+        let rowNodeA: RowNode;
+        let rowNodeB: RowNode;
+        let atLeastOneOutOfOrder = false;
+        for (let i = 0; i<rowNodes.length - 1; i++) {
+            rowNodeA = rowNodes[i];
+            rowNodeB = rowNodes[i+1];
+            if (comparator(rowNodeA, rowNodeB) > 0) {
+                atLeastOneOutOfOrder = true;
+                break;
+            }
+        }
+
+        if (atLeastOneOutOfOrder) {
+            rowNodes.sort(comparator);
+        }
     }
 
     public static fuzzyCheckStrings(inputValues: string[],
