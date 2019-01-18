@@ -203,9 +203,9 @@ window.customElements.define('polymer-getting-started-app', PolymerGettingStarte
 
 <snippet language="js">
 this.columnDefs = [
-    { headerName: "Make", field: "make", sortable=true },
-    { headerName: "Model", field: "model", sortable=true },
-    { headerName: "Price", field: "price", sortable=true },
+    { headerName: "Make", field: "make", sortable: true },
+    { headerName: "Model", field: "model", sortable: true },
+    { headerName: "Price", field: "price", sortable: true },
 ];
 </snippet>
 
@@ -227,9 +227,9 @@ this.columnDefs = [
 
 <snippet language="js">
 this.columnDefs = [
-    { headerName: "Make", field: "make", sortable=true, filter=true },
-    { headerName: "Model", field: "model", sortable=true, filter=true },
-    { headerName: "Price", field: "price", sortable=true, filter=true },
+    { headerName: "Make", field: "make", sortable: true, filter: true },
+    { headerName: "Model", field: "model", sortable: true, filter: true },
+    { headerName: "Price", field: "price", sortable: true, filter: true },
 ];
 </snippet>
 

@@ -144,9 +144,9 @@ each column entry specifies the header label and the data field to be displayed 
 
 <snippet language="js">
 columnDefs: [
-    {headerName: "Make", field: "make", sortable=true },
-    {headerName: "Model", field: "model", sortable=true },
-    {headerName: "Price", field: "price", sortable=true }
+    {headerName: "Make", field: "make", sortable: true },
+    {headerName: "Model", field: "model", sortable: true },
+    {headerName: "Price", field: "price", sortable: true }
 ]
 </snippet>
 
@@ -158,9 +158,9 @@ columnDefs: [
 
 <snippet language="js">
 columnDefs: [
-    {headerName: "Make", field: "make", sortable=true, filter=true },
-    {headerName: "Model", field: "model", sortable=true, filter=true },
-    {headerName: "Price", field: "price", sortable=true, filter=true }
+    {headerName: "Make", field: "make", sortable: true, filter: true },
+    {headerName: "Model", field: "model", sortable: true, filter: true },
+    {headerName: "Price", field: "price", sortable: true, filter: true }
 ]
 </snippet>
 
