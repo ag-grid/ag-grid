@@ -611,7 +611,11 @@ export class Utils {
     static removeAllChildren(node: HTMLElement) {
         if (node) {
             while (node.hasChildNodes() && node.lastChild) {
-                node.removeChild(node.lastChild);
+                try {
+                    node.removeChild(node.lastChild);
+                } catch (e) {
+                    return;
+                }
             }
         }
     }
