@@ -9,7 +9,7 @@
 
     .api .container {
         display: grid;
-        grid-template-columns: auto 500px;
+        grid-template-columns: auto 430px;
         column-gap: 40px;
         margin: 0 auto;
     }
@@ -55,8 +55,8 @@
     .api-methods-container img {
         width: 170px;
         position: absolute;
-        right: 20px;
-        top: 210px;
+        right: 0;
+        top: 240px;
     }
 
     .api-code {

@@ -95,6 +95,10 @@ display: block;
 margin: 0 auto;
 }
 
+.grid-example {
+  max-width: 776px;
+}
+
 .versions {
         font-family: 'Roboto', sans-serif;
     font-size: 2.6rem;
@@ -137,6 +141,8 @@ text-align: center;
 text-align: center;
 background-color: #f9fcff;
 border-radius: 45px 30px 45px;
+width: 98%;
+margin: auto;
 }
 .features .img-container:after {
 position: absolute;
@@ -379,7 +385,7 @@ display: block;
 }
 .api .container {
 display: grid;
-grid-template-columns: auto 500px;
+grid-template-columns: auto 430px;
 column-gap: 40px;
 margin: 0 auto;
 }
@@ -417,8 +423,8 @@ position: relative;
 .api-methods-container img {
 width: 170px;
 position: absolute;
-right: 20px;
-top: 210px;
+right: 0;
+top: 240px;
 }
 .api-code {
 margin-bottom: 30px;

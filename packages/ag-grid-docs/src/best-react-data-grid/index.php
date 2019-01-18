@@ -7,9 +7,9 @@ $pageGroup = "basics";
 include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
-<script src="/best-react-grid/js/ag-grid-enterprise@18.1.1.js" defer></script>
-<script src="/best-react-grid/js/grid-performance.js" type="module"></script>
-<script src="/best-react-grid/js/grid-api.js" type="module"></script>
+<script src="/_assets/js/ag-grid-enterprise@20.0.0.js" defer></script>
+<script src="/best-react-data-grid/js/grid-performance.js" type="module"></script>
+<script src="/best-react-data-grid/js/grid-api.js" type="module"></script>
 <section>
     
     <div id="head-top">
@@ -17,10 +17,10 @@ include '../landing-pages/convert-header.php';
             <img alt="ag-Grid React Component" src="/best-angular-grid/assets/images/angular-grid.svg">
         </a>
     </div>
-    <h1>ag-Grid: World's Leading React Datagrid</h1>
+    <h1>World's Leading React Datagrid Component</h1>
     <p class="lead-description" id="opener">ag-Grid is designed to integrate deeply into React.<br>
         Use our grid as a React component to quickly add a react grid table to your application.<br>
-        Discover the versions, key benefits and resources available to quickly add a data grid or React datatable to your React application.
+        Discover the versions9 key benefits and resources available to quickly add a data grid or React datatable to your React application.
     </p>
     <div class="container">
         <div class="row">
@@ -31,7 +31,7 @@ include '../landing-pages/convert-header.php';
                     &#10003; Well-Maintained
                 </p>
                 <br>
-                <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">View Demo</button></a>
+                <a href="https://www.ag-grid.com/example.php#/" target="_blank"><button type="button" class="btn btn-primary">View Demo</button></a>
             </div>
             <div class="col">
                 <p class="lead-description">
@@ -148,12 +148,12 @@ include '../landing-pages/convert-header.php';
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank">Github</a>
+            <a href="https://github.com/ag-grid/ag-grid-react" target="_blank">Github</a>
             <hr>
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank">npm-react-grid</a>
+            <a href="https://www.npmjs.com/package/ag-grid-react" target="_blank">npm-react-grid</a>
             <hr>
         </div>
     </div>
@@ -213,7 +213,7 @@ include '../landing-pages/convert-header.php';
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Features Overview</button></a>
+            <a href="https://www.ag-grid.com/features-overview/" target="_blank"><button type="button" class="btn btn-primary">Features Overview</button></a>
             <hr>
         </div>
         <div class="col">
@@ -261,7 +261,7 @@ include '../landing-pages/convert-header.php';
 <div class="row">
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Stress Test Demo</button></a>
+    <a href="https://www.ag-grid.com/example.php#/" target="_blank"><button type="button" class="btn btn-primary">Stress Test Demo</button></a>
     <hr>
 </div>
 <div class="col">
@@ -289,7 +289,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
     <pre></pre>
 </div>
 <div>
-    <img alt="Prompt to click on API links" src="/best-React-grid/assets/images/prompt-to-click-on-api-links.jpg">
+    <img alt="Prompt to click on API links" src="./images/prompt-to-click-on-api-links.png">
     <ul class="api-operations">
         <li data-action="sort-by-one-column"><a>Sort by one column (Country)</a></li>
         <li data-action="sort-by-two-columns"><a>Sort by two columns (Country & Year)</a></li>
@@ -317,7 +317,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
 <div class="row">
 <div class="col">
 <hr>
-<a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Grid API</button></a>
+<a href="https://www.ag-grid.com/javascript-grid-api/" target="_blank"><button type="button" class="btn btn-primary">Grid API</button></a>
 <hr>
 </div>
 <div class="col">
@@ -370,7 +370,7 @@ You can easily extend the default functionality by creating your custom React co
 <div class="row">
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Customize React Grid Blog</button></a>
+    <a href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb" target="_blank"><button type="button" class="btn btn-primary">Customize React Grid Blog</button></a>
     <hr>
 </div>
 <div class="col">
@@ -422,12 +422,12 @@ React Responsive Grid Layout
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Responsive Grid</button></a>
+            <a href="https://www.ag-grid.com/javascript-grid-responsiveness/" target="_blank"><button type="button" class="btn btn-primary">Responsive Grid</button></a>
             <hr>
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">ag-Grid Themes</button></a>
+            <a href="https://www.ag-grid.com/javascript-grid-styling/" target="_blank"><button type="button" class="btn btn-primary">ag-Grid Themes</button></a>
             <hr>
         </div>
         <div class="col">
@@ -475,17 +475,17 @@ React Responsive Grid Layout
 </div>
 <div class="row">
     <div class="col">
-        <a href=""><p>
+        <a href="https://www.ag-grid.com/documentation-main/documentation.php"><p>
             ag-Grid React Documentation
         </p></a>
     </div>
         <div class="col">
-            <a href=""> <p>
+            <a href="https://www.ag-grid.com/example.php#/"> <p>
                 Kitchen Sink Demo
             </p></a>
         </div>
             <div class="col">
-                <a href=""><p>
+                <a href="https://www.ag-grid.com/features-overview/"><p>
                     View all Features 
                 </p></a>
             </div>
@@ -503,7 +503,7 @@ React Responsive Grid Layout
 </p>
 <div class="row">
     <div class="col">
-        <a href=""><p class="lead-description">
+        <a href="https://www.ag-grid.com/react-more-details/"><p class="lead-description">
             ag-Grid React Overview
         </p></a>
         <img class="icons" src="/images/icons/overview.svg">
@@ -512,7 +512,7 @@ React Responsive Grid Layout
         </p>
     </div>
         <div class="col">
-            <a href=""> <p class="lead-description">
+            <a href="https://www.ag-grid.com/react-getting-started/"> <p class="lead-description">
                 Getting started with React Grid[Guide]
             </p></a>
             <img class="icons" src="/images/icons/guide.svg">
@@ -521,7 +521,7 @@ React Responsive Grid Layout
             </p>
         </div>
             <div class="col">
-                <a href=""><p class="lead-description">
+                <a href="https://medium.com/ag-grid/get-started-with-react-grid-in-5-minutes-f6e5fb16afa"><p class="lead-description">
                     Get Started with React Grid[Blog]
                 </p></a>
                 <img class="icons" src="/images/icons/blog.svg">

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: Getting Started with Vue";
-$pageDescription = "ag-Grid is a feature-rich Vue datagrid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
+$pageTitle = "Get Started with Vue Grid: ag-Grid Reference";
+$pageDescription = "ag-Grid is a feature-rich Vue grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
 $pageKeyboards = "Vue Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
