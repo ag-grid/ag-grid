@@ -161,6 +161,7 @@ export { ColumnApi } from "./dist/lib/columnController/columnApi";
 export { IHeader } from "./dist/lib/headerRendering/header/headerComp";
 export { ICellRendererParams } from "./dist/lib/rendering/cellRenderers/iCellRenderer";
 export { IRichCellEditorParams } from "./dist/lib/interfaces/iRichCellEditorParams";
+export { DynamicComponentDef, DynamicComponentParams } from "./dist/lib/components/framework/componentResolver";
 export { WrapableInterface } from "./dist/lib/components/framework/frameworkComponentWrapper";
 export { BaseComponentWrapper } from "./dist/lib/components/framework/frameworkComponentWrapper";
 export { FrameworkComponentWrapper } from "./dist/lib/components/framework/frameworkComponentWrapper";
