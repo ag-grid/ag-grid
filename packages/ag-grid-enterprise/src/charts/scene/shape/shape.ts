@@ -16,7 +16,7 @@ export abstract class Shape extends Node {
      * These static defaults are meant to be inherited by subclasses.
      */
     protected static defaultStyles = chainObjects({}, {
-        fillStyle: null,
+        fillStyle: 'black',
         strokeStyle: null,
         lineWidth: 1,
         opacity: 1
@@ -112,6 +112,6 @@ export abstract class Shape extends Node {
         ctx.globalAlpha = this.opacity;
     }
 
-    abstract isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean
-    abstract isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean
+    abstract isPointInPath(x: number, y: number): boolean
+    abstract isPointInStroke(x: number, y: number): boolean
 }

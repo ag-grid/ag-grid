@@ -1,5 +1,8 @@
-import { Shape } from "./shape";
+import {Shape} from "./shape";
 import {chainObjects} from "../../util/object";
+import {HdpiCanvas} from "../../canvas/hdpiCanvas";
+import {BBox, isPointInBBox} from "../bbox";
+import {Matrix} from "../matrix";
 
 export class Text extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -82,11 +85,62 @@ export class Text extends Shape {
         return this._textBaseline;
     }
 
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
-        return false;
+    private readonly getPlainBBox = HdpiCanvas.supports.textMetrics
+        ? (): BBox => {
+            const metrics = HdpiCanvas.measureText(this.text, this.font,
+                this.textBaseline, this.textAlign);
+
+            return {
+                x: this.x - metrics.actualBoundingBoxLeft,
+                y: this.y - metrics.actualBoundingBoxAscent,
+                width: metrics.width,
+                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+            };
+        }
+        : (): BBox => {
+            const size = HdpiCanvas.getTextSize(this.text, this.font);
+            let x = this.x;
+            let y = this.y;
+
+            switch (this.textAlign) {
+                case 'end':
+                case 'right':
+                    x -= size.width;
+                    break;
+                case 'center':
+                    x -= size.width / 2;
+            }
+
+            switch (this.textBaseline) {
+                case 'alphabetic':
+                    y -= size.height * 0.8;
+                    break;
+                case 'middle':
+                    y -= size.height * 0.40;
+                    break;
+                case 'ideographic':
+                    y -= size.height;
+                    break;
+                case 'top':
+                case 'hanging':
+                    y += size.height * 0.2;
+                    break;
+                case 'bottom':
+                    y -= size.height;
+                    break;
+            }
+
+            return {x, y, width: size.width, height: size.height};
+        };
+
+    isPointInPath(x: number, y: number): boolean {
+        const point = this.transformPoint(x, y);
+        const bbox = this.getPlainBBox();
+
+        return isPointInBBox(bbox, point.x, point.y);
     }
 
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInStroke(x: number, y: number): boolean {
         return false;
     }
 
@@ -124,6 +178,14 @@ export class Text extends Shape {
                 ctx.strokeText(this.text, this.x, this.y);
             }
         }
+
+        // debug
+        const bbox = this.getPlainBBox();
+        ctx.save();
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bbox.x, bbox.y, bbox.width, bbox.height);
+        ctx.restore();
 
         this.dirty = false;
     }

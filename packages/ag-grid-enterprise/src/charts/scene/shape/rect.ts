@@ -2,6 +2,7 @@ import { Shape } from "./shape";
 import { Path } from "../path";
 import { Matrix } from "../matrix";
 import {chainObjects} from "../../util/object";
+import {BBox, isPointInBBox} from "../bbox";
 
 export class Rect extends Shape {
 
@@ -110,11 +111,23 @@ export class Rect extends Shape {
         }
     }
 
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
-        return false;
+    private getPlainBBox(): BBox {
+        return {
+            x: this.x,
+            y: this.y,
+            width: this.width,
+            height: this.height
+        };
     }
 
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInPath(x: number, y: number): boolean {
+        const point = this.transformPoint(x, y);
+        const bbox = this.getPlainBBox();
+
+        return isPointInBBox(bbox, point.x, point.y);
+    }
+
+    isPointInStroke(x: number, y: number): boolean {
         return false;
     }
 
