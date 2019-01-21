@@ -10,7 +10,7 @@ export class Scene {
         const canvas = this.hdpiCanvas.canvas;
         this.ctx = canvas.getContext('2d')!;
         parent.appendChild(canvas);
-        // this.setupListeners(canvas); // debug
+        this.setupListeners(canvas); // debug
     }
 
     private readonly hdpiCanvas: HdpiCanvas;
@@ -20,38 +20,73 @@ export class Scene {
         canvas.addEventListener('mousemove', this.onMouseMove);
     }
 
+    private lastHit?: { // debug
+        node: Shape,
+        fillStyle: string | null
+    };
     private onMouseMove = (e: MouseEvent) => { // debug
-        const pixelRatio = this.hdpiCanvas.pixelRatio;
-        const x = e.offsetX * pixelRatio;
-        const y = e.offsetY * pixelRatio;
+        const x = e.offsetX;
+        const y = e.offsetY;
 
-        const node = this.root;
-
-        if (node instanceof Parent) {
-            const children = node.children;
-            const n = children.length;
-            for (let i = 0; i < n; i++) {
-                const child = children[i];
-                if (child instanceof Shape) {
-                    // TODO: right now, setting these properties causes
-                    //       a scene to rerender, even if values are the same
-                    if (child.isPointInPath(this.ctx, x, y)) {
-                        child.fillStyle = 'yellow';
-                    }
-                    else {
-                        child.fillStyle = 'red';
-                    }
-
-                    if (child.isPointInStroke(this.ctx, x, y)) {
-                        child.strokeStyle = 'lime';
-                    }
-                    else {
-                        child.strokeStyle = 'black';
-                    }
+        if (this.root) {
+            const node = this.hitTestPath(this.root, x, y);
+            if (node) {
+                if (node instanceof Shape) {
+                    this.lastHit = { node, fillStyle: node.fillStyle };
+                    node.fillStyle = 'yellow';
                 }
+            } else if (this.lastHit) {
+                this.lastHit.node.fillStyle = this.lastHit.fillStyle;
             }
         }
+
+        // const pixelRatio = this.hdpiCanvas.pixelRatio;
+        // Path2D's isPointInPath/isPointInStroke require multiplying by the pixelRatio
+        // const x = e.offsetX * pixelRatio;
+        // const y = e.offsetY * pixelRatio;
+        //
+        // const node = this.root;
+        // if (node instanceof Parent) {
+        //     const children = node.children;
+        //     const n = children.length;
+        //     for (let i = 0; i < n; i++) {
+        //         const child = children[i];
+        //         if (child instanceof Shape) {
+        //             // TODO: right now, setting these properties causes
+        //             //       a scene to rerender, even if values are the same
+        //             if (child.isPointInPath(this.ctx, x, y)) {
+        //                 child.fillStyle = 'yellow';
+        //             }
+        //             else {
+        //                 child.fillStyle = 'red';
+        //             }
+        //
+        //             if (child.isPointInStroke(this.ctx, x, y)) {
+        //                 child.strokeStyle = 'lime';
+        //             }
+        //             else {
+        //                 child.strokeStyle = 'black';
+        //             }
+        //         }
+        //     }
+        // }
     };
+
+    hitTestPath(node: Node, x: number, y: number): Node | undefined {
+        if (node instanceof Parent) {
+            const children = node.children;
+            const n = node.children.length;
+            // Group nodes added later should be hit-tested first,
+            // as they are rendered on top of previously added nodes.
+            for (let i = n - 1; i >= 0; i--) {
+                const hit = this.hitTestPath(children[i], x, y);
+                if (hit)
+                    return hit;
+            }
+        } else if (node instanceof Shape && node.isPointInPath(x, y)) {
+            return node;
+        }
+    }
 
     _width: number;
     get width(): number {
