@@ -15,7 +15,7 @@ import { ComponentType } from "./componentResolver";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
-import { LoadingCellRenderer } from "../../rendering/rowComp";
+import { LoadingCellRenderer } from "../../rendering/cellRenderers/loadingCellRenderer";
 import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
 import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
 import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";

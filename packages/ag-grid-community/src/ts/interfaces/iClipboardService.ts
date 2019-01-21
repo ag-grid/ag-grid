@@ -1,5 +1,5 @@
 import { Column } from "../entities/column";
-import {GridCore} from "../gridCore";
+import { GridCore } from "../gridCore";
 
 export interface IClipboardService {
     registerGridCore(gridCore: GridCore): void;

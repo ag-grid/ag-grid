@@ -1,6 +1,5 @@
 import { CellComp } from "./cellComp";
 import { CellChangedEvent, DataChangedEvent, RowNode } from "../entities/rowNode";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Column } from "../entities/column";
 import {
     Events,
@@ -12,11 +11,11 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import { Autowired } from "../context/context";
-import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
+
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../widgets/component";
-import { RefSelector } from "../widgets/componentAnnotations";
+
 import { Beans } from "./beans";
 import { ProcessRowParams } from "../entities/gridOptions";
 import { _ } from "../utils";
@@ -24,36 +23,6 @@ import { _ } from "../utils";
 interface CellTemplate {
     template: string;
     cellComps: CellComp[];
-}
-
-export class LoadingCellRenderer extends Component {
-
-    private static TEMPLATE =
-        `<div class="ag-stub-cell">
-            <span class="ag-loading-icon" ref="eLoadingIcon"></span>
-            <span class="ag-loading-text" ref="eLoadingText"></span>
-        </div>`;
-
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-
-    @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
-    @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
-
-    constructor() {
-        super(LoadingCellRenderer.TEMPLATE);
-    }
-
-    public init(params: ICellRendererParams): void {
-        const eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
-        this.eLoadingIcon.appendChild(eLoadingIcon);
-
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
-    }
-
-    public refresh(params: any): boolean {
-        return false;
-    }
 }
 
 export class RowComp extends Component {

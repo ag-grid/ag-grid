@@ -331,7 +331,7 @@ export class ComponentResolver {
                                                             defaultComponentName?: string,
                                                             mandatory: boolean = true,
                                                             customInitParamsCb?: (params: any, component: A) => any): Promise<A> {
-        const holder: ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
+        const holder: ComponentHolder = holderOpt || this.gridOptions;
 
         //Create the component instance
         const componentAndParams: [A, any] = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory) as [A, any];

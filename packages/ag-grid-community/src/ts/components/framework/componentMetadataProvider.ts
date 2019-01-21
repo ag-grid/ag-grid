@@ -35,6 +35,10 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
+            loadingCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []

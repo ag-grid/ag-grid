@@ -610,6 +610,10 @@
         "url": "javascript-grid-cell-editor/"
       },
       {
+        "title": "Date Component",
+        "url": "javascript-grid-date-component/"
+      },
+      {
         "title": "Filter Component",
         "url": "javascript-grid-filter-component/"
       },
@@ -622,8 +626,8 @@
         "url": "javascript-grid-header-rendering/"
       },
       {
-        "title": "Date Component",
-        "url": "javascript-grid-date-component/"
+        "title": "Loading Cell Renderer",
+        "url": "javascript-grid-loading-cell-renderer/"
       },
       {
         "title": "Overlay Component",
