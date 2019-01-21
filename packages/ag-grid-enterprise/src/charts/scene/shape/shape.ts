@@ -29,17 +29,21 @@ export abstract class Shape extends Node {
     /**
      * Restores the default styles introduced by this subclass.
      */
-    restoreOwnStyles() {
+    protected restoreOwnStyles() {
         const styles = (this.constructor as any).defaultStyles;
+        const keys = Object.getOwnPropertyNames(styles);
 
-        for (const property in styles) {
-            if (styles.hasOwnProperty(property)) {
-                (this as any)[property] = styles[property];
-            }
+        // getOwnPropertyNames is about 2.5 times faster than
+        // for..in with the hasOwnProperty check and in this
+        // case, where most properties are inherited, can be
+        // more then an order of magnitude faster.
+        for (let i = 0, n = keys.length; i < n; i++) {
+            const key = keys[i];
+            (this as any)[key] += styles[key];
         }
     }
 
-    restoreAllStyles() {
+    protected restoreAllStyles() {
         const styles = (this.constructor as any).defaultStyles;
 
         for (const property in styles) {
@@ -50,7 +54,7 @@ export abstract class Shape extends Node {
     /**
      * Restores the base class default styles that have been overridden by this subclass.
      */
-    restoreOverriddenStyles() {
+    protected restoreOverriddenStyles() {
         const styles = (this.constructor as any).defaultStyles;
         const protoStyles = Object.getPrototypeOf(styles);
 
