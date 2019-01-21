@@ -78,6 +78,62 @@ export class HdpiCanvas {
         canvas.getContext('2d')!.resetTransform();
     }
 
+    // 2D canvas context for measuring text.
+    private static readonly ctx: CanvasRenderingContext2D = (() => {
+        const canvas = document.createElement('canvas');
+        return canvas.getContext('2d')!;
+    })();
+
+    // Offscreen <span> element for measuring text, if canvas context lacks the support.
+    private static readonly span = (() => {
+        const span = document.createElement('span');
+        span.style.position = 'absolute';
+        span.style.top = '-10000px';
+        document.body.append(span);
+        return span;
+    })();
+
+    static readonly supports = Object.freeze({
+        textMetrics: HdpiCanvas.ctx.measureText('test')
+            .actualBoundingBoxDescent !== undefined,
+        getTransform: HdpiCanvas.ctx.getTransform !== undefined
+    });
+
+    static measureText(text: string, font: string,
+                       textBaseline: CanvasTextBaseline,
+                       textAlign: CanvasTextAlign): TextMetrics {
+        const ctx = HdpiCanvas.ctx;
+        ctx.font = font;
+        ctx.textBaseline = textBaseline;
+        ctx.textAlign = textAlign;
+        return ctx.measureText(text);
+    }
+
+    /**
+     * Returns the width and height of the measured text.
+     * @param text The single-line text to measure.
+     * @param font The font shorthand string.
+     */
+    static getTextSize(text: string, font: string): { width: number, height: number } {
+        if (HdpiCanvas.supports.textMetrics) {
+            HdpiCanvas.ctx.font = font;
+            const metrics = HdpiCanvas.ctx.measureText(text);
+            return {
+                width: metrics.width,
+                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+            };
+        } else { // the fallback is at least 25 times slower
+            HdpiCanvas.span.style.font = font;
+            HdpiCanvas.span.style.lineHeight = '1em';
+            HdpiCanvas.span.textContent = text;
+            const metrics = HdpiCanvas.span.getBoundingClientRect();
+            return {
+                width: metrics.width,
+                height: metrics.height
+            };
+        }
+    }
+
     private static makeHdpiOverrides(pixelRatio: number) {
         let depth = 0;
         return {
