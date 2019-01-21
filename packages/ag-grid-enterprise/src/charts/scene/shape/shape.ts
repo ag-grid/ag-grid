@@ -19,7 +19,11 @@ export abstract class Shape extends Node {
         fillStyle: 'black',
         strokeStyle: null,
         lineWidth: 1,
-        opacity: 1
+        opacity: 1,
+        shadowColor: 'rgba(0, 0, 0, 0)',
+        shadowBlur: 0,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0
     });
 
     /**
@@ -101,6 +105,50 @@ export abstract class Shape extends Node {
         return this._opacity;
     }
 
+    private _shadowColor: string = Shape.defaultStyles.shadowColor;
+    set shadowColor(value: string) {
+        if (this._shadowColor !== value) {
+            this._shadowColor = value;
+            this.dirty = true;
+        }
+    }
+    get shadowColor(): string {
+        return this._shadowColor;
+    }
+
+    private _shadowBlur: number = Shape.defaultStyles.shadowBlur;
+    set shadowBlur(value: number) {
+        if (this._shadowBlur !== value) {
+            this._shadowBlur = value;
+            this.dirty = true;
+        }
+    }
+    get shadowBlur(): number {
+        return this._shadowBlur;
+    }
+
+    private _shadowOffsetX: number = Shape.defaultStyles.shadowOffsetX;
+    set shadowOffsetX(value: number) {
+        if (this._shadowOffsetX !== value) {
+            this._shadowOffsetX = value;
+            this.dirty = true;
+        }
+    }
+    get shadowOffsetX(): number {
+        return this._shadowOffsetX;
+    }
+
+    private _shadowOffsetY: number = Shape.defaultStyles.shadowOffsetY;
+    set shadowOffsetY(value: number) {
+        if (this._shadowOffsetY !== value) {
+            this._shadowOffsetY = value;
+            this.dirty = true;
+        }
+    }
+    get shadowOffsetY(): number {
+        return this._shadowOffsetY;
+    }
+
     applyContextAttributes(ctx: CanvasRenderingContext2D) {
         if (this.fillStyle) {
             ctx.fillStyle = this.fillStyle;
@@ -110,6 +158,10 @@ export abstract class Shape extends Node {
         }
         ctx.lineWidth = this.lineWidth;
         ctx.globalAlpha = this.opacity;
+        ctx.shadowColor = this.shadowColor;
+        ctx.shadowBlur = this.shadowBlur;
+        ctx.shadowOffsetX = this.shadowOffsetX;
+        ctx.shadowOffsetY = this.shadowOffsetY;
     }
 
     abstract isPointInPath(x: number, y: number): boolean
