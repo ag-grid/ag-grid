@@ -18,7 +18,7 @@ export class Matrix {
     // `1` means first column
     // `2` means second row
 
-    private elements: number[];
+    private readonly elements: number[];
 
     constructor(elements: number[] = [1, 0, 0, 1, 0, 0]) {
         this.elements = elements;
@@ -215,6 +215,18 @@ export class Matrix {
         return this;
     }
 
+    clone(): Matrix {
+        return new Matrix(this.elements.slice());
+    }
+
+    transformPoint(x: number, y: number): { x: number, y: number } {
+        const e = this.elements;
+        return {
+            x: x * e[0] + y * e[2] + e[4],
+            y: x * e[1] + y * e[3] + e[5]
+        };
+    }
+
     toContext(ctx: CanvasRenderingContext2D) {
         // It's fair to say that matrix multiplications are not cheap.
         // However, updating path definitions on every frame isn't either, so
@@ -243,21 +255,16 @@ export class Matrix {
         ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);
     }
 
-    static flyweight: (elements?: number[]) => Matrix = (() => {
-        let matrix: Matrix;
-        return (elements?: number[]) => {
-            if (!matrix) {
-                matrix = new Matrix(elements);
+    private static matrix = new Matrix();
+    static flyweight(elements?: number[] | Matrix): Matrix {
+        if (elements)
+            if (elements instanceof Matrix)
+                Matrix.matrix.setElements(elements.elements);
+            else
+                Matrix.matrix.setElements(elements);
+        else
+            Matrix.matrix.setIdentityElements();
 
-                Matrix.flyweight = (elements?: number[]) => {
-                    if (elements)
-                        matrix.setElements(elements);
-                    else
-                        matrix.setIdentityElements();
-                    return matrix;
-                }
-            }
-            return matrix;
-        };
-    })();
+        return Matrix.matrix;
+    }
 }
