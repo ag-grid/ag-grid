@@ -5,30 +5,16 @@ import {chainObjects} from "../../util/object";
 
 export class Rect extends Shape {
 
-    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
-        fillStyle: 'red',
-        strokeStyle: 'black'
-    });
+    static create(x: number, y: number, width: number, height: number, radius = 0): Rect {
+        const rect = new Rect();
 
-    constructor(x: number, y: number, width: number, height: number, radius = 0) {
-        super();
+        rect.x = x;
+        rect.y = y;
+        rect.width = width;
+        rect.height = height;
+        rect.radius = radius;
 
-        this._x = x;
-        this._y = y;
-        this._width = width;
-        this._height = height;
-        this._radius = radius;
-
-        // Override the base class default styles.
-        this.fillStyle = Rect.defaultStyles.fillStyle;
-        this.strokeStyle = Rect.defaultStyles.strokeStyle;
-        // Alternatively we can do:
-        // this.restoreOverriddenDefaults();
-        // This call can even happen in the base class constructor,
-        // so that we don't worry about forgetting calling it in subclasses.
-        // This will figure out the properties (above) to apply
-        // automatically, but makes construction more expensive.
-        // TODO: measure the performance impact.
+        return rect;
     }
 
     protected path = new Path();
@@ -51,7 +37,7 @@ export class Rect extends Shape {
         return this._dirtyPath;
     }
 
-    private _x: number;
+    private _x: number = 0;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
@@ -62,7 +48,7 @@ export class Rect extends Shape {
         return this._x;
     }
 
-    private _y: number;
+    private _y: number = 0;
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
@@ -73,7 +59,7 @@ export class Rect extends Shape {
         return this._y;
     }
 
-    private _width: number;
+    private _width: number = 10;
     set width(value: number) {
         if (this._width !== value) {
             this._width = value;
@@ -84,7 +70,7 @@ export class Rect extends Shape {
         return this._width;
     }
 
-    private _height: number;
+    private _height: number = 10;
     set height(value: number) {
         if (this._height !== value) {
             this._height = value;
@@ -95,7 +81,7 @@ export class Rect extends Shape {
         return this._height;
     }
 
-    private _radius: number;
+    private _radius: number = 0;
     set radius(value: number) {
         if (this._radius !== value) {
             this._radius = value;
@@ -141,14 +127,6 @@ export class Rect extends Shape {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-
-        // const matrix = Matrix.flyweight();
-        // let parent = this.parent;
-        // while (parent) {
-        //     matrix.preMultiplySelf(parent.matrix);
-        //     parent = parent.parent;
-        // }
-        // matrix.toContext(ctx);
 
         this.applyContextAttributes(ctx);
         this.updatePath();

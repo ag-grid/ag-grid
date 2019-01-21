@@ -7,25 +7,19 @@ import {Path} from "../path";
  */
 export class Arc extends Shape {
 
-    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
-        fillStyle: 'red',
-        strokeStyle: 'black'
-    });
+    static create(centerX: number, centerY: number, radiusX: number, radiusY: number,
+                startAngle: number, endAngle: number, anticlockwise = false): Arc {
+        const arc = new Arc();
 
-    constructor(centerX: number, centerY: number, radiusX: number, radiusY: number,
-                startAngle: number, endAngle: number, anticlockwise = false) {
-        super();
+        arc.centerX = centerX;
+        arc.centerY = centerY;
+        arc.radiusX = radiusX;
+        arc.radiusY = radiusY;
+        arc.startAngle = startAngle;
+        arc.endAngle = endAngle;
+        arc.anticlockwise = anticlockwise;
 
-        this._centerX = centerX;
-        this._centerY = centerY;
-        this._radiusX = radiusX;
-        this._radiusY = radiusY;
-        this._startAngle = startAngle;
-        this._endAngle = endAngle;
-        this._anticlockwise = anticlockwise;
-
-        this.fillStyle = Arc.defaultStyles.fillStyle;
-        this.strokeStyle = Arc.defaultStyles.strokeStyle;
+        return arc;
     }
 
     // Declare a path to retain for later rendering and hit testing
@@ -51,7 +45,7 @@ export class Arc extends Shape {
         return this._dirtyPath;
     }
 
-    private _centerX: number;
+    private _centerX: number = 0;
     set centerX(value: number) {
         if (this._centerX !== value) {
             this._centerX = value;
@@ -62,7 +56,7 @@ export class Arc extends Shape {
         return this._centerX;
     }
 
-    private _centerY: number;
+    private _centerY: number = 0;
     set centerY(value: number) {
         if (this._centerY !== value) {
             this._centerY = value;
@@ -73,7 +67,7 @@ export class Arc extends Shape {
         return this._centerY;
     }
 
-    private _radiusX: number;
+    private _radiusX: number = 10;
     set radiusX(value: number) {
         if (this._radiusX !== value) {
             this._radiusX = value;
@@ -84,7 +78,7 @@ export class Arc extends Shape {
         return this._radiusX;
     }
 
-    private _radiusY: number;
+    private _radiusY: number = 10;
     set radiusY(value: number) {
         if (this._radiusY !== value) {
             this._radiusY = value;
@@ -95,7 +89,7 @@ export class Arc extends Shape {
         return this._radiusY;
     }
 
-    private _startAngle: number;
+    private _startAngle: number = 0;
     set startAngle(value: number) {
         if (this._startAngle !== value) {
             this._startAngle = value;
@@ -106,7 +100,7 @@ export class Arc extends Shape {
         return this._startAngle;
     }
 
-    private _endAngle: number;
+    private _endAngle: number = Math.PI * 2;
     set endAngle(value: number) {
         if (this._endAngle !== value) {
             this._endAngle = value;
@@ -117,7 +111,7 @@ export class Arc extends Shape {
         return this._endAngle;
     }
 
-    private _anticlockwise: boolean;
+    private _anticlockwise: boolean = false;
     set anticlockwise(value: boolean) {
         if (this._anticlockwise !== value) {
             this._anticlockwise = value;
@@ -146,14 +140,14 @@ export class Arc extends Shape {
         this.dirtyPath = false;
     }
 
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInPath(x: number, y: number): boolean {
         // TODO: implement hit testing in the Path class.
         // For example:
         // return this.path.isPointInPath(x, y);
         return false;
     }
 
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInStroke(x: number, y: number): boolean {
         return false;
     }
 

@@ -3,32 +3,12 @@ import {chainObjects} from "../../util/object";
 
 export class Text extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
-        fillStyle: 'black',
-
         textAlign: 'start' as CanvasTextAlign,
         font: '10px sans-serif',
         textBaseline: 'alphabetic' as CanvasTextBaseline
     });
 
-    constructor(text: string, x: number, y: number) {
-        super();
-
-        this._text = text;
-        this._x = x;
-        this._y = y;
-
-        // The `dirty` flag is set to `true` initially for all nodes.
-        // So for properties that simply set it `true` when modified,
-        // we can skip going through their setter and set them directly,
-        // for a faster instance construction.
-        // But some properties will have extra logic in their setters,
-        // like the `text` setter here that calls `splitText`.
-        this.splitText();
-
-        this.fillStyle = Text.defaultStyles.fillStyle;
-    }
-
-    private _x: number;
+    private _x: number = 0;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
@@ -39,7 +19,7 @@ export class Text extends Shape {
         return this._x;
     }
 
-    private _y: number;
+    private _y: number = 0;
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
@@ -57,7 +37,7 @@ export class Text extends Shape {
         this.lines = this._text.split(this.lineBreakRe);
     }
 
-    private _text: string;
+    private _text: string = '';
     set text(value: string) {
         if (this._text !== value) {
             this._text = value;

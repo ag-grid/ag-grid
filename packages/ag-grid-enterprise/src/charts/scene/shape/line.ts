@@ -7,19 +7,23 @@ export class Line extends Shape {
         strokeStyle: 'black'
     });
 
-    constructor(x1: number, y1: number, x2: number, y2: number) {
+    constructor() {
         super();
-
-        this._x1 = x1;
-        this._y1 = y1;
-
-        this._x2 = x2;
-        this._y2 = y2;
-
-        this.strokeStyle = Line.defaultStyles.strokeStyle;
+        this.restoreOwnStyles();
     }
 
-    private _x1: number;
+    static create(x1: number, y1: number, x2: number, y2: number): Line {
+        const line = new Line();
+
+        line.x1 = x1;
+        line.y1 = y1;
+        line.x2 = x2;
+        line.y2 = y2;
+
+        return line;
+    }
+
+    private _x1: number = 0;
     set x1(value: number) {
         if (this._x1 !== value) {
             this._x1 = value;
@@ -43,7 +47,7 @@ export class Line extends Shape {
         return this._x1;
     }
 
-    private _y1: number;
+    private _y1: number = 0;
     set y1(value: number) {
         if (this._y1 !== value) {
             this._y1 = value;
@@ -54,7 +58,7 @@ export class Line extends Shape {
         return this._y1;
     }
 
-    private _x2: number;
+    private _x2: number = 0;
     set x2(value: number) {
         if (this._x2 !== value) {
             this._x2 = value;
@@ -65,7 +69,7 @@ export class Line extends Shape {
         return this._x2;
     }
 
-    private _y2: number;
+    private _y2: number = 0;
     set y2(value: number) {
         if (this._y2 !== value) {
             this._y2 = value;
@@ -87,11 +91,11 @@ export class Line extends Shape {
         return this._pixelSnapBias;
     }
 
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInPath(x: number, y: number): boolean {
         return false;
     }
 
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInStroke(x: number, y: number): boolean {
         return false;
     }
 
