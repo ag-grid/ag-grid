@@ -404,7 +404,7 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
         return optionsHtml.length <= 0 ?
             '' :
-            `<div>
+            `<div class="ag-filter-select-wrapper">
                 <select class="ag-filter-select" id="${id}" ${readOnly}>
                     ${optionsHtml.join('')}
                 </select>
