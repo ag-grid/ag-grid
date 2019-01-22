@@ -253,8 +253,15 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
             min-height: 50px;
         }
     }
-    &:not(.ag-layout-print) .ag-center-cols-container {
+    .ag-center-cols-container {
         display: block;
+    }
+
+    &.ag-layout-print {
+        flex: none;
+        .ag-center-cols-clipper {
+            min-width: 100%;
+        }
     }
 }
 
@@ -312,6 +319,12 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     width: 100%;
     display: flex;
     position: relative;
+}
+
+.ag-layout-print {
+    .ag-body-horizontal-scroll {
+        display: none;
+    }
 }
 
 .ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
