@@ -45,7 +45,7 @@ import { _ } from "../utils";
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 const GRID_PANEL_NORMAL_TEMPLATE =
-    `<div class="ag-root ag-font-style" role="grid" unselectable="on">
+    `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
         <ag-header-root ref="headerRoot" unselectable="on"></ag-header-root>
         <div class="ag-floating-top" ref="eTop" role="presentation" unselectable="on">
             <div class="ag-pinned-left-floating-top" ref="eLeftTop" role="presentation" unselectable="on"></div>
@@ -267,6 +267,7 @@ export class GridPanel extends Component {
         if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
             this.showLoadingOverlay();
         }
+        this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
         this.setPinnedContainerSize();
         this.setHeaderAndFloatingHeights();
@@ -296,6 +297,7 @@ export class GridPanel extends Component {
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
+
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
         }
@@ -325,6 +327,11 @@ export class GridPanel extends Component {
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
         this.addOrRemoveCssClass('ag-column-moving', moving);
+    }
+
+    public setCellTextSelection(selectable: boolean = false): void {
+        [this.eTop, this.eCenterContainer, this.eBottom]
+            .forEach(ct => _.addOrRemoveCssClass(ct, 'ag-selectable', selectable));
     }
 
     private setupOverlay(): void {
@@ -695,7 +702,7 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndC(event: KeyboardEvent): boolean {
-        if (!this.clipboardService) { return; }
+        if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) { return false; }
 
         const focusedCell = this.focusedCellController.getFocusedCell();
 

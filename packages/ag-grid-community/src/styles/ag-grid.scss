@@ -26,9 +26,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 50%;
 }
 
-.ag-font-style {
-    cursor: default;
+.ag-unselectable {
     user-select: none; // disable user mouse selection
+}
+
+.ag-selectable {
+    user-select: text;
 }
 
 // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
@@ -147,6 +150,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-root {
+    cursor: default;
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;

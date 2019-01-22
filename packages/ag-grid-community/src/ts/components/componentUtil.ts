@@ -136,6 +136,10 @@ export class ComponentUtil {
             }
         });
 
+        if (changes.enableCellTextSelection) {
+            api.setEnableCellTextSelection(ComponentUtil.toBoolean(changes.enableCellTextSelection.currentValue));
+        }
+
         if (changes.showToolPanel) {
             api.showToolPanel(ComponentUtil.toBoolean(changes.showToolPanel.currentValue));
         }

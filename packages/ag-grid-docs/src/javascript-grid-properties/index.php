@@ -686,6 +686,12 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to operate grid in <a href="../javascript-grid-rtl/">RTL (Right to Left)</a> mode.</td>
         </tr>
         <tr>
+            <th>enableCellTextSelection</th>
+            <td>Set to true to be able to select the text within cells.<br>
+                <strong>Note:</strong> When this is set to true, the clipboard service is disabled.
+            </td>
+        </tr>
+        <tr>
             <th>debug</th>
             <td>Set this to true to enable debug information from ag-grid and related components. Will result in
                 additional logging being output, but very useful when investigating problems.</td>
