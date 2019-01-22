@@ -846,7 +846,7 @@ export class GridPanel extends Component {
         };
 
         params.verticalScrollShowing = this.isVerticalScrollShowing();
-        params.horizontalScrollShowing = !this.gridOptionsWrapper.isSuppressHorizontalScroll() && this.isHorizontalScrollShowing();
+        params.horizontalScrollShowing = this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
 
@@ -855,19 +855,20 @@ export class GridPanel extends Component {
     }
 
     private setHorizontalScrollVisible(visible: boolean): void {
-        const height = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
-        const isIE = _.isBrowserIE();
+        const isSuppressHorizontalScroll = this.gridOptionsWrapper.isSuppressHorizontalScroll();
+        const scrollSize = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+        const scrollContainerSize = !isSuppressHorizontalScroll ? scrollSize : 0;
+        const addIEPadding = _.isBrowserIE() && visible;
 
-        this.eCenterViewport.style.height = `calc(100% + ${height}px)`;
-        _.setFixedHeight(this.eHorizontalScrollBody, height);
-        _.addOrRemoveCssClass(this.eCenterViewport, 'ag-suppress-scroll', this.gridOptionsWrapper.isSuppressHorizontalScroll());
+        this.eCenterViewport.style.height = `calc(100% + ${scrollSize}px)`;
+        _.setFixedHeight(this.eHorizontalScrollBody, scrollContainerSize);
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
-        _.setFixedHeight(this.eBodyHorizontalScrollViewport, height + (isIE ? 1 : 0));
-        if (isIE) {
+        _.setFixedHeight(this.eBodyHorizontalScrollViewport, scrollContainerSize + (addIEPadding ? 1 : 0));
+        if (addIEPadding) {
             this.eBodyHorizontalScrollViewport.style.bottom = '1px';
         }
-        _.setFixedHeight(this.eBodyHorizontalScrollContainer, height);
+        _.setFixedHeight(this.eBodyHorizontalScrollContainer, scrollContainerSize);
     }
 
     private setVerticalScrollPaddingVisible(show: boolean): void {

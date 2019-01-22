@@ -203,9 +203,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 .ag-center-cols-viewport {
     width: 100%;
-    &:not(.ag-suppress-scroll) {
-        overflow-x: auto;
-    }
+    overflow-x: auto;
 }
 
 .ag-body-horizontal-scroll-viewport {
