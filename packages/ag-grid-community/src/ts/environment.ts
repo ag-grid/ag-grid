@@ -1,9 +1,10 @@
 import { Bean, Autowired } from './context/context';
 import { _ } from "./utils";
 
+let customThemes = ["your-custom-theme"];
 const themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
 const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
-const themeClass = new RegExp(`ag-(${themes.join('|')})`);
+const themeClass = new RegExp(`ag-(${themes.join("|")})|${customThemes.join("|")}`);
 
 const matGridSize = 8;
 interface HardCodedSize {
