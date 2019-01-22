@@ -860,6 +860,7 @@ export class GridPanel extends Component {
 
         this.eCenterViewport.style.height = `calc(100% + ${height}px)`;
         _.setFixedHeight(this.eHorizontalScrollBody, height);
+        _.addOrRemoveCssClass(this.eCenterViewport, 'ag-suppress-scroll', this.gridOptionsWrapper.isSuppressHorizontalScroll());
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
         _.setFixedHeight(this.eBodyHorizontalScrollViewport, height + (isIE ? 1 : 0));
