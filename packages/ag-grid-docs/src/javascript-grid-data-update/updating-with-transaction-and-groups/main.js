@@ -3,8 +3,7 @@ var columnDefs = [
     {field: 'price', aggFunc: 'sum', valueFormatter: poundFormatter},
     {field: 'zombies'},
     {field: 'style'},
-    {field: 'clothes'},
-    {field: 'created'}
+    {field: 'clothes'}
 ];
 
 function poundFormatter(params) {
@@ -19,7 +18,7 @@ function poundFormatter(params) {
 function getInitialRowData() {
     var rowData = [];
 
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < 10; i++) {
         var category = categories[i % categories.length];
         rowData.push(createNewRowData(category));
     }
@@ -39,8 +38,7 @@ function createNewRowData(category) {
         price: Math.floor(Math.random() * 800000) + 20000,
         zombies: names[Math.floor(Math.random() * names.length)],
         style: 'Smooth',
-        clothes: 'Jeans',
-        created: new Date().getTime()
+        clothes: 'Jeans'
     };
     return newData;
 }
@@ -58,6 +56,7 @@ var gridOptions = {
     rowSelection: 'multiple',
     animateRows: true,
     groupSelectsChildren: true,
+    suppressAggFuncInHeader: true,
     // this allows the different colors per group, by assigning a different
     // css class to each group level based on the key
     getRowClass: function(params) {
@@ -80,15 +79,13 @@ var gridOptions = {
     },
     autoGroupColumnDef: {
         headerName: 'Group',
+        width: 200,
         field: 'model',
         rowGroupIndex: 1,
         cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
         }
-    },
-    onGridReady: function(params) {
-       params.api.sizeColumnsToFit();
     }
 };
 

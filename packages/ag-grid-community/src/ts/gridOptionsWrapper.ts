@@ -293,6 +293,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressFocusAfterRefresh);
     }
 
+    public isSuppressMaintainUnsortedOrder() {
+        return isTrue(this.gridOptions.suppressMaintainUnsortedOrder);
+    }
+
     public isShowToolPanel() {
         return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
     }

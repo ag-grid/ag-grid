@@ -132,6 +132,12 @@ include '../documentation-main/documentation_header.php';
                 facilitate migration.
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
         </tr>
+        <tr>
+            <th>suppressMaintainUnsortedOrder</th>
+            <td>
+                Set to true to suppress sorting of un-sorted data to match original row data.
+            </td>
+        </tr>
         </table>
     <h2>Selection</h2>
 

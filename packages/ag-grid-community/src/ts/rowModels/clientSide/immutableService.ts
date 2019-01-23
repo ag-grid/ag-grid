@@ -44,7 +44,8 @@ export class ImmutableService {
 
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
-        const orderMap: { [id: string]: number } = {};
+        const suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
+        const orderMap: { [id: string]: number } = suppressSortOrder ? null : {};
 
         if (_.exists(data)) {
             // split all the new data in the following:
@@ -55,7 +56,9 @@ export class ImmutableService {
                 const id: string = getRowNodeIdFunc(dataItem);
                 const existingNode: RowNode | undefined = existingNodesMap[id];
 
-                orderMap[id] = index;
+                if (orderMap) {
+                    orderMap[id] = index;
+                }
 
                 if (existingNode) {
                     const dataHasChanged = existingNode.data !== dataItem;

@@ -8,19 +8,13 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Updating Data</h1>
 
-    <note>
-        Note that this is only applicable if you are using the <a href="../javascript-grid-client-side-model">Client-side Row Model</a>.
-        If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-server-side-model">Server-side</a>
-        the data would be passed to the grid through a datasource and the specifics on how to
-        update each model would be explained in their respective docs.
-    </note>
-
     <p class="lead">
-        Data can be updated inside the grid using the grid's API.
+        This section explains how to update the grid's data using the grid's API's.
     </p>
 
     <p>
-        The grid also allows updating data in the following other ways which are explained in other
+        As well as using the grid's API's, the grid also allows updating data in
+        the following other ways which are explained in other
         sections of the documentation:
     </p>
 
@@ -39,6 +33,13 @@ include '../documentation-main/documentation_header.php';
         If you are using an immutable data store, as is usual in a React application, then you will be
         interested in the section below <a href="#delta-row-data">Bulk Method 3 - Delta Row Data</a>.
     </p>
+
+<note>
+    Note that this is only applicable if you are using the <a href="../javascript-grid-client-side-model">Client-side Row Model</a>.
+    If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-server-side-model">Server-side</a>
+    the data would be passed to the grid through a datasource and the specifics on how to
+    update each model would be explained in their respective docs.
+</note>
 
     <h2>Updating RowNodes Data</h2>
 
@@ -108,10 +109,10 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Updating Row Nodes', 'updating-row-nodes', 'generated', array("processVue" => true)) ?>
 
-    <h2 id="bulk-updating">Bulk Updating</h2>
+    <h2 id="bulk-updating">Full CRUD & Bulk Updating</h2>
 
     <p>
-        If you want to update more than one row at a time, then you have the following options:
+        If you want to add, remove or update more than one row at a time, then you have the following options:
     </p>
 
     <ul>
@@ -540,6 +541,22 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
         Use batch updates if you have streaming data going into the grid and want don't want the grid's
         rendering and recalculating to be a bottleneck.
     </p>
+
+    <h2 id="big-data-small-transactions">Small Changes in Large Grouped Data</h2>
+
+    <p>
+        The grid uses path selection when doing transaction updates to grouped data.
+        What this means is if you have many groups, and an update only impacts a
+        subset of the groups, then only that subset needs to be visited for sorting,
+        filtering, aggregation etc after an update has been applied. This gives a
+        hugs performance increase to small changes to big grouped data.
+    </p>
+
+    <p>
+
+    </p>
+
+    <?= example('Small Changes Big Data', 'small-changes-big-data', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="flashing">Flashing Data Changes</h2>
 

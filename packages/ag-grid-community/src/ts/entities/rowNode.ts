@@ -46,6 +46,8 @@ export interface CellChangedEvent extends RowNodeEvent {
 
 export class RowNode implements IEventEmitter {
 
+    private static OBJECT_ID_SEQUENCE = 0;
+
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
@@ -180,6 +182,10 @@ export class RowNode implements IEventEmitter {
     /** Used by the value service, stores values for a particular change detection turn. */
     public __cacheData: { [colId: string]: any };
     public __cacheVersion: number;
+
+    /** Used by sorting service - to give deterministic sort to groups. Previously we
+     * just id for this, however id is a string and had slower sorting compared to numbers. */
+    public __objectId: number = RowNode.OBJECT_ID_SEQUENCE++;
 
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;

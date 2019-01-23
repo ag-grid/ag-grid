@@ -36,7 +36,7 @@ export class SortStage {
         const valueColumns = this.columnController.getValueColumns();
         const noAggregations = _.missingOrEmpty(valueColumns);
 
-        this.sortService.sort(params.rowNode, sortOptions, sortActive, deltaSort, dirtyLeafNodes,
+        this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes,
             params.changedPath, noAggregations);
     }
 

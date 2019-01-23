@@ -1804,6 +1804,7 @@ export class Utils {
         }
 
         const comparator = (nodeA: RowNode, nodeB: RowNode) => {
+
             const positionA = rowNodeOrder[nodeA.id];
             const positionB = rowNodeOrder[nodeB.id];
 
@@ -1821,16 +1822,21 @@ export class Utils {
                 // when comparing two filler nodes, we have no index to compare them
                 // against, however we want this sorting to be deterministic, so that
                 // the rows don't jump around as the user does delta updates. so we
-                // want the same sort result. so we use the id - which doesn't make sense
+                // want the same sort result. so we use the __objectId - which doesn't make sense
                 // from a sorting point of view, but does give consistent behaviour between
                 // calls. otherwise groups jump around as delta updates are done.
-                return nodeA.id > nodeB.id ? 1 : -1;
+                // note: previously here we used nodeId, however this gave a strange order
+                // as string ordering of numbers is wrong, so using id based on creation order
+                // as least gives better looking order.
+                return nodeA.__objectId - nodeB.__objectId;
             } else if (aHasIndex) {
                 return 1;
             } else {
                 return -1;
             }
         };
+
+        // const a = new Date().getTime();
 
         // check if the list first needs sorting
         let rowNodeA: RowNode;
@@ -1845,9 +1851,15 @@ export class Utils {
             }
         }
 
+        // const b = new Date().getTime();
+
         if (atLeastOneOutOfOrder) {
             rowNodes.sort(comparator);
         }
+
+        // const c = new Date().getTime();
+
+        // console.log(`${this.count}: ${rowNodes.length} items, ${b-a}ms ${atLeastOneOutOfOrder} ${c-b}ms`);
     }
 
     public static fuzzyCheckStrings(inputValues: string[],

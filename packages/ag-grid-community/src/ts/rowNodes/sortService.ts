@@ -35,46 +35,43 @@ export class SortService {
         this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
     }
 
-    public sort(rowNode: RowNode,
-                sortOptions: SortOption[],
+    public sort(sortOptions: SortOption[],
                 sortActive: boolean,
                 deltaSort: boolean,
                 dirtyLeafNodes: {[nodeId: string]: boolean},
                 changedPath: ChangedPath,
                 noAggregations: boolean): void {
 
-        // we clear out the 'pull down open parents' first, as the values mix up the sorting
-        this.pullDownDataForHideOpenParents(rowNode.childrenAfterFilter, true);
+        const callback = (rowNode: RowNode) => {
 
-        // RE https://ag-grid.atlassian.net/browse/AG-444
-        // Javascript sort is non deterministic when all the array items are equals
-        // ie Comparator always returns 0, so if you want to ensure the array keeps its
-        // order, then you need to add an additional sorting condition manually, in this
-        // case we are going to inspect the original array position. This is what SortedRowNode
-        // object is for
+            // we clear out the 'pull down open parents' first, as the values mix up the sorting
+            this.pullDownDataForHideOpenParents(rowNode.childrenAfterFilter, true);
 
-        if (sortActive) {
-            const sortedRowNodes: SortedRowNode[] = deltaSort ?
-                this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
-                : this.doFullSort(rowNode, sortOptions);
-            rowNode.childrenAfterSort = sortedRowNodes.map(sorted => sorted.rowNode);
-        } else {
-            rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
-        }
+            // RE https://ag-grid.atlassian.net/browse/AG-444
+            // Javascript sort is non deterministic when all the array items are equals
+            // ie Comparator always returns 0, so if you want to ensure the array keeps its
+            // order, then you need to add an additional sorting condition manually, in this
+            // case we are going to inspect the original array position. This is what SortedRowNode
+            // object is for
 
-        this.updateChildIndexes(rowNode);
-        this.pullDownDataForHideOpenParents(rowNode.childrenAfterSort, false);
-
-        // sort any groups recursively
-        rowNode.childrenAfterFilter.forEach(child => {
-            if (child.hasChildren()) {
-                this.sort(child, sortOptions, sortActive, deltaSort, dirtyLeafNodes, changedPath, noAggregations);
+            if (sortActive) {
+                const sortedRowNodes: SortedRowNode[] = deltaSort ?
+                    this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
+                    : this.doFullSort(rowNode, sortOptions);
+                rowNode.childrenAfterSort = sortedRowNodes.map(sorted => sorted.rowNode);
+            } else {
+                rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
             }
-        });
 
-        if (this.postSortFunc) {
-            this.postSortFunc(rowNode.childrenAfterSort);
-        }
+            this.updateChildIndexes(rowNode);
+            this.pullDownDataForHideOpenParents(rowNode.childrenAfterSort, false);
+
+            if (this.postSortFunc) {
+                this.postSortFunc(rowNode.childrenAfterSort);
+            }
+        };
+
+        changedPath.forEachChangedNodeDepthFirst(callback);
     }
 
     private doFullSort(rowNode: RowNode, sortOptions: SortOption[]): SortedRowNode[] {
@@ -212,13 +209,15 @@ export class SortService {
             return;
         }
 
-        rowNode.childrenAfterSort.forEach((child: RowNode, index: number) => {
-            const firstChild = index === 0;
-            const lastChild = index === rowNode.childrenAfterSort.length - 1;
+        const listToSort = rowNode.childrenAfterSort;
+        for (let i = 0; i<listToSort.length; i++) {
+            const child = listToSort[i];
+            const firstChild = i === 0;
+            const lastChild = i === rowNode.childrenAfterSort.length - 1;
             child.setFirstChild(firstChild);
             child.setLastChild(lastChild);
-            child.setChildIndex(index);
-        });
+            child.setChildIndex(i);
+        }
     }
 
     private pullDownDataForHideOpenParents(rowNodes: RowNode[], clearOperation: boolean) {
