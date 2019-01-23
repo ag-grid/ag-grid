@@ -1,11 +1,6 @@
 import {Node} from "../node";
 import {chainObjects} from "../../util/object";
 
-// TODO: Should we call this class `Path`?
-// `Text` sprite will also have basic attributes like `fillStyle`, `strokeStyle`
-// and `opacity`, but the `Shape` isn't a proper base class for `Text`.
-// Move the `render` method here and make `Rect` and `Arc` only supply the
-// `updatePath` method.
 export abstract class Shape extends Node {
     /**
      * Defaults for style properties. Note that properties that affect the position

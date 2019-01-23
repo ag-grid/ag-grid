@@ -1,7 +1,5 @@
-import { Shape } from "./shape";
-import { Path } from "../path";
-import { Matrix } from "../matrix";
-import {chainObjects} from "../../util/object";
+import {Shape} from "./shape";
+import {Path2D} from "../path2D";
 import {BBox, isPointInBBox} from "../bbox";
 
 export class Rect extends Shape {
@@ -18,13 +16,8 @@ export class Rect extends Shape {
         return rect;
     }
 
-    protected path = new Path();
+    protected path = new Path2D();
 
-    /**
-     * TODO: create a common base class for all nodes that use the `Path`?
-     *       At least those that need a single path/fill/stroke,
-     *       which is likely all we'll ever need.
-     */
     private _dirtyPath = true;
     set dirtyPath(value: boolean) {
         if (this._dirtyPath !== value) {
@@ -106,7 +99,7 @@ export class Rect extends Shape {
             path.rect(this.x, this.y, this.width, this.height);
         } else {
             // TODO: rect radius, this will require implementing
-            //       another `arcTo` method in the `Path` class.
+            //       another `arcTo` method in the `Path2D` class.
             throw "TODO";
         }
     }

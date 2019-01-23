@@ -39,37 +39,6 @@ export class Scene {
                 this.lastHit.node.fillStyle = this.lastHit.fillStyle;
             }
         }
-
-        // const pixelRatio = this.hdpiCanvas.pixelRatio;
-        // Path2D's isPointInPath/isPointInStroke require multiplying by the pixelRatio
-        // const x = e.offsetX * pixelRatio;
-        // const y = e.offsetY * pixelRatio;
-        //
-        // const node = this.root;
-        // if (node instanceof Parent) {
-        //     const children = node.children;
-        //     const n = children.length;
-        //     for (let i = 0; i < n; i++) {
-        //         const child = children[i];
-        //         if (child instanceof Shape) {
-        //             // TODO: right now, setting these properties causes
-        //             //       a scene to rerender, even if values are the same
-        //             if (child.isPointInPath(this.ctx, x, y)) {
-        //                 child.fillStyle = 'yellow';
-        //             }
-        //             else {
-        //                 child.fillStyle = 'red';
-        //             }
-        //
-        //             if (child.isPointInStroke(this.ctx, x, y)) {
-        //                 child.strokeStyle = 'lime';
-        //             }
-        //             else {
-        //                 child.strokeStyle = 'black';
-        //             }
-        //         }
-        //     }
-        // }
     };
 
     hitTestPath(node: Node, x: number, y: number): Node | undefined {

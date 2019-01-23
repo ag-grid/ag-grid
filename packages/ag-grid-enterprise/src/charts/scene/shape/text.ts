@@ -1,8 +1,7 @@
 import {Shape} from "./shape";
 import {chainObjects} from "../../util/object";
 import {HdpiCanvas} from "../../canvas/hdpiCanvas";
-import {BBox, isPointInBBox} from "../bbox";
-import {Matrix} from "../matrix";
+import {BBox, isPointInBBox, renderBBox} from "../bbox";
 
 export class Text extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -179,13 +178,7 @@ export class Text extends Shape {
             }
         }
 
-        // debug
-        const bbox = this.getPlainBBox();
-        ctx.save();
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(bbox.x, bbox.y, bbox.width, bbox.height);
-        ctx.restore();
+        renderBBox(ctx, this.getPlainBBox()); // debug
 
         this.dirty = false;
     }
