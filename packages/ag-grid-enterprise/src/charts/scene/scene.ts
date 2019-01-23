@@ -1,6 +1,6 @@
 import {HdpiCanvas} from "../canvas/hdpiCanvas";
 import {Node} from "./node";
-import {Path} from "./path";
+import {Path2D} from "./path2D";
 import {Shape} from "./shape/shape";
 import {Parent} from "./parent";
 
@@ -32,11 +32,17 @@ export class Scene {
             const node = this.hitTestPath(this.root, x, y);
             if (node) {
                 if (node instanceof Shape) {
-                    this.lastHit = { node, fillStyle: node.fillStyle };
+                    if (!this.lastHit) {
+                        this.lastHit = { node, fillStyle: node.fillStyle };
+                    } else if (this.lastHit.node !== node) {
+                        this.lastHit.node.fillStyle = this.lastHit.fillStyle;
+                        this.lastHit = { node, fillStyle: node.fillStyle };
+                    }
                     node.fillStyle = 'yellow';
                 }
             } else if (this.lastHit) {
                 this.lastHit.node.fillStyle = this.lastHit.fillStyle;
+                this.lastHit = undefined;
             }
         }
     };
@@ -95,7 +101,7 @@ export class Scene {
         return this._root;
     }
 
-    appendPath(path: Path) {
+    appendPath(path: Path2D) {
         const ctx = this.ctx;
         const commands = path.commands;
         const params = path.params;
