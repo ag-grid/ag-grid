@@ -122,6 +122,20 @@ export class Arc extends Shape {
         return this._anticlockwise;
     }
 
+    set startAngleDeg(value: number) {
+        this.startAngle = value / 180 * Math.PI;
+    }
+    get startAngleDeg(): number {
+        return this.startAngle / Math.PI * 180;
+    }
+
+    set endAngleDeg(value: number) {
+        this.endAngle = value / 180 * Math.PI;
+    }
+    get endAngleDeg(): number {
+        return this.endAngle / Math.PI * 180;
+    }
+
     updatePath() {
         if (!this.dirtyPath)
             return;
