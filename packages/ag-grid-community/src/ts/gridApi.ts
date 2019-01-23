@@ -335,9 +335,7 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        if (this.sideBarComp) {
-            this.sideBarComp.refresh();
-        }
+        this.gridCore.refreshSideBar();
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {

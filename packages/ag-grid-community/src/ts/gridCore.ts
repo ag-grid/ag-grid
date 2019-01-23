@@ -192,6 +192,12 @@ export class GridCore extends Component {
         return this.gridOptions.sideBar as SideBarDef;
     }
 
+    public refreshSideBar() {
+        if (this.sideBarComp) {
+            this.sideBarComp.refresh();
+        }
+    }
+
     public setSideBar(def: SideBarDef | string | boolean): void {
         this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
         this.gridOptions.sideBar = SideBarDefParser.parse(def);
