@@ -967,7 +967,8 @@ export class RowRenderer extends BeanStub {
                     key: key,
                     previousCellDef: previousCell,
                     nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
-                    event: event
+                    event: event,
+                    api: this.gridApi
                 } as NavigateToNextCellParams;
                 const nextCellDef = userFunc(params);
                 if (_.exists(nextCellDef)) {

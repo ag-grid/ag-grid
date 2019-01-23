@@ -105,6 +105,12 @@ interface NavigateToNextCellParams {
 
     // the cell the grid would normally pick as the next cell for this navigation
     nextCellDef: GridCellDef;
+ 
+    // the keyboard event the grid received
+    event: KeyboardEvent;
+
+    // the grid API of the detail grid
+    api: GridApi;
 }</snippet>
 
     <h2><code>tabToNextCell</code></h2>

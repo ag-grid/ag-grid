@@ -614,6 +614,7 @@ export interface NavigateToNextCellParams {
     previousCellDef: GridCellDef;
     nextCellDef: GridCellDef;
     event: KeyboardEvent;
+    api: GridApi;
 }
 
 export interface TabToNextCellParams {
