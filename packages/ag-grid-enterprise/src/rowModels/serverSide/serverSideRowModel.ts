@@ -526,15 +526,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.executeOnCache(route, cache => cache.purgeCache());
     }
 
-    public removeFromCache(route: string[], items: any[]): void {
-        this.executeOnCache(route, cache => cache.removeFromCache(items));
-        this.rowNodeBlockLoader!.checkBlockToLoad();
-    }
-
-    public addToCache(route: string[], items: any[], index: number): void {
-        this.executeOnCache(route, cache => cache.addToCache(items, index));
-    }
-
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
         if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];

@@ -49,7 +49,6 @@ import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IComponent } from "./interfaces/iComponent";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
@@ -1141,22 +1140,6 @@ export class GridApi {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
         }
     }
-
-    // public removeFromEnterpriseCache(route: string[], items: any[]): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.removeFromCache(route, items);
-    //     } else {
-    //         console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
-    //
-    // public addToEnterpriseCache(route: string[], items: any[], index: number): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.addToCache(route, items, index);
-    //     } else {
-    //         console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
 
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
