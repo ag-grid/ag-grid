@@ -183,13 +183,15 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         let lastBlockId = -1;
 
+        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+
         this.forEachBlockInOrder((currentBlock: ServerSideBlock, blockId: number) => {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
             const blocksSkippedCount = blockId - lastBlockId - 1;
-            const rowsSkippedCount = blocksSkippedCount * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+            const rowsSkippedCount = blocksSkippedCount * blockSize;
             if (rowsSkippedCount > 0) {
                 displayIndexSeq.skip(rowsSkippedCount);
             }
@@ -199,7 +201,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 if (_.exists(this.blockHeights[blockToAddId])) {
                     nextRowTop.value += this.blockHeights[blockToAddId];
                 } else {
-                    nextRowTop.value += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight;
+                    nextRowTop.value += blockSize * this.cacheParams.rowHeight;
                 }
             }
 
@@ -214,7 +216,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
-        const lastVisitedRow = ((lastBlockId + 1) * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0)) - 1;
+        const lastVisitedRow = ((lastBlockId + 1) * blockSize) - 1;
         const rowCount = this.getVirtualRowCount();
         const rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
@@ -259,6 +261,8 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             return null;
         }
 
+        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+
         // if block not found, we need to load it
         if (_.missing(block)) {
 
@@ -275,26 +279,26 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
 
                 const isInRange = (): boolean => {
-                    return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
+                    return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + blockSize);
                 };
 
                 while (!isInRange()) {
-                    displayIndexStart += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+                    displayIndexStart += blockSize;
 
                     const cachedBlockHeight = this.blockHeights[blockNumber];
                     if (_.exists(cachedBlockHeight)) {
                         nextRowTop += cachedBlockHeight;
                     } else {
-                        nextRowTop += this.cacheParams.rowHeight * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+                        nextRowTop += this.cacheParams.rowHeight * blockSize;
                     }
 
                     blockNumber++;
                 }
             } else {
                 const localIndex = displayRowIndex - this.displayIndexStart;
-                blockNumber = Math.floor(localIndex / (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
-                displayIndexStart = this.displayIndexStart + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
-                nextRowTop = this.cacheTop + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight);
+                blockNumber = Math.floor(localIndex / blockSize);
+                displayIndexStart = this.displayIndexStart + (blockNumber * blockSize);
+                nextRowTop = this.cacheTop + (blockNumber * blockSize * this.cacheParams.rowHeight);
             }
 
             block = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});

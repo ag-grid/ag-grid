@@ -31,6 +31,7 @@ import {
     SortController
 } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+import {ServerSideBlock} from "./serverSideBlock";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -376,7 +377,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
         if (!(params.blockSize as number >= 1)) {
-            params.blockSize = 100;
+            params.blockSize = ServerSideBlock.DefaultBlockSize;
         }
         // if user doesn't give initial rows to display, we assume zero
         if (!(params.initialRowCount >= 1)) {
