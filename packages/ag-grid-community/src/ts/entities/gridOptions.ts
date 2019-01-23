@@ -118,6 +118,7 @@ export interface GridOptions {
     enableColResize?: boolean; // deprecated in v20, use colDef.resizable instead
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
+    enableCellTextSelection?: boolean;
     enableSorting?: boolean; // deprecated in v20, use colDef.sortable instead
     enableServerSideSorting?: boolean; // deprecated in v20, use colDef.sortable instead
     enableFilter?: boolean; // deprecated in v20, use colDef.filter = true instead
@@ -161,9 +162,9 @@ export interface GridOptions {
     pivotColumnGroupTotals?: string;
     pivotRowTotals?: string;
     suppressEnterpriseResetOnNewColumns?: boolean;
+    // enterprise only
     enableRangeSelection?: boolean;
     suppressMultiRangeSelection?: boolean;
-    // enterprise only
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;

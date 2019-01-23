@@ -135,6 +135,7 @@ var gridOptions = {
     rowDragManaged: true,
     // popupParent: document.body,
     // ensureDomOrder: true,
+    // enableCellTextSelection: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
     // },

@@ -571,6 +571,12 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>setEnableCellTextSelection()</th>
+            <td>
+                Sets the enableCellTextSelection property.
+            </td>
+        </tr>
+        <tr>
             <th>setGridAutoHeight(value)</th>
             <td>
                 Sets the gridAutoHeight property.

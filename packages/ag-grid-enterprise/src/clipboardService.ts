@@ -512,9 +512,7 @@ export class ClipboardService implements IClipboardService {
 
     private copyFocusedCellToClipboard(includeHeaders = false): void {
         const focusedCell = this.focusedCellController.getFocusedCell();
-        if (_.missing(focusedCell)) {
-            return;
-        }
+        if (_.missing(focusedCell)) { return; }
 
         const currentRow = focusedCell.getGridRow();
         const rowNode = this.getRowNode(currentRow);

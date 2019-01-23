@@ -90,7 +90,7 @@ export class PaginationComp extends Component {
         const strNext = localeTextFunc('next', 'Next');
         const strLast = localeTextFunc('last', 'Last');
 
-        return `<div class="ag-paging-panel ag-font-style">
+        return `<div class="ag-paging-panel ag-unselectable">
                 <span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
                     <span ref="lbFirstRowOnPage"></span> ${strTo} <span ref="lbLastRowOnPage"></span> ${strOf} <span ref="lbRecordCount"></span>
                 </span>
