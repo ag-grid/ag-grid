@@ -2,10 +2,12 @@ var columnDefs = [
     { field: 'group1', enableRowGroup: true, rowGroup: true, hide: true, },
     { field: 'group2', enableRowGroup: true, rowGroup: true, hide: true, },
     { field: "id", headerName: "ID" },
-    { field: "name" },
+    { field: "name",
+        sort: 'asc',
+        comparator: myComparator,
+    },
     { field: 'value', enableCellChangeFlash: true,
         aggFunc: myAggFunc,
-        sort: 'asc', comparator: myComparator,
         filter: MyFilter
     }
 ];
@@ -26,33 +28,49 @@ function myAggFunc(values) {
 
 function myComparator(a, b) {
     compareCallCount++;
-    return a - b;
+    return a < b ? -1 : 1;
 }
 
 function MyFilter() {}
 
-MyFilter.prototype.init = function() {
+MyFilter.prototype.init = function(params) {
+    this.valueGetter = params.valueGetter;
+    this.filterValue = null;
+
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = 'This is a dummy filter';
+    this.eGui.innerHTML = '<div>Greater Than: <input type="text"/></div>';
+    this.eInput = this.eGui.querySelector('input');
+    var that = this;
+    this.eInput.addEventListener('input', function() {
+        that.getValueFromInput();
+        params.filterChangedCallback();
+    });
 };
 
 MyFilter.prototype.getGui = function() {
     return this.eGui;
 };
 
-MyFilter.prototype.setModel = function(model) {
-    console.log('setting filter model', model);
+MyFilter.prototype.getValueFromInput = function() {
+    let value = parseInt(this.eInput.value);
+    this.filterValue = isNaN(value) ? null : value;
 };
 
-MyFilter.prototype.isFilterActive = function(model) {
-    return true;
+MyFilter.prototype.setModel = function(model) {
+    this.eInput.value = model.value;
+    this.getValueFromInput();
+};
+
+MyFilter.prototype.isFilterActive = function() {
+    return this.filterValue !== null;
 };
 
 MyFilter.prototype.doesFilterPass = function(params) {
     filterCallCount++;
-    return true;
-};
 
+    var value = this.valueGetter(params);
+    return value > this.filterValue;
+};
 
 function isFirstColumn(params) {
     let displayedColumns = params.columnApi.getAllDisplayedColumns();
@@ -82,7 +100,7 @@ function onBtDuplicate() {
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
         idCounter++;
-        var newItem = createDataItem(idCounter, 'Thing ' + idCounter, oldData.group1, oldData.group2, oldData.value);
+        var newItem = createDataItem(idCounter, oldData.name, oldData.group1, oldData.group2, oldData.value);
         rowData.push(newItem);
     });
 
@@ -127,6 +145,10 @@ function onBtDelete() {
     timeSetRowData('Delete');
 }
 
+function onBtClearSelection() {
+    gridOptions.api.deselectAll();
+}
+
 function timeSetRowData(name) {
     aggCallCount = 0;
     compareCallCount = 0;
@@ -155,16 +177,25 @@ var gridOptions = {
 
 var rowData = [];
 
+function letter(i) {
+    return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.substr(i, 1);
+}
+
+function randomLetter() {
+    return letter(Math.floor(Math.random()*26 + 1));
+}
+
 function createData() {
     var nextGroup = 0;
     for (let i = 0; i < 10000; i++) {
         if (i % 2 === 0) {
             nextGroup++;
         }
-        var group1 = 'Group-' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.substr(i%26, 1);
+        var name = randomLetter() + randomLetter();
+        var group1 = 'Group-' + letter(i%26);
         var group2 = 'Group-' + Math.round(i/1000);
         idCounter++;
-        rowData.push(createDataItem(idCounter, 'Thing ' + idCounter, group1, group2, Math.floor(Math.random() * 100)));
+        rowData.push(createDataItem(idCounter, name, group1, group2, Math.floor(Math.random() * 100)));
     }
 }
 
@@ -186,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
     gridOptions.api.setFilterModel({
-        value: ''
+        value: {value: '22'}
     });
     createData();
     timeSetRowData('Initial');
