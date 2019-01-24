@@ -20,12 +20,12 @@ export abstract class Parent extends Node {
     }
 
     private _children: Node[] = [];
-    get children(): Node[] {
+    get children(): ReadonlyArray<Node> {
         return this._children;
     }
 
-    // Used to check for duplicate nodes.
-    private childSet: { [key: string]: boolean } = {}; // new Set<Node>()
+    // Used to check for duplicate nodes or find a node's index by `id`.
+    private childSet: { [id: string]: number } = {};
 
     add(node: Node) {
         // Passing a single parameter to an open-ended version of `addAll`
@@ -46,9 +46,13 @@ export abstract class Parent extends Node {
         const n = nodes.length;
         for (let i = 0; i < n; i++) {
             const node = nodes[i];
-            if (!this.childSet[node.id]) {
+            if (node.scene && (node.scene !== this.scene)) {
+                throw new Error(`Node ${node} already belongs to another scene, `
+                    + `or its parent ${this} hasn't been assigned a scene yet.`);
+            }
+            if (isNaN(this.childSet[node.id])) {
                 this._children.push(node);
-                this.childSet[node.id] = true;
+                this.childSet[node.id] = this._children.length - 1;
 
                 node.parent = this;
                 node.scene = this.scene;
@@ -59,5 +63,35 @@ export abstract class Parent extends Node {
             }
         }
         this.dirty = true;
+    }
+
+    insertBefore<T extends Node>(newChild: T, refChild?: Node | null): T {
+        if (newChild.scene && (newChild.scene !== this.scene)) {
+            throw new Error(`Cannot move ${newChild} from ${newChild.scene} to ${this.scene}`);
+        }
+
+        const i = refChild && this.childSet[refChild.id];
+        const parent = newChild.parent;
+
+        // If the newChild is already in the tree, it is first removed.
+        if (parent) {
+            const j = parent.childSet[newChild.id];
+            if (j >= 0) {
+                parent._children.splice(j, 1);
+            } else {
+                throw new Error(`${newChild} has ${parent} as the parent, `
+                    + `but is not in its list of children.`);
+            }
+        }
+        if (i != null && i >= 0) {
+            this._children.splice(i, 0, newChild);
+            newChild.parent = this;
+            newChild.scene = this.scene;
+        }
+        else {
+            this.addAll([newChild]);
+        }
+
+        return newChild;
     }
 }
