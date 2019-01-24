@@ -131,10 +131,22 @@ export class Scene {
         }
     }
 
-    private _frameIndex = 0; // debug
+    private _frameIndex = 0;
     get frameIndex(): number {
         return this._frameIndex;
     }
+
+    _isRenderFrameIndex = true;
+    set isRenderFrameIndex(value: boolean) {
+        if (this._isRenderFrameIndex !== value) {
+            this._isRenderFrameIndex = value;
+            this.dirty = true;
+        }
+    }
+    get isRenderFrameIndex(): boolean {
+        return this._isRenderFrameIndex;
+    }
+
 
     render = () => {
         const ctx = this.ctx;
@@ -147,9 +159,10 @@ export class Scene {
             ctx.restore();
         }
 
-        // Keep this here for a while to make sure if a redundant
-        // frames are rendered it won't go unnoticed.
-        ctx.fillText((++this._frameIndex).toString(), 0, 10); // debug
+        this._frameIndex++;
+        if (this.isRenderFrameIndex) {
+            ctx.fillText(this.frameIndex.toString(), 0, 10);
+        }
 
         this.dirty = false;
     };
