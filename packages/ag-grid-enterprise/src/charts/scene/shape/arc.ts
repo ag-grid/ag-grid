@@ -1,6 +1,6 @@
 import {Shape} from "./shape";
-import {chainObjects} from "../../util/object";
-import {Path} from "../path";
+import {Path2D} from "../path2D";
+import {BBox, isPointInBBox} from "../bbox";
 
 /**
  * Elliptical arc node.
@@ -23,8 +23,8 @@ export class Arc extends Shape {
     }
 
     // Declare a path to retain for later rendering and hit testing
-    // using custom Path class. It's pure TypeScript and works in all browsers.
-    protected path = new Path();
+    // using custom Path2D class. It's pure TypeScript and works in all browsers.
+    protected path = new Path2D();
 
     /**
      * It's not always that the path has to be updated.
@@ -122,6 +122,20 @@ export class Arc extends Shape {
         return this._anticlockwise;
     }
 
+    set startAngleDeg(value: number) {
+        this.startAngle = value / 180 * Math.PI;
+    }
+    get startAngleDeg(): number {
+        return this.startAngle / Math.PI * 180;
+    }
+
+    set endAngleDeg(value: number) {
+        this.endAngle = value / 180 * Math.PI;
+    }
+    get endAngleDeg(): number {
+        return this.endAngle / Math.PI * 180;
+    }
+
     updatePath() {
         if (!this.dirtyPath)
             return;
@@ -140,11 +154,21 @@ export class Arc extends Shape {
         this.dirtyPath = false;
     }
 
+    private getPlainBBox(): BBox {
+        return {
+            x: this.centerX - this.radiusX,
+            y: this.centerY - this.radiusY,
+            width: this.radiusX * 2,
+            height: this.radiusY * 2
+        };
+    }
+
     isPointInPath(x: number, y: number): boolean {
-        // TODO: implement hit testing in the Path class.
-        // For example:
-        // return this.path.isPointInPath(x, y);
-        return false;
+        const point = this.transformPoint(x, y);
+        const bbox = this.getPlainBBox();
+
+        return isPointInBBox(bbox, point.x, point.y)
+            && this.path.isPointInPath(point.x, point.y);
     }
 
     isPointInStroke(x: number, y: number): boolean {

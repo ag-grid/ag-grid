@@ -1,4 +1,6 @@
-export class Path {
+import {cubicSegmentIntersections, segmentIntersection} from "./intersection";
+
+export class Path2D {
     // The methods of this class will likely be called many times per animation frame,
     // and any allocation can trigger a GC cycle during animation, so we attempt
     // to minimize the number of allocations.
@@ -281,20 +283,7 @@ export class Path {
         const params = this.params;
         const start = commands.length;
 
-        Path.cubicArc(commands, params, cx, cy, rx, ry, phi, theta1, theta2, anticlockwise);
-
-        // if (!anticlockwise) {
-        //     if (theta2 < theta1) {
-        //         theta2 += Math.PI * 2;
-        //     }
-        //     Path.cubicArc(commands, params, cx, cy, rx, ry, phi, theta1, theta2, 0);
-        // }
-        // else {
-        //     if (theta1 < theta2) {
-        //         theta1 += Math.PI * 2;
-        //     }
-        //     Path.cubicArc(commands, params, cx, cy, rx, ry, phi, theta2, theta1, 0);
-        // }
+        Path2D.cubicArc(commands, params, cx, cy, rx, ry, phi, theta1, theta2, anticlockwise);
 
         const x = params[params.length - 2];
         const y = params[params.length - 1];
@@ -369,7 +358,7 @@ export class Path {
         // See https://pomax.github.io/bezierinfo/#reordering
         this.cubicCurveTo(
             (this.xy![0] + 2 * cx) / 3, (this.xy![1] + 2 * cy) / 3, // 1/3 start + 2/3 control
-            (2 * cx + x) / 3, (2 * cy + y) / 3,                   // 2/3 control + 1/3 end
+            (2 * cx + x) / 3, (2 * cy + y) / 3,                     // 2/3 control + 1/3 end
             x, y
         );
     }
@@ -397,8 +386,72 @@ export class Path {
         this.xy = undefined;
     }
 
-    static fromString(value: string): Path {
-        const path = new Path();
+    isPointInPath(x: number, y: number): boolean {
+        const commands = this.commands;
+        const params = this.params;
+        const cn = commands.length;
+        // Hit testing using ray casting method, where the ray's origin is some point
+        // outside the path. In this case, an offscreen point that is remote enough, so that
+        // even if the path itself is large and is partially offscreen, the ray's origin
+        // will likely be outside the path anyway. To test if the given point is inside the
+        // path or not, we cast a ray from the origin to the given point and check the number
+        // of intersections of this segment with the path. If the number of intersections is
+        // even, then the ray both entered and exited the path an equal number of times,
+        // therefore the point is outside the path, and inside the path, if the number of
+        // intersections is odd. Since the path is compound, we check if the ray segment
+        // intersects with each of the path's segments, which can be either a line segment
+        // (one or no intersection points) or a Bézier curve segment (up to 3 intersection
+        // points).
+        const ox = -10000;
+        const oy = -10000;
+        // the starting point of the  current path
+        let sx: number = NaN;
+        let sy: number = NaN;
+        // the previous point of the current path
+        let px = 0;
+        let py = 0;
+        let intersectionCount = 0;
+
+        for (let ci = 0, pi = 0; ci < cn; ci++) {
+            switch (commands[ci]) {
+                case 'M':
+                    if (!isNaN(sx)) {
+                        if (segmentIntersection(sx, sy, px, py, ox, oy, x, y)) {
+                            intersectionCount++;
+                        }
+                    }
+                    sx = px = params[pi++];
+                    sy = py = params[pi++];
+                    break;
+                case 'L':
+                    if (segmentIntersection(px, py, px = params[pi++], py = params[pi++], ox, oy, x, y)) {
+                        intersectionCount++;
+                    }
+                    break;
+                case 'C':
+                    intersectionCount += cubicSegmentIntersections(
+                        px, py,
+                        params[pi++], params[pi++],
+                        params[pi++], params[pi++],
+                        px = params[pi++], py = params[pi++],
+                        ox, oy, x, y
+                    ).length;
+                    break;
+                case 'Z':
+                    if (!isNaN(sx)) {
+                        if (segmentIntersection(sx, sy, px, py, ox, oy, x, y)) {
+                            intersectionCount++;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        return intersectionCount % 2 === 1;
+    }
+
+    static fromString(value: string): Path2D {
+        const path = new Path2D();
         path.setFromString(value);
         return path;
     }
@@ -409,8 +462,8 @@ export class Path {
      * @param value
      */
     static parseSvgPath(value: string): {command: string, params: number[]}[] {
-        return value.trim().split(Path.splitCommandsRe).map(part => {
-            const strParams = part.match(Path.matchParamsRe);
+        return value.trim().split(Path2D.splitCommandsRe).map(part => {
+            const strParams = part.match(Path2D.matchParamsRe);
             return {
                 command: part.substr(0, 1),
                 params: strParams ? strParams.map(parseFloat) : []
@@ -419,7 +472,7 @@ export class Path {
     }
 
     static prettifySvgPath(value: string): string {
-        return Path.parseSvgPath(value).map(d => d.command + d.params.join(',')).join('\n');
+        return Path2D.parseSvgPath(value).map(d => d.command + d.params.join(',')).join('\n');
     }
 
     /**
@@ -429,7 +482,7 @@ export class Path {
     setFromString(value: string) {
         this.clear();
 
-        const parts = Path.parseSvgPath(value);
+        const parts = Path2D.parseSvgPath(value);
 
         // Current point.
         let x: number;
@@ -442,14 +495,14 @@ export class Path {
         let lastCommand: string;
 
         function checkQuadraticCP() {
-            if (!lastCommand.match(Path.quadraticCommandRe)) {
+            if (!lastCommand.match(Path2D.quadraticCommandRe)) {
                 cpx = x;
                 cpy = y;
             }
         }
 
         function checkCubicCP() {
-            if (!lastCommand.match(Path.cubicCommandRe)) {
+            if (!lastCommand.match(Path2D.cubicCommandRe)) {
                 cpx = x;
                 cpy = y;
             }
@@ -611,10 +664,10 @@ export class Path {
     toString(): string {
         const c = this.commands;
         const p = this.params;
-        const cc = c.length;
+        const cn = c.length;
         const out: string[] = [];
 
-        for (let ci = 0, pi = 0; ci < cc; ci++) {
+        for (let ci = 0, pi = 0; ci < cn; ci++) {
             switch (c[ci]) {
                 case 'M':
                     out.push('M' + p[pi++] + ',' + p[pi++]);
@@ -636,20 +689,20 @@ export class Path {
     }
 
     toPrettyString(): string {
-        return Path.prettifySvgPath(this.toString());
+        return Path2D.prettifySvgPath(this.toString());
     }
 
     toSvg(): string {
-        return `${Path.xmlDeclaration}
-<svg width="100%" height="100%" viewBox="0 0 50 50" version="1.1" xmlns="${Path.xmlns}">
+        return `${Path2D.xmlDeclaration}
+<svg width="100%" height="100%" viewBox="0 0 50 50" version="1.1" xmlns="${Path2D.xmlns}">
     <path d="${this.toString()}" style="fill:none;stroke:#000;stroke-width:0.5;"/>
 </svg>`;
     }
 
     toDebugSvg(): string {
-        const d = Path.prettifySvgPath(this.toString());
-        return `${Path.xmlDeclaration}
-<svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="${Path.xmlns}">
+        const d = Path2D.prettifySvgPath(this.toString());
+        return `${Path2D.xmlDeclaration}
+<svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="${Path2D.xmlns}">
     <path d="${d}" style="fill:none;stroke:#000;stroke-width:0.5;"/>
 </svg>`;
     }

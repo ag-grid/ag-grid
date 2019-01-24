@@ -1,6 +1,6 @@
 import {HdpiCanvas} from "../canvas/hdpiCanvas";
 import {Node} from "./node";
-import {Path} from "./path";
+import {Path2D} from "./path2D";
 import {Shape} from "./shape/shape";
 import {Parent} from "./parent";
 
@@ -32,44 +32,19 @@ export class Scene {
             const node = this.hitTestPath(this.root, x, y);
             if (node) {
                 if (node instanceof Shape) {
-                    this.lastHit = { node, fillStyle: node.fillStyle };
+                    if (!this.lastHit) {
+                        this.lastHit = { node, fillStyle: node.fillStyle };
+                    } else if (this.lastHit.node !== node) {
+                        this.lastHit.node.fillStyle = this.lastHit.fillStyle;
+                        this.lastHit = { node, fillStyle: node.fillStyle };
+                    }
                     node.fillStyle = 'yellow';
                 }
             } else if (this.lastHit) {
                 this.lastHit.node.fillStyle = this.lastHit.fillStyle;
+                this.lastHit = undefined;
             }
         }
-
-        // const pixelRatio = this.hdpiCanvas.pixelRatio;
-        // Path2D's isPointInPath/isPointInStroke require multiplying by the pixelRatio
-        // const x = e.offsetX * pixelRatio;
-        // const y = e.offsetY * pixelRatio;
-        //
-        // const node = this.root;
-        // if (node instanceof Parent) {
-        //     const children = node.children;
-        //     const n = children.length;
-        //     for (let i = 0; i < n; i++) {
-        //         const child = children[i];
-        //         if (child instanceof Shape) {
-        //             // TODO: right now, setting these properties causes
-        //             //       a scene to rerender, even if values are the same
-        //             if (child.isPointInPath(this.ctx, x, y)) {
-        //                 child.fillStyle = 'yellow';
-        //             }
-        //             else {
-        //                 child.fillStyle = 'red';
-        //             }
-        //
-        //             if (child.isPointInStroke(this.ctx, x, y)) {
-        //                 child.strokeStyle = 'lime';
-        //             }
-        //             else {
-        //                 child.strokeStyle = 'black';
-        //             }
-        //         }
-        //     }
-        // }
     };
 
     hitTestPath(node: Node, x: number, y: number): Node | undefined {
@@ -126,7 +101,7 @@ export class Scene {
         return this._root;
     }
 
-    appendPath(path: Path) {
+    appendPath(path: Path2D) {
         const ctx = this.ctx;
         const commands = path.commands;
         const params = path.params;

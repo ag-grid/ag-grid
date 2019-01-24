@@ -15,7 +15,9 @@ export class HdpiCanvas {
         Object.freeze(this);
     }
 
-    _pixelRatio: number = 1;
+    // `NaN` is deliberate here, so that overrides are always applied
+    // and the `resetTransform` inside the `resize` method works in IE11.
+    _pixelRatio: number = NaN;
     get pixelRatio(): number {
         return this._pixelRatio;
     }
@@ -42,7 +44,7 @@ export class HdpiCanvas {
         for (const name in overrides) {
             if (overrides.hasOwnProperty(name)) {
                 // Save native methods under prefixed names,
-                // if this hasn't been done by previous overrides already.
+                // if this hasn't been done by the previous overrides already.
                 if (!(ctx as any)['$' + name]) {
                     (ctx as any)['$' + name] = (ctx as any)[name];
                 }
@@ -89,7 +91,7 @@ export class HdpiCanvas {
         const span = document.createElement('span');
         span.style.position = 'absolute';
         span.style.top = '-10000px';
-        document.body.append(span);
+        document.body.appendChild(span);
         return span;
     })();
 

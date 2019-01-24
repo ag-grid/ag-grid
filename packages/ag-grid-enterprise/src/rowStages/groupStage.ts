@@ -499,7 +499,15 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
-        const keys: string[] | null = this.getDataPath ? this.getDataPath(rowNode.data) : null;
+        let keys = null;
+        if (this.getDataPath) {
+            let path = this.getDataPath(rowNode.data);
+            if (path) {
+                // sanitize
+                keys = path.map(p => _.escape(p));
+            }
+        }
+
         if (keys === null || keys === undefined || keys.length === 0) {
             _.doOnce(
                 () => console.warn(`getDataPath() should not return an empty path for data`, rowNode.data),

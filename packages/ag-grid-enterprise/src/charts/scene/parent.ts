@@ -25,7 +25,7 @@ export abstract class Parent extends Node {
     }
 
     // Used to check for duplicate nodes.
-    private childSet: { [key in string]: boolean } = {}; // new Set<Node>()
+    private childSet: { [key: string]: boolean } = {}; // new Set<Node>()
 
     add(node: Node) {
         // Passing a single parameter to an open-ended version of `addAll`

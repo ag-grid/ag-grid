@@ -27,7 +27,7 @@ export default class extends Component {
     }
 
     createState() {
-        const topOptions = {alignedGrids: []};
+        const topOptions = {alignedGrids: [], suppressHorizontalScroll: true};
         const bottomOptions = {alignedGrids: []};
 
         topOptions.alignedGrids.push(bottomOptions);

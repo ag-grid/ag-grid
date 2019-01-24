@@ -18,3 +18,11 @@ export function isPointInBBox(bbox: BBox, x: number, y: number) {
     return x >= bbox.x && x <= (bbox.x + bbox.width)
         && y >= bbox.y && y <= (bbox.y + bbox.height);
 }
+
+export function renderBBox(ctx: CanvasRenderingContext2D, bbox: BBox) {
+    ctx.save();
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(bbox.x, bbox.y, bbox.width, bbox.height);
+    ctx.restore();
+}

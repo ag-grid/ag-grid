@@ -1,11 +1,6 @@
 import {Node} from "../node";
 import {chainObjects} from "../../util/object";
 
-// TODO: Should we call this class `Path`?
-// `Text` sprite will also have basic attributes like `fillStyle`, `strokeStyle`
-// and `opacity`, but the `Shape` isn't a proper base class for `Text`.
-// Move the `render` method here and make `Rect` and `Arc` only supply the
-// `updatePath` method.
 export abstract class Shape extends Node {
     /**
      * Defaults for style properties. Note that properties that affect the position
@@ -20,7 +15,7 @@ export abstract class Shape extends Node {
         strokeStyle: null,
         lineWidth: 1,
         opacity: 1,
-        shadowColor: 'rgba(0, 0, 0, 0)',
+        shadowColor: null,
         shadowBlur: 0,
         shadowOffsetX: 0,
         shadowOffsetY: 0
@@ -109,14 +104,14 @@ export abstract class Shape extends Node {
         return this._opacity;
     }
 
-    private _shadowColor: string = Shape.defaultStyles.shadowColor;
-    set shadowColor(value: string) {
+    private _shadowColor: string | null = Shape.defaultStyles.shadowColor;
+    set shadowColor(value: string | null) {
         if (this._shadowColor !== value) {
             this._shadowColor = value;
             this.dirty = true;
         }
     }
-    get shadowColor(): string {
+    get shadowColor(): string | null {
         return this._shadowColor;
     }
 
@@ -159,13 +154,23 @@ export abstract class Shape extends Node {
         }
         if (this.strokeStyle) {
             ctx.strokeStyle = this.strokeStyle;
+            ctx.lineWidth = this.lineWidth;
         }
-        ctx.lineWidth = this.lineWidth;
-        ctx.globalAlpha = this.opacity;
-        ctx.shadowColor = this.shadowColor;
-        ctx.shadowBlur = this.shadowBlur;
-        ctx.shadowOffsetX = this.shadowOffsetX;
-        ctx.shadowOffsetY = this.shadowOffsetY;
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+        if (this.shadowColor) {
+            ctx.shadowColor = this.shadowColor;
+        }
+        if (this.shadowBlur) {
+            ctx.shadowBlur = this.shadowBlur;
+        }
+        if (this.shadowOffsetX) {
+            ctx.shadowOffsetX = this.shadowOffsetX;
+        }
+        if (this.shadowOffsetY) {
+            ctx.shadowOffsetY = this.shadowOffsetY;
+        }
     }
 
     abstract isPointInPath(x: number, y: number): boolean

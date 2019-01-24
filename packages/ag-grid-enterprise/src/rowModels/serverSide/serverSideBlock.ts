@@ -52,6 +52,8 @@ export class ServerSideBlock extends RowNodeBlock {
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
+    public static readonly DefaultBlockSize = 100;
+
     constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
         super(pageNumber, params);
         this.params = params;

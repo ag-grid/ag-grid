@@ -1,8 +1,8 @@
 import {
+    _,
     Autowired,
     ColumnVO,
     Context,
-    Events,
     EventService,
     GridOptionsWrapper,
     IServerSideCache,
@@ -12,13 +12,11 @@ import {
     PostConstruct,
     Qualifier,
     RowBounds,
-    RowDataUpdatedEvent,
     RowNode,
     RowNodeCache,
-    RowNodeCacheParams,
-    _
+    RowNodeCacheParams
 } from "ag-grid-community";
-import { ServerSideBlock } from "./serverSideBlock";
+import {ServerSideBlock} from "./serverSideBlock";
 
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
@@ -185,13 +183,15 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         let lastBlockId = -1;
 
+        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+
         this.forEachBlockInOrder((currentBlock: ServerSideBlock, blockId: number) => {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
             const blocksSkippedCount = blockId - lastBlockId - 1;
-            const rowsSkippedCount = blocksSkippedCount * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+            const rowsSkippedCount = blocksSkippedCount * blockSize;
             if (rowsSkippedCount > 0) {
                 displayIndexSeq.skip(rowsSkippedCount);
             }
@@ -201,7 +201,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 if (_.exists(this.blockHeights[blockToAddId])) {
                     nextRowTop.value += this.blockHeights[blockToAddId];
                 } else {
-                    nextRowTop.value += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight;
+                    nextRowTop.value += blockSize * this.cacheParams.rowHeight;
                 }
             }
 
@@ -216,7 +216,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
-        const lastVisitedRow = ((lastBlockId + 1) * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0)) - 1;
+        const lastVisitedRow = ((lastBlockId + 1) * blockSize) - 1;
         const rowCount = this.getVirtualRowCount();
         const rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
@@ -261,6 +261,8 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             return null;
         }
 
+        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+
         // if block not found, we need to load it
         if (_.missing(block)) {
 
@@ -277,26 +279,26 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
 
                 const isInRange = (): boolean => {
-                    return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
+                    return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + blockSize);
                 };
 
                 while (!isInRange()) {
-                    displayIndexStart += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+                    displayIndexStart += blockSize;
 
                     const cachedBlockHeight = this.blockHeights[blockNumber];
                     if (_.exists(cachedBlockHeight)) {
                         nextRowTop += cachedBlockHeight;
                     } else {
-                        nextRowTop += this.cacheParams.rowHeight * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+                        nextRowTop += this.cacheParams.rowHeight * blockSize;
                     }
 
                     blockNumber++;
                 }
             } else {
                 const localIndex = displayRowIndex - this.displayIndexStart;
-                blockNumber = Math.floor(localIndex / (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
-                displayIndexStart = this.displayIndexStart + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
-                nextRowTop = this.cacheTop + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight);
+                blockNumber = Math.floor(localIndex / blockSize);
+                displayIndexStart = this.displayIndexStart + (blockNumber * blockSize);
+                nextRowTop = this.cacheTop + (blockNumber * blockSize * this.cacheParams.rowHeight);
             }
 
             block = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
@@ -365,153 +367,6 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             return false;
         }
         return pixel >= this.cacheTop && pixel < (this.cacheTop + this.cacheHeight);
-    }
-
-    public removeFromCache(items: any[]): void {
-
-        // create map of id's for quick lookup
-        const itemsToDeleteById: { [id: string]: any } = {};
-        const idForNodeFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-
-        items.forEach(item => {
-            if (idForNodeFunc !== undefined) {
-                const id = idForNodeFunc(item);
-                itemsToDeleteById[id] = item;
-            }
-        });
-
-        let deletedCount = 0;
-
-        this.forEachBlockInOrder(block => {
-            const startRow = block.getStartRow();
-            const endRow = block.getEndRow();
-
-            let deletedCountFromThisBlock = 0;
-            for (let rowIndex = startRow; rowIndex < endRow; rowIndex++) {
-
-                const rowNode = block.getRowUsingLocalIndex(rowIndex, true);
-                if (!rowNode) {
-                    continue;
-                }
-
-                const deleteThisRow = !!itemsToDeleteById[rowNode.id];
-                if (deleteThisRow) {
-                    deletedCountFromThisBlock++;
-                    deletedCount++;
-                    block.setDirty();
-                    rowNode.clearRowTop();
-                    continue;
-                }
-
-                // if rows were deleted, then we need to move this row node to
-                // it's new location
-                if (deletedCount > 0) {
-                    block.setDirty();
-                    const newIndex = rowIndex - deletedCount;
-
-                    const blockId = Math.floor(newIndex / (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
-                    const blockToInsert = this.getBlock(blockId);
-                    if (blockToInsert) {
-                        blockToInsert.setRowNode(newIndex, rowNode);
-                    }
-                }
-            }
-
-            if (deletedCountFromThisBlock > 0) {
-                for (let i = deletedCountFromThisBlock; i > 0; i--) {
-                    block.setBlankRowNode(endRow - i);
-                }
-            }
-        });
-
-        if (this.isMaxRowFound()) {
-            this.hack_setVirtualRowCount(this.getVirtualRowCount() - deletedCount);
-        }
-
-        this.onCacheUpdated();
-
-        const event: RowDataUpdatedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-
-        this.eventService.dispatchEvent(event);
-    }
-
-    public addToCache(items: any[], indexToInsert: number): void {
-        const newNodes: RowNode[] = [];
-        this.forEachBlockInReverseOrder(block => {
-            const pageEndRow = block.getEndRow();
-
-            // if the insertion is after this page, then this page is not impacted
-            if (pageEndRow <= indexToInsert) {
-                return;
-            }
-
-            this.moveItemsDown(block, indexToInsert, items.length);
-            const newNodesThisPage = this.insertItems(block, indexToInsert, items);
-            newNodesThisPage.forEach(rowNode => newNodes.push(rowNode));
-        });
-
-        if (this.isMaxRowFound()) {
-            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
-        }
-
-        this.onCacheUpdated();
-
-        const event: RowDataUpdatedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-
-        this.eventService.dispatchEvent(event);
-    }
-
-    private moveItemsDown(block: ServerSideBlock, moveFromIndex: number, moveCount: number): void {
-        const startRow = block.getStartRow();
-        const endRow = block.getEndRow();
-        const indexOfLastRowToMove = moveFromIndex + moveCount;
-
-        // all rows need to be moved down below the insertion index
-        for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
-            // don't move rows at or before the insertion index
-            if (currentRowIndex < indexOfLastRowToMove) {
-                continue;
-            }
-
-            const indexOfNodeWeWant = currentRowIndex - moveCount;
-            const nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
-
-            if (nodeForThisIndex) {
-                block.setRowNode(currentRowIndex, nodeForThisIndex);
-            } else {
-                block.setBlankRowNode(currentRowIndex);
-                block.setDirty();
-            }
-        }
-    }
-
-    private insertItems(block: ServerSideBlock, indexToInsert: number, items: any[]): RowNode[] {
-        const pageStartRow = block.getStartRow();
-        const pageEndRow = block.getEndRow();
-        const newRowNodes: RowNode[] = [];
-
-        // next stage is insert the rows into this page, if applicable
-        for (let index = 0; index < items.length; index++) {
-            const rowIndex = indexToInsert + index;
-
-            const currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
-
-            if (currentRowInThisPage) {
-                const dataItem = items[index];
-                const newRowNode = block.setNewData(rowIndex, dataItem);
-                newRowNodes.push(newRowNode);
-            }
-        }
-
-        return newRowNodes;
     }
 
     public refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
