@@ -1,16 +1,47 @@
 import { RowNode } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
-import {_} from "../../utils";
 
+// the class below contains a tree of row nodes. each node is
+// represented by a PathItem
+interface PathItem {
+    rowNode: RowNode; // the node this item points to
+    children: PathItem[]; // children of this node - will be a subset of all the nodes children
+}
+
+// when doing transactions, or change detection, and grouping is present
+// in the data, there is no need for the ClientSideRowModel to update each
+// group after an update, ony parts that were impacted by the change.
+// this class keeps track of all groups that were impacted by a transaction.
+// the the different CSRM operations (filter, sort etc) use the forEach method
+// to visit each group that was changed.
 export class ChangedPath {
 
+    // we keep columns when doing changed detection after user edits.
+    // when a user edits, we only need to re-aggregate the column
+    // that was edited.
     private readonly keepingColumns: boolean;
 
+    // the root path always points to RootNode, and RootNode
+    // is always in the changed path. over time, we add items to
+    // the path, but this stays as the root. when the changed path
+    // is ready, this will be the root of the tree of RowNodes that
+    // need to be refreshed (all the row nodes that were impacted by
+    // the transaction).
+    private readonly pathRoot: PathItem;
+
+    // whether changed path is active of not. it is active when a) doing
+    // a transaction update or b) doing change detection. if we are doing
+    // a CSRM refresh for other reasons (after sort or filter, or user calling
+    // setRowData() without delta mode) then we are not active. we are also
+    // marked as not active if secondary columns change in pivot (as this impacts
+    // aggregations)
     private active = true;
 
+    // for each node in the change path, we also store which columns need
+    // to be re-aggregated.
     private nodeIdsToColumns: {[nodeId:string]: {[colId:string]:boolean}} = {};
 
-    private pathRoot: PathItem;
+    // for quick lookup, all items in the change path are mapped by nodeId
     private mapToItems: {[id: string]: PathItem} = {};
 
     public constructor(keepingColumns: boolean, rootNode: RowNode) {
@@ -61,8 +92,11 @@ export class ChangedPath {
     // will be called for child nodes in addition to parent nodes.
     public forEachChangedNodeDepthFirst(callback: (rowNode: RowNode)=>void, traverseLeafNodes = false): void {
         if (this.active) {
+            // if we are active, then use the change path to callback
+            // only for updated groups
             this.depthFirstSearchChangedPath(this.pathRoot, callback);
         } else {
+            // we are not active, so callback for everything, walk the entire path
             this.depthFirstSearchEverything(this.pathRoot.rowNode, callback, traverseLeafNodes);
         }
     }
@@ -83,18 +117,16 @@ export class ChangedPath {
     }
 
     private populateColumnsMap(rowNode: RowNode, columns: Column[]): void {
+        if (!this.keepingColumns || !columns) { return; }
+
         let pointer = rowNode;
         while (pointer) {
-
             // if columns, add the columns in all the way to parent, merging
             // in any other columns that might be there already
-            if (this.keepingColumns && columns) {
-                if (!this.nodeIdsToColumns[pointer.id]) {
-                    this.nodeIdsToColumns[pointer.id] = {};
-                }
-                columns.forEach(col => this.nodeIdsToColumns[pointer.id][col.getId()] = true);
+            if (!this.nodeIdsToColumns[pointer.id]) {
+                this.nodeIdsToColumns[pointer.id] = {};
             }
-
+            columns.forEach(col => this.nodeIdsToColumns[pointer.id][col.getId()] = true);
             pointer = pointer.parent;
         }
     }
@@ -102,7 +134,7 @@ export class ChangedPath {
     private linkPathItems(rowNode: RowNode, newEntryCount: number): void {
         let pointer = rowNode;
         for (let i = 0; i<newEntryCount; i++) {
-            let thisItem = this.mapToItems[pointer.id];;
+            let thisItem = this.mapToItems[pointer.id];
             let parentItem = this.mapToItems[pointer.parent.id];
             if (!parentItem.children) {
                 parentItem.children = [];
@@ -112,22 +144,23 @@ export class ChangedPath {
         }
     }
 
-    // used by change detection (provides cols) and groupStage (doesn't provide cols)
+    // called by
+    // 1) change detection (provides cols) and
+    // 2) groupStage if doing transaction update (doesn't provide cols)
     public addParentNode(rowNode: RowNode | null, columns?: Column[]): void {
-        this.validateActive();
 
         // we cannot do  both steps below in the same loop as
         // the second loop has a dependency on the first loop.
         // ie the hierarchy cannot be stitched up yet because
         // we don't have it built yet
 
-        // step one - create the new PathItem objects.
+        // create the new PathItem objects.
         let newEntryCount = this.createPathItems(rowNode);
 
-        // step two - link in the node items
+        // link in the node items
         this.linkPathItems(rowNode, newEntryCount);
 
-        // step 3 - update columns
+        // update columns
         this.populateColumnsMap(rowNode, columns);
     }
 
@@ -136,7 +169,6 @@ export class ChangedPath {
     }
 
     public getValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] {
-        this.validateActive();
         if (!this.keepingColumns) { return valueColumns; }
 
         const colsForThisNode = this.nodeIdsToColumns[rowNode.id];
@@ -145,25 +177,10 @@ export class ChangedPath {
     }
 
     public getNotValueColumnsForNode(rowNode: RowNode, valueColumns: Column[]): Column[] {
-        this.validateActive();
         if (!this.keepingColumns) { return null; }
 
         const colsForThisNode = this.nodeIdsToColumns[rowNode.id];
         const result = valueColumns.filter(col => !colsForThisNode[col.getId()]);
         return result;
     }
-
-    // this is to check for a bug in our code. each part that uses ChangePath should check
-    // if it is valid first, and not use it if it is not valid
-    private validateActive(): void {
-        if (!this.active) {
-            throw new Error("ag-Grid: tried to work on an invalid changed path");
-        }
-    }
-}
-
-
-interface PathItem {
-    rowNode: RowNode;
-    children: PathItem[];
 }

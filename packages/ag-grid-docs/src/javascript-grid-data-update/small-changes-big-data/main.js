@@ -1,9 +1,58 @@
 var columnDefs = [
-    { field: 'dataGroup', enableRowGroup: true, rowGroup: true, hide: true, },
+    { field: 'group1', enableRowGroup: true, rowGroup: true, hide: true, },
+    { field: 'group2', enableRowGroup: true, rowGroup: true, hide: true, },
     { field: "id", headerName: "ID" },
     { field: "name" },
-    { field: 'value' }
+    { field: 'value', enableCellChangeFlash: true,
+        aggFunc: myAggFunc,
+        sort: 'asc', comparator: myComparator,
+        filter: MyFilter
+    }
 ];
+
+var aggCallCount;
+var compareCallCount;
+var filterCallCount;
+
+function myAggFunc(values) {
+    aggCallCount++;
+
+    var total = 0;
+    for (var i = 0; i<values.length; i++) {
+        total += values[i];
+    }
+    return total;
+}
+
+function myComparator(a, b) {
+    compareCallCount++;
+    return a - b;
+}
+
+function MyFilter() {}
+
+MyFilter.prototype.init = function() {
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = 'This is a dummy filter';
+};
+
+MyFilter.prototype.getGui = function() {
+    return this.eGui;
+};
+
+MyFilter.prototype.setModel = function(model) {
+    console.log('setting filter model', model);
+};
+
+MyFilter.prototype.isFilterActive = function(model) {
+    return true;
+};
+
+MyFilter.prototype.doesFilterPass = function(params) {
+    filterCallCount++;
+    return true;
+};
+
 
 function isFirstColumn(params) {
     let displayedColumns = params.columnApi.getAllDisplayedColumns();
@@ -21,71 +70,114 @@ function getRowNodeId(data) {
     return data.id;
 }
 
-function onBtDelete() {
+function onBtDuplicate() {
+    // get the first child of the
+    var selectedList = gridOptions.api.getSelectedNodes();
+    if (!selectedList || selectedList.length===0) {
+        console.log('No rows selected!');
+        return;
+    }
 
-    var start = new Date().getTime();
-
-    // var selectedData = data[5];
-    var selectedData = gridOptions.api.getDisplayedRowAtIndex(1).childrenAfterGroup[0].data;
-    // var selectedData = gridOptions.api.getSelectedNodes()[0].data;
-    data = data.filter( function(item) {
-        return selectedData!==item;
+    rowData = rowData.slice();
+    selectedList.forEach( function(rowNode) {
+        var oldData = rowNode.data;
+        idCounter++;
+        var newItem = createDataItem(idCounter, 'Thing ' + idCounter, oldData.group1, oldData.group2, oldData.value);
+        rowData.push(newItem);
     });
 
-    gridOptions.api.setRowData(data);
-
-    var end = new Date().getTime();
-
-    console.log('done ' + (end - start) + 'ms');
-
-    // let start = Date.now();
-    // let { data, selected } = this.state;
-    //
-    // if (selected.length > 0) {
-    //     let newData = data.filter(item => {
-    //         return !selected.includes(item.id);
-    //     });
-    //
-    //     this.setState({
-    //         data: newData,
-    //     });
-    // }
+    timeSetRowData('Update');
 }
 
-var rowData = [
-    {id: 'aa', make: "Toyota", model: "Celica", price: 35000},
-    {id: 'bb', make: "Ford", model: "Mondeo", price: 32000},
-    {id: 'cc', make: "Porsche", model: "Boxter", price: 72000},
-    {id: 'dd', make: "BMW", model: "5 Series", price: 59000},
-    {id: 'ee', make: "Dodge", model: "Challanger", price: 35000},
-    {id: 'ff', make: "Mazda", model: "MX5", price: 28000},
-    {id: 'gg', make: "Horse", model: "Outside", price: 99000}
-];
+function onBtUpdate() {
+    // get the first child of the
+    var selectedList = gridOptions.api.getSelectedNodes();
+    if (!selectedList || selectedList.length===0) {
+        console.log('No rows selected!');
+        return;
+    }
+
+    rowData = rowData.slice();
+    selectedList.forEach( function(rowNode) {
+        var oldData = rowNode.data;
+        var newItem = createDataItem(oldData.id, oldData.name, oldData.group1, oldData.group2, Math.floor(Math.random() * 100));
+        var index = rowData.indexOf(oldData);
+        rowData[index] = newItem;
+    });
+
+    timeSetRowData('Update');
+}
+
+function onBtDelete() {
+
+    // get the first child of the
+    var selectedList = gridOptions.api.getSelectedNodes();
+    if (!selectedList || selectedList.length===0) {
+        console.log('No rows selected!');
+        return;
+    }
+
+    var selectedMap = {};
+    selectedList.forEach( function(item) {selectedMap[item.id] = true; } );
+
+    rowData = rowData.filter( function(item) {
+        return !selectedMap[item.id];
+    });
+
+    timeSetRowData('Delete');
+}
+
+function timeSetRowData(name) {
+    aggCallCount = 0;
+    compareCallCount = 0;
+    filterCallCount = 0;
+    var start = new Date().getTime();
+    gridOptions.api.setRowData(rowData);
+    var end = new Date().getTime();
+    console.log(name + ' finished in ' + (end-start) + 'ms, aggCallCount = ' + aggCallCount + ', compareCallCount = '
+        + compareCallCount + ', filterCallCount = ' + filterCallCount);
+}
 
 var gridOptions = {
-    getRowNodeId: getRowNodeId,
-    deltaRowDataMode: true,
     defaultColDef: defaultColDef,
     columnDefs: columnDefs,
+    getRowNodeId: getRowNodeId,
+    deltaRowDataMode: true,
+    rowSelection: 'multiple',
+    groupSelectsChildren: true,
     animateRows: true,
-    suppressMaintainUnsortedOrder: true
+    suppressMaintainUnsortedOrder: true,
+    suppressRowClickSelection: true,
+    autoGroupColumnDef: {
+        checkboxSelection: true
+    }
 };
 
-var data = [];
+var rowData = [];
 
 function createData() {
-    let nextGroup = 0;
+    var nextGroup = 0;
     for (let i = 0; i < 10000; i++) {
         if (i % 2 === 0) {
             nextGroup++;
         }
-        data.push({
-            id: i,
-            name: `Thing ${i}`,
-            dataGroup: `group-${nextGroup}`,
-            value: Math.random(5000)
-        });
+        var group1 = 'Group-' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.substr(i%26, 1);
+        var group2 = 'Group-' + Math.round(i/1000);
+        idCounter++;
+        rowData.push(createDataItem(idCounter, 'Thing ' + idCounter, group1, group2, Math.floor(Math.random() * 100)));
     }
+}
+
+var idCounter = 0;
+
+function createDataItem(id, name, group1, group2, value) {
+    return {
+        id: id,
+        name: name,
+        group1: group1,
+        group2: group2,
+        value: value
+    };
 }
 
 // wait for the document to be loaded, otherwise
@@ -93,9 +185,9 @@ function createData() {
 document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
+    gridOptions.api.setFilterModel({
+        value: ''
+    });
     createData();
-
-    setTimeout( function() {
-        gridOptions.api.setRowData(data);
-    }, 100);
+    timeSetRowData('Initial');
 });
