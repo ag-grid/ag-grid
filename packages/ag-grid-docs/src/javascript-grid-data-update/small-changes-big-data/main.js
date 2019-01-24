@@ -118,7 +118,8 @@ function onBtUpdate() {
     rowData = rowData.slice();
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
-        var newItem = createDataItem(oldData.id, oldData.name, oldData.group1, oldData.group2, Math.floor(Math.random() * 100));
+        var newValue = Math.floor(Math.random() * 100) + 10;
+        var newItem = createDataItem(oldData.id, oldData.name, oldData.group1, oldData.group2, newValue);
         var index = rowData.indexOf(oldData);
         rowData[index] = newItem;
     });
@@ -194,8 +195,9 @@ function createData() {
         var name = randomLetter() + randomLetter();
         var group1 = 'Group-' + letter(i%26);
         var group2 = 'Group-' + Math.round(i/1000);
+        var value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
         idCounter++;
-        rowData.push(createDataItem(idCounter, name, group1, group2, Math.floor(Math.random() * 100)));
+        rowData.push(createDataItem(idCounter, name, group1, group2, value));
     }
 }
 
@@ -217,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
     gridOptions.api.setFilterModel({
-        value: {value: '22'}
+        value: {value: '5'}
     });
     createData();
     timeSetRowData('Initial');
