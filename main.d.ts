@@ -59,7 +59,7 @@ export { ICellRenderer, ICellRendererFunc, ICellRendererComp } from "./dist/lib/
 export { AnimateShowChangeCellRenderer } from "./dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./dist/lib/rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer } from "./dist/lib/rendering/cellRenderers/groupCellRenderer";
-export { IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./dist/lib/interfaces/iStatusPanel";
+export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./dist/lib/interfaces/iStatusPanel";
 export { IStatusBarService } from "./dist/lib/interfaces/iStatusBarService";
 export { IToolPanel, IToolPanelComp, IToolPanelParams } from "./dist/lib/interfaces/iToolPanel";
 export { ILoadingOverlayComp, ILoadingOverlayParams } from "./dist/lib/rendering/overlays/loadingOverlayComponent";
