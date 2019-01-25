@@ -6,7 +6,6 @@ import {Scene} from "./scene";
  * Each parent can have zero or more children.
  */
 export abstract class Parent extends Node {
-    set scene(value: Scene | undefined) {
     set scene(value: Scene | null) {
         this._scene = value;
 

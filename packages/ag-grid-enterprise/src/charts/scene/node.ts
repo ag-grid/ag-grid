@@ -15,8 +15,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
     };
     readonly id: string = this.createId();
 
-    data?: T;
-
     // TODO: make sure this cannot be set from user code
     protected _scene: Scene | null = null;
     set scene(value: Scene | null) {
