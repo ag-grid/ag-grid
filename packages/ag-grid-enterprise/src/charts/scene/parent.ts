@@ -7,6 +7,7 @@ import {Scene} from "./scene";
  */
 export abstract class Parent extends Node {
     set scene(value: Scene | undefined) {
+    set scene(value: Scene | null) {
         this._scene = value;
 
         const children = this.children;
@@ -15,7 +16,7 @@ export abstract class Parent extends Node {
             children[i].scene = value;
         }
     }
-    get scene(): Scene | undefined {
+    get scene(): Scene | null {
         return this._scene;
     }
 

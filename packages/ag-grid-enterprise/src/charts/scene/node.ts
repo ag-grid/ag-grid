@@ -15,19 +15,23 @@ export abstract class Node { // Don't confuse with `window.Node`.
     };
     readonly id: string = this.createId();
 
-    protected _scene?: Scene;
-    set scene(value: Scene | undefined) {
+    data?: T;
+
+    // TODO: make sure this cannot be set from user code
+    protected _scene: Scene | null = null;
+    set scene(value: Scene | null) {
         this._scene = value;
     }
-    get scene(): Scene | undefined {
+    get scene(): Scene | null {
         return this._scene;
     }
 
-    private _parent?: Parent;
-    set parent(value: Parent | undefined) {
+    // TODO: make sure this cannot be set from user code
+    private _parent: Parent | null = null;
+    set parent(value: Parent | null) {
         this._parent = value;
     }
-    get parent(): Parent | undefined {
+    get parent(): Parent | null {
         return this._parent;
     }
 
