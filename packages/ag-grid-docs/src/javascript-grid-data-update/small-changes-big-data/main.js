@@ -1,12 +1,13 @@
 var columnDefs = [
     { field: 'group1', enableRowGroup: true, rowGroup: true, hide: true, },
     { field: 'group2', enableRowGroup: true, rowGroup: true, hide: true, },
-    { field: "id", headerName: "ID" },
-    { field: "name",
+    { field: "city",
+        width: 150,
         sort: 'asc',
-        comparator: myComparator,
+        comparator: myComparator
     },
     { field: 'value', enableCellChangeFlash: true,
+        width: 150,
         aggFunc: myAggFunc,
         filter: MyFilter
     }
@@ -15,6 +16,10 @@ var columnDefs = [
 var aggCallCount;
 var compareCallCount;
 var filterCallCount;
+
+var CITIES = ['Tokyo','Jakarta','Delhi','Manila','Seoul','Shanghai','Mumbai','New York',
+                'Beijing','Sao Paulo','Mexico City','Guangzhou','Dhaka','Osaka-Kobe-Kyoto',
+                'Moscow','Cairo','Bangkok','Los Angeles','Buenos Aires'];
 
 function myAggFunc(values) {
     aggCallCount++;
@@ -100,7 +105,7 @@ function onBtDuplicate() {
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
         idCounter++;
-        var newItem = createDataItem(idCounter, oldData.name, oldData.group1, oldData.group2, oldData.value);
+        var newItem = createDataItem(idCounter, oldData.name, oldData.group1, oldData.group2, oldData.city, oldData.value);
         rowData.push(newItem);
     });
 
@@ -119,7 +124,7 @@ function onBtUpdate() {
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
         var newValue = Math.floor(Math.random() * 100) + 10;
-        var newItem = createDataItem(oldData.id, oldData.name, oldData.group1, oldData.group2, newValue);
+        var newItem = createDataItem(oldData.id, oldData.name, oldData.group1, oldData.group2, oldData.city, newValue);
         var index = rowData.indexOf(oldData);
         rowData[index] = newItem;
     });
@@ -170,9 +175,11 @@ var gridOptions = {
     groupSelectsChildren: true,
     animateRows: true,
     suppressMaintainUnsortedOrder: true,
+    suppressAggAtRootLevel: true,
     suppressRowClickSelection: true,
     autoGroupColumnDef: {
-        checkboxSelection: true
+        field: 'name',
+        cellRendererParams: { checkbox: true }
     }
 };
 
@@ -193,20 +200,22 @@ function createData() {
             nextGroup++;
         }
         var name = randomLetter() + randomLetter();
+        var city = CITIES[i%CITIES.length];
         var group1 = 'Group-' + letter(i%26);
         var group2 = 'Group-' + Math.round(i/1000);
         var value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
         idCounter++;
-        rowData.push(createDataItem(idCounter, name, group1, group2, value));
+        rowData.push(createDataItem(idCounter, name, group1, group2, city, value));
     }
 }
 
 var idCounter = 0;
 
-function createDataItem(id, name, group1, group2, value) {
+function createDataItem(id, name, group1, group2, city, value) {
     return {
         id: id,
         name: name,
+        city: city,
         group1: group1,
         group2: group2,
         value: value
@@ -223,4 +232,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     createData();
     timeSetRowData('Initial');
+
+    setTimeout( function() {
+        gridOptions.api.getDisplayedRowAtIndex(4).setExpanded(true);
+    }, 1000);
+    setTimeout( function() {
+        gridOptions.api.getDisplayedRowAtIndex(7).setExpanded(true);
+    }, 1400);
 });

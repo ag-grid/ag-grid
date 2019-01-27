@@ -545,15 +545,39 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
     <h2 id="big-data-small-transactions">Small Changes in Large Grouped Data</h2>
 
     <p>
-        The grid uses path selection when doing transaction updates to grouped data.
-        What this means is if you have many groups, and an update only impacts a
-        subset of the groups, then only that subset needs to be visited for sorting,
-        filtering, aggregation etc after an update has been applied. This gives a
-        hugs performance increase to small changes to big grouped data.
+        When grouping, the grid will group, sort, filter and aggregate each individual
+        group. When there is a lot of data and a lot of groups then this results
+        in a lot of computation required for all the data operations.
+    </p>
+    <p>
+        If using <a href="#transactions">transaction updates</a> then the grid does not execute all
+        the operations (sort, filter etc) on all the rows. Instead it only re-computes what was
+        impacted by a transaction.
+    </p>
+    <p>
+        For example, if shops are grouped by city, and the revenue for each show is summed at the city
+        level, then if the revenue for one shop changes, only the aggregation for that city needs
+        to be recomputed.
+    </p>
+    <p>
+        Deciding what groups need to be operated on again is called Changed Path Selection. After
+        the grid applies all add, removes and updates from a transaction, it works out what groups
+        got impacted and only executes the required operations on those groups.
+    </p>
+    <p>
+        Under the hood <a href="#delta-row-data">delta row data</a> uses transactions in the grid,
+        so Changed Path Selection applies also when using delta row update.
     </p>
 
     <p>
-
+        The example below demonstrates Changed Path Selection. Note the following:
+        <ul>
+            <li>The City column is sorted with a custom comparator. The comparator records how many
+            times it is called.</li>
+            <li>The Value column is aggregated with a customer aggregator. The aggregator records
+            how many times it is called.</li>
+            <li>Each time data is set into the grid, the grid works out which </li>
+        </ul>
     </p>
 
     <?= example('Small Changes Big Data', 'small-changes-big-data', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
