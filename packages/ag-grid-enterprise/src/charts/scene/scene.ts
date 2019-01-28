@@ -13,6 +13,12 @@ export class Scene {
         this.setupListeners(canvas); // debug
     }
 
+    private static id = 1;
+    private createId(): string {
+        return (this.constructor as any).name + '-' + (Scene.id++);
+    };
+    readonly id: string = this.createId();
+
     private readonly hdpiCanvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
 
@@ -89,15 +95,28 @@ export class Scene {
         return this._dirty;
     }
 
-    _root?: Node;
-    set root(node: Node | undefined) {
-        this._root = node;
-        if (node) {
-            node.scene = this;
+    _root: Node | null = null;
+    set root(node: Node | null) {
+        if (node === this._root)
+            return;
+
+        if (this._root) {
+            this._root._setScene(null);
         }
+
+        this._root = node;
+
+        if (node) {
+            // If `node` is the root node of another scene ...
+            if (node.parent === null && node.scene && node.scene !== this) {
+                node.scene.root = null;
+            }
+            node._setScene(this);
+        }
+
         this.dirty = true;
     }
-    get root(): Node | undefined {
+    get root(): Node | null {
         return this._root;
     }
 

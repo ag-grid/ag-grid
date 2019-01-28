@@ -15,18 +15,20 @@ export abstract class Node { // Don't confuse with `window.Node`.
     };
     readonly id: string = this.createId();
 
-    // TODO: make sure this cannot be set from user code
+    static isNode(node: any): node is Node {
+        return (node as Node).matrix !== undefined;
+    }
+
     protected _scene: Scene | null = null;
-    set scene(value: Scene | null) {
+    _setScene(value: Scene | null) {
         this._scene = value;
     }
     get scene(): Scene | null {
         return this._scene;
     }
 
-    // TODO: make sure this cannot be set from user code
     private _parent: Parent | null = null;
-    set parent(value: Parent | null) {
+    _setParent(value: Parent | null) {
         this._parent = value;
     }
     get parent(): Parent | null {
