@@ -339,6 +339,10 @@
         cursor: grab;
     }
 
+    .ag-row-dragging, .ag-row-dragging .ag-row-drag {
+        cursor: move;
+    }
+
     .ag-rtl .ag-row-drag {
         float: right;
         background-position-x: right;
