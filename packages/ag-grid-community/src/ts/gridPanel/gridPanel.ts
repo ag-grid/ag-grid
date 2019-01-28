@@ -482,7 +482,7 @@ export class GridPanel extends Component {
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = (mouseEvent: MouseEvent) => {
             const target = _.getTarget(mouseEvent);
-            if (target === this.eCenterViewport) {
+            if (target === this.eBodyViewport || target === this.eCenterViewport) {
                 // show it
                 this.onContextMenu(mouseEvent, null, null, null, null);
                 this.preventDefaultOnContextMenu(mouseEvent);
@@ -492,7 +492,7 @@ export class GridPanel extends Component {
         //For some reason listening only to this.eBody doesn't work... Maybe because the event is consumed somewhere else?
         //In any case, not expending much time on this, if anyone comes across this and knows how to make this work with
         //one listener please go ahead and change it...
-        this.addDestroyableEventListener(this.eCenterViewport, 'contextmenu', listener);
+        this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
     }
 
     // + rangeController - used to know when to scroll when user is dragging outside the
