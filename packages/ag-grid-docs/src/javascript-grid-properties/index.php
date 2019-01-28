@@ -783,6 +783,15 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascriptgridserversidemodel/">Serverside Row Model</a>.
             </td>
         </tr>
+        <tr>
+            <th>suppressBrowserResizeObserver</th>
+            <td>
+                The grid will check for ResizeObserver and use it if it exists in the browser,
+                otherwise it will use the grid's alternative implementation. Some users reported
+                issues with Chrome's ResizeObserver. Use this property to always use the grids
+                alternative implementation should such problems exist.</a>.
+            </td>
+        </tr>
     </table>
 
 

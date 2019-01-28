@@ -291,6 +291,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressFocusAfterRefresh);
     }
 
+    public isSuppressBrowserResizeObserver() {
+        return isTrue(this.gridOptions.suppressBrowserResizeObserver);
+    }
+
     public isSuppressMaintainUnsortedOrder() {
         return isTrue(this.gridOptions.suppressMaintainUnsortedOrder);
     }
