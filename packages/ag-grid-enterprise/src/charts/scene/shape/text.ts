@@ -6,7 +6,7 @@ import {BBox, isPointInBBox, renderBBox} from "../bbox";
 export class Text extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
-        font: '10px sans-serif',
+        font: '10px sans-serif' as string,
         textBaseline: 'alphabetic' as CanvasTextBaseline
     });
 

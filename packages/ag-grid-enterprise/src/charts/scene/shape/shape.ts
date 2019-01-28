@@ -1,5 +1,6 @@
 import {Node} from "../node";
 import {chainObjects} from "../../util/object";
+import {DropShadow} from "../dropShadow";
 
 export abstract class Shape extends Node {
     /**
@@ -11,14 +12,11 @@ export abstract class Shape extends Node {
      * These static defaults are meant to be inherited by subclasses.
      */
     protected static defaultStyles = chainObjects({}, {
-        fillStyle: 'black',
-        strokeStyle: null,
-        lineWidth: 1,
-        opacity: 1,
-        shadowColor: null,
-        shadowBlur: 0,
-        shadowOffsetX: 0,
-        shadowOffsetY: 0
+        fillStyle: 'black' as string | null,
+        strokeStyle: null as string | null,
+        lineWidth: 1 as number,
+        opacity: 1 as number,
+        shadow: null as DropShadow | null
     });
 
     /**
@@ -104,48 +102,15 @@ export abstract class Shape extends Node {
         return this._opacity;
     }
 
-    private _shadowColor: string | null = Shape.defaultStyles.shadowColor;
-    set shadowColor(value: string | null) {
-        if (this._shadowColor !== value) {
-            this._shadowColor = value;
+    private _shadow: DropShadow | null = Shape.defaultStyles.shadow;
+    set shadow(value: DropShadow | null) {
+        if (this._shadow !== value) {
+            this._shadow = value;
             this.dirty = true;
         }
     }
-    get shadowColor(): string | null {
-        return this._shadowColor;
-    }
-
-    private _shadowBlur: number = Shape.defaultStyles.shadowBlur;
-    set shadowBlur(value: number) {
-        if (this._shadowBlur !== value) {
-            this._shadowBlur = value;
-            this.dirty = true;
-        }
-    }
-    get shadowBlur(): number {
-        return this._shadowBlur;
-    }
-
-    private _shadowOffsetX: number = Shape.defaultStyles.shadowOffsetX;
-    set shadowOffsetX(value: number) {
-        if (this._shadowOffsetX !== value) {
-            this._shadowOffsetX = value;
-            this.dirty = true;
-        }
-    }
-    get shadowOffsetX(): number {
-        return this._shadowOffsetX;
-    }
-
-    private _shadowOffsetY: number = Shape.defaultStyles.shadowOffsetY;
-    set shadowOffsetY(value: number) {
-        if (this._shadowOffsetY !== value) {
-            this._shadowOffsetY = value;
-            this.dirty = true;
-        }
-    }
-    get shadowOffsetY(): number {
-        return this._shadowOffsetY;
+    get shadow(): DropShadow | null {
+        return this._shadow;
     }
 
     applyContextAttributes(ctx: CanvasRenderingContext2D) {
@@ -159,17 +124,13 @@ export abstract class Shape extends Node {
         if (this.opacity < 1) {
             ctx.globalAlpha = this.opacity;
         }
-        if (this.shadowColor) {
-            ctx.shadowColor = this.shadowColor;
-        }
-        if (this.shadowBlur) {
-            ctx.shadowBlur = this.shadowBlur;
-        }
-        if (this.shadowOffsetX) {
-            ctx.shadowOffsetX = this.shadowOffsetX;
-        }
-        if (this.shadowOffsetY) {
-            ctx.shadowOffsetY = this.shadowOffsetY;
+
+        const shadow = this.shadow;
+        if (shadow) {
+            ctx.shadowColor = shadow.color;
+            ctx.shadowOffsetX = shadow.offset.x;
+            ctx.shadowOffsetY = shadow.offset.y;
+            ctx.shadowBlur = shadow.blur;
         }
     }
 
