@@ -17,6 +17,10 @@ export abstract class Parent extends Node {
         }
     }
 
+    static isParent(node: {}): node is Parent {
+        return (node as Parent).children !== undefined;
+    }
+
     private _children: Node[] = [];
     get children(): ReadonlyArray<Node> {
         return this._children;
