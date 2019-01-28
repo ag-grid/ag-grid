@@ -14,10 +14,10 @@ import {
     IHeaderGroup,
     IHeaderGroupParams,
     IHeaderParams,
+    ILoadingCellRendererParams,
     ILoadingOverlayParams,
     INoRowsOverlayParams,
     IStatusPanelParams,
-    IToolPanel,
     IToolPanelParams,
 } from "ag-grid-community";
 
@@ -39,6 +39,7 @@ export interface AgRendererComponent extends ICellRendererAngularComp {}
 export interface AgEditorComponent extends ICellEditorAngularComp {}
 export interface AgFilterComponent extends IFilterAngularComp {}
 
+export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {}
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams> {}
 export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams> {}
 

@@ -1,14 +1,12 @@
 import {ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} from "@angular/core";
 import {
-    ICellRendererComp,
-    ICellEditorComp,
     IDoesFilterPassParams,
     IFilterComp,
     IFilterParams,
     IAfterGuiAttachedParams
 } from "ag-grid-community";
 import {BaseComponentFactory} from "./baseComponentFactory";
-import {ICellRendererAngularComp, ICellEditorAngularComp, IFilterAngularComp, AgFrameworkComponent} from "./interfaces";
+import {IFilterAngularComp, AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
 export class Ng2ComponentFactory extends BaseComponentFactory {
