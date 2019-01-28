@@ -37,7 +37,7 @@ export abstract class Parent extends Node {
         // Passing a single parameter to an open-ended version of `append`
         // would be 30-35% slower than this.
         if (Node.isNode(nodes)) {
-            nodes = [nodes as Node];
+            nodes = [nodes];
         }
         // The function takes an array rather than having open-ended
         // arguments like `...nodes: Node[]` because the latter is
