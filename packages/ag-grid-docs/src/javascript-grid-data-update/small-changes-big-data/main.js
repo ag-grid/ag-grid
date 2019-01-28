@@ -16,6 +16,8 @@ var columnDefs = [
 var aggCallCount;
 var compareCallCount;
 var filterCallCount;
+var myRowData = [];
+
 
 var LINUX_DISTROS = ['Manjaro','MX Linux','Mint','elementary','Ubuntu','Debian','Fedora','Solus','openSUSE',
     'Zorin','ReactOS','CentOS','Arch','KDE neon','deepin','antiX','Antergos','Kali','Parrot','Lite',
@@ -108,15 +110,15 @@ function onBtDuplicate() {
         return;
     }
 
-    rowData = rowData.slice();
+    myRowData = myRowData.slice();
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
         idCounter++;
         var newItem = createDataItem(idCounter, oldData.name, oldData.distro, oldData.laptop, oldData.city, oldData.value);
-        rowData.push(newItem);
+        myRowData.push(newItem);
     });
 
-    timeSetRowData('Update');
+    timeSetRowData('Update', gridOptions.api);
 }
 
 function onBtUpdate() {
@@ -127,16 +129,16 @@ function onBtUpdate() {
         return;
     }
 
-    rowData = rowData.slice();
+    myRowData = myRowData.slice();
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
         var newValue = Math.floor(Math.random() * 100) + 10;
         var newItem = createDataItem(oldData.id, oldData.name, oldData.distro, oldData.laptop, oldData.city, newValue);
-        var index = rowData.indexOf(oldData);
-        rowData[index] = newItem;
+        var index = myRowData.indexOf(oldData);
+        myRowData[index] = newItem;
     });
 
-    timeSetRowData('Update');
+    timeSetRowData('Update', gridOptions.api);
 }
 
 function onBtDelete() {
@@ -151,23 +153,23 @@ function onBtDelete() {
     var selectedMap = {};
     selectedList.forEach( function(item) {selectedMap[item.id] = true; } );
 
-    rowData = rowData.filter( function(item) {
+    myRowData = myRowData.filter( function(item) {
         return !selectedMap[item.id];
     });
 
-    timeSetRowData('Delete');
+    timeSetRowData('Delete', gridOptions.api);
 }
 
 function onBtClearSelection() {
     gridOptions.api.deselectAll();
 }
 
-function timeSetRowData(name) {
+function timeSetRowData(name, api) {
     aggCallCount = 0;
     compareCallCount = 0;
     filterCallCount = 0;
     var start = new Date().getTime();
-    gridOptions.api.setRowData(rowData);
+    api.setRowData(myRowData);
     var end = new Date().getTime();
     console.log(name + ' finished in ' + (end-start) + 'ms, aggCallCount = ' + aggCallCount + ', compareCallCount = '
         + compareCallCount + ', filterCallCount = ' + filterCallCount);
@@ -188,10 +190,20 @@ var gridOptions = {
     autoGroupColumnDef: {
         field: 'name',
         cellRendererParams: { checkbox: true }
+    },
+    onGridReady: function(params) {
+        createRowData();
+
+        timeSetRowData('Initial', params.api);
+
+        setTimeout( function() {
+            params.api.getDisplayedRowAtIndex(4).setExpanded(true);
+        }, 1000);
+        setTimeout( function() {
+            params.api.getDisplayedRowAtIndex(7).setExpanded(true);
+        }, 1400);
     }
 };
-
-var rowData = [];
 
 function letter(i) {
     return 'abcdefghijklmnopqrstuvwxyz'.substr(i, 1);
@@ -201,7 +213,7 @@ function randomLetter() {
     return letter(Math.floor(Math.random()*26 + 1));
 }
 
-function createData() {
+function createRowData() {
     var nextGroup = 0;
     for (let i = 0; i < 10000; i++) {
         if (i % 2 === 0) {
@@ -213,7 +225,7 @@ function createData() {
         var university = LAPTOPS[i%LAPTOPS.length];
         var value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
         idCounter++;
-        rowData.push(createDataItem(idCounter, name, distro, university, city, value));
+        myRowData.push(createDataItem(idCounter, name, distro, university, city, value));
     }
 }
 
@@ -238,13 +250,4 @@ document.addEventListener("DOMContentLoaded", function() {
     gridOptions.api.setFilterModel({
         value: {value: '5'}
     });
-    createData();
-    timeSetRowData('Initial');
-
-    setTimeout( function() {
-        gridOptions.api.getDisplayedRowAtIndex(4).setExpanded(true);
-    }, 1000);
-    setTimeout( function() {
-        gridOptions.api.getDisplayedRowAtIndex(7).setExpanded(true);
-    }, 1400);
 });
