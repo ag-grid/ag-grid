@@ -136,6 +136,7 @@ include '../documentation-main/documentation_header.php';
             <th>suppressMaintainUnsortedOrder</th>
             <td>
                 Set to true to suppress sorting of un-sorted data to match original row data.
+                See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a>
             </td>
         </tr>
         </table>
@@ -277,7 +278,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressAggAtRootLevel</th>
-            <td>When true, the aggregations won't be computed for root node of the grid.</td>
+            <td>When true, the aggregations won't be computed for root node of the grid.
+            See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a></td>
         </tr>
         <tr>
             <th>aggregateOnlyChangedColumns</th>

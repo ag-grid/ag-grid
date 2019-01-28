@@ -555,13 +555,13 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
         impacted by a transaction.
     </p>
     <p>
-        For example, if shops are grouped by city, and the revenue for each show is summed at the city
-        level, then if the revenue for one shop changes, only the aggregation for that city needs
-        to be recomputed.
+        For example, if items are grouped by city, and a value for each city is summed at the city
+        level, then if the value changes for one item, only the aggregation for the city it belongs
+        to needs be recomputed. All other groups where data did not change do not need to be recomputed.
     </p>
     <p>
         Deciding what groups need to be operated on again is called Changed Path Selection. After
-        the grid applies all add, removes and updates from a transaction, it works out what groups
+        the grid applies all adds, removes and updates from a transaction, it works out what groups
         got impacted and only executes the required operations on those groups.
     </p>
     <p>
@@ -570,17 +570,54 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
     </p>
 
     <p>
-        The example below demonstrates Changed Path Selection. Note the following:
+        The example below demonstrates Changed Path Selection. The example is best view with the dev
+        console open so log messages can be observed. Note the following:
         <ul>
-            <li>The City column is sorted with a custom comparator. The comparator records how many
+            <li>The 'Linux Distro' column is sorted with a custom comparator. The comparator records how many
             times it is called.</li>
-            <li>The Value column is aggregated with a customer aggregator. The aggregator records
+            <li>The Value column is aggregated with a custom aggregator. The aggregator records
             how many times it is called.</li>
-            <li>Each time data is set into the grid, the grid works out which </li>
+            <li>When the example first loads, all the data is set into the grid which results in 171 aggregation
+                operations (one for each group), 48,131 comparisons (for sorting all rows in each group) and 10,000 filter
+                passes (one for each row). The number of milliseconds to complete the operation is also printed (this
+            value will depend on your hardware).</li>
+            <li>Select a row and click 'Update', 'Delete' OR 'Duplicate' (duplicate results in an add operation).
+            Note in the console that the number of aggregations, compares and filters is drastically less.
+            The total time to execute is also drastically less</li>
         </ul>
     </p>
 
     <?= example('Small Changes Big Data', 'small-changes-big-data', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+    <p>
+        Note that the example above also uses the following properties to gain performance:
+    <ul>
+        <li><code>suppressMaintainUnsortedOrder</code>: When doing delta updates, the grid stores the data
+            in the same order as the data was provided. For example if you provide a new list with data added
+            in the middle of the list, the grid will also put the data into the middle of the list rather than
+            just appending to the end. This decides the order of data when there is no grid sort applied. If
+            this is not required by your application, then you can suppress this behaviour by setting
+            <code>suppressMaintainUnsortedOrder=true</code>.
+        </li>
+        <li><code>suppressAggAtRootLevel</code>: When aggregations are present, the grid also aggregates
+            all the top level rows into one parent row. This total aggregation is not shown in the grid so a
+            speed increase can be produced by turning this top level aggregation of by setting
+            <code>suppressAggAtRootLevel=true</code>. It is the intention that a future release of the grid
+            will allow exposing the top level aggregation hence why this feature is left in.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        Also note that the example above does NOT do the following (again for performance reasons):
+        <ul>
+            <li>
+                Header Checkbox Selection: <a href="../javascript-grid-selection/#header-checkbox-selection">Header Checkbox Selection</a>
+                will slow the grid down marginally as it requires each row to be checked (for selection state) between each update. If you need
+                a blasting fast grid managing rapid changes, then consider avoiding this feature.
+            </li>
+        </ul>
+    </p>
 
     <h2 id="flashing">Flashing Data Changes</h2>
 

@@ -1,7 +1,7 @@
 var columnDefs = [
-    { field: 'group1', enableRowGroup: true, rowGroup: true, hide: true, },
-    { field: 'group2', enableRowGroup: true, rowGroup: true, hide: true, },
-    { field: "city",
+    { field: "city", enableRowGroup: true, rowGroup: true, hide: true, },
+    { field: 'laptop', enableRowGroup: true, rowGroup: true, hide: true, },
+    { field: 'distro', headerName: 'Linux Distro',
         width: 150,
         sort: 'asc',
         comparator: myComparator
@@ -17,9 +17,16 @@ var aggCallCount;
 var compareCallCount;
 var filterCallCount;
 
+var LINUX_DISTROS = ['Manjaro','MX Linux','Mint','elementary','Ubuntu','Debian','Fedora','Solus','openSUSE',
+    'Zorin','ReactOS','CentOS','Arch','KDE neon','deepin','antiX','Antergos','Kali','Parrot','Lite',
+    'ArcoLinux','FreeBSD','Ubuntu Kylin','Lubuntu','SparkyLinux','Peppermint','SmartOS','PCLinuxOS',
+    'Mageia','Endless'];
+
 var CITIES = ['Tokyo','Jakarta','Delhi','Manila','Seoul','Shanghai','Mumbai','New York',
                 'Beijing','Sao Paulo','Mexico City','Guangzhou','Dhaka','Osaka-Kobe-Kyoto',
                 'Moscow','Cairo','Bangkok','Los Angeles','Buenos Aires'];
+
+var LAPTOPS = ['Hewlett Packard','Lenovo','Dell','Asus','Apple','Acer','Microsoft','Razer'];
 
 function myAggFunc(values) {
     aggCallCount++;
@@ -105,7 +112,7 @@ function onBtDuplicate() {
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
         idCounter++;
-        var newItem = createDataItem(idCounter, oldData.name, oldData.group1, oldData.group2, oldData.city, oldData.value);
+        var newItem = createDataItem(idCounter, oldData.name, oldData.distro, oldData.laptop, oldData.city, oldData.value);
         rowData.push(newItem);
     });
 
@@ -124,7 +131,7 @@ function onBtUpdate() {
     selectedList.forEach( function(rowNode) {
         var oldData = rowNode.data;
         var newValue = Math.floor(Math.random() * 100) + 10;
-        var newItem = createDataItem(oldData.id, oldData.name, oldData.group1, oldData.group2, oldData.city, newValue);
+        var newItem = createDataItem(oldData.id, oldData.name, oldData.distro, oldData.laptop, oldData.city, newValue);
         var index = rowData.indexOf(oldData);
         rowData[index] = newItem;
     });
@@ -174,6 +181,7 @@ var gridOptions = {
     rowSelection: 'multiple',
     groupSelectsChildren: true,
     animateRows: true,
+    rowGroupPanelShow: 'always',
     suppressMaintainUnsortedOrder: true,
     suppressAggAtRootLevel: true,
     suppressRowClickSelection: true,
@@ -186,7 +194,7 @@ var gridOptions = {
 var rowData = [];
 
 function letter(i) {
-    return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.substr(i, 1);
+    return 'abcdefghijklmnopqrstuvwxyz'.substr(i, 1);
 }
 
 function randomLetter() {
@@ -199,25 +207,25 @@ function createData() {
         if (i % 2 === 0) {
             nextGroup++;
         }
-        var name = randomLetter() + randomLetter();
+        var name = 'Mr ' + randomLetter().toUpperCase() + ' ' + randomLetter().toUpperCase() + randomLetter() + randomLetter() + randomLetter() + randomLetter();
         var city = CITIES[i%CITIES.length];
-        var group1 = 'Group-' + letter(i%26);
-        var group2 = 'Group-' + Math.round(i/1000);
+        var distro = LINUX_DISTROS[i%LINUX_DISTROS.length];
+        var university = LAPTOPS[i%LAPTOPS.length];
         var value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
         idCounter++;
-        rowData.push(createDataItem(idCounter, name, group1, group2, city, value));
+        rowData.push(createDataItem(idCounter, name, distro, university, city, value));
     }
 }
 
 var idCounter = 0;
 
-function createDataItem(id, name, group1, group2, city, value) {
+function createDataItem(id, name, distro, laptop, city, value) {
     return {
         id: id,
         name: name,
         city: city,
-        group1: group1,
-        group2: group2,
+        distro: distro,
+        laptop: laptop,
         value: value
     };
 }
