@@ -11,6 +11,7 @@ import {
     IHeaderGroup,
     IHeaderGroupParams,
     IHeaderParams,
+    ILoadingCellRendererParams,
     ILoadingOverlayParams,
     INoRowsOverlayParams,
     IStatusPanel,
@@ -40,6 +41,10 @@ export interface ICellRendererReactComp extends ICellRenderer, AgReactFrameworkC
 }
 
 export interface ICellEditorReactComp extends ICellEditor, AgReactFrameworkComponent<ICellEditorParams> {
+}
+
+export interface ILoadingCellRendererReactComp extends AgReactFrameworkComponent<ILoadingCellRendererParams> {
+    
 }
 
 export interface ILoadingOverlayReactComp extends AgReactFrameworkComponent<ILoadingOverlayParams> {

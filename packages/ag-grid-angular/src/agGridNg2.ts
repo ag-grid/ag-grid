@@ -191,6 +191,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public rowClassRules : any = undefined;
     @Input() public detailGridOptions : any = undefined;
     @Input() public detailCellRendererParams : any = undefined;
+    @Input() public loadingCellRendererParams : any = undefined;
     @Input() public loadingOverlayComponentParams : any = undefined;
     @Input() public noRowsOverlayComponentParams : any = undefined;
     @Input() public popupParent : any = undefined;
@@ -276,6 +277,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public postProcessPopup : any = undefined;
     @Input() public getChildCount : any = undefined;
     @Input() public getDataPath : any = undefined;
+    @Input() public loadingCellRenderer : any = undefined;
+    @Input() public loadingCellRendererFramework : any = undefined;
     @Input() public loadingOverlayComponent : any = undefined;
     @Input() public loadingOverlayComponentFramework : any = undefined;
     @Input() public noRowsOverlayComponent : any = undefined;

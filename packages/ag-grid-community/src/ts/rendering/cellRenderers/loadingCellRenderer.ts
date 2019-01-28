@@ -5,7 +5,10 @@ import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { _ } from "../../utils";
 
-export class LoadingCellRenderer extends Component implements ICellRenderer {
+export interface ILoadingCellRendererParams extends ICellRendererParams {}
+export interface ILoadingCellRenderer extends ICellRenderer {}
+
+export class LoadingCellRenderer extends Component implements ILoadingCellRenderer {
 
     private static TEMPLATE =
         `<div class="ag-stub-cell">
@@ -22,7 +25,7 @@ export class LoadingCellRenderer extends Component implements ICellRenderer {
         super(LoadingCellRenderer.TEMPLATE);
     }
 
-    public init(params: ICellRendererParams): void {
+    public init(params: ILoadingCellRendererParams): void {
         const eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         this.eLoadingIcon.appendChild(eLoadingIcon);
 
