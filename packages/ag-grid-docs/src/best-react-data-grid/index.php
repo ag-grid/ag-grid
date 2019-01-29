@@ -8,16 +8,16 @@ include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
 <script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
-<script src="./js/grid-performance.js" inline></script>
-<script src="./js/grid-api.js" inline></script>
+<script src="/best-react-data-grid/js/grid-performance.js" inline></script>
+<script src="/best-react-data-grid/js/grid-api.js" inline></script>
 <section>
     <div class="head-top">
         <div class="logo">
-            <img alt="ag-Grid React Component" src="images/ag-grid.png">
+            <img alt="ag-Grid React Component" src="/best-react-data-grid/images/ag-grid.png">
         </a>
     </div>
     <h1>World's Leading React Data Grid Component</h1>
-    <p class="lead-description" id="react-data-grid-overview    ">ag-Grid is designed to integrate deeply into React.<br>
+    <p class="lead-description" id="react-data-grid-overview">ag-Grid is designed to integrate deeply into React.<br>
         Use our grid as a React component to quickly add a react grid table to your application.<br>
         Discover the versions9 key benefits and resources available to quickly add a data grid or React datatable to your React application.
     </p>
@@ -291,7 +291,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
     <pre></pre>
 </div>
 <div>
-    <img alt="Prompt to click on API links" src="./images/prompt-to-click-on-api-links.png">
+    <img alt="Prompt to click on API links" src="/best-react-data-grid/images/prompt-to-click-on-api-links.png">
     <ul class="api-operations">
         <li data-action="sort-by-one-column"><a>Sort by one column (Country)</a></li>
         <li data-action="sort-by-two-columns"><a>Sort by two columns (Country & Year)</a></li>
