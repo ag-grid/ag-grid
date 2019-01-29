@@ -9,7 +9,7 @@ var columnDefs = [
     { field: 'value', enableCellChangeFlash: true,
         width: 150,
         aggFunc: myAggFunc,
-        filter: MyFilter
+        filter: getMyFilter()
     }
 ];
 
@@ -45,46 +45,49 @@ function myComparator(a, b) {
     return a < b ? -1 : 1;
 }
 
-function MyFilter() {}
+function getMyFilter() {
+    function MyFilter() {}
 
-MyFilter.prototype.init = function(params) {
-    this.valueGetter = params.valueGetter;
-    this.filterValue = null;
+    MyFilter.prototype.init = function(params) {
+        this.valueGetter = params.valueGetter;
+        this.filterValue = null;
 
-    this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '<div>Greater Than: <input type="text"/></div>';
-    this.eInput = this.eGui.querySelector('input');
-    var that = this;
-    this.eInput.addEventListener('input', function() {
-        that.getValueFromInput();
-        params.filterChangedCallback();
-    });
-};
+        this.eGui = document.createElement('div');
+        this.eGui.innerHTML = '<div>Greater Than: <input type="text"/></div>';
+        this.eInput = this.eGui.querySelector('input');
+        var that = this;
+        this.eInput.addEventListener('input', function() {
+            that.getValueFromInput();
+            params.filterChangedCallback();
+        });
+    };
 
-MyFilter.prototype.getGui = function() {
-    return this.eGui;
-};
+    MyFilter.prototype.getGui = function() {
+        return this.eGui;
+    };
 
-MyFilter.prototype.getValueFromInput = function() {
-    let value = parseInt(this.eInput.value);
-    this.filterValue = isNaN(value) ? null : value;
-};
+    MyFilter.prototype.getValueFromInput = function() {
+        let value = parseInt(this.eInput.value);
+        this.filterValue = isNaN(value) ? null : value;
+    };
 
-MyFilter.prototype.setModel = function(model) {
-    this.eInput.value = model.value;
-    this.getValueFromInput();
-};
+    MyFilter.prototype.setModel = function(model) {
+        this.eInput.value = model.value;
+        this.getValueFromInput();
+    };
 
-MyFilter.prototype.isFilterActive = function() {
-    return this.filterValue !== null;
-};
+    MyFilter.prototype.isFilterActive = function() {
+        return this.filterValue !== null;
+    };
 
-MyFilter.prototype.doesFilterPass = function(params) {
-    filterCallCount++;
+    MyFilter.prototype.doesFilterPass = function(params) {
+        filterCallCount++;
 
-    var value = this.valueGetter(params);
-    return value > this.filterValue;
-};
+        var value = this.valueGetter(params);
+        return value > this.filterValue;
+    };
+    return MyFilter;
+}
 
 function isFirstColumn(params) {
     let displayedColumns = params.columnApi.getAllDisplayedColumns();
