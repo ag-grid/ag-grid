@@ -28,7 +28,8 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowNodeCache,
-    SortController
+    SortController,
+    RowRenderer
 } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import {ServerSideBlock} from "./serverSideBlock";
@@ -44,6 +45,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -74,10 +76,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PreDestroy
     private destroyDatasource(): void {
-        if (this.datasource && this.datasource.destroy) {
-            this.datasource.destroy();
+        if (this.datasource) {
+            if (this.datasource.destroy) {
+                this.datasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.datasource = undefined;
         }
-        this.datasource = undefined;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {

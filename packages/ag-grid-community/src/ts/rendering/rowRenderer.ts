@@ -125,6 +125,15 @@ export class RowRenderer extends BeanStub {
         }
     }
 
+    // for row models that have datasources, when we update the datasource, we need to force the rowRenderer
+    // to redraw all rows. otherwise the old rows from the old datasource will stay displayed.
+    public datasourceChanged(): void {
+        this.firstRenderedRow = 0;
+        this.lastRenderedRow = -1;
+        const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
+        this.removeRowComps(rowIndexesToRemove);
+    }
+
     private onPageLoaded(refreshEvent?: ModelUpdatedEvent): void {
         if (_.missing(refreshEvent)) {
             refreshEvent = {
