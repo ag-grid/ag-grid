@@ -486,11 +486,8 @@ export class RowComp extends Component {
 
     private onExpandedChanged(): void {
         const rowNode = this.rowNode;
-        const isTreeData = this.beans.gridOptionsWrapper.isTreeData();
-        const isExpanded = (isTreeData || (rowNode.group && !rowNode.footer)) && rowNode.expanded;
-
-        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', isExpanded));
-        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !isExpanded));
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', rowNode.expanded));
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !rowNode.expanded));
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -909,9 +906,13 @@ export class RowComp extends Component {
             classes.push('ag-full-width-row');
         }
 
-        if (rowNode.allChildrenCount || rowNode.group) {
-            const isExpanded = (isTreeData || (rowNode.group && !rowNode.footer)) && rowNode.expanded;
-            classes.push(isExpanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
+        const addExpandedClass = isTreeData ?
+            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
+            rowNode.allChildrenCount :
+            // if normal row grouping, we add expanded classes to groups only
+            rowNode.group && !rowNode.footer;
+        if (addExpandedClass) {
+            classes.push(rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
 
         if (rowNode.dragging) {
