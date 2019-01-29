@@ -17,7 +17,7 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellFocusedEvent,
+    CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -449,6 +449,10 @@ export interface GridOptions {
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
 
     onModelUpdated?(event: ModelUpdatedEvent): void;
+
+    onCellKeyDown?(event: CellKeyDownEvent): void;
+
+    onCellKeyPress?(event: CellKeyPressEvent): void;
 
     onCellClicked?(event: CellClickedEvent): void;
 

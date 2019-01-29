@@ -305,6 +305,12 @@ export interface CellEvent extends RowEvent {
     value: any;
 }
 
+export interface CellKeyDownEvent extends CellEvent {
+}
+
+export interface CellKeyPressEvent extends CellEvent {
+}
+
 export interface CellClickedEvent extends CellEvent {
 }
 

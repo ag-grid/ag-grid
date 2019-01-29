@@ -7,7 +7,7 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellEvent,
+    CellEvent, CellKeyDownEvent, CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -1231,6 +1231,9 @@ export class CellComp extends Component {
                 this.onNavigationKeyPressed(event, key);
                 break;
         }
+
+        const cellKeyDownEvent: CellKeyDownEvent = this.createEvent(event, Events.EVENT_CELL_KEY_DOWN);
+        this.beans.eventService.dispatchEvent(cellKeyDownEvent);
     }
 
     public doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean {
@@ -1360,6 +1363,9 @@ export class CellComp extends Component {
                 }
             }
         }
+
+        const cellKeyPressEvent: CellKeyPressEvent = this.createEvent(event, Events.EVENT_CELL_KEY_PRESS);
+        this.beans.eventService.dispatchEvent(cellKeyPressEvent);
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {

@@ -322,6 +322,20 @@ include '../documentation-main/documentation_header.php';
                 pending, eg for sending to a printer.
             </td>
         </tr>
+        <tr>
+            <th>cellKeyDown</th>
+            <td>
+                DOM event keyDown happened on a cell. See
+                <a href="../javascript-grid-keyboard-navigation/#keyboard-events">Keyboard Events</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>cellKeyPress</th>
+            <td>
+                DOM event keyPress happened on a cell. See
+                <a href="../javascript-grid-keyboard-navigation/#keyboard-events">Keyboard Events</a>.
+            </td>
+        </tr>
     </table>
 
     <h2 id="properties-and-hierarchy">Event Properties & Hierarchy</h2>
@@ -479,6 +493,8 @@ CellValueChangedEvent {
                 ├── CellContextMenuEvent <span class="event-properties">{}</span>
                 ├── CellEditingStartedEvent <span class="event-properties">{}</span>
                 ├── CellEditingStoppedEvent <span class="event-properties">{}</span>
+                ├── CellKeyDown <span class="event-properties">{}</span>
+                ├── CellKeyPress <span class="event-properties">{}</span>
                 └── CellValueChangedEvent <span class="event-properties">{
                         <span class="event-attribute">oldValue</span>: any, // the old value before editing
                         <span class="event-attribute">newValue</span>: any // the new value after editing
