@@ -1831,9 +1831,9 @@ export class Utils {
                 return nodeA.__objectId - nodeB.__objectId;
             } else if (aHasIndex) {
                 return 1;
-            } else {
-                return -1;
             }
+
+            return -1;
         };
 
         // const a = new Date().getTime();
@@ -1842,9 +1842,9 @@ export class Utils {
         let rowNodeA: RowNode;
         let rowNodeB: RowNode;
         let atLeastOneOutOfOrder = false;
-        for (let i = 0; i<rowNodes.length - 1; i++) {
+        for (let i = 0; i < rowNodes.length - 1; i++) {
             rowNodeA = rowNodes[i];
-            rowNodeB = rowNodes[i+1];
+            rowNodeB = rowNodes[i + 1];
             if (comparator(rowNodeA, rowNodeB) > 0) {
                 atLeastOneOutOfOrder = true;
                 break;
