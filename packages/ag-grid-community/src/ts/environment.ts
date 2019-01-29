@@ -1,34 +1,30 @@
 import { Bean, Autowired } from './context/context';
 import { _ } from "./utils";
 
-const themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
-const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
-const themeClass = new RegExp(`ag-(${themes.join('|')})`);
-
-const matGridSize = 8;
+const MAT_GRID_SIZE = 8;
 interface HardCodedSize {
     [key: string]: {
         [key: string]: number
     };
 }
-const freshGridSize = 4;
-const balhamGridSize = 4;
+const FRESH_GRID_SIZE = 4;
+const BALHAM_GRID_SIZE = 4;
 
 const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
-        headerHeight: matGridSize * 7,
-        virtualItemHeight: matGridSize * 5,
-        rowHeight: matGridSize * 6
+        headerHeight: MAT_GRID_SIZE * 7,
+        virtualItemHeight: MAT_GRID_SIZE * 5,
+        rowHeight: MAT_GRID_SIZE * 6
     },
     'ag-theme-classic': {
         headerHeight: 25,
-        virtualItemHeight: freshGridSize * 5,
+        virtualItemHeight: FRESH_GRID_SIZE * 5,
         rowHeight: 25
     },
     'ag-theme-balham': {
-        headerHeight: balhamGridSize * 8,
-        virtualItemHeight: balhamGridSize * 7,
-        rowHeight: balhamGridSize * 7
+        headerHeight: BALHAM_GRID_SIZE * 8,
+        virtualItemHeight: BALHAM_GRID_SIZE * 7,
+        rowHeight: BALHAM_GRID_SIZE * 7
    }
 };
 
@@ -37,30 +33,6 @@ export class Environment {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    private gridSize: number;
-    private iconSize: number;
-    private sassVariables: {[key: string]: string} = {};
-
-    // Approach described here:
-    // https://www.ofcodeandcolor.com/2017/04/02/encoding-data-in-css/
-    public loadSassVariables(): void {
-        /*
-        var element = document.createElement('div');
-        element.className = 'sass-variables';
-        this.eGridDiv.appendChild(element);
-
-        var content = window.getComputedStyle(element, '::after').content;
-
-        try {
-            this.sassVariables = JSON.parse(JSON.parse(content));
-        } catch (e) {
-            throw new Error("Failed loading the theme sizing - check that you have the theme set up correctly.");
-        }
-
-        this.eGridDiv.removeChild(element);
-        */
-    }
-
     public getSassVariable(theme: string, key: string): number {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];
@@ -68,41 +40,31 @@ export class Environment {
             return HARD_CODED_SIZES['ag-theme-balham'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];
-        /*
-        const result = parseInt(this.sassVariables[key]);
-        if (!result || isNaN(result)) {
-            throw new Error(`Failed loading ${key} Sass variable from ${this.sassVariables}`);
-        }
-        return result;
-        */
     }
 
-    public getTheme(): string {
+    public getTheme(): string | undefined {
+        const reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
+        let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;
-        let element: HTMLElement = this.eGridDiv;
 
-        while (element != document.documentElement && themeMatch == null) {
-            themeMatch = element.className.match(themeClass);
-            element = element.parentElement;
-            if (element == null) {
+        while (el) {
+            themeMatch = reg.exec(el.className);
+            el = el.parentElement;
+            if (el == null || themeMatch) {
                 break;
             }
         }
 
-        if (themeMatch) {
+        if (!themeMatch) { return; }
 
-            const userTheme = themeMatch[0];
+        const theme = themeMatch[0];
+        const usingOldTheme = themeMatch[2] === undefined;
 
-            const oldThemes = ['ag-fresh', 'ag-dark', 'ag-blue', 'ag-material', 'ag-bootstrap'];
-            const usingOldTheme = oldThemes.indexOf(userTheme) >= 0;
-            if (usingOldTheme) {
-                const newTheme =  userTheme.replace('ag-', 'ag-theme-');
-                _.doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replacement ${userTheme} with ${newTheme}.`), 'using-old-theme');
-            }
-
-            return userTheme;
-        } else {
-            return 'ag-theme-fresh';
+        if (usingOldTheme) {
+            const newTheme =  theme.replace('ag-', 'ag-theme-');
+            _.doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
         }
+
+        return theme;
     }
 }

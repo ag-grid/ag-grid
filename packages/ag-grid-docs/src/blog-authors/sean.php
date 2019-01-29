@@ -1,5 +1,5 @@
 <div class="col-md-3 offset-1" class="blog-author">
-    <img src="../images/team/sean.jpg" class="img-fluid">
+    <img src="../images/team/sean.jpg" alt="Sean Landsman" class="img-fluid">
 
     <h4> Sean Landsman </h4>
 

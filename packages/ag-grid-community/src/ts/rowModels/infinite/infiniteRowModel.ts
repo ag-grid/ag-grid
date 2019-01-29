@@ -17,6 +17,7 @@ import { RowDataTransaction } from "../clientSide/clientSideRowModel";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { NumberSequence, _ } from "../../utils";
+import {RowRenderer} from "../../rendering/rowRenderer";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {
@@ -29,6 +30,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private infiniteCache: InfiniteCache | null;
     private rowNodeBlockLoader: RowNodeBlockLoader | null;
@@ -62,10 +64,13 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     @PreDestroy
     private destroyDatasource(): void {
-        if (this.datasource && this.datasource.destroy) {
-            this.datasource.destroy();
+        if (this.datasource) {
+            if (this.datasource.destroy) {
+                this.datasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.datasource = null;
         }
-        this.datasource = null;
     }
 
     public isLastRowFound(): boolean {

@@ -28,9 +28,11 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowNodeCache,
-    SortController
+    SortController,
+    RowRenderer
 } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+import {ServerSideBlock} from "./serverSideBlock";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -43,6 +45,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -73,10 +76,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PreDestroy
     private destroyDatasource(): void {
-        if (this.datasource && this.datasource.destroy) {
-            this.datasource.destroy();
+        if (this.datasource) {
+            if (this.datasource.destroy) {
+                this.datasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.datasource = undefined;
         }
-        this.datasource = undefined;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -376,7 +382,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
         if (!(params.blockSize as number >= 1)) {
-            params.blockSize = 100;
+            params.blockSize = ServerSideBlock.DefaultBlockSize;
         }
         // if user doesn't give initial rows to display, we assume zero
         if (!(params.initialRowCount >= 1)) {
@@ -524,15 +530,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public purgeCache(route: string[] = []): void {
         this.executeOnCache(route, cache => cache.purgeCache());
-    }
-
-    public removeFromCache(route: string[], items: any[]): void {
-        this.executeOnCache(route, cache => cache.removeFromCache(items));
-        this.rowNodeBlockLoader!.checkBlockToLoad();
-    }
-
-    public addToCache(route: string[], items: any[], index: number): void {
-        this.executeOnCache(route, cache => cache.addToCache(items, index));
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

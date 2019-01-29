@@ -485,11 +485,9 @@ export class RowComp extends Component {
     }
 
     private onExpandedChanged(): void {
-        if (this.rowNode.group && !this.rowNode.footer) {
-            const expanded = this.rowNode.expanded;
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded));
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded));
-        }
+        const rowNode = this.rowNode;
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', rowNode.expanded));
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !rowNode.expanded));
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -867,6 +865,8 @@ export class RowComp extends Component {
 
     private getInitialRowClasses(extraCssClass: string): string[] {
         const classes: string[] = [];
+        const isTreeData = this.beans.gridOptionsWrapper.isTreeData();
+        const rowNode = this.rowNode;
 
         if (_.exists(extraCssClass)) {
             classes.push(extraCssClass);
@@ -881,24 +881,24 @@ export class RowComp extends Component {
 
         classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
 
-        if (this.rowNode.isSelected()) {
+        if (rowNode.isSelected()) {
             classes.push('ag-row-selected');
         }
 
-        if (this.rowNode.group) {
+        if (rowNode.group) {
             classes.push('ag-row-group');
             // if a group, put the level of the group in
-            classes.push('ag-row-level-' + this.rowNode.level);
+            classes.push('ag-row-level-' + rowNode.level);
 
-            if (this.rowNode.footer) {
+            if (rowNode.footer) {
                 classes.push('ag-row-footer');
             }
         } else {
             // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            classes.push('ag-row-level-' + (this.rowNode.parent ? (this.rowNode.parent.level + 1) : '0'));
+            classes.push('ag-row-level-' + (rowNode.parent ? (rowNode.parent.level + 1) : '0'));
         }
 
-        if (this.rowNode.stub) {
+        if (rowNode.stub) {
             classes.push('ag-row-stub');
         }
 
@@ -906,11 +906,16 @@ export class RowComp extends Component {
             classes.push('ag-full-width-row');
         }
 
-        if (this.rowNode.group && !this.rowNode.footer) {
-            classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
+        const addExpandedClass = isTreeData ?
+            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
+            rowNode.allChildrenCount :
+            // if normal row grouping, we add expanded classes to groups only
+            rowNode.group && !rowNode.footer;
+        if (addExpandedClass) {
+            classes.push(rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
 
-        if (this.rowNode.dragging) {
+        if (rowNode.dragging) {
             classes.push('ag-row-dragging');
         }
 

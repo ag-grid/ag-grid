@@ -1,6 +1,6 @@
 import {HdpiCanvas} from "../canvas/hdpiCanvas";
 import {Node} from "./node";
-import {Path} from "./path";
+import {Path2D} from "./path2D";
 import {Shape} from "./shape/shape";
 import {Parent} from "./parent";
 
@@ -12,6 +12,12 @@ export class Scene {
         parent.appendChild(canvas);
         this.setupListeners(canvas); // debug
     }
+
+    private static id = 1;
+    private createId(): string {
+        return (this.constructor as any).name + '-' + (Scene.id++);
+    };
+    readonly id: string = this.createId();
 
     private readonly hdpiCanvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
@@ -32,44 +38,19 @@ export class Scene {
             const node = this.hitTestPath(this.root, x, y);
             if (node) {
                 if (node instanceof Shape) {
-                    this.lastHit = { node, fillStyle: node.fillStyle };
+                    if (!this.lastHit) {
+                        this.lastHit = { node, fillStyle: node.fillStyle };
+                    } else if (this.lastHit.node !== node) {
+                        this.lastHit.node.fillStyle = this.lastHit.fillStyle;
+                        this.lastHit = { node, fillStyle: node.fillStyle };
+                    }
                     node.fillStyle = 'yellow';
                 }
             } else if (this.lastHit) {
                 this.lastHit.node.fillStyle = this.lastHit.fillStyle;
+                this.lastHit = undefined;
             }
         }
-
-        // const pixelRatio = this.hdpiCanvas.pixelRatio;
-        // Path2D's isPointInPath/isPointInStroke require multiplying by the pixelRatio
-        // const x = e.offsetX * pixelRatio;
-        // const y = e.offsetY * pixelRatio;
-        //
-        // const node = this.root;
-        // if (node instanceof Parent) {
-        //     const children = node.children;
-        //     const n = children.length;
-        //     for (let i = 0; i < n; i++) {
-        //         const child = children[i];
-        //         if (child instanceof Shape) {
-        //             // TODO: right now, setting these properties causes
-        //             //       a scene to rerender, even if values are the same
-        //             if (child.isPointInPath(this.ctx, x, y)) {
-        //                 child.fillStyle = 'yellow';
-        //             }
-        //             else {
-        //                 child.fillStyle = 'red';
-        //             }
-        //
-        //             if (child.isPointInStroke(this.ctx, x, y)) {
-        //                 child.strokeStyle = 'lime';
-        //             }
-        //             else {
-        //                 child.strokeStyle = 'black';
-        //             }
-        //         }
-        //     }
-        // }
     };
 
     hitTestPath(node: Node, x: number, y: number): Node | undefined {
@@ -114,19 +95,32 @@ export class Scene {
         return this._dirty;
     }
 
-    _root?: Node;
-    set root(node: Node | undefined) {
-        this._root = node;
-        if (node) {
-            node.scene = this;
+    _root: Node | null = null;
+    set root(node: Node | null) {
+        if (node === this._root)
+            return;
+
+        if (this._root) {
+            this._root._setScene(null);
         }
+
+        this._root = node;
+
+        if (node) {
+            // If `node` is the root node of another scene ...
+            if (node.parent === null && node.scene && node.scene !== this) {
+                node.scene.root = null;
+            }
+            node._setScene(this);
+        }
+
         this.dirty = true;
     }
-    get root(): Node | undefined {
+    get root(): Node | null {
         return this._root;
     }
 
-    appendPath(path: Path) {
+    appendPath(path: Path2D) {
         const ctx = this.ctx;
         const commands = path.commands;
         const params = path.params;
@@ -156,10 +150,22 @@ export class Scene {
         }
     }
 
-    private _frameIndex = 0; // debug
+    private _frameIndex = 0;
     get frameIndex(): number {
         return this._frameIndex;
     }
+
+    _isRenderFrameIndex = true;
+    set isRenderFrameIndex(value: boolean) {
+        if (this._isRenderFrameIndex !== value) {
+            this._isRenderFrameIndex = value;
+            this.dirty = true;
+        }
+    }
+    get isRenderFrameIndex(): boolean {
+        return this._isRenderFrameIndex;
+    }
+
 
     render = () => {
         const ctx = this.ctx;
@@ -172,9 +178,10 @@ export class Scene {
             ctx.restore();
         }
 
-        // Keep this here for a while to make sure if a redundant
-        // frames are rendered it won't go unnoticed.
-        ctx.fillText((++this._frameIndex).toString(), 0, 10); // debug
+        this._frameIndex++;
+        if (this.isRenderFrameIndex) {
+            ctx.fillText(this.frameIndex.toString(), 0, 10);
+        }
 
         this.dirty = false;
     };

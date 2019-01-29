@@ -59,7 +59,7 @@ export class DetailCellRenderer extends Component {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
         const theme = this.environment.getTheme();
-        if (_.exists(theme)) {
+        if (theme) {
             _.addCssClass(this.eDetailGrid, theme);
         }
     }

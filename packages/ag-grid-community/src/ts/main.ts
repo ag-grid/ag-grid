@@ -157,6 +157,7 @@ export { RowComp } from "./rendering/rowComp";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { TextFormatter } from "./filter/textFilter";
+export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 
 // rowControllers/inMemory
 export { FilterStage } from "./rowModels/clientSide/filterStage";

@@ -34,7 +34,7 @@ import {HttpClient} from '@angular/common/http';
 export class AppComponent {
     columnDefs;
     rowData;
-    topOptions = {alignedGrids: []};
+    topOptions = {alignedGrids: [], suppressHorizontalScroll: true};
     bottomOptions = {alignedGrids: []};
 
     @ViewChild('topGrid') topGrid;

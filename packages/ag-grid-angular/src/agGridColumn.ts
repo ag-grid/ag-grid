@@ -1,13 +1,5 @@
-import {Component, ContentChildren, Input, QueryList} from "@angular/core";
-import {
-    ColDef,
-    ColGroupDef,
-    GetQuickFilterTextParams,
-    IAggFunc,
-    ICellRendererFunc,
-    IsColumnFunc,
-    RowNode
-} from "ag-grid-community";
+import { Component, ContentChildren, Input, QueryList } from "@angular/core";
+import { ColDef } from "ag-grid-community";
 
 @Component({
     selector: 'ag-grid-column',

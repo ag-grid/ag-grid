@@ -51,11 +51,13 @@ export class ResizeObserverService {
             return () => running = false;
         };
 
-        if ((window as any).ResizeObserver) {
+        const suppressResize = this.gridOptionsWrapper.isSuppressBrowserResizeObserver();
+        const resizeObserverExists = !!(window as any).ResizeObserver;
+
+        if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
         } else {
             return usePolyfill();
-
         }
     }
 

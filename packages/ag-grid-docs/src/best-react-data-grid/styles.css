@@ -95,6 +95,20 @@ display: block;
 margin: 0 auto;
 }
 
+ul.contents {
+  list-style: none;
+  text-align: center;
+  font-size: 21px;
+  font-weight: 300;
+  margin-top: 2rem;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+a.jump-to {
+  color: white;
+}
+
 .grid-example {
   max-width: 776px;
 }
@@ -106,8 +120,9 @@ margin: 0 auto;
 }
 
 
-#head-top {
-    background: linear-gradient(to top left, #0084e7, #00407f);
+.head-top {
+background: linear-gradient(to top left, #0084e7, #00407f);
+background-size: 100%;
 padding: 50px 0;
 padding-right: 60px;
 padding-left: 60px;

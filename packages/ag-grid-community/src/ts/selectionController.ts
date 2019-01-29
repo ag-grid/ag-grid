@@ -14,6 +14,7 @@ import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
 import { _ } from './utils';
+import {ChangedPath} from "./rowModels/clientSide/changedPath";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -86,7 +87,7 @@ export class SelectionController {
     }
 
     // should only be called if groupSelectsChildren=true
-    public updateGroupsFromChildrenSelections(): void {
+    public updateGroupsFromChildrenSelections(changedPath?: ChangedPath): void {
         // we only do this when group selection state depends on selected children
         if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
             return;
@@ -97,13 +98,26 @@ export class SelectionController {
         }
 
         const clientSideRowModel = this.rowModel as ClientSideRowModel;
-        clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
-            rowNode.depthFirstSearch((node) => {
-                if (node.group) {
-                    node.calculateSelectedFromChildren();
-                }
-            });
+        const rootNode = clientSideRowModel.getRootNode();
+
+        if (!changedPath) {
+            changedPath = new ChangedPath(true, rootNode);
+            changedPath.setInactive();
+        }
+
+        changedPath.forEachChangedNodeDepthFirst( rowNode => {
+            if (rowNode !== rootNode) {
+                rowNode.calculateSelectedFromChildren();
+            }
         });
+
+        // clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
+        //     rowNode.depthFirstSearch((node) => {
+        //         if (node.group) {
+        //         }
+        //     });
+        // });
+
     }
 
     public getNodeForIdIfSelected(id: number): RowNode | undefined {

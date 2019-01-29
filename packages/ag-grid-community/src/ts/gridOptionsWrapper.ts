@@ -48,19 +48,17 @@ function isTrue(value: any): boolean {
 function zeroOrGreater(value: any, defaultValue: number): number {
     if (value >= 0) {
         return value;
-    } else {
-        // zero gets returned if number is missing or the wrong type
-        return defaultValue;
     }
+    // zero gets returned if number is missing or the wrong type
+    return defaultValue;
 }
 
 function oneOrGreater(value: any, defaultValue: number): number {
     if (value > 0) {
         return value;
-    } else {
-        // zero gets returned if number is missing or the wrong type
-        return defaultValue;
     }
+    // zero gets returned if number is missing or the wrong type
+    return defaultValue;
 }
 
 export interface PropertyChangedEvent extends AgEvent {
@@ -213,9 +211,9 @@ export class GridOptionsWrapper {
         const domData = (element as any)[this.domDataKey];
         if (domData) {
             return domData[key];
-        } else {
-            return undefined;
         }
+
+        return;
     }
 
     public setDomData(element: Element, key: string, value: any): any {
@@ -293,6 +291,14 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressFocusAfterRefresh);
     }
 
+    public isSuppressBrowserResizeObserver() {
+        return isTrue(this.gridOptions.suppressBrowserResizeObserver);
+    }
+
+    public isSuppressMaintainUnsortedOrder() {
+        return isTrue(this.gridOptions.suppressMaintainUnsortedOrder);
+    }
+
     public isShowToolPanel() {
         return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
     }
@@ -364,9 +370,9 @@ export class GridOptionsWrapper {
         if (result && this.isTreeData()) {
             console.warn('ag-Grid: groupSelectsChildren does not work with tree data');
             return false;
-        } else {
-            return result;
         }
+
+        return result;
     }
 
     public isSuppressRowHoverHighlight() {
@@ -884,6 +890,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressAutoSize);
     }
 
+    public isEnableCellTextSelection() {
+        return isTrue(this.gridOptions.enableCellTextSelection);
+    }
+
     public isSuppressParentsInRowNodes() {
         return isTrue(this.gridOptions.suppressParentsInRowNodes);
     }
@@ -894,6 +904,10 @@ export class GridOptionsWrapper {
 
     public isFloatingFilter(): boolean | undefined {
         return this.gridOptions.floatingFilter;
+    }
+
+    public isEnableCellTextSelect(): boolean {
+        return isTrue(this.gridOptions.enableCellTextSelection);
     }
 
     public isEnableOldSetFilterModel(): boolean {
@@ -1101,57 +1115,57 @@ export class GridOptionsWrapper {
     public getHeaderHeight(): number {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
-        } else {
-            return this.specialForNewMaterial(25, 'headerHeight');
         }
+
+        return this.specialForNewMaterial(25, 'headerHeight');
     }
 
     public getFloatingFiltersHeight(): number {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
-        } else {
-            return this.specialForNewMaterial(25, 'headerHeight');
         }
+
+        return this.specialForNewMaterial(25, 'headerHeight');
     }
 
     public getGroupHeaderHeight(): number {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
             return this.gridOptions.groupHeaderHeight;
-        } else {
-            return this.getHeaderHeight();
         }
+
+        return this.getHeaderHeight();
     }
 
     public getPivotHeaderHeight(): number {
         if (typeof this.gridOptions.pivotHeaderHeight === 'number') {
             return this.gridOptions.pivotHeaderHeight;
-        } else {
-            return this.getHeaderHeight();
         }
+
+        return this.getHeaderHeight();
     }
 
     public getPivotGroupHeaderHeight(): number {
         if (typeof this.gridOptions.pivotGroupHeaderHeight === 'number') {
             return this.gridOptions.pivotGroupHeaderHeight;
-        } else {
-            return this.getGroupHeaderHeight();
         }
+
+        return this.getGroupHeaderHeight();
     }
 
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
             return this.gridOptions.isExternalFilterPresent();
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public doesExternalFilterPass(node: RowNode) {
         if (typeof this.gridOptions.doesExternalFilterPass === 'function') {
             return this.gridOptions.doesExternalFilterPass(node);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public getDocument(): Document {
@@ -1163,33 +1177,33 @@ export class GridOptionsWrapper {
         }
         if (result && _.exists(result)) {
             return result;
-        } else {
-            return document;
         }
+
+        return document;
     }
 
     public getMinColWidth() {
         if (this.gridOptions.minColWidth && (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH)) {
             return this.gridOptions.minColWidth;
-        } else {
-            return GridOptionsWrapper.MIN_COL_WIDTH;
         }
+
+        return GridOptionsWrapper.MIN_COL_WIDTH;
     }
 
     public getMaxColWidth() {
         if (this.gridOptions.maxColWidth && (this.gridOptions.maxColWidth > GridOptionsWrapper.MIN_COL_WIDTH)) {
             return this.gridOptions.maxColWidth;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     public getColWidth() {
         if (typeof this.gridOptions.colWidth !== 'number' || this.gridOptions.colWidth < GridOptionsWrapper.MIN_COL_WIDTH) {
             return 200;
-        } else {
-            return this.gridOptions.colWidth;
         }
+
+        return this.gridOptions.colWidth;
     }
 
     public getRowBuffer() {
@@ -1198,9 +1212,10 @@ export class GridOptionsWrapper {
                 console.warn('ag-Grid: rowBuffer should not be negative');
             }
             return this.gridOptions.rowBuffer;
-        } else {
-            return Constants.ROW_BUFFER_SIZE;
         }
+
+        return Constants.ROW_BUFFER_SIZE;
+
     }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
@@ -1461,9 +1476,9 @@ export class GridOptionsWrapper {
             const localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
-            } else {
-                return defaultValue;
             }
+
+            return defaultValue;
         };
     }
 
@@ -1481,10 +1496,10 @@ export class GridOptionsWrapper {
             return this.getDefaultRowHeight();
         } else if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
-        } else {
-            console.warn('ag-Grid row height must be a number if not using standard row model');
-            return this.getDefaultRowHeight();
         }
+
+        console.warn('ag-Grid row height must be a number if not using standard row model');
+        return this.getDefaultRowHeight();
     }
 
     public getRowHeightForNode(rowNode: RowNode): number | undefined {
@@ -1506,22 +1521,17 @@ export class GridOptionsWrapper {
             } else {
                 return DEFAULT_DETAIL_ROW_HEIGHT;
             }
-        } else {
-            const defaultHeight:number = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
-                this.gridOptions.rowHeight : this.getDefaultRowHeight();
-            if (this.columnController.isAutoRowHeightActive()) {
-                const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
-                // never return less than the default row height - covers when auto height
-                // cells are blank.
-                if (autoHeight > defaultHeight) {
-                    return autoHeight;
-                } else {
-                    return defaultHeight;
-                }
-            } else {
-                return defaultHeight;
-            }
         }
+
+        const defaultHeight:number = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
+            this.gridOptions.rowHeight : this.getDefaultRowHeight();
+        if (this.columnController.isAutoRowHeightActive()) {
+            const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
+            // never return less than the default row height - covers when auto height
+            // cells are blank.
+            return Math.max(autoHeight, defaultHeight);
+        }
+        return defaultHeight;
     }
 
     public isDynamicRowHeight(): boolean {
@@ -1540,11 +1550,11 @@ export class GridOptionsWrapper {
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
         const theme = this.environment.getTheme();
-        if (theme.indexOf('ag-theme') === 0) {
+        if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
-        } else {
-            return defaultValue;
         }
+
+        return defaultValue;
     }
 
     private getDefaultRowHeight() : number {

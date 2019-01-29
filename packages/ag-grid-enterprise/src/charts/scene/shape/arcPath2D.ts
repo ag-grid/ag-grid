@@ -83,6 +83,9 @@ export class Arc extends Shape {
         this.path.closePath();
     }
 
+    // Native Path2D's isPointInPath/isPointInStroke require multiplying by the pixelRatio:
+    // const x = mouseEvent.offsetX * pixelRatio;
+    // const y = mouseEvent.offsetY * pixelRatio;
     isPointInPath(x: number, y: number): boolean {
         return false; //ctx.isPointInPath(this.path, x, y);
     }

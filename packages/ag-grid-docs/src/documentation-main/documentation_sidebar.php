@@ -9,7 +9,7 @@
             <div class="card-body">
                 <h5 class="card-title"><a href="https://www.ag-grid-conf.com">ag-Grid Conf</a></h5>
                 Our ag-Grid Conf videos are now live!<br><br>
-                <a href=""><img src="/images/complex-performance.png" style="width: 100%"></a>
+                <a href="http://ag-grid-conf.com/"><img src="/images/complex-performance.png" alt="complex-performance-niall" style="width: 100%"></a>
                 <br><br>
                         <p class="text-right">
             <a class="learn-more" href="http://ag-grid-conf.com/">All Videos</a>

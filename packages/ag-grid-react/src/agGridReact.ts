@@ -22,6 +22,8 @@ export interface AgGridReactProps extends GridOptions {
 export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     static propTypes: any;
 
+    destroyed: boolean = false;
+
     gridOptions: AgGrid.GridOptions;
     api: AgGrid.GridApi;
     columnApi: AgGrid.ColumnApi;
@@ -98,10 +100,12 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             return callback && callback();
         }
         setTimeout(() => {
-            this.forceUpdate(() => {
-                callback && callback();
-                this.hasPendingPortalUpdate = false;
-            });
+            if (this.api) { // destroyed?
+                this.forceUpdate(() => {
+                    callback && callback();
+                    this.hasPendingPortalUpdate = false;
+                });
+            }
         });
         this.hasPendingPortalUpdate = true;
     }
@@ -156,6 +160,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     componentWillUnmount() {
         if (this.api) {
             this.api.destroy();
+            this.api = null;
         }
     }
 

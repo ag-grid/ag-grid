@@ -1,10 +1,7 @@
-import {NgModule,ModuleWithProviders} from '@angular/core';
-import {ANALYZE_FOR_ENTRY_COMPONENTS} from '@angular/core';
+import { ANALYZE_FOR_ENTRY_COMPONENTS, ModuleWithProviders, NgModule } from '@angular/core';
 
-import {AgGridNg2} from './agGridNg2';
-import {Ng2ComponentFactory} from './ng2ComponentFactory';
-import {BaseComponentFactory} from "./baseComponentFactory";
-import {AgGridColumn} from "./agGridColumn";
+import { AgGridNg2 } from './agGridNg2';
+import { AgGridColumn } from "./agGridColumn";
 
 @NgModule({
     imports: [],
@@ -18,24 +15,20 @@ import {AgGridColumn} from "./agGridColumn";
     ]
 })
 export class AgGridModule {
-    static withComponents(components:any):ModuleWithProviders {
+    static withComponents(components?: any): ModuleWithProviders {
         return {
             ngModule: AgGridModule,
             providers: [
-                Ng2ComponentFactory,
-                {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory},
                 {provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}
             ],
         };
     }
 
-    static forRoot():ModuleWithProviders {
-        console.warn("AgGridModule.forRoot() is deprecated - please use AgGridModule.withComponents([...optional components...]) instead.");
+    static forRoot(components?: any): ModuleWithProviders {
         return {
             ngModule: AgGridModule,
             providers: [
-                Ng2ComponentFactory,
-                {provide: BaseComponentFactory, useExisting: Ng2ComponentFactory}
+                {provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}
             ],
         };
     }

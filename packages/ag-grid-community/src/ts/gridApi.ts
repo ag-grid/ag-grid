@@ -49,7 +49,6 @@ import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IComponent } from "./interfaces/iComponent";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
@@ -336,9 +335,7 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        if (this.sideBarComp) {
-            this.sideBarComp.refresh();
-        }
+        this.gridCore.refreshSideBar();
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -783,6 +780,10 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     }
 
+    public setEnableCellTextSelection(selectable: boolean) {
+        this.gridPanel.setCellTextSelection(selectable);
+    }
+
     public getPreferredWidth(): number {
         console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()');
         return this.gridCore.getPreferredWidth();
@@ -1137,22 +1138,6 @@ export class GridApi {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
         }
     }
-
-    // public removeFromEnterpriseCache(route: string[], items: any[]): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.removeFromCache(route, items);
-    //     } else {
-    //         console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
-    //
-    // public addToEnterpriseCache(route: string[], items: any[], index: number): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.addToCache(route, items, index);
-    //     } else {
-    //         console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
 
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');

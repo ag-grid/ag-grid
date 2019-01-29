@@ -327,5 +327,22 @@ it('grid API is available after `detectChanges`', () =&gt; {
     expect(component.gridOptions.api).toBeTruthy();
 });</snippet>
 </div>
+<div class="card" style="background-color: aliceblue">
+  <div class="card-body">
+<h2 id="angular-grid-resources">
+    Angular Grid Resources
+</h2>
+<br/>
+<ul>
+    <li>
+        Get started with Angular Grid in 5 minutes in our <strong><a href="../angular-getting-started/" target="_blank">guide</a></strong>.
+    </li>
+    <br/>
+    <li>
+        Browse our <strong><a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a></strong> page to discover all major benefits in using ag-Grid Angular. 
+    </li>
+</ul>
+</div>
+</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -226,7 +226,7 @@ export class ClientSideRowModel {
         // const noValueColumns = _.missingOrEmpty(valueColumns);
         const noTransactions = _.missingOrEmpty(rowNodeTransactions);
 
-        const changedPath = new ChangedPath(false);
+        const changedPath = new ChangedPath(false, this.rootNode);
 
         // if (noValueColumns || noTransactions) {
         //     changedPath.setInactive();
@@ -262,7 +262,7 @@ export class ClientSideRowModel {
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
-                this.doFilter();
+                this.doFilter(changedPath);
             // console.log('filter = ' + (new Date().getTime() - start));
             case constants.STEP_PIVOT:
                 this.doPivot(changedPath);
@@ -276,7 +276,7 @@ export class ClientSideRowModel {
             // console.log('sort = ' + (new Date().getTime() - start));
             case constants.STEP_MAP:
                 // start = new Date().getTime();
-                this.doRowsToDisplay();
+                this.doRowsToDisplay(changedPath);
             // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
@@ -598,7 +598,7 @@ export class ClientSideRowModel {
             }
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
-                this.selectionController.updateGroupsFromChildrenSelections();
+                this.selectionController.updateGroupsFromChildrenSelections(changedPath);
             }
 
         } else {
@@ -621,8 +621,8 @@ export class ClientSideRowModel {
         });
     }
 
-    private doFilter() {
-        this.filterStage.execute({rowNode: this.rootNode});
+    private doFilter(changedPath: ChangedPath) {
+        this.filterStage.execute({rowNode: this.rootNode, changedPath: changedPath});
     }
 
     private doPivot(changedPath: ChangedPath) {
@@ -745,8 +745,8 @@ export class ClientSideRowModel {
         this.eventService.dispatchEvent(event);
     }
 
-    private doRowsToDisplay() {
-        this.rowsToDisplay = this.flattenStage.execute({rowNode: this.rootNode}) as RowNode[];
+    private doRowsToDisplay(changedPath: ChangedPath) {
+        this.rowsToDisplay = this.flattenStage.execute({rowNode: this.rootNode, changedPath: changedPath}) as RowNode[];
     }
 
     public onRowHeightChanged(): void {

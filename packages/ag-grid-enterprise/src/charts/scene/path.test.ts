@@ -1,8 +1,8 @@
-import {Path} from "./path";
+import {Path2D} from "./path2D";
 
 test('parseSvgPath', () => {
     const svgPath = "  M130 110 C 120 140,  180  140 170 110  z ";
-    const parsedSvgPath = Path.parseSvgPath(svgPath);
+    const parsedSvgPath = Path2D.parseSvgPath(svgPath);
     expect(parsedSvgPath).toEqual([
         {
             command: 'M',
@@ -21,19 +21,19 @@ test('parseSvgPath', () => {
 
 test('prettifySvgPath', () => {
     const svgPath = "  M130 110 C 120 140,  180  140 170 110  z ";
-    const prettySvgPath = Path.prettifySvgPath(svgPath);
+    const prettySvgPath = Path2D.prettifySvgPath(svgPath);
     expect(prettySvgPath).toBe('M130,110\nC120,140,180,140,170,110\nz');
 });
 
 test("approximateCurve", () => {
-    const path = new Path();
+    const path = new Path2D();
     path.approximateCurve([5, 45, -5, -40, 100, 25, 25, 20], 10);
     expect(path.toString()).toBe('M5,45L5.155,23.78L10.440000000000001,10.240000000000002L19.085000000000004,3.0599999999999956L29.32,0.9199999999999997L39.375,2.5L47.48,6.479999999999999L51.865,11.54L50.760000000000005,16.359999999999996L42.39500000000001,19.620000000000005L25.00000000000002,20');
 });
 
 test('fromString (basic)', () => {
     const svgPath = "  M130 110 C 120 140,  180  140 170 110  z ";
-    const path = Path.fromString(svgPath);
+    const path = Path2D.fromString(svgPath);
     expect(path.commands).toEqual(['M', 'C', 'Z']);
     expect(path.params).toEqual([ 130, 110, 120, 140, 180, 140, 170, 110 ]);
 });
@@ -269,6 +269,6 @@ C8.343999999999998,6.929000000000001,7.869999999999997,7.399000000000001,6.92599
 L8.382999999999997,9.807
 Z`;
 
-    const path = Path.fromString(pathString);
+    const path = Path2D.fromString(pathString);
     expect(path.toPrettyString()).toBe(expectedPathString);
 });

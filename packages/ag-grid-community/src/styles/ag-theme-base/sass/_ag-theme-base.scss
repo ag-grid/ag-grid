@@ -119,7 +119,7 @@
         .ag-cell-no-focus {
             border-right: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell {
+        .ag-row, .ag-cell:not(.ag-cell-focus) {
             &.ag-cell-first-right-pinned {
                 border-left: 1px solid $border-color;
             }
@@ -136,7 +136,7 @@
         .ag-cell-no-focus {
             border-left: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell {
+        .ag-row, .ag-cell:not(.ag-cell-focus) {
             &.ag-cell-first-right-pinned {
                 border-left: 1px solid $border-color;
             }
@@ -339,6 +339,10 @@
         cursor: grab;
     }
 
+    .ag-row-dragging, .ag-row-dragging .ag-row-drag {
+        cursor: move;
+    }
+
     .ag-rtl .ag-row-drag {
         float: right;
         background-position-x: right;
@@ -470,7 +474,7 @@
             margin-left: -$grid-size;
 
             & > span {
-                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='https://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{encodecolor($border-color)}'/> </svg>");
+                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{encodecolor($border-color)}'/> </svg>");
                 height: $grid-size * 2;
             }
         }
@@ -496,7 +500,7 @@
         margin: 0;
         padding: 0 $grid-size * 2;
         transform: translateY($grid-size * 2);
-        z-index: 5;
+        z-index: 10000;
 
         span,
         div {

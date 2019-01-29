@@ -26,9 +26,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 50%;
 }
 
-.ag-font-style {
-    cursor: default;
+.ag-unselectable {
     user-select: none; // disable user mouse selection
+}
+
+.ag-selectable {
+    user-select: text;
 }
 
 // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
@@ -147,6 +150,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-root {
+    cursor: default;
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
@@ -181,7 +185,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     height: 100%;
     min-width: 0px;
     overflow: hidden;
-    flex: 1;
+    flex: 1 1 auto;
 }
 
 .ag-body-viewport {
@@ -249,8 +253,15 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
             min-height: 50px;
         }
     }
-    &:not(.ag-layout-print) .ag-center-cols-container {
+    .ag-center-cols-container {
         display: block;
+    }
+
+    &.ag-layout-print {
+        flex: none;
+        .ag-center-cols-clipper {
+            min-width: 100%;
+        }
     }
 }
 
@@ -308,6 +319,12 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     width: 100%;
     display: flex;
     position: relative;
+}
+
+.ag-layout-print {
+    .ag-body-horizontal-scroll {
+        display: none;
+    }
 }
 
 .ag-horizontal-left-spacer, .ag-horizontal-right-spacer {

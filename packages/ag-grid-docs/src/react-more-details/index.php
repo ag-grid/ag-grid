@@ -354,21 +354,27 @@ class StyledRenderer extends Component {
     <h3>Working Example</h3>
     <p>You can find a fully working example at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
 The Simple Redux Example makes use of <code>reactNext</code> together with <code>Redux</code>.</p>
-<hr>
-<h2>Test our React Grid component</h2>
-<br>
+
+<div class="card" style="background-color: aliceblue">
+  <div class="card-body">
+<h2 id="angular-grid-resources" style="margin-top: 10px"> 
+    React Grid Resources
+</h2>
+<br/>
 <ul>
-    <li>Stress-test the grid with 100,000 rows on our <a href="">React Grid Demo</a>.</li>
-    <br>
-    <li>Have a play with our <a href="">API</a>.</li>
-    <br>
-    <li>Test <a href="">ag-Grid React's features</a> before implementing.</li>
-    <br>
+    <li>
+        Get started with React Grid in 5 minutes in our <strong><a href="../react-getting-started/" target="_blank">guide</a></strong>.
+    </li>
+    <br/>
+    <li>
+        Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React. 
+    </li>
 </ul>
-<hr>
+</div>
+</div>
 <h2 id="next-steps">Next Steps</h2>
 <p>
-    Now you can go to <a href="../javascript-grid-reference-overview/">reference</a>
+    Now you can go to our react grid <a href="../javascript-grid-reference-overview/">reference</a>
     to learn about accessing all the features of the grid.
 </p>
 

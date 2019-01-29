@@ -213,7 +213,7 @@ this.columnDefs = [
     clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
     by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-<img src="../images/js-gs-sorting.png" style="display: block;margin: auto;height: 170px;">
+<img src="../images/js-gs-sorting.png" alt="sorting" style="display: block;margin: auto;height: 170px;">
 
 <h3>Filtering</h3>
 
@@ -239,7 +239,7 @@ this.columnDefs = [
     <code>Model</code>
     column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-<img src="../images/js-gs-filtering.png" style="display: block;margin: auto;height: 170px;">
+<img src="../images/js-gs-filtering.png" alt="filtering" style="display: block;margin: auto;height: 170px;">
 
 <?= example('Polymer 3 Grid', 'simple-grid', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 175)) ?>
 

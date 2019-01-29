@@ -12,9 +12,9 @@ export class FilterStage implements IRowNodeStage {
     @Autowired('filterService') private filterService: FilterService;
 
     public execute(params: StageExecuteParams): void {
-        const rowNode = params.rowNode;
+        const {rowNode, changedPath} = params;
 
-        this.filterService.filter(rowNode);
+        this.filterService.filter(changedPath);
 
         this.selectableService.updateSelectableAfterFiltering(rowNode);
     }

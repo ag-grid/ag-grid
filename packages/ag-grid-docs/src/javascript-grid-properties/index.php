@@ -132,6 +132,13 @@ include '../documentation-main/documentation_header.php';
                 facilitate migration.
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
         </tr>
+        <tr>
+            <th>suppressMaintainUnsortedOrder</th>
+            <td>
+                Set to true to suppress sorting of un-sorted data to match original row data.
+                See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a>
+            </td>
+        </tr>
         </table>
     <h2>Selection</h2>
 
@@ -271,7 +278,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressAggAtRootLevel</th>
-            <td>When true, the aggregations won't be computed for root node of the grid.</td>
+            <td>When true, the aggregations won't be computed for root node of the grid.
+            See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a></td>
         </tr>
         <tr>
             <th>aggregateOnlyChangedColumns</th>
@@ -686,6 +694,12 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to operate grid in <a href="../javascript-grid-rtl/">RTL (Right to Left)</a> mode.</td>
         </tr>
         <tr>
+            <th>enableCellTextSelection</th>
+            <td>Set to true to be able to select the text within cells.<br>
+                <strong>Note:</strong> When this is set to true, the clipboard service is disabled.
+            </td>
+        </tr>
+        <tr>
             <th>debug</th>
             <td>Set this to true to enable debug information from ag-grid and related components. Will result in
                 additional logging being output, but very useful when investigating problems.</td>
@@ -767,6 +781,15 @@ include '../documentation-main/documentation_header.php';
             <td>
                 When true, a full reset will be performed when sorting using the
                 <a href="../javascriptgridserversidemodel/">Serverside Row Model</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressBrowserResizeObserver</th>
+            <td>
+                The grid will check for ResizeObserver and use it if it exists in the browser,
+                otherwise it will use the grid's alternative implementation. Some users reported
+                issues with Chrome's ResizeObserver. Use this property to always use the grids
+                alternative implementation should such problems exist.</a>.
             </td>
         </tr>
     </table>

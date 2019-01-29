@@ -15,19 +15,23 @@ export abstract class Node { // Don't confuse with `window.Node`.
     };
     readonly id: string = this.createId();
 
-    protected _scene?: Scene;
-    set scene(value: Scene | undefined) {
+    static isNode(node: {}): node is Node {
+        return (node as Node).matrix !== undefined;
+    }
+
+    protected _scene: Scene | null = null;
+    _setScene(value: Scene | null) {
         this._scene = value;
     }
-    get scene(): Scene | undefined {
+    get scene(): Scene | null {
         return this._scene;
     }
 
-    private _parent?: Parent;
-    set parent(value: Parent | undefined) {
+    private _parent: Parent | null = null;
+    _setParent(value: Parent | null) {
         this._parent = value;
     }
-    get parent(): Parent | undefined {
+    get parent(): Parent | null {
         return this._parent;
     }
 
@@ -292,59 +296,5 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
     get dirty(): boolean {
         return this._dirty;
-    }
-
-    /*
-
-    As of end of 2018:
-
-    DOMMatrix !== SVGMatrix but
-    DOMMatrix.constructor === SVGMatrix.constructor
-
-    This works in Chrome and Safari:
-
-    const p1 = new Path2D();
-    const p2 = new Path2D();
-    const m = new DOMMatrix();
-    p1.addPath(p2, m);
-
-    Firefox - TypeError: Argument 2 of Path2D.addPath does not implement interface SVGMatrix.
-    See: https://bugzilla.mozilla.org/show_bug.cgi?id=1514538
-
-    Edge - doesn't have DOMMatrix.
-    IE11 - game over.
-
-     */
-
-    private static svg: SVGSVGElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-
-    static createSvgMatrix(): SVGMatrix {
-        return Node.svg.createSVGMatrix();
-    }
-
-    static createSvgMatrixFrom(a: number, b: number,
-                               c: number, d: number,
-                               e: number, f: number): SVGMatrix {
-        const m = Node.svg.createSVGMatrix();
-        m.a = a;
-        m.b = b;
-        m.c = c;
-        m.d = d;
-        m.e = e;
-        m.f = f;
-        return m;
-    }
-
-    static createDomMatrix(a: number, b: number,
-                           c: number, d: number,
-                           e: number, f: number): DOMMatrix {
-        const m = new DOMMatrix();
-        m.a = a;
-        m.b = b;
-        m.c = c;
-        m.d = d;
-        m.e = e;
-        m.f = f;
-        return m;
     }
 }

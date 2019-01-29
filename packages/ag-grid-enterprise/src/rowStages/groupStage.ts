@@ -135,21 +135,15 @@ export class GroupStage implements IRowNodeStage {
             this.removeNodes(tran.remove, details);
         }
         if (details.rowNodeOrder) {
-            this.recursiveSortChildren(details.rootNode, details);
+            this.sortChildren(details);
         }
     }
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
-    private recursiveSortChildren(node: RowNode, details: GroupingDetails): void {
-        _.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
-        let childNode: RowNode;
-
-        for (let i = 0; i<node.childrenAfterGroup.length; i++) {
-            childNode = node.childrenAfterGroup[i];
-            if (childNode.childrenAfterGroup && !details.changedPath.canSkip(childNode)) {
-                this.recursiveSortChildren(childNode, details);
-            }
-        }
+    private sortChildren(details: GroupingDetails): void {
+        details.changedPath.forEachChangedNodeDepthFirst( rowNode => {
+            _.sortRowNodesByOrder(rowNode.childrenAfterGroup, details.rowNodeOrder);
+        });
     }
 
     private sortGroupsWithComparator(rootNode: RowNode): void {
@@ -505,7 +499,15 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
-        const keys: string[] | null = this.getDataPath ? this.getDataPath(rowNode.data) : null;
+        let keys = null;
+        if (this.getDataPath) {
+            let path = this.getDataPath(rowNode.data);
+            if (path) {
+                // sanitize
+                keys = path.map(p => _.escape(p));
+            }
+        }
+
         if (keys === null || keys === undefined || keys.length === 0) {
             _.doOnce(
                 () => console.warn(`getDataPath() should not return an empty path for data`, rowNode.data),

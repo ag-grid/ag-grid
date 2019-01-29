@@ -121,6 +121,9 @@ var gridOptions = {
         sortable: true,
         resizable: true
     },
+    autoGroupColumnDef: {
+        width: 200
+    },
     onGridReady: function(params) {
         createRowData();
         params.api.setRowData(globalRowData)
