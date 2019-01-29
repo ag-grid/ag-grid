@@ -9,5 +9,5 @@
 </div>
 
 <div id="bestHtml5Grid" class="ag-theme-material"></div>
-<script inline src="example-rich-grid/data.js"></script>
-<script inline src="example-rich-grid/example.js"></script>
+<script src="example-rich-grid/data.js"></script>
+<script src="example-rich-grid/example.js"></script>

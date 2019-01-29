@@ -23,14 +23,14 @@ meta_and_links($title, $keywords, $description, false);
 
         <section id="punch">
             <div id="doodle-container">
-                <div id="doodle-misc"><img inline src="_assets/doodles/misc.svg" /></div>
-                <div id="doodle-checkbox-selection"><img inline src="_assets/doodles/checkbox-selection.svg" /></div>
-                <div id="doodle-context-menu"><img inline src="_assets/doodles/context-menu.svg" /></div>
-                <div id="doodle-editing"><img inline src="_assets/doodles/editing.svg" /></div>
-                <div id="doodle-range-selection"><img inline src="_assets/doodles/range-selection.svg" /></div>
-                <div id="doodle-quick-filter"><img inline src="_assets/doodles/quick-filter.svg" /></div>
-                <div id="doodle-tree-data"><img inline src="_assets/doodles/tree-data.svg" /></div>
-                <div id="doodle-column-menu"><img inline src="_assets/doodles/column-menu.svg" /></div>
+                <div id="doodle-misc"><img src="_assets/doodles/misc.svg" /></div>
+                <div id="doodle-checkbox-selection"><img src="_assets/doodles/checkbox-selection.svg" /></div>
+                <div id="doodle-context-menu"><img src="_assets/doodles/context-menu.svg" /></div>
+                <div id="doodle-editing"><img src="_assets/doodles/editing.svg" /></div>
+                <div id="doodle-range-selection"><img src="_assets/doodles/range-selection.svg" /></div>
+                <div id="doodle-quick-filter"><img src="_assets/doodles/quick-filter.svg" /></div>
+                <div id="doodle-tree-data"><img src="_assets/doodles/tree-data.svg" /></div>
+                <div id="doodle-column-menu"><img src="_assets/doodles/column-menu.svg" /></div>
             </div>
 
             <div>

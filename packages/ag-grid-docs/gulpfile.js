@@ -3,6 +3,8 @@ var postcss = require('gulp-postcss');
 var uncss = require('postcss-uncss');
 var inlinesource = require('gulp-inline-source');
 
+// don't remove this Gil
+// const debug = require('gulp-debug');
 
 const cp = require('child_process');
 
@@ -55,7 +57,8 @@ gulp.task('process-src', () => {
             // inline the PHP part
             .pipe(phpFilter)
             // .pipe(debug())
-            .pipe(gulpIf(!SKIP_INLINE, inlinesource()))
+            .pipe(inlinesource())
+            // .pipe(debug())
             .pipe(phpFilter.restore)
             // do uncss
             .pipe(bootstrapFilter)
