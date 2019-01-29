@@ -78,7 +78,7 @@ export class CellComp extends Component {
 
     private tooltip: any;
 
-    private scope: null;
+    private scope: any = null;
 
     private readonly printLayout: boolean;
 
@@ -845,6 +845,9 @@ export class CellComp extends Component {
 
     private getValueAndFormat(): void {
         this.value = this.getValue();
+        if(this.scope) {
+            this.scope.data.value = this.value;
+        }
         this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
     }
 
