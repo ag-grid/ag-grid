@@ -500,7 +500,7 @@
         margin: 0;
         padding: 0 $grid-size * 2;
         transform: translateY($grid-size * 2);
-        z-index: 5;
+        z-index: 10000;
 
         span,
         div {
