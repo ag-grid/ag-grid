@@ -13,7 +13,6 @@ import {
 } from "@angular/core";
 
 import {
-    Utils as _,
     ColumnApi,
     ComponentUtil,
     Events,
@@ -22,12 +21,13 @@ import {
     GridOptions,
     GridOptionsWrapper,
     GridParams,
-    Promise
+    Promise,
+    Utils as _
 } from "ag-grid-community";
 
-import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
-import {AgGridColumn} from "./agGridColumn";
-import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
+import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
+import { AgGridColumn } from "./agGridColumn";
+import { Ng2FrameworkComponentWrapper } from "./ng2FrameworkComponentWrapper";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -66,8 +66,6 @@ export class AgGridNg2 implements AfterViewInit {
                 private frameworkComponentWrapper: Ng2FrameworkComponentWrapper,
                 private _componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
-
-        this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
 
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
@@ -144,7 +142,7 @@ export class AgGridNg2 implements AfterViewInit {
         }
 
         // generically look up the eventType
-        let emitter = <EventEmitter<any>> (<any>this)[eventType];
+        let emitter = <EventEmitter<any>>(<any>this)[eventType];
         if (emitter) {
             if (eventType === 'gridReady') {
                 // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the

@@ -6,7 +6,7 @@
   "typings": "main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "update-properties": "node updateGridAndColumnProperties.js",
+    "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
     "verify-properties": "node agGridPropertiesCheck.js",
     "build": "npm run clean && npm run build-no-verify && npm run verify-properties",
     "build-gulp": "npm run build-no-verify-gulp && npm run verify-properties",
@@ -53,6 +53,7 @@
     "run-sequence": "^2.2.1",
     "rxjs": "^5.5.11",
     "typescript": "^2.9.2",
+    "typescript-simple": "8.0.6",
     "zone.js": "^0.8.26"
   },
   "peerDependencies": {

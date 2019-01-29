@@ -46,9 +46,7 @@ export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
 
         let wrapper: DynamicAgNg2Component = new DynamicAgNg2Component();
         return wrapper;
-
     }
-
 
     public createComponent<T>(componentType: { new(...args: any[]): T; }): ComponentRef<T> {
         // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
