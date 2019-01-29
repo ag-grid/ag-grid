@@ -20,6 +20,21 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Material Design Components #2', 'material-design-2', 'angular', array('onlyShow' => 'angular', 'exampleHeight' => '300', 'extras' => array('materialdesign'))) ?>
 
-
-
+    <h2>
+    Angular Grid Resources
+</h2>
+<br/>
+<ul>
+    <li>
+        Get started with Angular Grid in 5 minutes in our <a href="../angular-getting-started/" target="_blank">guide</a>.
+    </li>
+    <br/>
+    <li>
+        Browse our <a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a> page to discover all major benefits in using ag-Grid Angular. 
+    </li>
+    <br/>
+    <li>
+        Please take a look at the <a href="../angular-more-details">more details</a> section next for more detailed information on using Angular with ag-Grid. 
+    </li>
+</ul>
 <?php include '../documentation-main/documentation_footer.php'; ?>

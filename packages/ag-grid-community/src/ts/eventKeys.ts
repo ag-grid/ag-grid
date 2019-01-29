@@ -79,6 +79,9 @@ export class Events {
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_SELECTION_CHANGED = 'selectionChanged';
 
+    public static EVENT_CELL_KEY_DOWN = 'cellKeyDown';
+    public static EVENT_CELL_KEY_PRESS = 'cellKeyPress';
+
     public static EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
     public static EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
 

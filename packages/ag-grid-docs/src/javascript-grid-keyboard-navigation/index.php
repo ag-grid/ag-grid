@@ -1,18 +1,17 @@
 <?php
-$pageTitle = "Keyboard Navigation: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Keyboard Navigation. With Keyboard Navigation users can use cursor keys and tab keys to navigate between cells. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Keyboard Navigation";
+$pageTitle = "Keyboard Interaction: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Keyboard Interaction. With Keyboard Navigation users can use cursor keys and tab keys to navigate between cells. Version 20 is available for download now, take it for a free two month trial.";
+$pageKeyboards = "ag-Grid Keyboard Interaction";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
-    <h1 id="keyboard-navigation">Keyboard Navigation</h1>
+    <h1 id="keyboard-navigation">Keyboard Interaction</h1>
 
     <p class="lead">
-        Clicking on a cell gives the cell focus. You can then navigate and interact with the grid in the
-        following ways:
+        The grid responds to keyboard interactions from the user as well as emitting events when
+        key presses happen on the grid cells. Below shows all the keyboards interactions that can
+        be done wiht the grid.
     </p>
 
     <h2>Navigation</h2>
@@ -54,15 +53,6 @@ include '../documentation-main/documentation_header.php';
     <p>
         Pressing the <b>space key</b> on a cell will select the cells row, or deselect the row if already selected.
         If multi-select is enabled, then the selection will not remove any previous selections.
-    </p>
-
-    <h2>Custom Actions</h2>
-
-    <p>
-        Custom cell renderers can listen to key presses on the focused div. The grid element that receives
-        the focus is provided to the cell renderers via the <code>eGridCell</code> parameter. You can add your
-        own listeners to this cell. Via this method you can listen to any key press and do your own action
-        on the cell eg hitting 'x' may execute a command in your application for that cell.
     </p>
 
     <h2>Suppress Cell Selection</h2>
@@ -225,5 +215,34 @@ myInput.addEventListener("keydown", function (event) {
 
 
     <?= example('Tabbing into the Grid', 'tabbing-into-grid', 'vanilla') ?>
+
+    <h2>Keyboard Events</h2>
+
+    <p>
+        It is possible to add custom behaviour to any key event that you want using the grid
+        events <code>cellKeyPress</code> (gets called when a DOM keyPress event fires on a cell)
+        and <code>cellKeyDown</code> (gets called when a DOM keyDown event fires on a cell).
+    </p>
+
+    <p>
+        The grid events wrap the DOM events and provides additional information such as row
+        and column details.
+    </p>
+
+    <p>
+        The example below shows processing grid cell keyboard events. The following can be noted:
+        <ul>
+            <li>
+                Each time a <code>cellKeyPress</code> or <code>cellKeyDown</code> is fired, the
+                details of the event are logged to the console.
+            </li>
+            <li>
+                When the user hits 's' on a row, the row selection is toggled. This is achieved
+                through the <code>cellKeyPress</code> listener.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Keyboard Events', 'keyboard-events', 'generated', array('processVue' => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

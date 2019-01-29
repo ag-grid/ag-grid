@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <img src="high-level.png" class="img-fluid"/>
+        <img src="high-level.png" alt="high-level" class="img-fluid"/>
     </p>
 
     <p>

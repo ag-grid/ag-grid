@@ -216,7 +216,7 @@
                 "img": "touch-support.gif",
                 "description":
                     "Ag-Grid is fully keyboard navigable for your users' maximum productivity. It is also fully functional on touch devices. You can even provide a print friendly version of it.",
-                "links": [{ "title": "Keyboard Navigation Documentation", "url": "/javascript-grid-keyboard-navigation/" }]
+                "links": [{ "title": "Keyboard Interaction Documentation", "url": "/javascript-grid-keyboard-navigation/" }]
             },
             {
                 "title": "Wide Audience Support",

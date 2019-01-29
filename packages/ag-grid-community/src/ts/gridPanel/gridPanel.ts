@@ -4,7 +4,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "../context/context";
 import { EventService } from "../eventService";
-import { BodyHeightChangedEvent, BodyScrollEvent, Events } from "../events";
+import { BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
 import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { Constants } from "../constants";

@@ -18,7 +18,7 @@ include '../landing-pages/convert-header.php';
 
         <div id="head-top">
         <div class="logo">
-            <img alt="ag-Grid React Component" src="/best-angular-grid/assets/images/angular-grid.svg">
+            <img alt="ag-Grid Angular Component" src="/best-angular-grid/assets/images/angular-grid.svg">
         </a>
     </div>
     <h1>World's Leading Angular Datagrid Component</h1>
@@ -359,21 +359,21 @@ You can easily extend the default functionality by creating your custom Angular 
     <p class="lead-description">
         If you want more complex HTML inside the cell or need to customise the value before it’s rendered, you can do it with a custom cell renderer.
     </p>
-    <img src="/images/customise/cell-renderer.png" class="center zoom">
+    <img src="/images/customise/cell-renderer.png" alt="angular-cell-renderer" class="center zoom">
 </div>
 <div class="col-sm">
     <p class="lead">Custom Cell Editor</p><hr>
     <p class="lead-description">
         Our Angular grid also provides rich inline editing experience so your users can update any record in a dataset with just a few clicks.
     </p>
-    <img src="/images/customise/cell-editor.png" class="center zoom">
+    <img src="/images/customise/cell-editor.png" alt="angular-cell-editor" class="center zoom">
 </div>
 <div class="col-sm">
     <p class="lead">Custom Column Filter</p><hr>
     <p class="lead-description">
         Filtering is one of the most useful features of data grids. It allows users to zoom in on a particular set of records. We provide a simple string filtering out of the box.
     </p>
-    <img src="/images/customise/custom-filter.png" class="center zoom">
+    <img src="/images/customise/custom-filter.png" alt="angular-custom-filter" class="center zoom">
 </div>
 </div>
 <div class="row">
@@ -423,11 +423,11 @@ Angular Responsive Grid Layout
 </div>
 <div class="row" id="images">
 <div class="col">
-    <img src="/images/themes/material.png" class="center2 zoom">
-    <img src="/images/themes/bootstrap.png" class="center2 zoom">
+    <img src="/images/themes/material.png" alt="ag-grid-material-theme" class="center2 zoom">
+    <img src="/images/themes/bootstrap.png" alt="ag-grid-bootstrap-theme" class="center2 zoom">
     <br>
-    <img src="/images/themes/balham.png" class="center2 zoom">
-    <img src="/images/themes/balham-dark.png" class="center2 zoom">
+    <img src="/images/themes/balham.png" alt="ag-grid-balham-theme" class="center2 zoom">
+    <img src="/images/themes/balham-dark.png" alt="ag-grid-balham-dark-theme" class="center2 zoom">
     <div class="row">
         <div class="col">
             <hr>
@@ -455,7 +455,7 @@ Angular Responsive Grid Layout
     <h3>
         Documentation<hr>
     </h3>
-    <img class="icons" src="/images/icons/docs.svg">
+    <img class="icons" alt="ag-grid-docs" src="/images/icons/docs.svg">
     <p class="lead-description">
         Save time up front by using our detailed documentation with live demos and evaluate the Grid’s functionality without having to build it in to your product.
     </p>
@@ -465,7 +465,7 @@ Angular Responsive Grid Layout
     <h3>
         Angular Grid Demo<hr>
     </h3>
-    <img class="icons" src="/images/icons/demo.svg">
+    <img class="icons" alt="ag-grid-demo" src="/images/icons/demo.svg">
     <p class="lead-description">
         Test our Angular Grid component's core and enterprise features ranging from sorting, filtering, paging, grouping and ability to handle large data sets with our Kitchen Sink demo. 
 </div>
@@ -475,7 +475,7 @@ Angular Responsive Grid Layout
     <h3>
         Features<hr>
     </h3>
-    <img class="icons" src="/images/icons/features.svg">
+    <img class="icons" alt="ag-grid-features" src="/images/icons/features.svg">
     <p class="lead-description"> 
         Most fully featured Angular grid on the market.
         Run through our core and enterprise features, designed to match all your needs. Filter, Sort, Group on Large Data Sets.
@@ -515,7 +515,7 @@ Angular Responsive Grid Layout
         <a href="https://www.ag-grid.com/angular-more-details/"><p class="lead-description">
             ag-Grid Angular Overview
         </p></a>
-        <img class="icons" src="/images/icons/overview.svg">
+        <img class="icons" alt="ag-grid-angular-overview" src="/images/icons/overview.svg">
         <p class="lead-description">
             Every feature of ag-Grid is available when using the ag-Grid Angular Component. The Angular Component wraps the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and Angular ag-Grid when it comes to features.
         </p>
@@ -524,7 +524,7 @@ Angular Responsive Grid Layout
             <a href="https://www.ag-grid.com/angular-getting-started/"> <p class="lead-description">
                 Getting started with Angular Grid[Guide]
             </p></a>
-            <img class="icons" src="/images/icons/guide.svg">
+            <img class="icons" alt="ag-grid-angular-guide" src="/images/icons/guide.svg">
             <p class="lead-description">
                 In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project, and configure some of the essential features of it.
             </p>
@@ -533,7 +533,7 @@ Angular Responsive Grid Layout
                 <a href="https://medium.com/ag-grid/get-started-with-react-grid-in-5-minutes-f6e5fb16afa"><p class="lead-description">
                     Get Started with Angular Grid[Blog]
                 </p></a>
-                <img class="icons" src="/images/icons/blog.svg">
+                <img class="icons" alt="ag-grid-angular-blog" src="/images/icons/blog.svg">
                 <p class="lead-description">
                     This article describes the Angular grid example and shows you how easy it is to integrate and configure it. It’s a 5 minute getting started guide with examples that you can copy/paste and hit the ground running.
                 </p>
