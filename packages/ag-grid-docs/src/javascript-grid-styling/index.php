@@ -106,12 +106,15 @@ include '../documentation-main/documentation_header.php';
         the most difficult.
         If you do decide to create your own theme, then you can use one of the provided themes and
         use that as a template. They can be found on GitHub <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community/src/styles">here</a>.
-    </p>
-
-    <p>
+        <p>
         This section does not provide an example of building a theme as a number of themes
         are already provided with ag-Grid - these can be used as a basis for any additional themes you may wish to create.
+        </p>
+        <h3>Important</h3><p>If you create your own theme, it's name has to follow the <code>ag-theme-</code>&lt;theme name&gt; naming convention, otherwise 
+        styles will not be applied to floating elements (eg. context menus) properly.</p>
     </p>
+
+
 
     <h2 id="when-to-style-via-themes">When to Style via Themes</h2>
 

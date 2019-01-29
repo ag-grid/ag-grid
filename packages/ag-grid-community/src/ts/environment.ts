@@ -33,7 +33,6 @@ export class Environment {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-
     public getSassVariable(theme: string, key: string): number {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];

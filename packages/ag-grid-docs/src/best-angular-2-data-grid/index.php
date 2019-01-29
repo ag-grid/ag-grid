@@ -9,7 +9,7 @@ include '../landing-pages/convert-header.php';
 <style><?php include './styles.css'; ?></style>
 <style><?php include './css/performance.css'; ?></style>
 <style><?php include './css/api.css'; ?></style>
-<script src="/_assets/js/ag-grid-enterprise@20.0.0.js" defer></script>
+<script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
 <script src="/best-angular-grid/js/grid-performance.js" type="module"></script>
 <script src="/best-angular-grid/js/grid-api.js" type="module"></script>
 <div>
@@ -155,12 +155,12 @@ include '../landing-pages/convert-header.php';
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://github.com/ag-grid/ag-grid-angular" target="_blank">Github</a>
+            <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-angular" target="_blank">Github</a>
             <hr>
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.npmjs.com/package/ag-grid-angular" target="_blank">npm-angular-grid</a>
+            <a href="https://www.npmjs.com/package/ag-grid-angular" target="_blank">npm</a>
             <hr>
         </div>
     </div>

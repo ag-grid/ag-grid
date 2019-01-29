@@ -7,11 +7,10 @@ $pageGroup = "basics";
 include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
-<script src="/_assets/js/ag-grid-enterprise@20.0.0.js" defer></script>
-<script src="/best-react-data-grid/js/grid-performance.js" type="module"></script>
-<script src="/best-react-data-grid/js/grid-api.js" type="module"></script>
+<script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
+<script src="./js/grid-performance.js" inline></script>
+<script src="./js/grid-api.js" inline></script>
 <section>
-    
     <div id="head-top">
         <div class="logo">
             <img alt="ag-Grid React Component" src="/best-angular-grid/assets/images/angular-grid.svg">
@@ -78,7 +77,7 @@ include '../landing-pages/convert-header.php';
                 </div>
             </div>
             <div class="col"><br>
-                <?= example('ag-Grid React', 'full-rich-markup', 'react', array( "enterprise" => 1, "exampleHeight" => 300 , "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+                <?= example('ag-Grid React', 'full-rich-markup', 'react-packaged', array("exampleHeight" => 300 , "noPlunker" => 1, "usePath" => "/dist/", "extras" => array("fontawesome"))) ?>
                 <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">React Grid Demo</button></a>
             </div>
         </div>
@@ -148,12 +147,12 @@ include '../landing-pages/convert-header.php';
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://github.com/ag-grid/ag-grid-react" target="_blank">Github</a>
+            <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-react" target="_blank">Github</a>
             <hr>
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.npmjs.com/package/ag-grid-react" target="_blank">npm-react-grid</a>
+            <a href="https://www.npmjs.com/package/ag-grid-react" target="_blank">npm</a>
             <hr>
         </div>
     </div>
@@ -300,9 +299,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
         <li data-action="remove-filter"><a>Clear filtering</a></li>
     </ul>
     <ul class="api-operations">
-        <li data-action="group-by-three-columns">
-            <a>Group by three columns (Country, Year & Sport)</a>
-        </li>
+        <li data-action="group-by-three-columns"><a>Group by three columns (Country, Year & Sport)</a></li>
         <li data-action="expand-top-level-rows"><a>Expand top level rows</a></li>
         <li data-action="collapse-top-level-rows"><a>Collapse top level rows</a></li>
         <li data-action="remove-grouping"><a>Remove grouping</a></li>

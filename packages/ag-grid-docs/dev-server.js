@@ -10,6 +10,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 const chokidar = require('chokidar');
 const generateExamples = require('./example-generator');
+const buildPackagedExamples = require('./packaged-example-builder');
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -190,6 +191,10 @@ module.exports = () => {
     // angular & vue are separate processes
     serveAndWatchAngular(app);
     serveAndWatchVue(app);
+
+    // build "packaged" landing page examples (for performance reasons)
+    // these aren't watched and regenerated like the other examples
+    buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg best-react-data-grid
 
     // regenerate examples
     watchAndGenerateExamples();
