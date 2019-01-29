@@ -7,22 +7,13 @@ $pageGroup = "basics";
 include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
-<<<<<<< Updated upstream
 <script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
 <script src="./js/grid-performance.js" inline></script>
 <script src="./js/grid-api.js" inline></script>
 <section>
-    <div id="head-top">
-=======
-<script src="/_assets/js/ag-grid-enterprise@20.0.0.js" defer></script>
-<script src="/best-react-data-grid/js/grid-performance.js" type="module"></script>
-<script src="/best-react-data-grid/js/grid-api.js" type="module"></script>
-
-    
     <div class="head-top">
->>>>>>> Stashed changes
         <div class="logo">
-            <img alt="ag-Grid React Component" src="/best-angular-grid/assets/images/angular-grid.svg">
+            <img alt="ag-Grid React Component" src="images/ag-grid.png">
         </a>
     </div>
     <h1>World's Leading React Data Grid Component</h1>
@@ -89,7 +80,7 @@ include '../landing-pages/convert-header.php';
                 </div>
             </div>
             <div class="col"><br>
-                <?= example('ag-Grid React', 'full-rich-markup', 'react-packaged', array("exampleHeight" => 300 , "noPlunker" => 1, "usePath" => "/dist/", "extras" => array("fontawesome"))) ?>
+<?= example('ag-Grid React', 'full-rich-markup', 'react-packaged', array("exampleHeight" => 300 , "noPlunker" => 1, "usePath" => "/dist/", "extras" => array("fontawesome"))) ?>
                 <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">React Grid Demo</button></a>
             </div>
         </div>
