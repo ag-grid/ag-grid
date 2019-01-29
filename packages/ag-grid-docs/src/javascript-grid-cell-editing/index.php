@@ -256,7 +256,7 @@ cellDefs.forEach( function(cellDef) {
     </p>
     <ul class="content">
         <li><code>cellEditingStarted: </code> editing has started on a cell.</li>
-        <li><code>cellEditingStopped: </code> editing has stopped on a row.</li>
+        <li><code>cellEditingStopped: </code> editing has stopped on a cell.</li>
         <li><code>rowEditingStarted: </code> editing has started on a row. Only for full row editing.</li>
         <li><code>rowEditingStopped: </code> editing has stopped on a row. Only for full row editing.</li>
     </ul>
