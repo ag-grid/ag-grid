@@ -119,7 +119,7 @@
         .ag-cell-no-focus {
             border-right: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell {
+        .ag-row, .ag-cell:not(.ag-cell-focus) {
             &.ag-cell-first-right-pinned {
                 border-left: 1px solid $border-color;
             }
@@ -136,7 +136,7 @@
         .ag-cell-no-focus {
             border-left: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell {
+        .ag-row, .ag-cell:not(.ag-cell-focus) {
             &.ag-cell-first-right-pinned {
                 border-left: 1px solid $border-color;
             }
