@@ -1,21 +1,43 @@
 <?php
-$pageTitle = "Get Started with Angular Grid: ag-Grid Reference";
+$pageTitle = "Angular Grid | Getting started with ag-Grid";
 $pageDescription = "ag-Grid is a feature-rich Angular Grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Angular application.";
 $pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
 ?>
 
-<h1>Get Started with ag-Grid in Your Angular Project</h1>
+<h1>Angular Grid | Get Started with ag-Grid</h1>
 
-<p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with zero dependencies. 
+<h2 id="angular-grid-overview">Angular Grid Overview</h2>
+
+<p class="lead" id="angular-grid-description">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with zero dependencies. 
 ag-Grid supports Angular through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Angular component &ndash; you pass configuration through property bindings and handle events through event bindings. 
 You can even use Angular components to customize the grid UI and cell contents / behavior.</p> 
-
+<h2>Tutorial Overview</h2>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features of it</a>. 
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
-<h2>Add ag-Grid to Your Project</h2>
+<hr>
+<h2>
+    Table of Contents
+</h2>
+<div class="row">
+  <div class="col">
+    <ol style="columns: 2">
+    <li><a href="#add-ag-grid-to-your-project">Add ag-Grid to Your Project</li></a>
+    <li><a href="#enable-sorting-and-filtering">Enable Sorting and Filtering</li></a>
+    <li><a href="#fetch-remote-data">Fetch Remote Data</li></a>
+    <li><a href="#enable-selection">Enable Selection</li></a>
+    <li><a href="#grouping(enterprise)">Grouping(Enterprise)</li></a>
+    <li><a href="#customize-the-theme-look">Customize the Theme Look</li></a>
+    <li><a href="#summary">Summary</li></a>
+    <li><a href="#next-steps">Next Steps</li></a>
+</ol>
+</div>
+</div>
+<hr>
+
+<h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold an Angular app with <a href="https://cli.angular.io/">angular CLI</a>. 
 Don't worry if your project has a different configuration. ag-Grid and its Angular wrapper are distributed as NPM packages, which should work with any common Angular project module bundler setup. 
@@ -120,7 +142,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <img class="img-fluid" src="../getting-started/step1.png" alt="ag-Grid hello world" />
 
-<h2>Enable Sorting And Filtering</h2>
+<h2 id="enable-sorting-and-filtering">Enable Sorting And Filtering</h2>
 
 <p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see
     which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually
@@ -154,7 +176,7 @@ columnDefs = [
 
 <img class="img-fluid" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
 
-<h2>Fetch Remote Data</h2>
+<h2 id="fetch-remote-data">Fetch Remote Data</h2>
 
 <p>Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of the time, we are dealing with data that resides on a remote server. Thanks to Angular, implementing this is actually quite simple. 
 Notice that the actual data fetching is performed outside of the grid component - We are using Angular's <a href="https://angular.io/guide/http">HttpClient</a> and an async pipe. As a first step, let's add the <code>HttpModule</code> to our app module:</p> 
@@ -223,7 +245,7 @@ export class AppComponent implements OnInit {
 <p>The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid. However, you will see an additional HTTP request performed if you open your developer tools.</p>
 
 
-<h2>Enable Selection</h2> 
+<h2 id="enable-selection">Enable Selection</h2> 
 
 <p>Being a programmer is a hectic job. Just when we thought that we are done with our assignment, the manager shows up with a fresh set of requirements! 
 It turned out that we need to allow the user to select certain rows from the grid and to mark them as flagged in the system. 
@@ -388,7 +410,7 @@ export class AppComponent implements OnInit {
 <p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend. 
 Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
 
-<h2>Grouping (Enterprise)</h2>
+<h2 id="grouping(enterprise)">Grouping (Enterprise)</h2>
 
 <div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
 
@@ -474,7 +496,7 @@ Notice that grouping works with checkboxes as well - the <code>groupSelectsChild
 <div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially. 
 The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
 
-<h2>Customize the Theme Look</h2>
+<h2 id="customize-the-theme-look">Customize the Theme Look</h2>
 
 <p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p> 
 
@@ -504,14 +526,14 @@ In fact, by specifying the icons path, we also made our first theme override! We
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color, 
 header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables">Sass variable list</a> is available in the themes documentation section.</p> 
 
-<h2>Summary</h2> 
+<h2 id="summary">Summary</h2> 
 
 <p>With this Angular grid tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
 While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
 
 <p>That's just scratching the surface, though. The grid has <a href="https://www.ag-grid.com/features-overview/"> a lot more features to offer</a>; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
-<h2>Next Steps</h2> 
+<h2 id="next-steps">Next Steps</h2> 
 
 <p>You are hungry for more? Head over to the <a href="../angular-more-details/">Angular guides section</a> for more in-depth information about the Angular flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
 

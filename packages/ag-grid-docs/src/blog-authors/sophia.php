@@ -1,5 +1,5 @@
 <div class="col-md-3 offset-1" class="blog-author">
-    <img src="/images/team/sophia.jpg" class="img-fluid">
+    <img src="/images/team/sophia.jpg" alt="Sophia Lazarova" class="img-fluid">
     <h4> Sophia Lazarova </h4>
     <p>
         Sophia recently switched her carreer path from being a developer to becoming member of the ag-Grid team as a Developer Advocate.
