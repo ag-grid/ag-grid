@@ -1550,7 +1550,7 @@ export class GridOptionsWrapper {
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
         const theme = this.environment.getTheme();
-        if (theme.indexOf('ag-theme') === 0) {
+        if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
         }
 
