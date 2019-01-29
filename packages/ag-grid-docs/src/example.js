@@ -415,8 +415,7 @@ var gridOptions = {
 };
 
 function getContextMenuItems(params) {
-    if (params.node == null) return null;
-    var result = params.defaultItems.splice(0);
+    var result = params.defaultItems ? params.defaultItems.splice(0) : [];
     result.push(
         {
             name: 'Custom Menu Item',
