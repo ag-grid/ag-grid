@@ -23,21 +23,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-width-half {
     display: inline-block;
-    width: 50%;
+    width: 50% !important;
 }
 
 .ag-unselectable {
-    user-select: none; // disable user mouse selection
+    user-select: none !important; // disable user mouse selection
 }
 
 .ag-selectable {
-    user-select: text;
-}
-
-// when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
-// the mouse isn't selecting text when dragging.
-.ag-body-no-select {
-    user-select: none;
+    user-select: text !important;
 }
 
 .ag-select-agg-func-popup {

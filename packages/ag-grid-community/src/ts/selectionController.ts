@@ -14,7 +14,7 @@ import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
 import { _ } from './utils';
-import {ChangedPath} from "./rowModels/clientSide/changedPath";
+import { ChangedPath } from "./rowModels/clientSide/changedPath";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -105,7 +105,7 @@ export class SelectionController {
             changedPath.setInactive();
         }
 
-        changedPath.forEachChangedNodeDepthFirst( rowNode => {
+        changedPath.forEachChangedNodeDepthFirst(rowNode => {
             if (rowNode !== rootNode) {
                 rowNode.calculateSelectedFromChildren();
             }
