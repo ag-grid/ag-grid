@@ -15,6 +15,8 @@ export abstract class Node { // Don't confuse with `window.Node`.
     };
     readonly id: string = this.createId();
 
+    datum: any;
+
     static isNode(node: {}): node is Node {
         return (node as Node).matrix !== undefined;
     }

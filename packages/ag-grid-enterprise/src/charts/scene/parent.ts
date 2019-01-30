@@ -73,7 +73,31 @@ export abstract class Parent extends Node {
             node._setParent(this);
             node._setScene(this.scene);
         }
+
         this.dirty = true;
+    }
+
+    appendChild<T extends Node>(node: T): T {
+        if (node.parent) {
+            throw new Error(`${node} already belongs to another parent: ${node.parent}.`);
+        }
+        if (node.scene) {
+            throw new Error(`${node} already belongs a scene: ${node.scene}.`);
+        }
+        if (this.childSet[node.id]) {
+            // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.
+            throw new Error(`Duplicate ${(node.constructor as any).name} node: ${node}`);
+        }
+
+        this._children.push(node);
+        this.childSet[node.id] = true;
+
+        node._setParent(this);
+        node._setScene(this.scene);
+
+        this.dirty = true;
+
+        return node;
     }
 
     removeChild<T extends Node>(node: T): T {
@@ -94,39 +118,39 @@ export abstract class Parent extends Node {
     }
 
     /**
-     * Inserts the node `newChild` before the existing child node `refChild`.
-     * If `refChild` is null, insert `newChild` at the end of the list of children.
-     * If the `newChild` belongs to another parent, it is first removed.
-     * Returns the `newChild`.
-     * @param newChild
-     * @param refChild
+     * Inserts the node `node` before the existing child node `nextNode`.
+     * If `nextNode` is null, insert `node` at the end of the list of children.
+     * If the `node` belongs to another parent, it is first removed.
+     * Returns the `node`.
+     * @param node
+     * @param nextNode
      */
-    insertBefore<T extends Node>(newChild: T, refChild?: Node | null): T {
-        const parent = newChild.parent;
+    insertBefore<T extends Node>(node: T, nextNode?: Node | null): T {
+        const parent = node.parent;
 
-        if (newChild.parent) {
-            newChild.parent.removeChild(newChild);
+        if (node.parent) {
+            node.parent.removeChild(node);
         }
 
-        if (refChild && refChild.parent === this) {
-            const i = this.children.indexOf(refChild);
+        if (nextNode && nextNode.parent === this) {
+            const i = this.children.indexOf(nextNode);
 
             if (i >= 0) {
-                this._children.splice(i, 0, newChild);
-                this.childSet[newChild.id] = true;
-                newChild._setParent(this);
-                newChild._setScene(this.scene);
+                this._children.splice(i, 0, node);
+                this.childSet[node.id] = true;
+                node._setParent(this);
+                node._setScene(this.scene);
             } else {
-                throw new Error(`${refChild} has ${parent} as the parent, `
+                throw new Error(`${nextNode} has ${parent} as the parent, `
                     + `but is not in its list of children.`);
             }
 
             this.dirty = true;
         }
         else {
-            this.append(newChild);
+            this.append(node);
         }
 
-        return newChild;
+        return node;
     }
 }
