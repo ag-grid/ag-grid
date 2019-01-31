@@ -53,13 +53,6 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
         if (visible && !this.initialised) {
             this.init(this.params);
         }
-
-        const event: ToolPanelVisibleChangedEvent = {
-            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(event);
     }
 
     public init(params: ToolPanelColumnCompParams): void {

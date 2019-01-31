@@ -32,6 +32,7 @@ export interface AgGridEvent extends AgEvent {
 }
 
 export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
+    source: string;
 }
 
 export interface AnimationQueueEmptyEvent extends AgGridEvent {
