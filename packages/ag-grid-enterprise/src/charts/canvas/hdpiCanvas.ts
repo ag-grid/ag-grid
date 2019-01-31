@@ -89,7 +89,7 @@ export class HdpiCanvas {
     })();
 
     // Offscreen SVGTextElement for measuring text
-    // (this fallback method is at least 25 slower).
+    // (this fallback method is at least 25 times slower).
     // Using a <span> and its `getBoundingClientRect` for the same purpose
     // often results in a grossly incorrect measured height.
     private static readonly svgText: SVGTextElement = (() => {
@@ -183,7 +183,7 @@ export class HdpiCanvas {
             height: bbox.height
         };
 
-        cache[font][text] = bbox;
+        cache[font][text] = size;
 
         return size;
     }
