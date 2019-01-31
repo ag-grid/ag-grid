@@ -1,3 +1,5 @@
+type Size = { width: number, height: number };
+
 export class HdpiCanvas {
     constructor(width = 300, height = 150) {
         this.updatePixelRatio(0, false);
@@ -86,13 +88,29 @@ export class HdpiCanvas {
         return canvas.getContext('2d')!;
     })();
 
-    // Offscreen <span> element for measuring text, if canvas context lacks the support.
-    private static readonly span = (() => {
-        const span = document.createElement('span');
-        span.style.position = 'absolute';
-        span.style.top = '-10000px';
-        document.body.appendChild(span);
-        return span;
+    // Offscreen SVGTextElement for measuring text
+    // (this fallback method is at least 25 slower).
+    // Using a <span> and its `getBoundingClientRect` for the same purpose
+    // often results in a grossly incorrect measured height.
+    private static readonly svgText: SVGTextElement = (() => {
+        const xmlns = 'http://www.w3.org/2000/svg';
+
+        const svg = document.createElementNS(xmlns, 'svg');
+        svg.setAttribute('width', '100');
+        svg.setAttribute('height', '100');
+        svg.style.position = 'absolute';
+        svg.style.top = '-1000px';
+        svg.style.visibility = 'hidden';
+
+        const svgText = document.createElementNS(xmlns, 'text');
+        svgText.setAttribute('x', '0');
+        svgText.setAttribute('y', '30');
+        svgText.setAttribute('text', 'black');
+
+        svg.appendChild(svgText);
+        document.body.appendChild(svg);
+
+        return svgText;
     })();
 
     static readonly supports = Object.freeze({
@@ -116,24 +134,58 @@ export class HdpiCanvas {
      * @param text The single-line text to measure.
      * @param font The font shorthand string.
      */
-    static getTextSize(text: string, font: string): { width: number, height: number } {
+    static getTextSize(text: string, font: string): Size {
         if (HdpiCanvas.supports.textMetrics) {
             HdpiCanvas.ctx.font = font;
             const metrics = HdpiCanvas.ctx.measureText(text);
+
             return {
                 width: metrics.width,
                 height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
             };
-        } else { // the fallback is at least 25 times slower
-            HdpiCanvas.span.style.font = font;
-            HdpiCanvas.span.style.lineHeight = '1em';
-            HdpiCanvas.span.textContent = text;
-            const metrics = HdpiCanvas.span.getBoundingClientRect();
-            return {
-                width: metrics.width,
-                height: metrics.height
-            };
         }
+        else {
+            return HdpiCanvas.measureSvgText(text, font);
+        }
+    }
+
+    private static textSizeCache: { [font: string]: { [text: string] : Size } } = {};
+
+    private static measureSvgText(text: string, font: string): Size {
+        const cache = HdpiCanvas.textSizeCache;
+        const fontCache = cache[font];
+
+        // Note: consider not caching the size of numeric strings.
+        // For example: if (isNaN(+text)) { // skip
+
+        if (fontCache) {
+            const size = fontCache[text];
+            if (size) {
+                return size;
+            }
+        }
+        else {
+            cache[font] = {};
+        }
+
+        const svgText = HdpiCanvas.svgText;
+
+        svgText.style.font = font;
+        svgText.textContent = text;
+
+        // `getBBox` returns an instance of `SVGRect` with the same `width` and `height`
+        // measurements as `DOMRect` instance returned by the `getBoundingClientRect`.
+        // But the `SVGRect` instance has half the properties of the `DOMRect`,
+        // so we use the `getBBox` method.
+        const bbox = svgText.getBBox();
+        const size: Size = {
+            width: bbox.width,
+            height: bbox.height
+        };
+
+        cache[font][text] = bbox;
+
+        return size;
     }
 
     private static makeHdpiOverrides(pixelRatio: number) {
