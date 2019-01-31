@@ -2,13 +2,11 @@ import {
     Autowired,
     Component,
     Context,
-    Events,
     EventService,
     GridApi,
     GridOptionsWrapper,
     IToolPanelComp,
     IToolPanelParams,
-    ToolPanelVisibleChangedEvent,
     _
 } from "ag-grid-community/main";
 import { PivotModePanel } from "./panels/pivotModePanel";
