@@ -112,17 +112,16 @@ export class Text extends Shape {
 
             switch (this.textBaseline) {
                 case 'alphabetic':
-                    y -= size.height * 0.8;
+                    y -= size.height * 0.7;
                     break;
                 case 'middle':
-                    y -= size.height * 0.40;
+                    y -= size.height * 0.45;
                     break;
                 case 'ideographic':
                     y -= size.height;
                     break;
-                case 'top':
                 case 'hanging':
-                    y += size.height * 0.2;
+                    y -= size.height * 0.2;
                     break;
                 case 'bottom':
                     y -= size.height;
