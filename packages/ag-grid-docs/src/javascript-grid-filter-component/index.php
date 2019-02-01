@@ -220,7 +220,5 @@ include './polymer.php';
 
 include './vuejs.php'; 
 
-include './aurelia.php'; 
-
 include '../documentation-main/documentation_footer.php'; 
 ?>

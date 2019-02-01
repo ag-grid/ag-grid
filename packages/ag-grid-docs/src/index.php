@@ -91,7 +91,6 @@ meta_and_links($title, $keywords, $description, false);
                     <li id="fw-vue"><a href="./best-vuejs-data-grid/">Vue.js</a></li>
                     <li id="fw-angularjs"><a href="./best-angularjs-data-grid/">AngularJS 1.x</a></li>
                     <li id="fw-polymer"><a href="./best-polymer-data-grid/">Polymer</a></li>
-                    <li id="fw-aurelia"><a href="./best-aurelia-data-grid/">Aurelia</a></li>
                     <li id="fw-webcomponents"><a href="./best-web-component-data-grid/">Web Components</a></li>
                 </ul>
             </div>

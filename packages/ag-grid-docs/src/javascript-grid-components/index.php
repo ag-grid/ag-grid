@@ -179,7 +179,6 @@ gridOptions = {
                 1
                 compiling to use AngularJS bindings inside ag-Grid.
             </li>
-            <li><b>Aurelia</b>: Aurelia uses templates instead of components.</li>
         </ul>
 
         <p>

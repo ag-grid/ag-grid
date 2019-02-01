@@ -148,7 +148,9 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     $packaged = strrpos($type,"-packaged") !== false;
     if($packaged) {
         $type = 'as-is';
-        array_push($options['skipDirs'], 'dist');
+        array_push($options['skipDirs'], 'prebuilt');
+        $options['usePath'] = '/prebuilt/';
+        $options['noPlunker'] = 1;
     }
 
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));

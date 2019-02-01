@@ -1,7 +1,7 @@
-var gulp = require('gulp');
-var postcss = require('gulp-postcss');
-var uncss = require('postcss-uncss');
-var inlinesource = require('gulp-inline-source');
+const gulp = require('gulp');
+const postcss = require('gulp-postcss');
+const uncss = require('postcss-uncss');
+const inlinesource = require('gulp-inline-source');
 
 // don't remove this Gil
 // const debug = require('gulp-debug');
@@ -19,7 +19,7 @@ const merge = require('merge-stream');
 
 const SKIP_INLINE = true;
 
-gulp.task('release', ['generate-examples', 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev']);
+gulp.task('release', ['generate-examples', 'build-packaged-examples', 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev']);
 gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
@@ -102,6 +102,9 @@ gulp.task('copy-from-dist', () => {
 const generateExamples = require('./example-generator');
 gulp.task('serve', require('./dev-server'));
 gulp.task('generate-examples', generateExamples);
+
+const buildPackagedExamples = require('./packaged-example-builder');
+gulp.task('build-packaged-examples', () => buildPackagedExamples(() => console.log("Packaged Examples Built")));
 
 gulp.task('serve-preview', () => {
     const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], {

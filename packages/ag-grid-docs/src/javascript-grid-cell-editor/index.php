@@ -393,6 +393,4 @@ if (instances.length > 0) {
 
 <?php include './vuejs.php'; ?>
 
-<?php include './aurelia.php'; ?>
-
 <?php include '../documentation-main/documentation_footer.php'; ?>

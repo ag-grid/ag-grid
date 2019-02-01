@@ -173,22 +173,6 @@ class SimpleGridExample extends Polymer.Element {
 
 </snippet>
 
-    <h2> Aurelia</h2>
-
-    <p> For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows: </p>
-
-<snippet>
-export function configure(aurelia: Aurelia) {
-    aurelia.use
-    .standardConfiguration()
-    .plugin('ag-grid-aurelia')
-    .feature('resources');
-
-    LicenseManager.setLicenseKey("your license key");
-
-    // ...rest of function
-</snippet>
-
     <h2>Invalid License</h2>
     <p>If you have an enterprise grid running with an invalid license (no license, expired license) your console log will 
         display a series of warnings and the grid will show a watermark for 5 seconds.</p>

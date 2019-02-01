@@ -130,9 +130,9 @@ each column entry specifies the header label and the data field to be displayed 
 <p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>sort</code> property to the column definitions.</p>
 <snippet language="js">
 columnDefs: [
-{headerName: "Make", field: "make", sortable=true },
-{headerName: "Model", field: "model", sortable=true },
-{headerName: "Price", field: "price", sortable=true }
+{headerName: "Make", field: "make", sortable:true },
+{headerName: "Model", field: "model", sortable:true },
+{headerName: "Price", field: "price", sortable:true }
 ]
 </snippet>
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
@@ -140,9 +140,9 @@ columnDefs: [
 <p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 <snippet language="js">
 columnDefs: [
-{headerName: "Make", field: "make", sortable=true, filter=true },
-{headerName: "Model", field: "model", sortable=true, filter=true },
-{headerName: "Price", field: "price", sortable=true, filter=true }
+{headerName: "Make", field: "make", sortable:true, filter:true },
+{headerName: "Model", field: "model", sortable:true, filter:true },
+{headerName: "Price", field: "price", sortable:true, filter:true }
 ]
 </snippet>
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>

@@ -1,8 +1,6 @@
 <?php
-$pageTitle = "Angular Data Grid | Packed with features and performance
-.";
-$pageDescription = "Fastest, most feature-rich angular Data Grid component from ag-Grid. Integrate seamlessly with angular to deliver 63+ core and enterprise features including filtering, grouping and pagination. angular Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.
-";
+$pageTitle = "Angular Data Grid | Packed with features and performance.";
+$pageDescription = "Fastest, most feature-rich angular Data Grid component from ag-Grid. Integrate seamlessly with angular to deliver 63+ core and enterprise features including filtering, grouping and pagination. angular Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.";
 $pageGroup = "basics";
 include '../landing-pages/convert-header.php';
 ?>
@@ -10,15 +8,15 @@ include '../landing-pages/convert-header.php';
 <style><?php include './css/performance.css'; ?></style>
 <style><?php include './css/api.css'; ?></style>
 <script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
-<script src="/best-angular-grid/js/grid-performance.js" type="module"></script>
-<script src="/best-angular-grid/js/grid-api.js" type="module"></script>
+<script src="/best-angular-2-data-grid/js/grid-performance.js" inline></script>
+<script src="/best-angular-2-data-grid/js/grid-api.js" inline></script>
 <div>
 
 
 
         <div id="head-top">
         <div class="logo">
-            <img alt="ag-Grid Angular Component" src="/best-angular-grid/assets/images/angular-grid.svg">
+            <img alt="ag-Grid Angular Component" src="/best-angular-2-data-grid/assets/images/angular-grid.svg">
         </a>
     </div>
     <h1>World's Leading Angular Datagrid Component</h1>
@@ -83,7 +81,7 @@ include '../landing-pages/convert-header.php';
                 </div>
             </div>
             <div class="col"><br>
-                <?=example('ag-Grid in Angular', 'rich-grid-example', 'angular', array("enterprise" => 1, "exampleHeight" => 300, "exampleWidth" => 300, "showResult" => true, "extras" => array("fontawesome")));?>
+                <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular-packaged', array("enterprise" => 1, "exampleHeight" => 300, "exampleWidth" => 300)) ?>
                 </div>
                 <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">Angular Grid Demo</button></a>
             </div>
@@ -103,12 +101,12 @@ include '../landing-pages/convert-header.php';
                     ag-Grid Community
                 </p>
                 <div>
-                    
+
                     <p class="lead-description" id="core-intro"><strong>Everything you'd expect from a Angular grid.</strong><br>
                         Among the most common features of the modern grids are Sorting, Filtering and Pagination.<br>
                         Our Angular Grid component ships with the following core features:
                     </p>
-                    
+
                 </div>
                 <div class="row" id="core-features">
                     <div class="col">
@@ -467,7 +465,7 @@ Angular Responsive Grid Layout
     </h3>
     <img class="icons" alt="ag-grid-demo" src="/images/icons/demo.svg">
     <p class="lead-description">
-        Test our Angular Grid component's core and enterprise features ranging from sorting, filtering, paging, grouping and ability to handle large data sets with our Kitchen Sink demo. 
+        Test our Angular Grid component's core and enterprise features ranging from sorting, filtering, paging, grouping and ability to handle large data sets with our Kitchen Sink demo.
 </div>
 
 
@@ -476,7 +474,7 @@ Angular Responsive Grid Layout
         Features<hr>
     </h3>
     <img class="icons" alt="ag-grid-features" src="/images/icons/features.svg">
-    <p class="lead-description"> 
+    <p class="lead-description">
         Most fully featured Angular grid on the market.
         Run through our core and enterprise features, designed to match all your needs. Filter, Sort, Group on Large Data Sets.
     </p>
@@ -495,7 +493,7 @@ Angular Responsive Grid Layout
         </div>
             <div class="col">
                 <a href="https://www.ag-grid.com/features-overview/"><p>
-                    View all Features 
+                    View all Features
                 </p></a>
             </div>
         </div>

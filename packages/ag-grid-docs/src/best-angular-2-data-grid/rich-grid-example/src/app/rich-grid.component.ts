@@ -8,14 +8,31 @@ import {ProficiencyCellRenderer} from "./proficiency-renderer.component";
 
 @Component({
     selector: 'my-app',
-    templateUrl: './rich-grid.component.html',
+    template: require('./rich-grid.component.html'),
+    styles: [`
+        .toolbar button {
+            margin: 2px; padding: 0;
+        }
+
+        .ag-cell {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+
+        label {
+            font-weight: normal !important;
+        }
+
+        .ag-menu {
+            z-index: 50;
+        }
+    `],
     encapsulation: ViewEncapsulation.None
 })
 export class RichGridComponent {
 
     private gridOptions: GridOptions;
-    private icons: any;
-    private defaultColDef: any = {
+    public defaultColDef: any = {
         sortable: true,
         filter: true,
         resizable: true
@@ -28,18 +45,7 @@ export class RichGridComponent {
     private api: GridApi;
     private columnApi: ColumnApi;
 
-    private sideBar = {
-        toolPanels: [{
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columns',
-            component: 'agColumnsToolPanel',
-            componentParams: {
-                suppressValues: true
-            }
-        }]
-    };
+    public sideBar = false;
 
     constructor() {
         this.gridOptions = <GridOptions>{};

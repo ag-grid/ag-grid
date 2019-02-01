@@ -80,7 +80,7 @@ include '../landing-pages/convert-header.php';
                 </div>
             </div>
             <div class="col"><br>
-<?= example('ag-Grid React', 'full-rich-markup', 'react-packaged', array("exampleHeight" => 300 , "noPlunker" => 1, "usePath" => "/dist/", "extras" => array("fontawesome"))) ?>
+                <?= example('ag-Grid React', 'full-rich-markup', 'react-packaged', array("exampleHeight" => 300)) ?>
                 <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">React Grid Demo</button></a>
             </div>
         </div>

@@ -194,7 +194,8 @@ module.exports = () => {
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
-    buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg best-react-data-grid
+    // commented out by default - add if you want to test as part of the dev build (or run separately - see at the end of the file)
+    // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg best-react-data-grid
 
     // regenerate examples
     watchAndGenerateExamples();
@@ -221,13 +222,17 @@ const genExamples = (exampleDir) => {
 
 // dont remove these unused vars
 const [cmd, script, execFunc, exampleDir, watch] = process.argv;
-if (process.argv.length >= 3 && execFunc === 'generate-examples') {
-    if (exampleDir && watch) {
-        const examplePath = path.resolve('./src/', exampleDir);
-        chokidar.watch(`${examplePath}/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
-    } else {
-        console.log('regenerating examples...');
-        generateExamples(() => console.log('generation done.'), exampleDir);
+if (process.argv.length >= 3) {
+    if (execFunc === 'generate-examples') {
+        if (exampleDir && watch) {
+            const examplePath = path.resolve('./src/', exampleDir);
+            chokidar.watch(`${examplePath}/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
+        } else {
+            console.log('regenerating examples...');
+            generateExamples(() => console.log('generation done.'), exampleDir);
+        }
+    } else if(execFunc === 'prebuild-examples') {
+        buildPackagedExamples(() => console.log("Packaged Examples Built"), exampleDir || undefined);
     }
 }
 

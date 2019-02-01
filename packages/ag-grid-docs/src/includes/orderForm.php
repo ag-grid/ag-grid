@@ -33,7 +33,7 @@
         </div>
         <div class="form-group" style="margin-top: 10px"> 
         <label for="WebToContact[_cf_NXMIJJ]">Please let us know which Framework you are using, if applicable, this helps us provide better support.</label> 
-        <input maxlength="100" class="form-control" placeholder="Framework e.g. Angular, React, Vue.js, Polymer, Aurelia." type="text" value="" name="WebToContact[_cf_NXMIJJ]" id="WebToContact__cf_NXMIJJ" /> 
+        <input maxlength="100" class="form-control" placeholder="Framework e.g. Angular, React, Vue.js, Polymer." type="text" value="" name="WebToContact[_cf_NXMIJJ]" id="WebToContact__cf_NXMIJJ" />
         </div>
        
 

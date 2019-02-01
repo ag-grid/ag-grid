@@ -5,6 +5,11 @@ const webpack = require('webpack');
 
 SUPPORTED_TYPES = ['react-packaged', 'angular-packaged'];
 
+const fwToMain = {
+    react: 'index.jsx',
+    angular: 'src/app.ts'
+};
+
 module.exports = (final, scope = '*') => {
     const workQueue = [];
     glob(`src/${scope}/*.php`, {}, (er, files) => {
@@ -30,21 +35,31 @@ module.exports = (final, scope = '*') => {
 
                 const absoluteRoot = path.resolve(__dirname, exampleRoot);
 
-                webpackConfig.entry = `${absoluteRoot}/index.jsx`;
-                webpackConfig.output = { path: `${absoluteRoot}/dist/`, filename: `bundle.js`};
+                webpackConfig.entry = `${absoluteRoot}/${fwToMain[fwType]}`;
+                webpackConfig.output = { path: `${absoluteRoot}/prebuilt/`, filename: `bundle.js`};
 
                 const workItem = new Promise((resolve, reject) => {
                     const compiler = webpack(webpackConfig);
 
                     compiler.run((err, stats) => {
-                        if (err || stats.hasErrors()) {
-                            console.error(err);
+                        if (err) {
+                            console.error(err.stack || err);
+                            if (err.details) {
+                                console.error(err.details);
+                            }
+                            return;
+                        }
+
+                        const info = stats.toJson();
+
+                        if (stats.hasErrors()) {
+                            console.error(info.errors);
                         }
 
                         // add any required extras (fontawesome etc)
                         const extras = getExtras(config.extras, fs.existsSync(`${absoluteRoot}/style.css`));
 
-                        const htmlFile = `${exampleRoot}/dist/index.html`;
+                        const htmlFile = `${exampleRoot}/prebuilt/index.html`;
                         const html = fs.readFileSync(htmlFile).toString();
 
                         fs.writeFileSync(htmlFile,

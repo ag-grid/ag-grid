@@ -310,8 +310,6 @@ colDef = {
 
     <?php include './react.php'; ?>
 
-    <?php include './aurelia.php'; ?>
-
     <?php include './vuejs.php'; ?>
 
     <h2>Header Group Component</h2>
