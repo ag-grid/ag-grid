@@ -21,6 +21,7 @@
                 Grid API:
                 <button @click="gridOptions.api.selectAll()">Select All</button>
                 <button @click="gridOptions.api.deselectAll()">Clear Selection</button>
+                <button @click="createRowData()">Refresh Data</button>
             </span>
                 <span style="margin-left: 20px;">
                 Column API:
@@ -30,18 +31,12 @@
             </div>
             <div style="clear: both;"></div>
             <div style="padding: 4px;" class="toolbar">
-                <label>
-                    <input type="checkbox" v-model="showToolPanel"/>
-                    Show Tool Panel
-                </label>
-                <button @click="createRowData()">Refresh Data</button>
             </div>
             <div style="clear: both;"></div>
-            <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
+            <ag-grid-vue style="width: 800px; height: 350px;" class="ag-theme-balham"
                          :gridOptions="gridOptions"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
-                         :showToolPanel="showToolPanel"
 
                          :groupHeaders="true"
                          :suppressRowClickSelection="true"
@@ -96,7 +91,6 @@
                 columnDefs: null,
                 rowData: null,
                 showGrid: false,
-                showToolPanel: false,
                 rowCount: null
             }
         },
@@ -302,14 +296,14 @@
         let skills = [];
         RefData.IT_SKILLS.forEach(function (skill) {
             if (data && data.skills && data.skills[skill]) {
-                skills.push('<img src="images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push(`<img src='http://www.ag-grid.com/images/skills/${skill}.png' width="16px" title="${skill}" />`);
             }
         });
         return skills.join(' ');
     }
 
     function countryCellRenderer(params) {
-        let flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+        let flag = `<img border='0' width='15' height='10' style='margin-bottom: 2px' src='http://www.ag-grid.com/images/flags/${RefData.COUNTRY_CODES[params.value]}.png'`;
         return flag + " " + params.value;
     }
 

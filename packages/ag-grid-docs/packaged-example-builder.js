@@ -3,11 +3,16 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 
-SUPPORTED_TYPES = ['react-packaged', 'angular-packaged'];
-
-const fwToMain = {
-    react: 'index.jsx',
-    angular: 'src/app.ts'
+SUPPORTED_TYPES = {
+    'react-packaged': {
+        main: 'index.jsx'
+    },
+    'angular-packaged': {
+        main: 'src/app.ts'
+    },
+    'vue-packaged': {
+        main: 'src/main.js'
+    }
 };
 
 module.exports = (final, scope = '*') => {
@@ -22,9 +27,10 @@ module.exports = (final, scope = '*') => {
             while ((matches = exampleRegEx.exec(contents))) {
                 const [example, type, options] = matches.slice(1);
 
-                if (SUPPORTED_TYPES.indexOf(type) === -1) {
+                if (!SUPPORTED_TYPES[type]) {
                     continue;
                 }
+
                 const exampleRoot = `src/${section}/${example}`;
                 console.log(`Pre-packaging ${exampleRoot}`);
 
@@ -35,10 +41,10 @@ module.exports = (final, scope = '*') => {
 
                 const absoluteRoot = path.resolve(__dirname, exampleRoot);
 
-                webpackConfig.entry = `${absoluteRoot}/${fwToMain[fwType]}`;
+                webpackConfig.entry = `${absoluteRoot}/${SUPPORTED_TYPES[type].main}`;
                 webpackConfig.output = { path: `${absoluteRoot}/prebuilt/`, filename: `bundle.js`};
 
-                const workItem = new Promise((resolve, reject) => {
+                const workItem = new Promise((resolve) => {
                     const compiler = webpack(webpackConfig);
 
                     compiler.run((err, stats) => {

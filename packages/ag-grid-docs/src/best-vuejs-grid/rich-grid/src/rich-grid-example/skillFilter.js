@@ -1,15 +1,15 @@
 import RefData from "./refData";
 
 const SKILL_TEMPLATE =
-    '<label style="border: 1px solid lightgrey; margin: 4px; padding: 4px; display: inline-block;">' +
-    '  <span>' +
-    '    <div style="text-align: center;">SKILL_NAME</div>' +
-    '    <div>' +
-    '      <input type="checkbox"/>' +
-    '      <img src="images/skills/SKILL.png" width="30px"/>' +
-    '    </div>' +
-    '  </span>' +
-    '</label>';
+    `<label style="border: 1px solid lightgrey; margin: 4px; padding: 4px; display: inline-block;">  
+        <span>    
+            <div style="text-align: center;">SKILL_NAME</div>    
+            <div>      
+                <input type="checkbox"/>      
+                <img src="http://www.ag-grid.com/images/skills/SKILL.png" width="30px"/>    
+            </div>  
+        </span>
+    </label>`;
 
 const FILTER_TITLE =
     '<div style="text-align: center; background: lightgray; width: 100%; display: block; border-bottom: 1px solid grey;">' +
