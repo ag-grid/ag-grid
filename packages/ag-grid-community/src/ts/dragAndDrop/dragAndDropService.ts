@@ -425,7 +425,7 @@ export class DragAndDropService {
     }
 
     public setGhostIcon(iconName: string, shake = false): void {
-        _.removeAllChildren(this.eGhostIcon);
+        _.clearElement(this.eGhostIcon);
         let eIcon: HTMLElement;
         switch (iconName) {
             case DragAndDropService.ICON_ADD: eIcon = this.ePlusIcon; break;

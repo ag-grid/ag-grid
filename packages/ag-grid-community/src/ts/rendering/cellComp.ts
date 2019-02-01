@@ -477,7 +477,7 @@ export class CellComp extends Component {
 
     private replaceContentsAfterRefresh(): void {
         // otherwise we rip out the cell and replace it
-        _.removeAllChildren(this.eParentOfValue);
+        _.clearElement(this.eParentOfValue);
 
         // remove old renderer component if it exists
         if (this.cellRenderer && this.cellRenderer.destroy) {
@@ -1057,7 +1057,7 @@ export class CellComp extends Component {
     }
 
     private addInCellEditor(): void {
-        _.removeAllChildren(this.getGui());
+        _.clearElement(this.getGui());
         if (this.cellEditor) {
             this.getGui().appendChild(this.cellEditor.getGui());
         }
@@ -1758,7 +1758,7 @@ export class CellComp extends Component {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         } else {
-            _.removeAllChildren(this.getGui());
+            _.clearElement(this.getGui());
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back

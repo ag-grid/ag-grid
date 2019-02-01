@@ -139,7 +139,7 @@ export class HeaderContainer {
             headerRowComp.destroy();
         });
         this.headerRowComps.length = 0;
-        _.removeAllChildren(this.eContainer);
+        _.clearElement(this.eContainer);
     }
 
     private createHeaderRowComps(): void {

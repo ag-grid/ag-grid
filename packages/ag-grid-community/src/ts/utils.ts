@@ -241,10 +241,6 @@ export class Utils {
         element.scrollLeft = value;
     }
 
-    static clearElement(el: HTMLElement): void {
-        while (el.firstChild) { el.removeChild(el.firstChild); }
-    }
-
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
         if (!map) {
             return;
@@ -608,12 +604,8 @@ export class Utils {
         return value != null && this.exists(value) && value.length > 0;
     }
 
-    static removeAllChildren(node: HTMLElement) {
-        if (node) {
-            while (node.hasChildNodes() && node.lastChild) {
-                node.removeChild(node.lastChild);
-            }
-        }
+    static clearElement(el: HTMLElement): void {
+        while (el && el.firstChild) { el.removeChild(el.firstChild); }
     }
 
     static removeElement(parent: HTMLElement, cssSelector: string) {
