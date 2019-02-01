@@ -55,9 +55,9 @@ export class AgCheckbox extends Component {
     }
 
     private loadIcons(): void {
-        _.removeAllChildren(this.eChecked);
-        _.removeAllChildren(this.eUnchecked);
-        _.removeAllChildren(this.eIndeterminate);
+        _.clearElement(this.eChecked);
+        _.clearElement(this.eUnchecked);
+        _.clearElement(this.eIndeterminate);
         if (this.readOnly) {
             this.eChecked.appendChild(_.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
             this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));

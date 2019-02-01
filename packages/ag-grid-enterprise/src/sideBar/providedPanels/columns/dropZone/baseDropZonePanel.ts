@@ -100,8 +100,8 @@ export abstract class BaseDropZonePanel extends Component {
         this.guiDestroyFunctions.forEach((func) => func());
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        _.removeAllChildren(this.getGui());
-        _.removeAllChildren(this.eColumnDropList);
+        _.clearElement(this.getGui());
+        _.clearElement(this.eColumnDropList);
     }
 
     public init(params: BaseDropZonePanelParams): void {

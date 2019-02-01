@@ -100,7 +100,7 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
     public destroyChildren(): void {
         this.childDestroyFuncs.forEach(func => func());
         this.childDestroyFuncs.length = 0;
-        _.removeAllChildren(this.getGui());
+        _.clearElement(this.getGui());
     }
 
     public refresh(): void {
