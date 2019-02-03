@@ -63,8 +63,8 @@ npm install --save ag-grid-community ag-grid-vue vue-property-decorator
 
 <snippet>
 &lt;style lang="scss"&gt;
-  @import "~ag-grid-community/dist/styles/ag-grid.css";
-  @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+  @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+  @import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
 &lt;/style&gt;
 </snippet>
 
@@ -460,10 +460,10 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 
 <snippet language="scss">
 &lt;style lang="scss"&gt;
-  $ag-icons-path: "~ag-grid-community/src/styles/icons/";
+  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
 
-  @import "~ag-grid-community/src/styles/ag-grid.scss";
-  @import "~ag-grid-community/src/styles/ag-theme-balham.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 &lt;/style&gt;
 </snippet>
 
@@ -473,7 +473,7 @@ In fact, by specifying the icons path, we also made our first theme override! We
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
 
 <snippet language="diff">
-  $ag-icons-path: "~ag-grid-community/src/styles/icons/";
+  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
 +$odd-row-background-color: #CFD8DC;
 </snippet>
 

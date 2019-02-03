@@ -506,10 +506,10 @@ override the theme variable values, and refer the ag-grid Sass files instead of 
 <p>Thankfully, Angular CLI has done most of the heavy lifting for us. Remember that  we bootstrapped our project with <code>--style scss</code>? Everything we need to do now is to change the paths in <code>src/styles.scss</code>:</p>
 
 <snippet language="scss">
-$ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
+$ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
 
-@import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-balham.scss";
+@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
+@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 </snippet>
 
 <p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
@@ -518,7 +518,7 @@ In fact, by specifying the icons path, we also made our first theme override! We
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
 
 <snippet language="diff">
- $ag-icons-path: "../node_modules/ag-grid-community/src/styles/icons/";
+$ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
 +$odd-row-background-color: #CFD8DC;
 </snippet>
 
