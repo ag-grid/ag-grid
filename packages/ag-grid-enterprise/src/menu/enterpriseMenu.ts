@@ -189,22 +189,23 @@ export class EnterpriseMenu extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        const items:TabbedItem[] = this.column.getMenuTabs (this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT)
-            .filter(menuTabName =>
-                this.isValidMenuTabItem(menuTabName)
-            )
-            .filter(menuTabName =>
-                this.isNotSuppressed(menuTabName)
-            )
-            .map(menuTabName =>
-                this.createTab(menuTabName)
-            );
+        const tabs = this.getTabsToCreate()
+            .map(menuTabName => this.createTab(menuTabName));
+
         this.tabbedLayout = new TabbedLayout({
-            items: items,
+            items: tabs,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this),
             onItemClicked: this.onTabItemClicked.bind(this)
         });
+    }
+
+    private getTabsToCreate() {
+        if (this.restrictTo) return this.restrictTo;
+
+        return this.column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT)
+            .filter(tabName => this.isValidMenuTabItem(tabName))
+            .filter(tabName => this.isNotSuppressed(tabName));
     }
 
     private isValidMenuTabItem(menuTabName: string): boolean {

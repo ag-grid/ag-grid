@@ -307,7 +307,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
             hasMethod(name: string): boolean {
                 let frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
                 if (frameworkComponentInstance == null) {
-                    return true;
+                    return false;
                 }
                 return frameworkComponentInstance[name] != null;
             }
