@@ -192,6 +192,7 @@ export { StylingService } from "./styling/stylingService";
 
 // widgets
 export { AgCheckbox } from "./widgets/agCheckbox";
+export { PopupWindow } from "./widgets/popupWindow";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";

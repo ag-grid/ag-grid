@@ -181,6 +181,7 @@ var gridOptions = {
     // suppressMakeColumnVisibleAfterUnGroup: true,
     // unSortIcon: true,
     // enableRtl: true,
+    enableCharts: true,
     multiSortKey: 'ctrl',
     animateRows: true,
     enableRangeSelection: true,
