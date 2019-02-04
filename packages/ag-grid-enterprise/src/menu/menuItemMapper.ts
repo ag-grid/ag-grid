@@ -151,6 +151,7 @@ export class MenuItemMapper {
                 name: 'Create Chart',
                 action: () => {
                     this.chartingService.createChart();
+
                 }
             };
             default:
