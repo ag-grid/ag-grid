@@ -297,8 +297,8 @@ export class ClipboardService implements IClipboardService {
                 rowIndex: rowNode.rowIndex,
                 rowPinned: rowNode.rowPinned,
                 context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi()
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!
             };
             this.eventService.dispatchEvent(event);
         });

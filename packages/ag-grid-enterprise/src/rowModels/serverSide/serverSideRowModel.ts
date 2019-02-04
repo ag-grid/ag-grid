@@ -255,8 +255,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const modelUpdatedEvent: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             newPage: false,
             newData: false,
             animate: shouldAnimate(),

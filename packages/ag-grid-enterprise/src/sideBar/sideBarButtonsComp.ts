@@ -104,8 +104,8 @@ export class SideBarButtonsComp extends Component {
         const event: ToolPanelVisibleChangedEvent = {
             type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
             source: key,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
         this.eventService.dispatchEvent(event);
     }
