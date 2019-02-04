@@ -43,7 +43,7 @@ export class ValueService {
         }
 
         if (!rowNode) {
-            return undefined;
+            return;
         }
 
         // pull these out to make code below easier to read
@@ -73,8 +73,6 @@ export class ValueService {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (field && data) {
             result = _.getValueUsingField(data, field, column.isFieldContainsDots());
-        } else {
-            result = undefined;
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
@@ -247,17 +245,12 @@ export class ValueService {
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
     public getKeyForNode(col: Column, rowNode: RowNode): any {
         const value = this.getValue(col, rowNode);
-        let result: any;
         const keyCreator = col.getColDef().keyCreator;
 
-        if (keyCreator) {
-            result = keyCreator({value: value});
-        } else {
-            result = value;
-        }
+        let result = keyCreator ? keyCreator({value: value}) : value;
 
         // if already a string, or missing, just return it
-        if (typeof result === 'string' || result === null || result === undefined) {
+        if (typeof result === 'string' || result == null) {
             return result;
         }
 
