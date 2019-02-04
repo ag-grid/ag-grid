@@ -133,7 +133,7 @@ export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlide
 export { GroupCellRenderer } from "./rendering/cellRenderers/groupCellRenderer";
 
 // status bar components
-export { IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./interfaces/iStatusPanel";
+export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./interfaces/iStatusPanel";
 export { IStatusBarService } from "./interfaces/iStatusBarService";
 
 // tool panel components

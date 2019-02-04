@@ -234,13 +234,14 @@ export class ValueService {
         return result;
     }
 
-    private getValueCallback(node: RowNode, field: string): any {
+    private getValueCallback(node: RowNode, field: string | Column): any {
         const otherColumn = this.columnController.getPrimaryColumn(field);
+
         if (otherColumn) {
             return this.getValue(otherColumn, node);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
