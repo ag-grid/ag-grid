@@ -156,7 +156,8 @@ export class SetFilterModel {
                 success: this.onAsyncValuesLoaded.bind(this),
                 colDef: this.colDef
             };
-            callback(params);
+
+            window.setTimeout(() => callback(params), 0);
         }
     }
 
