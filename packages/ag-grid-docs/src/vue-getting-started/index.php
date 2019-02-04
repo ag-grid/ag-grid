@@ -274,7 +274,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                      :rowData="rowData"
                      rowSelection="multiple"
 
-                     :gridReady="onGridReady"&gt;
+                     @grid-ready="onGridReady"&gt;
         &lt;/ag-grid-vue&gt;
     &lt;/div&gt;
 &lt;/template&gt;
@@ -381,7 +381,7 @@ import App from './App'
                      :rowData="rowData"
                      rowSelection="multiple"
 
-                     :gridReady="onGridReady"&gt;
+                     @grid-ready="onGridReady"&gt;
         &lt;/ag-grid-vue&gt;
     &lt;/div&gt;
 &lt;/template&gt;
