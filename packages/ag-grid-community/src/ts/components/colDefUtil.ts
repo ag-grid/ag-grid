@@ -94,7 +94,8 @@ export class ColDefUtil {
         'rowDrag',
         'autoHeight',
         'sortable',
-        'resizable'
+        'resizable',
+        'singleClickEdit'
     ];
 
     public static FUNCTION_PROPERTIES = [
