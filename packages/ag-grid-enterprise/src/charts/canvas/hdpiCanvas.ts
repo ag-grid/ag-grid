@@ -6,6 +6,14 @@ export class HdpiCanvas {
         this.resize(width, height);
     }
 
+    remove() {
+        const parent = this.canvas.parentNode;
+
+        if (parent !== null) {
+            parent.removeChild(this.canvas);
+        }
+    }
+
     _canvas = document.createElement('canvas');
     get canvas(): HTMLCanvasElement {
         return this._canvas;

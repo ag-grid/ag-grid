@@ -2,7 +2,7 @@ import {HdpiCanvas} from "../canvas/hdpiCanvas";
 import {Node} from "./node";
 import {Path2D} from "./path2D";
 import {Shape} from "./shape/shape";
-import {Parent} from "./parent";
+import {Group} from "./group";
 
 export class Scene {
     constructor(parent: HTMLElement, width = 800, height = 600) {
@@ -11,6 +11,10 @@ export class Scene {
         this.ctx = canvas.getContext('2d')!;
         parent.appendChild(canvas);
         this.setupListeners(canvas); // debug
+    }
+
+    remove() {
+        this.hdpiCanvas.remove();
     }
 
     private static id = 1;
@@ -54,7 +58,7 @@ export class Scene {
     };
 
     hitTestPath(node: Node, x: number, y: number): Node | undefined {
-        if (node instanceof Parent) {
+        if (Group.isGroup(node)) {
             const children = node.children;
             const n = node.children.length;
             // Group nodes added later should be hit-tested first,
@@ -64,7 +68,7 @@ export class Scene {
                 if (hit)
                     return hit;
             }
-        } else if (node instanceof Shape && node.isPointInPath(x, y)) {
+        } else if (Shape.isShape(node) && node.isPointInPath(x, y)) {
             return node;
         }
     }

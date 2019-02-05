@@ -19,6 +19,10 @@ export abstract class Shape extends Node {
         shadow: null as DropShadow | null
     });
 
+    static isShape(node: any): node is Shape {
+        return node ? (node as Shape).restoreOwnStyles !== undefined : false;
+    }
+
     /**
      * Restores the default styles introduced by this subclass.
      */
