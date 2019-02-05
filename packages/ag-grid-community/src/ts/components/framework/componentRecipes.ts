@@ -20,7 +20,7 @@ import {
 import { Column } from "../../entities/column";
 import { IFilterComp } from "../../interfaces/iFilter";
 import { FilterManager } from "../../filter/filterManager";
-import { ComponentResolver, DynamicComponentParams } from "./componentResolver";
+import { ComponentResolver } from "./componentResolver";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
@@ -29,7 +29,7 @@ import { Promise } from "../../utils";
 import { IOverlayWrapperComp, OverlayWrapperComponent } from "../../rendering/overlays/overlayWrapperComponent";
 import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
-import { ITooltipComp } from "../../rendering/tooltipComponent";
+import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 
@@ -233,7 +233,7 @@ export class ComponentRecipes {
         );
     }
 
-    public newTooltipComponent(params: DynamicComponentParams): Promise<ITooltipComp> {
+    public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
         return this.componentResolver.createAgGridComponent<ITooltipComp>(
             this.gridOptions,
             params,

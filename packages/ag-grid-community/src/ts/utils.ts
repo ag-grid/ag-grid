@@ -1647,10 +1647,9 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function() {
+        return function(...args: any[]) {
             // reference the context and args for the setTimeout function
             const context = this;
-            const args = arguments;
 
             // Should the function be called now? If immediate is true
             //   and not already in a timeout then the answer is: Yes

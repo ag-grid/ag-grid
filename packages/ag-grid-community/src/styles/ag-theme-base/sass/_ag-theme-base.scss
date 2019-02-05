@@ -1045,12 +1045,12 @@
     // Tooltip
     ////////////////////////////////////////
     .ag-tooltip {
-        background-color: aliceblue;
-        color: currentColor;
-        border-radius: 5px;
+        background-color: $hover-color;
+        color: $foreground-color;
+        border-radius: $card-radius;
         padding: 5px;
         border: 1px solid;
-        border-color: darkturquoise;
+        border-color: $border-color;
     }
     ////////////////////////////////////////
     // Expanding headers
