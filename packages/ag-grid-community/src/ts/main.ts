@@ -118,7 +118,7 @@ export { TabbedItem } from "./layout/tabbedLayout";
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 
 // editing / cellEditors
-export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./rendering/cellEditors/iCellEditor";
+export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
 export { LargeTextCellEditor } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { PopupSelectCellEditor } from "./rendering/cellEditors/popupSelectCellEditor";
@@ -194,6 +194,7 @@ export { StylingService } from "./styling/stylingService";
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { PopupWindow } from "./widgets/popupWindow";
 export { Component, VisibleChangedEvent } from "./widgets/component";
+export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 
@@ -282,7 +283,8 @@ export { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "./interf
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { SerializedSetFilter } from "./interfaces/iSerializedSetFilter";
 export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
-export { IAfterGuiAttachedParams, IComponent } from "./interfaces/iComponent";
+export { IAfterGuiAttachedParams } from "./interfaces/iAfterGuiAttachedParams";
+export { IComponent } from "./interfaces/iComponent";
 export { IFilter, IFilterComp } from "./interfaces/iFilter";
 export { IHeaderParams } from "./headerRendering/header/headerComp";
 export { GetQuickFilterTextParams } from "./entities/colDef";

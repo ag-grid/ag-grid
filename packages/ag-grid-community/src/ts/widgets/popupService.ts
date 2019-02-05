@@ -36,9 +36,9 @@ export class PopupService {
         if (ePopupParent) {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
-        } else {
-            return this.gridCore.getRootGui();
         }
+
+        return this.gridCore.getRootGui();
     }
 
     public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement }) {
@@ -104,7 +104,7 @@ export class PopupService {
         column?: Column,
         type: string,
         mouseEvent: MouseEvent | Touch,
-        ePopup: HTMLElement
+        ePopup: HTMLElement,
     }): void {
 
         const {x, y} = this.calculatePointerAlign(params.mouseEvent);
@@ -433,7 +433,7 @@ export class PopupService {
             // `ag-custom-component-popup` class to be detected as part of the Custom Component
             let el = event.target as HTMLElement;
             while (el && el != document.body) {
-                if (el.classList.contains('ag-custom-component-popup')) { return true; }
+                if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
                 el = el.parentElement;
             }
         }

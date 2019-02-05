@@ -1042,6 +1042,17 @@
     }
 
     ////////////////////////////////////////
+    // Tooltip
+    ////////////////////////////////////////
+    .ag-tooltip {
+        background-color: aliceblue;
+        color: currentColor;
+        border-radius: 5px;
+        padding: 5px;
+        border: 1px solid;
+        border-color: darkturquoise;
+    }
+    ////////////////////////////////////////
     // Expanding headers
     ////////////////////////////////////////
     .ag-header-group-cell-label {

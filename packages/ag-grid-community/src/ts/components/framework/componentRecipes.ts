@@ -29,6 +29,7 @@ import { Promise } from "../../utils";
 import { IOverlayWrapperComp, OverlayWrapperComponent } from "../../rendering/overlays/overlayWrapperComponent";
 import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ITooltipComp } from "../../rendering/tooltipComponent";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 
@@ -228,7 +229,21 @@ export class ComponentRecipes {
                 api: this.gridApi,
                 columnApi: this.columnApi
             },
-            "agNoRowsOverlay");
+            "agNoRowsOverlay"
+        );
+    }
+
+    public newTooltipComponent(): Promise<ITooltipComp> {
+        return this.componentResolver.createAgGridComponent<ITooltipComp>(
+            this.gridOptions,
+            null,
+            "agTooltipComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi
+            },
+            "agTooltip"
+        );
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>(colDef: ColDef): ComponentToUse<A, B> {

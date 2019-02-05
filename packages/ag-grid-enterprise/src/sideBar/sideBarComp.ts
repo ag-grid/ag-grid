@@ -40,7 +40,7 @@ export class SideBarComp extends Component implements ISideBar {
         super(SideBarComp.TEMPLATE);
     }
 
-    // this was deprecated in v19, we can drop in v20
+    /** @deprecated in v19, we can drop in v20 */
     public getPreferredWidth(): number {
         return this.getGui().clientWidth;
     }

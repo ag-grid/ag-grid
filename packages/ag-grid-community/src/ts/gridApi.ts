@@ -46,7 +46,7 @@ import { AgEvent, ColumnEventType } from "./events";
 import { ISideBar } from "./interfaces/ISideBar";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
+import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
@@ -203,7 +203,7 @@ export class GridApi {
         this.excelCreator.exportDataAsExcel(params);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public setEnterpriseDatasource(datasource: IServerSideDatasource) {
         console.warn(`ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
         this.setServerSideDatasource(datasource);
@@ -254,37 +254,37 @@ export class GridApi {
         }
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public setFloatingTopRowData(rows: any[]): void {
         console.warn('ag-Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()');
         this.setPinnedTopRowData(rows);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public setFloatingBottomRowData(rows: any[]): void {
         console.warn('ag-Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()');
         this.setPinnedBottomRowData(rows);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingTopRowCount(): number {
         console.warn('ag-Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()');
         return this.getPinnedTopRowCount();
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingBottomRowCount(): number {
         console.warn('ag-Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()');
         return this.getPinnedBottomRowCount();
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingTopRow(index: number): RowNode {
         console.warn('ag-Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
         return this.getPinnedTopRow(index);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingBottomRow(index: number): RowNode {
         console.warn('ag-Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
         return this.getPinnedBottomRow(index);
@@ -404,30 +404,30 @@ export class GridApi {
         }
     }
 
-    // *** deprecated
+    /** @deprecated */
     public refreshView() {
         console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
         this.redrawRows();
     }
 
-    // *** deprecated
+    //** @deprecated */
     public refreshRows(rowNodes: RowNode[]): void {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({rowNodes: rowNodes});
     }
 
-    // *** deprecated
+    /** @deprecated */
     public rowDataChanged(rows:any) {
         console.warn('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node');
         this.redrawRows();
     }
 
-    // *** deprecated
+    /** @deprecated */
     public softRefreshView() {
         console.error('ag-Grid: since v16, softRefreshView() is no longer supported. Please check the documentation on how to refresh.');
     }
 
-    // *** deprecated
+    /** @deprecated */
     public refreshGroupRows() {
         console.warn('ag-Grid: since v11.1, refreshGroupRows() is no longer supported, call refreshCells() instead. ' +
             'Because refreshCells() now does dirty checking, it will only refresh cells that have changed, so it should ' +
@@ -1125,7 +1125,7 @@ export class GridApi {
         }
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public purgeEnterpriseCache(route?: string[]): void {
         console.warn(`ag-grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.purgeServerSideCache()`);
         this.purgeServerSideCache(route);

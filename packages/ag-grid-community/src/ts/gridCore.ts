@@ -142,7 +142,7 @@ export class GridCore extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    // this was deprecated in v19, we can drop in v20
+    /** @deprecated since v19, we can drop in v20 */
     public getPreferredWidth(): number {
         const widthForCols = this.columnController.getBodyContainerWidth()
             + this.columnController.getPinnedLeftContainerWidth()

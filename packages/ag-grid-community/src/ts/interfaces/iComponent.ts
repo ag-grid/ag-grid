@@ -1,8 +1,5 @@
 import { Promise } from "../utils";
-
-export interface IAfterGuiAttachedParams {
-    hidePopup: () => void;
-}
+import { IAfterGuiAttachedParams } from "./iAfterGuiAttachedParams";
 
 export interface IComponent<T> {
 

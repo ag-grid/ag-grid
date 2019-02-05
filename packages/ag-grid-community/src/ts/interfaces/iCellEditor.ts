@@ -1,17 +1,13 @@
-import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
-import { GridApi } from "../../gridApi";
-import { ColumnApi } from "../../columnController/columnApi";
-import { IComponent } from "../../interfaces/iComponent";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
+import { IComponent } from "./iComponent";
+import { IPopupComponent } from "./iPopupComponent";
 
-export interface ICellEditor {
+export interface ICellEditor extends IPopupComponent {
     /** Return the final value - called by the grid once after editing is complete */
     getValue(): any;
-
-    /** Gets called once after initialised. If you return true, the editor will appear in a popup, so is not constrained
-     *  to the boundaries of the cell. This is great if you want to, for example, provide you own custom dropdown list
-     *  for selection. Default is false (ie if you don't provide the method). */
-    isPopup?(): boolean;
 
     /** Gets called once after initialised. If you return true, the editor will not be used and the grid will continue
      *  editing. Use this to make a decision on editing inside the init() function, eg maybe you want to only start
@@ -23,16 +19,6 @@ export interface ICellEditor {
      *  editing will have no impact on the record. Use this if you do not want a new value from your gui, i.e. you
      *  want to cancel the editing. */
     isCancelAfterEnd?(): boolean;
-
-    /** If doing full line edit, then gets called when focus should be put into the editor */
-    focusIn?(): void;
-
-    /** If doing full line edit, then gets called when focus is leaving the editor */
-    focusOut?(): void;
-}
-
-export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
-
 }
 
 export interface ICellEditorParams {
@@ -68,4 +54,8 @@ export interface ICellEditorParams {
     parseValue: (value: any) => any;
     // Utility function to format a value using the column's colDef.valueFormatter
     formatValue: (value: any) => any;
+}
+
+export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
+
 }

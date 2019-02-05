@@ -1,5 +1,5 @@
-import { Component } from "../../widgets/component";
-import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
+import { PopupComponent } from "../../widgets/popupComponent";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { Constants } from "../../constants";
 import { Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -10,7 +10,7 @@ export interface ISelectCellEditorParams extends ICellEditorParams {
     values: any[];
 }
 
-export class SelectCellEditor extends Component implements ICellEditorComp {
+export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
 
     private focusAfterAttached: boolean;
     private eSelect: HTMLSelectElement;
@@ -75,5 +75,9 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
 
     public getValue(): any {
         return this.eSelect.value;
+    }
+
+    public isPopup() {
+        return false;
     }
 }

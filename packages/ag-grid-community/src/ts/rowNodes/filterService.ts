@@ -2,7 +2,7 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { FilterManager } from "../filter/filterManager";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import {ChangedPath} from "../rowModels/clientSide/changedPath";
+import { ChangedPath } from "../rowModels/clientSide/changedPath";
 
 @Bean("filterService")
 export class FilterService {

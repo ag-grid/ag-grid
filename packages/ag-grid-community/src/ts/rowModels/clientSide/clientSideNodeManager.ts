@@ -268,7 +268,8 @@ export class ClientSideNodeManager {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = node.master; // deprecated, is now 'master'
+            /** @deprecated is now 'master' */
+            node.canFlower = node.master;
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {

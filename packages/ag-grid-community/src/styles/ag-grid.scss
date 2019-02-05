@@ -819,6 +819,17 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     flex-grow: 1000;
 }
 
+
+/**
+ ****************************
+ * Tooltip
+ ****************************
+*/
+
+.ag-tooltip {
+    position: absolute;
+    pointer-events: none;
+}
 /**
  ****************************
  * Animations

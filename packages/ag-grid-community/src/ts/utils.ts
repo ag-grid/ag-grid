@@ -1046,7 +1046,7 @@ export class Utils {
         columnGroupClosed: 'contracted',
         columnSelectClosed: 'tree-closed',
         columnSelectOpen: 'tree-open',
-        // from deprecated header, remove at some point
+        /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',
         sortUnSort: 'none'

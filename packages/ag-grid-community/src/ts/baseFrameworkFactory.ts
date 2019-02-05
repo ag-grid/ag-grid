@@ -1,7 +1,7 @@
 import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ColDef } from "./entities/colDef";
 import { GridOptions } from "./entities/gridOptions";
-import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
+import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { IFilterComp } from "./interfaces/iFilter";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { IDateComp } from "./rendering/dateComponent";

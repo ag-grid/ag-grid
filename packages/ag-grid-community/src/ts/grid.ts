@@ -76,6 +76,7 @@ import { PaginationComp } from "./rowModels/pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
+import { TooltipManager } from "./widgets/tooltipManager";
 
 export interface GridParams {
     // used by Web Components
@@ -190,20 +191,20 @@ export class Grid {
             overrideBeans: overrideBeans,
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
-            beans: [rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils,
-                ComponentMetadataProvider, ResizeObserverService,
-                ComponentProvider, ComponentResolver, ComponentRecipes, HeightScaler, AutoHeightCalculator,
-                CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
-                DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-                ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
-                NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
-                LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, StandardMenuFactory,
-                DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
-                CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
+            beans: [
+                rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils,
+                ComponentMetadataProvider, ResizeObserverService, ComponentProvider, ComponentResolver,
+                ComponentRecipes, HeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
+                PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
+                SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
+                ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
+                NavigationService, PopupService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
+                StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, CellEditorFactory,
+                CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController, ZipContainer],
+                ImmutableService, ChangeDetectionService, , AnimationFrameService, TooltipManager, ZipContainer
+            ],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
             debug: !!gridOptions.debug

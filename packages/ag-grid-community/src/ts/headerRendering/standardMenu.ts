@@ -5,7 +5,7 @@ import { Column } from "../entities/column";
 import { PopupService } from "../widgets/popupService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { EventService } from "../eventService";
-import { IAfterGuiAttachedParams } from "../interfaces/iComponent";
+import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { _ } from "../utils";
 
 @Bean('menuFactory')

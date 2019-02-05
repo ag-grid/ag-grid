@@ -257,9 +257,11 @@ export class HeaderWrapperComp extends Component {
         const colDef = this.column.getColDef();
 
         // add tooltip if exists
-        if (colDef.headerTooltip) {
-            this.getGui().title = colDef.headerTooltip;
-        }
+        if (colDef.headerTooltip == null) { return; }
+
+        const tooltipAttr = this.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
+
+        this.getGui().setAttribute(tooltipAttr, colDef.headerTooltip);
     }
 
     private setupMovingCss(): void {

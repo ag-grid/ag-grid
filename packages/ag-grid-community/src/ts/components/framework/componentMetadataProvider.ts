@@ -104,6 +104,10 @@ export class ComponentMetadataProvider {
             toolPanel: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached']
+            },
+            tooltipComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
             }
         };
     }

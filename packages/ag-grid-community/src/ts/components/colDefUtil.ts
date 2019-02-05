@@ -11,6 +11,7 @@ export class ColDefUtil {
         'sort',
         'field',
         'type',
+        'tooltipComponent',
         'tooltipField',
         'headerTooltip',
         'cellClass',
@@ -43,6 +44,8 @@ export class ColDefUtil {
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
+        'tooltipComponentParams',
+        'tooltipComponentFramework',
         'refData'];
 
     public static ARRAY_PROPERTIES = [
@@ -122,6 +125,7 @@ export class ColDefUtil {
         'onCellDoubleClicked',
         'onCellContextMenu',
         'tooltip',
+        'tooltipValueGetter',
         'cellRendererSelector',
         'cellEditorSelector'];
 

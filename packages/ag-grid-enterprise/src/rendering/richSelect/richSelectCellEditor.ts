@@ -1,7 +1,7 @@
-
 import {
     ICellEditor,
     Component,
+    PopupComponent,
     Autowired,
     Context,
     Utils,
@@ -15,7 +15,7 @@ import {
 import { RichSelectRow } from "./richSelectRow";
 import { VirtualList } from "../virtualList";
 
-export class RichSelectCellEditor extends Component implements ICellEditor {
+export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
     // tab index is needed so we can focus, which is needed for keyboard events
     private static TEMPLATE =
@@ -208,9 +208,5 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         } else {
             return this.originalSelectedValue;
         }
-    }
-
-    public isPopup(): boolean {
-        return true;
     }
 }

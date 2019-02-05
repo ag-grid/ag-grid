@@ -24,6 +24,7 @@ import { TextFilter } from "../../filter/textFilter";
 import { NumberFilter } from "../../filter/numberFilter";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
+import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { GridOptions } from "../../entities/gridOptions";
 import { _ } from "../../utils";
 
@@ -97,7 +98,10 @@ export class ComponentProvider {
 
         //overlays
         agLoadingOverlay: LoadingOverlayComponent,
-        agNoRowsOverlay: NoRowsOverlayComponent
+        agNoRowsOverlay: NoRowsOverlayComponent,
+
+        // tooltips
+        agTooltip: TooltipComponent
     };
 
     private agDeprecatedNames: { [key: string]: DeprecatedComponentName } = {

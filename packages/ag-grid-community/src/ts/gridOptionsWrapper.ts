@@ -742,6 +742,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.accentedSort);
     }
 
+    public isEnableLegacyTooltips() {
+        return isTrue(this.gridOptions.enableLegacyTooltips);
+    }
+
     public isEnableCellExpressions() {
         return isTrue(this.gridOptions.enableCellExpressions);
     }
