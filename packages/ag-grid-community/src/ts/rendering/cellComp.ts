@@ -213,8 +213,9 @@ export class CellComp extends Component {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
 
-        if (this.tooltip) {
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
             this.beans.tooltipManager.registerTooltip(this, this.eParentOfValue);
+            this.addDestroyFunc( () => this.beans.tooltipManager.unregisterTooltip(this) );
         }
     }
 
@@ -1519,10 +1520,6 @@ export class CellComp extends Component {
         if (this.cellRenderer && this.cellRenderer.destroy) {
             this.cellRenderer.destroy();
             this.cellRenderer = null;
-        }
-
-        if (this.tooltip) {
-            this.beans.tooltipManager.unregisterTooltip(this.eParentOfValue);
         }
     }
 

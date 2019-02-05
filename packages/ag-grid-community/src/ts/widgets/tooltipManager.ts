@@ -3,7 +3,8 @@ import { Component } from "./component";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { TooltipComponent } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
-import { _ } from "../utils";
+import {ComponentResolver, DynamicComponentParams} from "../components/framework/componentResolver";
+import {ColDef} from "../entities/colDef";
 
 @Bean('tooltipManager')
 export class TooltipManager {
@@ -12,51 +13,58 @@ export class TooltipManager {
     // maybe popups in the future should be parent to the body??
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('componentResolver') private componentResolver: ComponentResolver;
 
-    private registeredComponents: { [key: string]: [Component | undefined, () => void | undefined] } = {};
+    // map if compId to [tooltip component, close function]
+    private registeredComponents: { [key: string]: {comp: Component | undefined, destroyFunc: () => void | undefined} } = {};
 
     public registerTooltip(cmp: Component, el: HTMLElement): void {
-        cmp.addDestroyableEventListener(el, 'mouseover', (e) => this.showTooltip(e, el));
-        cmp.addDestroyableEventListener(el, 'mouseout', (e) => this.hideTooltip(e, el));
-        this.registeredComponents[el.id] = [undefined, undefined];
+        cmp.addDestroyableEventListener(el, 'mouseover', (e) => this.showTooltip(e, cmp));
+        cmp.addDestroyableEventListener(el, 'mouseout', (e) => this.hideTooltip(e, cmp));
+        this.registeredComponents[cmp.getCompId()] = {comp: undefined, destroyFunc: undefined};
     }
 
-    public unregisterTooltip(el: HTMLElement): void {
-        const id = el.id;
-        const rec = this.registeredComponents[id];
-        const tooltip = rec[0];
+    public unregisterTooltip(cmp: Component): void {
+        const id = cmp.getCompId();
+        const registeredComp = this.registeredComponents[id];
+        const tooltipComp = registeredComp.comp;
 
-        if (tooltip) {
-            if (rec[1]) {
-                rec[1]();
+        if (tooltipComp) {
+            if (registeredComp.destroyFunc) {
+                registeredComp.destroyFunc();
             }
-            tooltip.destroy();
-            delete this.registeredComponents[el.id];
+            tooltipComp.destroy();
+            delete this.registeredComponents[id];
         }
     }
 
-    private showTooltip(e: MouseEvent, el: HTMLElement): void {
+    private showTooltip(e: MouseEvent, cmp: Component): void {
 
-        const id = el.id;
-        const rec = this.registeredComponents[id];
-        if (!rec[0]) {
-            rec[0] = new TooltipComponent();
+        const id = cmp.getCompId();
+        const registeredComp = this.registeredComponents[id];
+        if (!registeredComp.comp) {
+            let params: DynamicComponentParams = null;
+            let colDef: ColDef = null;
+
+            // const tooltipComp = this.componentResolver.getComponentToUse(colDef, 'tooltipComp', params);
+
+            registeredComp.comp = new TooltipComponent();
         }
 
-        rec[1] = this.popupService.addPopup(false, rec[0].getGui(), false);
+        registeredComp.destroyFunc = this.popupService.addPopup(false, registeredComp.comp.getGui(), false);
 
         this.popupService.positionPopupUnderMouseEvent({
             type: 'tooltip',
             mouseEvent: e,
-            ePopup: rec[0].getGui()
+            ePopup: registeredComp.comp.getGui()
         });
     }
 
-    private hideTooltip(e: MouseEvent, el: HTMLElement): void {
-        const id = el.id;
+    private hideTooltip(e: MouseEvent, cmp: Component): void {
+        const id = cmp.getCompId();
         const rec = this.registeredComponents[id];
-        if (!rec || !rec[1]) { return; }
+        if (!rec || !rec.destroyFunc) { return; }
 
-        rec[1]();
+        rec.destroyFunc();
     }
 }

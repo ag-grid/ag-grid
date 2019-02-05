@@ -14,13 +14,14 @@ export interface ITooltipParams {}
 export interface ITooltipComp extends IComponent<ITooltipParams> {}
 
 export class TooltipComponent extends PopupComponent implements ITooltipComp {
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('popupService') private popupService: PopupService;
 
     constructor() {
-        super(`<div class="ag-tooltip">FOOOOOBAR</div>`);
+        super(`<div class="ag-tooltip">${Math.random()}</div>`);
+    }
+
+    // will need to type params
+    public init(params: any): void {
+        let tooltip = this.getGui().getAttribute('data-tooltip');
+        this.getGui().innerText = tooltip;
     }
 }
