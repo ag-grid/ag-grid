@@ -67,9 +67,8 @@ export class ToolPanelFilterComp extends Component {
 
     init(params: ToolPanelFilterCompParams) {
         this.params = params;
-        const displayName = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
-        const displayNameSanitised: any = _.escape(displayName);
-        this.eFilterName.innerText = displayNameSanitised;
+        const displayName: any = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
+        this.eFilterName.innerText = displayName;
         this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
         this.eventService.addEventListener(Events.EVENT_FILTER_OPENED, (event: FilterOpenedEvent) => this.onFilterOpened(event));
 
@@ -77,7 +76,6 @@ export class ToolPanelFilterComp extends Component {
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         _.addCssClass(this.eExpandChecked, 'ag-hidden');
         this.addDestroyableEventListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
