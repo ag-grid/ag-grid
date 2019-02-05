@@ -8,6 +8,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { PopupService } from "../widgets/popupService";
 
 import { _ } from '../utils';
+import { DynamicComponentParams } from "../components/framework/componentResolver";
 
 export interface ITooltipParams {}
 
@@ -16,12 +17,12 @@ export interface ITooltipComp extends IComponent<ITooltipParams> {}
 export class TooltipComponent extends PopupComponent implements ITooltipComp {
 
     constructor() {
-        super(`<div class="ag-tooltip">${Math.random()}</div>`);
+        super(`<div class="ag-tooltip"></div>`);
     }
 
     // will need to type params
-    public init(params: any): void {
-        let tooltip = this.getGui().getAttribute('data-tooltip');
-        this.getGui().innerText = tooltip;
+    public init(params: DynamicComponentParams): void {
+        const { data } = params ;
+        this.getGui().innerHTML = data;
     }
 }

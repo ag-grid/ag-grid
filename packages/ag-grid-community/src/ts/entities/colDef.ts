@@ -8,6 +8,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
 import { IFloatingFilterComp } from "../filter/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
+import { ITooltipComp } from "../rendering/tooltipComponent";
 import { DynamicComponentDef, DynamicComponentParams } from "../components/framework/componentResolver";
 
 /****************************************************************
@@ -98,6 +99,9 @@ export interface ColDef extends AbstractColDef {
 
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
     tooltipValueGetter?: (params: TooltipParams) => string;
+
+    tooltipComponent?: { new(): ITooltipComp } | string;
+    tooltipComponentFramework?: any;
 
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;

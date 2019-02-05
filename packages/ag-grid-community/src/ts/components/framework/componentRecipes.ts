@@ -20,7 +20,7 @@ import {
 import { Column } from "../../entities/column";
 import { IFilterComp } from "../../interfaces/iFilter";
 import { FilterManager } from "../../filter/filterManager";
-import { ComponentResolver } from "./componentResolver";
+import { ComponentResolver, DynamicComponentParams } from "./componentResolver";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
@@ -233,16 +233,16 @@ export class ComponentRecipes {
         );
     }
 
-    public newTooltipComponent(): Promise<ITooltipComp> {
+    public newTooltipComponent(params: DynamicComponentParams): Promise<ITooltipComp> {
         return this.componentResolver.createAgGridComponent<ITooltipComp>(
             this.gridOptions,
-            null,
-            "agTooltipComponent",
+            params,
+            "tooltipComponent",
             {
                 api: this.gridApi,
                 columnApi: this.columnApi
             },
-            "agTooltip"
+            'agTooltipComponent'
         );
     }
 

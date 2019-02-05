@@ -44,6 +44,7 @@ export class ColDefUtil {
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
+        'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
         'refData'];
@@ -126,6 +127,8 @@ export class ColDefUtil {
         'onCellContextMenu',
         'tooltip',
         'tooltipValueGetter',
+        'tooltipComponent',
+        'tooltipComponentFramework',
         'cellRendererSelector',
         'cellEditorSelector'];
 

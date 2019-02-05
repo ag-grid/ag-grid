@@ -101,7 +101,7 @@ export class ComponentProvider {
         agNoRowsOverlay: NoRowsOverlayComponent,
 
         // tooltips
-        agTooltip: TooltipComponent
+        agTooltipComponent: TooltipComponent
     };
 
     private agDeprecatedNames: { [key: string]: DeprecatedComponentName } = {

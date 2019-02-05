@@ -66,6 +66,7 @@ export class AgGridColumn {
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
+    @Input() public tooltipComponent: any;
     @Input() public tooltipComponentParams: any;
     @Input() public tooltipComponentFramework: any;
     @Input() public refData: any;
@@ -79,7 +80,6 @@ export class AgGridColumn {
     @Input() public sort: any;
     @Input() public field: any;
     @Input() public type: any;
-    @Input() public tooltipComponent: any;
     @Input() public tooltipField: any;
     @Input() public headerTooltip: any;
     @Input() public cellClass: any;

@@ -1,3 +1,4 @@
+import { ColGroupDef } from "../../entities/colDef";
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
@@ -66,7 +67,7 @@ export class HeaderGroupWrapperComp extends Component {
     @PostConstruct
     private postConstruct(): void {
 
-        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
 
         const displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
@@ -95,8 +96,12 @@ export class HeaderGroupWrapperComp extends Component {
         this.onColumnMovingChanged();
     }
 
+    public getComponentHolder(): ColGroupDef {
+        return this.columnGroup.getColGroupDef();
+    }
+
     private setupTooltip(): void {
-        const colGroupDef = this.columnGroup.getColGroupDef();
+        const colGroupDef = this.getComponentHolder();
 
         if (!colGroupDef || colGroupDef.headerTooltip == null) {
             return;
