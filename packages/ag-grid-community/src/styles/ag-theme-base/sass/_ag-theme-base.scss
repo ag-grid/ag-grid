@@ -71,6 +71,14 @@
     $card-shadow: map-get($params, "card-shadow");
     $focused-textbox-border: map-get($params, "focused-textbox-border");
 
+    $tooltip-background-color: map-get($params, "tooltip-background-color");
+    $tooltip-foreground-color: map-get($params, "tooltip-foreground-color");
+    $tooltip-border-radius: map-get($params, "tooltip-border-radius");
+    $tooltip-padding: map-get($params, "tooltip-padding");
+    $tooltip-border-width: map-get($params, "tooltip-border-width");
+    $tooltip-border-style: map-get($params, "tooltip-border-style");
+    $tooltip-border-color: map-get($params, "tooltip-border-color");
+
     $value-change-delta-up-color: map-get($params, "value-change-delta-up-color");
     $value-change-delta-down-color: map-get($params, "value-change-delta-down-color");
     $value-change-value-highlight-background-color: map-get($params, "value-change-value-highlight-background-color");
@@ -1045,12 +1053,13 @@
     // Tooltip
     ////////////////////////////////////////
     .ag-tooltip {
-        background-color: $hover-color;
-        color: $foreground-color;
-        border-radius: $card-radius;
-        padding: 5px;
-        border: 1px solid;
-        border-color: $border-color;
+        background-color: $tooltip-background-color;
+        color: $tooltip-foreground-color;
+        border-radius: $tooltip-border-radius;
+        padding: $tooltip-padding;
+        border-width: $tooltip-border-width;
+        border-style: $tooltip-border-style; 
+        border-color: $tooltip-border-color;
     }
     ////////////////////////////////////////
     // Expanding headers
