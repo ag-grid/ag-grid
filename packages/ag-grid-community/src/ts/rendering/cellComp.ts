@@ -621,14 +621,16 @@ export class CellComp extends Component {
 
     private refreshToolTip() {
         const newTooltip = this.getToolTip();
-        const tooltipAttr = this.beans.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
+
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
+            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) { return; }
+
             if (_.exists(newTooltip)) {
                 const tooltipSanitised = _.escape(this.tooltip);
-                this.eParentOfValue.setAttribute(tooltipAttr, tooltipSanitised!);
+                this.eParentOfValue.setAttribute('title', tooltipSanitised!);
             } else {
-                this.eParentOfValue.removeAttribute(tooltipAttr);
+                this.eParentOfValue.removeAttribute('title');
             }
         }
     }
@@ -641,9 +643,9 @@ export class CellComp extends Component {
 
         if (equalsMethod) {
             return equalsMethod(val1, val2);
-        } else {
-            return val1 === val2;
         }
+
+        return val1 === val2;
     }
 
     private getToolTip(): string | null {
@@ -669,6 +671,10 @@ export class CellComp extends Component {
         }
 
         return null;
+    }
+
+    public getTooltipText(escape: boolean = true) {
+        return escape ? _.escape(this.tooltip) : this.tooltip;
     }
 
     private processCellClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
@@ -803,7 +809,6 @@ export class CellComp extends Component {
     }
 
     private createCellRendererParams(): ICellRendererParams {
-
         const params = {
             value: this.value,
             valueFormatted: this.valueFormatted,

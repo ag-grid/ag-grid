@@ -259,15 +259,21 @@ export class HeaderWrapperComp extends Component {
         _.addCssClass(this.getGui(), 'ag-column-resizing');
     }
 
-    private setupTooltip(): void {
+    public getTooltipText(): string | undefined {
         const colDef = this.getComponentHolder();
 
+        return colDef.headerTooltip;
+    }
+
+    private setupTooltip(): void {
+        const tooltipText = this.getTooltipText();
+
         // add tooltip if exists
-        if (colDef.headerTooltip == null) { return; }
+        if (tooltipText == null) { return; }
 
-        const tooltipAttr = this.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
-
-        this.getGui().setAttribute(tooltipAttr, colDef.headerTooltip);
+        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            this.getGui().setAttribute('title', tooltipText);
+        }
     }
 
     private setupMovingCss(): void {

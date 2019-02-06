@@ -12,6 +12,16 @@ import { _ } from "../utils";
 
 type TooltipTarget = CellComp | HeaderWrapperComp | HeaderGroupWrapperComp;
 
+interface TooltipConfig {
+    autoHide?: boolean | undefined;
+    fadeOnHide?: boolean | undefined;
+}
+
+interface RegisteredComponents {
+    tooltipComp?: Component;
+    destroyFunc?: () => void;
+    config?: TooltipConfig;
+}
 @Bean('tooltipManager')
 export class TooltipManager {
 
@@ -27,42 +37,19 @@ export class TooltipManager {
     private activeComponent: TooltipTarget | undefined;
 
     // map if compId to [tooltip component, close function]
-    private registeredComponents: { [key: string]: {comp: Component | undefined, destroyFunc: () => void | undefined} } = {};
+    private registeredComponents: { [key: string]: RegisteredComponents } = {};
 
-    public registerTooltip(cmp: TooltipTarget, el: HTMLElement): void {
-        cmp.addDestroyableEventListener(el, 'mouseover', (e) => {
-            if (this.hideTimer) {
-                window.clearInterval(this.hideTimer);
-                this.hideTimer = 0;
-                this.hideTooltip();
-                this.showTooltip(e, cmp);
-            } else {
-                this.showTimer = window.setTimeout(this.showTooltip.bind(this), 2000, e, cmp);
-            }
-        });
+    public registerTooltip(targetCmp: TooltipTarget, el: HTMLElement, config?: TooltipConfig): void {
+        targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp));
+        targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this));
 
-        cmp.addDestroyableEventListener(el, 'mouseout', (e) => {
-            if (this.showTimer) {
-                window.clearTimeout(this.showTimer);
-                this.showTimer = 0;
-                return;
-            }
-            if (this.hideTimer) {
-                window.clearInterval(this.hideTimer);
-                this.hideTimer = 0;
-            }
-            if (this.activeComponent) {
-                this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), 1000);
-            }
-        });
-
-        this.registeredComponents[cmp.getCompId()] = { comp: undefined, destroyFunc: undefined };
+        this.registeredComponents[targetCmp.getCompId()] = { tooltipComp: undefined, destroyFunc: undefined, config };
     }
 
     public unregisterTooltip(cmp: TooltipTarget): void {
         const id = cmp.getCompId();
         const registeredComp = this.registeredComponents[id];
-        const tooltipComp = registeredComp.comp;
+        const tooltipComp = registeredComp.tooltipComp;
 
         if (!tooltipComp) { return; }
 
@@ -74,47 +61,80 @@ export class TooltipManager {
         delete this.registeredComponents[id];
     }
 
-    private showTooltip(e: MouseEvent, cmp: TooltipTarget): void {
-        const id = cmp.getCompId();
+    private getTargetTooltip(target: TooltipTarget = this.activeComponent) {
+        if (!target) { return; }
+
+        return this.registeredComponents[target.getCompId()].tooltipComp;
+    }
+
+    private processMouseOver(e: MouseEvent, targetCmp: TooltipTarget): void {
+        if (this.hideTimer) {
+            window.clearInterval(this.hideTimer);
+            this.hideTooltip();
+            this.showTooltip(e, targetCmp);
+        } else {
+            this.showTimer = window.setTimeout(this.showTooltip.bind(this), 2000, e, targetCmp);
+        }
+    }
+
+    private processMouseOut(): void {
+        if (this.showTimer) {
+            window.clearTimeout(this.showTimer);
+            this.showTimer = 0;
+            return;
+        }
+        if (this.hideTimer) {
+            window.clearInterval(this.hideTimer);
+            this.hideTimer = 0;
+        }
+        if (this.activeComponent) {
+            this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), 1000);
+        }
+    }
+
+    private showTooltip(e: MouseEvent, targetCmp: TooltipTarget): void {
+        const id = targetCmp.getCompId();
         const registeredComp = this.registeredComponents[id];
 
-        this.activeComponent = cmp;
+        this.activeComponent = targetCmp;
         this.showTimer = 0;
         this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), 10000);
 
-        if (!registeredComp.comp) {
-            const colDef = cmp.getComponentHolder();
-            const cell = (cmp as CellComp);
-            let rowIndex;
-            let column;
+        if (registeredComp.tooltipComp) { return; }
 
-            if (cell.getGridCell) {
-                rowIndex = cell.getGridCell().rowIndex;
-            }
-            if (cell) {
-                column = cell.getColumn();
-            }
+        const colDef = targetCmp.getComponentHolder();
+        const cell = (targetCmp as CellComp);
+        let rowIndex;
+        let column;
 
-            const params: DynamicComponentParams = {
-                colDef,
-                rowIndex,
-                column,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                data: cmp.getGui().getAttribute('data-tooltip')
-            };
-
-            this.componentRecipes.newTooltipComponent(params).then(cmp => {
-                registeredComp.comp = cmp;
-                registeredComp.destroyFunc = this.popupService.addPopup(false, registeredComp.comp.getGui(), false);
-
-                this.popupService.positionPopupUnderMouseEvent({
-                    type: 'tooltip',
-                    mouseEvent: e,
-                    ePopup: registeredComp.comp.getGui()
-                });
-            });
+        if (cell.getGridCell) {
+            rowIndex = cell.getGridCell().rowIndex;
         }
+        if (cell) {
+            column = cell.getColumn();
+        }
+
+        const params: DynamicComponentParams = {
+            colDef,
+            rowIndex,
+            column,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            data: targetCmp.getTooltipText()
+        };
+
+        this.componentRecipes.newTooltipComponent(params).then(tooltipComp => {
+            const tooltip = registeredComp.tooltipComp = tooltipComp;
+            const eGui = tooltip.getGui();
+
+            registeredComp.destroyFunc = this.popupService.addPopup(false, eGui, false);
+
+            this.popupService.positionPopupUnderMouseEvent({
+                type: 'tooltip',
+                mouseEvent: e,
+                ePopup: eGui
+            });
+        });
     }
 
     private hideTooltip(): void {
@@ -130,6 +150,6 @@ export class TooltipManager {
         if (!registeredComp || !registeredComp.destroyFunc) { return; }
 
         registeredComp.destroyFunc();
-        delete registeredComp.comp;
+        delete registeredComp.tooltipComp;
     }
 }

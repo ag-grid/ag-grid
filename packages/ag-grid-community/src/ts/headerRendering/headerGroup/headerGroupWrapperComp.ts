@@ -100,16 +100,20 @@ export class HeaderGroupWrapperComp extends Component {
         return this.columnGroup.getColGroupDef();
     }
 
-    private setupTooltip(): void {
+    public getTooltipText(): string | undefined {
         const colGroupDef = this.getComponentHolder();
 
-        if (!colGroupDef || colGroupDef.headerTooltip == null) {
-            return;
+        return colGroupDef && colGroupDef.headerTooltip;
+    }
+
+    private setupTooltip(): void {
+        const tooltipText = this.getTooltipText();
+
+        if (tooltipText == null) { return; }
+
+        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            this.getGui().setAttribute('title', tooltipText);
         }
-
-        const tooltipAttr = this.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
-
-        this.getGui().setAttribute(tooltipAttr, colGroupDef.headerTooltip);
     }
 
     private onColumnMovingChanged(): void {
