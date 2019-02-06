@@ -58,7 +58,7 @@ export class ValueService {
         const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
         if (forFilter && colDef.filterValueGetter) {
-            result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
+            result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
         } else if (this.gridOptionsWrapper.isTreeData() && aggDataExists) {
             result = rowNode.aggData[colId];
         } else if (this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
@@ -202,7 +202,22 @@ export class ValueService {
         return !valuesAreSame;
     }
 
-    private executeValueGetter(filterValueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+        const params: ValueGetterParams = {
+            data: data,
+            node: rowNode,
+            column: column,
+            colDef: column.getColDef(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext(),
+            getValue: this.getValueCallback.bind(this, rowNode)
+        };
+
+        return this.expressionService.evaluate(valueGetter, params);
+    }
+
+    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
 
         const colId = column.getId();
 
@@ -224,7 +239,7 @@ export class ValueService {
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
-        const result = this.expressionService.evaluate(filterValueGetter, params);
+        const result = this.expressionService.evaluate(valueGetter, params);
 
         // if a turn is active, store the value in case the grid asks for it again
         this.valueCache.setValue(rowNode, colId, result);
