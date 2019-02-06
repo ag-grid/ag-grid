@@ -29,7 +29,7 @@ import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { HeightScaler } from "./heightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./cellEditors/iCellEditor";
+import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { _ } from "../utils";
 
 @Bean("rowRenderer")

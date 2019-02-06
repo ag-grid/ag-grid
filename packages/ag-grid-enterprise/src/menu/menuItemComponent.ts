@@ -65,7 +65,8 @@ export class MenuItemComponent extends Component {
         }
 
         if (this.params.tooltip) {
-            this.getGui().setAttribute('title', this.params.tooltip);
+            const tooltipAttr = this.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
+            this.getGui().setAttribute(tooltipAttr, this.params.tooltip);
         }
 
         if (this.params.shortcut) {

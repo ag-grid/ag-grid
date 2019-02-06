@@ -166,5 +166,13 @@ $params: (
     use-icons-for-pager-buttons: true,
     customize-inputs: true,
     customize-buttons: true,
-    full-width-tabs: true
+    full-width-tabs: true,
+
+    tooltip-background-color: $tooltip-background-color,
+    tooltip-foreground-color: $tooltip-foreground-color,
+    tooltip-padding: $tooltip-padding,
+    tooltip-border-radius: $tooltip-border-radius,
+    tooltip-border-color: $tooltip-border-color,
+    tooltip-border-width: $tooltip-border-width,
+    tooltip-border-style: $tooltip-border-style
 );

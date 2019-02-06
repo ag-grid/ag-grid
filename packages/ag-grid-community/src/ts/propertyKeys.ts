@@ -16,7 +16,7 @@ export class PropertyKeys {
     public static ARRAY_PROPERTIES = [
         'slaveGrids', 'alignedGrids', 'rowData',
         'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
-        // deprecated
+        /** @deprecated */
     ];
 
     public static NUMBER_PROPERTIES = [

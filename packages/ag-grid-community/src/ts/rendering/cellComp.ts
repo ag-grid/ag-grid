@@ -15,11 +15,11 @@ import {
     FlashCellsEvent
 } from "../events";
 import { GridCell, GridCellDef } from "../entities/gridCell";
-import { ICellEditorComp, ICellEditorParams } from "./cellEditors/iCellEditor";
 import { Component } from "../widgets/component";
+import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
-import { NewValueParams, SuppressKeyboardEventParams } from "../entities/colDef";
+import { NewValueParams, SuppressKeyboardEventParams, ColDef } from "../entities/colDef";
 import { Beans } from "./beans";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
@@ -146,7 +146,6 @@ export class CellComp extends Component {
             wrapperEndTemplate = '</span></span>';
         }
 
-        // hey, this looks like React!!!
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
         templateParts.push(` unselectable="on"`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
@@ -154,7 +153,8 @@ export class CellComp extends Component {
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
-        templateParts.push(_.exists(tooltipSanitised) ? ` title="${tooltipSanitised}"` : ``);
+        const tooltipAttr = this.beans.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
+        templateParts.push(_.exists(tooltipSanitised) ? ` ${tooltipAttr}="${tooltipSanitised}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
         templateParts.push(wrapperStartTemplate);
         if (_.exists(valueSanitised, true)) {
@@ -212,6 +212,11 @@ export class CellComp extends Component {
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
+
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            this.beans.tooltipManager.registerTooltip(this, this.eParentOfValue);
+            this.addDestroyFunc(() => this.beans.tooltipManager.unregisterTooltip(this));
+        }
     }
 
     private onColumnHover(): void {
@@ -257,7 +262,7 @@ export class CellComp extends Component {
 
     private setupColSpan(): void {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (_.missing(this.column.getColDef().colSpan)) {
+        if (_.missing(this.getComponentHolder().colSpan)) {
             return;
         }
 
@@ -358,7 +363,7 @@ export class CellComp extends Component {
             }
         }
 
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
@@ -406,8 +411,9 @@ export class CellComp extends Component {
             return;
         }
 
+        const colDef = this.getComponentHolder();
         const newData = params && params.newData;
-        const suppressFlash = (params && params.suppressFlash) || this.column.getColDef().suppressCellFlash;
+        const suppressFlash = (params && params.suppressFlash) || colDef.suppressCellFlash;
         const forceRefresh = params && params.forceRefresh;
 
         const oldValue = this.value;
@@ -434,7 +440,7 @@ export class CellComp extends Component {
 
             if (!suppressFlash) {
                 const flashCell = this.beans.gridOptionsWrapper.isEnableCellChangeFlash()
-                    || this.column.getColDef().enableCellChangeFlash;
+                    || colDef.enableCellChangeFlash;
                 if (flashCell) {
                     this.flashCell();
                 }
@@ -516,7 +522,7 @@ export class CellComp extends Component {
     }
 
     private processStylesFromColDef(): any {
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
         if (colDef.cellStyle) {
             let cssToUse: any;
             if (typeof colDef.cellStyle === 'function') {
@@ -551,14 +557,15 @@ export class CellComp extends Component {
     }
 
     private processClassesFromColDef(onApplicableClass: (className: string) => void): void {
+        const colDef = this.getComponentHolder();
 
         this.beans.stylingService.processStaticCellClasses(
-            this.column.getColDef(),
+            colDef,
             {
                 value: this.value,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                colDef: this.column.getColDef(),
+                colDef: colDef,
                 rowIndex: this.rowNode.rowIndex,
                 $scope: this.scope,
                 api: this.beans.gridOptionsWrapper.getApi(),
@@ -570,7 +577,7 @@ export class CellComp extends Component {
 
     private putDataIntoCellAfterRefresh() {
         // template gets preference, then cellRenderer, then do it ourselves
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
 
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
@@ -614,13 +621,14 @@ export class CellComp extends Component {
 
     private refreshToolTip() {
         const newTooltip = this.getToolTip();
+        const tooltipAttr = this.beans.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
             if (_.exists(newTooltip)) {
                 const tooltipSanitised = _.escape(this.tooltip);
-                this.eParentOfValue.setAttribute('title', tooltipSanitised!);
+                this.eParentOfValue.setAttribute(tooltipAttr, tooltipSanitised!);
             } else {
-                this.eParentOfValue.removeAttribute('title');
+                this.eParentOfValue.removeAttribute(tooltipAttr);
             }
         }
     }
@@ -628,7 +636,7 @@ export class CellComp extends Component {
     private valuesAreEqual(val1: any, val2: any): boolean {
 
         // if the user provided an equals method, use that, otherwise do simple comparison
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
         const equalsMethod: ((valueA: any, valueB: any) => boolean) | null | undefined = colDef ? colDef.equals : null;
 
         if (equalsMethod) {
@@ -639,19 +647,20 @@ export class CellComp extends Component {
     }
 
     private getToolTip(): string | null {
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
         const data = this.rowNode.data;
 
         if (colDef.tooltipField && _.exists(data)) {
             return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
         }
-        if (colDef.tooltip) {
-            return colDef.tooltip({
+        const valueGetter = colDef.tooltipValueGetter || colDef.tooltip;
+        if (valueGetter) {
+            return valueGetter({
                 value: this.value,
                 valueFormatted: this.valueFormatted,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                colDef: this.column.getColDef(),
+                colDef: colDef,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext(),
@@ -663,13 +672,15 @@ export class CellComp extends Component {
     }
 
     private processCellClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
+        const colDef = this.getComponentHolder();
+
         this.beans.stylingService.processClassRules(
-            this.column.getColDef().cellClassRules,
+            colDef.cellClassRules,
             {
                 value: this.value,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                colDef: this.column.getColDef(),
+                colDef: colDef,
                 rowIndex: this.gridCell.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 $scope: this.scope,
@@ -706,7 +717,7 @@ export class CellComp extends Component {
 
     // a wrapper is used when we are putting a selection checkbox in the cell with the value
     public setUsingWrapper(): void {
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
 
         // never allow selection or dragging on pinned rows
         if (this.rowNode.rowPinned) {
@@ -727,7 +738,7 @@ export class CellComp extends Component {
 
     private chooseCellRenderer(): void {
         // template gets preference, then cellRenderer, then do it ourselves
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
 
         // templates are for ng1, ideally we wouldn't have these, they are ng1 support
         // inside the core which is bad
@@ -757,7 +768,7 @@ export class CellComp extends Component {
         this.cellRendererVersion++;
         const callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, params).then(callback);
+        this.beans.componentResolver.createAgGridComponent(this.getComponentHolder(), params, this.cellRendererType, params).then(callback);
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
@@ -803,7 +814,7 @@ export class CellComp extends Component {
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
             node: this.rowNode,
-            colDef: this.column.getColDef(),
+            colDef: this.getComponentHolder(),
             column: this.column,
             $scope: this.scope,
             rowIndex: this.gridCell.rowIndex,
@@ -896,7 +907,7 @@ export class CellComp extends Component {
     }
 
     public dispatchCellContextMenuEvent(event: Event) {
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
         const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 
@@ -912,7 +923,7 @@ export class CellComp extends Component {
             data: this.rowNode.data,
             value: this.value,
             column: this.column,
-            colDef: this.column.getColDef(),
+            colDef: this.getComponentHolder(),
             context: this.beans.gridOptionsWrapper.getContext(),
             api: this.beans.gridApi,
             columnApi: this.beans.columnApi,
@@ -943,7 +954,7 @@ export class CellComp extends Component {
     }
 
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
         // always dispatch event to eventService
         const cellDoubleClickedEvent: CellDoubleClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_DOUBLE_CLICKED);
         this.beans.eventService.dispatchEvent(cellDoubleClickedEvent);
@@ -989,7 +1000,7 @@ export class CellComp extends Component {
         const callback = this.afterCellEditorCreated.bind(this, this.cellEditorVersion);
 
         const params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params).then(callback);
+        this.beans.cellEditorFactory.createCellEditor(this.getComponentHolder(), params).then(callback);
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -1164,19 +1175,20 @@ export class CellComp extends Component {
     }
 
     private parseValue(newValue: any): any {
+        const colDef = this.getComponentHolder();
         const params: NewValueParams = {
             node: this.rowNode,
             data: this.rowNode.data,
             oldValue: this.value,
             newValue: newValue,
-            colDef: this.column.getColDef(),
+            colDef: colDef,
             column: this.column,
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext()
         };
 
-        const valueParser = this.column.getColDef().valueParser;
+        const valueParser = colDef.valueParser;
         return _.exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     }
 
@@ -1240,7 +1252,8 @@ export class CellComp extends Component {
     }
 
     public doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean {
-        const callback = this.column.getColDef().suppressKeyboardEvent;
+        const colDef = this.getComponentHolder();
+        const callback = colDef.suppressKeyboardEvent;
         if (!callback || _.missing(callback)) {
             return false;
         } else {
@@ -1252,7 +1265,7 @@ export class CellComp extends Component {
                 api: this.beans.gridOptionsWrapper.getApi(),
                 node: this.rowNode,
                 data: this.rowNode.data,
-                colDef: this.column.getColDef(),
+                colDef: colDef,
                 context: this.beans.gridOptionsWrapper.getContext(),
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi()
             };
@@ -1440,7 +1453,7 @@ export class CellComp extends Component {
         const cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
         this.beans.eventService.dispatchEvent(cellClickedEvent);
 
-        const colDef = this.column.getColDef();
+        const colDef = this.getComponentHolder();
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
@@ -1492,6 +1505,10 @@ export class CellComp extends Component {
 
     public getColumn(): Column {
         return this.column;
+    }
+
+    public getComponentHolder(): ColDef {
+        return this.column.getColDef();
     }
 
     public detach(): void {
@@ -1644,7 +1661,7 @@ export class CellComp extends Component {
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
         this.addFeature(this.beans.context, rowDraggingComp);
 
-        // let visibleFunc = this.column.getColDef().checkboxSelection;
+        // let visibleFunc = this.getComponentHolder().checkboxSelection;
         // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
         // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
 
@@ -1657,7 +1674,7 @@ export class CellComp extends Component {
         const cbSelectionComponent = new CheckboxSelectionComponent();
         this.beans.context.wireBean(cbSelectionComponent);
 
-        let visibleFunc = this.column.getColDef().checkboxSelection;
+        let visibleFunc = this.getComponentHolder().checkboxSelection;
         visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
 
         cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});

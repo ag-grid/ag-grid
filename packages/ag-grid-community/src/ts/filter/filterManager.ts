@@ -14,7 +14,7 @@ import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces
 import { ColDef, GetQuickFilterTextParams } from "../entities/colDef";
 import { GridApi } from "../gridApi";
 import { ComponentResolver } from "../components/framework/componentResolver";
-import {GridCore} from "../gridCore";
+import { GridCore } from "../gridCore";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 

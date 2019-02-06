@@ -323,27 +323,39 @@ export class SelectionController {
         this.eventService.dispatchEvent(event);
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public selectNode(rowNode: RowNode | null, tryMulti: boolean) {
         if (rowNode) {
             rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
         }
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public deselectIndex(rowIndex: number) {
         const node = this.rowModel.getRow(rowIndex);
         this.deselectNode(node);
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public deselectNode(rowNode: RowNode | null) {
         if (rowNode) {
             rowNode.setSelectedParams({newValue: false, clearSelection: false});
         }
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public selectIndex(index: any, tryMulti: boolean) {
         const node = this.rowModel.getRow(index);
         this.selectNode(node, tryMulti);

@@ -1,3 +1,4 @@
+import { ColGroupDef } from "../../entities/colDef";
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
@@ -66,7 +67,7 @@ export class HeaderGroupWrapperComp extends Component {
     @PostConstruct
     private postConstruct(): void {
 
-        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
 
         const displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
@@ -95,24 +96,27 @@ export class HeaderGroupWrapperComp extends Component {
         this.onColumnMovingChanged();
     }
 
-    private setupTooltip(): void {
-        const colGroupDef = this.columnGroup.getColGroupDef();
+    public getComponentHolder(): ColGroupDef {
+        return this.columnGroup.getColGroupDef();
+    }
 
-        // add tooltip if exists
-        if (colGroupDef && colGroupDef.headerTooltip) {
-            this.getGui().title = colGroupDef.headerTooltip;
+    private setupTooltip(): void {
+        const colGroupDef = this.getComponentHolder();
+
+        if (!colGroupDef || colGroupDef.headerTooltip == null) {
+            return;
         }
+
+        const tooltipAttr = this.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
+
+        this.getGui().setAttribute(tooltipAttr, colGroupDef.headerTooltip);
     }
 
     private onColumnMovingChanged(): void {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        if (this.columnGroup.isMoving()) {
-            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
-        } else {
-            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
-        }
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.columnGroup.isMoving());
     }
 
     private addAttributes(): void {

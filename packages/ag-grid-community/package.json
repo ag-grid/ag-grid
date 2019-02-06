@@ -72,7 +72,7 @@
     "stylus": "^0.54.5",
     "svg-colorize-loader": "^0.1.2",
     "tslint": "^5.11.0",
-    "typescript": "~3.2.1",
+    "typescript": "~3.3.1",
     "url-loader": "^1.1.2",
     "vinyl-buffer": "^1.0.1",
     "vinyl-named": "^1.1.0",

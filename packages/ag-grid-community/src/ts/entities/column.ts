@@ -327,6 +327,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.colDef.resizable = false;
         }
 
+        if (colDefAny.tooltip) {
+            console.warn(`ag-Grid: since v20.1, colDef.tooltip is gone, instead use colDef.tooltipValueGetter.`, this.colDef);
+            this.colDef.tooltipValueGetter = colDefAny.tooltip;
+        }
+
     }
 
     public addEventListener(eventType: string, listener: Function): void {

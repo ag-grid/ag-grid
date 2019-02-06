@@ -1,7 +1,7 @@
-import {Component} from "./component";
-import {RefSelector} from "./componentAnnotations";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {PopupService} from "./popupService";
+import { Component } from "./component";
+import { RefSelector } from "./componentAnnotations";
+import { Autowired, Context, PostConstruct } from "../context/context";
+import { PopupService } from "./popupService";
 
 export class PopupWindow extends Component {
 
@@ -26,7 +26,7 @@ export class PopupWindow extends Component {
     private closePopup: () => void;
 
     constructor() {
-        super(PopupWindow.TEMPLATE)
+        super(PopupWindow.TEMPLATE);
     }
 
     @PostConstruct

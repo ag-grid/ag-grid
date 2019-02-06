@@ -43,4 +43,7 @@ $value-change-delta-up-color: #43a047 !default;
 $value-change-delta-down-color: #e53935 !default;
 $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
 
+$tooltip-background-color: $header-background-color !default;
+$tooltip-border-color: lighten($header-background-color, 10%);
+
 @import '../../ag-theme-balham/vars/ag-theme-balham-vars';
