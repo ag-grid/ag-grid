@@ -2,6 +2,7 @@ import scaleLinear from "./scale/linearScale";
 import {BandScale} from "./scale/bandScale";
 import {createHdpiCanvas} from "./canvas/canvas";
 import {Axis} from "./axis";
+import {CanvasAxis} from "./canvasAxis";
 
 export interface ChartOptions {
     width: number;
@@ -142,12 +143,12 @@ export class Chart {
         ctx.restore();
 
         // y-axis
-        const yAxis = new Axis<number>(yScale);
+        const yAxis = new CanvasAxis<number>(yScale);
         yAxis.translation = [padding.left, padding.top];
         yAxis.render(ctx);
 
         // x-axis
-        const xAxis = new Axis<string>(xGroupScale);
+        const xAxis = new CanvasAxis<string>(xGroupScale);
         xAxis.rotation = -Math.PI / 2;
         xAxis.translation = [padding.left, padding.top + seriesHeight];
         xAxis.flippedLabels = true;
