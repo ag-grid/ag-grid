@@ -177,7 +177,7 @@ export class Text extends Shape {
             }
         }
 
-        renderBBox(ctx, this.getPlainBBox()); // debug
+        // renderBBox(ctx, this.getPlainBBox()); // debug
 
         this.dirty = false;
     }
