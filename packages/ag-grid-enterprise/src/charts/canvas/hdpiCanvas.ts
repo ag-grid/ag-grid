@@ -100,7 +100,12 @@ export class HdpiCanvas {
     // (this fallback method is at least 25 times slower).
     // Using a <span> and its `getBoundingClientRect` for the same purpose
     // often results in a grossly incorrect measured height.
-    private static readonly svgText: SVGTextElement = (() => {
+    private static _svgText: SVGTextElement;
+    private static get svgText(): SVGTextElement {
+        if (HdpiCanvas._svgText) {
+            return HdpiCanvas._svgText;
+        }
+
         const xmlns = 'http://www.w3.org/2000/svg';
 
         const svg = document.createElementNS(xmlns, 'svg');
@@ -118,8 +123,10 @@ export class HdpiCanvas {
         svg.appendChild(svgText);
         document.body.appendChild(svg);
 
+        HdpiCanvas._svgText = svgText;
+
         return svgText;
-    })();
+    };
 
     static readonly supports = Object.freeze({
         textMetrics: HdpiCanvas.ctx.measureText('test')
