@@ -288,8 +288,8 @@ export class RowComp extends Component {
             return null;
         }
 
-        const newChildScope = this.parentScope.$new();
-        newChildScope.data = data;
+        const newChildScope = this.parentScope.$new(true);
+        newChildScope.data = {...data };
         newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
 
@@ -831,7 +831,10 @@ export class RowComp extends Component {
             this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
 
-            this.angular1Compile(eRow);
+            const isDetailRow = this.beans.doingMasterDetail && this.rowNode.detail;
+            if(!isDetailRow) {
+                this.angular1Compile(eRow);
+            }
         });
     }
 
