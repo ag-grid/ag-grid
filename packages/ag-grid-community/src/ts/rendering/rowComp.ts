@@ -288,7 +288,7 @@ export class RowComp extends Component {
             return null;
         }
 
-        const newChildScope = this.parentScope.$new(true);
+        const newChildScope = this.parentScope.$new();
         newChildScope.data = {...data };
         newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();

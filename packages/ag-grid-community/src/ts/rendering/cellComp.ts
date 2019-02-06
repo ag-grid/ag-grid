@@ -451,6 +451,10 @@ export class CellComp extends Component {
             this.postProcessClassesFromColDef();
         }
 
+        // we can't readily determine if the data in an angularjs template has changed, so here we just update
+        // and recompile (if applicable)
+        this.updateAngular1ScopeAndCompile();
+
         this.refreshToolTip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
@@ -496,6 +500,13 @@ export class CellComp extends Component {
         this.putDataIntoCellAfterRefresh();
 
         this.angular1Compile();
+    }
+
+    private updateAngular1ScopeAndCompile() {
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows() && this.scope) {
+            this.scope.data = {...this.rowNode.data};
+            this.angular1Compile();
+        }
     }
 
     private angular1Compile(): void {
@@ -1818,5 +1829,4 @@ export class CellComp extends Component {
         const event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
         this.beans.eventService.dispatchEvent(event);
     }
-
 }
