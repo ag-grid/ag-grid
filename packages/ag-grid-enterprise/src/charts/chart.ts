@@ -45,9 +45,12 @@ export class Chart {
         const store = this.chartOptions.store;
         const data = store.data;
 
+        // These are fields to use to fetch the values for each bar in a category.
         const yFields = store.fields;
-        const yFieldNames = store.fieldNames;
-        const colors = gradientTheme;
+        // const yFieldNames = store.fieldNames;
+
+        // These are labels for each bar in a category.
+        const yFieldNames = data.map(d => d[this.chartOptions.store.categoryField]);
 
         const padding = {
             top: 20,
@@ -56,14 +59,20 @@ export class Chart {
             left: 60
         };
         const n = data.length;
-        const xData = data.map(d => d[this.chartOptions.store.categoryField]);
+        // const xData = data.map(d => d[this.chartOptions.store.categoryField]);
+        const xData = store.fieldNames; // These are category names.
+
         // For each category returns an array of values representing the height
         // of each bar in the group.
-        const yData = data.map(datum => {
-            const values: number[] = [];
-            yFields.forEach(field => values.push((datum as any)[field]));
-            return values;
-        });
+        // const yData = data.map(datum => {
+        //     const values: number[] = [];
+        //     yFields.forEach(field => values.push((datum as any)[field]));
+        //     return values;
+        // });
+
+        // Fetch one field from each record to form a category.
+        // (The above code fetched all fields from each record to form a category).
+        const yData = yFields.map(field => data.map(d => d[field]));
 
         const canvasWidth = this.chartOptions.width;
         const canvasHeight = this.chartOptions.height;
@@ -95,6 +104,8 @@ export class Chart {
         const ctx = canvas.getContext('2d')!;
         ctx.font = '14px Verdana';
 
+        const colors = gradientTheme;
+
         // bars
         ctx.save();
         ctx.translate(padding.left, padding.top);
@@ -122,8 +133,10 @@ export class Chart {
 
                 const label = yFieldNames[j];
                 const labelWidth = ctx.measureText(label).width;
-                ctx.fillStyle = 'black';
-                ctx.fillText(label, x + barWidth / 2 - labelWidth / 2, y + 20);
+                if (labelWidth < barWidth - 10) {
+                    ctx.fillStyle = 'black';
+                    ctx.fillText(label, x + barWidth / 2 - labelWidth / 2, y + 20);
+                }
             })
         }
         ctx.restore();

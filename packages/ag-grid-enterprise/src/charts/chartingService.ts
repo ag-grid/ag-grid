@@ -43,8 +43,8 @@ export class ChartingService {
         });
 
         const chart = new Chart({
-            height: 300,
-            width: 600,
+            height: 400,
+            width: 800,
             store: {
                 data: data,
                 categoryField: 'name',
