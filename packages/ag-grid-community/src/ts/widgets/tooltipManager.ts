@@ -110,7 +110,7 @@ export class TooltipManager {
         if (cell.getGridCell) {
             rowIndex = cell.getGridCell().rowIndex;
         }
-        if (cell) {
+        if (cell.getColumn) {
             column = cell.getColumn();
         }
 
