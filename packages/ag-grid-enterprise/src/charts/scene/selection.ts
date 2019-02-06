@@ -60,8 +60,8 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
 
     private static root = [undefined];
 
-    static select<T extends Node>(node: T | (() => T)) {
-        return new Selection([[typeof node === 'function' ? node() : node]], Selection.root);
+    static select<G extends Node, P extends Node | EnterNode>(node: G | (() => G)) {
+        return new Selection<G, P>([[typeof node === 'function' ? node() : node]], Selection.root);
     }
 
     static selectAll<G extends Node>(nodes?: G[] | null) {
@@ -86,16 +86,16 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * and returned as a new selection.
      * The selected nodes inherit the datums and the parents of the original nodes.
      */
-    select<N extends Node>(selector: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N): Selection<N, G, GDatum, GDatum> {
+    select<N extends Node>(selector: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N | undefined): Selection<N, G, GDatum, GDatum> {
         const groups = this.groups;
         const numGroups = groups.length;
 
-        const subgroups: N[][] = [];
+        const subgroups: (N | undefined)[][] = [];
 
         for (let j = 0; j < numGroups; j++) {
             const group = groups[j];
             const groupSize = group.length;
-            const subgroup = subgroups[j] = new Array<N>(groupSize);
+            const subgroup = subgroups[j] = new Array<N | undefined>(groupSize);
 
             for (let i = 0; i < groupSize; i++) {
                 const node = group[i];
@@ -115,6 +115,22 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         }
 
         return new Selection<N, G, GDatum, GDatum>(subgroups, this.parents as (G | undefined)[]);
+    }
+
+    selectByClass<N extends Node>(Class: new () => N): Selection<N, G, GDatum, GDatum> {
+        return this.select(node => {
+            if (Node.isNode(node)) {
+                const children = node.children;
+                const n = children.length;
+
+                for (let i = 0; i < n; i++) {
+                    const child = children[i];
+                    if (child instanceof Class) {
+                        return child;
+                    }
+                }
+            }
+        });
     }
 
     private selectNone(): [] {
