@@ -65,6 +65,6 @@ export class AgComponentUtils {
 
     public doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean {
         if (!candidate) { return false; }
-        return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
+        return 'getGui' in (candidate as any) || (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
     }
 }
