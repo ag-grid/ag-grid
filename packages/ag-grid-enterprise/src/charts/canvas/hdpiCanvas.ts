@@ -1,12 +1,33 @@
 type Size = { width: number, height: number };
 
+/**
+ * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
+ * provide resolution independent rendering based on `window.devicePixelRatio`.
+ */
 export class HdpiCanvas {
+    // The width/height attributes of the Canvas element default to
+    // 300/150 according to w3.org.
     constructor(width = 300, height = 150) {
         this.updatePixelRatio(0, false);
         this.resize(width, height);
     }
 
-    remove() {
+    private _parent: HTMLElement | null = null;
+    set parent(value: HTMLElement | null) {
+        if (this._parent !== value) {
+            this.remove();
+            if (value) {
+                value.appendChild(this.canvas);
+            }
+            this._parent = value;
+        }
+
+    }
+    get parent(): HTMLElement | null {
+        return this._parent;
+    }
+
+    private remove() {
         const parent = this.canvas.parentNode;
 
         if (parent !== null) {
@@ -14,13 +35,12 @@ export class HdpiCanvas {
         }
     }
 
-    _canvas = document.createElement('canvas');
-    get canvas(): HTMLCanvasElement {
-        return this._canvas;
-    }
+    readonly canvas = document.createElement('canvas');
+
+    readonly context = this.canvas.getContext('2d')!;
 
     destroy() {
-        this._canvas.remove();
+        this.canvas.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
     }
@@ -48,8 +68,8 @@ export class HdpiCanvas {
             return;
         }
 
-        const canvas = this._canvas;
-        const ctx = canvas.getContext('2d')!;
+        const canvas = this.canvas;
+        const ctx = this.context;
         const overrides = this.overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
         for (const name in overrides) {
             if (overrides.hasOwnProperty(name)) {
