@@ -17,7 +17,7 @@ export class Axis<D> {
 
     scale: Scale<D, number>;
     group: Group;
-    private groupSelection: Selection<Group, Group | EnterNode, D, D>;
+    private groupSelection: Selection<Group, Group, D, D>;
     private line = new Line();
 
     translation: [number, number] = [0, 0];
