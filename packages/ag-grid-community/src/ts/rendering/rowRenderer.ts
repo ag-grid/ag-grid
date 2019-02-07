@@ -847,6 +847,18 @@ export class RowRenderer extends BeanStub {
             newLast = last;
         }
 
+        // sometimes user doesn't set CSS right and ends up with grid with no height and grid ends up
+        // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
+        // killing the browser, we limit the number of rows. just in case some use case we didn't think
+        // of, we also have a property to not do this operation.
+        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_NORMAL;
+        const suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
+        if (rowLayoutNormal && !suppressRowCountRestriction) {
+            if (newLast - newFirst > 500) {
+                newLast = newFirst + 500;
+            }
+        }
+
         const firstDiffers = newFirst !== this.firstRenderedRow;
         const lastDiffers = newLast !== this.lastRenderedRow;
         if (firstDiffers || lastDiffers) {

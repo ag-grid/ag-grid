@@ -470,6 +470,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressHorizontalScroll);
     }
 
+    public isSuppressMaxRenderedRowRestriction() {
+        return isTrue(this.gridOptions.suppressMaxRenderedRowRestriction);
+    }
+
     public isAlwaysShowVerticalScroll() {
         return isTrue(this.gridOptions.alwaysShowVerticalScroll);
     }

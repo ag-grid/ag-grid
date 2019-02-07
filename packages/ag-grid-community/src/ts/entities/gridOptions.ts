@@ -208,6 +208,7 @@ export interface GridOptions {
     batchUpdateWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
+    suppressMaxRenderedRowRestriction?: boolean;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;

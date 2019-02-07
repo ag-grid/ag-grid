@@ -414,6 +414,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressMaintainUnsortedOrder : any = undefined;
     @Input() public enableCellTextSelection : any = undefined;
     @Input() public suppressBrowserResizeObserver : any = undefined;
+    @Input() public suppressMaxRenderedRowRestriction : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
