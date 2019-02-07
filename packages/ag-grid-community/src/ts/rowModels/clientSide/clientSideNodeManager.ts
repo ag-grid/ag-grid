@@ -233,7 +233,7 @@ export class ClientSideNodeManager {
             rowNode.clearRowTop();
 
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-            this.allNodesMap[rowNode.id] = undefined;
+            delete this.allNodesMap[rowNode.id];
         }
     }
 
