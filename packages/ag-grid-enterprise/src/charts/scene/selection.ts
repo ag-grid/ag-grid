@@ -36,7 +36,7 @@ export class EnterNode {
             return this.parent.insertBefore(node, null);
         }
         if (!Node.isNode(this.next)) {
-            throw new Error('');
+            throw new Error(`${this.next} is not a Node.`);
         }
         return this.parent.insertBefore(node, this.next);
     }
