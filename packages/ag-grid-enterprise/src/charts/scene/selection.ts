@@ -22,13 +22,8 @@ export class EnterNode {
     next: Node | EnterNode | null = null;
 
     appendChild<T extends Node>(node: T): T {
-        if (!Group.isGroup(this.parent)) {
-            throw new Error(`${this.parent} cannot have any children.`);
-        }
-        // if (!Node.isNode(this.next)) {
-        //     throw new Error(`${this.next} cannot be appended to ${this.parent}.`);
-        // }
-        // This doesn't work without the `strict: true` in the `tsconfig.json`.
+        // This doesn't work without the `strict: true` in the `tsconfig.json`,
+        // so we must have two `if` checks below, instead of this single one.
         // if (this.next && !Node.isNode(this.next)) {
         //     throw new Error(`${this.next} is not a Node.`);
         // }
@@ -42,9 +37,6 @@ export class EnterNode {
     }
 
     insertBefore<T extends Node>(node: T, nextNode?: Node | null): T {
-        if (!Group.isGroup(this.parent)) {
-            throw new Error(`${this.parent} cannot have any children.`);
-        }
         return this.parent.insertBefore(node, nextNode);
     }
 }
@@ -73,13 +65,13 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         return new Selection([nodes == null ? [] : nodes], [undefined]);
     }
 
-    append<N extends Node>(Class: new () => N): Selection<N, G, GDatum, GDatum> {
+    append<N extends Node>(Class: new () => N): Selection<N, P, GDatum, GDatum> {
         return this.select<N>(node => {
             return node.appendChild(new Class());
         });
     }
 
-    appendFn<N extends Node>(creator: NodeSelector<N, G, GDatum>): Selection<N, G, GDatum, GDatum> {
+    appendFn<N extends Node>(creator: NodeSelector<N, G, GDatum>): Selection<N, P, GDatum, GDatum> {
         return this.select<N>((node, data, index, group) => {
             return node.appendChild(creator(node, data, index, group));
         });
@@ -91,7 +83,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * and returned as a new selection.
      * The selected nodes inherit the datums and the parents of the original nodes.
      */
-    select<N extends Node>(selector: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N | undefined): Selection<N, G, GDatum, GDatum> {
+    select<N extends Node>(selector: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N | undefined): Selection<N, P, GDatum, GDatum> {
         const groups = this.groups;
         const numGroups = groups.length;
 
@@ -119,10 +111,10 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             }
         }
 
-        return new Selection<N, G, GDatum, GDatum>(subgroups, this.parents as unknown as (G | undefined)[]);
+        return new Selection(subgroups, this.parents);
     }
 
-    selectByClass<N extends Node>(Class: new () => N): Selection<N, G, GDatum, GDatum> {
+    selectByClass<N extends Node>(Class: new () => N): Selection<N, P, GDatum, GDatum> {
         return this.select(node => {
             if (Node.isNode(node)) {
                 const children = node.children;
@@ -312,11 +304,11 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     private exitGroups?: (G | undefined)[][];
 
     get enter() {
-        return new Selection<EnterNode, Node | EnterNode, GDatum, PDatum>(this.enterGroups ? this.enterGroups : [[]], this.parents);
+        return new Selection<EnterNode, P, GDatum, PDatum>(this.enterGroups ? this.enterGroups : [[]], this.parents);
     }
 
     get exit() {
-        return new Selection<Node | EnterNode, Node | EnterNode, GDatum, PDatum>(this.exitGroups ? this.exitGroups : [[]], this.parents);
+        return new Selection<G, P, GDatum, PDatum>(this.exitGroups ? this.exitGroups : [[]], this.parents);
     }
 
     setDatum<GDatum>(value: GDatum): Selection<G, P, GDatum, PDatum> {
@@ -330,7 +322,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     }
 
     setData<GDatum>(value: GDatum[] | ValueFn<P, GDatum, PDatum>,
-                    key?: KeyFn<Node | EnterNode, G | GDatum, GDatum>) {
+                    key?: KeyFn<Node | EnterNode, G | GDatum, GDatum>): Selection<G, P, GDatum, PDatum> {
 
         if (typeof value !== 'function') {
             const data = value;
