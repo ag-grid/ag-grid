@@ -5,16 +5,17 @@ import {Shape} from "./shape/shape";
 import {Group} from "./group";
 
 export class Scene {
-    constructor(parent: HTMLElement, width = 800, height = 600) {
+    constructor(width = 800, height = 600) {
         this.hdpiCanvas = new HdpiCanvas(this._width = width, this._height = height);
-        const canvas = this.hdpiCanvas.canvas;
-        this.ctx = canvas.getContext('2d')!;
-        parent.appendChild(canvas);
-        this.setupListeners(canvas); // debug
+        this.ctx = this.hdpiCanvas.context;
+        this.setupListeners(this.hdpiCanvas.canvas); // debug
     }
 
-    remove() {
-        this.hdpiCanvas.remove();
+    set parent(value: HTMLElement | null) {
+        this.hdpiCanvas.parent = value;
+    }
+    get parent(): HTMLElement | null {
+        return this.hdpiCanvas.parent;
     }
 
     private static id = 1;
