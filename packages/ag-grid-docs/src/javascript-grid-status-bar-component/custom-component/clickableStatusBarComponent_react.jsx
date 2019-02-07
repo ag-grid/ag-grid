@@ -13,12 +13,10 @@ export default class ClickableStatusBarComponent extends Component {
 
     render() {
         return (
-            <div className="container">
-                <div>
-                    <span className="component">Status Bar Component&nbsp;
-                        <input type="button" onClick={this.onClick} value="Click Me"/>
-                    </span>
-                </div>
+            <div className="ag-name-value">
+                <span>Status Bar Component&nbsp;
+                    <input type="button" onClick={this.onClick} value="Click Me"/>
+                </span>
             </div>
         );
     }

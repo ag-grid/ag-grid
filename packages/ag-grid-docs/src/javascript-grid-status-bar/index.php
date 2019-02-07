@@ -178,7 +178,7 @@ gridOptions: {
 
 <p>
     The example below demonstrates providing parameters to the status bar components.
-    Note the following:
+    Note the following:a
     <ul>
         <li>
             The component <code>agAggregationComponent</code> is provided with

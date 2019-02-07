@@ -2,12 +2,10 @@ import Vue from "vue";
 
 export default Vue.extend({
     template: `
-            <div class="container">
-                <div>
-                    <span class="component">Status Bar Component&nbsp;
-                        <input type="button" v-on:click="onClick" value="Click Me"/>
-                    </span>
-                </div>
+            <div class="ag-name-value">
+                <span>Status Bar Component&nbsp; 
+                    <input type="button" v-on:click="onClick" value="Click Me"/>
+                </span>
             </div>
     `,
     data: function () {
