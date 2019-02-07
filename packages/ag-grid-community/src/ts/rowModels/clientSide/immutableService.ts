@@ -42,7 +42,7 @@ export class ImmutableService {
             add: []
         };
 
-        const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
+        const existingNodesMap: { [id: string]: RowNode } = this.clientSideRowModel.getCopyOfNodesMap();
 
         const orderMap: { [id: string]: number } = {};
 
