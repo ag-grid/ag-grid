@@ -28,8 +28,15 @@ export class EnterNode {
         // if (!Node.isNode(this.next)) {
         //     throw new Error(`${this.next} cannot be appended to ${this.parent}.`);
         // }
-        if (this.next && !Node.isNode(this.next)) {
-            throw new Error(`${this.next} is not a Node.`);
+        // This doesn't work without the `strict: true` in the `tsconfig.json`.
+        // if (this.next && !Node.isNode(this.next)) {
+        //     throw new Error(`${this.next} is not a Node.`);
+        // }
+        if (this.next === null) {
+            return this.parent.insertBefore(node, null);
+        }
+        if (!Node.isNode(this.next)) {
+            throw new Error('');
         }
         return this.parent.insertBefore(node, this.next);
     }
@@ -58,14 +65,12 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     groups: (G | undefined)[][];
     parents: (P | undefined)[];
 
-    private static root = [undefined];
-
     static select<G extends Node, P extends Node | EnterNode>(node: G | (() => G)) {
-        return new Selection<G, P>([[typeof node === 'function' ? node() : node]], Selection.root);
+        return new Selection<G, P>([[typeof node === 'function' ? node() : node]], [undefined]);
     }
 
     static selectAll<G extends Node>(nodes?: G[] | null) {
-        return new Selection([nodes == null ? [] : nodes], Selection.root);
+        return new Selection([nodes == null ? [] : nodes], [undefined]);
     }
 
     append<N extends Node>(Class: new () => N): Selection<N, G, GDatum, GDatum> {
@@ -114,7 +119,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             }
         }
 
-        return new Selection<N, G, GDatum, GDatum>(subgroups, this.parents as (G | undefined)[]);
+        return new Selection<N, G, GDatum, GDatum>(subgroups, this.parents as unknown as (G | undefined)[]);
     }
 
     selectByClass<N extends Node>(Class: new () => N): Selection<N, G, GDatum, GDatum> {
