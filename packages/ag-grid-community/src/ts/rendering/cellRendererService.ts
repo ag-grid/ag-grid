@@ -56,11 +56,11 @@ export class CellRendererService {
     }
 
     public useRichSelectCellRenderer(
-        target: ColDef,
+        target: IRichCellEditorParams,
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer((target.cellEditorParams as IRichCellEditorParams), params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer(target, params);
         if (cellRendererPromise != null) {
             this.bindToHtml(cellRendererPromise, eTarget);
         } else {
