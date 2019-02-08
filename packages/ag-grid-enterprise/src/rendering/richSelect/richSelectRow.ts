@@ -1,15 +1,15 @@
 
-import { Component, Autowired, CellRendererService, ICellRendererFunc, ICellRendererComp, ColDef, Promise, _ } from "ag-grid-community";
+import { Component, Autowired, CellRendererService, ICellRendererComp, IRichCellEditorParams, Promise, _ } from "ag-grid-community";
 
 export class RichSelectRow extends Component {
 
     @Autowired('cellRendererService') cellRendererService: CellRendererService;
 
-    private columnDef: ColDef;
+    private params: IRichCellEditorParams;
 
-    constructor(columnDef: ColDef) {
+    constructor(params: IRichCellEditorParams) {
         super('<div class="ag-rich-select-row"></div>');
-        this.columnDef = columnDef;
+        this.params = params;
     }
 
     public setState(value: any, valueFormatted: string, selected: boolean): void {
@@ -35,7 +35,7 @@ export class RichSelectRow extends Component {
     }
 
     private populateWithRenderer(value: any, valueFormatted: string): boolean {
-        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), {value: value, valueFormatted: valueFormatted});
+        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params, this.getGui(), {value: value, valueFormatted: valueFormatted});
 
         const foundRenderer = _.exists(promise);
         if (foundRenderer) {

@@ -155,7 +155,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private createRowComponent(value: any): Component {
         const valueFormatted = this.params.formatValue(value);
-        const row = new RichSelectRow(this.params.column.getColDef());
+        const row = new RichSelectRow(this.params);
         this.context.wireBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
         return row;
