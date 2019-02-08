@@ -22,6 +22,7 @@ export interface ChartDatasource {
     getFieldNames(): string[];
     getValue(i: number, field: string): number;
     getRowCount(): number;
+    destroy(): void;
 
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
@@ -39,18 +40,38 @@ export class Chart {
 
     private chartOptions: ChartOptions;
 
-    private eGui: HTMLElement;
+    private readonly eGui: HTMLElement;
 
     constructor(chartOptions: ChartOptions) {
         this.chartOptions = chartOptions;
+
+        const canvas = createHdpiCanvas(this.chartOptions.width, this.chartOptions.height);
+        this.eGui = canvas;
+
         this.init();
+
+        const ds = this.chartOptions.datasource;
+        if (ds) {
+            ds.addEventListener('modelUpdated', this.refresh.bind(this));
+        }
     }
 
     public getGui(): HTMLElement {
         return this.eGui;
     }
 
+    public refresh(): void {
+        const canvas = <HTMLCanvasElement> this.getGui();
+        const ctx = canvas.getContext('2d')!;
+        ctx.clearRect(0, 0, this.chartOptions.width, this.chartOptions.height)
+
+        this.init();
+    }
+
     public destroy(): void {
+        if (this.chartOptions.datasource) {
+            this.chartOptions.datasource.destroy();
+        }
     }
 
     private init() {
@@ -155,8 +176,7 @@ export class Chart {
         xBarScale.round = true;
         const barWidth = xBarScale.bandwidth;
 
-        const canvas = createHdpiCanvas(canvasWidth, canvasHeight);
-        this.eGui = canvas;
+        const canvas = <HTMLCanvasElement> this.getGui();
 
         const ctx = canvas.getContext('2d')!;
         ctx.font = '14px Verdana';

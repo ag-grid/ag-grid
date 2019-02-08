@@ -91,7 +91,7 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     public getCategory(i: number): string {
-        const rowNode = this.rowModel.getRow(i);
+        const rowNode = this.rowModel.getRow(this.startRow + i);
         const res = this.valueService.getValue(this.categoryCol, rowNode);
         // force return type to be string or empty string (as value can be an object)
         return (res && res.toString) ? res.toString() : '';
@@ -106,7 +106,7 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     public getValue(i: number, field: string): number {
-        const rowNode = this.rowModel.getRow(i);
+        const rowNode = this.rowModel.getRow(this.startRow + i);
         const col = this.colsMapped[field];
         const res = this.valueService.getValue(col, rowNode);
         return res;
