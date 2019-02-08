@@ -59,12 +59,12 @@ export class Scene {
     };
 
     hitTestPath(node: Node, x: number, y: number): Node | undefined {
-        if (Group.isGroup(node)) {
-            const children = node.children;
-            const n = node.children.length;
-            // Group nodes added later should be hit-tested first,
-            // as they are rendered on top of previously added nodes.
-            for (let i = n - 1; i >= 0; i--) {
+        const children = node.children;
+
+        if (children.length) {
+            // Nodes added later should be hit-tested first,
+            // as they are rendered on top of the previously added nodes.
+            for (let i = children.length - 1; i >= 0; i--) {
                 const hit = this.hitTestPath(children[i], x, y);
                 if (hit)
                     return hit;

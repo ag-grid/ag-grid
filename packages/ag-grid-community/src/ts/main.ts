@@ -173,6 +173,7 @@ export { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
 export { InfiniteCacheParams } from "./rowModels/infinite/infiniteCache";
 export { RowNodeBlock } from "./rowModels/cache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./rowModels/cache/rowNodeBlockLoader";
+export { PaginationProxy } from "./rowModels/paginationProxy";
 
 export { ColumnVO } from "./interfaces/iColumnVO";
 

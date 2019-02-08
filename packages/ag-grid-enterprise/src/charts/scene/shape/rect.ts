@@ -102,6 +102,8 @@ export class Rect extends Shape {
             //       another `arcTo` method in the `Path2D` class.
             throw "TODO";
         }
+
+        this.dirtyPath = false;
     }
 
     private getPlainBBox(): BBox {

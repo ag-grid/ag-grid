@@ -164,12 +164,9 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             for (let i = 0; i < groupLength; i++) {
                 const node = group[i];
 
-                if (Group.isGroup(node)) {
+                if (node) {
                     subgroups.push(selectorAll(node, node.datum, i, group));
                     parents.push(node);
-                }
-                else {
-                    throw new Error(`${node} is not a Group node.`);
                 }
             }
         }
