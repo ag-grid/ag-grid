@@ -15,6 +15,17 @@ export interface ChartOptions {
     };
 }
 
+export interface ChartDatasource {
+    getCategory(i: number): void;
+    getFields(): string[];
+    getFieldNames(): string[];
+    getValue(i: number, field: string): number;
+    getValueCount(): number;
+
+    addEventListener(eventType: string, listener: Function): void;
+    removeEventListener(eventType: string, listener: Function): void;
+}
+
 const gradientTheme = [
     ['#69C5EC', '#53AFD6'],
     ['#FDED7C', '#FDE95C'],
