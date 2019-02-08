@@ -10,7 +10,8 @@ import {
     PaginationProxy,
     Events,
     EventService,
-    PostConstruct
+    PostConstruct,
+    _
 } from "ag-grid-community";
 
 export class GridChartDatasource extends BeanStub implements ChartDatasource {
@@ -27,7 +28,7 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
     private colDisplayNames: string[];
     private colsMapped: {[colId: string]: Column};
 
-    private categoryCol: Column;
+    private categoryCols: Column[];
 
     private startRow: number;
     private endRow: number;
@@ -42,12 +43,39 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
     private postConstruct(): void {
         this.calculateFields();
         this.calculateRowRange();
-
-        // hardcoded - always use the first column
-        this.categoryCol = this.columnController.getAllGridColumns()[0];
+        this.calculateCategoryCols();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onModelUpdated.bind(this));
+    }
+
+    private calculateCategoryCols(): void {
+        this.categoryCols = [];
+        if (!this.rangeSelection.columns) { return; }
+
+        if (this.columnController.isPivotMode()) {
+            console.warn('ag-Grid: GridChartDatasource doesnt handle pivot mode yet');
+        }
+
+        const isDimension = (col:Column) => col.getColDef().enableRowGroup || col.getColDef().enablePivot;
+
+        // pull out all dimension columns from the range
+        this.rangeSelection.columns.forEach( col => {
+            if (isDimension(col)) {
+                this.categoryCols.push(col);
+            }
+        });
+
+        // if no dimension columns in the range, then pull out first dimension column from primary columns
+        if (this.categoryCols.length===0) {
+            const primaryCols = this.columnController.getAllPrimaryColumns();
+            primaryCols!.forEach( col => {
+                if (this.categoryCols.length===0 && isDimension(col)) {
+                    this.categoryCols.push(col);
+                }
+            });
+        }
+
     }
 
     private onModelUpdated(): void {
@@ -80,6 +108,9 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
         if (!cols) { return; }
 
         cols.forEach( col => {
+            // only measure columns can be values
+            if (!col.getColDef().enableValue) { return; }
+
             const colId = col.getColId();
             const displayName = this.columnController.getDisplayNameForColumn(col, 'chart');
 
@@ -92,9 +123,14 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
 
     public getCategory(i: number): string {
         const rowNode = this.rowModel.getRow(this.startRow + i);
-        const res = this.valueService.getValue(this.categoryCol, rowNode);
+        const resParts: string[] = [];
+        this.categoryCols.forEach( col => {
+            const part = this.valueService.getValue(col, rowNode);
+            const partStr = (part && part.toString) ? part.toString() : '';
+            resParts.push(partStr);
+        });
         // force return type to be string or empty string (as value can be an object)
-        return (res && res.toString) ? res.toString() : '';
+        return resParts.join(', ');
     }
 
     public getFields(): string[] {
