@@ -545,10 +545,7 @@ export class ColumnController {
             const col = displayedColumns[i];
 
             const maxAllowedColSpan = displayedColumns.length - i;
-            let colSpan = col.getColSpan(rowNode);
-            if (colSpan > maxAllowedColSpan) {
-                colSpan = maxAllowedColSpan;
-            }
+            let colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
 
             const columnsToCheckFilter: Column[] = [col];
             if (colSpan > 1) {
