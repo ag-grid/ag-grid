@@ -2,11 +2,6 @@ import {Node} from "./node";
 
 export class Group extends Node {
 
-    private readonly isGroup = true;
-    static isGroup(node: any): node is Group {
-        return node ? (node as Group).isGroup === true : false;
-    }
-
     render(ctx: CanvasRenderingContext2D) {
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
