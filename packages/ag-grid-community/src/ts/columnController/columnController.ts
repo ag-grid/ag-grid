@@ -544,7 +544,9 @@ export class ColumnController {
 
             const col = displayedColumns[i];
 
-            const colSpan = col.getColSpan(rowNode);
+            const maxAllowedColSpan = displayedColumns.length - i;
+            let colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
+
             const columnsToCheckFilter: Column[] = [col];
             if (colSpan > 1) {
                 const colsToRemove = colSpan - 1;

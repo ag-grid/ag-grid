@@ -120,7 +120,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const valueFormatted = this.params.formatValue(this.selectedValue);
         const eValue = this.getRefElement('eValue') as HTMLElement;
 
-        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params, eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
 
         const foundRenderer = _.exists(promise);
 
@@ -155,7 +155,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private createRowComponent(value: any): Component {
         const valueFormatted = this.params.formatValue(value);
-        const row = new RichSelectRow(this.params.column.getColDef());
+        const row = new RichSelectRow(this.params);
         this.context.wireBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
         return row;

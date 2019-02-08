@@ -1,6 +1,6 @@
 import Scale from "./scale/scale";
 import {Group} from "./scene/group";
-import {Selection, EnterNode} from "./scene/selection";
+import {Selection} from "./scene/selection";
 import {Line} from "./scene/shape/line";
 import {NumericTicks} from "./util/ticks";
 import {pixelSnap, PixelSnapBias} from "./canvas/canvas";
@@ -15,12 +15,13 @@ export class Axis<D> {
         group.append(this.line);
     }
 
-    scale: Scale<D, number>;
-    group: Group;
+    readonly scale: Scale<D, number>;
+    readonly group: Group;
     private groupSelection: Selection<Group, Group, D, D>;
     private line = new Line();
 
-    translation: [number, number] = [0, 0];
+    translationX: number = 0;
+    translationY: number = 0;
     rotation: number = 0; // radians
 
     lineWidth: number = 1;
@@ -41,8 +42,8 @@ export class Axis<D> {
         const group = this.group;
         const scale = this.scale;
 
-        group.translationX = this.translation[0];
-        group.translationY = this.translation[1];
+        group.translationX = this.translationX;
+        group.translationY = this.translationY;
         group.rotation = this.rotation;
 
         // Render ticks and labels.
@@ -64,23 +65,24 @@ export class Axis<D> {
         enter.append(Line);
         enter.append(Text);
 
-        const updateAndEnter = update.merge(enter);
-        updateAndEnter
+        const groupSelection = update.merge(enter);
+
+        groupSelection
             .attrFn('translationY', (node, datum) => {
                 return scale.convert(datum) - this.tickWidth / 2 + bandwidth;
+            });
+
+        groupSelection.selectByClass(Line)
+            .each(node => {
+                node.lineWidth = this.tickWidth;
+                node.strokeStyle = this.tickColor;
             })
-            .call(selection => {
-                selection.selectByClass(Line)
-                    .each(node => {
-                        node.lineWidth = this.tickWidth;
-                        node.strokeStyle = this.tickColor;
-                    })
-                    .attr('x1', sideFlag * this.tickSize)
-                    .attr('x2', 0)
-                    .attr('y1', tickShift)
-                    .attr('y2', tickShift);
-            })
-            .selectByClass(Text)
+            .attr('x1', sideFlag * this.tickSize)
+            .attr('x2', 0)
+            .attr('y1', tickShift)
+            .attr('y2', tickShift);
+
+        const labels = groupSelection.selectByClass(Text)
             .each((label, datum) => {
                 label.font = this.labelFont;
                 label.fillStyle = this.labelColor;
@@ -91,22 +93,21 @@ export class Axis<D> {
                 label.textAlign = this.flippedLabels
                     ? 'center'
                     : sideFlag === -1 ? 'end' : 'start';
-            })
-            .call(selection => {
-                if (this.flippedLabels) {
-                    selection
-                        .attr('x', 0)
-                        .attr('y', -sideFlag * flipFlag * this.tickPadding)
-                        .attr('translationX', sideFlag * (this.tickSize + this.tickPadding))
-                        .attr('rotation', flipFlag * Math.PI / 2);
-                }
-                else {
-                    selection
-                        .attr('x', sideFlag * (this.tickSize + this.tickPadding));
-                }
             });
 
-        this.groupSelection = updateAndEnter;
+        if (this.flippedLabels) {
+            labels
+                .attr('x', 0)
+                .attr('y', -sideFlag * flipFlag * this.tickPadding)
+                .attr('translationX', sideFlag * (this.tickSize + this.tickPadding))
+                .attr('rotation', flipFlag * Math.PI / 2);
+        }
+        else {
+            labels
+                .attr('x', sideFlag * (this.tickSize + this.tickPadding));
+        }
+
+        this.groupSelection = groupSelection;
 
         // Render axis line.
         const lineShift = pixelSnap(this.lineWidth, PixelSnapBias.Negative);

@@ -7,12 +7,25 @@ import {CanvasAxis} from "./canvasAxis";
 export interface ChartOptions {
     width: number;
     height: number;
-    store: {
+    store?: {
         categoryField: string;
         fields: string[];
         fieldNames: string[],
         data: any[]
     };
+    datasource?: ChartDatasource;
+}
+
+export interface ChartDatasource {
+    getCategory(i: number): string;
+    getFields(): string[];
+    getFieldNames(): string[];
+    getValue(i: number, field: string): number;
+    getRowCount(): number;
+    destroy(): void;
+
+    addEventListener(eventType: string, listener: Function): void;
+    removeEventListener(eventType: string, listener: Function): void;
 }
 
 const gradientTheme = [
@@ -27,41 +40,101 @@ export class Chart {
 
     private chartOptions: ChartOptions;
 
-    private eGui: HTMLElement;
+    private readonly eGui: HTMLElement;
 
     constructor(chartOptions: ChartOptions) {
         this.chartOptions = chartOptions;
+
+        const canvas = createHdpiCanvas(this.chartOptions.width, this.chartOptions.height);
+        this.eGui = canvas;
+
         this.init();
+
+        const ds = this.chartOptions.datasource;
+        if (ds) {
+            ds.addEventListener('modelUpdated', this.refresh.bind(this));
+        }
     }
 
     public getGui(): HTMLElement {
         return this.eGui;
     }
 
+    public refresh(): void {
+        const canvas = <HTMLCanvasElement> this.getGui();
+        const ctx = canvas.getContext('2d')!;
+        ctx.clearRect(0, 0, this.chartOptions.width, this.chartOptions.height)
+
+        this.init();
+    }
+
     public destroy(): void {
+        if (this.chartOptions.datasource) {
+            this.chartOptions.datasource.destroy();
+        }
     }
 
     private init() {
 
-        const store = this.chartOptions.store;
-        const data = store.data;
+        let xData: string[] = [];
+        let yData: any[][] = [];
+        let yFields: string[] = [];
+        let yFieldNames: string[] = [];
 
-        // These are fields to use to fetch the values for each bar in a category.
-        const yFields = store.fields;
-        // const yFieldNames = store.fieldNames;
+        if (this.chartOptions.store) {
+            const store = this.chartOptions.store;
 
-        // These are labels for each bar in a category.
-        const yFieldNames = data.map(d => d[this.chartOptions.store.categoryField]);
+            const data = store.data;
 
-        const padding = {
-            top: 20,
-            right: 40,
-            bottom: 40,
-            left: 60
-        };
-        const n = data.length;
-        // const xData = data.map(d => d[this.chartOptions.store.categoryField]);
-        const xData = store.fieldNames; // These are category names.
+            // These are fields to use to fetch the values for each bar in a category.
+            yFields = store.fields;
+
+            // These are labels for each bar in a category.
+            yFieldNames = data.map(d => d[store.categoryField]);
+
+            const n = data.length;
+            // const xData = data.map(d => d[this.chartOptions.store.categoryField]);
+            xData = store.fieldNames; // These are category names.
+
+            // Fetch one field from each record to form a category.
+            // (The above code fetched all fields from each record to form a category).
+            yData = yFields.map(field => data.map(d => d[field]));
+
+        } else if (this.chartOptions.datasource) {
+
+            const ds = this.chartOptions.datasource;
+
+            xData = ds.getFieldNames();
+
+            yFields = ds.getFields();
+
+            const rowCount = ds.getRowCount();
+
+            const getValuesForField = (field: string): any[] => {
+                const res: any[] = [];
+                for (let i = 0; i<rowCount; i++) {
+                    const val = ds.getValue(i, field);
+                    res.push(val);
+                }
+                return res;
+            };
+
+            yFieldNames = [];
+            for (let i = 0; i<rowCount; i++) {
+                yFieldNames.push(ds.getCategory(i));
+            }
+
+            yData = [];
+            yFields.forEach( yField => {
+                const values = getValuesForField(yField);
+                yData.push(values);
+            });
+
+        } else {
+            console.error('at least one of store or datasource must be provided');
+        }
+
+
 
         // For each category returns an array of values representing the height
         // of each bar in the group.
@@ -71,9 +144,13 @@ export class Chart {
         //     return values;
         // });
 
-        // Fetch one field from each record to form a category.
-        // (The above code fetched all fields from each record to form a category).
-        const yData = yFields.map(field => data.map(d => d[field]));
+
+        const padding = {
+            top: 20,
+            right: 40,
+            bottom: 40,
+            left: 60
+        };
 
         const canvasWidth = this.chartOptions.width;
         const canvasHeight = this.chartOptions.height;
@@ -93,14 +170,13 @@ export class Chart {
         const groupWidth = xGroupScale.bandwidth;
 
         const xBarScale = new BandScale<string>();
-        xBarScale.domain = yFields;
+        xBarScale.domain = yFieldNames;
         xBarScale.range = [0, groupWidth];
         xBarScale.padding = 0.1;
         xBarScale.round = true;
         const barWidth = xBarScale.bandwidth;
 
-        const canvas = createHdpiCanvas(canvasWidth, canvasHeight);
-        this.eGui = canvas;
+        const canvas = <HTMLCanvasElement> this.getGui();
 
         const ctx = canvas.getContext('2d')!;
         ctx.font = '14px Verdana';
@@ -110,12 +186,12 @@ export class Chart {
         // bars
         ctx.save();
         ctx.translate(padding.left, padding.top);
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < xData.length; i++) {
             const category = xData[i];
             const values = yData[i];
             const groupX = xGroupScale.convert(category); // x-coordinate of the group
             values.forEach((value, j) => {
-                const barX = xBarScale.convert(yFields[j]); // x-coordinate of the bar within a group
+                const barX = xBarScale.convert(yFieldNames[j]); // x-coordinate of the bar within a group
                 const x = groupX + barX;
                 const y = yScale.convert(value);
 
