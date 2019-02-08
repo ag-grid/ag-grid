@@ -104,7 +104,7 @@ export class Chart {
         const groupWidth = xGroupScale.bandwidth;
 
         const xBarScale = new BandScale<string>();
-        xBarScale.domain = yFields;
+        xBarScale.domain = yFieldNames;
         xBarScale.range = [0, groupWidth];
         xBarScale.padding = 0.1;
         xBarScale.round = true;
@@ -121,12 +121,12 @@ export class Chart {
         // bars
         ctx.save();
         ctx.translate(padding.left, padding.top);
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < xData.length; i++) {
             const category = xData[i];
             const values = yData[i];
             const groupX = xGroupScale.convert(category); // x-coordinate of the group
             values.forEach((value, j) => {
-                const barX = xBarScale.convert(yFields[j]); // x-coordinate of the bar within a group
+                const barX = xBarScale.convert(yFieldNames[j]); // x-coordinate of the bar within a group
                 const x = groupX + barX;
                 const y = yScale.convert(value);
 
