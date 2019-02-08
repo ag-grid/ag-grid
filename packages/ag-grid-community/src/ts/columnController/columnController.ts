@@ -544,7 +544,12 @@ export class ColumnController {
 
             const col = displayedColumns[i];
 
-            const colSpan = col.getColSpan(rowNode);
+            const maxAllowedColSpan = displayedColumns.length - i;
+            let colSpan = col.getColSpan(rowNode);
+            if (colSpan > maxAllowedColSpan) {
+                colSpan = maxAllowedColSpan;
+            }
+
             const columnsToCheckFilter: Column[] = [col];
             if (colSpan > 1) {
                 const colsToRemove = colSpan - 1;
@@ -610,6 +615,11 @@ export class ColumnController {
     }
 
     private isColumnInViewport(col: Column): boolean {
+
+        // if (col === undefined) {
+        //     return false;
+        // }
+
         const columnLeft = col.getLeft();
         const columnRight = col.getLeft() + col.getActualWidth();
 
