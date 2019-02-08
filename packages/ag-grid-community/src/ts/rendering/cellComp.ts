@@ -7,7 +7,9 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellEvent, CellKeyDownEvent, CellKeyPressEvent,
+    CellEvent,
+    CellKeyDownEvent,
+    CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -19,7 +21,7 @@ import { Component } from "../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
-import { NewValueParams, SuppressKeyboardEventParams, ColDef } from "../entities/colDef";
+import { ColDef, NewValueParams, SuppressKeyboardEventParams } from "../entities/colDef";
 import { Beans } from "./beans";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
@@ -602,13 +604,20 @@ export class CellComp extends Component {
             if (template) {
                 this.eParentOfValue.innerHTML = template;
             }
-            // use cell renderer if it exists
-        } else if (this.usingCellRenderer) {
-            this.attachCellRenderer();
         } else {
-            const valueToUse = this.getValueToUse();
-            if (valueToUse !== null && valueToUse !== undefined) {
-                this.eParentOfValue.innerText = valueToUse;
+            // we can switch from using a cell renderer back to the default if a user
+            // is using cellRendererSelect
+            if (this.usingCellRenderer) {
+                if (!this.attachCellRenderer()) {
+                    this.usingCellRenderer = false;
+                }
+            }
+
+            if (!this.usingCellRenderer) {
+                const valueToUse = this.getValueToUse();
+                if (valueToUse !== null && valueToUse !== undefined) {
+                    this.eParentOfValue.innerText = valueToUse;
+                }
             }
         }
     }
@@ -635,7 +644,9 @@ export class CellComp extends Component {
 
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) { return; }
+            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+                return;
+            }
 
             if (_.exists(newTooltip)) {
                 const tooltipSanitised = _.escape(this.tooltip);
@@ -779,13 +790,20 @@ export class CellComp extends Component {
         }
     }
 
-    private createCellRendererInstance(): void {
+    private createCellRendererInstance(): boolean {
         const params = this.createCellRendererParams();
 
         this.cellRendererVersion++;
         const callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        this.beans.componentResolver.createAgGridComponent(this.getComponentHolder(), params, this.cellRendererType, params).then(callback);
+        // this can return null in the event that the user has switched from a renderer component to nothing, for example
+        // when using a cellRendererSelect to return a component or null depending on row data etc
+        const componentPromise = this.beans.componentResolver.createAgGridComponent(this.getComponentHolder(), params, this.cellRendererType, params, undefined, false);
+        if (componentPromise) {
+            componentPromise.then(callback);
+            return true;
+        }
+        return false;
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
@@ -811,12 +829,12 @@ export class CellComp extends Component {
         }
     }
 
-    private attachCellRenderer(): void {
+    private attachCellRenderer(): boolean {
         if (!this.usingCellRenderer) {
-            return;
+            return false;
         }
 
-        this.createCellRendererInstance();
+        return this.createCellRendererInstance();
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -901,7 +919,9 @@ export class CellComp extends Component {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (_.isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
 
         switch (eventName) {
             case 'click':
@@ -1005,10 +1025,14 @@ export class CellComp extends Component {
     public startEditingIfEnabled(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
 
         // don't do it if not editable
-        if (!this.isCellEditable()) { return; }
+        if (!this.isCellEditable()) {
+            return;
+        }
 
         // don't do it if already editing
-        if (this.editingCell) { return; }
+        if (this.editingCell) {
+            return;
+        }
 
         this.editingCell = true;
 
@@ -1311,12 +1335,16 @@ export class CellComp extends Component {
     private onShiftRangeSelect(key: number): void {
         const success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
 
-        if (!success) { return; }
+        if (!success) {
+            return;
+        }
 
         const ranges = this.beans.rangeController.getCellRanges();
 
         // this should never happen, as extendRangeFromCell should always have one range after getting called
-        if (_.missing(ranges) || !ranges || ranges.length !== 1) { return; }
+        if (_.missing(ranges) || !ranges || ranges.length !== 1) {
+            return;
+        }
 
         const endCell = ranges[0].end;
 
@@ -1324,7 +1352,9 @@ export class CellComp extends Component {
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        if (this.beans.gridOptionsWrapper.isSuppressTabbing()) { return; }
+        if (this.beans.gridOptionsWrapper.isSuppressTabbing()) {
+            return;
+        }
         this.beans.rowRenderer.onTabKeyDown(this, event);
     }
 
@@ -1348,7 +1378,9 @@ export class CellComp extends Component {
 
     private navigateAfterEdit(): void {
         const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
-        if (fullRowEdit) { return; }
+        if (fullRowEdit) {
+            return;
+        }
 
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
@@ -1447,7 +1479,9 @@ export class CellComp extends Component {
 
     // returns true if on iPad and this is second 'click' event in 200ms
     private isDoubleClickOnIPad(): boolean {
-        if (!_.isUserAgentIPad()) { return false; }
+        if (!_.isUserAgentIPad()) {
+            return false;
+        }
 
         const nowMillis = new Date().getTime();
         const res = nowMillis - this.lastIPadMouseClickEvent < 200;
@@ -1555,7 +1589,9 @@ export class CellComp extends Component {
     }
 
     private modifyLeftForPrintLayout(leftPosition: number): number {
-        if (!this.printLayout) { return leftPosition; }
+        if (!this.printLayout) {
+            return leftPosition;
+        }
 
         if (this.column.getPinned() === Column.PINNED_LEFT) {
             return leftPosition;
