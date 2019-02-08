@@ -612,11 +612,6 @@ export class ColumnController {
     }
 
     private isColumnInViewport(col: Column): boolean {
-
-        // if (col === undefined) {
-        //     return false;
-        // }
-
         const columnLeft = col.getLeft();
         const columnRight = col.getLeft() + col.getActualWidth();
 
