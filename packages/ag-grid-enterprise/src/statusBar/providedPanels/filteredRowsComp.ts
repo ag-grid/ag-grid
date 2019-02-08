@@ -51,7 +51,12 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private getFilteredRowCountValue(): number {
         let filteredRowCount = 0;
-        this.gridApi.forEachNodeAfterFilter((node) => filteredRowCount += 1);
+
+        this.gridApi.forEachNodeAfterFilter((node) => {
+            if (!node.group) {
+                filteredRowCount += 1
+            }
+        });
         return filteredRowCount;
     }
 
