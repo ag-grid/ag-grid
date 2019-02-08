@@ -32,6 +32,8 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
 
     protected eGridDiv: HTMLElement;
 
+    private static MAX_COMPONENT_CREATION_TIME: number = 1000; // a second should be more than enough to instantiate a component
+
     constructor(public props: any, public state: any) {
         super(props, state);
     }
@@ -85,14 +87,26 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         return false;
     }
 
+    waitForInstance(reactComponent: AgReactComponent, resolve, runningTime = 0) {
+        if(reactComponent.getFrameworkComponentInstance()) {
+            resolve(null);
+        } else {
+            if(runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
+                console.error(`ag-Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME}ms`);
+                return;
+            }
+            window.setTimeout(() => this.waitForInstance(reactComponent, resolve, runningTime + 5), 5);
+        }
+    }
+
     /**
      * Mounts a react portal for components registered under the componentFramework.
      * We do this because we want all portals to be in the same tree - in order to get
      * Context to work properly.
      */
-    mountReactPortal(portal, resolve) {
+    mountReactPortal(portal, reactComponent, resolve) {
         this.portals = [...this.portals, portal];
-        this.batchUpdate(() => resolve(null));
+        this.batchUpdate(this.waitForInstance(reactComponent,  resolve));
     }
 
     batchUpdate(callback?) {
@@ -315,6 +329,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
             callMethod(name: string, args: IArguments): void {
                 let frameworkComponentInstance = this.getFrameworkComponentInstance();
 
+                // this should never happen now that AgGridReact.waitForInstance is in use
                 if (frameworkComponentInstance == null) {
                     window.setTimeout(() => this.callMethod(name, args), 100);
                 } else {

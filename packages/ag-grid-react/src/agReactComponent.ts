@@ -23,6 +23,10 @@ export class AgReactComponent {
         return this.componentInstance;
     }
 
+    public getReactComponentName() : string {
+        return this.reactComponent.name;
+    }
+
     public init(params: any): Promise<void> {
         return new Promise<void>(resolve => {
             this.eParentElement = document.createElement('div');
@@ -95,6 +99,6 @@ export class AgReactComponent {
             this.eParentElement
         );
         this.portal = portal;
-        this.parentComponent.mountReactPortal(portal, resolve);
+        this.parentComponent.mountReactPortal(portal, this, resolve);
     }
 }
