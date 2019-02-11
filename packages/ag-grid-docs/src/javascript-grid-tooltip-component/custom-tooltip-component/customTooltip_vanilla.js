@@ -1,10 +1,14 @@
 function CustomTooltip () {}
 
 CustomTooltip.prototype.init = function(params) {
-    this.eGui = document.createElement('div');
-    this.eGui.classList.add('custom-tooltip');
+    var eGui = this.eGui = document.createElement('div');
+    var color = params.color || 'white';
     var data = params.api.getRowNode(params.rowIndex).data;
-    this.eGui.innerHTML =
+
+
+    eGui.classList.add('custom-tooltip');
+    eGui.style['background-color'] = color;
+    eGui.innerHTML =
         '<p><span class"name">' + data.athlete + '</span></p>' +
         '<p><span>Country: </span>' + data.country + '</p>' +
         '<p><span>Total: </span>' + data.total + '</p>';
@@ -12,13 +16,4 @@ CustomTooltip.prototype.init = function(params) {
 
 CustomTooltip.prototype.getGui = function() {
     return this.eGui;
-};
-
-CustomTooltip.prototype.destroy = function() {
-    var eGui = this.getGui();
-    var parent = eGui.parentElement;
-
-    if (parent) {
-        parent.remove(eGui);
-    }
 };

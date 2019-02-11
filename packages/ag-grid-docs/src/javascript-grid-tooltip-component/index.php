@@ -35,17 +35,15 @@ interface ITooltipParams {
     // the value to be rendered by the tooltip
     value?: any;
 
-    // a formatted value to be rendered by the tooltip
-    valueFormatted?: any;
-
-    // any custom data to be used by the tooltip
-    data:? any;
-
     // the grid colDef
     colDef?: any;
 
     // the column bound to this tooltip
     column?: any;
+
+    // the index of the row that contains the cell rendering the tooltip
+    // it does not apply on headerTooltips
+    rowIndex?: number;
 
     // the grid api
     api: any;

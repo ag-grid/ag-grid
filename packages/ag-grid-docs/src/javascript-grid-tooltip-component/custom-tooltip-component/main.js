@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Athlete", field: "athlete", width: 150, tooltipField: 'athlete', tooltipComponentParams: { color: "#ececec" }},
     {headerName: "Age", field: "age", width: 90},
     {headerName: "Country", field: "country", width: 120, tooltipField: "country" },
     {headerName: "Year", field: "year", width: 90},
