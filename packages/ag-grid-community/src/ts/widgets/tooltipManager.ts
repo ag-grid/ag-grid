@@ -57,14 +57,11 @@ export class TooltipManager {
             registeredComp.destroyFunc();
         }
 
-        tooltipComp.destroy();
+        if (tooltipComp.destroy) {
+            tooltipComp.destroy();
+        }
+
         delete this.registeredComponents[id];
-    }
-
-    private getTargetTooltip(target: TooltipTarget = this.activeComponent) {
-        if (!target) { return; }
-
-        return this.registeredComponents[target.getCompId()].tooltipComp;
     }
 
     private processMouseOver(e: MouseEvent, targetCmp: TooltipTarget): void {
@@ -120,8 +117,7 @@ export class TooltipManager {
             column,
             api: this.gridApi,
             columnApi: this.columnApi,
-            value: targetCmp.getTooltipText(),
-            data: colDef.tooltipComponentParams && colDef.tooltipComponentParams.data
+            value: targetCmp.getTooltipText()
         };
 
         this.componentRecipes.newTooltipComponent(params).then(tooltipComp => {

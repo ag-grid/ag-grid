@@ -346,7 +346,7 @@ export interface GridOptions {
     postProcessPopup?: (params: PostProcessPopupParams) => void;
     frameworkComponents?: { [p: string]: { new(): any } } | any;
     components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>> };
-    dateComponent?: { new(): IDateComp };
+    dateComponent?: string | { new(): IDateComp };
     dateComponentFramework?: any;
     groupRowRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;

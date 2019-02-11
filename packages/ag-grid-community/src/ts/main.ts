@@ -301,6 +301,7 @@ export { FrameworkComponentWrapper } from "./components/framework/frameworkCompo
 export { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./filter/numberFilter";
 export { Environment } from "./environment";
+export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
 
 //  events
 export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent,
