@@ -124,7 +124,13 @@ export class TooltipManager {
             const tooltip = registeredComp.tooltipComp = tooltipComp;
             const eGui = tooltip.getGui();
 
-            registeredComp.destroyFunc = this.popupService.addPopup(false, eGui, false);
+            const closeFnc = this.popupService.addPopup(false, eGui, false)
+            registeredComp.destroyFunc = () => {
+                closeFnc();
+                if(tooltip.destroy) {
+                    tooltip.destroy();
+                }
+            }
 
             this.popupService.positionPopupUnderMouseEvent({
                 type: 'tooltip',

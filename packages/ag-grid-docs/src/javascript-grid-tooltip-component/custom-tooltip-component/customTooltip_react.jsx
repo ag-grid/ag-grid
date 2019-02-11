@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 
 export default class CustomTooltip extends Component {
+    componentDidMount() {
+        this.props.reactContainer.className = 'custom-tooltip';
+    }
+
     render() {
         var data = this.props.api.getRowNode(this.props.rowIndex).data;
         return (
