@@ -8,7 +8,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
 import { IFloatingFilterComp } from "../filter/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
-import { ITooltipComp } from "../rendering/tooltipComponent";
+import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { DynamicComponentDef, DynamicComponentParams } from "../components/framework/componentResolver";
 
 /****************************************************************
@@ -33,6 +33,10 @@ export interface AbstractColDef {
     suppressToolPanel?: boolean;
     /** Tooltip for the column header */
     headerTooltip?: string;
+
+    tooltipComponent?: { new(): ITooltipComp } | string;
+    tooltipComponentFramework?: any;
+    tooltipComponentParams?: ITooltipParams;
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -95,13 +99,10 @@ export interface ColDef extends AbstractColDef {
     tooltipField?: string;
 
     /** @deprecated since v20.1, use colDef.tooltipValueGetter instead*/
-    tooltip?: (params: TooltipParams) => string;
+    tooltip?: (params: ITooltipParams) => string;
 
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
-    tooltipValueGetter?: (params: TooltipParams) => string;
-
-    tooltipComponent?: { new(): ITooltipComp } | string;
-    tooltipComponentFramework?: any;
+    tooltipValueGetter?: (params: ITooltipParams) => string;
 
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
@@ -404,18 +405,6 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
 
 export interface CellClassParams {
     value: any;
-    data: any;
-    node: RowNode;
-    colDef: ColDef;
-    rowIndex: number;
-    $scope: any;
-    api: GridApi | null | undefined;
-    context: any;
-}
-
-export interface TooltipParams {
-    value: any;
-    valueFormatted: any;
     data: any;
     node: RowNode;
     colDef: ColDef;

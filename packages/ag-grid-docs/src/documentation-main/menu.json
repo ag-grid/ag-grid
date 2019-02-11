@@ -640,6 +640,10 @@
       {
         "title": "Tool Panel Component",
         "url": "javascript-grid-tool-panel-component/"
+      },
+      {
+        "title": "Tooltip Component",
+        "url": "javascript-grid-tooltip-component/"
       }
     ]
   },

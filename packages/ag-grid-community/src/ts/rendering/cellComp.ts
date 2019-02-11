@@ -155,13 +155,18 @@ export class CellComp extends Component {
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
-        const tooltipAttr = this.beans.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
-        templateParts.push(_.exists(tooltipSanitised) ? ` ${tooltipAttr}="${tooltipSanitised}"` : ``);
+
+        if (this.beans.gridOptionsWrapper.isEnableLegacyTooltips() && _.exists(tooltipSanitised)) {
+            templateParts.push(`title="${tooltipSanitised}"`);
+        }
+
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
         templateParts.push(wrapperStartTemplate);
+
         if (_.exists(valueSanitised, true)) {
             templateParts.push(valueSanitised);
         }
+
         templateParts.push(wrapperEndTemplate);
         templateParts.push(`</div>`);
 
@@ -686,6 +691,7 @@ export class CellComp extends Component {
                 node: this.rowNode,
                 colDef: colDef,
                 api: this.beans.gridOptionsWrapper.getApi(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext(),
                 rowIndex: this.gridCell.rowIndex

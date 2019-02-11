@@ -4,7 +4,11 @@ import { IComponent } from "../interfaces/iComponent";
 import { _ } from '../utils';
 import { DynamicComponentParams } from "../components/framework/componentResolver";
 
-export interface ITooltipParams extends DynamicComponentParams {}
+export interface ITooltipParams extends DynamicComponentParams {
+    value?: any;
+    valueFormatted?: any;
+    context?: any;
+}
 
 export interface ITooltipComp extends IComponent<ITooltipParams> {}
 
@@ -16,7 +20,7 @@ export class TooltipComponent extends PopupComponent implements ITooltipComp {
 
     // will need to type params
     public init(params: ITooltipParams): void {
-        const { data } = params ;
-        this.getGui().innerHTML = data;
+        const { value } = params;
+        this.getGui().innerHTML = value;
     }
 }

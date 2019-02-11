@@ -2,12 +2,12 @@ import { Autowired, Bean } from "../context/context";
 import { Component } from "./component";
 import { PopupService } from "./popupService";
 import { ComponentRecipes } from "../components/framework/componentRecipes";
-import { DynamicComponentParams } from "../components/framework/componentResolver";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { CellComp } from "../rendering/cellComp";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
 import { HeaderGroupWrapperComp } from "../headerRendering/headerGroup/headerGroupWrapperComp";
+import { ITooltipParams } from "../rendering/tooltipComponent";
 import { _ } from "../utils";
 
 type TooltipTarget = CellComp | HeaderWrapperComp | HeaderGroupWrapperComp;
@@ -114,13 +114,14 @@ export class TooltipManager {
             column = cell.getColumn();
         }
 
-        const params: DynamicComponentParams = {
+        const params: ITooltipParams = {
             colDef,
             rowIndex,
             column,
             api: this.gridApi,
             columnApi: this.columnApi,
-            data: targetCmp.getTooltipText()
+            value: targetCmp.getTooltipText(),
+            data: colDef.tooltipComponentParams && colDef.tooltipComponentParams.data
         };
 
         this.componentRecipes.newTooltipComponent(params).then(tooltipComp => {

@@ -235,7 +235,7 @@ export class ComponentRecipes {
 
     public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
         return this.componentResolver.createAgGridComponent<ITooltipComp>(
-            this.gridOptions,
+            params.column.getColDef(),
             params,
             "tooltipComponent",
             {

@@ -254,8 +254,7 @@ export {
     SuppressKeyboardEventParams,
     ValueGetterParams,
     NewValueParams,
-    CellClassParams,
-    TooltipParams
+    CellClassParams
 } from "./entities/colDef";
 export {
     GridOptions,
