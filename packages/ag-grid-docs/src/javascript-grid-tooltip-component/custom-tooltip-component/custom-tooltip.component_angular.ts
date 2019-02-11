@@ -4,10 +4,10 @@ import {ITooltipAngularComp} from "ag-grid-angular";
 @Component({
     selector: 'tooltip-component',
     template: `
-        <div class="custom-tooltip" [style.background-color]="this.data.color">
-            <p><span>{{this.data.athlete}}</span></p>
-            <p><span>Country: </span>{{this.data.country}}</p>
-            <p><span>Total: </span>{{this.data.total}}</p>
+        <div class="custom-tooltip" [style.background-color]="data.color">
+            <p><span>{{data.athlete}}</span></p>
+            <p><span>Country: </span>{{data.country}}</p>
+            <p><span>Total: </span>{{data.total}}</p>
         </div>`,
     styles: [
         `
