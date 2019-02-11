@@ -12,6 +12,12 @@ export interface ITooltipParams extends DynamicComponentParams {
 
 export interface ITooltipComp extends IComponent<ITooltipParams> {}
 
+export interface TooltipConfig {
+    autoHide?: boolean | undefined;
+    fadeOnHide?: boolean | undefined;
+    syncAlignOnMouseMove?: boolean | undefined;
+}
+
 export class TooltipComponent extends PopupComponent implements ITooltipComp {
 
     constructor() {
