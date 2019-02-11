@@ -40,13 +40,13 @@ export class Chart {
 
     private chartOptions: ChartOptions;
 
-    private readonly eGui: HTMLElement;
+    private readonly eCanvas: HTMLElement;
 
     constructor(chartOptions: ChartOptions) {
         this.chartOptions = chartOptions;
 
         const canvas = createHdpiCanvas(this.chartOptions.width, this.chartOptions.height);
-        this.eGui = canvas;
+        this.eCanvas = canvas;
 
         this.init();
 
@@ -57,7 +57,7 @@ export class Chart {
     }
 
     public getGui(): HTMLElement {
-        return this.eGui;
+        return this.eCanvas;
     }
 
     public refresh(): void {

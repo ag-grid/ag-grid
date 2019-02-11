@@ -147,10 +147,17 @@ export class MenuItemMapper {
                 })
             };
             case 'separator': return 'separator';
-            case 'createChart': return {
-                name: 'Create Chart',
+            case 'chartRange': return {
+                name: 'Chart Range',
                 action: () => {
-                    this.chartingService.createChart();
+                    this.chartingService.chartRange();
+
+                }
+            };
+            case 'chartEverything': return {
+                name: 'Chart Everything',
+                action: () => {
+                    this.chartingService.chartEverything();
 
                 }
             };

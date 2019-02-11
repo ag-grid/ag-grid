@@ -6,7 +6,8 @@ import { createHdpiCanvas } from "./canvas/canvas";
 import {Axis} from "./axis";
 import {PopupService} from "ag-grid-community";
 import {Chart} from "./chart";
-import {GridChartDatasource} from "./gridChartDatasource";
+import {ChartRangeDatasource} from "./chartRangeDatasource";
+import {ChartEverythingDatasource} from "./chartEverythingDatasource";
 
 @Bean('chartingService')
 export class ChartingService {
@@ -16,7 +17,28 @@ export class ChartingService {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
 
-    public createChart(): void {
+    public chartEverything(): void {
+
+        const ds = new ChartEverythingDatasource();
+        this.context.wireBean(ds);
+
+        const chart = new Chart({
+            height: 400,
+            width: 800,
+            datasource: ds
+        });
+
+        const popupWindow = new PopupWindow();
+        this.context.wireBean(popupWindow);
+        popupWindow.setBody(chart.getGui());
+
+        popupWindow.addEventListener(PopupWindow.EVENT_DESTROYED, ()=> {
+            chart.destroy();
+        });
+
+    }
+
+    public chartRange(): void {
         const ranges = this.rangeController.getCellRanges();
 
         if (!ranges) {return;}
@@ -24,7 +46,7 @@ export class ChartingService {
         if (!range) {return;}
         if (!range.columns) { return; }
 
-        const ds = new GridChartDatasource(range);
+        const ds = new ChartRangeDatasource(range);
         this.context.wireBean(ds);
 
         const chart = new Chart({

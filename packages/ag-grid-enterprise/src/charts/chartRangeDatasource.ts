@@ -1,20 +1,19 @@
 import {ChartDatasource} from "./chart";
 import {
     Autowired,
-    IRowModel,
     BeanStub,
     Column,
     ColumnController,
-    RangeSelection,
-    ValueService,
-    PaginationProxy,
     Events,
     EventService,
+    IRowModel,
+    PaginationProxy,
     PostConstruct,
-    _
+    RangeSelection,
+    ValueService
 } from "ag-grid-community";
 
-export class GridChartDatasource extends BeanStub implements ChartDatasource {
+export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
 
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('valueService') valueService: ValueService;
@@ -54,7 +53,7 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
         if (!this.rangeSelection.columns) { return; }
 
         if (this.columnController.isPivotMode()) {
-            console.warn('ag-Grid: GridChartDatasource doesnt handle pivot mode yet');
+            console.warn('ag-Grid: ChartRangeDatasource doesnt handle pivot mode yet');
         }
 
         const isDimension = (col:Column) => col.getColDef().enableRowGroup || col.getColDef().enablePivot;
@@ -126,11 +125,12 @@ export class GridChartDatasource extends BeanStub implements ChartDatasource {
         const resParts: string[] = [];
         this.categoryCols.forEach( col => {
             const part = this.valueService.getValue(col, rowNode);
+            // force return type to be string or empty string (as value can be an object)
             const partStr = (part && part.toString) ? part.toString() : '';
             resParts.push(partStr);
         });
-        // force return type to be string or empty string (as value can be an object)
-        return resParts.join(', ');
+        const res = resParts.join(', ');
+        return res;
     }
 
     public getFields(): string[] {
