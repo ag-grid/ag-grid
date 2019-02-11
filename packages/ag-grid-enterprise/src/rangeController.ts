@@ -54,6 +54,7 @@ export class RangeController implements IRangeController {
     private bodyScrollListener = this.onBodyScroll.bind(this);
 
     private dragging = false;
+    private startedFrom: string | null | undefined;
 
     private autoScrollService: AutoScrollService;
 
@@ -311,6 +312,17 @@ export class RangeController implements IRangeController {
         this.gridPanel.addScrollEventListener(this.bodyScrollListener);
         this.dragging = true;
 
+        const floatingTopBottom = this.gridPanel.getFloatingTopBottom();
+        const target = mouseEvent.target as HTMLElement;
+
+        if (floatingTopBottom[0].contains(target)) {
+            this.startedFrom = 'top';
+        } else if (floatingTopBottom[1].contains(target)) {
+            this.startedFrom = 'bottom';
+        } else {
+            this.startedFrom = 'body';
+        }
+
         this.lastMouseEvent = mouseEvent;
 
         this.selectionChanged(false, true);
@@ -359,6 +371,7 @@ export class RangeController implements IRangeController {
         this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
+        this.startedFrom = null;
         this.dispatchChangedEvent(true, false);
     }
 
@@ -369,7 +382,18 @@ export class RangeController implements IRangeController {
 
         this.lastMouseEvent = mouseEvent;
 
-        this.autoScrollService.check(mouseEvent);
+        const floatingTopBottom = this.gridPanel.getFloatingTopBottom();
+        const target = mouseEvent.target as HTMLElement;
+        let skipVerticalScroll = false;
+
+        if (
+            (this.startedFrom === 'top' && floatingTopBottom[0].contains(target)) ||
+            (this.startedFrom === 'bottom' && floatingTopBottom[1].contains(target))
+        ) {
+            skipVerticalScroll = true;
+        }
+
+        this.autoScrollService.check(mouseEvent, skipVerticalScroll);
 
         const cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
         if (_.missing(cell)) {
@@ -440,7 +464,7 @@ class AutoScrollService {
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
 
-    public check(mouseEvent: MouseEvent): void {
+    public check(mouseEvent: MouseEvent, skipVerticalScroll: boolean = false): void {
 
         // we don't do ticking if grid is auto height
         if (this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL) {
@@ -451,8 +475,8 @@ class AutoScrollService {
 
         this.tickLeft = mouseEvent.clientX < (rect.left + 20);
         this.tickRight = mouseEvent.clientX > (rect.right - 20);
-        this.tickUp = mouseEvent.clientY < (rect.top + 20);
-        this.tickDown = mouseEvent.clientY > (rect.bottom - 20);
+        this.tickUp = mouseEvent.clientY < (rect.top + 20) && !skipVerticalScroll;
+        this.tickDown = mouseEvent.clientY > (rect.bottom - 20) && !skipVerticalScroll;
 
         if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
             this.ensureTickingStarted();

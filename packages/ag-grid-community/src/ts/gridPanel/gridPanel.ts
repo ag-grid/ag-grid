@@ -1081,6 +1081,10 @@ export class GridPanel extends Component {
         return this.rowContainerComponents;
     }
 
+    public getFloatingTopBottom(): HTMLElement[] {
+        return [this.eTop, this.eBottom];
+    }
+
     public onDisplayedColumnsChanged(): void {
         this.setPinnedContainerSize();
         this.setHeaderAndFloatingHeights();
