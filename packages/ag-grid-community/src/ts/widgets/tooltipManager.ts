@@ -12,15 +12,9 @@ import { _ } from "../utils";
 
 type TooltipTarget = CellComp | HeaderWrapperComp | HeaderGroupWrapperComp;
 
-interface TooltipConfig {
-    autoHide?: boolean | undefined;
-    fadeOnHide?: boolean | undefined;
-}
-
 interface RegisteredComponent {
     tooltipComp?: Component;
     destroyFunc?: () => void;
-    config?: TooltipConfig;
 }
 
 @Bean('tooltipManager')
@@ -31,106 +25,82 @@ export class TooltipManager {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
+    private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
+    private readonly MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
+    private readonly MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = 2000;
+
     private showTimer: number = 0;
     private hideTimer: number = 0;
     private activeComponent: TooltipTarget | undefined;
     private lastHoveredComponent: TooltipTarget | undefined;
 
-    // map of compId to [tooltip component, close function, tooltipConfig]
-    // TODO: implement tooltip configs
+    // map of compId to [tooltip component, close function]
     private registeredComponents: { [key: string]: RegisteredComponent } = {};
 
-    public registerTooltip(targetCmp: TooltipTarget, el: HTMLElement, config?: TooltipConfig): void {
+    public registerTooltip(targetCmp: TooltipTarget): void {
+        const el = targetCmp.getGui();
+        const id = targetCmp.getCompId();
+
         targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp));
         targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this));
         targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this));
 
-        this.registeredComponents[targetCmp.getCompId()] = { tooltipComp: undefined, destroyFunc: undefined, config };
+        this.registeredComponents[id] = { tooltipComp: undefined, destroyFunc: undefined };
+        targetCmp.addDestroyFunc(() => this.unregisterTooltip(targetCmp));
     }
 
-    public unregisterTooltip(cmp: TooltipTarget): void {
-        const id = cmp.getCompId();
-        const registeredComp = this.registeredComponents[id];
-        const tooltipComp = registeredComp.tooltipComp;
+    private unregisterTooltip(targetCmp: TooltipTarget): void {
+        const id = targetCmp.getCompId();
 
-        if (!tooltipComp) { return; }
-
-        if (registeredComp.destroyFunc) {
-            registeredComp.destroyFunc();
+        if (this.activeComponent === targetCmp) {
+            this.hideTooltip();
         }
-
         delete this.registeredComponents[id];
     }
 
-    public getActiveTooltip(): Component | undefined {
-        const cmp = this.activeComponent;
+    private processMouseOver(e: MouseEvent, targetCmp: TooltipTarget) {
+        let delay = this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT;
 
-        if (!cmp) { return; }
-
-        const id = cmp.getCompId();
-        const registeredComp = this.registeredComponents[id];
-
-        return registeredComp.tooltipComp;
-    }
-
-    private processMouseOver(e: MouseEvent, targetCmp: TooltipTarget): void {
-        if (this.lastHoveredComponent == targetCmp) { return; }
-        this.lastHoveredComponent = targetCmp;
-        // if a hideTimer is present it means we are currently showing a tooltip
-        // so hide the currentTooltip and display the new tooltip without delay
-        if (this.hideTimer) {
-            window.clearTimeout(this.hideTimer);
+        if (this.activeComponent) {
+            if (this.lastHoveredComponent === this.activeComponent) { return; }
+            delay = 0;
             this.hideTooltip();
-            this.showTooltip(e, targetCmp);
-        } else {
-            this.showTimer = window.setTimeout(this.showTooltip.bind(this), 2000, e, targetCmp);
         }
+
+        this.clearTimers();
+        if (this.lastHoveredComponent === targetCmp) { return; }
+
+        this.lastHoveredComponent = targetCmp;
+        this.showTimer = window.setTimeout(this.showTooltip.bind(this), delay, e);
     }
 
-    private processMouseOut(e: MouseEvent): void {
-        const lastHoveredComponent = this.lastHoveredComponent;
-        const eGui = lastHoveredComponent && lastHoveredComponent.getGui();
+    private processMouseOut(e: MouseEvent) {
+        const activeComponent = this.activeComponent;
+        const relatedTarget = e.relatedTarget as HTMLElement;
 
-        // we should only process the mouseout if the hovered item that cause
-        // the mouseout is not contained within the last hovered component.
-        if (eGui && eGui.contains(e.relatedTarget as HTMLElement)) { return; }
-
-        // if showTimer is present means we left the target
-        // before the tooltip was displayed
-        if (this.showTimer) {
-            window.clearTimeout(this.showTimer);
-            this.showTimer = 0;
+        if (!activeComponent) {
+            if (this.lastHoveredComponent && !this.lastHoveredComponent.getGui().contains(relatedTarget)) {
+                this.lastHoveredComponent = undefined;
+            }
+            this.clearTimers();
             return;
         }
-        // on mouseOut we should also cancel the default 10 seconds hideTimer
-        if (this.hideTimer) {
-            window.clearTimeout(this.hideTimer);
-            this.hideTimer = 0;
-        }
-        if (this.activeComponent) {
-            const activeTooltip = this.getActiveTooltip();
 
-            if (activeTooltip) {
-                _.addCssClass(activeTooltip.getGui(), 'ag-tooltip-hiding');
-            }
-
-            this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), 1000);
+        if (activeComponent.getGui().contains(relatedTarget)) {
+            return;
         }
 
+        const registedComponent = this.registeredComponents[activeComponent.getCompId()];
+        _.addCssClass(registedComponent.tooltipComp.getGui(), 'ag-tooltip-hiding');
         this.lastHoveredComponent = undefined;
+        this.clearTimers();
+        this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), this.MOUSEOUT_HIDE_TOOLTIP_TIMEOUT);
     }
 
-    private showTooltip(e: MouseEvent, targetCmp: TooltipTarget): void {
-        const id = targetCmp.getCompId();
-        const registeredComp = this.registeredComponents[id];
-
-        this.activeComponent = targetCmp;
-        this.showTimer = 0;
-        this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), 10000);
-
-        if (registeredComp.tooltipComp) { return; }
-
-        const cell = (targetCmp as CellComp);
+    private showTooltip(e: MouseEvent): void {
+        const targetCmp = this.lastHoveredComponent;
+        const cell = targetCmp as CellComp;
+        const registedComponent = this.registeredComponents[targetCmp.getCompId()];
 
         const params: ITooltipParams = {
             colDef: targetCmp.getComponentHolder(),
@@ -141,7 +111,9 @@ export class TooltipManager {
             value: targetCmp.getTooltipText()
         };
 
-        this.createTooltipComponent(params, registeredComp, e);
+        this.createTooltipComponent(params, registedComponent, e);
+        this.activeComponent = this.lastHoveredComponent;
+        this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
     }
 
     private createTooltipComponent(params: ITooltipParams, cmp: RegisteredComponent, e: MouseEvent): void {
@@ -165,30 +137,38 @@ export class TooltipManager {
         });
     }
 
-    private hideTooltip(): void {
-        const cmp = this.activeComponent;
+    hideTooltip(): void {
+        const activeComponent = this.activeComponent;
 
-        // in case hideTooltip gets manually called we need to cancel the
-        // default 10 seconds hideTimer and also cancel the showTimer if the
-        // target was clicked before rendering the tooltip.
+        this.clearTimers();
+        if (!activeComponent) { return; }
+
+        const id = activeComponent.getCompId();
+        const registedComponent = this.registeredComponents[id];
+
+        this.activeComponent = undefined;
+
+        if (!registedComponent) { return; }
+        if (registedComponent.destroyFunc) {
+            registedComponent.destroyFunc();
+        }
+        this.clearRegisteredComponent(registedComponent);
+    }
+
+    clearRegisteredComponent(registedComponent: RegisteredComponent) {
+        delete registedComponent.destroyFunc;
+        delete registedComponent.tooltipComp;
+    }
+
+    clearTimers(): void {
         if (this.hideTimer) {
             window.clearTimeout(this.hideTimer);
         }
+
         if (this.showTimer) {
             window.clearTimeout(this.showTimer);
         }
 
-        this.hideTimer = 0;
-        this.showTimer = 0;
-        if (!cmp) { return; }
-
-        const id = cmp.getCompId();
-        const registeredComp = this.registeredComponents[id];
-        this.activeComponent = undefined;
-
-        if (!registeredComp || !registeredComp.destroyFunc) { return; }
-
-        registeredComp.destroyFunc();
-        delete registeredComp.tooltipComp;
+        this.showTimer = this.hideTimer = 0;
     }
 }

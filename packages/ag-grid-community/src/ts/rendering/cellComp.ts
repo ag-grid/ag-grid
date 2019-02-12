@@ -226,8 +226,7 @@ export class CellComp extends Component {
         }
 
         if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
-            this.beans.tooltipManager.registerTooltip(this, this.eParentOfValue);
-            this.addDestroyFunc(() => this.beans.tooltipManager.unregisterTooltip(this));
+            this.beans.tooltipManager.registerTooltip(this);
         }
     }
 
