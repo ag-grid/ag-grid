@@ -181,7 +181,7 @@ var gridOptions = {
     // suppressMakeColumnVisibleAfterUnGroup: true,
     // unSortIcon: true,
     // enableRtl: true,
-    enableCharts: true,
+    // enableCharts: true,
     multiSortKey: 'ctrl',
     animateRows: true,
     enableRangeSelection: true,
@@ -1244,4 +1244,3 @@ function countryCellRenderer(params) {
         return flag + ' ' + params.value;
     }
 }
-
