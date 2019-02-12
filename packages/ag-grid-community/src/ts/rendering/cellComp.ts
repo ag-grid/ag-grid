@@ -26,10 +26,14 @@ import { Beans } from "./beans";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { _ } from "../utils";
+import {ComponentHolder} from "../components/framework/componentResolver";
 
 export class CellComp extends Component {
 
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
+
+    private static CELL_RENDERER_TYPE_NORMAL = 'cellRenderer';
+    private static CELL_RENDERER_TYPE_PINNED = 'pinnedRowCellRenderer';
 
     private eCellWrapper: HTMLElement;
     private eParentOfValue: HTMLElement;
@@ -634,9 +638,12 @@ export class CellComp extends Component {
         }
 
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
-        // note: should pass in params here instead of value?? so that client has formattedValue
         const params = this.createCellRendererParams();
-        const result: boolean | void = this.cellRenderer.refresh(params);
+
+        // take any custom params off of the user
+        const finalParams = this.beans.componentResolver.mergeParams(this.getComponentHolder(), this.cellRendererType, params, params);
+
+        const result: boolean | void = this.cellRenderer.refresh(finalParams);
 
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
         // returned nothing, if the method existed, we assumed it refreshed. so for
@@ -787,10 +794,10 @@ export class CellComp extends Component {
         const pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', params);
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
-            this.cellRendererType = 'pinnedRowCellRenderer';
+            this.cellRendererType =  CellComp.CELL_RENDERER_TYPE_PINNED;
             this.usingCellRenderer = true;
         } else if (cellRenderer) {
-            this.cellRendererType = 'cellRenderer';
+            this.cellRendererType = CellComp.CELL_RENDERER_TYPE_NORMAL;
             this.usingCellRenderer = true;
         } else {
             this.usingCellRenderer = false;
