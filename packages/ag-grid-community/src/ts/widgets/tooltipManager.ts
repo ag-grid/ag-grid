@@ -34,6 +34,7 @@ export class TooltipManager {
     private showTimer: number = 0;
     private hideTimer: number = 0;
     private activeComponent: TooltipTarget | undefined;
+    private lastHoveredComponent: TooltipTarget | undefined;
 
     // map of compId to [tooltip component, close function, tooltipConfig]
     // TODO: implement tooltip configs
@@ -73,6 +74,8 @@ export class TooltipManager {
     }
 
     private processMouseOver(e: MouseEvent, targetCmp: TooltipTarget): void {
+        if (this.lastHoveredComponent == targetCmp) { return; }
+        this.lastHoveredComponent = targetCmp;
         // if a hideTimer is present it means we are currently showing a tooltip
         // so hide the currentTooltip and display the new tooltip without delay
         if (this.hideTimer) {
@@ -84,7 +87,14 @@ export class TooltipManager {
         }
     }
 
-    private processMouseOut(): void {
+    private processMouseOut(e: MouseEvent): void {
+        const lastHoveredComponent = this.lastHoveredComponent;
+        const eGui = lastHoveredComponent && lastHoveredComponent.getGui();
+
+        // we should only process the mouseout if the hovered item that cause
+        // the mouseout is not contained within the last hovered component.
+        if (eGui && eGui.contains(e.relatedTarget as HTMLElement)) { return; }
+
         // if showTimer is present means we left the target
         // before the tooltip was displayed
         if (this.showTimer) {
@@ -106,6 +116,8 @@ export class TooltipManager {
 
             this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), 1000);
         }
+
+        this.lastHoveredComponent = undefined;
     }
 
     private showTooltip(e: MouseEvent, targetCmp: TooltipTarget): void {
@@ -156,13 +168,18 @@ export class TooltipManager {
     private hideTooltip(): void {
         const cmp = this.activeComponent;
 
-        // this is needed in case hideTooltip gets manually called
-        // and we need to cancel the default 10 seconds timer.
+        // in case hideTooltip gets manually called we need to cancel the
+        // default 10 seconds hideTimer and also cancel the showTimer if the
+        // target was clicked before rendering the tooltip.
         if (this.hideTimer) {
             window.clearTimeout(this.hideTimer);
         }
+        if (this.showTimer) {
+            window.clearTimeout(this.showTimer);
+        }
 
         this.hideTimer = 0;
+        this.showTimer = 0;
         if (!cmp) { return; }
 
         const id = cmp.getCompId();

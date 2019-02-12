@@ -26,7 +26,6 @@ import { Beans } from "./beans";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { _ } from "../utils";
-import {ComponentHolder} from "../components/framework/componentResolver";
 
 export class CellComp extends Component {
 
