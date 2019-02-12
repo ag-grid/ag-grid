@@ -17,16 +17,15 @@ interface TooltipConfig {
     fadeOnHide?: boolean | undefined;
 }
 
-interface RegisteredComponents {
+interface RegisteredComponent {
     tooltipComp?: Component;
     destroyFunc?: () => void;
     config?: TooltipConfig;
 }
+
 @Bean('tooltipManager')
 export class TooltipManager {
 
-    // really this should be using eGridDiv, not sure why it's not working.
-    // maybe popups in the future should be parent to the body??
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -36,8 +35,9 @@ export class TooltipManager {
     private hideTimer: number = 0;
     private activeComponent: TooltipTarget | undefined;
 
-    // map if compId to [tooltip component, close function]
-    private registeredComponents: { [key: string]: RegisteredComponents } = {};
+    // map of compId to [tooltip component, close function, tooltipConfig]
+    // TODO: implement tooltip configs
+    private registeredComponents: { [key: string]: RegisteredComponent } = {};
 
     public registerTooltip(targetCmp: TooltipTarget, el: HTMLElement, config?: TooltipConfig): void {
         targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp));
@@ -57,16 +57,25 @@ export class TooltipManager {
             registeredComp.destroyFunc();
         }
 
-        if (tooltipComp.destroy) {
-            tooltipComp.destroy();
-        }
-
         delete this.registeredComponents[id];
     }
 
+    public getActiveTooltip(): Component | undefined {
+        const cmp = this.activeComponent;
+
+        if (!cmp) { return; }
+
+        const id = cmp.getCompId();
+        const registeredComp = this.registeredComponents[id];
+
+        return registeredComp.tooltipComp;
+    }
+
     private processMouseOver(e: MouseEvent, targetCmp: TooltipTarget): void {
+        // if a hideTimer is present it means we are currently showing a tooltip
+        // so hide the currentTooltip and display the new tooltip without delay
         if (this.hideTimer) {
-            window.clearInterval(this.hideTimer);
+            window.clearTimeout(this.hideTimer);
             this.hideTooltip();
             this.showTooltip(e, targetCmp);
         } else {
@@ -75,16 +84,25 @@ export class TooltipManager {
     }
 
     private processMouseOut(): void {
+        // if showTimer is present means we left the target
+        // before the tooltip was displayed
         if (this.showTimer) {
             window.clearTimeout(this.showTimer);
             this.showTimer = 0;
             return;
         }
+        // on mouseOut we should also cancel the default 10 seconds hideTimer
         if (this.hideTimer) {
-            window.clearInterval(this.hideTimer);
+            window.clearTimeout(this.hideTimer);
             this.hideTimer = 0;
         }
         if (this.activeComponent) {
+            const activeTooltip = this.getActiveTooltip();
+
+            if (activeTooltip) {
+                _.addCssClass(activeTooltip.getGui(), 'ag-tooltip-hiding');
+            }
+
             this.hideTimer = window.setTimeout(this.hideTooltip.bind(this), 1000);
         }
     }
@@ -99,38 +117,32 @@ export class TooltipManager {
 
         if (registeredComp.tooltipComp) { return; }
 
-        const colDef = targetCmp.getComponentHolder();
         const cell = (targetCmp as CellComp);
-        let rowIndex;
-        let column;
-
-        if (cell.getGridCell) {
-            rowIndex = cell.getGridCell().rowIndex;
-        }
-        if (cell.getColumn) {
-            column = cell.getColumn();
-        }
 
         const params: ITooltipParams = {
-            colDef,
-            rowIndex,
-            column,
+            colDef: targetCmp.getComponentHolder(),
+            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
+            column: cell.getColumn && cell.getColumn(),
             api: this.gridApi,
             columnApi: this.columnApi,
             value: targetCmp.getTooltipText()
         };
 
+        this.createTooltipComponent(params, registeredComp, e);
+    }
+
+    private createTooltipComponent(params: ITooltipParams, cmp: RegisteredComponent, e: MouseEvent): void {
         this.componentRecipes.newTooltipComponent(params).then(tooltipComp => {
-            const tooltip = registeredComp.tooltipComp = tooltipComp;
+            const tooltip = cmp.tooltipComp = tooltipComp;
             const eGui = tooltip.getGui();
 
-            const closeFnc = this.popupService.addPopup(false, eGui, false)
-            registeredComp.destroyFunc = () => {
+            const closeFnc = this.popupService.addPopup(false, eGui, false);
+            cmp.destroyFunc = () => {
                 closeFnc();
-                if(tooltip.destroy) {
+                if (tooltip.destroy) {
                     tooltip.destroy();
                 }
-            }
+            };
 
             this.popupService.positionPopupUnderMouseEvent({
                 type: 'tooltip',
@@ -142,6 +154,12 @@ export class TooltipManager {
 
     private hideTooltip(): void {
         const cmp = this.activeComponent;
+
+        // this is needed in case hideTooltip gets manually called
+        // and we need to cancel the default 10 seconds timer.
+        if (this.hideTimer) {
+            window.clearTimeout(this.hideTimer);
+        }
 
         this.hideTimer = 0;
         if (!cmp) { return; }

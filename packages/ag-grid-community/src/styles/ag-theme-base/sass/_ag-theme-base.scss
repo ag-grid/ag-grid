@@ -1060,6 +1060,11 @@
         border-width: $tooltip-border-width;
         border-style: $tooltip-border-style; 
         border-color: $tooltip-border-color;
+        transition: opacity 1s;
+
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
     }
     ////////////////////////////////////////
     // Expanding headers

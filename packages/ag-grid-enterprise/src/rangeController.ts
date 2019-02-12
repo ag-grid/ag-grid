@@ -312,12 +312,12 @@ export class RangeController implements IRangeController {
         this.gridPanel.addScrollEventListener(this.bodyScrollListener);
         this.dragging = true;
 
-        const floatingTopBottom = this.gridPanel.getFloatingTopBottom();
+        const [eTop, eBottom] = this.gridPanel.getFloatingTopBottom();
         const target = mouseEvent.target as HTMLElement;
 
-        if (floatingTopBottom[0].contains(target)) {
+        if (eTop.contains(target)) {
             this.startedFrom = 'top';
-        } else if (floatingTopBottom[1].contains(target)) {
+        } else if (eBottom.contains(target)) {
             this.startedFrom = 'bottom';
         } else {
             this.startedFrom = 'body';
@@ -382,13 +382,13 @@ export class RangeController implements IRangeController {
 
         this.lastMouseEvent = mouseEvent;
 
-        const floatingTopBottom = this.gridPanel.getFloatingTopBottom();
+        const [eTop, eBottom] = this.gridPanel.getFloatingTopBottom();
         const target = mouseEvent.target as HTMLElement;
         let skipVerticalScroll = false;
 
         if (
-            (this.startedFrom === 'top' && floatingTopBottom[0].contains(target)) ||
-            (this.startedFrom === 'bottom' && floatingTopBottom[1].contains(target))
+            (this.startedFrom === 'top' && eTop.contains(target)) ||
+            (this.startedFrom === 'bottom' && eBottom.contains(target))
         ) {
             skipVerticalScroll = true;
         }
@@ -465,7 +465,6 @@ class AutoScrollService {
     }
 
     public check(mouseEvent: MouseEvent, skipVerticalScroll: boolean = false): void {
-
         // we don't do ticking if grid is auto height
         if (this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL) {
             return;
@@ -500,6 +499,7 @@ class AutoScrollService {
         const hScrollPosition = this.gridPanel.getHScrollPosition();
 
         let tickAmount: number;
+
         if (this.tickCount > 20) {
             tickAmount = 200;
         } else if (this.tickCount > 10) {
