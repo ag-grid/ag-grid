@@ -27,6 +27,11 @@ import {ITooltipAngularComp} from "ag-grid-angular";
                 border: 1px solid cornflowerblue;
                 overflow: hidden;
                 pointer-events: none;
+                transition: opacity 1s;
+            }
+
+            .custom-tooltip.ag-tooltip-hiding {
+                opacity: 0;
             }
 
             .custom-tooltip p {

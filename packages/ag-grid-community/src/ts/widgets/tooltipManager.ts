@@ -41,6 +41,7 @@ export class TooltipManager {
 
     public registerTooltip(targetCmp: TooltipTarget, el: HTMLElement, config?: TooltipConfig): void {
         targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp));
+        targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this));
         targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this));
 
         this.registeredComponents[targetCmp.getCompId()] = { tooltipComp: undefined, destroyFunc: undefined, config };

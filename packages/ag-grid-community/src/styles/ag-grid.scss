@@ -829,6 +829,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-tooltip {
     position: absolute;
     pointer-events: none;
+    z-index: 99999;
 }
 /**
  ****************************
