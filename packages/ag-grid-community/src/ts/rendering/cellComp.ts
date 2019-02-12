@@ -78,6 +78,8 @@ export class CellComp extends Component {
     private colsSpanning: Column[];
     private rowSpan: number;
 
+    private suppressRefreshCell = false;
+
     private tooltip: any;
 
     private scope: any = null;
@@ -414,9 +416,10 @@ export class CellComp extends Component {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean }) {
 
-        if (this.editingCell) {
-            return;
-        }
+        if (this.editingCell) { return; }
+
+        // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
+        if (this.suppressRefreshCell) { return; }
 
         const colDef = this.getComponentHolder();
         const newData = params && params.newData;
@@ -436,7 +439,7 @@ export class CellComp extends Component {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
-            const cellRendererRefreshed = (newData || suppressFlash) ? false : this.attemptCellRendererRefresh();
+            const cellRendererRefreshed = newData ? false : this.attemptCellRendererRefresh();
 
             // we do the replace if not doing refresh, or if refresh was unsuccessful.
             // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
@@ -445,12 +448,10 @@ export class CellComp extends Component {
                 this.replaceContentsAfterRefresh();
             }
 
-            if (!suppressFlash) {
-                const flashCell = this.beans.gridOptionsWrapper.isEnableCellChangeFlash()
-                    || colDef.enableCellChangeFlash;
-                if (flashCell) {
-                    this.flashCell();
-                }
+            const flashCell = !suppressFlash &&
+                (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || colDef.enableCellChangeFlash);
+            if (flashCell) {
+                this.flashCell();
             }
 
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
@@ -1859,8 +1860,13 @@ export class CellComp extends Component {
         this.setInlineEditingClass();
 
         if (newValueExists) {
+            // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
+            // getting triggered, which results in all cells getting refreshed. we do not want this refresh
+            // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
+            // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
+            this.suppressRefreshCell = true;
             this.rowNode.setDataValue(this.column, newValue);
-            this.getValueAndFormat();
+            this.suppressRefreshCell = false;
         }
 
         // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
@@ -1871,4 +1877,5 @@ export class CellComp extends Component {
         const event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
         this.beans.eventService.dispatchEvent(event);
     }
+
 }
