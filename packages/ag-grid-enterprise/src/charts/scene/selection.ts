@@ -65,13 +65,24 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         return new Selection([nodes == null ? [] : nodes], [undefined]);
     }
 
+    /**
+     * Creates new nodes, appends them to the nodes of this selection and returns them
+     * as a new selection. The created nodes inherit the datums and the parents of the nodes
+     * they replace.
+     * @param Class The constructor function to use to create the new nodes.
+     */
     append<N extends Node>(Class: new () => N): Selection<N, P, GDatum, GDatum> {
         return this.select<N>(node => {
             return node.appendChild(new Class());
         });
     }
 
-    appendFn<N extends Node>(creator: NodeSelector<N, G, GDatum>): Selection<N, P, GDatum, GDatum> {
+    /**
+     * Same as the {@link append}, but accepts a custom creator function with the
+     * {@link NodeSelector} signature rather than a constructor function.
+     * @param creator
+     */
+    private appendFn<N extends Node>(creator: NodeSelector<N, G, GDatum>): Selection<N, P, GDatum, GDatum> {
         return this.select<N>((node, data, index, group) => {
             return node.appendChild(creator(node, data, index, group));
         });
@@ -114,6 +125,10 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         return new Selection(subgroups, this.parents);
     }
 
+    /**
+     * Same as {@link select}, but uses the given {@param Class} (constructor) as a selector.
+     * @param Class The constructor function to use to find matching nodes.
+     */
     selectByClass<N extends Node>(Class: new () => N): Selection<N, P, GDatum, GDatum> {
         return this.select(node => {
             if (Node.isNode(node)) {
