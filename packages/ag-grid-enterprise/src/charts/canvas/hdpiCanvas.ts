@@ -107,11 +107,11 @@ export class HdpiCanvas {
         canvas.style.width = Math.round(width) + 'px';
         canvas.style.height = Math.round(height) + 'px';
 
-        canvas.getContext('2d')!.resetTransform();
+        this.context.resetTransform();
     }
 
     // 2D canvas context for measuring text.
-    private static readonly ctx: CanvasRenderingContext2D = (() => {
+    private static readonly textContext: CanvasRenderingContext2D = (() => {
         const canvas = document.createElement('canvas');
         return canvas.getContext('2d')!;
     })();
@@ -149,15 +149,15 @@ export class HdpiCanvas {
     };
 
     static readonly supports = Object.freeze({
-        textMetrics: HdpiCanvas.ctx.measureText('test')
+        textMetrics: HdpiCanvas.textContext.measureText('test')
             .actualBoundingBoxDescent !== undefined,
-        getTransform: HdpiCanvas.ctx.getTransform !== undefined
+        getTransform: HdpiCanvas.textContext.getTransform !== undefined
     });
 
     static measureText(text: string, font: string,
                        textBaseline: CanvasTextBaseline,
                        textAlign: CanvasTextAlign): TextMetrics {
-        const ctx = HdpiCanvas.ctx;
+        const ctx = HdpiCanvas.textContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
         ctx.textAlign = textAlign;
@@ -171,8 +171,8 @@ export class HdpiCanvas {
      */
     static getTextSize(text: string, font: string): Size {
         if (HdpiCanvas.supports.textMetrics) {
-            HdpiCanvas.ctx.font = font;
-            const metrics = HdpiCanvas.ctx.measureText(text);
+            HdpiCanvas.textContext.font = font;
+            const metrics = HdpiCanvas.textContext.measureText(text);
 
             return {
                 width: metrics.width,
