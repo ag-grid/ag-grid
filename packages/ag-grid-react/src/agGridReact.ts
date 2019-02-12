@@ -119,7 +119,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
-                if (this.skipPropertyCheck(propKey) ||
+                if (this.skipPropertyCheck(propKey, nextProps) ||
                     !this.areEquivalent(this.props[propKey], nextProps[propKey])) {
 
                     if (debugLogging) {
@@ -149,8 +149,8 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
     }
 
-    private skipPropertyCheck(propKey) {
-        return this.props['deltaRowDataMode'] && propKey === 'rowData';
+    private skipPropertyCheck(propKey, nextProps) {
+        return this.props['deltaRowDataMode'] && propKey === 'rowData' && this.props.rowData === nextProps.rowData;
     }
 
     componentWillUnmount() {
