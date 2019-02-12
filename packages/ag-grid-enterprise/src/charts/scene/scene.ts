@@ -185,6 +185,9 @@ export class Scene {
 
         this._frameIndex++;
         if (this.isRenderFrameIndex) {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, 40, 15);
+            ctx.fillStyle = 'black';
             ctx.fillText(this.frameIndex.toString(), 0, 10);
         }
 
