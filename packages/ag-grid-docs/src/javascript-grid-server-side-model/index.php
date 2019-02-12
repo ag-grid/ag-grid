@@ -13,7 +13,6 @@ include '../documentation-main/documentation_header.php';
     operations such as grouping, filtering and pivoting.
 </p>
 
-
 <h2>Overview</h2>
 
 <p>
@@ -21,6 +20,18 @@ include '../documentation-main/documentation_header.php';
     the server to the client? As a developer using ag-Grid you won't need to switch between grids based on the
     answer to this question, instead just select the appropriate Row Model used by the grid.
 </p>
+
+<note>
+    <p>
+        Also see our guides which provide reference implementations for numerous data sources:
+    <ul>
+        <li><a href="../nodejs-server-side-operations/">Node.js connecting to MySQL</a></li>
+        <li><a href="../graphql-server-side-operations/">GraphQL connecting to MySQL</a></li>
+        <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
+        <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
+    </ul>
+    </p>
+</note>
 
 <h4>Client-side Row Model</h4>
 

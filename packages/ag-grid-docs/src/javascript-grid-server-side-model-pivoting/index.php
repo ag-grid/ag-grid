@@ -137,45 +137,6 @@ include '../documentation-main/documentation_header.php';
     <code>toolPanelSuppressValues=true</code>.
 </p>
 
-<h2>Example - Slice and Dice - Real Server</h2>
-
-<p>
-    It is not possible to put up a full end to end example of the Server-side Row Model
-    on the documentation website, as we cannot host servers on our website.
-    Instead we have put a full end to end example
-    in Github at <a href="https://github.com/ag-grid/ag-grid-enterprise-mysql-example/">
-    https://github.com/ag-grid/ag-grid-enterprise-mysql-sample/</a>.
-</p>
-
-<p>
-    The example puts all the olympic winners data into a MySQL database and creates SQL
-    on the fly based on what the user is querying. This is a full end to end example of
-    the type of slicing and dicing we want ag-Grid to be able to do in your enterprise
-    applications.
-</p>
-
-<p>
-    The example does not demonstrate pivoting. This is because pivot is not easily achievable in
-    MySQL.
-</p>
-
-<p>
-    You can also check out these guides on connecting to other data sources:
-    <ul>
-        <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
-        <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
-    </ul>
-</p>
-
-<note>
-    The example is provided to show what logic you will need on the server-side. It is
-    provided 'as is' and we hope you find it useful. It is not provided as part of the
-    ag-Grid Enterprise product, and as such it is not something we intend to enhance
-    and support. It is our intention for ag-Grid users to create their own server-side
-    connectors to connect into their bespoke data stores. In the future, depending on
-    customer demand, we may provide connectors to server-side stores.
-</note>
-
 <h2>Next Up</h2>
 
 <p>
