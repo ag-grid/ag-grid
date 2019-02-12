@@ -324,7 +324,9 @@ export default connect(
     </snippet>
     <h3 id="context-api">React Context API</h3>
     <p>If you're using the new React Context API then you can access the context in the components used within the grid.</p>
-    
+
+    <p>Note: You'll need to be using <a href="#react-portals">React Portals</a> and <code>reactNext</code> if you wish to you the new React Context API.</p>
+
     <p>First, let's create a context we can use in our components:</p>
     
     <snippet>
@@ -355,6 +357,9 @@ class StyledRenderer extends Component {
     <p>You can find a fully working example at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
 The Simple Redux Example makes use of <code>reactNext</code> together with <code>Redux</code>.</p>
 
+    <h2 id="react-hooks">React Hooks</h2>
+    <p>React Hooks are fully supported - please refer to our working example in <a
+                href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
 <div class="card" style="background-color: aliceblue">
   <div class="card-body">
 <h2 id="angular-grid-resources" style="margin-top: 10px"> 
