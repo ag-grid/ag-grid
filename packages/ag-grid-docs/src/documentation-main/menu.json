@@ -108,6 +108,10 @@
         },
         "items": [
           {
+            "title": "Using Node.js & MySQL",
+            "url": "nodejs-server-side-operations/"
+          },
+          {
             "title": "Using GraphQL & MySQL",
             "url": "graphql-server-side-operations/"
           },
