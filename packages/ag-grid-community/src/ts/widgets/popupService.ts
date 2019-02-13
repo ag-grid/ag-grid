@@ -332,7 +332,7 @@ export class PopupService {
         const ePopupParent = this.getPopupParent();
 
         const popupAlreadyShown = _.isVisible(eChild);
-        if (popupAlreadyShown && (eChild as HTMLElement).parentNode === ePopupParent) {
+        if (popupAlreadyShown && ePopupParent.contains(eChild)) {
             return () => {};
         }
 
