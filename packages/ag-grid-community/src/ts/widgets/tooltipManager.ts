@@ -52,6 +52,7 @@ export class TooltipManager {
     private unregisterTooltip(targetCmp: TooltipTarget): void {
         const id = targetCmp.getCompId();
 
+        // hide the tooltip if it's being displyed while unregistering the component
         if (this.activeComponent === targetCmp) {
             this.hideTooltip();
         }
@@ -62,12 +63,18 @@ export class TooltipManager {
         let delay = this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT;
 
         if (this.activeComponent) {
+            // lastHoveredComponent will be the activeComponent when we are hovering
+            // a component with many child elements like the grid header
             if (this.lastHoveredComponent === this.activeComponent) { return; }
+
             delay = 0;
             this.hideTooltip();
         }
 
         this.clearTimers();
+
+        // lastHoveredComponet will be the targetCmp when a click hid the tooltip
+        // and the lastHoveredComponent has many child elements
         if (this.lastHoveredComponent === targetCmp) { return; }
 
         this.lastHoveredComponent = targetCmp;
@@ -79,6 +86,8 @@ export class TooltipManager {
         const relatedTarget = e.relatedTarget as HTMLElement;
 
         if (!activeComponent) {
+            // when a click hides the tooltip we need to reset the lastHoveredComponent
+            // otherwise the tooltip won't appear until another registered component is hovered.
             if (this.lastHoveredComponent && !this.lastHoveredComponent.getGui().contains(relatedTarget)) {
                 this.lastHoveredComponent = undefined;
             }
@@ -86,6 +95,7 @@ export class TooltipManager {
             return;
         }
 
+        // the mouseout was called from within the activeComponent so we do nothing
         if (activeComponent.getGui().contains(relatedTarget)) {
             return;
         }
