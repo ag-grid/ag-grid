@@ -28,11 +28,13 @@ export class TooltipManager {
     private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
     private readonly MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
     private readonly MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = 2000;
+    private readonly HIDE_SHOW_ONLY = true;
 
     private showTimeoutId: number = 0;
     private hideTimeoutId: number = 0;
     private activeComponent: TooltipTarget | undefined;
     private lastHoveredComponent: TooltipTarget | undefined;
+    private lastMouseEvent: MouseEvent | undefined;
 
     // map of compId to [tooltip component, close function]
     private registeredComponents: { [key: string]: RegisteredComponent } = {};
@@ -42,6 +44,7 @@ export class TooltipManager {
         const id = targetCmp.getCompId();
 
         targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp));
+        targetCmp.addDestroyableEventListener(el, 'mousemove', (e) => this.processMouseMove(e));
         targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this));
         targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this));
 
@@ -67,11 +70,10 @@ export class TooltipManager {
             // a component with many child elements like the grid header
             if (this.lastHoveredComponent === this.activeComponent) { return; }
 
-            delay = 0;
-            this.hideTooltip();
+            delay = 200;
         }
 
-        this.clearTimers();
+        this.clearTimers(this.HIDE_SHOW_ONLY);
 
         // lastHoveredComponent will be the targetCmp when a click hid the tooltip
         // and the lastHoveredComponent has many child elements
@@ -107,10 +109,18 @@ export class TooltipManager {
         this.hideTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.MOUSEOUT_HIDE_TOOLTIP_TIMEOUT);
     }
 
+    private processMouseMove(e: MouseEvent): void {
+        // there is a delay from the time we mouseOver a component and the time the
+        // tooltip is displayed, so we need to track mousemove to be able to correctly
+        // position the tootip when showTooltip is called.
+        this.lastMouseEvent = e;
+    }
+
     private showTooltip(e: MouseEvent): void {
         const targetCmp = this.lastHoveredComponent;
         const cell = targetCmp as CellComp;
         const registeredComponent = this.registeredComponents[targetCmp.getCompId()];
+        this.hideTooltip();
 
         const params: ITooltipParams = {
             colDef: targetCmp.getComponentHolder(),
@@ -141,8 +151,9 @@ export class TooltipManager {
 
             this.popupService.positionPopupUnderMouseEvent({
                 type: 'tooltip',
-                mouseEvent: e,
-                ePopup: eGui
+                mouseEvent: this.lastMouseEvent,
+                ePopup: eGui,
+                nudgeY: 18
             });
         });
     }
@@ -170,15 +181,15 @@ export class TooltipManager {
         delete registeredComponent.tooltipComp;
     }
 
-    private clearTimers(): void {
-        if (this.hideTimeoutId) {
+    private clearTimers(showOnly: boolean = false): void {
+        if (this.hideTimeoutId && !showOnly) {
             window.clearTimeout(this.hideTimeoutId);
+            this.hideTimeoutId = 0;
         }
 
         if (this.showTimeoutId) {
             window.clearTimeout(this.showTimeoutId);
+            this.showTimeoutId = 0;
         }
-
-        this.showTimeoutId = this.hideTimeoutId = 0;
     }
 }

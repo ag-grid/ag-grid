@@ -104,14 +104,19 @@ export class PopupService {
         column?: Column,
         type: string,
         mouseEvent: MouseEvent | Touch,
+        nudgeX?: number,
+        nudgeY?: number,
         ePopup: HTMLElement,
     }): void {
 
         const {x, y} = this.calculatePointerAlign(params.mouseEvent);
+        const { ePopup, nudgeX, nudgeY} = params;
         this.positionPopup({
-            ePopup: params.ePopup,
+            ePopup: ePopup,
             x,
             y,
+            nudgeX,
+            nudgeY,
             keepWithinBounds: true
         });
 
