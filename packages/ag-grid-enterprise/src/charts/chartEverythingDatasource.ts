@@ -31,8 +31,22 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
 
     private rows: RowNode[];
 
+    private errors: string[] = [];
+
     constructor() {
         super();
+    }
+
+    public getErrors(): string[] {
+        return this.errors;
+    }
+
+    private addError(error: string): void {
+        this.errors.push(error);
+    }
+
+    private clearErrors(): void {
+        this.errors = [];
     }
 
     @PostConstruct
@@ -44,11 +58,13 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
 
         this.reset();
 
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onModelUpdated.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onModelUpdated.bind(this));
     }
 
     private reset(): void {
+        this.clearErrors();
         this.calculateFields();
         this.calculateCategoryCols();
         this.calculateRowCount();
@@ -60,10 +76,6 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
 
     private calculateCategoryCols(): void {
         this.categoryCols = [];
-
-        if (this.columnController.isPivotActive()) {
-            console.warn('ag-Grid: ChartEverythingDatasource doesnt handle pivot mode yet');
-        }
 
         const isDimension = (col:Column) => col.getColDef().enableRowGroup || col.getColDef().enablePivot;
 
@@ -80,7 +92,6 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
     }
 
     private onModelUpdated(): void {
-        console.log('onModelUpdated');
         this.reset();
         this.dispatchEvent({type: 'modelUpdated'});
     }

@@ -12,25 +12,25 @@ export class PopupWindow extends Component {
                 <span ref="eClose" (click)="onBtClose" class="ag-popup-window-close" style="margin: 2px; border: 1px solid grey; border-radius: 2px;">X</span>
                 <span ref="eTitle" class="ag-popup-window-title" style="padding: 2px;">New Chart</span>
             </div>
-            <div ref=eContentWrapper class="ag-popup-window-content-wrapper"></div>
+            <div ref="eContentWrapper" class="ag-popup-window-content-wrapper"></div>
         </div>`;
 
     public static DESTROY_EVENT = 'destroy';
 
-    @Autowired('context') private context: Context;
+    @Autowired('context') protected context: Context;
     @Autowired('popupService') private popupService: PopupService;
 
-    @RefSelector('eContentWrapper')
-    private eContentWrapper: HTMLElement;
+    @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;
+    @RefSelector('eTitle') private eTitle: HTMLElement;
 
-    private closePopup: () => void;
+    protected closePopup: () => void;
 
     constructor() {
         super(PopupWindow.TEMPLATE);
     }
 
     @PostConstruct
-    private postConstruct() {
+    protected postConstruct() {
         this.instantiate(this.context);
 
         // need to show filter before positioning, as only after filter
@@ -45,6 +45,10 @@ export class PopupWindow extends Component {
 
     public setBody(eBody: HTMLElement) {
         this.eContentWrapper.appendChild(eBody);
+    }
+
+    public setTitle(title: string) {
+        this.eTitle.innerText = title;
     }
 
     // called when user hits the 'x' in the top right

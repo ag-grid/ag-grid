@@ -33,9 +33,23 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
     private endRow: number;
     private rowCount: number;
 
+    private errors: string[] = [];
+
     constructor(rangeSelection: RangeSelection) {
         super();
         this.rangeSelection = rangeSelection;
+    }
+
+    public getErrors(): string[] {
+        return this.errors;
+    }
+
+    private addError(error: string): void {
+        this.errors.push(error);
+    }
+
+    private clearErrors(): void {
+        this.errors = [];
     }
 
     @PostConstruct
@@ -43,6 +57,9 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
         this.calculateFields();
         this.calculateRowRange();
         this.calculateCategoryCols();
+
+        console.log(`colIds`, this.colIds);
+        console.log(`categoryCols`, this.categoryCols);
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onModelUpdated.bind(this));
@@ -75,6 +92,10 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
             });
         }
 
+        // if still no dimension, then this is an error
+        if (this.categoryCols.length===0) {
+            this.errors.push('No dimension column found on which to build chart.');
+        }
     }
 
     private onModelUpdated(): void {
@@ -98,17 +119,19 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
     }
 
     private calculateFields(): void {
-        const cols = this.rangeSelection.columns;
 
         this.colIds = [];
         this.colDisplayNames = [];
         this.colsMapped = {};
 
-        if (!cols) { return; }
+        const colsInRange = this.rangeSelection.columns || [];
+        const valueColumnsInRange = colsInRange.filter( col => col.getColDef().enableValue);
 
-        cols.forEach( col => {
-            // only measure columns can be values
-            if (!col.getColDef().enableValue) { return; }
+        if (valueColumnsInRange.length===0) {
+            this.addError('You need to have at least one value column selected in the range to chart.');
+        }
+
+        valueColumnsInRange.forEach( col => {
 
             const colId = col.getColId();
             const displayName = this.columnController.getDisplayNameForColumn(col, 'chart');
