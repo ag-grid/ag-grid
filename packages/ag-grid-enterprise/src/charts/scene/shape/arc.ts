@@ -8,7 +8,7 @@ import {BBox, isPointInBBox} from "../bbox";
 export class Arc extends Shape {
 
     static create(centerX: number, centerY: number, radiusX: number, radiusY: number,
-                startAngle: number, endAngle: number, anticlockwise = false): Arc {
+                  startAngle: number, endAngle: number, isCounterClockwise = false): Arc {
         const arc = new Arc();
 
         arc.centerX = centerX;
@@ -17,7 +17,7 @@ export class Arc extends Shape {
         arc.radiusY = radiusY;
         arc.startAngle = startAngle;
         arc.endAngle = endAngle;
-        arc.anticlockwise = anticlockwise;
+        arc.isCounterClockwise = isCounterClockwise;
 
         return arc;
     }
@@ -32,24 +32,24 @@ export class Arc extends Shape {
      * are changed, we don't have to update the path. The `dirtyFlag`
      * is how we keep track if the path has to be updated or not.
      */
-    private _dirtyPath = true;
-    set dirtyPath(value: boolean) {
-        if (this._dirtyPath !== value) {
-            this._dirtyPath = value;
+    private _isDirtyPath = true;
+    set isDirtyPath(value: boolean) {
+        if (this._isDirtyPath !== value) {
+            this._isDirtyPath = value;
             if (value) {
-                this.dirty = true;
+                this.isDirty = true;
             }
         }
     }
-    get dirtyPath(): boolean {
-        return this._dirtyPath;
+    get isDirtyPath(): boolean {
+        return this._isDirtyPath;
     }
 
     private _centerX: number = 0;
     set centerX(value: number) {
         if (this._centerX !== value) {
             this._centerX = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get centerX(): number {
@@ -60,7 +60,7 @@ export class Arc extends Shape {
     set centerY(value: number) {
         if (this._centerY !== value) {
             this._centerY = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get centerY(): number {
@@ -71,7 +71,7 @@ export class Arc extends Shape {
     set radiusX(value: number) {
         if (this._radiusX !== value) {
             this._radiusX = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get radiusX(): number {
@@ -82,7 +82,7 @@ export class Arc extends Shape {
     set radiusY(value: number) {
         if (this._radiusY !== value) {
             this._radiusY = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get radiusY(): number {
@@ -93,7 +93,7 @@ export class Arc extends Shape {
     set startAngle(value: number) {
         if (this._startAngle !== value) {
             this._startAngle = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get startAngle(): number {
@@ -104,22 +104,22 @@ export class Arc extends Shape {
     set endAngle(value: number) {
         if (this._endAngle !== value) {
             this._endAngle = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get endAngle(): number {
         return this._endAngle;
     }
 
-    private _anticlockwise: boolean = false;
-    set anticlockwise(value: boolean) {
-        if (this._anticlockwise !== value) {
-            this._anticlockwise = value;
-            this.dirtyPath = true;
+    private _isCounterClockwise: boolean = false;
+    set isCounterClockwise(value: boolean) {
+        if (this._isCounterClockwise !== value) {
+            this._isCounterClockwise = value;
+            this.isDirtyPath = true;
         }
     }
-    get anticlockwise(): boolean {
-        return this._anticlockwise;
+    get isCounterClockwise(): boolean {
+        return this._isCounterClockwise;
     }
 
     set startAngleDeg(value: number) {
@@ -137,7 +137,7 @@ export class Arc extends Shape {
     }
 
     updatePath() {
-        if (!this.dirtyPath)
+        if (!this.isDirtyPath)
             return;
 
         const path = this.path;
@@ -148,24 +148,24 @@ export class Arc extends Shape {
         // where you can specify two radii and rotation, while Path2D's `arc` method simply produces
         // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
         // maybe it's because we have to create a new instance of it on each render, who knows...
-        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.anticlockwise ? 1 : 0);
+        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.isCounterClockwise ? 1 : 0);
         path.closePath();
 
-        this.dirtyPath = false;
+        this.isDirtyPath = false;
     }
 
-    private getPlainBBox(): BBox {
+    readonly getBBox = () => {
         return {
             x: this.centerX - this.radiusX,
             y: this.centerY - this.radiusY,
             width: this.radiusX * 2,
             height: this.radiusY * 2
         };
-    }
+    };
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
-        const bbox = this.getPlainBBox();
+        const bbox = this.getBBox();
 
         return isPointInBBox(bbox, point.x, point.y)
             && this.path.isPointInPath(point.x, point.y);
@@ -180,7 +180,7 @@ export class Arc extends Shape {
             return;
         }
 
-        if (this.dirtyTransform) {
+        if (this.isDirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -196,6 +196,6 @@ export class Arc extends Shape {
             ctx.stroke();
         }
 
-        this.dirty = false;
+        this.isDirty = false;
     }
 }

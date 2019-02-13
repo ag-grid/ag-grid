@@ -11,12 +11,14 @@ export class SvgPath extends Shape {
         if (this._path !== value) {
             this._path = value;
             this.path2d.setFromString(value);
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get path(): string {
         return this._path;
     }
+
+    readonly getBBox = undefined;
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
@@ -33,7 +35,7 @@ export class SvgPath extends Shape {
             return;
         }
 
-        if (this.dirtyTransform) {
+        if (this.isDirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -48,6 +50,6 @@ export class SvgPath extends Shape {
             ctx.stroke();
         }
 
-        this.dirty = false;
+        this.isDirty = false;
     }
 }

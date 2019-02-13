@@ -2,7 +2,6 @@ import {HdpiCanvas} from "../canvas/hdpiCanvas";
 import {Node} from "./node";
 import {Path2D} from "./path2D";
 import {Shape} from "./shape/shape";
-import {Group} from "./group";
 
 export class Scene {
     constructor(width = 800, height = 600) {
@@ -89,15 +88,15 @@ export class Scene {
         [this._width, this._height] = value;
     }
 
-    _dirty = false;
-    set dirty(dirty: boolean) {
-        if (dirty && !this._dirty) {
+    _isDirty = false;
+    set isDirty(dirty: boolean) {
+        if (dirty && !this._isDirty) {
             requestAnimationFrame(this.render);
         }
-        this._dirty = dirty;
+        this._isDirty = dirty;
     }
-    get dirty(): boolean {
-        return this._dirty;
+    get isDirty(): boolean {
+        return this._isDirty;
     }
 
     _root: Node | null = null;
@@ -119,7 +118,7 @@ export class Scene {
             node._setScene(this);
         }
 
-        this.dirty = true;
+        this.isDirty = true;
     }
     get root(): Node | null {
         return this._root;
@@ -160,11 +159,11 @@ export class Scene {
         return this._frameIndex;
     }
 
-    _isRenderFrameIndex = true;
+    _isRenderFrameIndex = false;
     set isRenderFrameIndex(value: boolean) {
         if (this._isRenderFrameIndex !== value) {
             this._isRenderFrameIndex = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get isRenderFrameIndex(): boolean {
@@ -179,7 +178,9 @@ export class Scene {
 
         if (this.root) {
             ctx.save();
-            this.root.render(ctx);
+            if (this.root.isVisible) {
+                this.root.render(ctx);
+            }
             ctx.restore();
         }
 
@@ -191,6 +192,6 @@ export class Scene {
             ctx.fillText(this.frameIndex.toString(), 0, 10);
         }
 
-        this.dirty = false;
+        this.isDirty = false;
     };
 }

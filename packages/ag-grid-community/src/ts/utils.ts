@@ -1268,7 +1268,8 @@ export class Utils {
     static isBrowserChrome(): boolean {
         if (this.isChrome === undefined) {
             const win = window as any;
-            this.isChrome = !!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime);
+            this.isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
+                            (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
         }
         return this.isChrome;
     }

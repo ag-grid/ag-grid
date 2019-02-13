@@ -1,5 +1,6 @@
 import {Scene} from "./scene";
 import {Matrix} from "./matrix";
+import {BBox} from "./bbox";
 
 /**
  * Abstract scene graph node.
@@ -113,7 +114,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             node._setScene(this.scene);
         }
 
-        this.dirty = true;
+        this.isDirty = true;
     }
 
     appendChild<T extends Node>(node: T): T {
@@ -134,7 +135,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         node._setParent(this);
         node._setScene(this.scene);
 
-        this.dirty = true;
+        this.isDirty = true;
 
         return node;
     }
@@ -148,7 +149,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                 delete this.childSet[node.id];
                 node._setParent(null);
                 node._setScene(null);
-                this.dirty = true;
+                this.isDirty = true;
 
                 return node;
             }
@@ -184,9 +185,8 @@ export abstract class Node { // Don't confuse with `window.Node`.
                     + `but is not in its list of children.`);
             }
 
-            this.dirty = true;
-        }
-        else {
+            this.isDirty = true;
+        } else {
             this.append(node);
         }
 
@@ -218,24 +218,24 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     // TODO: should this be `true` by default as well?
-    private _dirtyTransform = false;
-    set dirtyTransform(value: boolean) {
-        this._dirtyTransform = value;
+    private _isDirtyTransform = false;
+    set isDirtyTransform(value: boolean) {
+        this._isDirtyTransform = value;
         // TODO: replace this with simply `this.dirty = true`,
         //       see `set dirty` method.
         if (value) {
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
-    get dirtyTransform(): boolean {
-        return this._dirtyTransform;
+    get isDirtyTransform(): boolean {
+        return this._isDirtyTransform;
     }
 
     private _scalingX: number = 1;
     set scalingX(value: number) {
         if (this._scalingX !== value) {
             this._scalingX = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get scalingX(): number {
@@ -246,7 +246,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set scalingY(value: number) {
         if (this._scalingY !== value) {
             this._scalingY = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get scalingY(): number {
@@ -263,7 +263,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set scalingCenterX(value: number | null) {
         if (this._scalingCenterX !== value) {
             this._scalingCenterX = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get scalingCenterX(): number | null {
@@ -274,7 +274,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set scalingCenterY(value: number | null) {
         if (this._scalingCenterY !== value) {
             this._scalingCenterY = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get scalingCenterY(): number | null {
@@ -285,7 +285,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set rotationCenterX(value: number | null) {
         if (this._rotationCenterX !== value) {
             this._rotationCenterX = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get rotationCenterX(): number | null {
@@ -296,7 +296,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set rotationCenterY(value: number | null) {
         if (this._rotationCenterY !== value) {
             this._rotationCenterY = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get rotationCenterY(): number | null {
@@ -304,19 +304,33 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     /**
-     * Rotation in radians.
+     * Rotation angle in radians.
+     * The value is set as is. No normalization to the [-180, 180) or [0, 360)
+     * interval is performed.
      */
     private _rotation: number = 0;
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get rotation(): number {
         return this._rotation;
     }
 
+    /**
+     * For performance reasons the rotation angle's internal representation
+     * is in radians. Therefore, don't expect to get the same number you set.
+     * Even with integer angles about a quarter of them from 0 to 359 cannot
+     * be converted to radians and back without precision loss.
+     * For example:
+     *
+     *     node.rotationDeg = 11;
+     *     console.log(node.rotationDeg); // 10.999999999999998
+     *
+     * @param value Rotation angle in degrees.
+     */
     set rotationDeg(value: number) {
         this.rotation = value / 180 * Math.PI;
     }
@@ -328,7 +342,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set translationX(value: number) {
         if (this._translationX !== value) {
             this._translationX = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get translationX(): number {
@@ -339,11 +353,24 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set translationY(value: number) {
         if (this._translationY !== value) {
             this._translationY = value;
-            this.dirtyTransform = true;
+            this.isDirtyTransform = true;
         }
     }
     get translationY(): number {
         return this._translationY;
+    }
+
+    abstract readonly getBBox?: () => BBox;
+
+    getBBoxCenter(): [number, number] {
+        const bbox = this.getBBox && this.getBBox();
+        if (bbox) {
+            return [
+                bbox.x + bbox.width * 0.5,
+                bbox.y + bbox.height * 0.5
+            ];
+        }
+        return [0, 0];
     }
 
     protected computeTransformMatrix() {
@@ -365,8 +392,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         if (sx === 1 && sy === 1) {
             scx = 0;
             scy = 0;
-        }
-        else {
+        } else {
             scx = this.scalingCenterX === null ? bbcx : this.scalingCenterX;
             scy = this.scalingCenterY === null ? bbcy : this.scalingCenterY;
         }
@@ -380,8 +406,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         if (r === 0) {
             rcx = 0;
             rcy = 0;
-        }
-        else {
+        } else {
             rcx = this.rotationCenterX === null ? bbcx : this.rotationCenterX;
             rcy = this.rotationCenterY === null ? bbcy : this.rotationCenterY;
         }
@@ -406,7 +431,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         const tx4 = scx * (1 - sx) - rcx;
         const ty4 = scy * (1 - sy) - rcy;
 
-        this.dirtyTransform = false;
+        this.isDirtyTransform = false;
 
         this.matrix.setElements([
             cos * sx, sin * sx,
@@ -426,33 +451,43 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     /**
      * Each time a property of the node that effects how it renders changes
-     * the `dirty` property of the node should be set to `true`. The
-     * change to the `dirty` property of the node will propagate up to its
-     * parents and eventually to the scene, at which point an animation frame
-     * callback will be scheduled to rerender the scene and its nodes and reset
-     * the `dirty` flags of all nodes and the scene back to `false`.
-     * Since we don't render changes to node properties immediately, we can
-     * set as many as we like and the rendering will still only happen once
-     * on the next animation frame callback.
-     * The animation frame callback is only scheduled, if it hasn't been already.
+     * the `isDirty` property of the node should be set to `true`. The change
+     * to the `isDirty` property of the node will propagate up to its parents
+     * and eventually to the scene, at which point an animation frame callback
+     * will be scheduled to rerender the scene and its nodes and reset the `isDirty`
+     * flags of all nodes and the {@link Scene._isDirty | Scene} back to `false`.
+     * Since changes to node properties are not rendered immediately, it's possible
+     * to change as many properties on as many nodes as needed and the rendering
+     * will still only happen once in the next animation frame callback.
+     * The animation frame callback is only scheduled if it hasn't been already.
      */
-    private _dirty = true;
-    set dirty(dirty: boolean) {
-        // TODO: check if we are already dirty (e.g. if (this._dirty !== dirty))
+    private _isDirty = true;
+    set isDirty(value: boolean) {
+        // TODO: check if we are already dirty (e.g. if (this._isDirty !== value))
         //       if we are, then all parents and the scene have been
         //       notified already, and we are doing redundant work
         //       (but test if this is indeed the case)
-        this._dirty = dirty;
-        if (dirty) {
+        this._isDirty = value;
+        if (value) {
             if (this.parent) {
-                this.parent.dirty = true;
-            }
-            else if (this.scene) {
-                this.scene.dirty = true;
+                this.parent.isDirty = true;
+            } else if (this.scene) {
+                this.scene.isDirty = true;
             }
         }
     }
-    get dirty(): boolean {
-        return this._dirty;
+    get isDirty(): boolean {
+        return this._isDirty;
+    }
+
+    private _isVisible: boolean = true;
+    set isVisible(value: boolean) {
+        if (this._isVisible !== value) {
+            this._isVisible = value;
+            this.isDirty = true;
+        }
+    }
+    get isVisible(): boolean {
+        return this._isVisible;
     }
 }

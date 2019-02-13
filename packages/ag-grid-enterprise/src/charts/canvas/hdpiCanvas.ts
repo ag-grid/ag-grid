@@ -178,8 +178,7 @@ export class HdpiCanvas {
                 width: metrics.width,
                 height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
             };
-        }
-        else {
+        } else {
             return HdpiCanvas.measureSvgText(text, font);
         }
     }
@@ -198,8 +197,7 @@ export class HdpiCanvas {
             if (size) {
                 return size;
             }
-        }
-        else {
+        } else {
             cache[font] = {};
         }
 

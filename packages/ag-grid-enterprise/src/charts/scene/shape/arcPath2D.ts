@@ -14,7 +14,7 @@ export class Arc extends Shape {
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get x(): number {
@@ -25,7 +25,7 @@ export class Arc extends Shape {
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get y(): number {
@@ -36,7 +36,7 @@ export class Arc extends Shape {
     set radius(value: number) {
         if (this._radius !== value) {
             this._radius = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get radius(): number {
@@ -47,7 +47,7 @@ export class Arc extends Shape {
     set startAngle(value: number) {
         if (this._startAngle !== value) {
             this._startAngle = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get startAngle(): number {
@@ -58,28 +58,30 @@ export class Arc extends Shape {
     set endAngle(value: number) {
         if (this._endAngle !== value) {
             this._endAngle = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get endAngle(): number {
         return this._endAngle;
     }
 
-    private _anticlockwise: boolean = false;
-    set anticlockwise(value: boolean) {
-        if (this._anticlockwise !== value) {
-            this._anticlockwise = value;
-            this.dirty = true;
+    private _isCounterClockwise: boolean = false;
+    set isCounterClockwise(value: boolean) {
+        if (this._isCounterClockwise !== value) {
+            this._isCounterClockwise = value;
+            this.isDirty = true;
         }
     }
-    get anticlockwise(): boolean {
-        return this._anticlockwise;
+    get isCounterClockwise(): boolean {
+        return this._isCounterClockwise;
     }
+
+    readonly getBBox = undefined;
 
     updatePath() {
         this.path = new Path2D();
         // No way to clear existing Path2D, have to create a new one each time.
-        this.path.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise);
+        this.path.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.isCounterClockwise);
         this.path.closePath();
     }
 
@@ -111,6 +113,6 @@ export class Arc extends Shape {
         // About 15% performance loss for re-creating and retaining a Path2D
         // object for hit testing.
 
-        this.dirty = false;
+        this.isDirty = false;
     }
 }
