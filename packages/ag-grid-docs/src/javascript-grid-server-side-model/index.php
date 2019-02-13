@@ -26,8 +26,8 @@ include '../documentation-main/documentation_header.php';
         Also see our guides which provide reference implementations for numerous data sources:
     <ul>
         <li><a href="../nodejs-server-side-operations/">Node.js connecting to MySQL</a></li>
-        <li><a href="../graphql-server-side-operations/">GraphQL connecting to MySQL</a></li>
         <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
+        <li><a href="../graphql-server-side-operations/">GraphQL connecting to MySQL</a></li>
         <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
     </ul>
     </p>
