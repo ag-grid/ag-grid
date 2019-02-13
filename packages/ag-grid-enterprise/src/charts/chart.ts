@@ -201,8 +201,7 @@ export class Chart {
                     gradient.addColorStop(0, color[0]);
                     gradient.addColorStop(1, color[1]);
                     ctx.fillStyle = gradient;
-                }
-                else {
+                } else {
                     ctx.fillStyle = color;
                 }
                 ctx.fillRect(x, y, barWidth, seriesHeight - y);

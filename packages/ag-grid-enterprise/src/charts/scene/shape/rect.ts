@@ -18,24 +18,24 @@ export class Rect extends Shape {
 
     protected path = new Path2D();
 
-    private _dirtyPath = true;
-    set dirtyPath(value: boolean) {
-        if (this._dirtyPath !== value) {
-            this._dirtyPath = value;
+    private _isDirtyPath = true;
+    set isDirtyPath(value: boolean) {
+        if (this._isDirtyPath !== value) {
+            this._isDirtyPath = value;
             if (value) {
-                this.dirty = true;
+                this.isDirty = true;
             }
         }
     }
-    get dirtyPath(): boolean {
-        return this._dirtyPath;
+    get isDirtyPath(): boolean {
+        return this._isDirtyPath;
     }
 
     private _x: number = 0;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get x(): number {
@@ -46,7 +46,7 @@ export class Rect extends Shape {
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get y(): number {
@@ -57,7 +57,7 @@ export class Rect extends Shape {
     set width(value: number) {
         if (this._width !== value) {
             this._width = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get width(): number {
@@ -68,7 +68,7 @@ export class Rect extends Shape {
     set height(value: number) {
         if (this._height !== value) {
             this._height = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get height(): number {
@@ -79,7 +79,7 @@ export class Rect extends Shape {
     set radius(value: number) {
         if (this._radius !== value) {
             this._radius = value;
-            this.dirtyPath = true;
+            this.isDirtyPath = true;
         }
     }
     get radius(): number {
@@ -87,7 +87,7 @@ export class Rect extends Shape {
     }
 
     updatePath() {
-        if (!this.dirtyPath)
+        if (!this.isDirtyPath)
             return;
 
         const path = this.path;
@@ -103,21 +103,21 @@ export class Rect extends Shape {
             throw "TODO";
         }
 
-        this.dirtyPath = false;
+        this.isDirtyPath = false;
     }
 
-    private getPlainBBox(): BBox {
+    readonly getBBox = () => {
         return {
             x: this.x,
             y: this.y,
             width: this.width,
             height: this.height
         };
-    }
+    };
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
-        const bbox = this.getPlainBBox();
+        const bbox = this.getBBox();
 
         return isPointInBBox(bbox, point.x, point.y);
     }
@@ -131,7 +131,7 @@ export class Rect extends Shape {
             return;
         }
 
-        if (this.dirtyTransform) {
+        if (this.isDirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -147,6 +147,6 @@ export class Rect extends Shape {
             ctx.stroke();
         }
 
-        this.dirty = false;
+        this.isDirty = false;
     }
 }

@@ -27,7 +27,7 @@ export class Line extends Shape {
     set x1(value: number) {
         if (this._x1 !== value) {
             this._x1 = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get x1(): number {
@@ -51,7 +51,7 @@ export class Line extends Shape {
     set y1(value: number) {
         if (this._y1 !== value) {
             this._y1 = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get y1(): number {
@@ -62,7 +62,7 @@ export class Line extends Shape {
     set x2(value: number) {
         if (this._x2 !== value) {
             this._x2 = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get x2(): number {
@@ -73,18 +73,20 @@ export class Line extends Shape {
     set y2(value: number) {
         if (this._y2 !== value) {
             this._y2 = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get y2(): number {
         return this._y2;
     }
 
+    readonly getBBox = undefined;
+
     private _pixelSnapBias = PixelSnapBias.Positive;
     set pixelSnapBias(value: PixelSnapBias) {
         if (this._pixelSnapBias !== value) {
             this._pixelSnapBias = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get pixelSnapBias(): PixelSnapBias {
@@ -104,7 +106,7 @@ export class Line extends Shape {
             return;
         }
 
-        if (this.dirtyTransform) {
+        if (this.isDirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -122,8 +124,7 @@ export class Line extends Shape {
             const delta = pixelSnap(this.lineWidth, this.pixelSnapBias);
             x1 += delta;
             x2 += delta;
-        }
-        else if (y1 === y2) {
+        } else if (y1 === y2) {
             const delta = pixelSnap(this.lineWidth, this.pixelSnapBias);
             y1 += delta;
             y2 += delta;
@@ -137,6 +138,6 @@ export class Line extends Shape {
             ctx.stroke();
         }
 
-        this.dirty = false;
+        this.isDirty = false;
     }
 }

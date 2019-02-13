@@ -73,7 +73,7 @@ export abstract class Shape extends Node {
     set fillStyle(value: string | null) {
         if (this._fillStyle !== value) {
             this._fillStyle = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get fillStyle(): string | null {
@@ -84,7 +84,7 @@ export abstract class Shape extends Node {
     set strokeStyle(value: string | null) {
         if (this._strokeStyle !== value) {
             this._strokeStyle = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get strokeStyle(): string | null {
@@ -95,7 +95,7 @@ export abstract class Shape extends Node {
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get lineWidth(): number {
@@ -121,7 +121,7 @@ export abstract class Shape extends Node {
                 }
             }
             this._lineDash = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get lineDash(): number[] | null {
@@ -132,7 +132,7 @@ export abstract class Shape extends Node {
     set lineDashOffset(value: number) {
         if (this._lineDashOffset !== value) {
             this._lineDashOffset = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get lineDashOffset(): number {
@@ -143,7 +143,7 @@ export abstract class Shape extends Node {
     set lineCap(value: ShapeLineCap) {
         if (this._lineCap !== value) {
             this._lineCap = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get lineCap(): ShapeLineCap {
@@ -154,7 +154,7 @@ export abstract class Shape extends Node {
     set lineJoin(value: ShapeLineJoin) {
         if (this._lineJoin !== value) {
             this._lineJoin = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get lineJoin(): ShapeLineJoin {
@@ -166,7 +166,7 @@ export abstract class Shape extends Node {
         value = Math.min(1, Math.max(0, value));
         if (this._opacity !== value) {
             this._opacity = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get opacity(): number {
@@ -177,7 +177,7 @@ export abstract class Shape extends Node {
     set shadow(value: DropShadow | null) {
         if (this._shadow !== value) {
             this._shadow = value;
-            this.dirty = true;
+            this.isDirty = true;
         }
     }
     get shadow(): DropShadow | null {

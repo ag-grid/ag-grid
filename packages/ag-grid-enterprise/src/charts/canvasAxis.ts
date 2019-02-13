@@ -1,6 +1,6 @@
 import Scale from "./scale/scale";
 import {pixelSnap, PixelSnapBias} from "./canvas/canvas";
-import {normalizeAngle} from "./util/angle";
+import {normalizeAngle360} from "./util/angle";
 
 export class CanvasAxis<D> {
     constructor(scale: Scale<D, number>) {
@@ -50,7 +50,7 @@ export class CanvasAxis<D> {
                 ctx.moveTo(sideFlag * this.tickSize, r + pxShift);
                 ctx.lineTo(0, r + pxShift);
                 if (this.flippedLabels) {
-                    const rotation = normalizeAngle(this.rotation);
+                    const rotation = normalizeAngle360(this.rotation);
                     let flipFlag = (rotation >= 0 && rotation <= Math.PI) ? -1 : 1;
 
                     ctx.save();

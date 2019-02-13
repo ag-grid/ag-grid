@@ -3,10 +3,13 @@ import {Group} from "./scene/group";
 import {Selection} from "./scene/selection";
 import {Line} from "./scene/shape/line";
 import {NumericTicks} from "./util/ticks";
-import {pixelSnap, PixelSnapBias} from "./canvas/canvas";
-import {normalizeAngle} from "./util/angle";
+import {normalizeAngle360, toRadians} from "./util/angle";
 import {Text} from "./scene/shape/text";
 
+/**
+ * The axis is always rendered vertically, with horizontal labels positioned to the left
+ * of the axis line by default.
+ */
 export class Axis<D> {
     constructor(scale: Scale<D, number>, group: Group) {
         this.scale = scale;
@@ -22,7 +25,7 @@ export class Axis<D> {
 
     translationX: number = 0;
     translationY: number = 0;
-    rotation: number = 0; // radians
+    rotation: number = 0; // in degrees
 
     lineWidth: number = 1;
     tickWidth: number = 1;
@@ -32,19 +35,32 @@ export class Axis<D> {
     tickColor: string = 'black';
     labelFont: string = '14px Verdana';
     labelColor: string = 'black';
-    flippedLabels: boolean = false;
-    mirroredLabels: boolean = false;
+    labelRotation: number = 0; // in degrees
 
-    // By default, the axis is vertical, with horizontal labels positioned to the left
-    // of the axis line.
+    /**
+     * By default labels are positioned to the left of the axis line.
+     * `true` positions the labels to the right of the axis line.
+     * If the axis is rotated, its easier to think in terms of this side
+     * or the opposite side, rather than left and right.
+     */
+    isMirrorLabels: boolean = false;
+    /**
+     * If the axis is rotated so that it is horizontal (by +/- 90 degrees),
+     * the labels rotate with it and become vertical, `true` makes labels
+     * horizontal again and center aligns labels' text at the ticks.
+     */
+    isFlipLabels: boolean = false;
 
     render() {
         const group = this.group;
         const scale = this.scale;
 
+        const rotation = normalizeAngle360(toRadians(this.rotation));
+        const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
+
         group.translationX = this.translationX;
         group.translationY = this.translationY;
-        group.rotation = this.rotation;
+        group.rotation = rotation;
 
         // Render ticks and labels.
         const ticks = scale.ticks!(10);
@@ -53,23 +69,22 @@ export class Axis<D> {
             decimalDigits = ticks.decimalDigits;
         }
         const bandwidth = (scale.bandwidth || 0) / 2;
-        const tickShift = pixelSnap(this.tickWidth);
-        const sideFlag = this.mirroredLabels ? 1 : -1;
-        const rotation = normalizeAngle(this.rotation);
+        const sideFlag = this.isMirrorLabels ? 1 : -1; // -1 = left, 1 = right
         const flipFlag = (rotation >= 0 && rotation <= Math.PI) ? -1 : 1;
+        const flipFlag2 = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
 
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
 
         const enter = update.enter.append(Group);
-        enter.append(Line);
+        enter.append(Line); // auto-snaps to pixel grid if vertical or horizontal
         enter.append(Text);
 
         const groupSelection = update.merge(enter);
 
         groupSelection
             .attrFn('translationY', (node, datum) => {
-                return scale.convert(datum) - this.tickWidth / 2 + bandwidth;
+                return Math.round(scale.convert(datum) + bandwidth);
             });
 
         groupSelection.selectByClass(Line)
@@ -79,8 +94,8 @@ export class Axis<D> {
             })
             .attr('x1', sideFlag * this.tickSize)
             .attr('x2', 0)
-            .attr('y1', tickShift)
-            .attr('y2', tickShift);
+            .attr('y1', 0)
+            .attr('y2', 0);
 
         const labels = groupSelection.selectByClass(Text)
             .each((label, datum) => {
@@ -90,31 +105,34 @@ export class Axis<D> {
                 label.text = decimalDigits && typeof datum === 'number'
                     ? datum.toFixed(decimalDigits)
                     : datum.toString();
-                label.textAlign = this.flippedLabels
-                    ? 'center'
+                label.textAlign = this.isFlipLabels
+                    ? labelRotation ? (sideFlag * flipFlag2 === -1 ? 'end' : 'start') : 'center'
                     : sideFlag === -1 ? 'end' : 'start';
             });
 
-        if (this.flippedLabels) {
+        if (this.isFlipLabels) {
+            const x = sideFlag * (this.tickSize + this.tickPadding);
             labels
-                .attr('x', 0)
+                // .attr('rotationCenterX', x)
+                // .attr('rotationCenterY', y)
                 .attr('y', -sideFlag * flipFlag * this.tickPadding)
                 .attr('translationX', sideFlag * (this.tickSize + this.tickPadding))
-                .attr('rotation', flipFlag * Math.PI / 2);
-        }
-        else {
+                .attr('rotation', flipFlag * Math.PI / 2 + labelRotation);
+        } else {
+            const x = sideFlag * (this.tickSize + this.tickPadding);
             labels
-                .attr('x', sideFlag * (this.tickSize + this.tickPadding));
+                .attr('x', x)
+                .attr('rotationCenterX', x)
+                .attr('rotation', labelRotation);
         }
 
         this.groupSelection = groupSelection;
 
         // Render axis line.
-        const lineShift = pixelSnap(this.lineWidth, PixelSnapBias.Negative);
         const line = this.line;
-        line.x1 = lineShift;
+        line.x1 = 0;
+        line.x2 = 0;
         line.y1 = scale.range[0];
-        line.x2 = lineShift;
         line.y2 = scale.range[scale.range.length - 1];
         line.lineWidth = this.lineWidth;
         line.strokeStyle = this.lineColor;

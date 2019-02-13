@@ -101,8 +101,7 @@ export class Path2D {
             rx *= lambda;
             ry *= lambda;
             // me gives lambda == cpx == cpy == 0;
-        }
-        else {
+        } else {
             lambda = Math.sqrt(1 / lambda - 1);
             if (fA === fS) {
                 lambda = -lambda;
@@ -291,8 +290,7 @@ export class Path2D {
             commands[start] = 'L';
             this.xy[0] = x;
             this.xy[1] = y;
-        }
-        else {
+        } else {
             this.xy = [x, y];
         }
     }
@@ -307,14 +305,11 @@ export class Path2D {
 
         if (n < 2 || n % 2 === 1) {
             throw new Error('Fewer than two points or not an even count.');
-        }
-        else if (n === 2 || t === 0) {
+        } else if (n === 2 || t === 0) {
             return points.slice(0, 2) as [number, number];
-        }
-        else if (t === 1) {
+        } else if (t === 1) {
             return points.slice(-2) as [number, number];
-        }
-        else {
+        } else {
             const newPoints = [];
             const last = n - 2;
 

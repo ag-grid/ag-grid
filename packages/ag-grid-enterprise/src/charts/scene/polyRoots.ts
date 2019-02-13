@@ -36,8 +36,7 @@ export function quadraticRoots(a: number, b: number, c: number): number[] {
         if (t >= 0 && t <= 1) {
             roots.push(t);
         }
-    }
-    else if (D > 0) { // A pair of distinct real roots.
+    } else if (D > 0) { // A pair of distinct real roots.
         const rD = Math.sqrt(D);
         const t1 = (-b - rD) / (2 * a);
         const t2 = (-b + rD) / (2 * a);
@@ -94,8 +93,7 @@ export function cubicRoots(a: number, b: number, c: number, d: number): number[]
                 roots.push(t);
             }
         }
-    }
-    else { // Distinct real roots.
+    } else { // Distinct real roots.
         const theta = Math.acos(R / Math.sqrt(-Q * Q * Q));
 
         const thirdA = third * A;
