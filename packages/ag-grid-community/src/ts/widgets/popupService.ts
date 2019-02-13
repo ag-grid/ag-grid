@@ -319,6 +319,7 @@ export class PopupService {
 
     public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
         const eDocument = this.gridOptionsWrapper.getDocument();
+
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
             return () => {
@@ -328,13 +329,12 @@ export class PopupService {
         eChild.style.top = '0px';
         eChild.style.left = '0px';
 
-        const popupAlreadyShown = _.isVisible(eChild);
-        if (popupAlreadyShown) {
-            return () => {
-            };
-        }
-
         const ePopupParent = this.getPopupParent();
+
+        const popupAlreadyShown = _.isVisible(eChild);
+        if (popupAlreadyShown && (eChild as HTMLElement).parentNode === ePopupParent) {
+            return () => {};
+        }
 
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
