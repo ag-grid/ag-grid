@@ -54,26 +54,35 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
 
     @PostConstruct
     private postConstruct(): void {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onModelUpdated.bind(this));
+
+        this.reset();
+    }
+
+    private reset(): void {
+        this.clearErrors();
+
         this.calculateFields();
         this.calculateRowRange();
         this.calculateCategoryCols();
 
         console.log(`colIds`, this.colIds);
         console.log(`categoryCols`, this.categoryCols);
-
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onModelUpdated.bind(this));
     }
 
     private calculateCategoryCols(): void {
         this.categoryCols = [];
         if (!this.rangeSelection.columns) { return; }
 
-        if (this.columnController.isPivotMode()) {
-            console.warn('ag-Grid: ChartRangeDatasource doesnt handle pivot mode yet');
-        }
+        const displayedCols = this.columnController.getAllDisplayedColumns();
 
-        const isDimension = (col:Column) => col.getColDef().enableRowGroup || col.getColDef().enablePivot;
+        const isDimension = (col:Column) =>
+            // col has to be defined by user as a dimension
+            (col.getColDef().enableRowGroup || col.getColDef().enablePivot)
+            &&
+            // plus the col must be visible
+            displayedCols.indexOf(col) >= 0;
 
         // pull out all dimension columns from the range
         this.rangeSelection.columns.forEach( col => {
@@ -82,24 +91,18 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
             }
         });
 
-        // if no dimension columns in the range, then pull out first dimension column from primary columns
+        // if no dimension columns in the range, then pull out first dimension column from displayed columns
         if (this.categoryCols.length===0) {
-            const primaryCols = this.columnController.getAllPrimaryColumns();
-            primaryCols!.forEach( col => {
+            displayedCols!.forEach( col => {
                 if (this.categoryCols.length===0 && isDimension(col)) {
                     this.categoryCols.push(col);
                 }
             });
         }
-
-        // if still no dimension, then this is an error
-        if (this.categoryCols.length===0) {
-            this.errors.push('No dimension column found on which to build chart.');
-        }
     }
 
     private onModelUpdated(): void {
-        this.calculateRowCount();
+        this.reset();
         this.dispatchEvent({type: 'modelUpdated'});
     }
 
@@ -107,15 +110,16 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
         const paginationOffset = this.paginationProxy.getPageFirstRow();
         this.startRow = this.rangeSelection.start.rowIndex + paginationOffset;
         this.endRow = this.rangeSelection.end.rowIndex + paginationOffset;
-        this.calculateRowCount();
-    }
 
-    private calculateRowCount(): void {
         // make sure enough rows in range to chart. if user filters and less rows, then
         // end row will be the last displayed row, not where the range ends.
-        const maxRow = this.rowModel.getRowCount();
-        const lastRow = Math.min(this.endRow, maxRow);
-        this.rowCount = lastRow - this.startRow + 1;
+        const modelLastRow = this.rowModel.getRowCount() - 1;
+        const rangeLastRow = Math.min(this.endRow, modelLastRow);
+        this.rowCount = rangeLastRow - this.startRow + 1;
+
+        if (this.rowCount<=0) {
+            this.addError('No rows in selected range.');
+        }
     }
 
     private calculateFields(): void {
@@ -125,10 +129,19 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
         this.colsMapped = {};
 
         const colsInRange = this.rangeSelection.columns || [];
-        const valueColumnsInRange = colsInRange.filter( col => col.getColDef().enableValue);
+
+        const displayedCols = this.columnController.getAllDisplayedColumns();
+
+        const valueColumnsInRange = colsInRange.filter( col =>
+            // all columns must have enableValue enabled
+            col.getColDef().enableValue
+            // and the column must be visible in the grid. this gets around issues where user switches
+            // into / our of pivot mode (range no longer valid as switching between primary and secondary cols)
+            && displayedCols.indexOf(col) >= 0
+        );
 
         if (valueColumnsInRange.length===0) {
-            this.addError('You need to have at least one value column selected in the range to chart.');
+            this.addError('No value column in selected range.');
         }
 
         valueColumnsInRange.forEach( col => {

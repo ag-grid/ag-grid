@@ -1,19 +1,15 @@
 import scaleLinear from "./scale/linearScale";
+import {_, Component} from "ag-grid-community";
 import {BandScale} from "./scale/bandScale";
 import {createHdpiCanvas} from "./canvas/canvas";
-import {Axis} from "./axis";
 import {CanvasAxis} from "./canvasAxis";
+import {ChartRangeDatasource} from "./chartRangeDatasource";
+import {ChartEverythingDatasource} from "./chartEverythingDatasource";
 
 export interface ChartOptions {
     width: number;
     height: number;
-    store?: {
-        categoryField: string;
-        fields: string[];
-        fieldNames: string[],
-        data: any[]
-    };
-    datasource?: ChartDatasource;
+    datasource: ChartDatasource;
 }
 
 export interface ChartDatasource {
@@ -36,36 +32,49 @@ const gradientTheme = [
     ['#FB9D5D', '#FA8535'],
 ];
 
-export class Chart {
+export class Chart extends Component {
 
     private chartOptions: ChartOptions;
 
-    private readonly eCanvas: HTMLElement;
+    private readonly eCanvas: HTMLCanvasElement;
+
+    private datasource: ChartRangeDatasource | ChartEverythingDatasource;
 
     constructor(chartOptions: ChartOptions) {
+        super(`<div></div>`);
+
         this.chartOptions = chartOptions;
 
         const canvas = createHdpiCanvas(this.chartOptions.width, this.chartOptions.height);
         this.eCanvas = canvas;
 
-        this.init();
+        this.datasource = <ChartRangeDatasource | ChartEverythingDatasource> chartOptions.datasource;
+        this.datasource.addEventListener('modelUpdated', this.refresh.bind(this));
 
-        const ds = this.chartOptions.datasource;
-        if (ds) {
-            ds.addEventListener('modelUpdated', this.refresh.bind(this));
-        }
-    }
-
-    public getGui(): HTMLElement {
-        return this.eCanvas;
+        this.refresh();
     }
 
     public refresh(): void {
-        const canvas = <HTMLCanvasElement> this.getGui();
-        const ctx = canvas.getContext('2d')!;
-        ctx.clearRect(0, 0, this.chartOptions.width, this.chartOptions.height)
 
-        this.init();
+        const errors = this.datasource.getErrors();
+        const eGui = this.getGui();
+        _.clearElement(eGui);
+
+        if (errors && errors.length > 0) {
+            const html: string[] = [];
+
+            html.push(`Could not create chart:`);
+            html.push(`<ul>`);
+            errors.forEach( error => html.push(`<li>${error}</li>`));
+            html.push(`</ul>`);
+
+            eGui.innerHTML = html.join('');
+        } else {
+            const ctx = this.eCanvas.getContext('2d')!;
+            ctx.clearRect(0, 0, this.chartOptions.width, this.chartOptions.height);
+            this.drawChart();
+            eGui.appendChild(this.eCanvas);
+        }
     }
 
     public destroy(): void {
@@ -74,76 +83,35 @@ export class Chart {
         }
     }
 
-    private init() {
+    private drawChart() {
 
-        let xData: string[] = [];
         let yData: any[][] = [];
-        let yFields: string[] = [];
         let yFieldNames: string[] = [];
 
-        if (this.chartOptions.store) {
-            const store = this.chartOptions.store;
+        const ds = this.chartOptions.datasource;
+        const xData = ds.getFieldNames();
+        const yFields = ds.getFields();
+        const rowCount = ds.getRowCount();
 
-            const data = store.data;
-
-            // These are fields to use to fetch the values for each bar in a category.
-            yFields = store.fields;
-
-            // These are labels for each bar in a category.
-            yFieldNames = data.map(d => d[store.categoryField]);
-
-            const n = data.length;
-            // const xData = data.map(d => d[this.chartOptions.store.categoryField]);
-            xData = store.fieldNames; // These are category names.
-
-            // Fetch one field from each record to form a category.
-            // (The above code fetched all fields from each record to form a category).
-            yData = yFields.map(field => data.map(d => d[field]));
-
-        } else if (this.chartOptions.datasource) {
-
-            const ds = this.chartOptions.datasource;
-
-            xData = ds.getFieldNames();
-
-            yFields = ds.getFields();
-
-            const rowCount = ds.getRowCount();
-
-            const getValuesForField = (field: string): any[] => {
-                const res: any[] = [];
-                for (let i = 0; i<rowCount; i++) {
-                    const val = ds.getValue(i, field);
-                    res.push(val);
-                }
-                return res;
-            };
-
-            yFieldNames = [];
+        const getValuesForField = (field: string): any[] => {
+            const res: any[] = [];
             for (let i = 0; i<rowCount; i++) {
-                yFieldNames.push(ds.getCategory(i));
+                const val = ds.getValue(i, field);
+                res.push(val);
             }
+            return res;
+        };
 
-            yData = [];
-            yFields.forEach( yField => {
-                const values = getValuesForField(yField);
-                yData.push(values);
-            });
-
-        } else {
-            console.error('at least one of store or datasource must be provided');
+        yFieldNames = [];
+        for (let i = 0; i<rowCount; i++) {
+            yFieldNames.push(ds.getCategory(i));
         }
 
-
-
-        // For each category returns an array of values representing the height
-        // of each bar in the group.
-        // const yData = data.map(datum => {
-        //     const values: number[] = [];
-        //     yFields.forEach(field => values.push((datum as any)[field]));
-        //     return values;
-        // });
-
+        yData = [];
+        yFields.forEach( yField => {
+            const values = getValuesForField(yField);
+            yData.push(values);
+        });
 
         const padding = {
             top: 20,
@@ -176,9 +144,7 @@ export class Chart {
         xBarScale.round = true;
         const barWidth = xBarScale.bandwidth;
 
-        const canvas = <HTMLCanvasElement> this.getGui();
-
-        const ctx = canvas.getContext('2d')!;
+        const ctx = this.eCanvas.getContext('2d')!;
         ctx.font = '14px Verdana';
 
         const colors = gradientTheme;
