@@ -53,9 +53,9 @@
             }
         },
         'set-filter-by-one-column': {
-            code: 'api.setFilterModel({country: [\'United States\']});',
+            code: 'api.setFilterModel({country: [\'Great Britain\']});',
             fn: function() {
-                api.setFilterModel({country: ['United States']});
+                api.setFilterModel({country: ['Great Britain']});
             }
         },
         'remove-filter': {
@@ -131,7 +131,7 @@
         columnApi = gridOptions.columnApi;
 
         // feed data into the grid
-        agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'})
+        agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/wideSpreadOfSports.json'})
             .then(function (data) {
                 gridOptions.api.setRowData(data.slice(0, 1000));
                 setTimeout(function () {

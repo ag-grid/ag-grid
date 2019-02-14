@@ -53,9 +53,9 @@
             }
         },
         'set-filter-by-one-column': {
-            code: 'api.setFilterModel({country: [\'United States\']});',
+            code: 'api.setFilterModel({country: [\'Great Britain\']});',
             fn: function() {
-                api.setFilterModel({country: ['United States']});
+                api.setFilterModel({country: ['Great Britain']});
             }
         },
         'remove-filter': {

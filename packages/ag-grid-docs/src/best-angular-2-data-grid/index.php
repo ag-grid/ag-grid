@@ -301,7 +301,7 @@ Waste no time in integrating ag-Grid Angular into your Web Application.</p>
         <li data-action="clear-sorting"><a>Clear sorting</a></li>
     </ul>
     <ul class="api-operations">
-        <li data-action="set-filter-by-one-column"><a>Filter by one column (United States)</a></li>
+        <li data-action="set-filter-by-one-column"><a>Filter by one column (Great Britain)</a></li>
         <li data-action="remove-filter"><a>Clear filtering</a></li>
     </ul>
     <ul class="api-operations">
