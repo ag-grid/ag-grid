@@ -80,6 +80,14 @@ interface ITooltipParams {
     <li><b>Custom Tooltip Parameters</b> are supplied using <code>colDef.tooltipComponentParams</code>.</li>
 </ul>
 
-<?= example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('enterprise' => true, 'processVue' => true) ) ?>
+<?= example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
+
+<h2>Example: Legacy Browser Tooltip</h2>
+
+<p>
+    The example below demonstrates how to use the default browser tooltips.
+</p>
+
+<?= example('Default Browser Tooltip', 'default-tooltip', 'vanilla', array('processVue' => true) ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -838,9 +838,39 @@ window.addEventListener("load", function() {
                     <td>The indent used for the tool panel hierarchy.</td>
                 </tr>
                 <tr>
-                    <td>row-group-indent-size</td>
-                    <td><code>grid-size</code> * 3 + <code>icon-size</code></td>
-                    <td>The indent used for the row groups.</td>
+                    <td>tooltip-background-color</td>
+                    <td>#535353</td>
+                    <td>The tooltip background color.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-foreground-color</td>
+                    <td>#ffffff</td>
+                    <td>The tooltip foreground color.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-radius</td>
+                    <td>2px</td>
+                    <td>The tooltip boder radius.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-padding</td>
+                    <td>5px</td>
+                    <td>The tooltip padding.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-width</td>
+                    <td>1px</td>
+                    <td>The tooltip border width.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-style</td>
+                    <td>solid</td>
+                    <td>The tooltip border style.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-color</td>
+                    <td>#ebebeb</td>
+                    <td>The tooltip border color</td>
                 </tr>
                 </tbody>
             </table>
@@ -1085,6 +1115,22 @@ window.addEventListener("load", function() {
                     <tr>
                         <td>secondary-font-weight</td>
                         <td>600</td>
+                    </tr>
+                    <tr>
+                        <td>tooltip-background-color</td>
+                        <td><code>lighten($flat-gray-2, 5%)</code></td>
+                    </tr>
+                    <tr>
+                        <td>tooltip-foreground-color</td>
+                        <td><code>foreground-color</code></td>
+                    </tr>
+                    <tr>
+                        <td>tooltip-border-radius</td>
+                        <td><code>border-radius</code></td>
+                    </tr>
+                    <tr>
+                        <td>tooltio-border-color</td>
+                        <td><code>darken($border-color, 10%)</code></td>
                     </tr>
                 </tbody>
             </table>
