@@ -937,12 +937,15 @@
     // Editing
     ////////////////////////////////////////
     .ag-cell-inline-editing {
+        padding: $cell-horizontal-padding;
+        height: $row-height + $grid-size * 3;
+        z-index: 2;
+    }
+
+    .ag-cell-inline-editing, .ag-popup-editor {
         @include card($params);
 
         background-color: $editor-background-color-color;
-        height: $row-height + $grid-size * 3;
-        padding: $cell-horizontal-padding;
-        z-index: 2;
 
         input[type="text"],
         input[type="tel"],
@@ -957,10 +960,6 @@
     }
 
     .ag-popup-editor {
-        @include card($params);
-
-        background-color: $editor-background-color-color;
-        padding: 0;
         z-index: 1;
 
         .ag-large-textarea textarea {
