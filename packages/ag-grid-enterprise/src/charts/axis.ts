@@ -7,8 +7,11 @@ import {normalizeAngle360, toRadians} from "./util/angle";
 import {Text} from "./scene/shape/text";
 
 /**
+ * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
- * of the axis line by default.
+ * of the axis line by default. The axis can be rotated by an arbitrary angle,
+ * so that it can be used as a top, right, bottom, left, radial or any other kind
+ * of linear axis.
  */
 export class Axis<D> {
     constructor(scale: Scale<D, number>, group: Group) {
@@ -35,27 +38,45 @@ export class Axis<D> {
     tickColor: string = 'black';
     labelFont: string = '14px Verdana';
     labelColor: string = 'black';
-    labelRotation: number = 0; // in degrees
 
     /**
-     * By default labels are positioned to the left of the axis line.
+     * Custom label rotation in degrees.
+     * Labels are rendered perpendicular to the axis line by default.
+     * Or parallel to the axis line, if the {@link isParallelLabels} is set to `true`.
+     * The value of this config is used as the angular offset/deflection
+     * from the default rotation.
+     */
+    labelRotation: number = 0;
+
+    /**
+     * By default labels and ticks are positioned to the left of the axis line.
      * `true` positions the labels to the right of the axis line.
-     * If the axis is rotated, its easier to think in terms of this side
-     * or the opposite side, rather than left and right.
+     * However, if the axis is rotated, its easier to think in terms
+     * of this side or the opposite side, rather than left and right.
+     * We use the term `mirror` for conciseness, although it's not
+     * true mirroring - for example, when a label is rotated, so that
+     * it is inclined at the 45 degree angle, text flowing from north-west
+     * to south-east, ending at the tick to the left of the axis line,
+     * and then we set this config to `true`, the text will still be flowing
+     * from north-west to south-east, _starting_ at the tick to the right
+     * of the axis line.
      */
     isMirrorLabels: boolean = false;
+
     /**
+     * Labels are rendered perpendicular to the axis line by default.
+     * Setting this config to `true` makes labels render parallel to the axis line
+     * and center aligns labels' text at the ticks.
      * If the axis is rotated so that it is horizontal (by +/- 90 degrees),
-     * the labels rotate with it and become vertical, `true` makes labels
-     * horizontal again and center aligns labels' text at the ticks.
+     * the labels rotate with it and become vertical,
      */
-    isFlipLabels: boolean = false;
+    isParallelLabels: boolean = false;
 
     render() {
         const group = this.group;
         const scale = this.scale;
 
-        const rotation = normalizeAngle360(toRadians(this.rotation));
+        const rotation = toRadians(this.rotation);
         const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
 
         group.translationX = this.translationX;
@@ -69,9 +90,27 @@ export class Axis<D> {
             decimalDigits = ticks.decimalDigits;
         }
         const bandwidth = (scale.bandwidth || 0) / 2;
-        const sideFlag = this.isMirrorLabels ? 1 : -1; // -1 = left, 1 = right
-        const flipFlag = (rotation >= 0 && rotation <= Math.PI) ? -1 : 1;
-        const flipFlag2 = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
+        // The side of the axis line to position the labels on.
+        // -1 = left (default)
+        //  1 = right
+        const sideFlag = this.isMirrorLabels ? 1 : -1;
+        // When labels are parallel to the axis line, the flip flag is used to
+        // flip the labels to avoid upside-down text, when the axis is rotated
+        // such that it is in the right hemisphere, i.e. the angle of rotation
+        // is in the [0, π] interval.
+        // The rotation angle is normalized, so that we have an easier time checking
+        // if it's in the said interval. Since the axis is always rendered vertically
+        // and then rotated, zero rotation means 12 (not 3) o-clock.
+        // -1 = flip
+        //  1 = don't flip (default)
+        const parallelFlipRotation = normalizeAngle360(rotation);
+        const flipFlag = (!labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI) ? -1 : 1;
+
+        const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
+        const regularFlipFlag = (!labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI) ? -1 : 1;
+
+        const alignFlag = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
+        const isParallelLabels = this.isParallelLabels;
 
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
@@ -101,30 +140,26 @@ export class Axis<D> {
             .each((label, datum) => {
                 label.font = this.labelFont;
                 label.fillStyle = this.labelColor;
-                label.textBaseline = 'middle';
+                label.textBaseline = isParallelLabels && !labelRotation
+                    ? (sideFlag * flipFlag === -1 ? 'hanging' : 'bottom')
+                    : 'middle';
                 label.text = decimalDigits && typeof datum === 'number'
                     ? datum.toFixed(decimalDigits)
                     : datum.toString();
-                label.textAlign = this.isFlipLabels
-                    ? labelRotation ? (sideFlag * flipFlag2 === -1 ? 'end' : 'start') : 'center'
-                    : sideFlag === -1 ? 'end' : 'start';
+                label.textAlign = isParallelLabels
+                    ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
+                    : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
             });
 
-        if (this.isFlipLabels) {
-            const x = sideFlag * (this.tickSize + this.tickPadding);
-            labels
-                // .attr('rotationCenterX', x)
-                // .attr('rotationCenterY', y)
-                .attr('y', -sideFlag * flipFlag * this.tickPadding)
-                .attr('translationX', sideFlag * (this.tickSize + this.tickPadding))
-                .attr('rotation', flipFlag * Math.PI / 2 + labelRotation);
-        } else {
-            const x = sideFlag * (this.tickSize + this.tickPadding);
-            labels
-                .attr('x', x)
-                .attr('rotationCenterX', x)
-                .attr('rotation', labelRotation);
-        }
+        const labelX = sideFlag * (this.tickSize + this.tickPadding);
+        const autoRotation = isParallelLabels
+            ? flipFlag * Math.PI / 2
+            : (regularFlipFlag === -1 ? Math.PI : 0);
+
+        labels
+            .attr('x', labelX)
+            .attr('rotationCenterX', labelX)
+            .attr('rotation', autoRotation + labelRotation);
 
         this.groupSelection = groupSelection;
 
