@@ -2,7 +2,7 @@ import {Node} from "./node";
 
 export class Group extends Node {
 
-    readonly getBBox = undefined;
+    readonly getBBox: any = undefined;
 
     render(ctx: CanvasRenderingContext2D) {
         // A group can have `scaling`, `rotation`, `translation` properties

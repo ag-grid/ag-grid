@@ -80,7 +80,7 @@ export class Line extends Shape {
         return this._y2;
     }
 
-    readonly getBBox = undefined;
+    readonly getBBox: any = undefined;
 
     private _pixelSnapBias = PixelSnapBias.Positive;
     set pixelSnapBias(value: PixelSnapBias) {
