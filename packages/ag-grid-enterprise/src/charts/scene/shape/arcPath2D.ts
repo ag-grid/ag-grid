@@ -76,8 +76,6 @@ export class Arc extends Shape {
         return this._isCounterClockwise;
     }
 
-    readonly getBBox = undefined;
-
     updatePath() {
         this.path = new Path2D();
         // No way to clear existing Path2D, have to create a new one each time.

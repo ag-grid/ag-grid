@@ -360,7 +360,11 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._translationY;
     }
 
-    abstract readonly getBBox?: () => BBox;
+    isPointInNode(x: number, y: number): boolean {
+        return false;
+    }
+
+    readonly getBBox?: () => BBox;
 
     getBBoxCenter(): [number, number] {
         const bbox = this.getBBox && this.getBBox();
@@ -441,13 +445,24 @@ export abstract class Node { // Don't confuse with `window.Node`.
         ]).inverseTo(this.inverseMatrix);
     }
 
-    abstract render(ctx: CanvasRenderingContext2D): void
-
     /**
-     * Determines the order of rendering of this node within its parent node.
-     * By default the child nodes are rendered in the order in which they were added.
+     * Scene nodes start rendering with the {@link Scene.root | root},
+     * where the `render` call propagates from parent nodes to their children.
+     * The root rendering is initiated by the {@link Scene.render} method,
+     * so if the `render` method of a node is called, that node belongs to a scene,
+     * and there is no need to check if node's {@link Node._scene} property
+     * is defined inside node's `render` method. For example, instead of doing this:
+     *
+     *     if (!this.scene) return;
+     *     this.scene.appendPath(this.path);
+     *
+     * it's safe to do this:
+     *
+     *     this.scene!.appendPath(this.path);
+     *
+     * @param ctx The 2D canvas rendering context.
      */
-    zIndex: number = 0;
+    abstract render(ctx: CanvasRenderingContext2D): void
 
     /**
      * Each time a property of the node that effects how it renders changes

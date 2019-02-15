@@ -30,7 +30,7 @@ export class Scene {
         canvas.addEventListener('mousemove', this.onMouseMove);
     }
 
-    private lastHit?: { // debug
+    private lastPick?: { // debug
         node: Shape,
         fillStyle: string | null
     };
@@ -39,53 +39,67 @@ export class Scene {
         const y = e.offsetY;
 
         if (this.root) {
-            const node = this.hitTestPath(this.root, x, y);
+            const node = this.pickNode(this.root, x, y);
             if (node) {
                 if (node instanceof Shape) {
-                    if (!this.lastHit) {
-                        this.lastHit = { node, fillStyle: node.fillStyle };
-                    } else if (this.lastHit.node !== node) {
-                        this.lastHit.node.fillStyle = this.lastHit.fillStyle;
-                        this.lastHit = { node, fillStyle: node.fillStyle };
+                    if (!this.lastPick) {
+                        this.lastPick = { node, fillStyle: node.fillStyle };
+                    } else if (this.lastPick.node !== node) {
+                        this.lastPick.node.fillStyle = this.lastPick.fillStyle;
+                        this.lastPick = { node, fillStyle: node.fillStyle };
                     }
                     node.fillStyle = 'yellow';
                 }
-            } else if (this.lastHit) {
-                this.lastHit.node.fillStyle = this.lastHit.fillStyle;
-                this.lastHit = undefined;
+            } else if (this.lastPick) {
+                this.lastPick.node.fillStyle = this.lastPick.fillStyle;
+                this.lastPick = undefined;
             }
         }
     };
 
-    hitTestPath(node: Node, x: number, y: number): Node | undefined {
+    pickNode(node: Node, x: number, y: number): Node | undefined {
+        if (!node.isVisible || !node.isPointInNode(x, y)) {
+            return;
+        }
+
         const children = node.children;
 
         if (children.length) {
             // Nodes added later should be hit-tested first,
             // as they are rendered on top of the previously added nodes.
             for (let i = children.length - 1; i >= 0; i--) {
-                const hit = this.hitTestPath(children[i], x, y);
-                if (hit)
+                const hit = this.pickNode(children[i], x, y);
+                if (hit) {
                     return hit;
+                }
             }
-        } else if (Shape.isShape(node) && node.isPointInPath(x, y)) {
+        } else if (node instanceof Shape) {
             return node;
         }
     }
 
-    _width: number;
+    private _width: number;
+    set width(value: number) {
+        this.size = [value, this._height];
+    }
     get width(): number {
         return this._width;
     }
 
-    _height: number;
+    private _height: number;
+    set height(value: number) {
+        this.size = [this._width, value];
+    }
     get height(): number {
         return this._height;
     }
 
     set size(value: [number, number]) {
-        this.hdpiCanvas.resize(value[0], value[1]);
-        [this._width, this._height] = value;
+        if (this._width !== value[0] || this._height !== value[1]) {
+            this.hdpiCanvas.resize(value[0], value[1]);
+            [this._width, this._height] = value;
+            this.isDirty = true;
+        }
     }
 
     _isDirty = false;

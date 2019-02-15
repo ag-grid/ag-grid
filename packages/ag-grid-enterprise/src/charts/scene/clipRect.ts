@@ -5,6 +5,23 @@ export class ClipRect extends Node {
 
     protected path = new Path2D();
 
+    isPointInNode(x: number, y: number): boolean {
+        const point = this.transformPoint(x, y);
+        return point.x >= this.x && point.x <= this.x + this.width
+            && point.y >= this.y && point.y <= this.y + this.height;
+    }
+
+    private _isActive: boolean = true;
+    set isActive(value: boolean) {
+        if (this._isActive !== value) {
+            this._isActive = value;
+            this.isDirty = true;
+        }
+    }
+    get isActive(): boolean {
+        return this._isActive;
+    }
+
     private _isDirtyPath = true;
     set isDirtyPath(value: boolean) {
         if (this._isDirtyPath !== value) {
@@ -62,8 +79,6 @@ export class ClipRect extends Node {
         return this._height;
     }
 
-    readonly getBBox = undefined;
-
     updatePath() {
         if (!this.isDirtyPath) {
             return;
@@ -78,13 +93,11 @@ export class ClipRect extends Node {
     }
 
     render(ctx: CanvasRenderingContext2D) {
-        if (!this.scene) {
-            return;
+        if (this.isActive) {
+            this.updatePath();
+            this.scene!.appendPath(this.path);
+            ctx.clip();
         }
-
-        this.updatePath();
-        this.scene.appendPath(this.path);
-        ctx.clip();
 
         const children = this.children;
         const n = children.length;

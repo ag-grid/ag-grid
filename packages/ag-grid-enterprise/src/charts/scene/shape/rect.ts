@@ -127,10 +127,6 @@ export class Rect extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene) {
-            return;
-        }
-
         if (this.isDirtyTransform) {
             this.computeTransformMatrix();
         }
@@ -138,7 +134,7 @@ export class Rect extends Shape {
 
         this.applyContextAttributes(ctx);
         this.updatePath();
-        this.scene.appendPath(this.path);
+        this.scene!.appendPath(this.path);
 
         if (this.fillStyle) {
             ctx.fill();

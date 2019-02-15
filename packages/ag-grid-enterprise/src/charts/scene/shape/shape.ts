@@ -26,10 +26,6 @@ export abstract class Shape extends Node {
         shadow: null as DropShadow | null
     });
 
-    static isShape(node: any): node is Shape {
-        return node ? (node as Shape).restoreOwnStyles !== undefined : false;
-    }
-
     /**
      * Restores the default styles introduced by this subclass.
      */
@@ -215,6 +211,10 @@ export abstract class Shape extends Node {
             ctx.shadowOffsetY = shadow.offset.y;
             ctx.shadowBlur = shadow.blur;
         }
+    }
+
+    isPointInNode(x: number, y: number): boolean {
+        return this.isPointInPath(x, y);
     }
 
     abstract isPointInPath(x: number, y: number): boolean

@@ -18,8 +18,6 @@ export class SvgPath extends Shape {
         return this._path;
     }
 
-    readonly getBBox = undefined;
-
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
 
@@ -31,17 +29,13 @@ export class SvgPath extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene) {
-            return;
-        }
-
         if (this.isDirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
 
         this.applyContextAttributes(ctx);
-        this.scene.appendPath(this.path2d);
+        this.scene!.appendPath(this.path2d);
 
         if (this.fillStyle) {
             ctx.fill();

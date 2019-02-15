@@ -102,10 +102,6 @@ export class Line extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene) {
-            return;
-        }
-
         if (this.isDirtyTransform) {
             this.computeTransformMatrix();
         }
