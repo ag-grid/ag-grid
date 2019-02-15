@@ -94,7 +94,7 @@ export class Axis<D> {
         // -1 = left (default)
         //  1 = right
         const sideFlag = this.isMirrorLabels ? 1 : -1;
-        // When labels are parallel to the axis line, the flip flag is used to
+        // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
         // is in the [0, π] interval.
@@ -104,9 +104,10 @@ export class Axis<D> {
         // -1 = flip
         //  1 = don't flip (default)
         const parallelFlipRotation = normalizeAngle360(rotation);
-        const flipFlag = (!labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI) ? -1 : 1;
+        const parallelFlipFlag = (!labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI) ? -1 : 1;
 
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
+        // Flip if the axis rotation angle is in the top hemisphere.
         const regularFlipFlag = (!labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI) ? -1 : 1;
 
         const alignFlag = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
@@ -141,7 +142,7 @@ export class Axis<D> {
                 label.font = this.labelFont;
                 label.fillStyle = this.labelColor;
                 label.textBaseline = isParallelLabels && !labelRotation
-                    ? (sideFlag * flipFlag === -1 ? 'hanging' : 'bottom')
+                    ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 label.text = decimalDigits && typeof datum === 'number'
                     ? datum.toFixed(decimalDigits)
@@ -153,7 +154,7 @@ export class Axis<D> {
 
         const labelX = sideFlag * (this.tickSize + this.tickPadding);
         const autoRotation = isParallelLabels
-            ? flipFlag * Math.PI / 2
+            ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
         labels

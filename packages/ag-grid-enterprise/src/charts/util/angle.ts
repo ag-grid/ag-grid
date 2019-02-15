@@ -23,16 +23,6 @@ export function normalizeAngle180(radians: number): number {
     return radians;
 }
 
-function normalizeAngleRightHemisphere(radians: number): number {
-    let angle = normalizeAngle180(radians);
-    if (angle > Math.PI) {
-        angle -= Math.PI;
-    } else if (angle < -Math.PI) {
-        angle += Math.PI;
-    }
-    return angle;
-}
-
 export function toRadians(degrees: number): number {
     return degrees / 180 * Math.PI;
 }
