@@ -150,7 +150,7 @@ class ExampleRunner {
 
         // for now - once all examples have been converted/tested for vue, this can be removed and the vue entry added to
         // this.titles as a permanent addition
-        this.processVue = options.processVue;
+        this.processVue = options.processVue || options.processVue === undefined;
         if(this.processVue) {
             this.titles['vue'] = "Vue";
         } else {
