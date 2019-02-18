@@ -55,6 +55,6 @@ export interface IRowModel {
      */
     isLastRowFound(): boolean;
 
-    /** Used be CSRM only - is makes sure there are now estimated row heights within the range. */
+    /** Used by CSRM only - is makes sure there are now estimated row heights within the range. */
     ensureRowHeightsValid(startPixel: number, endPixel: number): boolean;
 }
