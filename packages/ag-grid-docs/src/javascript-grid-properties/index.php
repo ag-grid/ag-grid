@@ -683,13 +683,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>suppressTabbing</th>
-            <td>
-                Set to true to remove the grid tabbing functionality. Use this if you want to manage tabbing
-                differently to what the grid provides.
-            </td>
-        </tr>
-        <tr>
             <th>enableRtl</th>
             <td>Set to true to operate grid in <a href="../javascript-grid-rtl/">RTL (Right to Left)</a> mode.</td>
         </tr>
@@ -793,30 +786,29 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>suppressActionCtrlA</th>
+            <th>
+                suppressActionCtrlC,<br/>
+                suppressActionCtrlA,<br/>
+                suppressActionCtrlV,<br/>
+                suppressActionCtrlD,<br/>
+                suppressActionEnter,<br/>
+                suppressActionPageUpDown,<br/>
+                suppressActionHome,<br/>
+                suppressActionEnd,<br/>
+                suppressActionArrowKeyNavigation,<br/>
+                suppressActionF2,<br/>
+                suppressActionBackspace,<br/>
+                suppressActionEscape,<br/>
+                suppressActionSpace,<br/>
+                suppressActionDelete,<br/>
+                suppressTabbing
+            </th>
             <td>
-                Suppress the grid taking any action when Ctrl & A is pressed.
-            </td>
-        </tr>
-        <tr>
-            <th>suppressActionCtrlC</th>
-            <td>
-                Suppress the grid taking any action when Ctrl & A is pressed.
-            </td>
-        </tr>
-        <tr>
-            <th>suppressActionCtrlV</th>
-            <td>
-                Suppress the grid taking any action when Ctrl & A is pressed.
-            </td>
-        </tr>
-        <tr>
-            <th>suppressActionCtrlD</th>
-            <td>
-                Suppress the grid taking any action when Ctrl & A is pressed.
+                Suppress the grid taking action for the relevant key.
+                See <a href="../javascript-grid-keyboard-navigation/#suppressKeyboardActions">
+                Suppress Grid Keyboard Actions</a>.
             </td>
         </tr>
     </table>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

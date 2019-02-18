@@ -523,58 +523,7 @@ export class GridPanel extends Component {
 
         if (!renderedCell) { return; }
 
-        const key = keyboardEvent.which || keyboardEvent.keyCode;
-
-        switch (key) {
-            case Constants.KEY_LEFT :
-            case Constants.KEY_RIGHT :
-            case Constants.KEY_UP :
-            case Constants.KEY_DOWN :
-                if (this.gridOptionsWrapper.isSuppressActionArrowKeyNavigation()) { return; }
-                break;
-            case Constants.KEY_TAB :
-                if (this.beans.gridOptionsWrapper.isSuppressTabbing()) { return; }
-                break;
-            case Constants.KEY_ENTER :
-                if (this.beans.gridOptionsWrapper.isSuppressActionEnter()) { return; }
-                break;
-
-            case Constants.KEY_PAGE_UP :
-            case Constants.KEY_PAGE_DOWN :
-                if (this.gridOptionsWrapper.isSuppressActionPageUpDown()) { return; }
-                break;
-
-            case Constants.KEY_F2:
-                if (this.gridOptionsWrapper.isSuppressActionF2()) { return; }
-                break;
-
-            case Constants.KEY_BACKSPACE:
-                if (this.gridOptionsWrapper.isSuppressActionBackspace()) { return; }
-                break;
-
-            case Constants.KEY_ESCAPE:
-                if (this.gridOptionsWrapper.isSuppressActionEscape()) { return; }
-                break;
-
-            case Constants.KEY_SPACE:
-                if (this.gridOptionsWrapper.isSuppressActionSpace()) { return; }
-                break;
-
-            case Constants.KEY_DELETE:
-                if (this.gridOptionsWrapper.isSuppressActionDelete()) { return; }
-                break;
-
-            case Constants.KEY_PAGE_HOME:
-                if (this.gridOptionsWrapper.isSuppressActionHome()) { return; }
-                break;
-
-            case Constants.KEY_PAGE_END:
-                if (this.gridOptionsWrapper.isSuppressActionEnd()) { return; }
-                break;
-
-            // case Constants.KEY_PAGE_HOME :
-            // case Constants.KEY_PAGE_END :
-        }
+        if (this.isUserSuppressingKeyboardEvent(keyboardEvent)) { return; }
 
         switch (eventName) {
             case 'keydown':
@@ -590,6 +539,51 @@ export class GridPanel extends Component {
             case 'keypress':
                 renderedCell.onKeyPress(keyboardEvent);
                 break;
+        }
+    }
+
+    private isUserSuppressingKeyboardEvent(keyboardEvent: KeyboardEvent): boolean {
+        const key = keyboardEvent.which || keyboardEvent.keyCode;
+        switch (key) {
+            case Constants.KEY_LEFT :
+            case Constants.KEY_RIGHT :
+            case Constants.KEY_UP :
+            case Constants.KEY_DOWN :
+                return this.gridOptionsWrapper.isSuppressActionArrowKeyNavigation();
+
+            case Constants.KEY_TAB :
+                return this.gridOptionsWrapper.isSuppressTabbing();
+
+            case Constants.KEY_ENTER :
+                return this.gridOptionsWrapper.isSuppressActionEnter();
+
+            case Constants.KEY_PAGE_UP :
+            case Constants.KEY_PAGE_DOWN :
+                return this.gridOptionsWrapper.isSuppressActionPageUpDown();
+
+            case Constants.KEY_F2:
+                return this.gridOptionsWrapper.isSuppressActionF2();
+
+            case Constants.KEY_BACKSPACE:
+                return this.gridOptionsWrapper.isSuppressActionBackspace();
+
+            case Constants.KEY_ESCAPE:
+                return this.gridOptionsWrapper.isSuppressActionEscape();
+
+            case Constants.KEY_SPACE:
+                return this.gridOptionsWrapper.isSuppressActionSpace();
+
+            case Constants.KEY_DELETE:
+                return this.gridOptionsWrapper.isSuppressActionDelete();
+
+            case Constants.KEY_PAGE_HOME:
+                return this.gridOptionsWrapper.isSuppressActionHome();
+
+            case Constants.KEY_PAGE_END:
+                return this.gridOptionsWrapper.isSuppressActionEnd();
+
+            default:
+                return false;
         }
     }
 

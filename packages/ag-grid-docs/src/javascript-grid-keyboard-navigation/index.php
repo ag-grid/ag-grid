@@ -245,7 +245,7 @@ myInput.addEventListener("keydown", function (event) {
         </li>
     </ul>
 
-    <h2>Suppress Default Grid Keyboard Actions</h2>
+    <h2 id="suppressKeyboardActions">Suppress Grid Keyboard Actions</h2>
 
     <p>
         It is possible to suppress the default grid actions of the grid. The following is a list of all
@@ -270,6 +270,7 @@ myInput.addEventListener("keydown", function (event) {
         <li><code>suppressActionBackspace</code>: Backspace will not start editing.</li>
         <li><code>suppressActionEscape</code>: Escape will not cancel editing.</li>
         <li><code>suppressActionSpace</code>: Space will not select current row.</li>
+        <li><code>suppressTabbing</code>: Tabbing will not be handled by the grid.</li>
     </ul>
 
     <p>
