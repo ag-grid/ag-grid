@@ -370,6 +370,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressRowDrag : any = undefined;
     @Input() public enableGroupEdit : any = undefined;
     @Input() public embedFullWidthRows : any = undefined;
+    @Input() public deprecatedEmbedFullWidthRows : any = undefined;
     @Input() public suppressTabbing : any = undefined;
     @Input() public suppressPaginationPanel : any = undefined;
     @Input() public floatingFilter : any = undefined;

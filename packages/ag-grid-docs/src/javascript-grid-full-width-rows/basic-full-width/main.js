@@ -44,7 +44,6 @@ function getColumnDefs() {
 }
 
 var gridOptions = {
-    // embedFullWidthRows: true,
     columnDefs: getColumnDefs(),
     rowData: rowData,
     pinnedTopRowData: pinnedTopRowData,

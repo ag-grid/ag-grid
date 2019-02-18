@@ -595,7 +595,7 @@ export class GridOptionsWrapper {
     }
 
     public isEmbedFullWidthRows() {
-        return isTrue(this.gridOptions.embedFullWidthRows);
+        return isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     }
 
     public getBusinessKeyForNodeFunc() {
@@ -1448,6 +1448,10 @@ export class GridOptionsWrapper {
             if (!options.defaultColDef.resizable) {
                 options.defaultColDef.resizable = true;
             }
+        }
+
+        if (options.embedFullWidthRows) {
+            console.warn(`ag-Grid: since v20.1, embedFullWidthRows is now gone. This property was introduced to allow faster vertical scrolling when using slow browsers (IE) and full width rows. However in v20 the dom layout was redesigned and this performance problem no longer exists, hence this property 'hack' is no longer necessary.`);
         }
 
     }

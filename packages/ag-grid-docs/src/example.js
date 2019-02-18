@@ -181,7 +181,7 @@ var gridOptions = {
     // suppressMakeColumnVisibleAfterUnGroup: true,
     // unSortIcon: true,
     // enableRtl: true,
-    // enableCharts: true,
+    enableCharts: true,
     multiSortKey: 'ctrl',
     animateRows: true,
     enableRangeSelection: true,
@@ -190,7 +190,6 @@ var gridOptions = {
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     // pagination: true,
-    // embedFullWidthRows: true,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
@@ -584,7 +583,6 @@ var defaultCols = [
                 // pivotIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                enableValue: true,
                 cellClass: 'booleanType',
                 cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
@@ -1243,4 +1241,16 @@ function countryCellRenderer(params) {
         var flag = '<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }
+}
+
+// setTimeout( function(){
+//     columnApi.setRowGroupColumns(['country']);
+//     columnApi.setValueColumns(['jan']);
+//     columnApi.setPivotMode(true);
+// }, 5000);
+
+function movePopup() {
+    var e = document.querySelector('.ag-popup-window');
+    e.style.top = '400px';
+    e.style.left = '100px';
 }
