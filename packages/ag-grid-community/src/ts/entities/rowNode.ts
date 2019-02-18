@@ -165,6 +165,11 @@ export class RowNode implements IEventEmitter {
 
     /** The height, in pixels, of this row */
     public rowHeight: number;
+    /** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation
+     * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each
+     * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do
+     * the row height calculation and set rowHeightEstimated=false.*/
+    public rowHeightEstimated: boolean;
     /** The top pixel for this row */
     public rowTop: number;
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
@@ -396,8 +401,9 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setRowHeight(rowHeight: number | undefined | null): void {
+    public setRowHeight(rowHeight: number | undefined | null, estimated = false): void {
         this.rowHeight = rowHeight;
+        this.rowHeightEstimated = estimated;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }

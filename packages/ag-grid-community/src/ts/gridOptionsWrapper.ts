@@ -1570,12 +1570,15 @@ export class GridOptionsWrapper {
         return this.getDefaultRowHeight();
     }
 
-    public getRowHeightForNode(rowNode: RowNode): number | undefined {
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): {height: number, estimated: boolean} {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
 
         if (typeof this.gridOptions.getRowHeight === 'function') {
+            if (allowEstimate) {
+                return {height: this.getDefaultRowHeight(), estimated: true};
+            }
             const params = {
                 node: rowNode,
                 data: rowNode.data,
@@ -1585,21 +1588,25 @@ export class GridOptionsWrapper {
             return this.gridOptions.getRowHeight(params);
         } else if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-                return this.gridOptions.detailRowHeight;
+                return {height: this.gridOptions.detailRowHeight, estimated: false};
             } else {
-                return DEFAULT_DETAIL_ROW_HEIGHT;
+                return {height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false};
             }
         }
 
         const defaultHeight:number = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
             this.gridOptions.rowHeight : this.getDefaultRowHeight();
         if (this.columnController.isAutoRowHeightActive()) {
+            if (allowEstimate) {
+                return {height: this.getDefaultRowHeight(), estimated: true};
+            }
             const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
             // never return less than the default row height - covers when auto height
             // cells are blank.
-            return Math.max(autoHeight, defaultHeight);
+            return {height: Math.max(autoHeight, defaultHeight), estimated: false};
         }
-        return defaultHeight;
+
+        return {height: defaultHeight, estimated: false};
     }
 
     public isDynamicRowHeight(): boolean {

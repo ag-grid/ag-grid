@@ -19,7 +19,6 @@ export class FlattenStage implements IRowNodeStage {
 
     public execute(params: StageExecuteParams): RowNode[] {
         const rootNode = params.rowNode;
-        const changedPath = params.changedPath;
 
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
@@ -35,11 +34,6 @@ export class FlattenStage implements IRowNodeStage {
         const showRootNode = skipLeafNodes && rootNode.leafGroup;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
-        // set all row tops to null, then set row tops on all visible rows. if we don't
-        // do this, then the algorithm below only sets row tops, old row tops from old rows
-        // will still lie around
-        this.resetRowTops(rootNode, changedPath);
-
         this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
 
         // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
@@ -50,32 +44,6 @@ export class FlattenStage implements IRowNodeStage {
         }
 
         return result;
-    }
-
-    private resetRowTops(rowNode: RowNode, changedPath: ChangedPath): void {
-        rowNode.clearRowTop();
-        if (rowNode.hasChildren()) {
-            if (rowNode.childrenAfterGroup) {
-
-                // if a changedPath is active, it means we are here because of a transaction update or
-                // a change detection. neither of these impacts the open/closed state of groups. so if
-                // a group is not open this time, it was not open last time. so we know all closed groups
-                // already have their top positions cleared. so there is no need to traverse all the way
-                // when changedPath is active and the rowNode is not expanded.
-                const skipChildren = changedPath.isActive() && !rowNode.expanded;
-                if (!skipChildren) {
-                    for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                        this.resetRowTops(rowNode.childrenAfterGroup[i], changedPath);
-                    }
-                }
-            }
-            if (rowNode.sibling) {
-                rowNode.sibling.clearRowTop();
-            }
-        }
-        if (rowNode.detailNode) {
-            rowNode.detailNode.clearRowTop();
-        }
     }
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],
@@ -143,17 +111,8 @@ export class FlattenStage implements IRowNodeStage {
     // duplicated method, it's also in floatingRowModel
     private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper, uiLevel: number): void {
         result.push(rowNode);
-        if (_.missing(rowNode.rowHeight)) {
-            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-            rowNode.setRowHeight(rowHeight);
-        }
-
         const isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
-
         rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
-        rowNode.setRowTop(nextRowTop.value);
-        rowNode.setRowIndex(result.length - 1);
-        nextRowTop.value += rowNode.rowHeight;
     }
 
     private ensureFooterNodeExists(groupNode: RowNode): void {

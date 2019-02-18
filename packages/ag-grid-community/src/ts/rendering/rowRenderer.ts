@@ -813,8 +813,6 @@ export class RowRenderer extends BeanStub {
             newFirst = this.paginationProxy.getPageFirstRow();
             newLast = this.paginationProxy.getPageLastRow();
         } else {
-            const pageFirstRow = this.paginationProxy.getPageFirstRow();
-            const pageLastRow = this.paginationProxy.getPageLastRow();
 
             const pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
             const heightOffset = this.heightScaler.getOffset();
@@ -826,6 +824,13 @@ export class RowRenderer extends BeanStub {
             const realPixelTop = topPixel + pixelOffset + heightOffset;
             const realPixelBottom = bottomPixel + pixelOffset + heightOffset;
 
+            // ensureRowHeightsVisible on works with CSRM, as it's the only row model that allows lazy row height calcs
+            let rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(realPixelTop, realPixelBottom);
+            if (rowHeightsChanged) {
+                this.heightScaler.update();
+                this.sizeContainerToPageHeight();
+            }
+
             let first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
             let last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
 
@@ -833,6 +838,9 @@ export class RowRenderer extends BeanStub {
             const buffer = this.gridOptionsWrapper.getRowBuffer();
             first = first - buffer;
             last = last + buffer;
+
+            const pageFirstRow = this.paginationProxy.getPageFirstRow();
+            const pageLastRow = this.paginationProxy.getPageLastRow();
 
             // adjust, in case buffer extended actual size
             if (first < pageFirstRow) {

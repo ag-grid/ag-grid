@@ -58,6 +58,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private rowNodeBlockLoader: RowNodeBlockLoader | undefined;
 
+    // we don't implement as lazy row heights is not supported in this row model
+    public ensureRowHeightsValid(startPixel: number, endPixel: number): boolean { return false; }
+
     @PostConstruct
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
@@ -674,7 +677,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             detailNode.level = masterNode.level + 1;
 
             const defaultDetailRowHeight = 200;
-            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode);
+            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
             detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
 
             masterNode.detailNode = detailNode;

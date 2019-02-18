@@ -48,6 +48,9 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         };
     }
 
+    // we don't implement as lazy row heights is not supported in this row model
+    public ensureRowHeightsValid(startPixel: number, endPixel: number): boolean { return false; }
+
     @PostConstruct
     public init(): void {
         if (!this.gridOptionsWrapper.isRowModelInfinite()) {

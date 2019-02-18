@@ -182,7 +182,7 @@ export class ServerSideBlock extends RowNodeBlock {
             const idToUse = this.createIdForIndex(index);
 
             rowNode.setDataAndId(data, idToUse);
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
 
             if (this.usingTreeData) {
                 const getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();

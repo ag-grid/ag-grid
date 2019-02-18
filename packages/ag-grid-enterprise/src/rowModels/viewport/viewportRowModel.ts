@@ -44,6 +44,9 @@ export class ViewportRowModel implements IRowModel {
 
     private viewportDatasource: IViewportDatasource;
 
+    // we don't implement as lazy row heights is not supported in this row model
+    public ensureRowHeightsValid(startPixel: number, endPixel: number): boolean { return false; }
+
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
@@ -54,7 +57,6 @@ export class ViewportRowModel implements IRowModel {
         if (viewportEnabled && this.gridOptionsWrapper.getViewportDatasource()) {
             this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
         }
-
     }
 
     public isLastRowFound(): boolean {

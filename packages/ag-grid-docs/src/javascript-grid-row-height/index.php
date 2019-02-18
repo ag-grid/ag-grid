@@ -104,22 +104,22 @@ gridOptions.getRowHeight = function(params) {
     </p>
 
     <p>
-        The example below shows auto height in actions. The following can be noted:
-        <ul>
-            <li>
-                Columns Auto A, Auto B and Auto C have <code>autoHeight=true</code>,
-                so the height of each row is such that it fits all contents form these
-                three columns.
-            </li>
-            <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
-            <li>
-                When a column is resized, the grid re-calculated the row heights after
-                the resize is finished.
-            </li>
-        </ul>
+        The example below shows auto height in action. The following can be noted:
     </p>
+    <ul>
+        <li>
+            Columns Auto A, Auto B and Auto C have <code>autoHeight=true</code>,
+            so the height of each row is such that it fits all contents form these
+            three columns.
+        </li>
+        <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
+        <li>
+            When a column is resized, the grid re-calculated the row heights after
+            the resize is finished.
+        </li>
+    </ul>
 
-    <?= example('Auto Row Height', 'auto-row-height', 'generated', array('processVue' => true)) ?>
+    <?= example('Auto Row Height', 'auto-row-height', 'generated') ?>
 
     <p>
         Auto height works by the grid creating an off-screen temporary row with all the
