@@ -61,7 +61,10 @@ export class PropertyKeys {
         'suppressRowHoverHighlight', 'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste',
         'serverSideSortingAlwaysResets', 'reactNext', 'suppressSetColumnStateEvents', 'enableCharts',
         'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver',
-        'suppressMaxRenderedRowRestriction'
+        'suppressMaxRenderedRowRestriction', 'suppressActionCtrlA', 'suppressActionCtrlV', 'suppressActionCtrlC',
+        'suppressActionCtrlD', 'suppressActionEnter', 'suppressActionPageUpDown', 'suppressActionArrowKeyNavigation',
+        'suppressActionF2', 'suppressActionBackspace', 'suppressActionEscape', 'suppressActionSpace',
+        'suppressActionDelete', 'suppressActionHome', 'suppressActionEnd'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

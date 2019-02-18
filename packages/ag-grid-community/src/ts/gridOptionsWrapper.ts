@@ -287,6 +287,62 @@ export class GridOptionsWrapper {
         return this.gridOptions.editType === 'fullRow';
     }
 
+    public isSuppressActionArrowKeyNavigation() {
+        return isTrue(this.gridOptions.suppressActionArrowKeyNavigation);
+    }
+
+    public isSuppressActionPageUpDown() {
+        return isTrue(this.gridOptions.suppressActionPageUpDown);
+    }
+
+    public isSuppressActionF2() {
+        return isTrue(this.gridOptions.suppressActionF2);
+    }
+
+    public isSuppressActionBackspace() {
+        return isTrue(this.gridOptions.suppressActionBackspace);
+    }
+
+    public isSuppressActionEscape() {
+        return isTrue(this.gridOptions.suppressActionEscape);
+    }
+
+    public isSuppressActionDelete() {
+        return isTrue(this.gridOptions.suppressActionDelete);
+    }
+
+    public isSuppressActionHome() {
+        return isTrue(this.gridOptions.suppressActionHome);
+    }
+
+    public isSuppressActionEnd() {
+        return isTrue(this.gridOptions.suppressActionEnd);
+    }
+
+    public isSuppressActionSpace() {
+        return isTrue(this.gridOptions.suppressActionSpace);
+    }
+
+    public isSuppressActionEnter() {
+        return isTrue(this.gridOptions.suppressActionEnter);
+    }
+
+    public isSuppressActionCtrlA() {
+        return isTrue(this.gridOptions.suppressActionCtrlA);
+    }
+
+    public isSuppressActionCtrlC() {
+        return isTrue(this.gridOptions.suppressActionCtrlC);
+    }
+
+    public isSuppressActionCtrlV() {
+        return isTrue(this.gridOptions.suppressActionCtrlV);
+    }
+
+    public isSuppressActionCtrlD() {
+        return isTrue(this.gridOptions.suppressActionCtrlD);
+    }
+
     public isSuppressFocusAfterRefresh() {
         return isTrue(this.gridOptions.suppressFocusAfterRefresh);
     }

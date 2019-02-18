@@ -1364,9 +1364,6 @@ export class CellComp extends Component {
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        if (this.beans.gridOptionsWrapper.isSuppressTabbing()) {
-            return;
-        }
         this.beans.rowRenderer.onTabKeyDown(this, event);
     }
 

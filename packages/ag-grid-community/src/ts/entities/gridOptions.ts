@@ -148,6 +148,21 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+    suppressActionCtrlA?: boolean;
+    suppressActionCtrlC?: boolean;
+    suppressActionCtrlV?: boolean;
+    suppressActionCtrlD?: boolean;
+    suppressActionEnter?: boolean;
+    suppressActionPageUpDown?: boolean;
+    suppressActionHome?: boolean;
+    suppressActionEnd?: boolean;
+    suppressActionArrowKeyNavigation?: boolean;
+    suppressActionF2?: boolean;
+    suppressActionBackspace?: boolean;
+    suppressActionEscape?: boolean;
+    suppressActionSpace?: boolean;
+    suppressActionDelete?: boolean;
+
     stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
     icons?: any; // should be typed

@@ -523,6 +523,59 @@ export class GridPanel extends Component {
 
         if (!renderedCell) { return; }
 
+        const key = keyboardEvent.which || keyboardEvent.keyCode;
+
+        switch (key) {
+            case Constants.KEY_LEFT :
+            case Constants.KEY_RIGHT :
+            case Constants.KEY_UP :
+            case Constants.KEY_DOWN :
+                if (this.gridOptionsWrapper.isSuppressActionArrowKeyNavigation()) { return; }
+                break;
+            case Constants.KEY_TAB :
+                if (this.beans.gridOptionsWrapper.isSuppressTabbing()) { return; }
+                break;
+            case Constants.KEY_ENTER :
+                if (this.beans.gridOptionsWrapper.isSuppressActionEnter()) { return; }
+                break;
+
+            case Constants.KEY_PAGE_UP :
+            case Constants.KEY_PAGE_DOWN :
+                if (this.gridOptionsWrapper.isSuppressActionPageUpDown()) { return; }
+                break;
+
+            case Constants.KEY_F2:
+                if (this.gridOptionsWrapper.isSuppressActionF2()) { return; }
+                break;
+
+            case Constants.KEY_BACKSPACE:
+                if (this.gridOptionsWrapper.isSuppressActionBackspace()) { return; }
+                break;
+
+            case Constants.KEY_ESCAPE:
+                if (this.gridOptionsWrapper.isSuppressActionEscape()) { return; }
+                break;
+
+            case Constants.KEY_SPACE:
+                if (this.gridOptionsWrapper.isSuppressActionSpace()) { return; }
+                break;
+
+            case Constants.KEY_DELETE:
+                if (this.gridOptionsWrapper.isSuppressActionDelete()) { return; }
+                break;
+
+            case Constants.KEY_PAGE_HOME:
+                if (this.gridOptionsWrapper.isSuppressActionHome()) { return; }
+                break;
+
+            case Constants.KEY_PAGE_END:
+                if (this.gridOptionsWrapper.isSuppressActionEnd()) { return; }
+                break;
+
+            // case Constants.KEY_PAGE_HOME :
+            // case Constants.KEY_PAGE_END :
+        }
+
         switch (eventName) {
             case 'keydown':
                 // first see if it's a scroll key, page up / down, home / end etc
@@ -663,6 +716,8 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndA(event: KeyboardEvent): boolean {
+        if (this.gridOptionsWrapper.isSuppressActionCtrlA()) { return; }
+
         const {columnController, pinnedRowModel, paginationProxy, rangeController} = this;
         const {PINNED_BOTTOM, PINNED_TOP} = Constants;
 
@@ -702,6 +757,8 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndC(event: KeyboardEvent): boolean {
+        if (this.gridOptionsWrapper.isSuppressActionCtrlC()) { return; }
+
         if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) { return false; }
 
         const focusedCell = this.focusedCellController.getFocusedCell();
@@ -720,6 +777,8 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndV(event: KeyboardEvent): boolean {
+        if (this.gridOptionsWrapper.isSuppressActionCtrlV()) { return; }
+
         if (!this.enterprise || this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             return;
         }
@@ -730,6 +789,8 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndD(event: KeyboardEvent): boolean {
+        if (this.gridOptionsWrapper.isSuppressActionCtrlD()) { return; }
+
         if (!this.enterprise) { return; }
 
         this.clipboardService.copyRangeDown();

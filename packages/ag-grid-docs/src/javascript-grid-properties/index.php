@@ -789,7 +789,31 @@ include '../documentation-main/documentation_header.php';
                 The grid will check for ResizeObserver and use it if it exists in the browser,
                 otherwise it will use the grid's alternative implementation. Some users reported
                 issues with Chrome's ResizeObserver. Use this property to always use the grids
-                alternative implementation should such problems exist.</a>.
+                alternative implementation should such problems exist.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressActionCtrlA</th>
+            <td>
+                Suppress the grid taking any action when Ctrl & A is pressed.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressActionCtrlC</th>
+            <td>
+                Suppress the grid taking any action when Ctrl & A is pressed.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressActionCtrlV</th>
+            <td>
+                Suppress the grid taking any action when Ctrl & A is pressed.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressActionCtrlD</th>
+            <td>
+                Suppress the grid taking any action when Ctrl & A is pressed.
             </td>
         </tr>
     </table>
