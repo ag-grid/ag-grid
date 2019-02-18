@@ -135,7 +135,7 @@ export class ClientSideRowModel {
         this.context.wireBean(this.rootNode);
     }
 
-    public ensureRowHeightsValid(startPixel: number, endPixel: number): boolean {
+    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
 
         let atLeastOneChange: boolean;
         let res = false;
@@ -146,8 +146,12 @@ export class ClientSideRowModel {
         do {
             atLeastOneChange = false;
 
-            const firstRow = this.getRowIndexAtPixel(startPixel);
-            const lastRow = this.getRowIndexAtPixel(endPixel);
+            const rowAtStartPixel = this.getRowIndexAtPixel(startPixel);
+            const rowAtEndPixel = this.getRowIndexAtPixel(endPixel);
+
+            // keep check to current page if doing pagination
+            const firstRow = Math.max(rowAtStartPixel, startLimitIndex);
+            const lastRow = Math.min(rowAtEndPixel, endLimitIndex);
 
             for (let rowIndex = firstRow; rowIndex<=lastRow; rowIndex++) {
                 let rowNode = this.getRow(rowIndex);

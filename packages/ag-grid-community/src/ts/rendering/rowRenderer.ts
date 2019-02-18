@@ -825,7 +825,7 @@ export class RowRenderer extends BeanStub {
             const realPixelBottom = bottomPixel + pixelOffset + heightOffset;
 
             // ensureRowHeightsVisible on works with CSRM, as it's the only row model that allows lazy row height calcs
-            let rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(realPixelTop, realPixelBottom);
+            let rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(realPixelTop, realPixelBottom, -1, -1);
             if (rowHeightsChanged) {
                 this.heightScaler.update();
                 this.sizeContainerToPageHeight();

@@ -94,8 +94,8 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         this.onModelUpdated();
     }
 
-    public ensureRowHeightsValid(startPixel: number, endPixel: number): boolean {
-        const res = this.rowModel.ensureRowHeightsValid(startPixel, endPixel);
+    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
+        const res = this.rowModel.ensureRowHeightsValid(startPixel, endPixel, this.getPageFirstRow(), this.getPageLastRow());
         if (res) {
             this.setIndexesAndBounds();
         }

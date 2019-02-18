@@ -45,7 +45,7 @@ export class ViewportRowModel implements IRowModel {
     private viewportDatasource: IViewportDatasource;
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(startPixel: number, endPixel: number): boolean { return false; }
+    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
 
     @PostConstruct
     private init(): void {
