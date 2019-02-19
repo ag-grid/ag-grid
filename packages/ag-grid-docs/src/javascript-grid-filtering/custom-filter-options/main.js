@@ -104,39 +104,14 @@ var gridOptions = {
     }
 };
 
-function introduceNullsToResults(httpResult) {
-    var results = httpResult.slice(10,35);
-    results.forEach(res => {
-        if (res.date === "24/08/2008") {
-            res.date = null;
-        }
-
-        if (res.age === 24) {
-            res.age = null;
-        }
-
-        if (res.country === 'Australia') {
-            res.country = null;
-        }
-    });
-
-    return results;
-}
-
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(introduceNullsToResults(httpResult));
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/packages/ag-grid-docs/src/javascript-grid-filtering/custom-filter-options/data/data.json'})
+        .then(function (data) {
+            gridOptions.api.setRowData(data);
         }
-    };
+    );
 });
