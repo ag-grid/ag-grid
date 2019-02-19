@@ -31,7 +31,7 @@ import { _ } from "../../utils";
 export class HeaderWrapperComp extends Component {
 
     private static TEMPLATE =
-        '<div class="ag-header-cell" role="presentation" >' +
+        '<div class="ag-header-cell" role="presentation" unselectable="on">' +
           '<div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
           '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
             // <inner component goes here>

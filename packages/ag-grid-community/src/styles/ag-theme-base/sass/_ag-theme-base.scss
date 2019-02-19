@@ -482,7 +482,7 @@
             margin-left: -$grid-size;
 
             & > span {
-                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{encodecolor($border-color)}'/> </svg>");
+                background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'#{$grid-size * 2}'%20viewBox%3D'0%200%201%20#{$grid-size * 2}'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'#{$grid-size}'%20x2%3D'1'%20y2%3D'#{$grid-size}'%20stroke-width%3D'1'%20stroke%3D'#{encodecolor($border-color)}'%2F%3E%3C%2Fsvg%3E");
                 height: $grid-size * 2;
             }
         }

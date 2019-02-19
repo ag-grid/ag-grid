@@ -52,6 +52,19 @@ export class Utils {
 
     private static doOnceFlags: { [key: string]: boolean } = {};
 
+    // https://ag-grid.com/forum/showthread.php?tid=4362
+    // when in IE or Edge, when you are editing a cell, then click on another cell,
+    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
+    // don't work. appears that when you update the dom in IE it looses focus
+    static doIeFocusHack(el: HTMLElement): void {
+        if (_.isBrowserIE() || _.isBrowserEdge()) {
+            if (_.missing(document.activeElement) || document.activeElement === document.body) {
+                // console.log('missing focus');
+                el.focus();
+            }
+        }
+    }
+
     // if the key was passed before, then doesn't execute the func
     static doOnce(func: () => void, key: string) {
         if (this.doOnceFlags[key]) {
@@ -83,7 +96,7 @@ export class Utils {
         return Math.max(diffX, diffY) <= pixelCount;
     }
 
-    public static jsonEquals(val1: any, val2: any): boolean {
+    static jsonEquals(val1: any, val2: any): boolean {
 
         const val1Json = val1 ? JSON.stringify(val1) : null;
         const val2Json = val2 ? JSON.stringify(val2) : null;
@@ -1102,6 +1115,7 @@ export class Utils {
                 throw new Error(`${iconName} did not find class`);
             }
             span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            span.setAttribute("unselectable", "on");
             return span;
         }
     }
@@ -1295,6 +1309,19 @@ export class Utils {
     static getTarget(event: Event): Element {
         const eventNoType = event as any;
         return eventNoType.target || eventNoType.srcElement;
+    }
+
+    static isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
+        let counter = 0;
+        while (element) {
+            if (this.containsClass(element, cls)) {
+                return true;
+            }
+            element = element.parentElement;
+            if (maxNest && ++counter > maxNest) { break; }
+        }
+
+        return false;
     }
 
     static isElementInEventPath(element: HTMLElement, event: Event): boolean {

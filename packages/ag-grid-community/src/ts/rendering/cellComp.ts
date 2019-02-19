@@ -128,6 +128,7 @@ export class CellComp extends Component {
     }
 
     public getCreateTemplate(): string {
+        const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'unselectable="on"' : '';
         const templateParts: string[] = [];
         const col = this.column;
 
@@ -149,13 +150,13 @@ export class CellComp extends Component {
         const stylesForRowSpanning = this.getStylesForRowSpanning();
 
         if (this.usingWrapper) {
-            wrapperStartTemplate = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
+            wrapperStartTemplate = `<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value" ${unselectable}>`;
             wrapperEndTemplate = '</span></span>';
         }
 
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
-        templateParts.push(` unselectable="on"`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
+        templateParts.push(` ${unselectable}`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
         templateParts.push(` role="gridcell"`);
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
@@ -1460,6 +1461,9 @@ export class CellComp extends Component {
         // behind, making it impossible to select the text field.
         let forceBrowserFocus = false;
 
+        // return if we are clicking on a row selection checkbox
+        if (_.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-selection-checkbox', 3)) { return; }
+
         if (_.isBrowserIE()) {
             const target = mouseEvent.target as HTMLElement;
             if (target.classList.contains('ag-cell')) {
@@ -1525,20 +1529,7 @@ export class CellComp extends Component {
             this.startRowOrCellEdit();
         }
 
-        this.doIeFocusHack();
-    }
-
-    // https://ag-grid.com/forum/showthread.php?tid=4362
-    // when in IE or Edge, when you are editing a cell, then click on another cell,
-    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
-    // don't work. appears that when you update the dom in IE it looses focus
-    private doIeFocusHack(): void {
-        if (_.isBrowserIE() || _.isBrowserEdge()) {
-            if (_.missing(document.activeElement) || document.activeElement === document.body) {
-                // console.log('missing focus');
-                this.getGui().focus();
-            }
-        }
+        _.doIeFocusHack(this.getGui());
     }
 
     private createGridCellVo(): void {
@@ -1773,7 +1764,9 @@ export class CellComp extends Component {
         // if this cell was just focused, see if we need to force browser focus, his can
         // happen if focus is programmatically set.
         if (cellFocused && event && event.forceBrowserFocus) {
-            this.getGui().focus();
+            const eGui = this.getGui();
+            eGui.focus();
+            _.doIeFocusHack(eGui);
         }
 
         // if another cell was focused, and we are editing, then stop editing

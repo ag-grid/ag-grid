@@ -125,7 +125,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    // for row models that have datasources, when we updateOffset the datasource, we need to force the rowRenderer
+    // for row models that have datasources, when we update the datasource, we need to force the rowRenderer
     // to redraw all rows. otherwise the old rows from the old datasource will stay displayed.
     public datasourceChanged(): void {
         this.firstRenderedRow = 0;
@@ -389,7 +389,7 @@ export class RowRenderer extends BeanStub {
 
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
     // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
-    // and the cellEditor is calling 'refresh' to get other cells to updateOffset (as other cells might depend on the
+    // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
     // edited cell).
     private restoreFocusedCell(gridCell: GridCell): void {
         if (gridCell) {
@@ -851,7 +851,7 @@ export class RowRenderer extends BeanStub {
         // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
-        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_NORMAL;
+        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         const suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
         if (rowLayoutNormal && !suppressRowCountRestriction) {
             if (newLast - newFirst > 500) {
@@ -1024,6 +1024,7 @@ export class RowRenderer extends BeanStub {
         this.ensureCellVisible(nextCell);
 
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
+
         if (this.rangeController) {
             const gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
             this.rangeController.setRangeToCell(gridCell);
