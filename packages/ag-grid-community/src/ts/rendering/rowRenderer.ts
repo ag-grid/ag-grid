@@ -825,7 +825,8 @@ export class RowRenderer extends BeanStub {
             const realPixelBottom = bottomPixel + pixelOffset + heightOffset;
 
             // ensureRowHeightsVisible on works with CSRM, as it's the only row model that allows lazy row height calcs
-            let rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(realPixelTop, realPixelBottom, -1, -1);
+            const rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(realPixelTop, realPixelBottom, -1, -1);
+
             if (rowHeightsChanged) {
                 this.heightScaler.update();
                 this.sizeContainerToPageHeight();
@@ -859,7 +860,7 @@ export class RowRenderer extends BeanStub {
         // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
-        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_NORMAL;
+        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         const suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
         if (rowLayoutNormal && !suppressRowCountRestriction) {
             if (newLast - newFirst > 500) {
@@ -1020,6 +1021,7 @@ export class RowRenderer extends BeanStub {
         this.ensureCellVisible(nextCell);
 
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
+
         if (this.rangeController) {
             const gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
             this.rangeController.setRangeToCell(gridCell);
