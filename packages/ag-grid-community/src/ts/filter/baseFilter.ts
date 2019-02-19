@@ -1,5 +1,5 @@
 import { Component } from "../widgets/component";
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
+import { IFilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
 import { QuerySelector } from "../widgets/componentAnnotations";
 import { Autowired, Context } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -63,14 +63,17 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     public static STARTS_WITH = 'startsWith'; //4;
     public static ENDS_WITH = 'endsWith'; //5;
 
+    // contains translations from any custom FilterOptionDef's (via filterOptions)
+    defaultFilterOptionTranslations: {[name: string]: string} = {};
+
     private newRowsActionKeep: boolean;
 
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
-    defaultFilter: string;
-    filter: string;
-    filterCondition: string;
+    defaultFilter: string | IFilterOptionDef;
+    selectedFilter: string | IFilterOptionDef;
+    selectedFilterCondition: string | IFilterOptionDef;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -95,15 +98,17 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     public init(params: P): void {
         this.filterParams = params;
+
         this.defaultFilter = this.filterParams.defaultOption;
+
         if (this.filterParams.filterOptions && !this.defaultFilter) {
             if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0) {
                 this.defaultFilter = this.filterParams.filterOptions[0];
             }
         }
         this.customInit();
-        this.filter = this.defaultFilter;
-        this.filterCondition = this.defaultFilter;
+        this.selectedFilter = this.defaultFilter;
+        this.selectedFilterCondition = this.defaultFilter;
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
         this.applyActive = ((params.applyButton === true) || ((params as any).apply === true));
@@ -128,7 +133,6 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
         this.initialiseFilterBodyUi(FilterConditionType.MAIN);
         this.refreshFilterBodyUi(FilterConditionType.MAIN);
-
     }
 
     public onClearButton() {
@@ -334,7 +338,14 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     public translate(toTranslate: string): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
+
+        let defaultTranslation = DEFAULT_TRANSLATIONS[toTranslate];
+
+        if (!defaultTranslation) {
+            defaultTranslation = this.defaultFilterOptionTranslations[toTranslate];
+        }
+
+        return translate(toTranslate, defaultTranslation);
     }
 
     public getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number {
@@ -342,10 +353,8 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
             return 0;
         }
-
         return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
     }
-
 }
 
 /**
@@ -389,14 +398,28 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
         return this.suppressAndOrCondition !== true;
     }
 
+    public getSelectedFilterOptionKey(filterConditionType: FilterConditionType) {
+        const selectedFilterOption = (filterConditionType === FilterConditionType.MAIN) ?
+            this.selectedFilter : this.selectedFilterCondition;
+
+        if (selectedFilterOption) {
+            return (typeof this.selectedFilter === 'string') ? this.selectedFilter : this.selectedFilter.displayKey;
+        } else  {
+            return (typeof this.defaultFilter === 'string') ? this.defaultFilter : this.defaultFilter.displayKey;
+        }
+    }
+
     public generateFilterHeader(type:FilterConditionType): string {
         const defaultFilterTypes = this.getApplicableFilterTypes();
         const restrictedFilterTypes = this.filterParams.filterOptions;
+        this.addDefaultFilterOptionsTranslations();
+
         const actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
 
-        const optionsHtml: string[] = actualFilterTypes.map(filterType => {
-            const localeFilterName = this.translate(filterType);
-            return `<option value="${filterType}">${localeFilterName}</option>`;
+        const optionsHtml: string[] = actualFilterTypes.map(filter => {
+            const filterName = (typeof filter === 'string') ? filter : filter.displayKey;
+            const localeFilterName = this.translate(filterName);
+            return `<option value="${filterName}">${localeFilterName}</option>`;
         });
 
         const readOnly = optionsHtml.length == 1 ? 'disabled' : '';
@@ -411,30 +434,52 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
             </div>`;
     }
 
+    private addDefaultFilterOptionsTranslations() {
+        if (!this.filterParams.filterOptions) return;
+
+        this.filterParams.filterOptions.forEach(filterOption => {
+            if (typeof filterOption !== 'string') {
+                const filterOptionDef = filterOption as IFilterOptionDef;
+                if (filterOptionDef && filterOptionDef.displayKey && filterOptionDef.displayName) {
+                    this.defaultFilterOptionTranslations[filterOptionDef.displayKey] = filterOptionDef.displayName;
+                }
+            }
+        });
+    }
+
     public initialiseFilterBodyUi(type:FilterConditionType) {
         if (type === FilterConditionType.MAIN) {
-            this.setFilterType(this.filter, type);
+            this.setFilterType(this.selectedFilter, type);
             this.addDestroyableEventListener(this.eTypeSelector, "change", () => this.onFilterTypeChanged (type));
         } else {
-            this.setFilterType(this.filterCondition, type);
+            this.setFilterType(this.selectedFilterCondition, type);
             this.addDestroyableEventListener(this.eTypeConditionSelector, "change", () => this.onFilterTypeChanged (type));
         }
     }
 
-    // refreshFilterBodyUi(): void {
-    //     if (this.eTypeConditionSelector){
-    //         this.setFilterType(this.filter, this.eTypeConditionSelector);
-    //     }
-    //
-    // }
-
     public abstract getDefaultType(): string;
 
+
     private onFilterTypeChanged(type:FilterConditionType): void {
+
+        const lookupFilter = (selectedFilterValue: string): string | IFilterOptionDef => {
+            for (let i = 0; this.filterParams.filterOptions.length; i++) {
+                const filterOpt = this.filterParams.filterOptions[i];
+
+                const filterKey = (typeof filterOpt === 'string') ?
+                    filterOpt : (filterOpt as IFilterOptionDef).displayKey;
+
+                if (filterKey === selectedFilterValue) return filterOpt;
+            }
+        };
+
         if (type === FilterConditionType.MAIN) {
-            this.filter = this.eTypeSelector.value;
+            this.selectedFilter = this.filterParams.filterOptions ?
+                lookupFilter(this.eTypeSelector.value) : this.eTypeSelector.value;
+
         } else {
-            this.filterCondition = this.eTypeConditionSelector.value;
+            this.selectedFilterCondition = this.filterParams.filterOptions ?
+                lookupFilter(this.eTypeConditionSelector.value) : this.eTypeConditionSelector.value;
         }
         this.refreshFilterBodyUi(type);
 
@@ -448,7 +493,7 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
     public isFilterActive(): boolean {
         const rawFilterValues = this.filterValues(FilterConditionType.MAIN);
-        if (rawFilterValues && this.filter === BaseFilter.IN_RANGE) {
+        if (rawFilterValues && this.selectedFilter === BaseFilter.IN_RANGE) {
             const filterValueArray = (rawFilterValues as T[]);
             return filterValueArray[0] != null && filterValueArray[1] != null;
         } else {
@@ -456,22 +501,33 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
         }
     }
 
-    public setFilterType(filterType: string, type:FilterConditionType): void {
+    public setFilterType(filterType: string | IFilterOptionDef, type:FilterConditionType): void {
         if (type === FilterConditionType.MAIN) {
-            this.filter = filterType;
+            this.selectedFilter = filterType;
 
             if (!this.eTypeSelector) { return; }
-            this.eTypeSelector.value = filterType;
+
+            if (typeof filterType === 'string') {
+                this.eTypeSelector.value = filterType;
+            } else {
+                this.eTypeSelector.value = filterType ? filterType.displayKey : null;
+            }
+
         } else {
-            this.filterCondition = filterType;
+            this.selectedFilterCondition = filterType;
 
             if (!this.eTypeConditionSelector) { return; }
-            this.eTypeConditionSelector.value = filterType;
 
+            if (typeof filterType === 'string') {
+                this.eTypeConditionSelector.value = filterType;
+            } else {
+                this.eTypeConditionSelector.value = filterType ? filterType.displayKey : null;
+            }
         }
     }
 
     isFilterConditionActive(type: FilterConditionType): boolean {
+        console.log('isFilterConditionActive');
         return this.filterValues(type) != null;
     }
 }
@@ -508,27 +564,27 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         return (filterValue: T, gridValue: T): number => {
             if (gridValue == null) {
                 const nullValue = this.translateNull (type);
-                if (this.filter === BaseFilter.EQUALS) {
+                if (this.selectedFilter === BaseFilter.EQUALS) {
                     return nullValue ? 0 : 1;
                 }
 
-                if (this.filter === BaseFilter.GREATER_THAN) {
+                if (this.selectedFilter === BaseFilter.GREATER_THAN) {
                     return nullValue ? 1 : -1;
                 }
 
-                if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
+                if (this.selectedFilter === BaseFilter.GREATER_THAN_OR_EQUAL) {
                     return nullValue ? 1 : -1;
                 }
 
-                if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
+                if (this.selectedFilter === BaseFilter.LESS_THAN_OR_EQUAL) {
                     return nullValue ? -1 : 1;
                 }
 
-                if (this.filter === BaseFilter.LESS_THAN) {
+                if (this.selectedFilter === BaseFilter.LESS_THAN) {
                     return nullValue ? -1 : 1;
                 }
 
-                if (this.filter === BaseFilter.NOT_EQUAL) {
+                if (this.selectedFilter === BaseFilter.NOT_EQUAL) {
                     return nullValue ? 1 : 0;
                 }
             }
@@ -556,20 +612,33 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     }
 
     individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType) {
-        return this.doIndividualFilterPasses(params, type, type === FilterConditionType.MAIN ? this.filter : this.filterCondition);
+        const filter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        return this.doIndividualFilterPasses(params, type, filter);
     }
 
-    private doIndividualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType, filter: string) {
-        const value: any = this.filterParams.valueGetter(params.node);
-        const comparator: Comparator<T> = this.nullComparator (filter);
+    private doIndividualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType, filter: string | IFilterOptionDef) {
+        const cellValue: any = this.filterParams.valueGetter(params.node);
 
         const rawFilterValues: T[] | T = this.filterValues(type);
-        const from: T = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
-        if (from == null) {
+        const filterValue: T = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
+
+        if (filterValue == null) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         }
 
-        const compareResult = comparator(from, value);
+        const customFilterOptionDef = typeof filter !== 'string';
+        if (customFilterOptionDef) {
+            const filterOptionDef = filter as IFilterOptionDef;
+            if (type === FilterConditionType.MAIN) {
+                return filterOptionDef.test(filterValue, cellValue);
+            }
+            if (type === FilterConditionType.CONDITION) {
+                return filterOptionDef.test(filterValue, cellValue);
+            }
+        }
+
+        const comparator: Comparator<T> = this.nullComparator (filter as string);
+        const compareResult = comparator(filterValue, cellValue);
 
         if (filter === BaseFilter.EQUALS) {
             return compareResult === 0;
@@ -596,7 +665,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         }
 
         //From now on the type is a range and rawFilterValues must be an array!
-        const compareToResult: number = comparator((rawFilterValues as T[])[1], value);
+        const compareToResult: number = comparator((rawFilterValues as T[])[1], cellValue);
         if (filter === BaseFilter.IN_RANGE) {
             if (!this.filterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
@@ -605,7 +674,6 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
             }
         }
 
-        throw new Error('Unexpected type of filter!: ' + filter);
+        throw new Error('Unexpected type of filter: ' + filter);
     }
-
 }

@@ -1,8 +1,8 @@
-import { SerializedFilter } from "../interfaces/iFilter";
-import { QuerySelector } from "../widgets/componentAnnotations";
-import { BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter } from "./baseFilter";
-import { INumberFilterParams } from "./textFilter";
-import { _ } from "../utils";
+import {IFilterOptionDef, SerializedFilter} from "../interfaces/iFilter";
+import {QuerySelector} from "../widgets/componentAnnotations";
+import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
+import {INumberFilterParams} from "./textFilter";
+import {_} from "../utils";
 
 export interface SerializedNumberFilter extends SerializedFilter {
     filter: number;
@@ -32,8 +32,11 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     public static LESS_THAN = 'lessThan'; //3;
 
     modelFromFloatingFilter(from: string): SerializedNumberFilter {
+        const filterOptionType = (typeof this.selectedFilter === 'string') ?
+            this.selectedFilter : this.selectedFilter.displayKey;
+
         return {
-            type: this.filter,
+            type: filterOptionType,
             filter: Number(from),
             filterTo: this.filterNumberTo,
             filterType: 'number'
@@ -71,7 +74,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
             this.setFilter(this.filterNumberCondition, FilterConditionType.CONDITION);
             this.setFilterTo(this.filterNumberConditionTo, FilterConditionType.CONDITION);
-            this.setFilterType(this.filterCondition, FilterConditionType.CONDITION);
+            this.setFilterType(this.selectedFilterCondition, FilterConditionType.CONDITION);
         }
     }
 
@@ -115,12 +118,12 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
     public filterValues(type:FilterConditionType): number | number[] {
         if (type === FilterConditionType.MAIN) {
-            return this.filter !== BaseFilter.IN_RANGE ?
+            return this.selectedFilter !== BaseFilter.IN_RANGE ?
                 this.asNumber(this.filterNumber) :
                 [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
         }
 
-        return this.filterCondition !== BaseFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== BaseFilter.IN_RANGE ?
             this.asNumber(this.filterNumberCondition) :
             [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     }
@@ -186,11 +189,15 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public serialize(type:FilterConditionType): SerializedNumberFilter {
-        const filter = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const selectedFilter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         const filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
         const filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
+
+        const filterOptionType = (typeof selectedFilter === 'string') ?
+            selectedFilter : (selectedFilter as IFilterOptionDef).displayKey;
+
         return {
-            type: filter ? filter : this.defaultFilter,
+            type: filterOptionType,
             filter: filterNumber,
             filterTo: filterNumberTo,
             filterType: 'number'
@@ -204,7 +211,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public refreshFilterBodyUi(type:FilterConditionType): void {
-        const filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         const panel = type === FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
 
         if (!panel) { return; }

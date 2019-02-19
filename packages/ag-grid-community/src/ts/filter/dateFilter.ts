@@ -50,10 +50,12 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateToCondition: Date;
 
     public modelFromFloatingFilter(from: string): SerializedDateFilter {
+        const filterOptionType = (typeof this.selectedFilter === 'string') ?
+            this.selectedFilter : this.selectedFilter.displayKey;
         return {
             dateFrom: from,
             dateTo: this.getDateTo(),
-            type: this.filter,
+            type: filterOptionType,
             filterType: 'date'
         };
     }
@@ -81,11 +83,11 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         if (type === FilterConditionType.MAIN) {
             this.setDateFrom_date(this.dateFrom, FilterConditionType.MAIN);
             this.setDateTo_date(this.dateTo, FilterConditionType.MAIN);
-            this.setFilterType(this.filterCondition, FilterConditionType.MAIN);
+            this.setFilterType(this.selectedFilter, FilterConditionType.MAIN);
         } else {
             this.setDateFrom_date(this.dateFromCondition, FilterConditionType.CONDITION);
             this.setDateTo_date(this.dateToCondition, FilterConditionType.CONDITION);
-            this.setFilterType(this.filterCondition, FilterConditionType.CONDITION);
+            this.setFilterType(this.selectedFilterCondition, FilterConditionType.CONDITION);
         }
     }
 
@@ -155,10 +157,12 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         let filterTypeValue: string;
         if (type === FilterConditionType.MAIN) {
             panel = this.eDateToPanel;
-            filterTypeValue = this.filter;
+            filterTypeValue = (typeof this.selectedFilter === 'string') ?
+                this.selectedFilter : this.selectedFilter.displayKey;
         } else {
             panel = this.eDateToConditionPanel;
-            filterTypeValue = this.filterCondition;
+            filterTypeValue = (typeof this.selectedFilterCondition === 'string') ?
+                this.selectedFilterCondition : this.selectedFilterCondition.displayKey;
         }
 
         if (!panel) { return; }
@@ -182,11 +186,10 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public serialize(type:FilterConditionType): SerializedDateFilter {
         const dateToComponent = type === FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
         const dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
-        const filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
         return {
             dateTo: _.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
             dateFrom: _.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
-            type: filterType ? filterType : this.defaultFilter,
+            type: this.getSelectedFilterOptionKey(type),
             filterType: 'date'
         };
     }
@@ -195,14 +198,14 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         if (type === FilterConditionType.MAIN) {
             if (!this.dateFromComponent) { return null; }
 
-            return this.filter !== BaseFilter.IN_RANGE ?
+            return this.selectedFilter !== BaseFilter.IN_RANGE ?
                 this.dateFromComponent.getDate() :
                 [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
         }
 
         if (!this.dateFromConditionComponent) { return null; }
 
-        return this.filterCondition !== BaseFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== BaseFilter.IN_RANGE ?
             this.dateFromConditionComponent.getDate() :
             [this.dateFromConditionComponent.getDate(), this.dateToConditionComponent.getDate()];
     }
@@ -219,7 +222,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getFilterType(): string {
-        return this.filter;
+        return (typeof this.selectedFilter === 'string') ? this.selectedFilter : this.selectedFilter.displayKey;
     }
 
     public setDateFrom(date: string, type:FilterConditionType): void {
