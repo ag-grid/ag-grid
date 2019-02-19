@@ -481,7 +481,7 @@ export interface IFilterOptionDef {
         <code>greaterThanWithNulls</code></li>
     <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that custom <code>comparator</code>
         is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
-    <li>The 'Country' column includes a custom <code>notEqualWithNulls</code> filter.</li>
+    <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter.</li>
 </ul>
 
 <?= example('Custom Filter Options', 'custom-filter-options', 'generated', array("processVue" => true)) ?>

@@ -78,13 +78,14 @@ var columnDefs = [
         width: 120,
         filterParams: {
             filterOptions: [
-                'contains',
-                'equals',
+                // 'equals',
+                'notEqual',
                 {
-                    displayKey: 'notEqualWithNulls',
-                    displayName: 'Not Equals with Nulls',
+                    displayKey: 'notEqualNoNulls',
+                    displayName: 'Not Equals (No Nulls)',
                     test: function(filterValue, cellValue) {
-                        return cellValue == null || cellValue !== filterValue;
+                        if (cellValue == null) return false;
+                        return cellValue !== filterValue;
                     }
                 }
             ]

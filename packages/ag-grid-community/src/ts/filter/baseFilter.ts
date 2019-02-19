@@ -101,11 +101,30 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
         this.defaultFilter = this.filterParams.defaultOption;
 
+        // strip out incorrectly defined FilterOptionDef's
+        this.filterParams.filterOptions = params.filterOptions.filter(filterOption => {
+            if (typeof filterOption === 'string') return true;
+            if (!filterOption.displayKey) {
+                console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
+                return false;
+            }
+            if (!filterOption.displayName) {
+                console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayName'");
+                return false;
+            }
+            if (!filterOption.test) {
+                console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'test'");
+                return false;
+            }
+            return true;
+        });
+
         if (this.filterParams.filterOptions && !this.defaultFilter) {
             if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0) {
                 this.defaultFilter = this.filterParams.filterOptions[0];
             }
         }
+
         this.customInit();
         this.selectedFilter = this.defaultFilter;
         this.selectedFilterCondition = this.defaultFilter;
