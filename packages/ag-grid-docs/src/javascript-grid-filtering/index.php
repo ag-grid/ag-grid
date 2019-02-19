@@ -408,4 +408,84 @@ on the combination of filter type and your <code>columnDef.filterParams.nullComp
     Note that <code>inRange</code> will never include <code>null</code>.
 </p>
 
+
+<h2>Adding Custom Filter Options</h2>
+
+<p>
+    For applications that have bespoke filtering requirements, it is also possible to can add new custom filtering
+    options to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be
+    included alongside the built in 'Not Equal' option.
+</p>
+
+<p>
+    Custom filter options are supplied to the grid via <code>filterParams.filterOptions</code> and must conform to the
+    following interface:
+</p>
+
+<snippet>
+export interface FilterOptionDef {
+    displayKey: string;
+    displayName: string;
+    test: (filterValue: any, cellValue: any) => boolean;
+}
+</snippet>
+
+<p>
+    The <code>displayKey</code> should contain a unique key value that doesn't clash with the built-in filter keys.
+    A default <code>displayName</code> should also be provided but can be replaced by a locale specific value using a
+    <a href="../javascript-grid-internationalisation/#using-localetextfunc">localeTextFunc</a>.
+</p>
+
+<p>
+    The custom filter logic is implemented through the <code>test</code> function, which receives the <code>filterValue</code>
+    typed by the user along with the <code>cellValue</code> from the grid, and returns <code>true</code> or <code>false</code>.
+</p>
+
+<p>
+    Custom <code>FilterOptionDef's</code> can be supplied alongside built-in filter option <code>string</code> keys
+    as shown below:
+</p>
+
+<snippet>
+{
+    field: "age",
+    filter: 'agNumberColumnFilter',
+    filterParams: {
+        filterOptions: [
+            'lessThan',
+            {
+                displayKey: 'lessThanWithNulls',
+                displayName: 'Less Than with Nulls',
+                test: function(filterValue, cellValue) {
+                    return dataValue == null || dataValue < filterValue;
+                }
+            },
+            'greaterThan',
+            {
+                displayKey: 'greaterThanWithNulls',
+                displayName: 'Greater Than with Nulls',
+                test: function(filterValue, cellValue) {
+                    return dataValue == null || dataValue > filterValue;
+                }
+            }
+        ]
+    }
+}
+</snippet>
+
+<p>
+    The example demonstrates several custom filter options:
+</p>
+<ul class="content">
+    <li>The 'Age' column contains two custom filter options <code>lessThanWithNulls</code> and
+        <code>greaterThanWithNulls</code></li>
+    <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that custom <code>comparator</code>
+        is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
+    <li>The 'Country' column includes a custom <code>notEqualWithNulls</code> filter.</li>
+</ul>
+
+<?= example('Custom Filter Options', 'custom-filter-options', 'generated') ?>
+
+
+
 <?php include '../documentation-main/documentation_footer.php';?>

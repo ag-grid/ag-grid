@@ -60,6 +60,12 @@ export interface IDoesFilterPassParams {
     data: any;
 }
 
+export interface FilterOptionDef {
+    displayKey: string;
+    displayName: string;
+    test: (filterValue: any, cellValue: any) => boolean;
+}
+
 export interface IFilterParams {
     clearButton?: boolean;
     applyButton?: boolean;
@@ -73,7 +79,7 @@ export interface IFilterParams {
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
     $scope: any;
-    filterOptions?: string[];
+    filterOptions?: (FilterOptionDef | string) [];
     defaultOption?: string;
     textFormatter?: (from: string) => string;
 }

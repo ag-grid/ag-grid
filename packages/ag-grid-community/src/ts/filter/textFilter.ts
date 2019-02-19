@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
+import {FilterOptionDef, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
 import {
     ComparableBaseFilter,
     BaseFilter,
@@ -41,16 +41,17 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     private filterText: string;
     private filterConditionText: string;
+
     private comparator: TextComparator;
     private formatter: TextFormatter;
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
-    }
+    };
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    }
+    };
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -72,7 +73,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             console.warn('invalid filter type ' + filter);
             return false;
         }
-    }
+    };
 
     public getDefaultType(): string {
         return BaseFilter.CONTAINS;
@@ -88,8 +89,12 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     modelFromFloatingFilter(from: string): SerializedTextFilter {
+
+        const filterOptionType = (typeof this.selectedFilter === 'string') ?
+            this.selectedFilter : this.selectedFilter.displayKey;
+
         return {
-            type: this.filter,
+            type: filterOptionType,
             filter: from,
             filterType: 'text'
         };
@@ -114,7 +119,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         super.initialiseFilterBodyUi(type);
         this.addFilterChangedListener(type);
         this.setFilter(this.filterConditionText, FilterConditionType.CONDITION);
-        this.setFilterType(this.filterCondition, FilterConditionType.CONDITION);
+        this.setFilterType(this.selectedFilterCondition, FilterConditionType.CONDITION);
     }
 
     private addFilterChangedListener(type:FilterConditionType) {
@@ -139,24 +144,47 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
-        const filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
-        const filter:string = type == FilterConditionType.MAIN ? this.filter : this.filterCondition;
+
+        const filterText: string = (type == FilterConditionType.MAIN) ?
+            this.filterText : this.filterConditionText;
+
+        const selectedFilterOption: string | FilterOptionDef = (type == FilterConditionType.MAIN) ?
+            this.selectedFilter : this.selectedFilterCondition;
 
         if (!filterText) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         } else {
-            return this.checkIndividualFilter (params, filter, filterText);
+            return this.checkIndividualFilter (params, type, selectedFilterOption, filterText);
         }
     }
 
-    private checkIndividualFilter(params: IDoesFilterPassParams, filterType:string, filterText: string) {
-        const value = this.filterParams.valueGetter(params.node);
-        if (value == null || value === undefined) {
-            return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
-        }
+    private checkIndividualFilter(params: IDoesFilterPassParams, type:FilterConditionType, selectedFilterOption: string | FilterOptionDef, filterText: string) {
+        const cellValue = this.filterParams.valueGetter(params.node);
+
         const filterTextFormatted = this.formatter(filterText);
-        const valueFormatted: string = this.formatter(value);
-        return this.comparator (filterType, valueFormatted, filterTextFormatted);
+
+        if (typeof selectedFilterOption !== 'string') {
+            const filterOptionDef = selectedFilterOption as FilterOptionDef;
+            if (type === FilterConditionType.MAIN) {
+                // value could be null so only invoking formatter if custom filter option
+                const valueFormatted: string = this.formatter(cellValue);
+                return filterOptionDef.test(filterTextFormatted, valueFormatted);
+            }
+            if (type === FilterConditionType.CONDITION) {
+                // value could be null so only invoking formatter if custom filter option
+                const valueFormatted: string = this.formatter(cellValue);
+                return filterOptionDef.test(filterTextFormatted, valueFormatted);
+            }
+        }
+
+        if (cellValue == null || cellValue === undefined) {
+            return selectedFilterOption === BaseFilter.NOT_EQUAL || selectedFilterOption === BaseFilter.NOT_CONTAINS;
+        }
+
+        // values supplied to formatter should not be null (for backwards compatibility)
+        const valueFormatted: string = this.formatter(cellValue);
+
+        return this.comparator (selectedFilterOption as string, valueFormatted, filterTextFormatted);
     }
 
     private onFilterTextFieldChanged(type:FilterConditionType) {
@@ -230,10 +258,11 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public serialize(type:FilterConditionType): SerializedTextFilter {
-        const filter = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        const filterOptionKey = this.getSelectedFilterOptionKey(type);
         const filterText = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
+
         return {
-            type: filter ? filter : this.defaultFilter,
+            type: filterOptionKey,
             filter: filterText,
             filterType: 'text'
         };
@@ -247,5 +276,4 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     public setType(filterType: string, type:FilterConditionType): void {
         this.setFilterType(filterType, type);
     }
-
 }
