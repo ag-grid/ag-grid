@@ -1594,19 +1594,22 @@ export class GridOptionsWrapper {
             }
         }
 
-        const defaultHeight:number = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
-            this.gridOptions.rowHeight : this.getDefaultRowHeight();
+        const minRowHeight = this.getDefaultRowHeight();
+
+        const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
+            this.gridOptions.rowHeight : minRowHeight;
+
         if (this.columnController.isAutoRowHeightActive()) {
             if (allowEstimate) {
-                return {height: this.getDefaultRowHeight(), estimated: true};
+                return {height: rowHeight, estimated: true};
             }
             const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
             // never return less than the default row height - covers when auto height
             // cells are blank.
-            return {height: Math.max(autoHeight, defaultHeight), estimated: false};
+            return {height: Math.max(autoHeight, minRowHeight), estimated: false};
         }
 
-        return {height: defaultHeight, estimated: false};
+        return {height: rowHeight, estimated: false};
     }
 
     public isDynamicRowHeight(): boolean {

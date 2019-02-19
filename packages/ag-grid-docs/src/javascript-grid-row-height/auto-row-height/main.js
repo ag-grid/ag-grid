@@ -51,10 +51,8 @@ function createRowData() {
     return rowData;
 }
 
-function onColumnResized(event) {
-    if (event.finished) {
-        gridOptions.api.resetRowHeights();
-    }
+function onColumnResized() {
+    gridOptions.api.resetRowHeights();
 }
 
 var gridOptions = {

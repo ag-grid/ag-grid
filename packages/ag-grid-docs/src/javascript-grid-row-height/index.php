@@ -114,37 +114,40 @@ gridOptions.getRowHeight = function(params) {
         </li>
         <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
         <li>
-            When a column is resized, the grid re-calculated the row heights after
+            When a column is resized, the grid re-calculates the row heights after
             the resize is finished.
         </li>
     </ul>
 
     <?= example('Auto Row Height', 'auto-row-height', 'generated') ?>
 
+    <h3>Lazy Height Calculation</h3>
+
     <p>
-        Auto height works by the grid creating an off-screen temporary row with all the
+        Auto height works by the grid creating an off-screen (not visible to the user)
+        temporary row with all the
         auto height columns rendered into it. The grid then measures the height of the
         temporary row. Because DOM interaction is required for each row this can be an
-        intensive process. For this reason be careful of the following:
-        <ul>
-            <li>
-                Only apply auto height to columns where it makes sense. For example if you have
-                many columns that do not require a variable height, then do not set them to auto-height.
-            </li>
-            <li>
-                Do not recalculate auto height to often. In the example above the code checks
-                the columns resize event <code>event.finished</code> so that the height is only calculated
-                when the resize is complete, rather than re-calculating the height continually
-                during the column resizing.
-            </li>
-            <li>
-                For large data grids (eg 10,000+ rows) the time taken to calculate the heights
-                may take to long and you may decide not to use the feature in these circumstances.
-                The row limit depends on your browser choice, computer speed and data so you will
-                need to decide for yourself how much data is to much for this feature.
-            </li>
-        </ul>
+        intensive process. For this reason the grid only calculates the height of the
+        row when it is needed - eg rows not yet visible due to vertical scrolling do not
+        have their heights calculated, similarly child rows of groups where the group
+        is not open do not have their heights calculated until the group is opened and
+        the child rows are visible.
     </p>
+
+    <h3>Auto Height Considerations</h3>
+
+    <p>
+        Because auto-height is a DOM intensive operation, consideration should be given
+        when and how to use it. The following are recommendations:
+    </p>
+
+    <ul>
+        <li>
+            Only apply auto height to columns where it makes sense. For example if you have
+            many columns that do not require a variable height, then do not set them to auto-height.
+        </li>
+    </ul>
 
     <h2>Changing Row Height</h2>
 
