@@ -102,7 +102,6 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
         this.defaultFilter = this.filterParams.defaultOption;
 
         // strip out incorrectly defined FilterOptionDef's
-
         if (params.filterOptions) {
             this.filterParams.filterOptions = params.filterOptions.filter(filterOption => {
                 if (typeof filterOption === 'string') return true;
