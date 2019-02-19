@@ -423,7 +423,7 @@ on the combination of filter type and your <code>columnDef.filterParams.nullComp
 </p>
 
 <snippet>
-export interface FilterOptionDef {
+export interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
@@ -484,8 +484,7 @@ export interface FilterOptionDef {
     <li>The 'Country' column includes a custom <code>notEqualWithNulls</code> filter.</li>
 </ul>
 
-<?= example('Custom Filter Options', 'custom-filter-options', 'generated') ?>
-
+<?= example('Custom Filter Options', 'custom-filter-options', 'generated', array("processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

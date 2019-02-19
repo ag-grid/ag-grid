@@ -1,4 +1,4 @@
-import {FilterOptionDef, SerializedFilter} from "../interfaces/iFilter";
+import {IFilterOptionDef, SerializedFilter} from "../interfaces/iFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
 import {INumberFilterParams} from "./textFilter";
@@ -194,7 +194,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         const filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
 
         const filterOptionType = (typeof selectedFilter === 'string') ?
-            selectedFilter : (selectedFilter as FilterOptionDef).displayKey;
+            selectedFilter : (selectedFilter as IFilterOptionDef).displayKey;
 
         return {
             type: filterOptionType,

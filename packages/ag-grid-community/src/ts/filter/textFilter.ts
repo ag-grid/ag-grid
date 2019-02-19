@@ -1,4 +1,4 @@
-import {FilterOptionDef, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
+import {IFilterOptionDef, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
 import {
     ComparableBaseFilter,
     BaseFilter,
@@ -148,7 +148,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         const filterText: string = (type == FilterConditionType.MAIN) ?
             this.filterText : this.filterConditionText;
 
-        const selectedFilterOption: string | FilterOptionDef = (type == FilterConditionType.MAIN) ?
+        const selectedFilterOption: string | IFilterOptionDef = (type == FilterConditionType.MAIN) ?
             this.selectedFilter : this.selectedFilterCondition;
 
         if (!filterText) {
@@ -158,13 +158,13 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         }
     }
 
-    private checkIndividualFilter(params: IDoesFilterPassParams, type:FilterConditionType, selectedFilterOption: string | FilterOptionDef, filterText: string) {
+    private checkIndividualFilter(params: IDoesFilterPassParams, type:FilterConditionType, selectedFilterOption: string | IFilterOptionDef, filterText: string) {
         const cellValue = this.filterParams.valueGetter(params.node);
 
         const filterTextFormatted = this.formatter(filterText);
 
         if (typeof selectedFilterOption !== 'string') {
-            const filterOptionDef = selectedFilterOption as FilterOptionDef;
+            const filterOptionDef = selectedFilterOption as IFilterOptionDef;
             if (type === FilterConditionType.MAIN) {
                 // value could be null so only invoking formatter if custom filter option
                 const valueFormatted: string = this.formatter(cellValue);

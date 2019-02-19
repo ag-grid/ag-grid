@@ -60,7 +60,7 @@ export interface IDoesFilterPassParams {
     data: any;
 }
 
-export interface FilterOptionDef {
+export interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
@@ -79,7 +79,7 @@ export interface IFilterParams {
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
     $scope: any;
-    filterOptions?: (FilterOptionDef | string) [];
+    filterOptions?: (IFilterOptionDef | string) [];
     defaultOption?: string;
     textFormatter?: (from: string) => string;
 }

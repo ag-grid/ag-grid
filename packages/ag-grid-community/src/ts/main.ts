@@ -280,7 +280,7 @@ export { IViewportDatasource , IViewportDatasourceParams} from "./interfaces/iVi
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { ICompFactory } from "./interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
-export { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "./interfaces/iFilter";
+export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, SerializedFilter } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { SerializedSetFilter } from "./interfaces/iSerializedSetFilter";
 export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";

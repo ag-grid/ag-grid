@@ -1,5 +1,5 @@
 import { Component } from "../widgets/component";
-import { FilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
+import { IFilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
 import { QuerySelector } from "../widgets/componentAnnotations";
 import { Autowired, Context } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -71,9 +71,9 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
-    defaultFilter: string | FilterOptionDef;
-    selectedFilter: string | FilterOptionDef;
-    selectedFilterCondition: string | FilterOptionDef;
+    defaultFilter: string | IFilterOptionDef;
+    selectedFilter: string | IFilterOptionDef;
+    selectedFilterCondition: string | IFilterOptionDef;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -439,7 +439,7 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
         this.filterParams.filterOptions.forEach(filterOption => {
             if (typeof filterOption !== 'string') {
-                const filterOptionDef = filterOption as FilterOptionDef;
+                const filterOptionDef = filterOption as IFilterOptionDef;
                 if (filterOptionDef && filterOptionDef.displayKey && filterOptionDef.displayName) {
                     this.defaultFilterOptionTranslations[filterOptionDef.displayKey] = filterOptionDef.displayName;
                 }
@@ -462,12 +462,12 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
     private onFilterTypeChanged(type:FilterConditionType): void {
 
-        const lookupFilter = (selectedFilterValue: string): string | FilterOptionDef => {
+        const lookupFilter = (selectedFilterValue: string): string | IFilterOptionDef => {
             for (let i = 0; this.filterParams.filterOptions.length; i++) {
                 const filterOpt = this.filterParams.filterOptions[i];
 
                 const filterKey = (typeof filterOpt === 'string') ?
-                    filterOpt : (filterOpt as FilterOptionDef).displayKey;
+                    filterOpt : (filterOpt as IFilterOptionDef).displayKey;
 
                 if (filterKey === selectedFilterValue) return filterOpt;
             }
@@ -501,7 +501,7 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
         }
     }
 
-    public setFilterType(filterType: string | FilterOptionDef, type:FilterConditionType): void {
+    public setFilterType(filterType: string | IFilterOptionDef, type:FilterConditionType): void {
         if (type === FilterConditionType.MAIN) {
             this.selectedFilter = filterType;
 
@@ -616,7 +616,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         return this.doIndividualFilterPasses(params, type, filter);
     }
 
-    private doIndividualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType, filter: string | FilterOptionDef) {
+    private doIndividualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType, filter: string | IFilterOptionDef) {
         const cellValue: any = this.filterParams.valueGetter(params.node);
 
         const rawFilterValues: T[] | T = this.filterValues(type);
@@ -628,7 +628,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
 
         const customFilterOptionDef = typeof filter !== 'string';
         if (customFilterOptionDef) {
-            const filterOptionDef = filter as FilterOptionDef;
+            const filterOptionDef = filter as IFilterOptionDef;
             if (type === FilterConditionType.MAIN) {
                 return filterOptionDef.test(filterValue, cellValue);
             }
