@@ -478,10 +478,17 @@ export interface IFilterOptionDef {
 </p>
 <ul class="content">
     <li>The 'Age' column contains two custom filter options <code>lessThanWithNulls</code> and
-        <code>greaterThanWithNulls</code></li>
-    <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that custom <code>comparator</code>
+        <code>greaterThanWithNulls</code> which also return nulls.</li>
+    <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
         is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
-    <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter.</li>
+    <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>
+    <li>The 'Country' columns also demonstrates how internationalisation can be achieved via the
+        <code>gridOptions.localeTextFunc()</code> callback function, where the default value replaced for the filter
+        option 'notEqualNoNulls'.
+    </li>
+    <li>Saving and Restoring custom filter options via <code>api.getFilterModel()</code> and <code>api.setFilterModel()</code>
+        can also be tested using the provided buttons.
+    </li>
 </ul>
 
 <?= example('Custom Filter Options', 'custom-filter-options', 'generated', array("processVue" => true)) ?>

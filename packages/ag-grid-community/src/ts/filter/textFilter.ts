@@ -1,4 +1,4 @@
-import {IFilterOptionDef, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
+import {IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
 import {
     ComparableBaseFilter,
     BaseFilter,
@@ -89,12 +89,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     modelFromFloatingFilter(from: string): SerializedTextFilter {
-
-        const filterOptionType = (typeof this.selectedFilter === 'string') ?
-            this.selectedFilter : this.selectedFilter.displayKey;
-
         return {
-            type: filterOptionType,
+            type: this.selectedFilter,
             filter: from,
             filterType: 'text'
         };
@@ -144,47 +140,31 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
-
-        const filterText: string = (type == FilterConditionType.MAIN) ?
-            this.filterText : this.filterConditionText;
-
-        const selectedFilterOption: string | IFilterOptionDef = (type == FilterConditionType.MAIN) ?
-            this.selectedFilter : this.selectedFilterCondition;
+        const filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
+        const filter:string = type == FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
 
         if (!filterText) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         } else {
-            return this.checkIndividualFilter (params, type, selectedFilterOption, filterText);
+            return this.checkIndividualFilter (params, filter, filterText);
         }
     }
 
-    private checkIndividualFilter(params: IDoesFilterPassParams, type:FilterConditionType, selectedFilterOption: string | IFilterOptionDef, filterText: string) {
+    private checkIndividualFilter(params: IDoesFilterPassParams, filterType:string, filterText: string) {
         const cellValue = this.filterParams.valueGetter(params.node);
-
         const filterTextFormatted = this.formatter(filterText);
 
-        if (typeof selectedFilterOption !== 'string') {
-            const filterOptionDef = selectedFilterOption as IFilterOptionDef;
-            if (type === FilterConditionType.MAIN) {
-                // value could be null so only invoking formatter if custom filter option
-                const valueFormatted: string = this.formatter(cellValue);
-                return filterOptionDef.test(filterTextFormatted, valueFormatted);
-            }
-            if (type === FilterConditionType.CONDITION) {
-                // value could be null so only invoking formatter if custom filter option
-                const valueFormatted: string = this.formatter(cellValue);
-                return filterOptionDef.test(filterTextFormatted, valueFormatted);
-            }
+        const customFilterOption = this.customFilterOptions[filterType];
+        if (customFilterOption) {
+            const valueFormatted: string = this.formatter(cellValue);
+            return customFilterOption.test(filterTextFormatted, valueFormatted);
         }
 
         if (cellValue == null || cellValue === undefined) {
-            return selectedFilterOption === BaseFilter.NOT_EQUAL || selectedFilterOption === BaseFilter.NOT_CONTAINS;
+            return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
         }
-
-        // values supplied to formatter should not be null (for backwards compatibility)
         const valueFormatted: string = this.formatter(cellValue);
-
-        return this.comparator (selectedFilterOption as string, valueFormatted, filterTextFormatted);
+        return this.comparator (filterType, valueFormatted, filterTextFormatted);
     }
 
     private onFilterTextFieldChanged(type:FilterConditionType) {
@@ -258,11 +238,11 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public serialize(type:FilterConditionType): SerializedTextFilter {
-        const filterOptionKey = this.getSelectedFilterOptionKey(type);
+        const filter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         const filterText = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
 
         return {
-            type: filterOptionKey,
+            type: filter ? filter : this.defaultFilter,
             filter: filterText,
             filterType: 'text'
         };

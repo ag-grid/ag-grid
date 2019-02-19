@@ -82,7 +82,7 @@ var columnDefs = [
                 'notEqual',
                 {
                     displayKey: 'notEqualNoNulls',
-                    displayName: 'Not Equals (No Nulls)',
+                    displayName: 'Not Equals without Nulls',
                     test: function(filterValue, cellValue) {
                         if (cellValue == null) return false;
                         return cellValue !== filterValue;
@@ -102,8 +102,34 @@ var gridOptions = {
     defaultColDef: {
         sortable: true,
         filter: true
+    },
+    localeTextFunc: function(key, defaultValue) {
+        if (key === 'notEqualNoNulls') {
+            return '* Not Equals (No Nulls) *'
+        }
+        return defaultValue;
     }
 };
+
+function printState() {
+    var filterState = gridOptions.api.getFilterModel();
+    console.log("filterState: ", filterState);
+}
+
+function saveState() {
+    window.filterState = gridOptions.api.getFilterModel();
+    console.log('filter state saved');
+}
+
+function restoreState() {
+    gridOptions.api.setFilterModel(window.filterState);
+    console.log('filter state restored');
+}
+
+function resetState() {
+    gridOptions.api.setFilterModel(null);
+    console.log('column state reset');
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

@@ -1,4 +1,4 @@
-import {IFilterOptionDef, SerializedFilter} from "../interfaces/iFilter";
+import {SerializedFilter} from "../interfaces/iFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
 import {INumberFilterParams} from "./textFilter";
@@ -32,11 +32,8 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     public static LESS_THAN = 'lessThan'; //3;
 
     modelFromFloatingFilter(from: string): SerializedNumberFilter {
-        const filterOptionType = (typeof this.selectedFilter === 'string') ?
-            this.selectedFilter : this.selectedFilter.displayKey;
-
         return {
-            type: filterOptionType,
+            type: this.selectedFilter,
             filter: Number(from),
             filterTo: this.filterNumberTo,
             filterType: 'number'
@@ -192,12 +189,8 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         const selectedFilter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         const filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
         const filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
-
-        const filterOptionType = (typeof selectedFilter === 'string') ?
-            selectedFilter : (selectedFilter as IFilterOptionDef).displayKey;
-
         return {
-            type: filterOptionType,
+            type: selectedFilter ? selectedFilter : this.defaultFilter,
             filter: filterNumber,
             filterTo: filterNumberTo,
             filterType: 'number'

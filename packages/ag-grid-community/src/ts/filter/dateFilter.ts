@@ -50,12 +50,10 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateToCondition: Date;
 
     public modelFromFloatingFilter(from: string): SerializedDateFilter {
-        const filterOptionType = (typeof this.selectedFilter === 'string') ?
-            this.selectedFilter : this.selectedFilter.displayKey;
         return {
             dateFrom: from,
             dateTo: this.getDateTo(),
-            type: filterOptionType,
+            type: this.selectedFilter,
             filterType: 'date'
         };
     }
@@ -157,12 +155,10 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         let filterTypeValue: string;
         if (type === FilterConditionType.MAIN) {
             panel = this.eDateToPanel;
-            filterTypeValue = (typeof this.selectedFilter === 'string') ?
-                this.selectedFilter : this.selectedFilter.displayKey;
+            filterTypeValue = this.selectedFilter;
         } else {
             panel = this.eDateToConditionPanel;
-            filterTypeValue = (typeof this.selectedFilterCondition === 'string') ?
-                this.selectedFilterCondition : this.selectedFilterCondition.displayKey;
+            filterTypeValue = this.selectedFilterCondition;
         }
 
         if (!panel) { return; }
@@ -186,10 +182,11 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public serialize(type:FilterConditionType): SerializedDateFilter {
         const dateToComponent = type === FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
         const dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
+        const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         return {
             dateTo: _.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
             dateFrom: _.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
-            type: this.getSelectedFilterOptionKey(type),
+            type: filterType ? filterType : this.defaultFilter,
             filterType: 'date'
         };
     }
@@ -222,7 +219,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getFilterType(): string {
-        return (typeof this.selectedFilter === 'string') ? this.selectedFilter : this.selectedFilter.displayKey;
+        return this.selectedFilter;
     }
 
     public setDateFrom(date: string, type:FilterConditionType): void {
