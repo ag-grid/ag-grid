@@ -26,7 +26,7 @@ import { ComponentResolver } from "../components/framework/componentResolver";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
-import { HeightScaler } from "./heightScaler";
+import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { TooltipManager } from "../widgets/tooltipManager";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
@@ -66,7 +66,7 @@ export class Beans {
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
     @Autowired('filterManager') public filterManager: FilterManager;
-    @Autowired('heightScaler') public heightScaler: HeightScaler;
+    @Autowired('maxDivHeightScaler') public maxDivHeightScaler: MaxDivHeightScaler;
     @Autowired('tooltipManager') public tooltipManager: TooltipManager;
 
     public doingMasterDetail: boolean;

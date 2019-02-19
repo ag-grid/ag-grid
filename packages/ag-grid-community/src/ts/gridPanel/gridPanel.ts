@@ -30,7 +30,7 @@ import { LongTapEvent, TouchListener } from "../widgets/touchListener";
 import { ComponentRecipes } from "../components/framework/componentRecipes";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { RowDragFeature } from "./rowDragFeature";
-import { HeightScaler } from "../rendering/heightScaler";
+import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
 import { IOverlayWrapperComp } from "../rendering/overlays/overlayWrapperComponent";
 import { Component } from "../widgets/component";
 import { AutoHeightCalculator } from "../rendering/autoHeightCalculator";
@@ -126,7 +126,7 @@ export class GridPanel extends Component {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('heightScaler') private heightScaler: HeightScaler;
+    @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
     @Autowired('enterprise') private enterprise: boolean;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 

@@ -1270,16 +1270,23 @@ export class GridOptionsWrapper {
         return this.gridOptions.colWidth;
     }
 
-    public getRowBuffer() {
+    public getRowBufferInPixels() {
+        let rowsToBuffer: number;
         if (typeof this.gridOptions.rowBuffer === 'number') {
             if (this.gridOptions.rowBuffer < 0) {
-                console.warn('ag-Grid: rowBuffer should not be negative');
+                _.doOnce(() => console.warn(`ag-Grid: rowBuffer should not be negative`),
+                    'warn rowBuffer negative');
+                rowsToBuffer = 0;
+            } else {
+                rowsToBuffer = this.gridOptions.rowBuffer;
             }
-            return this.gridOptions.rowBuffer;
+        } else {
+            rowsToBuffer = Constants.ROW_BUFFER_SIZE;
         }
 
-        return Constants.ROW_BUFFER_SIZE;
-
+        const defaultRowHeight = this.getRowHeightAsNumber();
+        const res = rowsToBuffer * defaultRowHeight;
+        return res;
     }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero

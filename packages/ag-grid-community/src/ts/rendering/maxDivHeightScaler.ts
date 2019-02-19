@@ -10,8 +10,8 @@ import { _ } from "../utils";
  * the max div height actually allows.
  */
 
-@Bean('heightScaler')
-export class HeightScaler extends BeanStub {
+@Bean('maxDivHeightScaler')
+export class MaxDivHeightScaler extends BeanStub {
 
     @Autowired('eventService') private eventService: EventService;
 
@@ -44,7 +44,7 @@ export class HeightScaler extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.update.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.scrollBarWidth = _.getScrollbarWidth();
         this.maxDivHeight = _.getMaxDivHeight();
     }
@@ -61,7 +61,7 @@ export class HeightScaler extends BeanStub {
         return this.offset;
     }
 
-    public update(): void {
+    public updateOffset(): void {
         if (!this.scaling) { return; }
 
         const newScrollY = this.gridPanel.getVScrollPosition().top;

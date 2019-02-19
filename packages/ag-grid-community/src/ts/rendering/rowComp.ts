@@ -223,7 +223,7 @@ export class RowComp extends Component {
         // if sliding in, we take the old row top. otherwise we just set the current row top.
         const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
         const afterPaginationPixels = this.applyPaginationOffset(pixels);
-        const afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        const afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
         const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
 
         return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
@@ -1373,7 +1373,7 @@ export class RowComp extends Component {
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
-            const afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+            const afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
 
             if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {

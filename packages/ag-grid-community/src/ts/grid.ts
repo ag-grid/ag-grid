@@ -69,7 +69,7 @@ import { Beans } from "./rendering/beans";
 import { Environment } from "./environment";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { NavigationService } from "./gridPanel/navigationService";
-import { HeightScaler } from "./rendering/heightScaler";
+import { MaxDivHeightScaler } from "./rendering/maxDivHeightScaler";
 import { SelectableService } from "./rowNodes/selectableService";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { PaginationComp } from "./rowModels/pagination/paginationComp";
@@ -194,7 +194,7 @@ export class Grid {
             beans: [
                 rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils,
                 ComponentMetadataProvider, ResizeObserverService, ComponentProvider, ComponentResolver,
-                ComponentRecipes, HeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
+                ComponentRecipes, MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
                 PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
                 SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
                 ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,

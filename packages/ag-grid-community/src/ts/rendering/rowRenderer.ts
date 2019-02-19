@@ -27,7 +27,7 @@ import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCells
 import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { HeightScaler } from "./heightScaler";
+import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { _ } from "../utils";
@@ -51,7 +51,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
-    @Autowired("heightScaler") private heightScaler: HeightScaler;
+    @Autowired("maxDivHeightScaler") private maxDivHeightScaler: MaxDivHeightScaler;
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Optional("rangeController") private rangeController: IRangeController;
 
@@ -125,7 +125,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    // for row models that have datasources, when we update the datasource, we need to force the rowRenderer
+    // for row models that have datasources, when we updateOffset the datasource, we need to force the rowRenderer
     // to redraw all rows. otherwise the old rows from the old datasource will stay displayed.
     public datasourceChanged(): void {
         this.firstRenderedRow = 0;
@@ -362,9 +362,9 @@ export class RowRenderer extends BeanStub {
             containerHeight = 1;
         }
 
-        this.heightScaler.setModelHeight(containerHeight);
+        this.maxDivHeightScaler.setModelHeight(containerHeight);
 
-        const realHeight = this.heightScaler.getUiContainerHeight();
+        const realHeight = this.maxDivHeightScaler.getUiContainerHeight();
 
         containers.forEach(container => container.setHeight(realHeight));
     }
@@ -389,7 +389,7 @@ export class RowRenderer extends BeanStub {
 
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
     // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
-    // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
+    // and the cellEditor is calling 'refresh' to get other cells to updateOffset (as other cells might depend on the
     // edited cell).
     private restoreFocusedCell(gridCell: GridCell): void {
         if (gridCell) {
@@ -634,7 +634,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowComp }, animate = false, afterScroll = false) {
-        this.heightScaler.update();
+        this.maxDivHeightScaler.updateOffset();
         this.workOutFirstAndLastRowsToRender();
 
         // the row can already exist and be in the following:
@@ -814,45 +814,37 @@ export class RowRenderer extends BeanStub {
             newLast = this.paginationProxy.getPageLastRow();
         } else {
 
-            const pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
-            const heightOffset = this.heightScaler.getOffset();
+            const paginationOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            const maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
 
             const bodyVRange = this.gridPanel.getVScrollPosition();
-            const topPixel = bodyVRange.top;
-            const bottomPixel = bodyVRange.bottom;
+            const bodyTopPixel = bodyVRange.top;
+            const bodyBottomPixel = bodyVRange.bottom;
 
-            const realPixelTop = topPixel + pixelOffset + heightOffset;
-            const realPixelBottom = bottomPixel + pixelOffset + heightOffset;
+            const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
 
-            // ensureRowHeightsVisible on works with CSRM, as it's the only row model that allows lazy row height calcs
-            let rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(realPixelTop, realPixelBottom, -1, -1);
-            if (rowHeightsChanged) {
-                this.heightScaler.update();
-                this.sizeContainerToPageHeight();
-            }
+            const firstPixel = bodyTopPixel + paginationOffset + maxDivHeightScaler - bufferPixels;
+            const lastPixel = bodyBottomPixel + paginationOffset + maxDivHeightScaler + bufferPixels;
 
-            let first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
-            let last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
+            this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
 
-            //add in buffer
-            const buffer = this.gridOptionsWrapper.getRowBuffer();
-            first = first - buffer;
-            last = last + buffer;
+            let firstRowIndex = this.paginationProxy.getRowIndexAtPixel(firstPixel);
+            let lastRowIndex = this.paginationProxy.getRowIndexAtPixel(lastPixel);
 
             const pageFirstRow = this.paginationProxy.getPageFirstRow();
             const pageLastRow = this.paginationProxy.getPageLastRow();
 
             // adjust, in case buffer extended actual size
-            if (first < pageFirstRow) {
-                first = pageFirstRow;
+            if (firstRowIndex < pageFirstRow) {
+                firstRowIndex = pageFirstRow;
             }
 
-            if (last > pageLastRow) {
-                last = pageLastRow;
+            if (lastRowIndex > pageLastRow) {
+                lastRowIndex = pageLastRow;
             }
 
-            newFirst = first;
-            newLast = last;
+            newFirst = firstRowIndex;
+            newLast = lastRowIndex;
         }
 
         // sometimes user doesn't set CSS right and ends up with grid with no height and grid ends up
@@ -895,6 +887,18 @@ export class RowRenderer extends BeanStub {
             };
 
             this.eventService.dispatchEventOnce(event);
+        }
+    }
+
+    private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): void {
+        // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
+        // all the other row models just hard code so the method just returns back false
+        let rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        if (rowHeightsChanged) {
+            // if row heights have changed, we need to resize the containers the rows sit it
+            this.sizeContainerToPageHeight();
+            // we also need to update heightScaler as this has dependency of row container height
+            this.maxDivHeightScaler.updateOffset();
         }
     }
 
