@@ -625,7 +625,7 @@ export class CellComp extends Component {
             if (!this.usingCellRenderer) {
                 const valueToUse = this.getValueToUse();
                 if (valueToUse !== null && valueToUse !== undefined) {
-                    this.eParentOfValue.innerText = valueToUse;
+                    this.eParentOfValue.innerHTML = _.escape(valueToUse);
                 }
             }
         }

@@ -63,9 +63,9 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     public static STARTS_WITH = 'startsWith'; //4;
     public static ENDS_WITH = 'endsWith'; //5;
 
-    customFilterOptions: {[name: string]: IFilterOptionDef} = {};
-
     private newRowsActionKeep: boolean;
+
+    customFilterOptions: {[name: string]: IFilterOptionDef} = {};
 
     filterParams: P;
     clearActive: boolean;

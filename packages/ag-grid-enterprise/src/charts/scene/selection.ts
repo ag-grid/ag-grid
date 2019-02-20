@@ -145,6 +145,22 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         });
     }
 
+    selectByTag<N extends Node>(tag: number): Selection<N, P, GDatum, GDatum> {
+        return this.select<N>(node => {
+            if (Node.isNode(node)) {
+                const children = node.children;
+                const n = children.length;
+
+                for (let i = 0; i < n; i++) {
+                    const child = children[i];
+                    if (child.tag === tag) {
+                        return child as N;
+                    }
+                }
+            }
+        });
+    }
+
     private selectNone(): [] {
         return [];
     }
@@ -427,8 +443,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     private bindKey<GDatum>(parent: P, group: (G | undefined)[],
                             enter: (EnterNode | undefined)[], update: (G | undefined)[], exit: (G | undefined)[],
                             data: GDatum[], key: KeyFn<Node | EnterNode, G | GDatum, GDatum>) {
-        // Compute the key for each node.
-        // If multiple nodes have the same key, the duplicates are added to exit.
+
         const groupSize = group.length;
         const dataSize = data.length;
         const keyValues = new Array(groupSize);
@@ -441,15 +456,16 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
 
             if (node) {
                 const keyValue = keyValues[i] = Selection.keyPrefix + key(node, node.datum, i, group);
-                if (keyValue in nodeByKeyValue)
+                if (keyValue in nodeByKeyValue) {
                     exit[i] = node;
-                else
+                } else {
                     nodeByKeyValue[keyValue] = node;
+                }
             }
         }
 
         // Compute the key for each datum.
-        // If there a node associated with this key, join and add it to update.
+        // If there is a node associated with this key, join and add it to update.
         // If there is not (or the key is a duplicate), add it to enter.
         for (let i = 0; i < dataSize; i++) {
             const keyValue = Selection.keyPrefix + key(parent, data[i], i, data);
