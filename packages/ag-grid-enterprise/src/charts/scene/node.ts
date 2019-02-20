@@ -17,6 +17,8 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     datum: any;
 
+    tag: number = NaN;
+
     static isNode(node: any): node is Node {
         return node ? (node as Node).matrix !== undefined : false;
     }
