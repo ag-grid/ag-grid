@@ -44,5 +44,5 @@ echo "###################### Installing Packages #############################"
 
 echo "########################################################################"
 echo "##################### Updating .gitignore #############################"
-node scripts/updateGitIgnore.js $NEW_VERSION $PEER_VERSION
+node scripts/updateGitIgnore.js
 
