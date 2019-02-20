@@ -131,7 +131,7 @@
         columnApi = gridOptions.columnApi;
 
         // feed data into the grid
-        agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/wideSpreadOfSports.json'})
+        agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/wideSpreadOfSports.json'})
             .then(function (data) {
                 gridOptions.api.setRowData(data.slice(0, 1000));
                 setTimeout(function () {

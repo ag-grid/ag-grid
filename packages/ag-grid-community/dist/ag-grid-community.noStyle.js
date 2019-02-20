@@ -32524,44 +32524,55 @@ var GridPanel = /** @class */ (function (_super) {
         }
         this.paginationProxy.goToPageWithIndex(index);
         var rowNode = this.paginationProxy.getRow(index);
-        var paginationOffset = this.paginationProxy.getPixelOffset();
-        var rowTopPixel = rowNode.rowTop - paginationOffset;
-        var rowBottomPixel = rowTopPixel + rowNode.rowHeight;
-        var scrollPosition = this.getVScrollPosition();
-        var heightOffset = this.heightScaler.getOffset();
-        var vScrollTop = scrollPosition.top + heightOffset;
-        var vScrollBottom = scrollPosition.bottom + heightOffset;
-        var viewportHeight = vScrollBottom - vScrollTop;
-        // work out the pixels for top, middle and bottom up front,
-        // make the if/else below easier to read
-        var pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
-        var pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
-        // make sure if middle, the row is not outside the top of the grid
-        var pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
-        var rowBelowViewport = vScrollTop > rowTopPixel;
-        var rowAboveViewport = vScrollBottom < rowBottomPixel;
-        var newScrollPosition = null;
-        if (position === 'top') {
-            newScrollPosition = pxTop;
-        }
-        else if (position === 'bottom') {
-            newScrollPosition = pxBottom;
-        }
-        else if (position === 'middle') {
-            newScrollPosition = pxMiddle;
-        }
-        else if (rowBelowViewport) {
-            // if row is before, scroll up with row at top
-            newScrollPosition = pxTop;
-        }
-        else if (rowAboveViewport) {
-            // if row is below, scroll down with row at bottom
-            newScrollPosition = pxBottom;
-        }
-        if (newScrollPosition !== null) {
-            this.eBodyViewport.scrollTop = newScrollPosition;
-            this.rowRenderer.redrawAfterScroll();
-        }
+        var rowGotShiftedDuringOperation;
+        do {
+            var startingRowTop = rowNode.rowTop;
+            var startingRowHeight = rowNode.rowHeight;
+            var paginationOffset = this.paginationProxy.getPixelOffset();
+            var rowTopPixel = rowNode.rowTop - paginationOffset;
+            var rowBottomPixel = rowTopPixel + rowNode.rowHeight;
+            var scrollPosition = this.getVScrollPosition();
+            var heightOffset = this.heightScaler.getOffset();
+            var vScrollTop = scrollPosition.top + heightOffset;
+            var vScrollBottom = scrollPosition.bottom + heightOffset;
+            var viewportHeight = vScrollBottom - vScrollTop;
+            // work out the pixels for top, middle and bottom up front,
+            // make the if/else below easier to read
+            var pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
+            var pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
+            // make sure if middle, the row is not outside the top of the grid
+            var pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
+            var rowBelowViewport = vScrollTop > rowTopPixel;
+            var rowAboveViewport = vScrollBottom < rowBottomPixel;
+            var newScrollPosition = null;
+            if (position === 'top') {
+                newScrollPosition = pxTop;
+            }
+            else if (position === 'bottom') {
+                newScrollPosition = pxBottom;
+            }
+            else if (position === 'middle') {
+                newScrollPosition = pxMiddle;
+            }
+            else if (rowBelowViewport) {
+                // if row is before, scroll up with row at top
+                newScrollPosition = pxTop;
+            }
+            else if (rowAboveViewport) {
+                // if row is below, scroll down with row at bottom
+                newScrollPosition = pxBottom;
+            }
+            if (newScrollPosition !== null) {
+                this.eBodyViewport.scrollTop = newScrollPosition;
+                this.rowRenderer.redrawAfterScroll();
+            }
+            // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),
+            // the height of a row changes due to lazy calculation of row heights when using
+            // colDef.autoHeight or gridOptions.getRowHeight.
+            // if row was shifted, then the position we scrolled to is incorrect.
+            rowGotShiftedDuringOperation = (startingRowTop !== rowNode.rowTop)
+                || (startingRowHeight !== rowNode.rowHeight);
+        } while (rowGotShiftedDuringOperation);
         // so when we return back to user, the cells have rendered
         this.animationFrameService.flushAllFrames();
     };

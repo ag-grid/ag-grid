@@ -813,48 +813,63 @@ export class GridPanel extends Component {
         this.paginationProxy.goToPageWithIndex(index);
 
         const rowNode = this.paginationProxy.getRow(index);
-        const paginationOffset = this.paginationProxy.getPixelOffset();
-        const rowTopPixel = rowNode.rowTop - paginationOffset;
-        const rowBottomPixel = rowTopPixel + rowNode.rowHeight;
+        let rowGotShiftedDuringOperation: boolean;
 
-        const scrollPosition = this.getVScrollPosition();
-        const heightOffset = this.heightScaler.getOffset();
+        do {
+            const startingRowTop = rowNode.rowTop;
+            const startingRowHeight = rowNode.rowHeight;
 
-        const vScrollTop = scrollPosition.top + heightOffset;
-        const vScrollBottom = scrollPosition.bottom + heightOffset;
+            const paginationOffset = this.paginationProxy.getPixelOffset();
+            const rowTopPixel = rowNode.rowTop - paginationOffset;
+            const rowBottomPixel = rowTopPixel + rowNode.rowHeight;
 
-        const viewportHeight = vScrollBottom - vScrollTop;
+            const scrollPosition = this.getVScrollPosition();
+            const heightOffset = this.heightScaler.getOffset();
 
-        // work out the pixels for top, middle and bottom up front,
-        // make the if/else below easier to read
-        const pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
-        const pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
-        // make sure if middle, the row is not outside the top of the grid
-        const pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
+            const vScrollTop = scrollPosition.top + heightOffset;
+            const vScrollBottom = scrollPosition.bottom + heightOffset;
 
-        const rowBelowViewport = vScrollTop > rowTopPixel;
-        const rowAboveViewport = vScrollBottom < rowBottomPixel;
+            const viewportHeight = vScrollBottom - vScrollTop;
 
-        let newScrollPosition: number = null;
+            // work out the pixels for top, middle and bottom up front,
+            // make the if/else below easier to read
+            const pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
+            const pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
+            // make sure if middle, the row is not outside the top of the grid
+            const pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
 
-        if (position === 'top') {
-            newScrollPosition = pxTop;
-        } else if (position === 'bottom') {
-            newScrollPosition = pxBottom;
-        } else if (position === 'middle') {
-            newScrollPosition = pxMiddle;
-        } else if (rowBelowViewport) {
-            // if row is before, scroll up with row at top
-            newScrollPosition = pxTop;
-        } else if (rowAboveViewport) {
-            // if row is below, scroll down with row at bottom
-            newScrollPosition = pxBottom;
-        }
+            const rowBelowViewport = vScrollTop > rowTopPixel;
+            const rowAboveViewport = vScrollBottom < rowBottomPixel;
 
-        if (newScrollPosition !== null) {
-            this.eBodyViewport.scrollTop = newScrollPosition;
-            this.rowRenderer.redrawAfterScroll();
-        }
+            let newScrollPosition: number = null;
+
+            if (position === 'top') {
+                newScrollPosition = pxTop;
+            } else if (position === 'bottom') {
+                newScrollPosition = pxBottom;
+            } else if (position === 'middle') {
+                newScrollPosition = pxMiddle;
+            } else if (rowBelowViewport) {
+                // if row is before, scroll up with row at top
+                newScrollPosition = pxTop;
+            } else if (rowAboveViewport) {
+                // if row is below, scroll down with row at bottom
+                newScrollPosition = pxBottom;
+            }
+
+            if (newScrollPosition !== null) {
+                this.eBodyViewport.scrollTop = newScrollPosition;
+                this.rowRenderer.redrawAfterScroll();
+            }
+
+            // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),
+            // the height of a row changes due to lazy calculation of row heights when using
+            // colDef.autoHeight or gridOptions.getRowHeight.
+            // if row was shifted, then the position we scrolled to is incorrect.
+            rowGotShiftedDuringOperation = (startingRowTop !== rowNode.rowTop)
+                || (startingRowHeight !== rowNode.rowHeight);
+
+        } while (rowGotShiftedDuringOperation);
 
         // so when we return back to user, the cells have rendered
         this.animationFrameService.flushAllFrames();
