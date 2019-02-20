@@ -1585,7 +1585,7 @@ export class GridOptionsWrapper {
                 api: this.gridOptions.api,
                 context: this.gridOptions.context
             };
-            return this.gridOptions.getRowHeight(params);
+            return { height: this.gridOptions.getRowHeight(params), estimated: false };
         } else if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
                 return {height: this.gridOptions.detailRowHeight, estimated: false};

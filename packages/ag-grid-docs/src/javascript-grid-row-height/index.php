@@ -121,7 +121,8 @@ gridOptions.getRowHeight = function(params) {
         </li>
     </ul>
 
-    <?= example('Auto Row Height', 'auto-row-height', 'generated') ?>
+    <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
+    <?= example('Auto Row Height', 'auto-row-height', 'vanilla') ?>
 
     <h3>Lazy Height Calculation</h3>
 
