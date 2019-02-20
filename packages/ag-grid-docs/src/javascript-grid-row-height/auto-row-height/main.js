@@ -61,6 +61,7 @@ var gridOptions = {
         resizable: true
     },
     columnDefs: columnDefs,
+    rowHeight: 275,
     onColumnResized: onColumnResized
 };
 
