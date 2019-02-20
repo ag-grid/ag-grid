@@ -9,9 +9,9 @@ import {BBox} from "./bbox";
 export abstract class Node { // Don't confuse with `window.Node`.
 
     // Uniquely identify nodes (to check for duplicates, for example).
-    private static id = 1;
     private createId(): string {
-        return (this.constructor as any).name + '-' + (Node.id++);
+        const constructor = this.constructor as any;
+        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     readonly id: string = this.createId();
 
