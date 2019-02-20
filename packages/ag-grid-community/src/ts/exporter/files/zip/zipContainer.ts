@@ -64,10 +64,11 @@ export class ZipContainer {
     }
 
     public addFile(path: string,  content: string): void {
+        const { utf8_encode } = _;
         this.files.push({
             path,
             created: new Date(),
-            content
+            content: utf8_encode(content)
         });
     }
 
