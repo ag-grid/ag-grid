@@ -22,7 +22,7 @@
   "dependencies": {},
   "peerDependencies": {
     "ag-grid-community": "^20.0.0",
-    "@polymer/polymer": "^3.0.0-pre.12"
+    "@polymer/polymer": "^3.0.0"
   },
   "devDependencies": {}
 }
