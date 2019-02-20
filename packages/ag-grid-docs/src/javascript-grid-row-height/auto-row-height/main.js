@@ -62,14 +62,18 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowHeight: 275,
-    onColumnResized: onColumnResized
+    onColumnResized: onColumnResized,
+    onGridReady: function(params) {
+
+        // in this example, the CSS styles are loaded AFTER the grid is created,
+        // so we put this in a timeout, so height is calculated after styles are applied.
+        setTimeout(function () {
+            params.api.setRowData(createRowData());
+        }, 2000);
+    }
 };
 
-// in this example, the CSS styles are loaded AFTER the grid is created,
-// so we put this in a timeout, so height is calculated after styles are applied.
-setTimeout(function () {
-    gridOptions.api.setRowData(createRowData());
-}, 2000);
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
