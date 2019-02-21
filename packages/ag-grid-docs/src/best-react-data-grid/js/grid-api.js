@@ -42,7 +42,6 @@
                 '    {colId: \'year\', sort: \'asc\'}\n' +
                 ']);',
             fn: function() {
-                console.log("here", api);
                 api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'asc'}]);
             }
         },
@@ -153,7 +152,6 @@
                     });
                     node.classList.add('active');
 
-                    console.log(currentAction);
                     callGridApi(actions[currentAction], placeholder)
                 });
 
