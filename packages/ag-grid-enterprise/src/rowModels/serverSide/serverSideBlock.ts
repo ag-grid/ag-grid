@@ -369,7 +369,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 // then check if current row contains a detail row with pixel in range
                 const expandedMasterRow = rowNode.master && rowNode.expanded;
                 if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
-                    return rowNode.rowIndex;
+                    return rowNode.detailNode.rowIndex;
                 }
 
                 // then check if it's a group row with a child cache with pixel in range
