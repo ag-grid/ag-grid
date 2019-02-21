@@ -1461,7 +1461,9 @@ export class CellComp extends Component {
         // behind, making it impossible to select the text field.
         let forceBrowserFocus = false;
 
-        // return if we are clicking on a row selection checkbox
+        // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
+        // we do range selection, however if user is clicking checking, they are probably only interested
+        // in row selection.
         if (_.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-selection-checkbox', 3)) { return; }
 
         if (_.isBrowserIE()) {
