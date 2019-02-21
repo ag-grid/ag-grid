@@ -525,6 +525,8 @@ var frameworkComponentWrapper_1 = __webpack_require__(154);
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = __webpack_require__(44);
 exports.Environment = environment_1.Environment;
+var tooltipManager_1 = __webpack_require__(96);
+exports.TooltipManager = tooltipManager_1.TooltipManager;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(3)))
 
@@ -559,12 +561,6 @@ module.exports = g;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -879,12 +875,6 @@ exports.ColumnFactory = ColumnFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1470,8 +1460,8 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isAccentedSort = function () {
         return isTrue(this.gridOptions.accentedSort);
     };
-    GridOptionsWrapper.prototype.isEnableLegacyTooltips = function () {
-        return isTrue(this.gridOptions.enableLegacyTooltips);
+    GridOptionsWrapper.prototype.isEnableBrowserTooltips = function () {
+        return isTrue(this.gridOptions.enableBrowserTooltips);
     };
     GridOptionsWrapper.prototype.isEnableCellExpressions = function () {
         return isTrue(this.gridOptions.enableCellExpressions);
@@ -2258,12 +2248,6 @@ exports.GridOptionsWrapper = GridOptionsWrapper;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2460,12 +2444,6 @@ exports.EventService = EventService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2531,12 +2509,6 @@ exports.Logger = Logger;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(9);
@@ -2888,12 +2860,6 @@ function getOrCreateProps(target) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var constants_1 = __webpack_require__(10);
@@ -4780,12 +4746,6 @@ exports.Promise = Promise;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Constants = /** @class */ (function () {
@@ -4848,12 +4808,6 @@ exports.Constants = Constants;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var events_1 = __webpack_require__(12);
@@ -5073,12 +5027,6 @@ function checkForDeprecated(changes) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var eventKeys_1 = __webpack_require__(13);
@@ -5090,12 +5038,6 @@ exports.Events = eventKeys_1.Events;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Events = /** @class */ (function () {
@@ -5226,12 +5168,6 @@ exports.Events = Events;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var PropertyKeys = /** @class */ (function () {
@@ -5269,7 +5205,7 @@ var PropertyKeys = /** @class */ (function () {
         'toolPanelSuppressSideButtons', 'toolPanelSuppressColumnFilter', 'toolPanelSuppressColumnSelectAll',
         'toolPanelSuppressColumnExpandAll', 'suppressMakeColumnVisibleAfterUnGroup',
         'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
-        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
+        'enableBrowserTooltips', 'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
         'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
         'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
         'groupIncludeFooter', 'groupIncludeTotalFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader',
@@ -5333,12 +5269,6 @@ exports.PropertyKeys = PropertyKeys;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6504,12 +6434,6 @@ exports.GridApi = GridApi;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -6775,12 +6699,6 @@ exports.CsvCreator = CsvCreator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -7083,12 +7001,6 @@ var RowType;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9667,12 +9579,6 @@ exports.ColumnController = ColumnController;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9964,12 +9870,6 @@ exports.ColumnGroup = ColumnGroup;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10106,7 +10006,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (this.gridOptionsWrapper.isTreeData()) {
-            var itemsNotAllowedWithTreeData = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+            var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(function (item) {
                 if (utils_1._.exists(colDefAny[item])) {
                     console.warn("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item);
@@ -10566,12 +10466,6 @@ exports.Column = Column;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10725,12 +10619,6 @@ exports.ColumnUtils = ColumnUtils;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10909,12 +10797,6 @@ exports.OriginalColumnGroup = OriginalColumnGroup;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11079,12 +10961,6 @@ exports.ColumnApi = ColumnApi;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11185,12 +11061,6 @@ exports.ExpressionService = ExpressionService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11397,12 +11267,6 @@ exports.DisplayedGroupCreator = DisplayedGroupCreator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11522,12 +11386,6 @@ exports.AutoWidthCalculator = AutoWidthCalculator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -12677,12 +12535,6 @@ exports.RowRenderer = RowRenderer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -12770,12 +12622,6 @@ exports.TemplateService = TemplateService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13058,12 +12904,6 @@ exports.ValueService = ValueService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13137,12 +12977,6 @@ exports.ValueCache = ValueCache;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -14395,12 +14229,6 @@ exports.RowComp = RowComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -14500,7 +14328,7 @@ var CellComp = /** @class */ (function (_super) {
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
         templateParts.push(" class=\"" + cssClasses.join(' ') + "\"");
-        if (this.beans.gridOptionsWrapper.isEnableLegacyTooltips() && utils_1._.exists(tooltipSanitised)) {
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && utils_1._.exists(tooltipSanitised)) {
             templateParts.push("title=\"" + tooltipSanitised + "\"");
         }
         templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + " " + stylesForRowSpanning + "\" >");
@@ -14551,7 +14379,7 @@ var CellComp = /** @class */ (function (_super) {
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
-        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.beans.tooltipManager.registerTooltip(this);
         }
     };
@@ -14925,7 +14753,7 @@ var CellComp = /** @class */ (function (_super) {
         var newTooltip = this.getToolTip();
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 return;
             }
             if (utils_1._.exists(newTooltip)) {
@@ -15612,7 +15440,9 @@ var CellComp = /** @class */ (function (_super) {
         // the focus doesn't get to the text field, instead to goes to the div
         // behind, making it impossible to select the text field.
         var forceBrowserFocus = false;
-        // return if we are clicking on a row selection checkbox
+        // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
+        // we do range selection, however if user is clicking checking, they are probably only interested
+        // in row selection.
         if (utils_1._.isElementChildOfClass(mouseEvent.target, 'ag-selection-checkbox', 3)) {
             return;
         }
@@ -15975,12 +15805,6 @@ exports.CellComp = CellComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -16614,12 +16438,6 @@ exports.RowNode = RowNode;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -16983,12 +16801,6 @@ exports.SelectionController = SelectionController;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // when doing transactions, or change detection, and grouping is present
@@ -17149,12 +16961,6 @@ exports.ChangedPath = ChangedPath;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridRow_1 = __webpack_require__(37);
@@ -17197,12 +17003,6 @@ exports.GridCell = GridCell;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var constants_1 = __webpack_require__(10);
@@ -17275,12 +17075,6 @@ exports.GridRow = GridRow;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -17620,12 +17414,6 @@ exports.Component = Component;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var eventService_1 = __webpack_require__(6);
@@ -17716,12 +17504,6 @@ exports.BeanStub = BeanStub;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -17865,12 +17647,6 @@ exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -18075,12 +17851,6 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18480,12 +18250,6 @@ exports.DragAndDropService = DragAndDropService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18771,12 +18535,6 @@ exports.DragService = DragService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18861,12 +18619,6 @@ exports.Environment = Environment;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19024,12 +18776,6 @@ exports.FocusedCellController = FocusedCellController;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19343,12 +19089,6 @@ exports.CellNavigationService = CellNavigationService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19520,12 +19260,6 @@ exports.PinnedRowModel = PinnedRowModel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -19844,12 +19578,6 @@ exports.PaginationProxy = PaginationProxy;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19926,12 +19654,6 @@ exports.ScrollVisibleService = ScrollVisibleService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20127,12 +19849,6 @@ exports.Beans = Beans;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20240,12 +19956,6 @@ exports.ColumnAnimationService = ColumnAnimationService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20333,12 +20043,6 @@ exports.CellEditorFactory = CellEditorFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20444,12 +20148,6 @@ exports.PopupEditorWrapper = PopupEditorWrapper;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20484,12 +20182,6 @@ exports.PopupComponent = PopupComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20837,12 +20529,6 @@ exports.ComponentResolver = ComponentResolver;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -21092,12 +20778,6 @@ exports.ComponentProvider = ComponentProvider;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -21221,12 +20901,6 @@ exports.TextCellEditor = TextCellEditor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -21541,12 +21215,6 @@ exports.DefaultDateComponent = DefaultDateComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 function QuerySelector(selector) {
@@ -21625,12 +21293,6 @@ function getOrCreateProps(target, instanceName) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -22204,12 +21866,6 @@ exports.ScalarBaseFilter = ScalarBaseFilter;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22330,7 +21986,8 @@ var ComponentRecipes = /** @class */ (function () {
         }, "agNoRowsOverlay");
     };
     ComponentRecipes.prototype.newTooltipComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "tooltipComponent", {
+        var colDef = params.column && params.column.getColDef();
+        return this.componentResolver.createAgGridComponent(colDef, params, "tooltipComponent", {
             api: this.gridApi,
             columnApi: this.columnApi
         }, 'agTooltipComponent');
@@ -22397,12 +22054,6 @@ exports.ComponentRecipes = ComponentRecipes;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -22792,12 +22443,6 @@ exports.ReadModelAsStringFloatingFilterComp = ReadModelAsStringFloatingFilterCom
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -22975,12 +22620,6 @@ exports.EmptyFloatingFilterWrapperComp = EmptyFloatingFilterWrapperComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -23098,12 +22737,6 @@ exports.SetLeftFeature = SetLeftFeature;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -23163,12 +22796,6 @@ exports.HoverFeature = HoverFeature;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -23250,12 +22877,6 @@ exports.ColumnHoverService = ColumnHoverService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -23825,12 +23446,6 @@ exports.FilterManager = FilterManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24228,12 +23843,6 @@ exports.PopupService = PopupService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24341,12 +23950,6 @@ exports.OverlayWrapperComponent = OverlayWrapperComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24641,12 +24244,6 @@ exports.HeaderComp = HeaderComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24852,12 +24449,6 @@ exports.SortController = SortController;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var eventService_1 = __webpack_require__(6);
@@ -24993,12 +24584,6 @@ exports.TouchListener = TouchListener;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -25138,12 +24723,6 @@ exports.HeaderGroupComp = HeaderGroupComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -25597,12 +25176,6 @@ exports.GroupCellRenderer = GroupCellRenderer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -25756,12 +25329,6 @@ exports.CellRendererService = CellRendererService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -25839,12 +25406,6 @@ exports.ValueFormatterService = ValueFormatterService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -25935,12 +25496,6 @@ exports.MouseEventService = MouseEventService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26048,12 +25603,6 @@ exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26148,12 +25697,6 @@ exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26220,12 +25763,6 @@ exports.LoadingCellRenderer = LoadingCellRenderer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26328,12 +25865,6 @@ exports.SelectCellEditor = SelectCellEditor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26368,12 +25899,6 @@ exports.PopupTextCellEditor = PopupTextCellEditor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26408,12 +25933,6 @@ exports.PopupSelectCellEditor = PopupSelectCellEditor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26483,12 +26002,6 @@ exports.LargeTextCellEditor = LargeTextCellEditor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26727,12 +26240,6 @@ exports.TextFilter = TextFilter;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26972,12 +26479,6 @@ exports.NumberFilter = NumberFilter;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27032,12 +26533,6 @@ exports.LoadingOverlayComponent = LoadingOverlayComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27092,12 +26587,6 @@ exports.NoRowsOverlayComponent = NoRowsOverlayComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27134,12 +26623,6 @@ exports.TooltipComponent = TooltipComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27224,12 +26707,6 @@ exports.AgComponentUtils = AgComponentUtils;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27366,12 +26843,6 @@ exports.ComponentMetadataProvider = ComponentMetadataProvider;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27454,12 +26925,6 @@ exports.CellRendererFactory = CellRendererFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27540,12 +27005,6 @@ exports.StylingService = StylingService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27704,12 +27163,6 @@ exports.AnimationFrameService = AnimationFrameService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27853,12 +27306,6 @@ exports.MaxDivHeightScaler = MaxDivHeightScaler;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28051,12 +27498,6 @@ exports.TooltipManager = TooltipManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28285,7 +27726,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         if (tooltipText == null) {
             return;
         }
-        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
@@ -28412,12 +27853,6 @@ exports.HeaderWrapperComp = HeaderWrapperComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28506,12 +27941,6 @@ exports.HorizontalResizeService = HorizontalResizeService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(9);
@@ -28571,12 +28000,6 @@ exports.CssClassApplier = CssClassApplier;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28763,12 +28186,6 @@ exports.AgCheckbox = AgCheckbox;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28994,12 +28411,6 @@ exports.SelectAllFeature = SelectAllFeature;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // class returns unique instance id's for columns.
@@ -29040,12 +28451,6 @@ exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29190,12 +28595,6 @@ exports.AutoGroupColService = AutoGroupColService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29238,12 +28637,6 @@ exports.Downloader = Downloader;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29347,12 +28740,6 @@ exports.ImmutableService = ImmutableService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29588,12 +28975,6 @@ exports.AlignedGridsService = AlignedGridsService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ColDefUtil = /** @class */ (function () {
@@ -29750,12 +29131,6 @@ exports.ColDefUtil = ColDefUtil;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29847,12 +29222,6 @@ exports.AutoHeightCalculator = AutoHeightCalculator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var SideBarDefParser = /** @class */ (function () {
@@ -29945,12 +29314,6 @@ exports.SideBarDefParser = SideBarDefParser;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // class returns a unique id to use for the column. it checks the existing columns, and if the requested
@@ -30003,12 +29366,6 @@ exports.ColumnKeyCreator = ColumnKeyCreator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultColumnTypes = {
@@ -30024,12 +29381,6 @@ exports.DefaultColumnTypes = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var grid_1 = __webpack_require__(113);
@@ -30073,12 +29424,6 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
@@ -30317,12 +29662,6 @@ exports.Grid = Grid;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -30511,12 +29850,6 @@ exports.HeaderRootComp = HeaderRootComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30692,12 +30025,6 @@ exports.HeaderContainer = HeaderContainer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31059,12 +30386,6 @@ exports.HeaderRowComp = HeaderRowComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31152,7 +30473,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         if (tooltipText == null) {
             return;
         }
-        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
@@ -31449,12 +30770,6 @@ exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -31586,12 +30901,6 @@ exports.BodyDropTarget = BodyDropTarget;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -31958,12 +31267,6 @@ exports.MoveColumnController = MoveColumnController;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -32066,12 +31369,6 @@ exports.BodyDropPivotTarget = BodyDropPivotTarget;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33496,12 +32793,6 @@ exports.GridPanel = GridPanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33648,12 +32939,6 @@ exports.RowContainerComponent = RowContainerComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33897,12 +33182,6 @@ exports.NavigationService = NavigationService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34118,12 +33397,6 @@ exports.RowDragFeature = RowDragFeature;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34202,12 +33475,6 @@ exports.ResizeObserverService = ResizeObserverService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -34529,12 +33796,6 @@ exports.GridCore = GridCore;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34648,12 +33909,6 @@ exports.StandardMenuFactory = StandardMenuFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34702,12 +33957,6 @@ exports.FilterStage = FilterStage;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34855,12 +34104,6 @@ exports.FilterService = FilterService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34939,12 +34182,6 @@ exports.SelectableService = SelectableService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -35026,12 +34263,6 @@ exports.SortStage = SortStage;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -35278,12 +34509,6 @@ exports.SortService = SortService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -35461,12 +34686,6 @@ exports.FlattenStage = FlattenStage;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -35869,12 +35088,6 @@ exports.InfiniteRowModel = InfiniteRowModel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -36055,12 +35268,6 @@ exports.InfiniteCache = InfiniteCache;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -36193,12 +35400,6 @@ exports.InfiniteBlock = InfiniteBlock;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -36411,12 +35612,6 @@ exports.RowNodeBlock = RowNodeBlock;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -36688,12 +35883,6 @@ exports.RowNodeCache = RowNodeCache;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -36811,12 +36000,6 @@ exports.RowNodeBlockLoader = RowNodeBlockLoader;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -37558,12 +36741,6 @@ exports.ClientSideRowModel = ClientSideRowModel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var rowNode_1 = __webpack_require__(33);
@@ -37870,12 +37047,6 @@ exports.ClientSideNodeManager = ClientSideNodeManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
@@ -37919,12 +37090,6 @@ exports.BaseFrameworkFactory = BaseFrameworkFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38012,12 +37177,6 @@ exports.XmlFactory = XmlFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38113,12 +37272,6 @@ exports.ChangeDetectionService = ChangeDetectionService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38344,12 +37497,6 @@ exports.PaginationComp = PaginationComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38412,11 +37559,10 @@ var ZipContainer = /** @class */ (function () {
         paths.forEach(this.addFolder);
     };
     ZipContainer.prototype.addFile = function (path, content) {
-        var utf8_encode = utils_1._.utf8_encode;
         this.files.push({
             path: path,
             created: new Date(),
-            content: utf8_encode(content)
+            content: content
         });
     };
     ZipContainer.prototype.clearStream = function () {
@@ -38547,12 +37693,6 @@ exports.ZipContainer = ZipContainer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var componentUtil_1 = __webpack_require__(11);
@@ -38670,12 +37810,6 @@ function toCamelCase(myString) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(9);
@@ -38792,12 +37926,6 @@ exports.TabbedLayout = TabbedLayout;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var VerticalStack = /** @class */ (function () {
@@ -38839,12 +37967,6 @@ exports.VerticalStack = VerticalStack;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(9);
@@ -38869,12 +37991,6 @@ exports.simpleHttpRequest = simpleHttpRequest;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38963,12 +38079,6 @@ exports.PopupWindow = PopupWindow;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -39062,12 +38172,6 @@ var MessageBody = /** @class */ (function (_super) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(9);
@@ -39099,12 +38203,6 @@ exports.defaultGroupComparator = defaultGroupComparator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var BaseComponentWrapper = /** @class */ (function () {
@@ -39811,8 +38909,13 @@ var MenuItemComponent = /** @class */ (function (_super) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
         if (this.params.tooltip) {
-            var tooltipAttr = this.gridOptionsWrapper.isEnableLegacyTooltips() ? 'title' : 'data-tooltip';
-            this.getGui().setAttribute(tooltipAttr, this.params.tooltip);
+            this.tooltip = this.params.tooltip;
+            if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                this.getGui().setAttribute('title', this.tooltip);
+            }
+            else {
+                this.tooltipManager.registerTooltip(this);
+            }
         }
         if (this.params.shortcut) {
             this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
@@ -39840,6 +38943,12 @@ var MenuItemComponent = /** @class */ (function (_super) {
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(function (it) { return ag_grid_community_1._.addCssClass(_this.getGui(), it); });
         }
+    };
+    MenuItemComponent.prototype.getTooltipText = function () {
+        return this.tooltip;
+    };
+    MenuItemComponent.prototype.getComponentHolder = function () {
+        return undefined;
     };
     MenuItemComponent.prototype.onOptionSelected = function (mouseEvent) {
         var event = {
@@ -39871,6 +38980,10 @@ var MenuItemComponent = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('tooltipManager'),
+        __metadata("design:type", ag_grid_community_1.TooltipManager)
+    ], MenuItemComponent.prototype, "tooltipManager", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
@@ -53664,7 +52777,7 @@ var cellFactory = {
                     name: 'is',
                     children: [{
                             name: 't',
-                            textNode: ag_grid_community_1._.escape(value)
+                            textNode: ag_grid_community_1._.escape(ag_grid_community_1._.utf8_encode(value))
                         }]
                 }];
         }
@@ -55062,7 +54175,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
                 // then check if current row contains a detail row with pixel in range
                 var expandedMasterRow = rowNode.master && rowNode.expanded;
                 if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
-                    return rowNode.rowIndex;
+                    return rowNode.detailNode.rowIndex;
                 }
                 // then check if it's a group row with a child cache with pixel in range
                 if (rowNode.group && rowNode.expanded && ag_grid_community_1._.exists(rowNode.childrenCache)) {
@@ -55532,7 +54645,9 @@ var WatermarkComp = /** @class */ (function (_super) {
         var show = this.shouldDisplayWatermark();
         ag_grid_community_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
         if (show) {
-            this.addCssClass('ag-opacity-zero');
+            window.setTimeout(function () {
+                _this.addCssClass('ag-opacity-zero');
+            }, 0);
             window.setTimeout(function () {
                 _this.addCssClass('ag-hidden');
             }, 5000);

@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -140,7 +134,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (this.gridOptionsWrapper.isTreeData()) {
-            var itemsNotAllowedWithTreeData = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+            var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(function (item) {
                 if (utils_1._.exists(colDefAny[item])) {
                     console.warn("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item);

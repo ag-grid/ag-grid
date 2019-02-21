@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var globalObj = typeof global === 'undefined' ? {} : global;
@@ -272,3 +266,5 @@ var frameworkComponentWrapper_1 = require("./components/framework/frameworkCompo
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = require("./environment");
 exports.Environment = environment_1.Environment;
+var tooltipManager_1 = require("./widgets/tooltipManager");
+exports.TooltipManager = tooltipManager_1.TooltipManager;

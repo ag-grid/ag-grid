@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v20.1.0
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./columnController/columnFactory";
 export { ColumnController } from "./columnController/columnController";
 export { ColumnKeyCreator } from "./columnController/columnKeyCreator";
@@ -174,4 +171,5 @@ export { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./filter/numberFilter";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
+export { TooltipManager } from "./widgets/tooltipManager";
 export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent, ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent, RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent, DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent, BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent, ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent, ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent, CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent, ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent, RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent, PasteEndEvent, PasteStartEvent, GridSizeChangedEvent } from "./events";

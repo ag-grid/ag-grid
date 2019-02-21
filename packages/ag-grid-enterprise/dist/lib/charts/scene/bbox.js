@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 "use strict";
 // For small data structs like a bounding box, objects are superior to arrays
 // in terms of performance (by 3-4% in Chrome 71, Safari 12 and by 20% in Firefox 64).

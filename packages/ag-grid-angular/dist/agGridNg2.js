@@ -163,6 +163,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.suppressCellSelection = undefined;
         this.suppressHorizontalScroll = undefined;
         this.debug = undefined;
+        this.enableBrowserTooltips = undefined;
         this.enableColResize = undefined;
         this.enableCellExpressions = undefined;
         this.enableSorting = undefined;
@@ -608,6 +609,7 @@ var AgGridNg2 = /** @class */ (function () {
         'suppressCellSelection': [{ type: core_1.Input },],
         'suppressHorizontalScroll': [{ type: core_1.Input },],
         'debug': [{ type: core_1.Input },],
+        'enableBrowserTooltips': [{ type: core_1.Input },],
         'enableColResize': [{ type: core_1.Input },],
         'enableCellExpressions': [{ type: core_1.Input },],
         'enableSorting': [{ type: core_1.Input },],

@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -91,7 +85,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         if (tooltipText == null) {
             return;
         }
-        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {

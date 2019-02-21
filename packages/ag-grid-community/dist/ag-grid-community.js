@@ -395,6 +395,8 @@ var frameworkComponentWrapper_1 = __webpack_require__(153);
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = __webpack_require__(43);
 exports.Environment = environment_1.Environment;
+var tooltipManager_1 = __webpack_require__(95);
+exports.TooltipManager = tooltipManager_1.TooltipManager;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
@@ -1340,8 +1342,8 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isAccentedSort = function () {
         return isTrue(this.gridOptions.accentedSort);
     };
-    GridOptionsWrapper.prototype.isEnableLegacyTooltips = function () {
-        return isTrue(this.gridOptions.enableLegacyTooltips);
+    GridOptionsWrapper.prototype.isEnableBrowserTooltips = function () {
+        return isTrue(this.gridOptions.enableBrowserTooltips);
     };
     GridOptionsWrapper.prototype.isEnableCellExpressions = function () {
         return isTrue(this.gridOptions.enableCellExpressions);
@@ -5139,7 +5141,7 @@ var PropertyKeys = /** @class */ (function () {
         'toolPanelSuppressSideButtons', 'toolPanelSuppressColumnFilter', 'toolPanelSuppressColumnSelectAll',
         'toolPanelSuppressColumnExpandAll', 'suppressMakeColumnVisibleAfterUnGroup',
         'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
-        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
+        'enableBrowserTooltips', 'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
         'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
         'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
         'groupIncludeFooter', 'groupIncludeTotalFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader',
@@ -9976,7 +9978,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (this.gridOptionsWrapper.isTreeData()) {
-            var itemsNotAllowedWithTreeData = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+            var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(function (item) {
                 if (utils_1._.exists(colDefAny[item])) {
                     console.warn("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item);
@@ -14370,7 +14372,7 @@ var CellComp = /** @class */ (function (_super) {
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
         templateParts.push(" class=\"" + cssClasses.join(' ') + "\"");
-        if (this.beans.gridOptionsWrapper.isEnableLegacyTooltips() && utils_1._.exists(tooltipSanitised)) {
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && utils_1._.exists(tooltipSanitised)) {
             templateParts.push("title=\"" + tooltipSanitised + "\"");
         }
         templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + " " + stylesForRowSpanning + "\" >");
@@ -14421,7 +14423,7 @@ var CellComp = /** @class */ (function (_super) {
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
-        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.beans.tooltipManager.registerTooltip(this);
         }
     };
@@ -14795,7 +14797,7 @@ var CellComp = /** @class */ (function (_super) {
         var newTooltip = this.getToolTip();
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 return;
             }
             if (utils_1._.exists(newTooltip)) {
@@ -15482,7 +15484,9 @@ var CellComp = /** @class */ (function (_super) {
         // the focus doesn't get to the text field, instead to goes to the div
         // behind, making it impossible to select the text field.
         var forceBrowserFocus = false;
-        // return if we are clicking on a row selection checkbox
+        // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
+        // we do range selection, however if user is clicking checking, they are probably only interested
+        // in row selection.
         if (utils_1._.isElementChildOfClass(mouseEvent.target, 'ag-selection-checkbox', 3)) {
             return;
         }
@@ -22200,7 +22204,8 @@ var ComponentRecipes = /** @class */ (function () {
         }, "agNoRowsOverlay");
     };
     ComponentRecipes.prototype.newTooltipComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "tooltipComponent", {
+        var colDef = params.column && params.column.getColDef();
+        return this.componentResolver.createAgGridComponent(colDef, params, "tooltipComponent", {
             api: this.gridApi,
             columnApi: this.columnApi
         }, 'agTooltipComponent');
@@ -28155,7 +28160,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         if (tooltipText == null) {
             return;
         }
-        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
@@ -31022,7 +31027,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         if (tooltipText == null) {
             return;
         }
-        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
@@ -38282,11 +38287,10 @@ var ZipContainer = /** @class */ (function () {
         paths.forEach(this.addFolder);
     };
     ZipContainer.prototype.addFile = function (path, content) {
-        var utf8_encode = utils_1._.utf8_encode;
         this.files.push({
             path: path,
             created: new Date(),
-            content: utf8_encode(content)
+            content: content
         });
     };
     ZipContainer.prototype.clearStream = function () {

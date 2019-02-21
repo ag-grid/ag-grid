@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { Node } from "./node";
 import { Scene } from "./scene";
 declare type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];

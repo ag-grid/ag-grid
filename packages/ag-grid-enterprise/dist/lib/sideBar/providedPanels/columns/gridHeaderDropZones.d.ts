@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { Component } from "ag-grid-community/main";
 export declare class GridHeaderDropZones extends Component {
     private gridOptionsWrapper;

@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { Shape } from "./shape";
 /**
  * Circular arc node that uses the experimental `Path2D` class to define

@@ -5,12 +5,15 @@ import { ComponentRecipes } from "../components/framework/componentRecipes";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { CellComp } from "../rendering/cellComp";
-import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
-import { HeaderGroupWrapperComp } from "../headerRendering/headerGroup/headerGroupWrapperComp";
 import { ITooltipParams } from "../rendering/tooltipComponent";
+import { ColDef } from "../entities/colDef";
 import { _ } from "../utils";
 
-type TooltipTarget = CellComp | HeaderWrapperComp | HeaderGroupWrapperComp;
+interface TooltipTarget extends Component {
+    getTooltipText(): string;
+    getComponentHolder(): ColDef | undefined;
+
+}
 
 interface RegisteredComponent {
     tooltipComp?: Component;

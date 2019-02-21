@@ -272,3 +272,5 @@ var frameworkComponentWrapper_1 = require("./dist/lib/components/framework/frame
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = require("./dist/lib/environment");
 exports.Environment = environment_1.Environment;
+var tooltipManager_1 = require("./dist/lib/widgets/tooltipManager");
+exports.TooltipManager = tooltipManager_1.TooltipManager;

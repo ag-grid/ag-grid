@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { IRowNodeStage, StageExecuteParams } from "ag-grid-community";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;

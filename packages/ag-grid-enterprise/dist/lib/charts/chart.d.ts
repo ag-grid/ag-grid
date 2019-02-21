@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { Component } from "ag-grid-community";
 export interface ChartOptions {
     width: number;

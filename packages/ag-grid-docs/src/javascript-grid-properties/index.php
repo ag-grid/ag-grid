@@ -599,6 +599,10 @@ include '../documentation-main/documentation_header.php';
                 and you want the mouse to scroll the browser page.</td>
         </tr>
         <tr>
+            <th>enableBrowserTooltips</th>
+            <td>Set to true to use the browser's default tooltip instead of using Ag-Grid's Tooltip Component.</td>
+        </tr>
+        <tr>
             <th>enableCellExpressions</th>
             <td>Set to true to allow <a href="../javascript-grid-cell-expressions/#cell-expressions">cell expressions</a>.</td>
         </tr>

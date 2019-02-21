@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -103,7 +97,7 @@ var CellComp = /** @class */ (function (_super) {
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
         templateParts.push(" class=\"" + cssClasses.join(' ') + "\"");
-        if (this.beans.gridOptionsWrapper.isEnableLegacyTooltips() && utils_1._.exists(tooltipSanitised)) {
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && utils_1._.exists(tooltipSanitised)) {
             templateParts.push("title=\"" + tooltipSanitised + "\"");
         }
         templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + " " + stylesForRowSpanning + "\" >");
@@ -154,7 +148,7 @@ var CellComp = /** @class */ (function (_super) {
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
-        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.beans.tooltipManager.registerTooltip(this);
         }
     };
@@ -528,7 +522,7 @@ var CellComp = /** @class */ (function (_super) {
         var newTooltip = this.getToolTip();
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 return;
             }
             if (utils_1._.exists(newTooltip)) {
@@ -1215,7 +1209,9 @@ var CellComp = /** @class */ (function (_super) {
         // the focus doesn't get to the text field, instead to goes to the div
         // behind, making it impossible to select the text field.
         var forceBrowserFocus = false;
-        // return if we are clicking on a row selection checkbox
+        // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
+        // we do range selection, however if user is clicking checking, they are probably only interested
+        // in row selection.
         if (utils_1._.isElementChildOfClass(mouseEvent.target, 'ag-selection-checkbox', 3)) {
             return;
         }

@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { Column, GridOptionsWrapper, IAggFunc, IAggFuncService } from "ag-grid-community";
 export declare class AggFuncService implements IAggFuncService {
     private static AGG_SUM;

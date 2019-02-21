@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
 export { SetFilter } from "./setFilter/setFilter";

@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode } from "ag-grid-community";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;

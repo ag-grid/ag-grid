@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -124,7 +118,8 @@ var ComponentRecipes = /** @class */ (function () {
         }, "agNoRowsOverlay");
     };
     ComponentRecipes.prototype.newTooltipComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "tooltipComponent", {
+        var colDef = params.column && params.column.getColDef();
+        return this.componentResolver.createAgGridComponent(colDef, params, "tooltipComponent", {
             api: this.gridApi,
             columnApi: this.columnApi
         }, 'agTooltipComponent');

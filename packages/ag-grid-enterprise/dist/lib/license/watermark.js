@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -35,7 +34,9 @@ var WatermarkComp = /** @class */ (function (_super) {
         var show = this.shouldDisplayWatermark();
         ag_grid_community_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
         if (show) {
-            this.addCssClass('ag-opacity-zero');
+            window.setTimeout(function () {
+                _this.addCssClass('ag-opacity-zero');
+            }, 0);
             window.setTimeout(function () {
                 _this.addCssClass('ag-hidden');
             }, 5000);

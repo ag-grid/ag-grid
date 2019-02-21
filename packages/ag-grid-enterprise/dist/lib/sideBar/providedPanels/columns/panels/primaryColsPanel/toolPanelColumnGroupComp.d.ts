@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { Component, OriginalColumnGroup } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {

@@ -1,10 +1,9 @@
-// Type definitions for ag-grid-community v20.1.0
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { CellComp } from "../rendering/cellComp";
-import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
-import { HeaderGroupWrapperComp } from "../headerRendering/headerGroup/headerGroupWrapperComp";
-declare type TooltipTarget = CellComp | HeaderWrapperComp | HeaderGroupWrapperComp;
+import { Component } from "./component";
+import { ColDef } from "../entities/colDef";
+interface TooltipTarget extends Component {
+    getTooltipText(): string;
+    getComponentHolder(): ColDef | undefined;
+}
 export declare class TooltipManager {
     private popupService;
     private componentRecipes;

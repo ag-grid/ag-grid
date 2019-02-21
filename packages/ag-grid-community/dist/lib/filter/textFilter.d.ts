@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v20.1.0
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
 import { ComparableBaseFilter, IScalarFilterParams, FilterConditionType, IComparableFilterParams } from "./baseFilter";
 export interface SerializedTextFilter extends SerializedFilter {

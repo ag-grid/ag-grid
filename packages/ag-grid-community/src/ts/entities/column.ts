@@ -254,7 +254,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         if (this.gridOptionsWrapper.isTreeData()) {
             const itemsNotAllowedWithTreeData =
-                ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+                ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (_.exists(colDefAny[item])) {
                     console.warn(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`);

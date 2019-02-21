@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66,11 +60,10 @@ var ZipContainer = /** @class */ (function () {
         paths.forEach(this.addFolder);
     };
     ZipContainer.prototype.addFile = function (path, content) {
-        var utf8_encode = utils_1._.utf8_encode;
         this.files.push({
             path: path,
             created: new Date(),
-            content: utf8_encode(content)
+            content: content
         });
     };
     ZipContainer.prototype.clearStream = function () {

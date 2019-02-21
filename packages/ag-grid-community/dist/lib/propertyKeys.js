@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var PropertyKeys = /** @class */ (function () {
@@ -41,7 +35,7 @@ var PropertyKeys = /** @class */ (function () {
         'toolPanelSuppressSideButtons', 'toolPanelSuppressColumnFilter', 'toolPanelSuppressColumnSelectAll',
         'toolPanelSuppressColumnExpandAll', 'suppressMakeColumnVisibleAfterUnGroup',
         'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
-        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
+        'enableBrowserTooltips', 'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
         'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
         'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
         'groupIncludeFooter', 'groupIncludeTotalFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader',

@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 /**

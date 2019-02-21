@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -299,7 +298,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
                 // then check if current row contains a detail row with pixel in range
                 var expandedMasterRow = rowNode.master && rowNode.expanded;
                 if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
-                    return rowNode.rowIndex;
+                    return rowNode.detailNode.rowIndex;
                 }
                 // then check if it's a group row with a child cache with pixel in range
                 if (rowNode.group && rowNode.expanded && ag_grid_community_1._.exists(rowNode.childrenCache)) {

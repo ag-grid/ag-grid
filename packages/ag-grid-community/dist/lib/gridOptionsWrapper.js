@@ -1,9 +1,3 @@
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -589,8 +583,8 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isAccentedSort = function () {
         return isTrue(this.gridOptions.accentedSort);
     };
-    GridOptionsWrapper.prototype.isEnableLegacyTooltips = function () {
-        return isTrue(this.gridOptions.enableLegacyTooltips);
+    GridOptionsWrapper.prototype.isEnableBrowserTooltips = function () {
+        return isTrue(this.gridOptions.enableBrowserTooltips);
     };
     GridOptionsWrapper.prototype.isEnableCellExpressions = function () {
         return isTrue(this.gridOptions.enableCellExpressions);

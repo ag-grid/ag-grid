@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v20.1.0
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
@@ -69,7 +66,7 @@ export interface GridOptions {
     enableRtl?: boolean;
     /** @deprecated in v20, use colDef.resizable instead */
     enableColResize?: boolean;
-    enableLegacyTooltips?: boolean;
+    enableBrowserTooltips?: boolean;
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
     enableCellTextSelection?: boolean;

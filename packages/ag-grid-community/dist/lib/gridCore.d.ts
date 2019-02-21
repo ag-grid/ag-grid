@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v20.1.0
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
 import { Component } from "./widgets/component";
 import { SideBarDef } from "./entities/sideBar";

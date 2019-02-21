@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { PopupService, Component, ColumnController, Context, EventService, DragAndDropService, GridOptionsWrapper, DropTarget, Column, AgEvent } from "ag-grid-community";
 import { AggFuncService } from "../../../../aggregation/aggFuncService";
 export interface ColumnRemoveEvent extends AgEvent {

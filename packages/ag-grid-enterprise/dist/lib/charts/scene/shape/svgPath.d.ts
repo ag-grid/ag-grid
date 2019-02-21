@@ -1,4 +1,3 @@
-// ag-grid-enterprise v20.1.0
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 export declare class SvgPath extends Shape {

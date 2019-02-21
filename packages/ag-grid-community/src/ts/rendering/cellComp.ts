@@ -162,7 +162,7 @@ export class CellComp extends Component {
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
 
-        if (this.beans.gridOptionsWrapper.isEnableLegacyTooltips() && _.exists(tooltipSanitised)) {
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && _.exists(tooltipSanitised)) {
             templateParts.push(`title="${tooltipSanitised}"`);
         }
 
@@ -226,7 +226,7 @@ export class CellComp extends Component {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
 
-        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.beans.tooltipManager.registerTooltip(this);
         }
     }
@@ -656,7 +656,7 @@ export class CellComp extends Component {
 
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 return;
             }
 
@@ -1461,7 +1461,9 @@ export class CellComp extends Component {
         // behind, making it impossible to select the text field.
         let forceBrowserFocus = false;
 
-        // return if we are clicking on a row selection checkbox
+        // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
+        // we do range selection, however if user is clicking checking, they are probably only interested
+        // in row selection.
         if (_.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-selection-checkbox', 3)) { return; }
 
         if (_.isBrowserIE()) {
