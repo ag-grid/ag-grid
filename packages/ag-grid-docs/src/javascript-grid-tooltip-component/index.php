@@ -63,7 +63,7 @@ interface ITooltipParams {
 <h2>Default Browser Tooltip</h2>
 
 <p>
-    If you don't want to use Ag-Grid's tooltip component, you can use the <code>enableLegacyTooltips</code> config to use
+    If you don't want to use Ag-Grid's tooltip component, you can use the <code>enableBrowserTooltips</code> config to use
     the browser's default tootip. 
 
     Note: That will use the element's title attribute to display the tooltip.
@@ -82,7 +82,7 @@ interface ITooltipParams {
 
 <?= example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
 
-<h2>Example: Legacy Browser Tooltip</h2>
+<h2>Example: Using Browser Tooltips</h2>
 
 <p>
     The example below demonstrates how to use the default browser tooltips.

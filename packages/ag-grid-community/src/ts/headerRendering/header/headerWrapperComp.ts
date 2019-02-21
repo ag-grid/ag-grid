@@ -271,7 +271,7 @@ export class HeaderWrapperComp extends Component {
         // add tooltip if exists
         if (tooltipText == null) { return; }
 
-        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
             this.beans.tooltipManager.registerTooltip(this);

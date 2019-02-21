@@ -162,7 +162,7 @@ export class CellComp extends Component {
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
 
-        if (this.beans.gridOptionsWrapper.isEnableLegacyTooltips() && _.exists(tooltipSanitised)) {
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && _.exists(tooltipSanitised)) {
             templateParts.push(`title="${tooltipSanitised}"`);
         }
 
@@ -226,7 +226,7 @@ export class CellComp extends Component {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
 
-        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.beans.tooltipManager.registerTooltip(this);
         }
     }
@@ -656,7 +656,7 @@ export class CellComp extends Component {
 
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableLegacyTooltips()) {
+            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 return;
             }
 

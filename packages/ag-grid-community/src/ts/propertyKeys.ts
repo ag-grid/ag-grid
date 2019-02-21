@@ -34,7 +34,7 @@ export class PropertyKeys {
         'toolPanelSuppressSideButtons', 'toolPanelSuppressColumnFilter', 'toolPanelSuppressColumnSelectAll',
         'toolPanelSuppressColumnExpandAll', 'suppressMakeColumnVisibleAfterUnGroup',
         'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
-        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
+        'enableBrowserTooltips', 'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
         'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
         'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
         'groupIncludeFooter', 'groupIncludeTotalFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader',

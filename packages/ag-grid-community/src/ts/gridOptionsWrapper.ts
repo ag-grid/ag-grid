@@ -802,8 +802,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.accentedSort);
     }
 
-    public isEnableLegacyTooltips() {
-        return isTrue(this.gridOptions.enableLegacyTooltips);
+    public isEnableBrowserTooltips() {
+        return isTrue(this.gridOptions.enableBrowserTooltips);
     }
 
     public isEnableCellExpressions() {
