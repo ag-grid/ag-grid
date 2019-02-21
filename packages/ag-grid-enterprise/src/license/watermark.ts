@@ -16,7 +16,9 @@ export class WatermarkComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
 
         if (show) {
-            this.addCssClass('ag-opacity-zero');
+            window.setTimeout(() => {
+                this.addCssClass('ag-opacity-zero');
+            }, 0);
             window.setTimeout(() => {
                 this.addCssClass('ag-hidden');
             }, 5000);
