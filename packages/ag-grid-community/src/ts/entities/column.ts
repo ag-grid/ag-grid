@@ -226,7 +226,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public isFilterAllowed(): boolean {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        const filterDefined = !!this.colDef.filter;
+        const filterDefined = !!this.colDef.filter || this.colDef.filterFramework;
         return this.primary && filterDefined;
     }
 
