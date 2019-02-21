@@ -111,7 +111,7 @@ export class HeaderGroupWrapperComp extends Component {
 
         if (tooltipText == null) { return; }
 
-        if (this.gridOptionsWrapper.isEnableLegacyTooltips()) {
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
             this.beans.tooltipManager.registerTooltip(this);

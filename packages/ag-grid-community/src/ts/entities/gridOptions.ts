@@ -127,7 +127,7 @@ export interface GridOptions {
     enableRtl?: boolean;
     /** @deprecated in v20, use colDef.resizable instead */
     enableColResize?: boolean;
-    enableLegacyTooltips?: boolean;
+    enableBrowserTooltips?: boolean;
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
     enableCellTextSelection?: boolean;

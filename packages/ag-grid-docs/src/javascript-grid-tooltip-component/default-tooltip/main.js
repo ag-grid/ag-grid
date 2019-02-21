@@ -16,7 +16,7 @@ var gridOptions = {
         sortable: true,
     },
 
-    enableLegacyTooltips: true,
+    enableBrowserTooltips: true,
 
     // set rowData to null or undefined to show loading panel by default
     rowData: null,
