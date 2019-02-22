@@ -74,7 +74,7 @@ export class TooltipManager {
             if (this.lastHoveredComponent === this.activeComponent) { return; }
 
             delay = 200;
-        }
+        } else if (this.showTimeoutId && this.lastHoveredComponent === targetCmp) { return; }
 
         this.clearTimers(this.HIDE_SHOW_ONLY);
 
@@ -91,10 +91,18 @@ export class TooltipManager {
         const relatedTarget = e.relatedTarget as HTMLElement;
 
         if (!activeComponent) {
-            // when a click hides the tooltip we need to reset the lastHoveredComponent
-            // otherwise the tooltip won't appear until another registered component is hovered.
-            if (this.lastHoveredComponent && !this.lastHoveredComponent.getGui().contains(relatedTarget)) {
-                this.lastHoveredComponent = undefined;
+            if (this.lastHoveredComponent) {
+                const constainsElement = this.lastHoveredComponent.getGui().contains(relatedTarget);
+
+                if (this.showTimeoutId && constainsElement) {
+                    // if we are hovering within a component with multiple child elements before
+                    // the tooltip has been displayed, we should cancel this event
+                    return;
+                } else if (!constainsElement) {
+                    // when a click hides the tooltip we need to reset the lastHoveredComponent
+                    // otherwise the tooltip won't appear until another registered component is hovered.
+                    this.lastHoveredComponent = undefined;
+                }
             }
             this.clearTimers();
             return;
