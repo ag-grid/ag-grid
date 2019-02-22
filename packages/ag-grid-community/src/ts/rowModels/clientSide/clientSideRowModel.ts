@@ -153,8 +153,8 @@ export class ClientSideRowModel {
             const firstRow = Math.max(rowAtStartPixel, startLimitIndex);
             const lastRow = Math.min(rowAtEndPixel, endLimitIndex);
 
-            for (let rowIndex = firstRow; rowIndex<=lastRow; rowIndex++) {
-                let rowNode = this.getRow(rowIndex);
+            for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                const rowNode = this.getRow(rowIndex);
                 if (rowNode.rowHeightEstimated) {
                     const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
                     rowNode.setRowHeight(rowHeight.height);
@@ -174,7 +174,7 @@ export class ClientSideRowModel {
 
     private setRowTops(): void {
         let nextRowTop = 0;
-        for (let i = 0; i<this.rowsToDisplay.length; i++) {
+        for (let i = 0; i < this.rowsToDisplay.length; i++) {
 
             // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
             // with these two layouts.
@@ -562,7 +562,7 @@ export class ClientSideRowModel {
     // nodes - the rowNodes to traverse
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
-    // index - works similar to the index in forEach in javascripts array function
+    // index - works similar to the index in forEach in javascript's array function
     private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: Function, recursionType: RecursionType, index: number) {
         if (nodes) {
             for (let i = 0; i < nodes.length; i++) {

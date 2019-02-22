@@ -268,7 +268,7 @@ export class RowRenderer extends BeanStub {
         }
 
         // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
+        // called to what's rendered. if the row isn't rendered, we don't care
         const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 
         // remove the rows
@@ -893,7 +893,7 @@ export class RowRenderer extends BeanStub {
     private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): void {
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        let rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        const rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
         if (rowHeightsChanged) {
             // if row heights have changed, we need to resize the containers the rows sit it
             this.sizeContainerToPageHeight();

@@ -79,21 +79,21 @@ export class CellRendererService {
         const componentToUse: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", null);
 
         if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT) {
-            //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
+            // THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
         } else {
             const otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", null);
             if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT) {
-                //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
-                //ignore it
-                //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
+                // Only if the original column is using an specific renderer, it it is a using a DEFAULT one
+                // ignore it
+                // THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
                 rendererToUsePromise = this.componentRecipes.newCellRenderer(originalColumn, params);
             } else if (otherRenderer && otherRenderer.source == ComponentSource.DEFAULT && (_.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
-                //EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
-                //AND HAS A INNER CELL RENDERER
+                // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
+                // AND HAS A INNER CELL RENDERER
                 rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(originalColumn.cellRendererParams, params);
             } else {
-                //This forces the retrieval of the default plain cellRenderer that just renders the values.
+                // This forces the retrieval of the default plain cellRenderer that just renders the values.
                 rendererToUsePromise = this.componentRecipes.newCellRenderer({}, params);
             }
         }

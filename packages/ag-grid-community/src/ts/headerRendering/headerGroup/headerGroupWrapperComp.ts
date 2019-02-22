@@ -199,7 +199,7 @@ export class HeaderGroupWrapperComp extends Component {
     public getDragItemForGroup(): DragItem {
         const allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
 
-        // capture visible state, used when reentering grid to dictate which columns should be visible
+        // capture visible state, used when re-entering grid to dictate which columns should be visible
         const visibleState: { [key: string]: boolean } = {};
         allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
 
@@ -245,8 +245,8 @@ export class HeaderGroupWrapperComp extends Component {
 
         this.onWidthChanged();
 
-        // the child listeners are not tied to this components lifecycle, as children can get added and removed
-        // to the group - hence they are on a different lifecycle. so we must make sure the existing children
+        // the child listeners are not tied to this components life-cycle, as children can get added and removed
+        // to the group - hence they are on a different life-cycle. so we must make sure the existing children
         // listeners are removed when we finally get destroyed
         this.addDestroyFunc(this.destroyListenersOnChildrenColumns.bind(this));
     }

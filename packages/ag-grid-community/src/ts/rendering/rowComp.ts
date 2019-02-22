@@ -832,7 +832,7 @@ export class RowComp extends Component {
             eRowCallback(eRow);
 
             const isDetailRow = this.beans.doingMasterDetail && this.rowNode.detail;
-            if(!isDetailRow) {
+            if (!isDetailRow) {
                 this.angular1Compile(eRow);
             }
         });

@@ -17,7 +17,7 @@ import { RowDataTransaction } from "../clientSide/clientSideRowModel";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { NumberSequence, _ } from "../../utils";
-import {RowRenderer} from "../../rendering/rowRenderer";
+import { RowRenderer } from "../../rendering/rowRenderer";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {
@@ -173,7 +173,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
             return;
         }
 
-        // if user is providing id's, then this means we can keep the selection between datsource hits,
+        // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
         const userGeneratingIds = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());

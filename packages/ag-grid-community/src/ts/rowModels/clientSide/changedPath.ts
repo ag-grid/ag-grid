@@ -65,19 +65,19 @@ export class ChangedPath {
         return this.active;
     }
 
-    private depthFirstSearchChangedPath(pathItem: PathItem, callback: (rowNode: RowNode)=>void): void {
+    private depthFirstSearchChangedPath(pathItem: PathItem, callback: (rowNode: RowNode) => void): void {
         if (pathItem.children) {
-            for (let i = 0; i<pathItem.children.length; i++) {
+            for (let i = 0; i < pathItem.children.length; i++) {
                 this.depthFirstSearchChangedPath(pathItem.children[i], callback);
             }
         }
         callback(pathItem.rowNode);
     }
 
-    private depthFirstSearchEverything(rowNode: RowNode, callback: (rowNode: RowNode)=>void, traverseEverything: boolean): void {
+    private depthFirstSearchEverything(rowNode: RowNode, callback: (rowNode: RowNode) => void, traverseEverything: boolean): void {
         if (rowNode.childrenAfterGroup) {
-            for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
-                let childNode = rowNode.childrenAfterGroup[i];
+            for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+                const childNode = rowNode.childrenAfterGroup[i];
                 if (childNode.childrenAfterGroup) {
                     this.depthFirstSearchEverything(rowNode.childrenAfterGroup[i], callback, traverseEverything);
                 } else if (traverseEverything) {
@@ -90,7 +90,7 @@ export class ChangedPath {
 
     // traverseLeafNodes -> used when NOT doing changed path, ie traversing everything. the callback
     // will be called for child nodes in addition to parent nodes.
-    public forEachChangedNodeDepthFirst(callback: (rowNode: RowNode)=>void, traverseLeafNodes = false): void {
+    public forEachChangedNodeDepthFirst(callback: (rowNode: RowNode) => void, traverseLeafNodes = false): void {
         if (this.active) {
             // if we are active, then use the change path to callback
             // only for updated groups
@@ -105,7 +105,7 @@ export class ChangedPath {
         let pointer = rowNode;
         let newEntryCount = 0;
         while (!this.mapToItems[pointer.id]) {
-            let newEntry: PathItem = {
+            const newEntry: PathItem = {
                 rowNode: pointer,
                 children: null
             };
@@ -133,9 +133,9 @@ export class ChangedPath {
 
     private linkPathItems(rowNode: RowNode, newEntryCount: number): void {
         let pointer = rowNode;
-        for (let i = 0; i<newEntryCount; i++) {
-            let thisItem = this.mapToItems[pointer.id];
-            let parentItem = this.mapToItems[pointer.parent.id];
+        for (let i = 0; i < newEntryCount; i++) {
+            const thisItem = this.mapToItems[pointer.id];
+            const parentItem = this.mapToItems[pointer.parent.id];
             if (!parentItem.children) {
                 parentItem.children = [];
             }
@@ -155,7 +155,7 @@ export class ChangedPath {
         // we don't have it built yet
 
         // create the new PathItem objects.
-        let newEntryCount = this.createPathItems(rowNode);
+        const newEntryCount = this.createPathItems(rowNode);
 
         // link in the node items
         this.linkPathItems(rowNode, newEntryCount);

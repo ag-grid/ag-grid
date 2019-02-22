@@ -242,7 +242,7 @@ export class ColumnFactory {
         });
 
         // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef's with common id
+        // one column instance for colDef with common id
         if (res) {
             _.removeFromArray(existingColsCopy, res);
         }

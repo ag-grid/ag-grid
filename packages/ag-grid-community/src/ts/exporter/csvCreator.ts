@@ -152,7 +152,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     public export(userParams?: P): string {
         if (this.isExportSuppressed()) {
-            console.warn(`ag-grid: Export canceled. Export is not allowed as per your configuration.`);
+            console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
             return '';
         }
 

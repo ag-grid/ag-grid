@@ -1,5 +1,5 @@
 import { Component } from "../widgets/component";
-import { IFilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
+import { IFilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
 import { QuerySelector } from "../widgets/componentAnnotations";
 import { Autowired, Context } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -100,10 +100,10 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
         this.defaultFilter = this.filterParams.defaultOption;
 
-        // strip out incorrectly defined FilterOptionDef's
+        // strip out incorrectly defined FilterOptionDefs
         if (params.filterOptions) {
             params.filterOptions.forEach(filterOption => {
-                if (typeof filterOption === 'string') return;
+                if (typeof filterOption === 'string') { return; }
                 if (!filterOption.displayKey) {
                     console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
                     return;
@@ -126,7 +126,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
                 const firstFilterOption = this.filterParams.filterOptions[0];
                 if (typeof firstFilterOption === 'string') {
                     this.defaultFilter = firstFilterOption;
-                } else if (firstFilterOption.displayKey){
+                } else if (firstFilterOption.displayKey) {
                     this.defaultFilter = firstFilterOption.displayKey;
                 } else {
                     console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
@@ -461,7 +461,6 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
     }
 
     public abstract getDefaultType(): string;
-
 
     private onFilterTypeChanged(type:FilterConditionType): void {
         if (type === FilterConditionType.MAIN) {

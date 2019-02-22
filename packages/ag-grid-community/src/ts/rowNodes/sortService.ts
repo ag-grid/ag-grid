@@ -5,10 +5,9 @@ import { SortController } from "../sortController";
 import { ValueService } from "../valueService/valueService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnController } from "../columnController/columnController";
+import { RowNodeMap } from "../rowModels/clientSide/clientSideRowModel";
+import { ChangedPath } from "../rowModels/clientSide/changedPath";
 import { _ } from "../utils";
-import {RowNodeMap} from "../rowModels/clientSide/clientSideRowModel";
-import {SortStage} from "../rowModels/clientSide/sortStage";
-import {ChangedPath} from "../rowModels/clientSide/changedPath";
 
 export interface SortOption {
     inverter: number;
@@ -109,7 +108,7 @@ export class SortService {
                 // there is no value in the group that could of changed (ie no aggregate values)
                 const passesChangedPathCheck = noAggregations || changedPath.canSkip(rowNode);
                 return passesDirtyNodesCheck && passesChangedPathCheck;
-            } )
+            })
             .map(this.mapNodeToSortedNode.bind(this));
 
         // for fast access below, we map them
@@ -150,9 +149,9 @@ export class SortService {
             // of second array. If yes, store first
             // array element and increment first array
             // index. Otherwise do same with second array
-            let compareResult = this.compareRowNodes(sortOptions, arr1[i], arr2[j]);
-            if (compareResult<0) {
-                res.push(arr1[i++])
+            const compareResult = this.compareRowNodes(sortOptions, arr1[i], arr2[j]);
+            if (compareResult < 0) {
+                res.push(arr1[i++]);
             } else {
                 res.push(arr2[j++]);
             }
@@ -160,12 +159,12 @@ export class SortService {
 
         // add remaining from arr1
         while (i < arr1.length) {
-            res.push(arr1[i++])
+            res.push(arr1[i++]);
         }
 
         // add remaining from arr2
         while (j < arr2.length) {
-            res.push(arr2[j++])
+            res.push(arr2[j++]);
         }
 
         return res;
@@ -210,7 +209,7 @@ export class SortService {
         }
 
         const listToSort = rowNode.childrenAfterSort;
-        for (let i = 0; i<listToSort.length; i++) {
+        for (let i = 0; i < listToSort.length; i++) {
             const child = listToSort[i];
             const firstChild = i === 0;
             const lastChild = i === rowNode.childrenAfterSort.length - 1;
