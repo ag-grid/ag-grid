@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 import { Node } from "./node";
 import { Path2D } from "./path2D";
 export declare class Scene {

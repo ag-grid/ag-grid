@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -201,7 +207,7 @@ var ColumnFactory = /** @class */ (function () {
             }
         });
         // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef's with common id
+        // one column instance for colDef with common id
         if (res) {
             utils_1._.removeFromArray(existingColsCopy, res);
         }

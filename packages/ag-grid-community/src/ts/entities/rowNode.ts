@@ -23,7 +23,7 @@ export interface SetSelectedParams {
     clearSelection?: boolean;
     // true when action is NOT on this node, ie user clicked a group and this is the child of a group
     suppressFinishActions?: boolean;
-    // gets used when user shif-selects a range
+    // gets used when user shift-selects a range
     rangeSelect?: boolean;
     // used in group selection, if true, filtered out children will not be selected
     groupSelectsFiltered?: boolean;

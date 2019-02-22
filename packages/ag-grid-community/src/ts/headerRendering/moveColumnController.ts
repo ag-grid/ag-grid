@@ -291,7 +291,7 @@ export class MoveColumnController implements DropListener {
             availableWidth -= widthOfMovingDisplayedCols;
         }
 
-        if (availableWidth>0) {
+        if (availableWidth > 0) {
             // now count how many of the displayed columns will fit to the left
             for (let i = 0; i < otherDisplayedCols.length; i++) {
                 const col = otherDisplayedCols[i];

@@ -24,7 +24,7 @@ import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { _ } from "../utils";
 
 /**
- * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
+ * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
  * must be passed in, the serializer will call back to the provided methods and finally call to parse to obtain the final result
  * of the serialization.
  *

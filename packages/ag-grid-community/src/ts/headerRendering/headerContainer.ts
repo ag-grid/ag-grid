@@ -62,7 +62,7 @@ export class HeaderContainer {
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
-    // if row group changes, that means we may need to add aggFunc's to the column headers,
+    // if row group changes, that means we may need to add aggFuncs to the column headers,
     // if the grid goes from no aggregation (ie no grouping) to grouping
     private onColumnRowGroupChanged(): void {
         this.onGridColumnsChanged();

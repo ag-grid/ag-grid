@@ -1,3 +1,6 @@
+// Type definitions for ag-grid-community v20.1.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { ColumnController } from "../columnController/columnController";
 import { RowNode } from "../entities/rowNode";
@@ -6,7 +9,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 /**
- * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
+ * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
  * must be passed in, the serializer will call back to the provided methods and finally call to parse to obtain the final result
  * of the serialization.
  *

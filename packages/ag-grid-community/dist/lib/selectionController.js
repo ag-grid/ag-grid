@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -185,7 +191,7 @@ var SelectionController = /** @class */ (function () {
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function () {
         if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('getBestCostNodeSelection is only avilable when using normal row model');
+            console.warn('getBestCostNodeSelection is only available when using normal row model');
         }
         var clientSideRowModel = this.rowModel;
         var topLevelNodes = clientSideRowModel.getTopLevelNodes();

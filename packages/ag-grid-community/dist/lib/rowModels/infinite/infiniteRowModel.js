@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -149,7 +155,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         if (utils_1._.missing(this.datasource)) {
             return;
         }
-        // if user is providing id's, then this means we can keep the selection between datsource hits,
+        // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
         var userGeneratingIds = utils_1._.exists(this.gridOptionsWrapper.getRowNodeIdFunc());

@@ -640,7 +640,7 @@ var ColumnFactory = /** @class */ (function () {
             }
         });
         // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef's with common id
+        // one column instance for colDef with common id
         if (res) {
             utils_1._.removeFromArray(existingColsCopy, res);
         }
@@ -3199,7 +3199,7 @@ var Utils = /** @class */ (function () {
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
             var printableCharacter = event.key.length === 1;
             // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
-            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browers
+            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browsers
             var numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
             return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
         }
@@ -5192,7 +5192,7 @@ var PropertyKeys = /** @class */ (function () {
         .concat(PropertyKeys.FUNCTION_PROPERTIES)
         .concat(PropertyKeys.BOOLEAN_PROPERTIES);
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-    // properties to coldefs, gridOptions etc
+    // properties to colDefs, gridOptions etc
     PropertyKeys.FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
         'toColDef', 'createColDefFromGridColumn'];
     return PropertyKeys;
@@ -6530,7 +6530,7 @@ var BaseCreator = /** @class */ (function () {
     };
     BaseCreator.prototype.export = function (userParams) {
         if (this.isExportSuppressed()) {
-            console.warn("ag-grid: Export canceled. Export is not allowed as per your configuration.");
+            console.warn("ag-grid: Export cancelled. Export is not allowed as per your configuration.");
             return '';
         }
         var _a = this.getMergedParamsAndData(userParams), mergedParams = _a.mergedParams, data = _a.data;
@@ -7215,7 +7215,7 @@ var ColumnController = /** @class */ (function () {
         if (source === void 0) { source = "api"; }
         // keep track of which cols we have resized in here
         var columnsAutosized = [];
-        // initialise with anything except 0 so that while loop executs at least once
+        // initialise with anything except 0 so that while loop executes at least once
         var changesThisTimeAround = -1;
         while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
@@ -9958,7 +9958,7 @@ var Column = /** @class */ (function () {
     Column.prototype.isFilterAllowed = function () {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        var filterDefined = !!this.colDef.filter;
+        var filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
         return this.primary && filterDefined;
     };
     Column.prototype.isFieldContainsDots = function () {
@@ -11089,7 +11089,7 @@ var DisplayedGroupCreator = /** @class */ (function () {
     sortedVisibleColumns, 
     // the tree of columns, as provided by the users, used to know what groups columns roll up into
     balancedColumnTree, 
-    // create's unique id's for the group
+    // creates unique id's for the group
     groupInstanceIdCreator, 
     // whether it's left, right or center col
     pinned, 
@@ -11592,7 +11592,7 @@ var RowRenderer = /** @class */ (function (_super) {
             return;
         }
         // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
+        // called to what's rendered. if the row isn't rendered, we don't care
         var indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
         // remove the rows
         this.removeRowComps(indexesToRemove);
@@ -14318,7 +14318,7 @@ var CellComp = /** @class */ (function (_super) {
         // every time we go into edit mode, or back again, this gets incremented.
         // it's the components way of dealing with the async nature of framework components,
         // so if a framework component takes a while to be created, we know if the object
-        // is still relevant when creating is finished. eg we could click edit / unedit 20
+        // is still relevant when creating is finished. eg we could click edit / un-edit 20
         // times before the first React edit component comes back - we should discard
         // the first 19.
         _this.cellEditorVersion = 0;
@@ -14472,7 +14472,7 @@ var CellComp = /** @class */ (function (_super) {
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.colsSpanning = this.getColSpanningList();
     };
@@ -15016,7 +15016,7 @@ var CellComp = /** @class */ (function (_super) {
         var isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
         // are we showing group footers
         var groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
-        // if doing footers, we noramlly don't show agg data at group level when group is open
+        // if doing footers, we normally don't show agg data at group level when group is open
         var groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -15529,7 +15529,7 @@ var CellComp = /** @class */ (function (_super) {
         // iPad.
         if (this.isDoubleClickOnIPad()) {
             this.onCellDoubleClicked(mouseEvent);
-            mouseEvent.preventDefault(); // if we don't do this, then ipad zooms in
+            mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
             return;
         }
         var cellClickedEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_CLICKED);
@@ -16681,7 +16681,7 @@ var SelectionController = /** @class */ (function () {
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function () {
         if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('getBestCostNodeSelection is only avilable when using normal row model');
+            console.warn('getBestCostNodeSelection is only available when using normal row model');
         }
         var clientSideRowModel = this.rowModel;
         var topLevelNodes = clientSideRowModel.getTopLevelNodes();
@@ -20934,7 +20934,7 @@ var ComponentProvider = /** @class */ (function () {
         if (deprecatedInfo != null) {
             utils_1._.doOnce(function () {
                 console.warn("ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename " + deprecatedInfo.propertyHolder + ":" + raw + " to " + deprecatedInfo.propertyHolder + ":" + deprecatedInfo.newComponentName);
-            }, 'DEPREACTE_COMPONENT_' + raw);
+            }, 'DEPRECATE_COMPONENT_' + raw);
             return deprecatedInfo.newComponentName;
         }
         return raw;
@@ -21057,9 +21057,9 @@ var TextCellEditor = /** @class */ (function (_super) {
             eInput.select();
         }
         else {
-            // when we started editing, we want the carot at the end, not the start.
+            // when we started editing, we want the caret at the end, not the start.
             // this comes into play in two scenarios: a) when user hits F2 and b)
-            // when user hits a printable character, then on IE (and only IE) the carot
+            // when user hits a printable character, then on IE (and only IE) the caret
             // was placed after the first character, thus 'apply' would end up as 'pplea'
             var length_1 = eInput.value ? eInput.value.length : 0;
             if (length_1 > 0) {
@@ -21578,11 +21578,12 @@ var BaseFilter = /** @class */ (function (_super) {
         var _this = this;
         this.filterParams = params;
         this.defaultFilter = this.filterParams.defaultOption;
-        // strip out incorrectly defined FilterOptionDef's
+        // strip out incorrectly defined FilterOptionDefs
         if (params.filterOptions) {
             params.filterOptions.forEach(function (filterOption) {
-                if (typeof filterOption === 'string')
+                if (typeof filterOption === 'string') {
                     return;
+                }
                 if (!filterOption.displayKey) {
                     console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
                     return;
@@ -24335,8 +24336,8 @@ var HeaderComp = /** @class */ (function (_super) {
         if (!this.eMenu) {
             return;
         }
-        // we don't show the menu if on an ipad/iphone, as the user cannot have a pointer device
-        // Note: If supressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
+        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device
+        // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         var suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
         var dontShowMenu = !this.params.enableMenu || (utils_1._.isUserAgentIPad() && !suppressMenuHide);
@@ -25547,24 +25548,24 @@ var CellRendererService = /** @class */ (function () {
         var rendererToUsePromise = null;
         var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer", null);
         if (componentToUse && componentToUse.component != null && componentToUse.source != componentResolver_1.ComponentSource.DEFAULT) {
-            //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
+            // THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
         }
         else {
             var otherRenderer = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", null);
             if (otherRenderer && otherRenderer.source != componentResolver_1.ComponentSource.DEFAULT) {
-                //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
-                //ignore it
-                //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
+                // Only if the original column is using an specific renderer, it it is a using a DEFAULT one
+                // ignore it
+                // THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
                 rendererToUsePromise = this.componentRecipes.newCellRenderer(originalColumn, params);
             }
             else if (otherRenderer && otherRenderer.source == componentResolver_1.ComponentSource.DEFAULT && (utils_1._.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
-                //EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
-                //AND HAS A INNER CELL RENDERER
+                // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
+                // AND HAS A INNER CELL RENDERER
                 rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(originalColumn.cellRendererParams, params);
             }
             else {
-                //This forces the retrieval of the default plain cellRenderer that just renders the values.
+                // This forces the retrieval of the default plain cellRenderer that just renders the values.
                 rendererToUsePromise = this.componentRecipes.newCellRenderer({}, params);
             }
         }
@@ -27791,6 +27792,9 @@ var TooltipManager = /** @class */ (function () {
             }
             delay = 200;
         }
+        else if (this.showTimeoutId && this.lastHoveredComponent === targetCmp) {
+            return;
+        }
         this.clearTimers(this.HIDE_SHOW_ONLY);
         // lastHoveredComponent will be the targetCmp when a click hid the tooltip
         // and the lastHoveredComponent has many child elements
@@ -27804,10 +27808,18 @@ var TooltipManager = /** @class */ (function () {
         var activeComponent = this.activeComponent;
         var relatedTarget = e.relatedTarget;
         if (!activeComponent) {
-            // when a click hides the tooltip we need to reset the lastHoveredComponent
-            // otherwise the tooltip won't appear until another registered component is hovered.
-            if (this.lastHoveredComponent && !this.lastHoveredComponent.getGui().contains(relatedTarget)) {
-                this.lastHoveredComponent = undefined;
+            if (this.lastHoveredComponent) {
+                var containsElement = this.lastHoveredComponent.getGui().contains(relatedTarget);
+                if (this.showTimeoutId && containsElement) {
+                    // if we are hovering within a component with multiple child elements before
+                    // the tooltip has been displayed, we should cancel this event
+                    return;
+                }
+                else if (!containsElement) {
+                    // when a click hides the tooltip we need to reset the lastHoveredComponent
+                    // otherwise the tooltip won't appear until another registered component is hovered.
+                    this.lastHoveredComponent = undefined;
+                }
             }
             this.clearTimers();
             return;
@@ -27825,7 +27837,7 @@ var TooltipManager = /** @class */ (function () {
     TooltipManager.prototype.processMouseMove = function (e) {
         // there is a delay from the time we mouseOver a component and the time the
         // tooltip is displayed, so we need to track mousemove to be able to correctly
-        // position the tootip when showTooltip is called.
+        // position the tooltip when showTooltip is called.
         this.lastMouseEvent = e;
     };
     TooltipManager.prototype.showTooltip = function (e) {
@@ -29612,7 +29624,7 @@ var ColDefUtil = /** @class */ (function () {
         .concat(ColDefUtil.FUNCTION_PROPERTIES)
         .concat(ColDefUtil.BOOLEAN_PROPERTIES);
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-    // properties to coldefs, gridOptions etc
+    // properties to colDefs, gridOptions etc
     ColDefUtil.FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
         'toColDef', 'createColDefFromGridColumn'];
     return ColDefUtil;
@@ -30438,7 +30450,7 @@ var HeaderContainer = /** @class */ (function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     };
-    // if row group changes, that means we may need to add aggFunc's to the column headers,
+    // if row group changes, that means we may need to add aggFuncs to the column headers,
     // if the grid goes from no aggregation (ie no grouping) to grouping
     HeaderContainer.prototype.onColumnRowGroupChanged = function () {
         this.onGridColumnsChanged();
@@ -30869,7 +30881,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
                     if (filterComponent.onFloatingFilterChanged) {
                         //If going through this branch of code the user MUST
                         //be passing an object of type change that contains
-                        //a model propery inside and some other stuff
+                        //a model property inside and some other stuff
                         var result = filterComponent.onFloatingFilterChanged(change);
                         captureModelChangedResolveFunc(result);
                     }
@@ -30885,7 +30897,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
                 });
                 return modelChanged.resolveNow(true, function (changed) { return changed; });
             },
-            //This one might be overriden from the colDef
+            //This one might be overridden from the colDef
             suppressFilterButton: false
         };
         return baseParams;
@@ -31108,7 +31120,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     // and in the order they are currently in the screen.
     HeaderGroupWrapperComp.prototype.getDragItemForGroup = function () {
         var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
-        // capture visible state, used when reentering grid to dictate which columns should be visible
+        // capture visible state, used when re-entering grid to dictate which columns should be visible
         var visibleState = {};
         allColumnsOriginalOrder.forEach(function (column) { return visibleState[column.getId()] = column.isVisible(); });
         var allColumnsCurrentOrder = [];
@@ -31143,8 +31155,8 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         // the children belonging to this group can change, so we need to add and remove listeners as they change
         this.addDestroyableEventListener(this.columnGroup, columnGroup_1.ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
         this.onWidthChanged();
-        // the child listeners are not tied to this components lifecycle, as children can get added and removed
-        // to the group - hence they are on a different lifecycle. so we must make sure the existing children
+        // the child listeners are not tied to this components life-cycle, as children can get added and removed
+        // to the group - hence they are on a different life-cycle. so we must make sure the existing children
         // listeners are removed when we finally get destroyed
         this.addDestroyFunc(this.destroyListenersOnChildrenColumns.bind(this));
     };
@@ -32373,7 +32385,7 @@ var GridPanel = /** @class */ (function (_super) {
     };
     GridPanel.prototype.mockContextMenuForIPad = function () {
         var _this = this;
-        // we do NOT want this when not in ipad, otherwise we will be doing
+        // we do NOT want this when not in iPad, otherwise we will be doing
         if (!utils_1._.isUserAgentIPad()) {
             return;
         }
@@ -34835,8 +34847,8 @@ var context_1 = __webpack_require__(7);
 var gridOptionsWrapper_1 = __webpack_require__(4);
 var sortService_1 = __webpack_require__(131);
 var sortController_1 = __webpack_require__(70);
-var utils_1 = __webpack_require__(8);
 var columnController_1 = __webpack_require__(17);
+var utils_1 = __webpack_require__(8);
 var SortStage = /** @class */ (function () {
     function SortStage() {
     }
@@ -35493,7 +35505,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         if (utils_1._.missing(this.datasource)) {
             return;
         }
-        // if user is providing id's, then this means we can keep the selection between datsource hits,
+        // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
         var userGeneratingIds = utils_1._.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
@@ -36248,7 +36260,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
                 rowNode.childrenCache = null;
             }
             // this is needed, so row render knows to fade out the row, otherwise it
-            // see's row top is present, and thinks the row should be shown. maybe
+            // sees row top is present, and thinks the row should be shown. maybe
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
@@ -36262,7 +36274,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
             this.populateWithRowData(rows);
         }
         lastRow = utils_1._.cleanNumber(lastRow);
-        // check here if lastrow should be set
+        // check here if lastRow should be set
         var event = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: true,
@@ -37108,7 +37120,7 @@ var ClientSideRowModel = /** @class */ (function () {
     // nodes - the rowNodes to traverse
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
-    // index - works similar to the index in forEach in javascripts array function
+    // index - works similar to the index in forEach in javascript's array function
     ClientSideRowModel.prototype.recursivelyWalkNodesAndCallback = function (nodes, callback, recursionType, index) {
         if (nodes) {
             for (var i = 0; i < nodes.length; i++) {

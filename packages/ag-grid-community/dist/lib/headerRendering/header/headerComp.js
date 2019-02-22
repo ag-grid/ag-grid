@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -111,8 +117,8 @@ var HeaderComp = /** @class */ (function (_super) {
         if (!this.eMenu) {
             return;
         }
-        // we don't show the menu if on an ipad/iphone, as the user cannot have a pointer device
-        // Note: If supressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
+        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device
+        // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         var suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
         var dontShowMenu = !this.params.enableMenu || (utils_1._.isUserAgentIPad() && !suppressMenuHide);

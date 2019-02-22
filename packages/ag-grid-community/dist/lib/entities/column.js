@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -114,7 +120,7 @@ var Column = /** @class */ (function () {
     Column.prototype.isFilterAllowed = function () {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        var filterDefined = !!this.colDef.filter;
+        var filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
         return this.primary && filterDefined;
     };
     Column.prototype.isFieldContainsDots = function () {

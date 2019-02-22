@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -43,7 +49,7 @@ var CellComp = /** @class */ (function (_super) {
         // every time we go into edit mode, or back again, this gets incremented.
         // it's the components way of dealing with the async nature of framework components,
         // so if a framework component takes a while to be created, we know if the object
-        // is still relevant when creating is finished. eg we could click edit / unedit 20
+        // is still relevant when creating is finished. eg we could click edit / un-edit 20
         // times before the first React edit component comes back - we should discard
         // the first 19.
         _this.cellEditorVersion = 0;
@@ -197,7 +203,7 @@ var CellComp = /** @class */ (function (_super) {
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.colsSpanning = this.getColSpanningList();
     };
@@ -741,7 +747,7 @@ var CellComp = /** @class */ (function (_super) {
         var isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
         // are we showing group footers
         var groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
-        // if doing footers, we noramlly don't show agg data at group level when group is open
+        // if doing footers, we normally don't show agg data at group level when group is open
         var groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -1254,7 +1260,7 @@ var CellComp = /** @class */ (function (_super) {
         // iPad.
         if (this.isDoubleClickOnIPad()) {
             this.onCellDoubleClicked(mouseEvent);
-            mouseEvent.preventDefault(); // if we don't do this, then ipad zooms in
+            mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
             return;
         }
         var cellClickedEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_CLICKED);

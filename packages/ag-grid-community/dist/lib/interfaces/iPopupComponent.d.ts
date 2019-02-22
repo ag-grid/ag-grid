@@ -1,3 +1,6 @@
+// Type definitions for ag-grid-community v20.1.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export interface IPopupComponent {
     /** Gets called once after initialised. If you return true, the component will appear in a popup, and it will be
      *  constrained to the boundaries of the popupParent. This is great if you want to, for example, provide you own

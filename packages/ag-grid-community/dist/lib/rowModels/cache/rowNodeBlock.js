@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -172,7 +178,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
                 rowNode.childrenCache = null;
             }
             // this is needed, so row render knows to fade out the row, otherwise it
-            // see's row top is present, and thinks the row should be shown. maybe
+            // sees row top is present, and thinks the row should be shown. maybe
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
@@ -186,7 +192,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
             this.populateWithRowData(rows);
         }
         lastRow = utils_1._.cleanNumber(lastRow);
-        // check here if lastrow should be set
+        // check here if lastRow should be set
         var event = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: true,

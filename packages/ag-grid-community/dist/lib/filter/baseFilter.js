@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -71,11 +77,12 @@ var BaseFilter = /** @class */ (function (_super) {
         var _this = this;
         this.filterParams = params;
         this.defaultFilter = this.filterParams.defaultOption;
-        // strip out incorrectly defined FilterOptionDef's
+        // strip out incorrectly defined FilterOptionDefs
         if (params.filterOptions) {
             params.filterOptions.forEach(function (filterOption) {
-                if (typeof filterOption === 'string')
+                if (typeof filterOption === 'string') {
                     return;
+                }
                 if (!filterOption.displayKey) {
                     console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
                     return;

@@ -210,7 +210,7 @@ export class SelectionController {
     public getBestCostNodeSelection() {
 
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('getBestCostNodeSelection is only avilable when using normal row model');
+            console.warn('getBestCostNodeSelection is only available when using normal row model');
         }
 
         const clientSideRowModel = this.rowModel as ClientSideRowModel;

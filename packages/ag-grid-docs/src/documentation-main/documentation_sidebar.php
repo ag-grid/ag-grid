@@ -21,7 +21,25 @@
 <br>
 <p>Latest Release:</p>
 
-<div class="card card-highlight">
+    <div class="card card-highlight">
+        <div class="card-body">
+            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.1.0">Version 20.1.0 Released</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">Feb 22</h6>
+            <p class="card-text">
+                Minor release with new features and bug fixes.
+                Feature highlights:
+            </p>
+            <ul>
+                <li>
+                    <a class="learn-more" href="">Some Feature</a>.
+                </li>
+            </ul>
+            <p class="text-right">
+                <a class="learn-more" href="../ag-grid-changelog/?fixVersion=20.1.0">Change Log</a>
+            </p>
+        </div>
+    </div>
+    <div class="card card-highlight">
     <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.0.0">Version 20.0.0 Released</a></h5>
         <h6 class="card-subtitle mb-2 text-muted">Jan 11</h6>
@@ -43,20 +61,6 @@
     </div>
 </div>
 <br>
-<div class="card card-highlight">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.4">Version 19.1.4 Released</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Nov 22</h6>
-        <p class="card-text">
-            Patch release with the bug fixes:
-        </p>
-
-        <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.4">Change Log</a>
-        </p>
-    </div>
-</div>
-
 
 <hr>
 

@@ -321,7 +321,7 @@ export class HeaderRowComp extends Component {
                     if (filterComponent.onFloatingFilterChanged) {
                         //If going through this branch of code the user MUST
                         //be passing an object of type change that contains
-                        //a model propery inside and some other stuff
+                        //a model property inside and some other stuff
                         const result: boolean = filterComponent.onFloatingFilterChanged(change as F);
                         captureModelChangedResolveFunc(result);
                     } else {
@@ -336,7 +336,7 @@ export class HeaderRowComp extends Component {
                 });
                 return modelChanged.resolveNow(true, changed => changed);
             },
-            //This one might be overriden from the colDef
+            //This one might be overridden from the colDef
             suppressFilterButton: false
         };
         return baseParams;

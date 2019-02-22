@@ -392,7 +392,7 @@ export class ColumnController {
 
         // keep track of which cols we have resized in here
         const columnsAutosized: Column[] = [];
-        // initialise with anything except 0 so that while loop executs at least once
+        // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
         while (changesThisTimeAround !== 0) {
@@ -545,7 +545,7 @@ export class ColumnController {
             const col = displayedColumns[i];
 
             const maxAllowedColSpan = displayedColumns.length - i;
-            let colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
+            const colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
 
             const columnsToCheckFilter: Column[] = [col];
             if (colSpan > 1) {
@@ -2573,7 +2573,7 @@ export class ColumnController {
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
         const newGridColumns = oldColsOrdered.slice();
-        newColsOrdered.forEach( newCol => {
+        newColsOrdered.forEach(newCol => {
 
             let parent = newCol.getOriginalParent();
 
@@ -2590,7 +2590,7 @@ export class ColumnController {
                 const leafCols = parent.getLeafColumns();
                 leafCols.forEach(leafCol => {
                     const presentInNewGriColumns = newGridColumns.indexOf(leafCol) >= 0;
-                    const noYetInSiblings = siblings.indexOf(leafCol)<0;
+                    const noYetInSiblings = siblings.indexOf(leafCol) < 0;
                     if (presentInNewGriColumns && noYetInSiblings) {
                         siblings.push(leafCol);
                     }
@@ -2605,8 +2605,8 @@ export class ColumnController {
             }
 
             // find index of last column in the group
-            let indexes = siblings.map( col => newGridColumns.indexOf(col) );
-            let lastIndex = Math.max(...indexes);
+            const indexes = siblings.map(col => newGridColumns.indexOf(col));
+            const lastIndex = Math.max(...indexes);
 
             _.insertIntoArray(newGridColumns, newCol, lastIndex + 1);
         });

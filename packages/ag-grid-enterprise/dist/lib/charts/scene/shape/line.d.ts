@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 import { Shape } from "./shape";
 import { PixelSnapBias } from "../../canvas/canvas";
 export declare class Line extends Shape {

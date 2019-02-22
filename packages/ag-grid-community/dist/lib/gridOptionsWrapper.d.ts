@@ -1,3 +1,6 @@
+// Type definitions for ag-grid-community v20.1.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
 import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";

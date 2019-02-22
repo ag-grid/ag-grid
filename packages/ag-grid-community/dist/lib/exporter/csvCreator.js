@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -146,7 +152,7 @@ var BaseCreator = /** @class */ (function () {
     };
     BaseCreator.prototype.export = function (userParams) {
         if (this.isExportSuppressed()) {
-            console.warn("ag-grid: Export canceled. Export is not allowed as per your configuration.");
+            console.warn("ag-grid: Export cancelled. Export is not allowed as per your configuration.");
             return '';
         }
         var _a = this.getMergedParamsAndData(userParams), mergedParams = _a.mergedParams, data = _a.data;

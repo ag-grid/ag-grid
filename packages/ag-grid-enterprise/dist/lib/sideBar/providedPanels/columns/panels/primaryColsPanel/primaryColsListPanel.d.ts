@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 import { Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare type ColumnItem = BaseColumnItem & Component;

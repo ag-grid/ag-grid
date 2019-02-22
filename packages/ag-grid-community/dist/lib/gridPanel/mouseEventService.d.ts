@@ -1,3 +1,6 @@
+// Type definitions for ag-grid-community v20.1.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridCell } from "../entities/gridCell";
 import { CellComp } from "../rendering/cellComp";
 export declare class MouseEventService {

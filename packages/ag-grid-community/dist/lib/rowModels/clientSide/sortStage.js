@@ -1,3 +1,9 @@
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v20.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13,8 +19,8 @@ var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var sortService_1 = require("../../rowNodes/sortService");
 var sortController_1 = require("../../sortController");
-var utils_1 = require("../../utils");
 var columnController_1 = require("../../columnController/columnController");
+var utils_1 = require("../../utils");
 var SortStage = /** @class */ (function () {
     function SortStage() {
     }

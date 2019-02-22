@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 export declare class Path2D {
     xy?: [number, number];
     commands: string[];

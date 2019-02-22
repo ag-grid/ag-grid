@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 export declare class LicenseManager {
     private static RELEASE_INFORMATION;
     private static licenseKey;

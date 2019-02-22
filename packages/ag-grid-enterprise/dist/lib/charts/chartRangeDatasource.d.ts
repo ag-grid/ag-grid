@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 import { ChartDatasource } from "./chart";
 import { BeanStub, ColumnController, EventService, IRowModel, PaginationProxy, RangeSelection, ValueService } from "ag-grid-community";
 export declare class ChartRangeDatasource extends BeanStub implements ChartDatasource {

@@ -618,7 +618,7 @@ export class GridPanel extends Component {
     }
 
     private mockContextMenuForIPad(): void {
-        // we do NOT want this when not in ipad, otherwise we will be doing
+        // we do NOT want this when not in iPad, otherwise we will be doing
         if (!_.isUserAgentIPad()) { return; }
 
         this.eAllCellContainers.forEach(container => {

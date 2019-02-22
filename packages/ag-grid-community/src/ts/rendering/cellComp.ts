@@ -92,7 +92,7 @@ export class CellComp extends Component {
     // every time we go into edit mode, or back again, this gets incremented.
     // it's the components way of dealing with the async nature of framework components,
     // so if a framework component takes a while to be created, we know if the object
-    // is still relevant when creating is finished. eg we could click edit / unedit 20
+    // is still relevant when creating is finished. eg we could click edit / un-edit 20
     // times before the first React edit component comes back - we should discard
     // the first 19.
     private cellEditorVersion = 0;
@@ -283,7 +283,7 @@ export class CellComp extends Component {
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
 
         this.colsSpanning = this.getColSpanningList();
@@ -921,7 +921,7 @@ export class CellComp extends Component {
         // are we showing group footers
         const groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
 
-        // if doing footers, we noramlly don't show agg data at group level when group is open
+        // if doing footers, we normally don't show agg data at group level when group is open
         const groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
 
         // if doing grouping and footers, we don't want to include the agg value
@@ -1511,7 +1511,7 @@ export class CellComp extends Component {
         // iPad.
         if (this.isDoubleClickOnIPad()) {
             this.onCellDoubleClicked(mouseEvent);
-            mouseEvent.preventDefault(); // if we don't do this, then ipad zooms in
+            mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
             return;
         }
 

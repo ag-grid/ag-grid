@@ -1,3 +1,6 @@
+// Type definitions for ag-grid-community v20.1.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRenderer, ICellRendererFunc } from "./cellRenderers/iCellRenderer";
 export declare class CellRendererFactory {
     static ANIMATE_SLIDE: string;

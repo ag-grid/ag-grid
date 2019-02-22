@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 import { ICellEditor, PopupComponent, Context, CellRendererService, IRichCellEditorParams } from "ag-grid-community";
 export declare class RichSelectCellEditor extends PopupComponent implements ICellEditor {
     private static TEMPLATE;

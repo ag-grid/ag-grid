@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 import { Deinterpolator, Reinterpolator } from "./scale";
 import ContinuousScale from "./continuousScale";
 export declare class LinearScale<R> extends ContinuousScale<R> {

@@ -1,3 +1,6 @@
+// Type definitions for ag-grid-community v20.1.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
 export declare class BodyDropPivotTarget implements DropListener {

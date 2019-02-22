@@ -1,3 +1,4 @@
+// ag-grid-enterprise v20.1.0
 import { ExcelStyle, ExcelWorksheet } from 'ag-grid-community';
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf

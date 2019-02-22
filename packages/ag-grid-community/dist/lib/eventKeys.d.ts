@@ -1,3 +1,6 @@
+// Type definitions for ag-grid-community v20.1.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
     static EVENT_COLUMN_EVERYTHING_CHANGED: string;
