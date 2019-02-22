@@ -58,11 +58,6 @@ export class OrdinalScale<D, R> implements Scale<D, R> {
             }
             this.index[key] = i = this.domain.push(d);
         }
-
-        const range = this.range;
-        // if (range.length === 0) {
-        //     return this.unknown;
-        // }
-        return range[(i - 1) % range.length];
+        return this.range[(i - 1) % this.range.length];
     }
 }

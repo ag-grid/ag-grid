@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue",
   "description": "ag-Grid Vue Component",
-  "version": "20.0.0",
+  "version": "20.1.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -28,7 +28,7 @@
     "lint": "vue-cli-service lint"
   },
   "peerDependencies": {
-    "ag-grid-community": "^20.0.0",
+    "ag-grid-community": "^20.1.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0"
   },
@@ -39,7 +39,7 @@
     "@vue/cli-plugin-typescript": "^3.2.0",
     "@vue/cli-plugin-unit-jest": "^3.2.0",
     "@vue/cli-service": "^3.2.0",
-    "ag-grid-community": "^20.0.0",
+    "ag-grid-community": "^20.1.0",
     "typescript": "^3.2.0",
     "vue-template-compiler": "<= 2.5.17 || >= 2.5.20",
     "gulp-typescript": "^5.0.0",

@@ -8,12 +8,12 @@ include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
 <script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
-<script src="/best-react-data-grid/js/grid-performance.js" inline></script>
-<script src="/best-react-data-grid/js/grid-api.js" inline></script>
+<script src="./js/grid-performance.js" inline></script>
+<script src="./js/grid-api.js" inline></script>
 <section>
     <div class="head-top">
         <div class="logo">
-            <img alt="ag-Grid React Component" src="/best-react-data-grid/images/ag-grid.png">
+            <img alt="ag-Grid React Component" src="./images/ag-grid.png">
         </a>
     </div>
     <h1>World's Leading React Data Grid Component</h1>
@@ -276,6 +276,7 @@ include '../landing-pages/convert-header.php';
 <section class="api">
 <h2 id="Grid-API">Easy to integrate and customize</h2>
 <hr>
+
 <p class="lead-description">
 Easy to deeply customize many areas of our React Grid component.<br>
 Waste no time in integrating ag-Grid React into your Web Application.</p>
@@ -291,7 +292,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
     <pre></pre>
 </div>
 <div>
-    <img alt="Prompt to click on API links" src="/best-react-data-grid/images/prompt-to-click-on-api-links.png">
+    <img alt="Prompt to click on API links" src="./images/prompt-to-click-on-api-links.png">
     <ul class="api-operations">
         <li data-action="sort-by-one-column"><a>Sort by one column (Country)</a></li>
         <li data-action="sort-by-two-columns"><a>Sort by two columns (Country & Year)</a></li>

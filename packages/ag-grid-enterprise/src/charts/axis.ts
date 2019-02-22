@@ -3,13 +3,25 @@ import {Group} from "./scene/group";
 import {Selection} from "./scene/selection";
 import {Line} from "./scene/shape/line";
 import {NumericTicks} from "./util/ticks";
-import {normalizeAngle360, toRadians} from "./util/angle";
+import {normalizeAngle360, normalizeAngle360Inclusive, toRadians} from "./util/angle";
 import {Text} from "./scene/shape/text";
+import {Arc} from "./scene/shape/arc";
+import {Shape} from "./scene/shape/shape";
+
+enum Tags {
+    Tick,
+    GridLine
+}
+
+export type GridStyle = {
+    strokeStyle: string | null,
+    lineDash: number[] | null
+};
 
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
- * of the axis line by default. The axis can be rotated by an arbitrary angle,
+ * of the axis line by default. The axis can be {@link rotation | rotated} by an arbitrary angle,
  * so that it can be used as a top, right, bottom, left, radial or any other kind
  * of linear axis.
  */
@@ -26,18 +38,116 @@ export class Axis<D> {
     private groupSelection: Selection<Group, Group, D, D>;
     private line = new Line();
 
+    /**
+     * The horizontal translation of the axis group.
+     */
     translationX: number = 0;
-    translationY: number = 0;
-    rotation: number = 0; // in degrees
 
+    /**
+     * The vertical translation of the axis group.
+     */
+    translationY: number = 0;
+
+    /**
+     * Axis rotation angle in degrees.
+     */
+    rotation: number = 0;
+
+    /**
+     * The line width to be used by the axis line.
+     */
     lineWidth: number = 1;
+
+    /**
+     * The color of the axis line.
+     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
+     */
+    lineColor: string | null = 'black';
+
+    /**
+     * The line width to be used by axis ticks.
+     */
     tickWidth: number = 1;
+
+    /**
+     * The line length to be used by axis ticks.
+     */
     tickSize: number = 6;
+
+    /**
+     * The padding between the ticks and the labels.
+     */
     tickPadding: number = 5;
-    lineColor: string = 'black';
-    tickColor: string = 'black';
+
+    /**
+     * The color of the axis ticks.
+     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
+     */
+    tickColor: string | null = 'black';
+
+    /**
+     * The font to be used by the labels. The given font string should use the
+     * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
+     */
     labelFont: string = '14px Verdana';
-    labelColor: string = 'black';
+
+    /**
+     * The color of the labels.
+     * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
+     */
+    labelColor: string | null = 'black';
+
+    /**
+     * The length of the grid. The grid is only visible in case of a non-zero value.
+     * In case {@link isRadialGrid} is `true`, the value is interpreted as an angle
+     * (in degrees).
+     */
+    private _gridLength: number = 0;
+    set gridLength(value: number) {
+        // Was visible and now invisible, or was invisible and now visible.
+        if (this._gridLength && !value || !this._gridLength && value) {
+            this.groupSelection = this.groupSelection.remove().setData([]);
+        }
+        this._gridLength = value;
+    }
+    get gridLength(): number {
+        return this._gridLength;
+    }
+
+    /**
+     * The array of styles to cycle through when rendering grid lines.
+     * For example, use two {@link GridStyle} objects for alternating styles.
+     * Contains only one {@link GridStyle} object by default, meaning all grid lines
+     * have the same style.
+     */
+    private _gridStyle: GridStyle[] = [{
+        strokeStyle: 'lightgray',
+        lineDash: null
+    }];
+    set gridStyle(value: GridStyle[]) {
+        if (value.length) {
+            this._gridStyle = value;
+        }
+    }
+    get gridStyle(): GridStyle[] {
+        return this._gridStyle;
+    }
+
+    /**
+     * `false` - render grid as lines of {@link gridLength} that extend the ticks
+     *           on the opposite side of the axis
+     * `true` - render grid as concentric circles that go through the ticks
+     */
+    _isRadialGrid: boolean = false;
+    set isRadialGrid(value: boolean) {
+        if (this._isRadialGrid !== value) {
+            this._isRadialGrid = value;
+            this.groupSelection = this.groupSelection.remove().setData([]);
+        }
+    }
+    get isRadialGrid(): boolean {
+        return this._isRadialGrid;
+    }
 
     /**
      * Custom label rotation in degrees.
@@ -67,12 +177,23 @@ export class Axis<D> {
      * Labels are rendered perpendicular to the axis line by default.
      * Setting this config to `true` makes labels render parallel to the axis line
      * and center aligns labels' text at the ticks.
-     * If the axis is rotated so that it is horizontal (by +/- 90 degrees),
-     * the labels rotate with it and become vertical,
      */
     isParallelLabels: boolean = false;
 
-    render() {
+    /**
+     * Creates/removes/updates the scene graph nodes that constitute the axis.
+     * Supposed to be called manually after changing any of the axis properties.
+     * This allows to bulk set axis properties before updating the nodes.
+     * The node changes made by this method are rendered on the next animation frame.
+     * We could schedule this method call automatically on the next animation frame
+     * when any of the axis properties change (the way we do when properties of scene graph's
+     * nodes change), but this will mean that we first wait for the next animation
+     * frame to make changes to the nodes of the axis, then wait for another animation
+     * frame to render those changes. It's nice to have everything update automatically,
+     * but this extra level of async indirection will not just introduce an unwanted delay,
+     * it will also make it harder to reason about the program.
+     */
+    update() {
         const group = this.group;
         const scale = this.scale;
 
@@ -117,7 +238,15 @@ export class Axis<D> {
         update.exit.remove();
 
         const enter = update.enter.append(Group);
-        enter.append(Line); // auto-snaps to pixel grid if vertical or horizontal
+        // Line auto-snaps to pixel grid if vertical or horizontal.
+        enter.append(Line).each(node => node.tag = Tags.Tick);
+        if (this.gridLength) {
+            if (this.isRadialGrid) {
+                enter.append(Arc).each(node => node.tag = Tags.GridLine);
+            } else {
+                enter.append(Line).each(node => node.tag = Tags.GridLine);
+            }
+        }
         enter.append(Text);
 
         const groupSelection = update.merge(enter);
@@ -127,15 +256,48 @@ export class Axis<D> {
                 return Math.round(scale.convert(datum) + bandwidth);
             });
 
-        groupSelection.selectByClass(Line)
-            .each(node => {
-                node.lineWidth = this.tickWidth;
-                node.strokeStyle = this.tickColor;
+        groupSelection.selectByTag<Line>(Tags.Tick)
+            .each(line => {
+                line.lineWidth = this.tickWidth;
+                line.strokeStyle = this.tickColor;
             })
             .attr('x1', sideFlag * this.tickSize)
             .attr('x2', 0)
             .attr('y1', 0)
             .attr('y2', 0);
+
+        if (this.gridLength) {
+            const styles = this.gridStyle;
+            const styleCount = styles.length;
+            let gridLines: Selection<Shape, Group, D, D>;
+
+            if (this.isRadialGrid) {
+                const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
+                gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
+                    .each((arc, datum) => {
+                        const radius = Math.round(scale.convert(datum) + bandwidth);
+                        arc.centerX = 0;
+                        arc.centerY = this.scale.range[0] - radius;
+                        arc.endAngle = angularGridLength;
+                        arc.radiusX = radius;
+                        arc.radiusY = radius;
+                    });
+            } else {
+                gridLines = groupSelection.selectByTag<Line>(Tags.GridLine)
+                    .each(line => {
+                        line.x1 = 0;
+                        line.x2 = -sideFlag * this.gridLength;
+                        line.y1 = 0;
+                        line.y2 = 0;
+                    });
+            }
+            gridLines.each((arc, datum, index) => {
+                const style = styles[index % styleCount];
+                arc.strokeStyle = style.strokeStyle;
+                arc.lineDash = style.lineDash;
+                arc.fillStyle = null;
+            });
+        }
 
         const labels = groupSelection.selectByClass(Text)
             .each((label, datum) => {

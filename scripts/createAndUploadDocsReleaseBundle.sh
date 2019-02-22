@@ -3,7 +3,7 @@
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version number"
-    echo "For example: ./scripts/createDocsReleaseBundle.sh 19.1.2"
+    echo "For example: ./scripts/createAndUploadDocsReleaseBundle.sh 19.1.2"
     exit 1
 fi
 
@@ -12,13 +12,7 @@ ZIP_PREFIX=`date +%Y%m%d`
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
-cd packages/ag-grid-docs
-gulp release
-gulp replace-to-cdn
-cd dist
-
 FILENAME=release_"$ZIP_PREFIX"_v"$VERSION".zip
-zip -r --exclude="dev*" ../../../$FILENAME *
 
-cd ../../../
-
+./scripts/createDocsReleaseBundle.sh $RAW_VERSION
+./scripts/uploadAndUnzipRelease.sh $FILENAME

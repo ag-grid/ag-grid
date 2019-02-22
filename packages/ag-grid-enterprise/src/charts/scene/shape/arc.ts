@@ -1,14 +1,32 @@
 import {Shape} from "./shape";
 import {Path2D} from "../path2D";
 import {BBox, isPointInBBox} from "../bbox";
+import {normalizeAngle360} from "../../util/angle";
+import {chainObjects} from "../../util/object";
+
+export enum ArcType {
+    Open,
+    Chord,
+    Round
+}
 
 /**
  * Elliptical arc node.
  */
 export class Arc extends Shape {
 
-    static create(centerX: number, centerY: number, radiusX: number, radiusY: number,
-                  startAngle: number, endAngle: number, isCounterClockwise = false): Arc {
+    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
+        strokeStyle: 'black',
+        fillStyle: null
+    });
+
+    constructor() {
+        super();
+        this.restoreOwnStyles();
+    }
+
+    static create(centerX: number, centerY: number, radiusX: number, radiusY: number = radiusX,
+                  startAngle: number = 0, endAngle: number = Math.PI * 2, isCounterClockwise = false): Arc {
         const arc = new Arc();
 
         arc.centerX = centerX;
@@ -111,6 +129,10 @@ export class Arc extends Shape {
         return this._endAngle;
     }
 
+    private get isFullPie(): boolean {
+        return normalizeAngle360(this.startAngle) === normalizeAngle360(this.endAngle);
+    }
+
     private _isCounterClockwise: boolean = false;
     set isCounterClockwise(value: boolean) {
         if (this._isCounterClockwise !== value) {
@@ -122,21 +144,30 @@ export class Arc extends Shape {
         return this._isCounterClockwise;
     }
 
-    set startAngleDeg(value: number) {
-        this.startAngle = value / 180 * Math.PI;
+    /**
+     * The type of arc to render:
+     * - {@link ArcType.Open} - end points of the arc segment are not connected (default)
+     * - {@link ArcType.Chord} - end points of the arc segment are connected by a line segment
+     * - {@link ArcType.Round} - each of the end points of the arc segment are connected
+     *                           to the center of the arc
+     * Arcs with {@link ArcType.Open} do not support hit testing, even if they have their
+     * {@link Shape.fillStyle} set, because they are not closed paths. Hit testing support
+     * would require using two paths - one for rendering, another for hit testing - and there
+     * doesn't seem to be a compelling reason to do that, when one can just use {@link ArcType.Chord}
+     * to create a closed path.
+     */
+    private _type: ArcType = ArcType.Open;
+    set type(value: ArcType) {
+        if (this._type !== value) {
+            this._type = value;
+            this.isDirtyPath = true;
+        }
     }
-    get startAngleDeg(): number {
-        return this.startAngle / Math.PI * 180;
+    get type(): ArcType {
+        return this._type;
     }
 
-    set endAngleDeg(value: number) {
-        this.endAngle = value / 180 * Math.PI;
-    }
-    get endAngleDeg(): number {
-        return this.endAngle / Math.PI * 180;
-    }
-
-    updatePath() {
+    updatePath(): void {
         if (!this.isDirtyPath)
             return;
 
@@ -149,12 +180,18 @@ export class Arc extends Shape {
         // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
         // maybe it's because we have to create a new instance of it on each render, who knows...
         path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.isCounterClockwise ? 1 : 0);
-        path.closePath();
+
+        if (this.type === ArcType.Chord) {
+            path.closePath();
+        } else if (this.type === ArcType.Round && !this.isFullPie) {
+            path.lineTo(this.centerX, this.centerY);
+            path.closePath();
+        }
 
         this.isDirtyPath = false;
     }
 
-    readonly getBBox = () => {
+    readonly getBBox = (): BBox => {
         return {
             x: this.centerX - this.radiusX,
             y: this.centerY - this.radiusY,
@@ -167,7 +204,8 @@ export class Arc extends Shape {
         const point = this.transformPoint(x, y);
         const bbox = this.getBBox();
 
-        return isPointInBBox(bbox, point.x, point.y)
+        return this.type !== ArcType.Open
+            && isPointInBBox(bbox, point.x, point.y)
             && this.path.isPointInPath(point.x, point.y);
     }
 

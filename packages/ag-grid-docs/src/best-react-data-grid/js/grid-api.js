@@ -42,7 +42,6 @@
                 '    {colId: \'year\', sort: \'asc\'}\n' +
                 ']);',
             fn: function() {
-                console.log("here", api);
                 api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'asc'}]);
             }
         },
@@ -131,7 +130,7 @@
         columnApi = gridOptions.columnApi;
 
         // feed data into the grid
-        agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/wideSpreadOfSports.json'})
+        agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/wideSpreadOfSports.json'})
             .then(function (data) {
                 gridOptions.api.setRowData(data.slice(0, 1000));
                 setTimeout(function () {
@@ -153,7 +152,6 @@
                     });
                     node.classList.add('active');
 
-                    console.log(currentAction);
                     callGridApi(actions[currentAction], placeholder)
                 });
 

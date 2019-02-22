@@ -1,3 +1,29 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_20_1_0">
+    <p>Release 20.1.0 Overview</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>AG-1617 - <a href="https://www.ag-grid.com/javascript-grid-tooltip-component">
+                Allow for Custom Tooltip Components</a></li>
+
+        <li>AG-2166 - <a href="https://www.ag-grid.com/javascript-grid-filtering/#adding-custom-filter-options">
+                Allow for defining Custom Filters that appear in Filter Option List</a></li>
+
+        <li>AG-1049 - <a href="https://www.ag-grid.com/javascript-grid-loading-cell-renderer">
+                Allow for Custom Loading Renderer Component
+            </a></li>
+
+        <li>AG-2185 - <a href="https://www.ag-grid.com/nodejs-server-side-operations">
+                New Server-side Row Model guide for Node.js with MySql</a></li>
+
+        <li>AG-1972 - Performance improvements for small changes to large datasets</li>
+        <li>AG-2289 - Better management of Column Definitions after grid is created</li>
+        <li>AG-2305 - Lazy row height calculation for dynamic row heights</li>
+        <li>AG-1485 - Raise events for cellKeyPress and cellKeyDown</li>
+        <li>AG-2628 - Provide capability to suppress keyboard actions from the grid</li>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_20_0_0">
     <p>Release 20.0.0 Overview</p>
 
