@@ -1,0 +1,27 @@
+.ag-row-level-0 {
+    font-weight: bold;
+    color: burlywood;
+}
+
+.number-cell {
+    text-align: right;
+}
+
+.parent-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-container button {
+    margin-bottom: 4px;
+    margin-right: 4px;
+}
+
+.center-container {
+    min-height: 10px;
+    flex: 1;
+}
+
+
+

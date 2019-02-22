@@ -701,7 +701,7 @@ cellEditorParams: function(params) {
             Cell Editor Components</a> for more information.</note>
 
 
-    <h2>Controlling keyboard while editing</h2>
+    <h2>Controlling Keyboard While Editing</h2>
     <p>
     While editing, the grid will listen to navigation events coming from the keyboard, this includes navigate to next cell,
     next row etc. If you want to avoid this events from being consumed by the grid you can do so by configuring

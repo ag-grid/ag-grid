@@ -96,7 +96,7 @@ include '../documentation-main/documentation_header.php';
 </p>
         <ul class="content">
             <li>
-                If using <b>ag-Grid Free</b>, use <b>Client-side Row Model</b> if you want to load all
+                If using <b>ag-Grid Community</b>, use <b>Client-side Row Model</b> if you want to load all
                 your data into the browser, or <b>Infinite Row Model</b> if you want to load it in blocks.
             </li>
             <li>

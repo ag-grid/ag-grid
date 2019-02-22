@@ -63,10 +63,10 @@ function resetCountdown() {
 function setTitleFormatted(apiName, methodName, paramsName) {
     var html;
     if (apiName === null) {
-        html = '<span class="code-highlight-yellow">aggrid/:> </span>';
+        html = '<span class="code-highlight-yellow">command:> </span>';
     } else {
         html =
-            '<span class="code-highlight-yellow">aggrid/:> </span> ' +
+            '<span class="code-highlight-yellow">command:> </span> ' +
             '<span class="code-highlight-blue">' +
             apiName +
             "</span>" +

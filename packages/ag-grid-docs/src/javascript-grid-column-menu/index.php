@@ -9,6 +9,12 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">Column Menu</h1>
 
+    <p class="lead">
+        The column menu appears when you click on the menu icon in the column header. For ag-Grid Community,
+        only the filter is shown. For ag-Grid Enterprise, a tabbed component containing a 1) Menu, 2) Filter
+        and 3) Column Management panel is shown.
+    </p>
+
     <h2>Showing the Column Menu</h2>
 
     <p>
