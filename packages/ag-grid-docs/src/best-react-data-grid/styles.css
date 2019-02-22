@@ -95,6 +95,24 @@ display: block;
 margin: 0 auto;
 }
 
+ul.contents {
+  list-style: none;
+  text-align: center;
+  font-size: 21px;
+  font-weight: 300;
+  margin-top: 2rem;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+a.jump-to {
+  color: white;
+}
+
+.grid-example {
+  max-width: 776px;
+}
+
 .versions {
         font-family: 'Roboto', sans-serif;
     font-size: 2.6rem;
@@ -102,8 +120,9 @@ margin: 0 auto;
 }
 
 
-#head-top {
-    background: linear-gradient(to top left, #0084e7, #00407f);
+.head-top {
+background: linear-gradient(to top left, #0084e7, #00407f);
+background-size: 100%;
 padding: 50px 0;
 padding-right: 60px;
 padding-left: 60px;
@@ -137,6 +156,8 @@ text-align: center;
 text-align: center;
 background-color: #f9fcff;
 border-radius: 45px 30px 45px;
+width: 98%;
+margin: auto;
 }
 .features .img-container:after {
 position: absolute;
@@ -379,7 +400,7 @@ display: block;
 }
 .api .container {
 display: grid;
-grid-template-columns: auto 500px;
+grid-template-columns: auto 430px;
 column-gap: 40px;
 margin: 0 auto;
 }
@@ -417,8 +438,8 @@ position: relative;
 .api-methods-container img {
 width: 170px;
 position: absolute;
-right: 20px;
-top: 210px;
+right: 0;
+top: 240px;
 }
 .api-code {
 margin-bottom: 30px;

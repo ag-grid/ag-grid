@@ -176,7 +176,8 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
                 this.actionUnCheckedReduce(childColumns);
             }
         } else {
-            const allowedColumns = childColumns.filter(c => !c.isLockVisible());
+            const isAllowedColumn = (c: Column) => !c.isLockVisible() && !c.getColDef().suppressToolPanel;
+            const allowedColumns = childColumns.filter(isAllowedColumn);
             this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
 
@@ -280,7 +281,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         return colsThatCanAction === 0;
     }
 
-    private workOutSelectedValue(): boolean {
+    private workOutSelectedValue(): boolean | null {
         const pivotMode = this.columnController.isPivotMode();
 
         let visibleChildCount = 0;
@@ -288,10 +289,9 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
         this.columnGroup.getLeafColumns().forEach((column: Column) => {
 
-            // ignore lock visible columns
-            if (column.isLockVisible()) {
-                return;
-            }
+            // ignore lock visible columns and columns set to 'suppressToolPanel'
+            const ignoredColumn = column.isLockVisible() || column.getColDef().suppressToolPanel;
+            if (ignoredColumn) return null;
 
             if (this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;
@@ -300,9 +300,9 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             }
         });
 
-        let selectedValue: boolean;
+        let selectedValue: boolean | null;
         if (visibleChildCount > 0 && hiddenChildCount > 0) {
-            selectedValue = false;
+            selectedValue = null;
         } else if (visibleChildCount > 0) {
             selectedValue = true;
         } else {

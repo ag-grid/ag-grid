@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -15,6 +15,9 @@ var rangeController_1 = require("./rangeController");
 var ClipboardService = /** @class */ (function () {
     function ClipboardService() {
     }
+    ClipboardService.prototype.registerGridCore = function (gridCore) {
+        this.gridCore = gridCore;
+    };
     ClipboardService.prototype.init = function () {
         this.logger = this.loggerFactory.create('ClipboardService');
     };
@@ -146,8 +149,7 @@ var ClipboardService = /** @class */ (function () {
         var updatedColumnIds = [];
         var rowCallback = function (currentRow, rowNode, columns) {
             // take reference of first row, this is the one we will be using to copy from
-            if (!firstRowValues) {
-                firstRowValues = [];
+            if (!firstRowValues.length) {
                 // two reasons for looping through columns
                 columns.forEach(function (column) {
                     // reason 1 - to get the initial values to copy down
@@ -648,10 +650,6 @@ var ClipboardService = /** @class */ (function () {
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ClipboardService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('gridCore'),
-        __metadata("design:type", ag_grid_community_1.GridCore)
-    ], ClipboardService.prototype, "gridCore", void 0);
     __decorate([
         ag_grid_community_1.Autowired('columnApi'),
         __metadata("design:type", ag_grid_community_1.ColumnApi)

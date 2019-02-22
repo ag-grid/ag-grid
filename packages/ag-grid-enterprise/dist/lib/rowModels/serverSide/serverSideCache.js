@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -149,12 +149,13 @@ var ServerSideCache = /** @class */ (function (_super) {
         this.displayIndexStart = displayIndexSeq.peek();
         this.cacheTop = nextRowTop.value;
         var lastBlockId = -1;
+        var blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : serverSideBlock_1.ServerSideBlock.DefaultBlockSize;
         this.forEachBlockInOrder(function (currentBlock, blockId) {
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
             var blocksSkippedCount = blockId - lastBlockId - 1;
-            var rowsSkippedCount = blocksSkippedCount * (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0);
+            var rowsSkippedCount = blocksSkippedCount * blockSize;
             if (rowsSkippedCount > 0) {
                 displayIndexSeq.skip(rowsSkippedCount);
             }
@@ -164,7 +165,7 @@ var ServerSideCache = /** @class */ (function (_super) {
                     nextRowTop.value += _this.blockHeights[blockToAddId];
                 }
                 else {
-                    nextRowTop.value += (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0) * _this.cacheParams.rowHeight;
+                    nextRowTop.value += blockSize * _this.cacheParams.rowHeight;
                 }
             }
             lastBlockId = blockId;
@@ -175,7 +176,7 @@ var ServerSideCache = /** @class */ (function (_super) {
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
-        var lastVisitedRow = ((lastBlockId + 1) * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0)) - 1;
+        var lastVisitedRow = ((lastBlockId + 1) * blockSize) - 1;
         var rowCount = this.getVirtualRowCount();
         var rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
@@ -187,7 +188,6 @@ var ServerSideCache = /** @class */ (function (_super) {
     };
     // gets called in a) init() above and b) by the grid
     ServerSideCache.prototype.getRow = function (displayRowIndex, dontCreateBlock) {
-        var _this = this;
         if (dontCreateBlock === void 0) { dontCreateBlock = false; }
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
@@ -215,6 +215,7 @@ var ServerSideCache = /** @class */ (function (_super) {
         if (ag_grid_community_1._.missing(block) && dontCreateBlock) {
             return null;
         }
+        var blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : serverSideBlock_1.ServerSideBlock.DefaultBlockSize;
         // if block not found, we need to load it
         if (ag_grid_community_1._.missing(block)) {
             var blockNumber = void 0;
@@ -228,25 +229,25 @@ var ServerSideCache = /** @class */ (function (_super) {
                 displayIndexStart_1 = beforeBlock.getDisplayIndexEnd();
                 nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
                 var isInRange = function () {
-                    return displayRowIndex >= displayIndexStart_1 && displayRowIndex < (displayIndexStart_1 + (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0));
+                    return displayRowIndex >= displayIndexStart_1 && displayRowIndex < (displayIndexStart_1 + blockSize);
                 };
                 while (!isInRange()) {
-                    displayIndexStart_1 += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+                    displayIndexStart_1 += blockSize;
                     var cachedBlockHeight = this.blockHeights[blockNumber];
                     if (ag_grid_community_1._.exists(cachedBlockHeight)) {
                         nextRowTop += cachedBlockHeight;
                     }
                     else {
-                        nextRowTop += this.cacheParams.rowHeight * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+                        nextRowTop += this.cacheParams.rowHeight * blockSize;
                     }
                     blockNumber++;
                 }
             }
             else {
                 var localIndex = displayRowIndex - this.displayIndexStart;
-                blockNumber = Math.floor(localIndex / (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
-                displayIndexStart_1 = this.displayIndexStart + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
-                nextRowTop = this.cacheTop + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight);
+                blockNumber = Math.floor(localIndex / blockSize);
+                displayIndexStart_1 = this.displayIndexStart + (blockNumber * blockSize);
+                nextRowTop = this.cacheTop + (blockNumber * blockSize * this.cacheParams.rowHeight);
             }
             block = this.createBlock(blockNumber, displayIndexStart_1, { value: nextRowTop });
             this.logger.log("block missing, rowIndex = " + displayRowIndex + ", creating #" + blockNumber + ", displayIndexStart = " + displayIndexStart_1);
@@ -299,125 +300,6 @@ var ServerSideCache = /** @class */ (function (_super) {
             return false;
         }
         return pixel >= this.cacheTop && pixel < (this.cacheTop + this.cacheHeight);
-    };
-    ServerSideCache.prototype.removeFromCache = function (items) {
-        var _this = this;
-        // create map of id's for quick lookup
-        var itemsToDeleteById = {};
-        var idForNodeFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-        items.forEach(function (item) {
-            if (idForNodeFunc !== undefined) {
-                var id = idForNodeFunc(item);
-                itemsToDeleteById[id] = item;
-            }
-        });
-        var deletedCount = 0;
-        this.forEachBlockInOrder(function (block) {
-            var startRow = block.getStartRow();
-            var endRow = block.getEndRow();
-            var deletedCountFromThisBlock = 0;
-            for (var rowIndex = startRow; rowIndex < endRow; rowIndex++) {
-                var rowNode = block.getRowUsingLocalIndex(rowIndex, true);
-                if (!rowNode) {
-                    continue;
-                }
-                var deleteThisRow = !!itemsToDeleteById[rowNode.id];
-                if (deleteThisRow) {
-                    deletedCountFromThisBlock++;
-                    deletedCount++;
-                    block.setDirty();
-                    rowNode.clearRowTop();
-                    continue;
-                }
-                // if rows were deleted, then we need to move this row node to
-                // it's new location
-                if (deletedCount > 0) {
-                    block.setDirty();
-                    var newIndex = rowIndex - deletedCount;
-                    var blockId = Math.floor(newIndex / (_this.cacheParams.blockSize ? _this.cacheParams.blockSize : 0));
-                    var blockToInsert = _this.getBlock(blockId);
-                    if (blockToInsert) {
-                        blockToInsert.setRowNode(newIndex, rowNode);
-                    }
-                }
-            }
-            if (deletedCountFromThisBlock > 0) {
-                for (var i = deletedCountFromThisBlock; i > 0; i--) {
-                    block.setBlankRowNode(endRow - i);
-                }
-            }
-        });
-        if (this.isMaxRowFound()) {
-            this.hack_setVirtualRowCount(this.getVirtualRowCount() - deletedCount);
-        }
-        this.onCacheUpdated();
-        var event = {
-            type: ag_grid_community_1.Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(event);
-    };
-    ServerSideCache.prototype.addToCache = function (items, indexToInsert) {
-        var _this = this;
-        var newNodes = [];
-        this.forEachBlockInReverseOrder(function (block) {
-            var pageEndRow = block.getEndRow();
-            // if the insertion is after this page, then this page is not impacted
-            if (pageEndRow <= indexToInsert) {
-                return;
-            }
-            _this.moveItemsDown(block, indexToInsert, items.length);
-            var newNodesThisPage = _this.insertItems(block, indexToInsert, items);
-            newNodesThisPage.forEach(function (rowNode) { return newNodes.push(rowNode); });
-        });
-        if (this.isMaxRowFound()) {
-            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
-        }
-        this.onCacheUpdated();
-        var event = {
-            type: ag_grid_community_1.Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(event);
-    };
-    ServerSideCache.prototype.moveItemsDown = function (block, moveFromIndex, moveCount) {
-        var startRow = block.getStartRow();
-        var endRow = block.getEndRow();
-        var indexOfLastRowToMove = moveFromIndex + moveCount;
-        // all rows need to be moved down below the insertion index
-        for (var currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
-            // don't move rows at or before the insertion index
-            if (currentRowIndex < indexOfLastRowToMove) {
-                continue;
-            }
-            var indexOfNodeWeWant = currentRowIndex - moveCount;
-            var nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
-            if (nodeForThisIndex) {
-                block.setRowNode(currentRowIndex, nodeForThisIndex);
-            }
-            else {
-                block.setBlankRowNode(currentRowIndex);
-                block.setDirty();
-            }
-        }
-    };
-    ServerSideCache.prototype.insertItems = function (block, indexToInsert, items) {
-        var pageStartRow = block.getStartRow();
-        var pageEndRow = block.getEndRow();
-        var newRowNodes = [];
-        // next stage is insert the rows into this page, if applicable
-        for (var index = 0; index < items.length; index++) {
-            var rowIndex = indexToInsert + index;
-            var currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
-            if (currentRowInThisPage) {
-                var dataItem = items[index];
-                var newRowNode = block.setNewData(rowIndex, dataItem);
-                newRowNodes.push(newRowNode);
-            }
-        }
-        return newRowNodes;
     };
     ServerSideCache.prototype.refreshCacheAfterSort = function (changedColumnsInSort, rowGroupColIds) {
         var _this = this;

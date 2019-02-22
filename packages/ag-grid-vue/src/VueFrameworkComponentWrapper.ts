@@ -64,7 +64,6 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         return wrapper;
     }
 
-
     public createComponent<T>(component: any, params: any): any {
         const componentType = VueComponentFactory.getComponentType(this.parent!, component);
         if (!componentType) {

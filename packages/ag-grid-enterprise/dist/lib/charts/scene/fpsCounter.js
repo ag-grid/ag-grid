@@ -1,19 +1,17 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var FpsCounter = /** @class */ (function () {
     function FpsCounter(parent) {
         this.fps = 0;
-        this.start = performance.now();
         this.minFps = Infinity;
         this.maxFps = 0;
-        this.fpsSum = 0;
-        this.fpsSamples = 0;
+        this.pastFps = []; // A queue of recent FPS values.
+        // Number of recent FPS values to keep for average FPS calculation.
+        this.maxPastFps = 10;
+        this.lastSecond = performance.now();
         if (parent) {
             var el = document.createElement('div');
-            // el.style.position = 'absolute';
-            // el.style.left = '0px';
-            // el.style.top = '0px';
             el.style.opacity = '0.8';
             el.style.padding = '5px';
             el.style.color = 'black';
@@ -25,24 +23,32 @@ var FpsCounter = /** @class */ (function () {
     FpsCounter.prototype.countFrame = function () {
         var now = performance.now();
         var fps = this.fps++;
-        if (now - this.start > 1000) {
+        var pastFps = this.pastFps;
+        if (now - this.lastSecond >= 1000) {
             if (fps > this.maxFps) {
                 this.maxFps = fps;
             }
             if (fps < this.minFps) {
                 this.minFps = fps;
             }
-            this.fpsSum += this.fps;
-            this.fpsSamples++;
-            var avgFps = (this.fpsSum / this.fpsSamples).toFixed(2);
+            pastFps.push(this.fps);
+            var n = pastFps.length;
+            var totalFrames = 0;
+            for (var i = 0; i < n; i++) {
+                totalFrames += pastFps[i];
+            }
+            var avgFps = totalFrames / n;
+            if (n >= this.maxPastFps) {
+                pastFps.shift();
+            }
             if (this.fpsElement) {
-                this.fpsElement.innerText = "FPS: " + fps + "\nAvg: " + avgFps + "\nMin: " + this.minFps + "\nMax: " + this.maxFps;
+                this.fpsElement.innerText = "FPS: " + fps + "\nAvg: " + avgFps.toFixed(1) + " (" + n + " seconds)\nMin: " + this.minFps + "\nMax: " + this.maxFps;
             }
             else {
                 console.log("FPS: " + fps + ", Avg: " + avgFps + ", Min: " + this.minFps + ", Max: " + this.maxFps);
             }
             this.fps = 0;
-            this.start = now;
+            this.lastSecond = now;
         }
     };
     return FpsCounter;

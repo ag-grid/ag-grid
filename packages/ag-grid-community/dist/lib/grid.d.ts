@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
@@ -21,6 +21,7 @@ export declare class Grid {
     private static enterpriseComponents;
     private static enterpriseDefaultComponents;
     protected logger: Logger;
+    private gridOptions;
     private static RowModelClasses;
     static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void;
     static setEnterpriseComponents(components: any[]): void;

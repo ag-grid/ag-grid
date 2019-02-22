@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,6 +43,7 @@ var rowNodeBlockLoader_1 = require("../cache/rowNodeBlockLoader");
 var gridApi_1 = require("../../gridApi");
 var columnApi_1 = require("../../columnController/columnApi");
 var utils_1 = require("../../utils");
+var rowRenderer_1 = require("../../rendering/rowRenderer");
 var InfiniteRowModel = /** @class */ (function (_super) {
     __extends(InfiniteRowModel, _super);
     function InfiniteRowModel() {
@@ -54,6 +55,8 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             rowTop: this.rowHeight * index
         };
     };
+    // we don't implement as lazy row heights is not supported in this row model
+    InfiniteRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     InfiniteRowModel.prototype.init = function () {
         var _this = this;
         if (!this.gridOptionsWrapper.isRowModelInfinite()) {
@@ -65,10 +68,13 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.destroyCache(); });
     };
     InfiniteRowModel.prototype.destroyDatasource = function () {
-        if (this.datasource && this.datasource.destroy) {
-            this.datasource.destroy();
+        if (this.datasource) {
+            if (this.datasource.destroy) {
+                this.datasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.datasource = null;
         }
-        this.datasource = null;
     };
     InfiniteRowModel.prototype.isLastRowFound = function () {
         return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
@@ -149,7 +155,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         if (utils_1._.missing(this.datasource)) {
             return;
         }
-        // if user is providing id's, then this means we can keep the selection between datsource hits,
+        // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
         var userGeneratingIds = utils_1._.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
@@ -365,6 +371,10 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         context_1.Autowired('columnApi'),
         __metadata("design:type", columnApi_1.ColumnApi)
     ], InfiniteRowModel.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('rowRenderer'),
+        __metadata("design:type", rowRenderer_1.RowRenderer)
+    ], InfiniteRowModel.prototype, "rowRenderer", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

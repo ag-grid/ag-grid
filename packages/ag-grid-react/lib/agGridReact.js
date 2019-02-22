@@ -1,4 +1,4 @@
-// ag-grid-react v20.0.0
+// ag-grid-react v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -35,6 +35,7 @@ var AgGridReact = /** @class */ (function (_super) {
         var _this = _super.call(this, props, state) || this;
         _this.props = props;
         _this.state = state;
+        _this.destroyed = false;
         _this.portals = [];
         _this.hasPendingPortalUpdate = false;
         return _this;
@@ -81,14 +82,28 @@ var AgGridReact = /** @class */ (function (_super) {
         // property changes.
         return false;
     };
+    AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, runningTime) {
+        var _this = this;
+        if (runningTime === void 0) { runningTime = 0; }
+        if (reactComponent.getFrameworkComponentInstance()) {
+            resolve(null);
+        }
+        else {
+            if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
+                console.error("ag-Grid: React Component '" + reactComponent.getReactComponentName() + "' not created within " + AgGridReact.MAX_COMPONENT_CREATION_TIME + "ms");
+                return;
+            }
+            window.setTimeout(function () { return _this.waitForInstance(reactComponent, resolve, runningTime + 5); }, 5);
+        }
+    };
     /**
      * Mounts a react portal for components registered under the componentFramework.
      * We do this because we want all portals to be in the same tree - in order to get
      * Context to work properly.
      */
-    AgGridReact.prototype.mountReactPortal = function (portal, resolve) {
+    AgGridReact.prototype.mountReactPortal = function (portal, reactComponent, resolve) {
         this.portals = this.portals.concat([portal]);
-        this.batchUpdate(function () { return resolve(null); });
+        this.batchUpdate(this.waitForInstance(reactComponent, resolve));
     };
     AgGridReact.prototype.batchUpdate = function (callback) {
         var _this = this;
@@ -96,10 +111,12 @@ var AgGridReact = /** @class */ (function (_super) {
             return callback && callback();
         }
         setTimeout(function () {
-            _this.forceUpdate(function () {
-                callback && callback();
-                _this.hasPendingPortalUpdate = false;
-            });
+            if (_this.api) { // destroyed?
+                _this.forceUpdate(function () {
+                    callback && callback();
+                    _this.hasPendingPortalUpdate = false;
+                });
+            }
         });
         this.hasPendingPortalUpdate = true;
     };
@@ -145,6 +162,7 @@ var AgGridReact = /** @class */ (function (_super) {
     AgGridReact.prototype.componentWillUnmount = function () {
         if (this.api) {
             this.api.destroy();
+            this.api = null;
         }
     };
     /*
@@ -246,6 +264,7 @@ var AgGridReact = /** @class */ (function (_super) {
                 delete b.areEquivPropertyTracking;
         }
     };
+    AgGridReact.MAX_COMPONENT_CREATION_TIME = 1000; // a second should be more than enough to instantiate a component
     return AgGridReact;
 }(React.Component));
 exports.AgGridReact = AgGridReact;
@@ -282,13 +301,14 @@ var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
             DynamicAgReactComponent.prototype.hasMethod = function (name) {
                 var frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
                 if (frameworkComponentInstance == null) {
-                    return true;
+                    return false;
                 }
                 return frameworkComponentInstance[name] != null;
             };
             DynamicAgReactComponent.prototype.callMethod = function (name, args) {
                 var _this = this;
                 var frameworkComponentInstance = this.getFrameworkComponentInstance();
+                // this should never happen now that AgGridReact.waitForInstance is in use
                 if (frameworkComponentInstance == null) {
                     window.setTimeout(function () { return _this.callMethod(name, args); }, 100);
                 }

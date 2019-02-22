@@ -34,7 +34,7 @@ var gridOptions = {
     // each row should be
     getRowHeight: function(params) {
         // assuming 50 characters per line, working how how many lines we need
-        return 18 * (Math.floor(params.data.latinText.length / 45) + 1);
+        return 28 * (Math.floor(params.data.latinText.length / 60) + 1);
     }
 };
 

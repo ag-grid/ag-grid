@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -91,12 +91,12 @@ var SetFilterModel = /** @class */ (function () {
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
-            var callback = this.filterParams.values;
-            var params = {
+            var callback_1 = this.filterParams.values;
+            var params_1 = {
                 success: this.onAsyncValuesLoaded.bind(this),
                 colDef: this.colDef
             };
-            callback(params);
+            window.setTimeout(function () { return callback_1(params_1); }, 0);
         }
     };
     SetFilterModel.prototype.onAsyncValuesLoaded = function (values) {
@@ -370,7 +370,7 @@ var SetFilterModel = /** @class */ (function () {
             for (var i = 0; i < model.length; i++) {
                 var rawValue = model[i];
                 var value = this.keyToValue(rawValue);
-                if (value && this.allUniqueValues.indexOf(value) >= 0) {
+                if (this.allUniqueValues.indexOf(value) >= 0) {
                     this.selectValue(value);
                 }
             }

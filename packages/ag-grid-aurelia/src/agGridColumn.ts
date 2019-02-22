@@ -11,7 +11,7 @@ import {generateBindables} from "./agUtils";
 
 @customElement('ag-grid-column')
 @generateBindables(["colId", "sort", "sortedAt", "sortingOrder", "field", "headerValueGetter", "hideCol", "pinned",
-    "tooltipField", "headerTooltip", "valueGetter", "keyCreator",
+    "tooltipField", "headerTooltip", "valueGetter", "keyCreator", "floatingFilterComponentFramework", "rowDrag", 
     "width", "minWidth", "maxWidth", "cellClass", "cellStyle", "cellRenderer", "cellRendererFramework",
     "cellRendererParams", "cellEditor", "cellEditorFramework", "cellEditorParams", "floatingCellRenderer",
     "floatingCellRendererFramework", "floatingCellRendererParams", "cellFormatter", "floatingCellFormatter",
@@ -21,12 +21,12 @@ import {generateBindables} from "./agUtils";
     "editable", "suppressNavigable", "newValueHandler", "volatile", "filter", "filterFramework", "filterParams",
     "cellClassRules", "onCellValueChanged", "onCellClicked", "onCellDoubleClicked", "onCellContextMenu", "icons",
     "enableCellChangeFlash", "headerName", "columnGroupShow", "headerClass", "toolPanelClass", "children", "groupId", "openByDefault",
-    "marryChildren", "headerCheckboxSelection", "headerCheckboxSelectionFilteredOnly", "type", "tooltipField", "valueSetter",
+    "marryChildren", "headerCheckboxSelection", "headerCheckboxSelectionFilteredOnly", "type", "valueSetter",
     "pinnedRowCellRenderer", "pinnedRowCellRendererFramework", "pinnedRowCellRendererParams", "valueFormatter",
     "pinnedRowValueFormatter", "valueParser", "allowedAggFuncs", "rowGroup", "showRowGroup", "pivot", "equals", "pivotComparator",
     "menuTabs", "colSpan", "suppressPaste", "template", "templateUrl", "pivotValueColumn", "pivotTotalColumnIds", "headerComponent",
     "headerComponentFramework", "headerComponentParams", "floatingFilterComponent", "floatingFilterComponentParams",
-    "floatingFilterComponentFramework", "rowDrag", "lockPinned"])
+    "lockPinned"])
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
 @inlineView(`<template><slot></slot></template>`)
 @autoinject()
@@ -133,7 +133,7 @@ export class AgGridColumn {
         let colDef: ColDef = {};
         for (let prop in this) {
             // only map this property if it's been actually been set
-            if(this[prop] === undefined) {
+            if (this[prop] === undefined) {
                 continue;
             }
 

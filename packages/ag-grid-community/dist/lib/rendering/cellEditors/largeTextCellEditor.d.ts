@@ -1,15 +1,14 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ICellEditorComp } from "./iCellEditor";
-import { ICellEditorParams } from "./iCellEditor";
-import { Component } from "../../widgets/component";
+import { PopupComponent } from "../../widgets/popupComponent";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
     rows: number;
     cols: number;
 }
-export declare class LargeTextCellEditor extends Component implements ICellEditorComp {
+export declare class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE;
     private params;
     private textarea;
@@ -19,5 +18,4 @@ export declare class LargeTextCellEditor extends Component implements ICellEdito
     private onKeyDown;
     afterGuiAttached(): void;
     getValue(): any;
-    isPopup(): boolean;
 }

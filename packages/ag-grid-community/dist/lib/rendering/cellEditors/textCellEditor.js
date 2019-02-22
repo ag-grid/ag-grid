@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var constants_1 = require("../../constants");
-var component_1 = require("../../widgets/component");
+var popupComponent_1 = require("../../widgets/popupComponent");
 var utils_1 = require("../../utils");
 var TextCellEditor = /** @class */ (function (_super) {
     __extends(TextCellEditor, _super);
@@ -89,9 +89,9 @@ var TextCellEditor = /** @class */ (function (_super) {
             eInput.select();
         }
         else {
-            // when we started editing, we want the carot at the end, not the start.
+            // when we started editing, we want the caret at the end, not the start.
             // this comes into play in two scenarios: a) when user hits F2 and b)
-            // when user hits a printable character, then on IE (and only IE) the carot
+            // when user hits a printable character, then on IE (and only IE) the caret
             // was placed after the first character, thus 'apply' would end up as 'pplea'
             var length_1 = eInput.value ? eInput.value.length : 0;
             if (length_1 > 0) {
@@ -113,7 +113,10 @@ var TextCellEditor = /** @class */ (function (_super) {
         var formatValue = params.useFormatter || params.column.getColDef().refData;
         return formatValue ? params.formatValue(params.value) : params.value;
     };
+    TextCellEditor.prototype.isPopup = function () {
+        return false;
+    };
     TextCellEditor.TEMPLATE = '<div class="ag-input-text-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
     return TextCellEditor;
-}(component_1.Component));
+}(popupComponent_1.PopupComponent));
 exports.TextCellEditor = TextCellEditor;

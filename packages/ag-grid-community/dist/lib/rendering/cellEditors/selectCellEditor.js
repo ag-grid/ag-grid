@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = require("../../widgets/component");
+var popupComponent_1 = require("../../widgets/popupComponent");
 var constants_1 = require("../../constants");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
@@ -85,6 +85,9 @@ var SelectCellEditor = /** @class */ (function (_super) {
     SelectCellEditor.prototype.getValue = function () {
         return this.eSelect.value;
     };
+    SelectCellEditor.prototype.isPopup = function () {
+        return false;
+    };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
@@ -94,5 +97,5 @@ var SelectCellEditor = /** @class */ (function (_super) {
         __metadata("design:type", valueFormatterService_1.ValueFormatterService)
     ], SelectCellEditor.prototype, "valueFormatterService", void 0);
     return SelectCellEditor;
-}(component_1.Component));
+}(popupComponent_1.PopupComponent));
 exports.SelectCellEditor = SelectCellEditor;

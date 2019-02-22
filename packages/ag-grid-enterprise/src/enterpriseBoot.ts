@@ -3,6 +3,13 @@ import { SetFilter } from "./setFilter/setFilter";
 import { RichSelectCellEditor } from "./rendering/richSelect/richSelectCellEditor";
 import { LicenseManager } from "./licenseManager";
 import { DetailCellRenderer } from "./rendering/detail/detailCellRenderer";
+import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp";
+import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp";
+import {ColumnToolPanel} from "./sideBar/providedPanels/columns/columnToolPanel";
+import {AggregationComp} from "./statusBar/providedPanels/aggregationComp";
+import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp";
+import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp";
+import {FiltersToolPanel} from "./sideBar/providedPanels/filters/filtersToolPanel";
 
 @Bean('enterpriseBoot')
 export class EnterpriseBoot {
@@ -18,7 +25,13 @@ export class EnterpriseBoot {
         this.componentProvider.registerDefaultComponent('agRichSelectCellEditor', RichSelectCellEditor);
         this.componentProvider.registerDefaultComponent('agSetColumnFilter', SetFilter);
         this.componentProvider.registerDefaultComponent('agDetailCellRenderer', DetailCellRenderer);
-
-        this.licenseManager.validateLicense();
+        this.componentProvider.registerDefaultComponent('agAggregationComponent', AggregationComp);
+        this.componentProvider.registerDefaultComponent('agColumnsToolPanel', ColumnToolPanel);
+        this.componentProvider.registerDefaultComponent('agFiltersToolPanel', FiltersToolPanel);
+        this.componentProvider.registerDefaultComponent('agSelectedRowCountComponent', SelectedRowsComp);
+        this.componentProvider.registerDefaultComponent('agTotalRowCountComponent', TotalRowsComp);
+        this.componentProvider.registerDefaultComponent('agFilteredRowCountComponent', FilteredRowsComp);
+        this.componentProvider.registerDefaultComponent('agTotalAndFilteredRowCountComponent', TotalAndFilteredRowsComp);
     }
+
 }

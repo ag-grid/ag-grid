@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,6 @@ var events_1 = require("../events");
 var constants_1 = require("../constants");
 var cellComp_1 = require("./cellComp");
 var context_1 = require("../context/context");
-var gridCore_1 = require("../gridCore");
 var columnApi_1 = require("../columnController/columnApi");
 var columnController_1 = require("../columnController/columnController");
 var logger_1 = require("../logger");
@@ -54,7 +53,7 @@ var gridApi_1 = require("../gridApi");
 var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
 var beans_1 = require("./beans");
 var animationFrameService_1 = require("../misc/animationFrameService");
-var heightScaler_1 = require("./heightScaler");
+var maxDivHeightScaler_1 = require("./maxDivHeightScaler");
 var utils_1 = require("../utils");
 var RowRenderer = /** @class */ (function (_super) {
     __extends(RowRenderer, _super);
@@ -72,6 +71,9 @@ var RowRenderer = /** @class */ (function (_super) {
         _this.refreshInProgress = false;
         return _this;
     }
+    RowRenderer.prototype.registerGridCore = function (gridCore) {
+        this.gridCore = gridCore;
+    };
     RowRenderer.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");
     };
@@ -99,6 +101,14 @@ var RowRenderer = /** @class */ (function (_super) {
         if (destroyRows) {
             this.redrawAfterModelUpdate();
         }
+    };
+    // for row models that have datasources, when we update the datasource, we need to force the rowRenderer
+    // to redraw all rows. otherwise the old rows from the old datasource will stay displayed.
+    RowRenderer.prototype.datasourceChanged = function () {
+        this.firstRenderedRow = 0;
+        this.lastRenderedRow = -1;
+        var rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
+        this.removeRowComps(rowIndexesToRemove);
     };
     RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
         if (utils_1._.missing(refreshEvent)) {
@@ -186,7 +196,7 @@ var RowRenderer = /** @class */ (function (_super) {
             return;
         }
         // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
+        // called to what's rendered. if the row isn't rendered, we don't care
         var indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
         // remove the rows
         this.removeRowComps(indexesToRemove);
@@ -260,8 +270,8 @@ var RowRenderer = /** @class */ (function (_super) {
         if (containerHeight === 0) {
             containerHeight = 1;
         }
-        this.heightScaler.setModelHeight(containerHeight);
-        var realHeight = this.heightScaler.getUiContainerHeight();
+        this.maxDivHeightScaler.setModelHeight(containerHeight);
+        var realHeight = this.maxDivHeightScaler.getUiContainerHeight();
         containers.forEach(function (container) { return container.setHeight(realHeight); });
     };
     RowRenderer.prototype.getLockOnRefresh = function () {
@@ -498,7 +508,7 @@ var RowRenderer = /** @class */ (function (_super) {
         var _this = this;
         if (animate === void 0) { animate = false; }
         if (afterScroll === void 0) { afterScroll = false; }
-        this.heightScaler.update();
+        this.maxDivHeightScaler.updateOffset();
         this.workOutFirstAndLastRowsToRender();
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
@@ -653,30 +663,39 @@ var RowRenderer = /** @class */ (function (_super) {
             newLast = this.paginationProxy.getPageLastRow();
         }
         else {
+            var paginationOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            var maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
+            var bodyVRange = this.gridPanel.getVScrollPosition();
+            var bodyTopPixel = bodyVRange.top;
+            var bodyBottomPixel = bodyVRange.bottom;
+            var bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
+            var firstPixel = bodyTopPixel + paginationOffset + maxDivHeightScaler - bufferPixels;
+            var lastPixel = bodyBottomPixel + paginationOffset + maxDivHeightScaler + bufferPixels;
+            this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
+            var firstRowIndex = this.paginationProxy.getRowIndexAtPixel(firstPixel);
+            var lastRowIndex = this.paginationProxy.getRowIndexAtPixel(lastPixel);
             var pageFirstRow = this.paginationProxy.getPageFirstRow();
             var pageLastRow = this.paginationProxy.getPageLastRow();
-            var pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
-            var heightOffset = this.heightScaler.getOffset();
-            var bodyVRange = this.gridPanel.getVScrollPosition();
-            var topPixel = bodyVRange.top;
-            var bottomPixel = bodyVRange.bottom;
-            var realPixelTop = topPixel + pixelOffset + heightOffset;
-            var realPixelBottom = bottomPixel + pixelOffset + heightOffset;
-            var first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
-            var last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
-            //add in buffer
-            var buffer = this.gridOptionsWrapper.getRowBuffer();
-            first = first - buffer;
-            last = last + buffer;
             // adjust, in case buffer extended actual size
-            if (first < pageFirstRow) {
-                first = pageFirstRow;
+            if (firstRowIndex < pageFirstRow) {
+                firstRowIndex = pageFirstRow;
             }
-            if (last > pageLastRow) {
-                last = pageLastRow;
+            if (lastRowIndex > pageLastRow) {
+                lastRowIndex = pageLastRow;
             }
-            newFirst = first;
-            newLast = last;
+            newFirst = firstRowIndex;
+            newLast = lastRowIndex;
+        }
+        // sometimes user doesn't set CSS right and ends up with grid with no height and grid ends up
+        // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
+        // killing the browser, we limit the number of rows. just in case some use case we didn't think
+        // of, we also have a property to not do this operation.
+        var rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_NORMAL;
+        var suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
+        if (rowLayoutNormal && !suppressRowCountRestriction) {
+            if (newLast - newFirst > 500) {
+                newLast = newFirst + 500;
+            }
         }
         var firstDiffers = newFirst !== this.firstRenderedRow;
         var lastDiffers = newLast !== this.lastRenderedRow;
@@ -701,6 +720,17 @@ var RowRenderer = /** @class */ (function (_super) {
                 columnApi: this.columnApi
             };
             this.eventService.dispatchEventOnce(event_2);
+        }
+    };
+    RowRenderer.prototype.ensureAllRowsInRangeHaveHeightsCalculated = function (topPixel, bottomPixel) {
+        // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
+        // all the other row models just hard code so the method just returns back false
+        var rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        if (rowHeightsChanged) {
+            // if row heights have changed, we need to resize the containers the rows sit it
+            this.sizeContainerToPageHeight();
+            // we also need to update heightScaler as this has dependency of row container height
+            this.maxDivHeightScaler.updateOffset();
         }
     };
     RowRenderer.prototype.getFirstVirtualRenderedRow = function () {
@@ -1035,10 +1065,6 @@ var RowRenderer = /** @class */ (function (_super) {
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], RowRenderer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_1.Autowired("gridCore"),
-        __metadata("design:type", gridCore_1.GridCore)
-    ], RowRenderer.prototype, "gridCore", void 0);
-    __decorate([
         context_1.Autowired("$scope"),
         __metadata("design:type", Object)
     ], RowRenderer.prototype, "$scope", void 0);
@@ -1091,9 +1117,9 @@ var RowRenderer = /** @class */ (function (_super) {
         __metadata("design:type", beans_1.Beans)
     ], RowRenderer.prototype, "beans", void 0);
     __decorate([
-        context_1.Autowired("heightScaler"),
-        __metadata("design:type", heightScaler_1.HeightScaler)
-    ], RowRenderer.prototype, "heightScaler", void 0);
+        context_1.Autowired("maxDivHeightScaler"),
+        __metadata("design:type", maxDivHeightScaler_1.MaxDivHeightScaler)
+    ], RowRenderer.prototype, "maxDivHeightScaler", void 0);
     __decorate([
         context_1.Autowired("animationFrameService"),
         __metadata("design:type", animationFrameService_1.AnimationFrameService)

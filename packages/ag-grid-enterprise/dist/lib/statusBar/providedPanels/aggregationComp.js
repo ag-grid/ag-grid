@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -62,13 +62,13 @@ var AggregationComp = /** @class */ (function (_super) {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         var statusBarValueComponent = null;
-        var aggregationPanelConfig = ag_grid_community_1._.exists(this.gridOptions.statusBar) && this.gridOptions.statusBar ? ag_grid_community_1._.find(this.gridOptions.statusBar.statusPanels, aggFuncName) : null;
+        var aggregationPanelConfig = ag_grid_community_1._.exists(this.gridOptions.statusBar) && this.gridOptions.statusBar ? ag_grid_community_1._.find(this.gridOptions.statusBar.statusPanels, function (panel) { return panel.statusPanel === 'agAggregationComponent'; }) : null;
         if (ag_grid_community_1._.exists(aggregationPanelConfig) && aggregationPanelConfig) {
             // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
             if (!ag_grid_community_1._.exists(aggregationPanelConfig.statusPanelParams) ||
                 (ag_grid_community_1._.exists(aggregationPanelConfig.statusPanelParams) &&
                     ag_grid_community_1._.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
-                    ag_grid_community_1._.exists(ag_grid_community_1._.find(aggregationPanelConfig.statusPanelParams.aggFuncs, function (item) { return item === aggFuncName; })))) {
+                    ag_grid_community_1._.exists(ag_grid_community_1._.find(aggregationPanelConfig.statusPanelParams.aggFuncs, function (func) { return func === aggFuncName; })))) {
                 statusBarValueComponent = this[refComponentName];
             }
         }

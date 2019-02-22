@@ -8,19 +8,13 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Updating Data</h1>
 
-    <note>
-        Note that this is only applicable if you are using the <a href="../javascript-grid-client-side-model">Client-side Row Model</a>.
-        If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-server-side-model">Server-side</a>
-        the data would be passed to the grid through a datasource and the specifics on how to
-        update each model would be explained in their respective docs.
-    </note>
-
     <p class="lead">
-        Data can be updated inside the grid using the grid's API.
+        This section explains how to update the grid's data using the grid's API's.
     </p>
 
     <p>
-        The grid also allows updating data in the following other ways which are explained in other
+        As well as using the grid's API's, the grid also allows updating data in
+        the following other ways which are explained in other
         sections of the documentation:
     </p>
 
@@ -39,6 +33,13 @@ include '../documentation-main/documentation_header.php';
         If you are using an immutable data store, as is usual in a React application, then you will be
         interested in the section below <a href="#delta-row-data">Bulk Method 3 - Delta Row Data</a>.
     </p>
+
+<note>
+    Note that this is only applicable if you are using the <a href="../javascript-grid-client-side-model">Client-side Row Model</a>.
+    If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-server-side-model">Server-side</a>
+    the data would be passed to the grid through a datasource and the specifics on how to
+    update each model would be explained in their respective docs.
+</note>
 
     <h2>Updating RowNodes Data</h2>
 
@@ -108,10 +109,10 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Updating Row Nodes', 'updating-row-nodes', 'generated', array("processVue" => true)) ?>
 
-    <h2 id="bulk-updating">Bulk Updating</h2>
+    <h2 id="bulk-updating">Full CRUD & Bulk Updating</h2>
 
     <p>
-        If you want to update more than one row at a time, then you have the following options:
+        If you want to add, remove or update more than one row at a time, then you have the following options:
     </p>
 
     <ul>
@@ -209,26 +210,27 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // API method for updating data
-    function updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+// API method for updating data
+function updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
 
-    // params for above
-    interface RowDataTransaction {
+// params for above
+interface RowDataTransaction {
 
     // rows to add
     add?: any[];
+
     // index for rows to add
-    addIndex?: number,
+    addIndex?: number;
 
     // rows to remove
     remove?: any[];
 
     // rows to update
     update?: any[];
-    }
+}
 
-    // result for above
-    interface RowDataTransaction {
+// result for above
+interface RowDataTransaction {
 
     // Row Nodes added
     add: RowNode[];
@@ -238,7 +240,7 @@ include '../documentation-main/documentation_header.php';
 
     // Row Nodes updated
     update: RowNode[];
-    }</snippet>
+}</snippet>
 
 <h3>Adding Rows</h3>
 
@@ -539,6 +541,83 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
     <p>
         Use batch updates if you have streaming data going into the grid and want don't want the grid's
         rendering and recalculating to be a bottleneck.
+    </p>
+
+    <h2 id="big-data-small-transactions">Small Changes in Large Grouped Data</h2>
+
+    <p>
+        When grouping, the grid will group, sort, filter and aggregate each individual
+        group. When there is a lot of data and a lot of groups then this results
+        in a lot of computation required for all the data operations.
+    </p>
+    <p>
+        If using <a href="#transactions">transaction updates</a> then the grid does not execute all
+        the operations (sort, filter etc) on all the rows. Instead it only re-computes what was
+        impacted by a transaction.
+    </p>
+    <p>
+        For example, if items are grouped by city, and a value for each city is summed at the city
+        level, then if the value changes for one item, only the aggregation for the city it belongs
+        to needs be recomputed. All other groups where data did not change do not need to be recomputed.
+    </p>
+    <p>
+        Deciding what groups need to be operated on again is called Changed Path Selection. After
+        the grid applies all adds, removes and updates from a transaction, it works out what groups
+        got impacted and only executes the required operations on those groups.
+    </p>
+    <p>
+        Under the hood <a href="#delta-row-data">delta row data</a> uses transactions in the grid,
+        so Changed Path Selection applies also when using delta row update.
+    </p>
+
+    <p>
+        The example below demonstrates Changed Path Selection. The example is best view with the dev
+        console open so log messages can be observed. Note the following:
+        <ul>
+            <li>The 'Linux Distro' column is sorted with a custom comparator. The comparator records how many
+            times it is called.</li>
+            <li>The Value column is aggregated with a custom aggregator. The aggregator records
+            how many times it is called.</li>
+            <li>When the example first loads, all the data is set into the grid which results in 171 aggregation
+                operations (one for each group), 48,131 comparisons (for sorting all rows in each group) and 10,000 filter
+                passes (one for each row). The number of milliseconds to complete the operation is also printed (this
+            value will depend on your hardware).</li>
+            <li>Select a row and click 'Update', 'Delete' OR 'Duplicate' (duplicate results in an add operation).
+            Note in the console that the number of aggregations, compares and filters is drastically less.
+            The total time to execute is also drastically less</li>
+        </ul>
+    </p>
+
+    <?= example('Small Changes Big Data', 'small-changes-big-data', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+    <p>
+        Note that the example above also uses the following properties to gain performance:
+    <ul>
+        <li><code>suppressMaintainUnsortedOrder</code>: When doing delta updates, the grid stores the data
+            in the same order as the data was provided. For example if you provide a new list with data added
+            in the middle of the list, the grid will also put the data into the middle of the list rather than
+            just appending to the end. This decides the order of data when there is no grid sort applied. If
+            this is not required by your application, then you can suppress this behaviour by setting
+            <code>suppressMaintainUnsortedOrder=true</code>.
+        </li>
+        <li><code>suppressAggAtRootLevel</code>: When aggregations are present, the grid also aggregates
+            all the top level rows into one parent row. This total aggregation is not shown in the grid so a
+            speed increase can be produced by turning this top level aggregation of by setting
+            <code>suppressAggAtRootLevel=true</code>. It is the intention that a future release of the grid
+            will allow exposing the top level aggregation hence why this feature is left in.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        Also note that the example above does NOT do the following (again for performance reasons):
+        <ul>
+            <li>
+                Header Checkbox Selection: <a href="../javascript-grid-selection/#header-checkbox-selection">Header Checkbox Selection</a>
+                will slow the grid down marginally as it requires each row to be checked (for selection state) between each update. If you need
+                a blasting fast grid managing rapid changes, then consider avoiding this feature.
+            </li>
+        </ul>
     </p>
 
     <h2 id="flashing">Flashing Data Changes</h2>

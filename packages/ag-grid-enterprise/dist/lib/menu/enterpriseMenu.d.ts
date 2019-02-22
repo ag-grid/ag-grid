@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { AgEvent, BeanStub, Column, IMenuFactory } from "ag-grid-community";
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -48,6 +48,7 @@ export declare class EnterpriseMenu extends BeanStub {
         height: number;
     };
     init(): void;
+    private getTabsToCreate;
     private isValidMenuTabItem;
     private isNotSuppressed;
     private createTab;

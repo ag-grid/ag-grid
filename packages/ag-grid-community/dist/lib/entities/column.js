@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,6 +48,11 @@ var Column = /** @class */ (function () {
         this.lockPinned = colDef.lockPinned === true;
         this.lockVisible = colDef.lockVisible === true;
     }
+    // gets called when user provides an alternative colDef, eg
+    Column.prototype.setColDef = function (colDef, userProvidedColDef) {
+        this.colDef = colDef;
+        this.userProvidedColDef = userProvidedColDef;
+    };
     Column.prototype.getUserProvidedColDef = function () {
         return this.userProvidedColDef;
     };
@@ -65,6 +70,12 @@ var Column = /** @class */ (function () {
     };
     Column.prototype.getParent = function () {
         return this.parent;
+    };
+    Column.prototype.setOriginalParent = function (originalParent) {
+        this.originalParent = originalParent;
+    };
+    Column.prototype.getOriginalParent = function () {
+        return this.originalParent;
     };
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
@@ -109,7 +120,7 @@ var Column = /** @class */ (function () {
     Column.prototype.isFilterAllowed = function () {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        var filterDefined = !!this.colDef.filter;
+        var filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
         return this.primary && filterDefined;
     };
     Column.prototype.isFieldContainsDots = function () {
@@ -129,7 +140,7 @@ var Column = /** @class */ (function () {
             });
         }
         if (this.gridOptionsWrapper.isTreeData()) {
-            var itemsNotAllowedWithTreeData = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+            var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(function (item) {
                 if (utils_1._.exists(colDefAny[item])) {
                     console.warn("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item);
@@ -190,6 +201,10 @@ var Column = /** @class */ (function () {
         if (colDefAny.suppressResize) {
             console.warn("ag-Grid: since v20, colDef.suppressResize is gone, instead use colDef.resizable=false.", this.colDef);
             this.colDef.resizable = false;
+        }
+        if (colDefAny.tooltip) {
+            console.warn("ag-Grid: since v20.1, colDef.tooltip is gone, instead use colDef.tooltipValueGetter.", this.colDef);
+            this.colDef.tooltipValueGetter = colDefAny.tooltip;
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {

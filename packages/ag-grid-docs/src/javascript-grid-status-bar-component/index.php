@@ -85,6 +85,14 @@ var gridOptions = {
 
 <?= example('Status Bar Panel', 'custom-component', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
+<h2>Initialisation of Status Bar Components</h2>
+<p>Please refer to the documentation <a href="../javascript-grid-status-bar/#initialisation-of-status-bar-components">here.</a></p>
+
+<note>When using <code>React Fiber</code> the Grid will generally be ready <span style="font-style=italic">before</span> the Status Bar Components
+have been instantiated. With this in mind it's often safer to use a timeout to do your post init work.<br/>
+<br/>Refer to the React version of the example above for an example of this.</note>
+
+
 
 <h2 id="accessing-status-bar-comp-instances">Accessing Status Bar Panel Instances</h2>
 

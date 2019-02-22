@@ -1,10 +1,11 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { Column, IContextMenuFactory, RowNode } from "ag-grid-community";
 export declare class ContextMenuFactory implements IContextMenuFactory {
     private context;
     private popupService;
     private gridOptionsWrapper;
     private rowModel;
+    private rangeController;
     private activeMenu;
     private init;
     hideActiveMenu(): void;

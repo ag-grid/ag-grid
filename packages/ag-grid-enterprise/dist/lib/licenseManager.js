@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -14,6 +14,7 @@ var ag_grid_community_1 = require("ag-grid-community");
 var md5_1 = require("./license/md5");
 var LicenseManager = /** @class */ (function () {
     function LicenseManager() {
+        this.displayWatermark = false;
     }
     LicenseManager_1 = LicenseManager;
     LicenseManager.prototype.validateLicense = function () {
@@ -33,12 +34,14 @@ var LicenseManager = /** @class */ (function () {
         }
         if (!valid) {
             LicenseManager_1.outputMessage('********************************************* Invalid License **************************************************', '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
+            this.displayWatermark = true;
         }
         else if (!current) {
             var formattedExpiryDate = LicenseManager_1.formatDate(expiry);
             var formattedReleaseDate = LicenseManager_1.formatDate(gridReleaseDate);
             LicenseManager_1.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************', "Your license for ag-Grid Enterprise expired on " + formattedExpiryDate + " but the version installed was released on " + formattedReleaseDate + ". Please " +
                 'contact accounts@ag-grid.com to renew your license');
+            this.displayWatermark = true;
         }
     };
     LicenseManager.extractExpiry = function (license) {
@@ -64,6 +67,9 @@ var LicenseManager = /** @class */ (function () {
             valid: valid,
             expiry: valid ? LicenseManager_1.formatDate(expiry) : null
         };
+    };
+    LicenseManager.prototype.isDisplayWatermark = function () {
+        return this.displayWatermark;
     };
     LicenseManager.outputMessage = function (header, message) {
         console.error('****************************************************************************************************************');
@@ -138,11 +144,17 @@ var LicenseManager = /** @class */ (function () {
         LicenseManager_1.licenseKey = licenseKey;
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU0Njk2NjI4MDE0OA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU1MDY4Mjk4NTgyMA==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)
     ], LicenseManager.prototype, "md5", void 0);
+    __decorate([
+        ag_grid_community_1.PreConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], LicenseManager.prototype, "validateLicense", null);
     LicenseManager = LicenseManager_1 = __decorate([
         ag_grid_community_1.Bean('licenseManager')
     ], LicenseManager);

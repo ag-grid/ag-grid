@@ -29,6 +29,9 @@ export declare class AgGridColumn {
     floatingFilterComponent: any;
     floatingFilterComponentParams: any;
     floatingFilterComponentFramework: any;
+    tooltipComponent: any;
+    tooltipComponentParams: any;
+    tooltipComponentFramework: any;
     refData: any;
     headerName: any;
     columnGroupShow: any;
@@ -77,6 +80,7 @@ export declare class AgGridColumn {
     onCellDoubleClicked: any;
     onCellContextMenu: any;
     tooltip: any;
+    tooltipValueGetter: any;
     cellRendererSelector: any;
     cellEditorSelector: any;
     suppressCellFlash: any;
@@ -111,4 +115,5 @@ export declare class AgGridColumn {
     autoHeight: any;
     sortable: any;
     resizable: any;
+    singleClickEdit: any;
 }

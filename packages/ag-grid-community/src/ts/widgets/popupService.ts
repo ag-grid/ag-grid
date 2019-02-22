@@ -15,12 +15,17 @@ export class PopupService {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
-    @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
     @Autowired('eventService') private eventService: EventService;
 
     private activePopupElements: HTMLElement[] = [];
+
+    private gridCore: GridCore;
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+    }
 
     private getDocument(): Document {
         return this.gridOptionsWrapper.getDocument();
@@ -31,9 +36,9 @@ export class PopupService {
         if (ePopupParent) {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
-        } else {
-            return this.gridCore.getRootGui();
         }
+
+        return this.gridCore.getRootGui();
     }
 
     public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement }) {
@@ -99,14 +104,19 @@ export class PopupService {
         column?: Column,
         type: string,
         mouseEvent: MouseEvent | Touch,
-        ePopup: HTMLElement
+        nudgeX?: number,
+        nudgeY?: number,
+        ePopup: HTMLElement,
     }): void {
 
         const {x, y} = this.calculatePointerAlign(params.mouseEvent);
+        const { ePopup, nudgeX, nudgeY} = params;
         this.positionPopup({
-            ePopup: params.ePopup,
+            ePopup: ePopup,
             x,
             y,
+            nudgeX,
+            nudgeY,
             keepWithinBounds: true
         });
 
@@ -314,6 +324,7 @@ export class PopupService {
 
     public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
         const eDocument = this.gridOptionsWrapper.getDocument();
+
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
             return () => {
@@ -323,18 +334,22 @@ export class PopupService {
         eChild.style.top = '0px';
         eChild.style.left = '0px';
 
-        const popupAlreadyShown = _.isVisible(eChild);
-        if (popupAlreadyShown) {
-            return () => {
-            };
-        }
-
         const ePopupParent = this.getPopupParent();
+
+        const popupAlreadyShown = _.isVisible(eChild);
+        if (popupAlreadyShown && ePopupParent.contains(eChild)) {
+            return () => {};
+        }
 
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         const eWrapper = document.createElement('div');
-        _.addCssClass(eWrapper, this.environment.getTheme());
+        const theme = this.environment.getTheme();
+
+        if (theme) {
+            _.addCssClass(eWrapper, theme);
+        }
+
         eWrapper.appendChild(eChild);
 
         ePopupParent.appendChild(eWrapper);
@@ -423,7 +438,7 @@ export class PopupService {
             // `ag-custom-component-popup` class to be detected as part of the Custom Component
             let el = event.target as HTMLElement;
             while (el && el != document.body) {
-                if (el.classList.contains('ag-custom-component-popup')) { return true; }
+                if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
                 el = el.parentElement;
             }
         }

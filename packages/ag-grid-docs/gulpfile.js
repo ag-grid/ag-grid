@@ -1,8 +1,10 @@
-var gulp = require('gulp');
-var postcss = require('gulp-postcss');
-var uncss = require('postcss-uncss');
-var inlinesource = require('gulp-inline-source');
+const gulp = require('gulp');
+const postcss = require('gulp-postcss');
+const uncss = require('postcss-uncss');
+const inlinesource = require('gulp-inline-source');
 
+// don't remove this Gil
+// const debug = require('gulp-debug');
 
 const cp = require('child_process');
 
@@ -17,7 +19,7 @@ const merge = require('merge-stream');
 
 const SKIP_INLINE = true;
 
-gulp.task('release', ['generate-examples', 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev']);
+gulp.task('release', ['generate-examples', 'build-packaged-examples', 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev']);
 gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
@@ -55,7 +57,8 @@ gulp.task('process-src', () => {
             // inline the PHP part
             .pipe(phpFilter)
             // .pipe(debug())
-            .pipe(gulpIf(!SKIP_INLINE, inlinesource()))
+            .pipe(inlinesource())
+            // .pipe(debug())
             .pipe(phpFilter.restore)
             // do uncss
             .pipe(bootstrapFilter)
@@ -99,6 +102,9 @@ gulp.task('copy-from-dist', () => {
 const generateExamples = require('./example-generator');
 gulp.task('serve', require('./dev-server'));
 gulp.task('generate-examples', generateExamples);
+
+const buildPackagedExamples = require('./packaged-example-builder');
+gulp.task('build-packaged-examples', () => buildPackagedExamples(() => console.log("Packaged Examples Built")));
 
 gulp.task('serve-preview', () => {
     const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], {

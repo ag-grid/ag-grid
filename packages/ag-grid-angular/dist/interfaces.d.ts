@@ -1,4 +1,4 @@
-import { IAfterGuiAttachedParams, ICellEditor, ICellEditorParams, ICellRenderer, ICellRendererParams, IDate, IDateParams, IFilter, IFilterParams, IFloatingFilter, IFloatingFilterParams, IHeader, IHeaderGroup, IHeaderGroupParams, IHeaderParams, ILoadingOverlayParams, INoRowsOverlayParams, IStatusPanelParams, IToolPanelParams } from "ag-grid-community";
+import { IAfterGuiAttachedParams, ICellEditor, ICellEditorParams, ICellRenderer, ICellRendererParams, IDate, IDateParams, IFilter, IFilterParams, IFloatingFilter, IFloatingFilterParams, IHeader, IHeaderGroup, IHeaderGroupParams, IHeaderParams, ILoadingCellRendererParams, ILoadingOverlayParams, INoRowsOverlayParams, IStatusPanelParams, IToolPanelParams, ITooltipParams } from "ag-grid-community";
 export interface AgFrameworkComponent<T> {
     agInit(params: T): void;
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
@@ -23,6 +23,8 @@ export interface AgEditorComponent extends ICellEditorAngularComp {
 }
 export interface AgFilterComponent extends IFilterAngularComp {
 }
+export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {
+}
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams> {
 }
 export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams> {
@@ -30,4 +32,6 @@ export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsO
 export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams> {
 }
 export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelParams> {
+}
+export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {
 }

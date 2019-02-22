@@ -105,14 +105,16 @@ include '../documentation-main/documentation_header.php';
         You should only create your own theme when options 1 and 2 above don't suit, as it is
         the most difficult.
         If you do decide to create your own theme, then you can use one of the provided themes and
-        use that as a template. They can be found on GitHub here:
-        <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">https://github.com/ceolter/ag-grid/tree/master/src/styles</a>.
-    </p>
-
-    <p>
+        use that as a template. They can be found on GitHub <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community/src/styles">here</a>.
+        <p>
         This section does not provide an example of building a theme as a number of themes
         are already provided with ag-Grid - these can be used as a basis for any additional themes you may wish to create.
+        </p>
+        <h3>Important</h3><p>If you create your own theme, it's name has to follow the <code>ag-theme-</code>&lt;theme name&gt; naming convention, otherwise 
+        styles will not be applied to floating elements (eg. context menus) properly.</p>
     </p>
+
+
 
     <h2 id="when-to-style-via-themes">When to Style via Themes</h2>
 
@@ -591,6 +593,11 @@ window.addEventListener("load", function() {
                     <td>The color used for all borders.</td>
                 </tr>
                 <tr>
+                    <td>scroll-spacer-border</td>
+                    <td>1px solid <code>border-color</code></td>
+                    <td>The border that separates the pinned columns from the scrollable area within the horizontal scrollbar</td>
+                </tr>
+                <tr>
                     <td>primary-color</td>
                     <td><code>&lt;no default&gt;</code></td>
                     <td>The main color associated with selected cells and other items (eg. cell border color, sidbar selected tab border).</td>
@@ -831,9 +838,39 @@ window.addEventListener("load", function() {
                     <td>The indent used for the tool panel hierarchy.</td>
                 </tr>
                 <tr>
-                    <td>row-group-indent-size</td>
-                    <td><code>grid-size</code> * 3 + <code>icon-size</code></td>
-                    <td>The indent used for the row groups.</td>
+                    <td>tooltip-background-color</td>
+                    <td>#535353</td>
+                    <td>The tooltip background color.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-foreground-color</td>
+                    <td>#ffffff</td>
+                    <td>The tooltip foreground color.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-radius</td>
+                    <td>2px</td>
+                    <td>The tooltip boder radius.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-padding</td>
+                    <td>5px</td>
+                    <td>The tooltip padding.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-width</td>
+                    <td>1px</td>
+                    <td>The tooltip border width.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-style</td>
+                    <td>solid</td>
+                    <td>The tooltip border style.</td>
+                </tr>
+                <tr>
+                    <td>tooltip-border-color</td>
+                    <td>#ebebeb</td>
+                    <td>The tooltip border color</td>
                 </tr>
                 </tbody>
             </table>
@@ -1078,6 +1115,22 @@ window.addEventListener("load", function() {
                     <tr>
                         <td>secondary-font-weight</td>
                         <td>600</td>
+                    </tr>
+                    <tr>
+                        <td>tooltip-background-color</td>
+                        <td><code>lighten($flat-gray-2, 5%)</code></td>
+                    </tr>
+                    <tr>
+                        <td>tooltip-foreground-color</td>
+                        <td><code>foreground-color</code></td>
+                    </tr>
+                    <tr>
+                        <td>tooltip-border-radius</td>
+                        <td><code>border-radius</code></td>
+                    </tr>
+                    <tr>
+                        <td>tooltio-border-color</td>
+                        <td><code>darken($border-color, 10%)</code></td>
                     </tr>
                 </tbody>
             </table>

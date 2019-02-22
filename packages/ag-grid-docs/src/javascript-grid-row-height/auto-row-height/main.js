@@ -51,29 +51,29 @@ function createRowData() {
     return rowData;
 }
 
-function onColumnResized(event) {
-    if (event.finished) {
-        gridOptions.api.resetRowHeights();
-    }
+function onColumnResized() {
+    gridOptions.api.resetRowHeights();
 }
 
 var gridOptions = {
     defaultColDef: {
         sortable: true,
-        resizable: true,
-        sortable: true
+        resizable: true
     },
     columnDefs: columnDefs,
-    rowData: createRowData(),
+    rowHeight: 275,
+    onColumnResized: onColumnResized,
     onGridReady: function(params) {
+
         // in this example, the CSS styles are loaded AFTER the grid is created,
         // so we put this in a timeout, so height is calculated after styles are applied.
         setTimeout(function () {
-            gridOptions.api.resetRowHeights();
-        }, 500);
-    },
-    onColumnResized: onColumnResized
+            params.api.setRowData(createRowData());
+        }, 2000);
+    }
 };
+
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

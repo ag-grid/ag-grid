@@ -1,44 +1,141 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { Scene } from "./scene";
+import { Matrix } from "./matrix";
+import { BBox } from "./bbox";
 /**
  * Abstract scene graph node.
- * Each node can have zero or more children, zero or one parent
- * and belong to zero or one scene.
+ * Each node can have zero or one parent and belong to zero or one scene.
  */
 export declare abstract class Node {
-    private static id;
     private createId;
     readonly id: string;
-    private _scene?;
-    scene: Scene | undefined;
-    private _parent?;
-    parent: Node | undefined;
+    datum: any;
+    tag: number;
+    static isNode(node: any): node is Node;
+    protected _scene: Scene | null;
+    _setScene(value: Scene | null): void;
+    readonly scene: Scene | null;
+    private _parent;
+    _setParent(value: Node | null): void;
+    readonly parent: Node | null;
     private _children;
-    readonly children: Node[];
+    readonly children: ReadonlyArray<Node>;
+    private static MAX_SAFE_INTEGER;
+    countChildren(depth?: number): number;
     private childSet;
-    add(...args: Node[]): void;
+    /**
+     * Appends one or more new node instances to this parent.
+     * If one needs to:
+     * - move a child to the end of the list of children
+     * - move a child from one parent to another (including parents in other scenes)
+     * one should use the {@link insertBefore} method instead.
+     * @param nodes A node or nodes to append.
+     */
+    append(nodes: Node[] | Node): void;
+    appendChild<T extends Node>(node: T): T;
+    removeChild<T extends Node>(node: T): T;
+    /**
+     * Inserts the node `node` before the existing child node `nextNode`.
+     * If `nextNode` is null, insert `node` at the end of the list of children.
+     * If the `node` belongs to another parent, it is first removed.
+     * Returns the `node`.
+     * @param node
+     * @param nextNode
+     */
+    insertBefore<T extends Node>(node: T, nextNode?: Node | null): T;
+    protected matrix: Matrix;
+    protected inverseMatrix: Matrix;
+    /**
+     * Calculates the combined inverse transformation for this node,
+     * and uses it to convert the given transformed point
+     * to the untransformed one.
+     * @param x
+     * @param y
+     */
+    transformPoint(x: number, y: number): {
+        x: number;
+        y: number;
+    };
+    private _isDirtyTransform;
+    isDirtyTransform: boolean;
+    private _scalingX;
+    scalingX: number;
+    private _scalingY;
+    scalingY: number;
+    /**
+     * The center of scaling.
+     * The default value of `null` means the scaling center will be
+     * determined automatically, as the center of the bounding box
+     * of a node.
+     */
+    private _scalingCenterX;
+    scalingCenterX: number | null;
+    private _scalingCenterY;
+    scalingCenterY: number | null;
+    private _rotationCenterX;
+    rotationCenterX: number | null;
+    private _rotationCenterY;
+    rotationCenterY: number | null;
+    /**
+     * Rotation angle in radians.
+     * The value is set as is. No normalization to the [-180, 180) or [0, 360)
+     * interval is performed.
+     */
+    private _rotation;
+    rotation: number;
+    /**
+     * For performance reasons the rotation angle's internal representation
+     * is in radians. Therefore, don't expect to get the same number you set.
+     * Even with integer angles about a quarter of them from 0 to 359 cannot
+     * be converted to radians and back without precision loss.
+     * For example:
+     *
+     *     node.rotationDeg = 11;
+     *     console.log(node.rotationDeg); // 10.999999999999998
+     *
+     * @param value Rotation angle in degrees.
+     */
+    rotationDeg: number;
+    private _translationX;
+    translationX: number;
+    private _translationY;
+    translationY: number;
+    isPointInNode(x: number, y: number): boolean;
+    readonly getBBox?: () => BBox;
+    getBBoxCenter(): [number, number];
+    protected computeTransformMatrix(): void;
+    /**
+     * Scene nodes start rendering with the {@link Scene.root | root},
+     * where the `render` call propagates from parent nodes to their children.
+     * The root rendering is initiated by the {@link Scene.render} method,
+     * so if the `render` method of a node is called, that node belongs to a scene,
+     * and there is no need to check if node's {@link Node._scene} property
+     * is defined inside node's `render` method. For example, instead of doing this:
+     *
+     *     if (!this.scene) return;
+     *     this.scene.appendPath(this.path);
+     *
+     * it's safe to do this:
+     *
+     *     this.scene!.appendPath(this.path);
+     *
+     * @param ctx The 2D canvas rendering context.
+     */
     abstract render(ctx: CanvasRenderingContext2D): void;
     /**
-     * Determines the order of rendering of this node within the parent node.
-     * By default the child nodes are rendered in the order in which they were added.
-     */
-    zIndex: number;
-    /**
      * Each time a property of the node that effects how it renders changes
-     * the `dirty` property of the node should be set to `true`. The
-     * change to the `dirty` property of the node will propagate up to its
-     * parents and eventually to the scene, at which point an animation frame
-     * callback will be scheduled to rerender the scene and its nodes and reset
-     * the `dirty` flags of all nodes and the scene back to `false`.
-     * Since we don't render changes to node properties immediately, we can
-     * set as many as we like and the rendering will still only happen once
-     * on the next animation frame callback.
-     * The animation frame callback is only scheduled, if it hasn't been already.
+     * the `isDirty` property of the node should be set to `true`. The change
+     * to the `isDirty` property of the node will propagate up to its parents
+     * and eventually to the scene, at which point an animation frame callback
+     * will be scheduled to rerender the scene and its nodes and reset the `isDirty`
+     * flags of all nodes and the {@link Scene._isDirty | Scene} back to `false`.
+     * Since changes to node properties are not rendered immediately, it's possible
+     * to change as many properties on as many nodes as needed and the rendering
+     * will still only happen once in the next animation frame callback.
+     * The animation frame callback is only scheduled if it hasn't been already.
      */
-    private _dirty;
-    dirty: boolean;
-    private static svg;
-    static createSvgMatrix(): SVGMatrix;
-    static createSvgMatrixFrom(a: number, b: number, c: number, d: number, e: number, f: number): SVGMatrix;
-    static createDomMatrix(a: number, b: number, c: number, d: number, e: number, f: number): DOMMatrix;
+    private _isDirty;
+    isDirty: boolean;
+    private _isVisible;
+    isVisible: boolean;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,6 +35,10 @@ var ComponentMetadataProvider = /** @class */ (function () {
                 optionalMethodList: []
             },
             headerGroupComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            loadingCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
@@ -103,6 +107,10 @@ var ComponentMetadataProvider = /** @class */ (function () {
             toolPanel: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached']
+            },
+            tooltipComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
             }
         };
     };

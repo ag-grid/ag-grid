@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -57,6 +57,8 @@ export declare class Events {
     static EVENT_CELL_FOCUSED: string;
     static EVENT_ROW_SELECTED: string;
     static EVENT_SELECTION_CHANGED: string;
+    static EVENT_CELL_KEY_DOWN: string;
+    static EVENT_CELL_KEY_PRESS: string;
     static EVENT_CELL_MOUSE_OVER: string;
     static EVENT_CELL_MOUSE_OUT: string;
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */

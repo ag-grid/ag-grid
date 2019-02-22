@@ -53,7 +53,7 @@ export class TabbedLayout {
         let minHeight = 0;
 
         this.items.forEach((itemWrapper: TabbedItemWrapper) => {
-            _.removeAllChildren(eDummyBody);
+            _.clearElement(eDummyBody);
 
             const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body.cloneNode(true)) as HTMLElement;
             if (eClone == null) { return; }
@@ -118,7 +118,7 @@ export class TabbedLayout {
             _.callIfPresent(this.params.onActiveItemClicked);
             return;
         }
-        _.removeAllChildren(this.eBody);
+        _.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
         });

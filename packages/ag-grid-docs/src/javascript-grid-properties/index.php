@@ -132,6 +132,13 @@ include '../documentation-main/documentation_header.php';
                 facilitate migration.
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
         </tr>
+        <tr>
+            <th>suppressMaintainUnsortedOrder</th>
+            <td>
+                Set to true to suppress sorting of un-sorted data to match original row data.
+                See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a>
+            </td>
+        </tr>
         </table>
     <h2>Selection</h2>
 
@@ -271,7 +278,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressAggAtRootLevel</th>
-            <td>When true, the aggregations won't be computed for root node of the grid.</td>
+            <td>When true, the aggregations won't be computed for root node of the grid.
+            See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a></td>
         </tr>
         <tr>
             <th>aggregateOnlyChangedColumns</th>
@@ -591,6 +599,10 @@ include '../documentation-main/documentation_header.php';
                 and you want the mouse to scroll the browser page.</td>
         </tr>
         <tr>
+            <th>enableBrowserTooltips</th>
+            <td>Set to true to use the browser's default tooltip instead of using Ag-Grid's Tooltip Component.</td>
+        </tr>
+        <tr>
             <th>enableCellExpressions</th>
             <td>Set to true to allow <a href="../javascript-grid-cell-expressions/#cell-expressions">cell expressions</a>.</td>
         </tr>
@@ -675,15 +687,14 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>suppressTabbing</th>
-            <td>
-                Set to true to remove the grid tabbing functionality. Use this if you want to manage tabbing
-                differently to what the grid provides.
-            </td>
-        </tr>
-        <tr>
             <th>enableRtl</th>
             <td>Set to true to operate grid in <a href="../javascript-grid-rtl/">RTL (Right to Left)</a> mode.</td>
+        </tr>
+        <tr>
+            <th>enableCellTextSelection</th>
+            <td>Set to true to be able to select the text within cells.<br>
+                <strong>Note:</strong> When this is set to true, the clipboard service is disabled.
+            </td>
         </tr>
         <tr>
             <th>debug</th>
@@ -769,7 +780,15 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascriptgridserversidemodel/">Serverside Row Model</a>.
             </td>
         </tr>
+        <tr>
+            <th>suppressBrowserResizeObserver</th>
+            <td>
+                The grid will check for ResizeObserver and use it if it exists in the browser,
+                otherwise it will use the grid's alternative implementation. Some users reported
+                issues with Chrome's ResizeObserver. Use this property to always use the grids
+                alternative implementation should such problems exist.
+            </td>
+        </tr>
     </table>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

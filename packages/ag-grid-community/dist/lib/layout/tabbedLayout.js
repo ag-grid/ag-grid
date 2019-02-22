@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var TabbedLayout = /** @class */ (function () {
         var minWidth = 0;
         var minHeight = 0;
         this.items.forEach(function (itemWrapper) {
-            utils_1._.removeAllChildren(eDummyBody);
+            utils_1._.clearElement(eDummyBody);
             var eClone = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, function (body) { return body.cloneNode(true); });
             if (eClone == null) {
                 return;
@@ -90,7 +90,7 @@ var TabbedLayout = /** @class */ (function () {
             utils_1._.callIfPresent(this.params.onActiveItemClicked);
             return;
         }
-        utils_1._.removeAllChildren(this.eBody);
+        utils_1._.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(function (body) {
             _this.eBody.appendChild(body);
         });

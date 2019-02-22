@@ -1,8 +1,8 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Component } from "../../widgets/component";
-import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
+import { PopupComponent } from "../../widgets/popupComponent";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
  *               want to display text rather than code.
@@ -10,7 +10,7 @@ import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
 export interface ITextCellEditorParams extends ICellEditorParams {
     useFormatter: boolean;
 }
-export declare class TextCellEditor extends Component implements ICellEditorComp {
+export declare class TextCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE;
     private highlightAllOnFocus;
     private focusAfterAttached;
@@ -22,4 +22,5 @@ export declare class TextCellEditor extends Component implements ICellEditorComp
     focusIn(): void;
     getValue(): any;
     private getStartValue;
+    isPopup(): boolean;
 }

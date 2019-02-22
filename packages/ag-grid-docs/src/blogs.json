@@ -132,13 +132,6 @@
         "medium": "https://medium.com/ag-grid/ag-grid-v7-aot-angular-2-components-7130fdb8f480"
     },
     {
-        "title": "ag-Grid - The Enterprise Datagrid For Aurelia",
-        "link": "../ag-grid-datagrid-aurelia/",
-        "date": "30th November 2016",
-        "author": "sean",
-        "medium": "https://medium.com/@underlog_27126/ece33767042b"
-    },
-    {
         "title": "8 reasons to choose ag-Grid as your JavaScript Datagrid",
         "link": "../javascript-datagrid/",
         "date": "27th October 2016",

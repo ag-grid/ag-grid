@@ -12,12 +12,12 @@ $icon-size: 16px !default;
 $row-height: $grid-size * 7 !default;
 // theme shortcuts
 $default-background: white !default;
-$chrome-background: lighten($flat-clouds, 3) !default;
+$chrome-background: lighten($flat-gray-1, 3) !default;
 $active: #0091EA !default;
 $foreground-color: #000 !default;
 $border-color: $flat-silver !default;
 $icon-color: $flat-gray-4 !default;
-$alt-background: $flat-clouds !default;
+$alt-background: $flat-gray-1 !default;
 $odd-row-background-color: rgb(252, 253, 254) !default;
 $header-cell-moving-background-color: $default-background !default;
 
@@ -85,6 +85,11 @@ $secondary-font-weight: 600 !default; // font-secondary-weight
 $card-radius: 2px !default;
 $card-shadow: none !default;
 
+$tooltip-background-color: lighten($flat-gray-2, 5%) !default;
+$tooltip-foreground-color: $foreground-color !default;
+$tooltip-border-radius: $border-radius !default;
+$tooltio-border-color: darken($border-color, 10%) !default;
+
 @import "../../ag-theme-base/vars/ag-theme-base-vars";
 
 $params: (
@@ -111,6 +116,7 @@ $params: (
     disabled-foreground-color: $disabled-foreground-color,
 
     border-color: $border-color,
+    scroll-spacer-border: $scroll-spacer-border,
 
     panel-background-color: $panel-background-color,
     tool-panel-background-color: $tool-panel-background-color,
@@ -164,5 +170,13 @@ $params: (
     icons-path: $icons-path,
     card-radius: $card-radius,
     card-shadow: $card-shadow,
-    use-icons-for-pager-buttons: true
+    use-icons-for-pager-buttons: true,
+
+    tooltip-background-color: $tooltip-background-color,
+    tooltip-foreground-color: $tooltip-foreground-color,
+    tooltip-padding: $tooltip-padding,
+    tooltip-border-radius: $tooltip-border-radius,
+    tooltip-border-color: $tooltip-border-color,
+    tooltip-border-width: $tooltip-border-width,
+    tooltip-border-style: $tooltip-border-style
 );

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33,7 +33,7 @@ var SideBarComp = /** @class */ (function (_super) {
         _this.panelComps = {};
         return _this;
     }
-    // this was deprecated in v19, we can drop in v20
+    /** @deprecated in v19, we can drop in v20 */
     SideBarComp.prototype.getPreferredWidth = function () {
         return this.getGui().clientWidth;
     };

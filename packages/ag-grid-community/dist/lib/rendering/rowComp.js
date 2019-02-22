@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,55 +18,24 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var cellComp_1 = require("./cellComp");
 var rowNode_1 = require("../entities/rowNode");
-var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var column_1 = require("../entities/column");
 var events_1 = require("../events");
-var context_1 = require("../context/context");
 var component_1 = require("../widgets/component");
-var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var utils_1 = require("../utils");
-var LoadingCellRenderer = /** @class */ (function (_super) {
-    __extends(LoadingCellRenderer, _super);
-    function LoadingCellRenderer() {
-        return _super.call(this, LoadingCellRenderer.TEMPLATE) || this;
-    }
-    LoadingCellRenderer.prototype.init = function (params) {
-        var eLoadingIcon = utils_1._.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
-        this.eLoadingIcon.appendChild(eLoadingIcon);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
-    };
-    LoadingCellRenderer.prototype.refresh = function (params) {
-        return false;
-    };
-    LoadingCellRenderer.TEMPLATE = "<div class=\"ag-stub-cell\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], LoadingCellRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eLoadingIcon'),
-        __metadata("design:type", HTMLElement)
-    ], LoadingCellRenderer.prototype, "eLoadingIcon", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eLoadingText'),
-        __metadata("design:type", HTMLElement)
-    ], LoadingCellRenderer.prototype, "eLoadingText", void 0);
-    return LoadingCellRenderer;
-}(component_1.Component));
-exports.LoadingCellRenderer = LoadingCellRenderer;
 var RowComp = /** @class */ (function (_super) {
     __extends(RowComp, _super);
     function RowComp(parentScope, bodyContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, fullWidthContainerComp, rowNode, beans, animateIn, useAnimationFrameForCreate, printLayout, embedFullWidth) {
@@ -181,7 +150,7 @@ var RowComp = /** @class */ (function (_super) {
         // if sliding in, we take the old row top. otherwise we just set the current row top.
         var pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
         var afterPaginationPixels = this.applyPaginationOffset(pixels);
-        var afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        var afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
         var isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
         return isSuppressRowTransform ? "top: " + afterScalingPixels + "px; " : "transform: translateY(" + afterScalingPixels + "px);";
     };
@@ -236,7 +205,7 @@ var RowComp = /** @class */ (function (_super) {
             return null;
         }
         var newChildScope = this.parentScope.$new();
-        newChildScope.data = data;
+        newChildScope.data = __assign({}, data);
         newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
         this.addDestroyFunc(function () {
@@ -403,11 +372,9 @@ var RowComp = /** @class */ (function (_super) {
         this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-dragging', dragging); });
     };
     RowComp.prototype.onExpandedChanged = function () {
-        if (this.rowNode.group && !this.rowNode.footer) {
-            var expanded_1 = this.rowNode.expanded;
-            this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded_1); });
-            this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded_1); });
-        }
+        var rowNode = this.rowNode;
+        this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-group-expanded', rowNode.expanded); });
+        this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-group-contracted', !rowNode.expanded); });
     };
     RowComp.prototype.onDisplayedColumnsChanged = function () {
         if (this.fullWidthRow) {
@@ -722,7 +689,10 @@ var RowComp = /** @class */ (function (_super) {
             res.then(callback);
             _this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
-            _this.angular1Compile(eRow);
+            var isDetailRow = _this.beans.doingMasterDetail && _this.rowNode.detail;
+            if (!isDetailRow) {
+                _this.angular1Compile(eRow);
+            }
         });
     };
     RowComp.prototype.angular1Compile = function (element) {
@@ -753,6 +723,8 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.getInitialRowClasses = function (extraCssClass) {
         var classes = [];
+        var isTreeData = this.beans.gridOptionsWrapper.isTreeData();
+        var rowNode = this.rowNode;
         if (utils_1._.exists(extraCssClass)) {
             classes.push(extraCssClass);
         }
@@ -762,31 +734,36 @@ var RowComp = /** @class */ (function (_super) {
             classes.push('ag-opacity-zero');
         }
         classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
-        if (this.rowNode.isSelected()) {
+        if (rowNode.isSelected()) {
             classes.push('ag-row-selected');
         }
-        if (this.rowNode.group) {
+        if (rowNode.group) {
             classes.push('ag-row-group');
             // if a group, put the level of the group in
-            classes.push('ag-row-level-' + this.rowNode.level);
-            if (this.rowNode.footer) {
+            classes.push('ag-row-level-' + rowNode.level);
+            if (rowNode.footer) {
                 classes.push('ag-row-footer');
             }
         }
         else {
             // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            classes.push('ag-row-level-' + (this.rowNode.parent ? (this.rowNode.parent.level + 1) : '0'));
+            classes.push('ag-row-level-' + (rowNode.parent ? (rowNode.parent.level + 1) : '0'));
         }
-        if (this.rowNode.stub) {
+        if (rowNode.stub) {
             classes.push('ag-row-stub');
         }
         if (this.fullWidthRow) {
             classes.push('ag-full-width-row');
         }
-        if (this.rowNode.group && !this.rowNode.footer) {
-            classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
+        var addExpandedClass = isTreeData ?
+            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
+            rowNode.allChildrenCount :
+            // if normal row grouping, we add expanded classes to groups only
+            rowNode.group && !rowNode.footer;
+        if (addExpandedClass) {
+            classes.push(rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
-        if (this.rowNode.dragging) {
+        if (rowNode.dragging) {
             classes.push('ag-row-dragging');
         }
         utils_1._.pushAll(classes, this.processClassesFromGridOptions());
@@ -1179,7 +1156,7 @@ var RowComp = /** @class */ (function (_super) {
         // visible (ie parent group was expanded) but is now not visible
         if (utils_1._.exists(pixels)) {
             var afterPaginationPixels = this.applyPaginationOffset(pixels);
-            var afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+            var afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
             var topPx_1 = afterScalingPixels + "px";
             if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
                 this.eAllRowContainers.forEach(function (row) { return row.style.top = topPx_1; });

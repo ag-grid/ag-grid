@@ -1,7 +1,7 @@
-
 import {
     ICellEditor,
     Component,
+    PopupComponent,
     Autowired,
     Context,
     Utils,
@@ -15,7 +15,7 @@ import {
 import { RichSelectRow } from "./richSelectRow";
 import { VirtualList } from "../virtualList";
 
-export class RichSelectCellEditor extends Component implements ICellEditor {
+export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
     // tab index is needed so we can focus, which is needed for keyboard events
     private static TEMPLATE =
@@ -120,7 +120,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         const valueFormatted = this.params.formatValue(this.selectedValue);
         const eValue = this.getRefElement('eValue') as HTMLElement;
 
-        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params, eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
 
         const foundRenderer = _.exists(promise);
 
@@ -155,7 +155,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
     private createRowComponent(value: any): Component {
         const valueFormatted = this.params.formatValue(value);
-        const row = new RichSelectRow(this.params.column.getColDef());
+        const row = new RichSelectRow(this.params);
         this.context.wireBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
         return row;
@@ -208,9 +208,5 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         } else {
             return this.originalSelectedValue;
         }
-    }
-
-    public isPopup(): boolean {
-        return true;
     }
 }

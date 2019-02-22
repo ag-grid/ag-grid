@@ -101,7 +101,10 @@ export class ClientSideNodeManager {
         }
 
         // kick off recursion
-        const result = this.recursiveFunction(rowData, null, ClientSideNodeManager.TOP_LEVEL);
+        // we add rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
+        // sets the parent node on each row (even if we are not grouping). so setting parent node
+        // here is for benefit of ag-grid-community users
+        const result = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
 
         if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
@@ -185,7 +188,7 @@ export class ClientSideNodeManager {
 
     private addRowNode(data: any, index?: number): RowNode {
 
-        const newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
+        const newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
 
         if (_.exists(index)) {
             _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
@@ -233,7 +236,7 @@ export class ClientSideNodeManager {
             rowNode.clearRowTop();
 
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-            this.allNodesMap[rowNode.id] = undefined;
+            delete this.allNodesMap[rowNode.id];
         }
     }
 
@@ -268,7 +271,8 @@ export class ClientSideNodeManager {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = node.master; // deprecated, is now 'master'
+            /** @deprecated is now 'master' */
+            node.canFlower = node.master;
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
@@ -346,33 +350,6 @@ export class ClientSideNodeManager {
                 }
             });
         }
-    }
-
-    public insertItemsAtIndex(index: number, rowData: any[]): RowNode[] {
-        if (this.isLegacyTreeData()) { return null; }
-
-        const nodeList = this.rootNode.allLeafChildren;
-
-        if (index > nodeList.length) {
-            console.warn(`ag-Grid: invalid index ${index}, max index is ${nodeList.length}`);
-            return;
-        }
-
-        const newNodes: RowNode[] = [];
-        // go through the items backwards, otherwise they get added in reverse order
-        for (let i = rowData.length - 1; i >= 0; i--) {
-            const data = rowData[i];
-            const newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
-            _.insertIntoArray(nodeList, newNode, index);
-            newNodes.push(newNode);
-        }
-
-        return newNodes.length > 0 ? newNodes : null;
-    }
-
-    public addItems(items: any): RowNode[] {
-        const nodeList = this.rootNode.allLeafChildren;
-        return this.insertItemsAtIndex(nodeList.length, items);
     }
 
     public isLegacyTreeData(): boolean {

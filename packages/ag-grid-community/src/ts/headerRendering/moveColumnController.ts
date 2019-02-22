@@ -223,8 +223,6 @@ export class MoveColumnController implements DropListener {
         // (ie left or right) to the mouse direction. however
         const oldIndex = this.calculateOldIndex(allMovingColumns);
 
-        // fromEnter = false;
-
         for (let i = 0; i < validMoves.length; i++) {
             const newIndex: number = validMoves[i];
 
@@ -293,17 +291,18 @@ export class MoveColumnController implements DropListener {
             availableWidth -= widthOfMovingDisplayedCols;
         }
 
-        // now count how many of the displayed columns will fit to the left
-        for (let i = 0; i < otherDisplayedCols.length; i++) {
-            const col = otherDisplayedCols[i];
-            availableWidth -= col.getActualWidth();
-            if (availableWidth < 0) { break; }
-            displayIndex++;
-        }
-
-        // trial and error, if going right, we adjust by one, i didn't manage to quantify why, but it works
-        if (draggingRight) {
-            displayIndex++;
+        if (availableWidth > 0) {
+            // now count how many of the displayed columns will fit to the left
+            for (let i = 0; i < otherDisplayedCols.length; i++) {
+                const col = otherDisplayedCols[i];
+                availableWidth -= col.getActualWidth();
+                if (availableWidth < 0) { break; }
+                displayIndex++;
+            }
+            // trial and error, if going right, we adjust by one, i didn't manage to quantify why, but it works
+            if (draggingRight) {
+                displayIndex++;
+            }
         }
 
         // the display index is with respect to all the showing columns, however when we move, it's with

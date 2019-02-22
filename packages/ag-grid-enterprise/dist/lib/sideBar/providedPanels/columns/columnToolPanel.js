@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -43,12 +43,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         if (visible && !this.initialised) {
             this.init(this.params);
         }
-        var event = {
-            type: main_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(event);
     };
     ColumnToolPanel.prototype.init = function (params) {
         var defaultParams = {
@@ -89,7 +83,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     ColumnToolPanel.prototype.destroyChildren = function () {
         this.childDestroyFuncs.forEach(function (func) { return func(); });
         this.childDestroyFuncs.length = 0;
-        main_1._.removeAllChildren(this.getGui());
+        main_1._.clearElement(this.getGui());
     };
     ColumnToolPanel.prototype.refresh = function () {
         this.destroyChildren();

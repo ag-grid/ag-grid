@@ -288,11 +288,13 @@ interface IViewportDatasourceParams {
 
     <?= example('Pagination Viewport Example', 'pagination-viewport', 'generated', array('enterprise' => true, "processVue" => true)) ?>
 
-<!--
-This was example put in by niall for trying to figure out how to have unlimited number of rows in grid
-    <h1>Very Large Data Set</h1>
--->
-    <?/*= example('Viewport Big Data', 'viewport-big-data', 'generated', array( 'enterprise'=> true )) */?>
+    <!--
+    This was example put in by niall for trying to figure out how to have unlimited number of rows in grid
+        <h1>Very Large Data Set</h1>
+
+        example('Viewport Big Data', 'viewport-big-data', 'generated', array( 'enterprise'=> true ))
+
+    -->
 
 </div>
 

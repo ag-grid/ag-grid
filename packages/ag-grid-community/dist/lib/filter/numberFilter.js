@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,7 +38,7 @@ var NumberFilter = /** @class */ (function (_super) {
     }
     NumberFilter.prototype.modelFromFloatingFilter = function (from) {
         return {
-            type: this.filter,
+            type: this.selectedFilter,
             filter: Number(from),
             filterTo: this.filterNumberTo,
             filterType: 'number'
@@ -66,7 +66,7 @@ var NumberFilter = /** @class */ (function (_super) {
             this.addFilterChangedEventListeners(type, this.eFilterTextConditionField, this.eFilterToConditionText);
             this.setFilter(this.filterNumberCondition, baseFilter_1.FilterConditionType.CONDITION);
             this.setFilterTo(this.filterNumberConditionTo, baseFilter_1.FilterConditionType.CONDITION);
-            this.setFilterType(this.filterCondition, baseFilter_1.FilterConditionType.CONDITION);
+            this.setFilterType(this.selectedFilterCondition, baseFilter_1.FilterConditionType.CONDITION);
         }
     };
     NumberFilter.prototype.addFilterChangedEventListeners = function (type, filterElement, filterToElement) {
@@ -112,11 +112,11 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.filterValues = function (type) {
         if (type === baseFilter_1.FilterConditionType.MAIN) {
-            return this.filter !== baseFilter_1.BaseFilter.IN_RANGE ?
+            return this.selectedFilter !== baseFilter_1.BaseFilter.IN_RANGE ?
                 this.asNumber(this.filterNumber) :
                 [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
         }
-        return this.filterCondition !== baseFilter_1.BaseFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== baseFilter_1.BaseFilter.IN_RANGE ?
             this.asNumber(this.filterNumberCondition) :
             [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     };
@@ -181,11 +181,11 @@ var NumberFilter = /** @class */ (function (_super) {
         return type === baseFilter_1.FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
     };
     NumberFilter.prototype.serialize = function (type) {
-        var filter = type === baseFilter_1.FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        var selectedFilter = type === baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         var filterNumber = type === baseFilter_1.FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
         var filterNumberTo = type === baseFilter_1.FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
         return {
-            type: filter ? filter : this.defaultFilter,
+            type: selectedFilter ? selectedFilter : this.defaultFilter,
             filter: filterNumber,
             filterTo: filterNumberTo,
             filterType: 'number'
@@ -197,7 +197,7 @@ var NumberFilter = /** @class */ (function (_super) {
         this.setFilterTo(model.filterTo, type);
     };
     NumberFilter.prototype.refreshFilterBodyUi = function (type) {
-        var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         var panel = type === baseFilter_1.FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
         if (!panel) {
             return;

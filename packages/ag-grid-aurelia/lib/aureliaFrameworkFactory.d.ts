@@ -1,4 +1,4 @@
-// ag-grid-aurelia v20.0.0
+// ag-grid-aurelia v20.1.0
 import { Container, ViewResources } from "aurelia-framework";
 import { IFrameworkFactory } from "ag-grid-community";
 export declare class AureliaFrameworkFactory implements IFrameworkFactory {

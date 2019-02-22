@@ -1,86 +1,145 @@
 import {Shape} from "./shape";
-import {chainObjects} from "../../util/object";
-import {Path} from "../path";
+import {Path2D} from "../path2D";
+import {BBox, isPointInBBox} from "../bbox";
 
+/**
+ * Elliptical arc node.
+ */
 export class Arc extends Shape {
 
-    protected static defaults = chainObjects(Shape.defaults, {
-        fillStyle: 'red',
-        strokeStyle: 'black',
+    static create(centerX: number, centerY: number, radiusX: number, radiusY: number,
+                  startAngle: number, endAngle: number, isCounterClockwise = false): Arc {
+        const arc = new Arc();
 
-        x: 0,
-        y: 0,
-        radius: 10,
-        startAngle: 0,
-        endAngle: Math.PI * 2,
-        anticlockwise: false
-    });
+        arc.centerX = centerX;
+        arc.centerY = centerY;
+        arc.radiusX = radiusX;
+        arc.radiusY = radiusY;
+        arc.startAngle = startAngle;
+        arc.endAngle = endAngle;
+        arc.isCounterClockwise = isCounterClockwise;
 
-    constructor() {
-        super();
-        this.fillStyle = Arc.defaults.fillStyle;
-        this.strokeStyle = Arc.defaults.strokeStyle;
+        return arc;
     }
 
     // Declare a path to retain for later rendering and hit testing
-    // using custom Path class. It's pure TypeScript and works in all browsers.
-    protected path = new Path();
+    // using custom Path2D class. It's pure TypeScript and works in all browsers.
+    protected path = new Path2D();
 
-    private _x: number = Arc.defaults.x;
-    set x(value: number) {
-        this._x = value;
-        this.dirty = true;
+    /**
+     * It's not always that the path has to be updated.
+     * For example, if transform attributes (such as `translationX`)
+     * are changed, we don't have to update the path. The `dirtyFlag`
+     * is how we keep track if the path has to be updated or not.
+     */
+    private _isDirtyPath = true;
+    set isDirtyPath(value: boolean) {
+        if (this._isDirtyPath !== value) {
+            this._isDirtyPath = value;
+            if (value) {
+                this.isDirty = true;
+            }
+        }
     }
-    get x(): number {
-        return this._x;
-    }
-
-    private _y: number = Arc.defaults.y;
-    set y(value: number) {
-        this._y = value;
-        this.dirty = true;
-    }
-    get y(): number {
-        return this._y;
-    }
-
-    private _radius: number = Arc.defaults.radius;
-    set radius(value: number) {
-        this._radius = value;
-        this.dirty = true;
-    }
-    get radius(): number {
-        return this._radius;
+    get isDirtyPath(): boolean {
+        return this._isDirtyPath;
     }
 
-    private _startAngle: number = Arc.defaults.startAngle;
+    private _centerX: number = 0;
+    set centerX(value: number) {
+        if (this._centerX !== value) {
+            this._centerX = value;
+            this.isDirtyPath = true;
+        }
+    }
+    get centerX(): number {
+        return this._centerX;
+    }
+
+    private _centerY: number = 0;
+    set centerY(value: number) {
+        if (this._centerY !== value) {
+            this._centerY = value;
+            this.isDirtyPath = true;
+        }
+    }
+    get centerY(): number {
+        return this._centerY;
+    }
+
+    private _radiusX: number = 10;
+    set radiusX(value: number) {
+        if (this._radiusX !== value) {
+            this._radiusX = value;
+            this.isDirtyPath = true;
+        }
+    }
+    get radiusX(): number {
+        return this._radiusX;
+    }
+
+    private _radiusY: number = 10;
+    set radiusY(value: number) {
+        if (this._radiusY !== value) {
+            this._radiusY = value;
+            this.isDirtyPath = true;
+        }
+    }
+    get radiusY(): number {
+        return this._radiusY;
+    }
+
+    private _startAngle: number = 0;
     set startAngle(value: number) {
-        this._startAngle = value;
-        this.dirty = true;
+        if (this._startAngle !== value) {
+            this._startAngle = value;
+            this.isDirtyPath = true;
+        }
     }
     get startAngle(): number {
         return this._startAngle;
     }
 
-    private _endAngle: number = Arc.defaults.endAngle;
+    private _endAngle: number = Math.PI * 2;
     set endAngle(value: number) {
-        this._endAngle = value;
-        this.dirty = true;
+        if (this._endAngle !== value) {
+            this._endAngle = value;
+            this.isDirtyPath = true;
+        }
     }
     get endAngle(): number {
         return this._endAngle;
     }
 
-    private _anticlockwise: boolean = Arc.defaults.anticlockwise;
-    set anticlockwise(value: boolean) {
-        this._anticlockwise = value;
-        this.dirty = true;
+    private _isCounterClockwise: boolean = false;
+    set isCounterClockwise(value: boolean) {
+        if (this._isCounterClockwise !== value) {
+            this._isCounterClockwise = value;
+            this.isDirtyPath = true;
+        }
     }
-    get anticlockwise(): boolean {
-        return this._anticlockwise;
+    get isCounterClockwise(): boolean {
+        return this._isCounterClockwise;
+    }
+
+    set startAngleDeg(value: number) {
+        this.startAngle = value / 180 * Math.PI;
+    }
+    get startAngleDeg(): number {
+        return this.startAngle / Math.PI * 180;
+    }
+
+    set endAngleDeg(value: number) {
+        this.endAngle = value / 180 * Math.PI;
+    }
+    get endAngleDeg(): number {
+        return this.endAngle / Math.PI * 180;
     }
 
     updatePath() {
+        if (!this.isDirtyPath)
+            return;
+
         const path = this.path;
 
         path.clear(); // No need to recreate the Path, can simply clear the existing one.
@@ -89,30 +148,50 @@ export class Arc extends Shape {
         // where you can specify two radii and rotation, while Path2D's `arc` method simply produces
         // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
         // maybe it's because we have to create a new instance of it on each render, who knows...
-        path.cubicArc(this.x, this.y, this.radius, this.radius, 0, this.startAngle, this.endAngle, this.anticlockwise ? 1 : 0);
+        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.isCounterClockwise ? 1 : 0);
         path.closePath();
+
+        this.isDirtyPath = false;
     }
 
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
-        // TODO: implement hit testing in the Path class.
-        // For example:
-        // return this.path.isPointInPath(x, y);
-        return false;
+    readonly getBBox = () => {
+        return {
+            x: this.centerX - this.radiusX,
+            y: this.centerY - this.radiusY,
+            width: this.radiusX * 2,
+            height: this.radiusY * 2
+        };
+    };
+
+    isPointInPath(x: number, y: number): boolean {
+        const point = this.transformPoint(x, y);
+        const bbox = this.getBBox();
+
+        return isPointInBBox(bbox, point.x, point.y)
+            && this.path.isPointInPath(point.x, point.y);
     }
 
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInStroke(x: number, y: number): boolean {
         return false;
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.scene) {
-            this.updatePath();
-            this.applyContextAttributes(ctx);
-            this.scene.appendPath(this.path);
+        if (this.isDirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+
+        this.applyContextAttributes(ctx);
+        this.updatePath();
+        this.scene!.appendPath(this.path);
+
+        if (this.fillStyle) {
             ctx.fill();
+        }
+        if (this.strokeStyle) {
             ctx.stroke();
         }
 
-        this.dirty = false;
+        this.isDirty = false;
     }
 }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 export { AggregationStage } from "./dist/lib/rowStages/aggregationStage";
 export { GroupStage } from "./dist/lib/rowStages/groupStage";
 export { SetFilter } from "./dist/lib/setFilter/setFilter";
@@ -35,3 +35,4 @@ export { ExcelCreator } from "./dist/lib/exporter/excelCreator";
 export { ExcelXmlFactory } from "./dist/lib/exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./dist/lib/exporter/excelXlsxFactory";
 export { ChartingService } from "./dist/lib/charts/chartingService";
+export { WatermarkComp } from "./dist/lib/license/watermark";

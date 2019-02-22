@@ -55,9 +55,9 @@ export class AgCheckbox extends Component {
     }
 
     private loadIcons(): void {
-        _.removeAllChildren(this.eChecked);
-        _.removeAllChildren(this.eUnchecked);
-        _.removeAllChildren(this.eIndeterminate);
+        _.clearElement(this.eChecked);
+        _.clearElement(this.eUnchecked);
+        _.clearElement(this.eIndeterminate);
         if (this.readOnly) {
             this.eChecked.appendChild(_.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
             this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
@@ -120,7 +120,7 @@ export class AgCheckbox extends Component {
         }
     }
 
-    public setSelected(selected: boolean): void {
+    public setSelected(selected: boolean | null): void {
         if (this.selected === selected) {
             return;
         }
@@ -129,6 +129,8 @@ export class AgCheckbox extends Component {
             this.selected = true;
         } else if (selected === false) {
             this.selected = false;
+        } else {
+            this.selected = undefined;
         }
 
         this.updateIcons();

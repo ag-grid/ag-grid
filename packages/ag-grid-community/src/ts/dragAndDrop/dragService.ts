@@ -73,7 +73,9 @@ export class DragService {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const eBody = eDocument.querySelector('body') as HTMLElement;
         if (_.exists(eBody)) {
-            _.addOrRemoveCssClass(eBody, 'ag-body-no-select', noSelect);
+            // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
+            // the mouse isn't selecting text when dragging.
+            _.addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
         }
     }
 

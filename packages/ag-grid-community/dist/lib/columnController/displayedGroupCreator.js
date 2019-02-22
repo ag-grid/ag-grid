@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,7 @@ var DisplayedGroupCreator = /** @class */ (function () {
     sortedVisibleColumns, 
     // the tree of columns, as provided by the users, used to know what groups columns roll up into
     balancedColumnTree, 
-    // create's unique id's for the group
+    // creates unique id's for the group
     groupInstanceIdCreator, 
     // whether it's left, right or center col
     pinned, 

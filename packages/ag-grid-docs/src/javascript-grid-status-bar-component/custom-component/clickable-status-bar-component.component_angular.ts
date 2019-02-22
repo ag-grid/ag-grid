@@ -6,10 +6,8 @@ import {IFilterAngularComp} from "ag-grid-angular";
 @Component({
     selector: 'status-component',
     template: `
-        <div class="container">
-            <div>
-                <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
-            </div>
+        <div class="ag-name-value">
+            <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
         </div>
     `
 })

@@ -1,7 +1,8 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
+import { ChangedPath } from "./rowModels/clientSide/changedPath";
 export declare class SelectionController {
     private eventService;
     private rowModel;
@@ -19,7 +20,7 @@ export declare class SelectionController {
     getSelectedNodes(): RowNode[];
     getSelectedRows(): any[];
     removeGroupsFromSelection(): void;
-    updateGroupsFromChildrenSelections(): void;
+    updateGroupsFromChildrenSelections(changedPath?: ChangedPath): void;
     getNodeForIdIfSelected(id: number): RowNode | undefined;
     clearOtherNodes(rowNodeToKeepSelected: RowNode): number;
     private onRowSelected;
@@ -32,8 +33,24 @@ export declare class SelectionController {
     isEmpty(): boolean;
     deselectAllRowNodes(justFiltered?: boolean): void;
     selectAllRowNodes(justFiltered?: boolean): void;
+    /**
+     * @method
+     * @deprecated
+     */
     selectNode(rowNode: RowNode | null, tryMulti: boolean): void;
+    /**
+     * @method
+     * @deprecated
+     */
     deselectIndex(rowIndex: number): void;
+    /**
+     * @method
+     * @deprecated
+     */
     deselectNode(rowNode: RowNode | null): void;
+    /**
+     * @method
+     * @deprecated
+     */
     selectIndex(index: any, tryMulti: boolean): void;
 }

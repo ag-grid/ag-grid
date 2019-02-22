@@ -237,7 +237,7 @@ export abstract class RowNodeBlock extends BeanStub {
                 rowNode.childrenCache = null;
             }
             // this is needed, so row render knows to fade out the row, otherwise it
-            // see's row top is present, and thinks the row should be shown. maybe
+            // sees row top is present, and thinks the row should be shown. maybe
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
@@ -254,7 +254,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
         lastRow = _.cleanNumber(lastRow);
 
-        // check here if lastrow should be set
+        // check here if lastRow should be set
         const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: true,

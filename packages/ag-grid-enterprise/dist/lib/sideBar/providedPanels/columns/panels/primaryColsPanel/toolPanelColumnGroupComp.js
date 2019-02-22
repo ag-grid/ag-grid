@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -122,7 +122,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             }
         }
         else {
-            var allowedColumns = childColumns.filter(function (c) { return !c.isLockVisible(); });
+            var isAllowedColumn = function (c) { return !c.isLockVisible() && !c.getColDef().suppressToolPanel; };
+            var allowedColumns = childColumns.filter(isAllowedColumn);
             this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
         if (this.selectionCallback) {
@@ -217,10 +218,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var visibleChildCount = 0;
         var hiddenChildCount = 0;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            // ignore lock visible columns
-            if (column.isLockVisible()) {
-                return;
-            }
+            // ignore lock visible columns and columns set to 'suppressToolPanel'
+            var ignoredColumn = column.isLockVisible() || column.getColDef().suppressToolPanel;
+            if (ignoredColumn)
+                return null;
             if (_this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;
             }
@@ -230,7 +231,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         });
         var selectedValue;
         if (visibleChildCount > 0 && hiddenChildCount > 0) {
-            selectedValue = false;
+            selectedValue = null;
         }
         else if (visibleChildCount > 0) {
             selectedValue = true;

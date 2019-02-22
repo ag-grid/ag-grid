@@ -1,7 +1,8 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 export declare class LicenseManager {
     private static RELEASE_INFORMATION;
     private static licenseKey;
+    private displayWatermark;
     private md5;
     validateLicense(): void;
     private static extractExpiry;
@@ -11,6 +12,7 @@ export declare class LicenseManager {
         valid: boolean;
         expiry: string | null;
     };
+    isDisplayWatermark(): boolean;
     private static outputMessage;
     private static formatDate;
     private static getGridReleaseDate;

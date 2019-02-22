@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,15 +46,19 @@ var ColumnFactory = /** @class */ (function () {
         // we take a copy of the columns as we are going to be removing from them
         var existingColsCopy = existingColumns ? existingColumns.slice() : null;
         // create am unbalanced tree that maps the provided definitions
-        var unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingColsCopy, columnKeyCreator);
+        var unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns, existingColsCopy, columnKeyCreator, null);
         var treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         var res = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
-        this.columnUtils.depthFirstOriginalTreeSearch(res, function (child) {
+        var deptFirstCallback = function (child, parent) {
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
                 child.setupExpandable();
             }
-        });
+            // we set the original parents at the end, rather than when we go along, as balancing the tree
+            // adds extra levels into the tree. so we can only set parents when balancing is done.
+            child.setOriginalParent(parent);
+        };
+        this.columnUtils.depthFirstOriginalTreeSearch(null, res, deptFirstCallback);
         return {
             columnTree: res,
             treeDept: treeDept
@@ -77,6 +81,7 @@ var ColumnFactory = /** @class */ (function () {
             var autoGroup = new originalColumnGroup_1.OriginalColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true, i);
             this.context.wireBean(autoGroup);
             autoGroup.setChildren([nextChild]);
+            nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
         }
         // at this point, the nextChild is the top most item in the tree
@@ -132,7 +137,7 @@ var ColumnFactory = /** @class */ (function () {
         }
         return maxDeptThisLevel;
     };
-    ColumnFactory.prototype.recursivelyCreateColumns = function (defs, level, primaryColumns, existingColsCopy, columnKeyCreator) {
+    ColumnFactory.prototype.recursivelyCreateColumns = function (defs, level, primaryColumns, existingColsCopy, columnKeyCreator, parent) {
         var _this = this;
         var result = [];
         if (!defs) {
@@ -141,21 +146,21 @@ var ColumnFactory = /** @class */ (function () {
         defs.forEach(function (def) {
             var newGroupOrColumn;
             if (_this.isColumnGroup(def)) {
-                newGroupOrColumn = _this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator);
+                newGroupOrColumn = _this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, parent);
             }
             else {
-                newGroupOrColumn = _this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
+                newGroupOrColumn = _this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator, parent);
             }
             result.push(newGroupOrColumn);
         });
         return result;
     };
-    ColumnFactory.prototype.createColumnGroup = function (primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator) {
+    ColumnFactory.prototype.createColumnGroup = function (primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, parent) {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
-        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator);
+        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
         originalGroup.setChildren(children);
         return originalGroup;
     };
@@ -166,16 +171,19 @@ var ColumnFactory = /** @class */ (function () {
         this.checkForDeprecatedItems(colGroupDefMerged);
         return colGroupDefMerged;
     };
-    ColumnFactory.prototype.createColumn = function (primaryColumns, colDef, existingColsCopy, columnKeyCreator) {
+    ColumnFactory.prototype.createColumn = function (primaryColumns, colDef, existingColsCopy, columnKeyCreator, parent) {
         var colDefMerged = this.mergeColDefs(colDef);
         this.checkForDeprecatedItems(colDefMerged);
         // see if column already exists
         var column = this.findExistingColumn(colDef, existingColsCopy);
-        // no existing column, need to create one
         if (!column) {
+            // no existing column, need to create one
             var colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
             column = new column_1.Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.wireBean(column);
+        }
+        else {
+            column.setColDef(colDefMerged, colDef);
         }
         return column;
     };
@@ -199,7 +207,7 @@ var ColumnFactory = /** @class */ (function () {
             }
         });
         // make sure we remove, so if user provided duplicate id, then we don't have more than
-        // one column instance for colDef's with common id
+        // one column instance for colDef with common id
         if (res) {
             utils_1._.removeFromArray(existingColsCopy, res);
         }

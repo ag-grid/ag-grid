@@ -3,8 +3,8 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
-import { ColDef, ColGroupDef, IAggFunc } from "./colDef";
+import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
+import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
@@ -17,7 +17,7 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellFocusedEvent,
+    CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -85,23 +85,35 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
+    suppressBrowserResizeObserver?: boolean;
     rowDragManaged?: boolean;
     suppressRowDrag?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
+    deltaColumnMode?: boolean;
     scrollbarWidth?: number;
-    toolPanelSuppressRowGroups?: boolean; //deprecated
-    toolPanelSuppressValues?: boolean; //deprecated
-    toolPanelSuppressPivots?: boolean; //deprecated
-    toolPanelSuppressPivotMode?: boolean; //deprecated
-    toolPanelSuppressSideButtons?: boolean; //deprecated
-    toolPanelSuppressColumnFilter?: boolean; //deprecated
-    toolPanelSuppressColumnSelectAll?: boolean; //deprecated
-    toolPanelSuppressColumnExpandAll?: boolean; //deprecated
-    contractColumnSelection?: boolean; //deprecated
+    /** @deprecated */
+    toolPanelSuppressRowGroups?: boolean;
+    /** @deprecated */
+    toolPanelSuppressValues?: boolean;
+    /** @deprecated */
+    toolPanelSuppressPivots?: boolean;
+    /** @deprecated */
+    toolPanelSuppressPivotMode?: boolean;
+    /** @deprecated */
+    toolPanelSuppressSideButtons?: boolean;
+    /** @deprecated */
+    toolPanelSuppressColumnFilter?: boolean;
+    /** @deprecated */
+    toolPanelSuppressColumnSelectAll?: boolean;
+    /** @deprecated */
+    toolPanelSuppressColumnExpandAll?: boolean;
+    /** @deprecated */
+    contractColumnSelection?: boolean;
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
     suppressCellSelection?: boolean;
+    suppressMaintainUnsortedOrder?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;
     multiSortKey?: string;
@@ -113,13 +125,20 @@ export interface GridOptions {
     unSortIcon?: boolean;
     rowBuffer?: number;
     enableRtl?: boolean;
-    enableColResize?: boolean; // deprecated in v20, use colDef.resizable instead
+    /** @deprecated in v20, use colDef.resizable instead */
+    enableColResize?: boolean;
+    enableBrowserTooltips?: boolean;
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
-    enableSorting?: boolean; // deprecated in v20, use colDef.sortable instead
-    enableServerSideSorting?: boolean; // deprecated in v20, use colDef.sortable instead
-    enableFilter?: boolean; // deprecated in v20, use colDef.filter = true instead
-    enableServerSideFilter?: boolean; // deprecated in v20, use colDef.filter = true instead
+    enableCellTextSelection?: boolean;
+    /** @deprecated in v20, use colDef.sortable instead */
+    enableSorting?: boolean;
+    /** @deprecated in v20,  use colDef.sortable instead */
+    enableServerSideSorting?: boolean;
+    /** @deprecated in v20, use colDef.filter = true instead */
+    enableFilter?: boolean;
+    /** @deprecated in v20, use colDef.filter = true instead */
+    enableServerSideFilter?: boolean;
     enableGroupEdit?: boolean;
     enterMovesDownAfterEdit?: boolean;
     enterMovesDown?: boolean;
@@ -129,6 +148,10 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+
+    /** Allows user to suppress certain keyboard events */
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+
     stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
     icons?: any; // should be typed
@@ -155,13 +178,14 @@ export interface GridOptions {
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
-    pivotTotals?: boolean; //deprecated
+    /** @deprecated */
+    pivotTotals?: boolean;
     pivotColumnGroupTotals?: string;
     pivotRowTotals?: string;
     suppressEnterpriseResetOnNewColumns?: boolean;
+    // enterprise only
     enableRangeSelection?: boolean;
     suppressMultiRangeSelection?: boolean;
-    // enterprise only
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
@@ -188,6 +212,7 @@ export interface GridOptions {
     batchUpdateWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
+    suppressMaxRenderedRowRestriction?: boolean;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;
@@ -202,7 +227,12 @@ export interface GridOptions {
     editType?: string;
     suppressTouch?: boolean;
     suppressAsyncEvents?: boolean;
+
+    /** @deprecated */
     embedFullWidthRows?: boolean;
+    /** deprecated */
+    deprecatedEmbedFullWidthRows?: boolean;
+
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
     floatingFilter?: boolean;
@@ -257,7 +287,7 @@ export interface GridOptions {
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
-    //Deprecated in v11.0 substituted by autoGroupColumnDef
+    /** @deprecated in v11.0 substituted by autoGroupColumnDef */
     groupColumnDef?: ColDef;
     autoGroupColumnDef?: ColDef;
     forPrint?: boolean;
@@ -273,7 +303,8 @@ export interface GridOptions {
     rowStyle?: any;
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
-    slaveGrids?: GridOptions[]; // slaveGrids deprecated, replace with alignedGrids
+    /** @deprecated slaveGrids, replace with alignedGrids */
+    slaveGrids?: GridOptions[];
     alignedGrids?: GridOptions[];
     rowSelection?: string;
     rowDeselection?: boolean;
@@ -299,7 +330,8 @@ export interface GridOptions {
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
-    showToolPanel?: boolean; //deprecated
+    /** @deprecated */
+    showToolPanel?: boolean;
     sideBar?: SideBarDef | string | boolean;
     columnDefs?: (ColDef | ColGroupDef)[];
     columnTypes?: { [key: string]: ColDef };
@@ -323,7 +355,7 @@ export interface GridOptions {
     postProcessPopup?: (params: PostProcessPopupParams) => void;
     frameworkComponents?: { [p: string]: { new(): any } } | any;
     components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>> };
-    dateComponent?: { new(): IDateComp };
+    dateComponent?: string | { new(): IDateComp };
     dateComponentFramework?: any;
     groupRowRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
@@ -346,8 +378,13 @@ export interface GridOptions {
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
+    loadingCellRenderer?: { new(): ICellRenderer } | string;
+    loadingCellRendererFramework?: any;
+    loadingCellRendererParams?: any;
+
     loadingOverlayComponent?: { new(): ILoadingOverlayComp } | string;
     loadingOverlayComponentFramework?: any;
+
     noRowsOverlayComponent?: { new(): INoRowsOverlayComp } | string;
     noRowsOverlayComponentFramework?: any;
 
@@ -441,6 +478,10 @@ export interface GridOptions {
 
     onModelUpdated?(event: ModelUpdatedEvent): void;
 
+    onCellKeyDown?(event: CellKeyDownEvent): void;
+
+    onCellKeyPress?(event: CellKeyPressEvent): void;
+
     onCellClicked?(event: CellClickedEvent): void;
 
     onCellMouseDown?(event: CellMouseDownEvent): void;
@@ -511,7 +552,7 @@ export interface GridOptions {
 
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
 
-    // deprecated
+    /** @deprecated */
     onGridSizeChanged?(event: any): void;
 
     /****************************************************************

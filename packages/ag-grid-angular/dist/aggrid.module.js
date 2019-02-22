@@ -1,10 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var core_2 = require("@angular/core");
 var agGridNg2_1 = require("./agGridNg2");
-var ng2ComponentFactory_1 = require("./ng2ComponentFactory");
-var baseComponentFactory_1 = require("./baseComponentFactory");
 var agGridColumn_1 = require("./agGridColumn");
 var AgGridModule = /** @class */ (function () {
     function AgGridModule() {
@@ -13,19 +10,15 @@ var AgGridModule = /** @class */ (function () {
         return {
             ngModule: AgGridModule,
             providers: [
-                ng2ComponentFactory_1.Ng2ComponentFactory,
-                { provide: baseComponentFactory_1.BaseComponentFactory, useExisting: ng2ComponentFactory_1.Ng2ComponentFactory },
-                { provide: core_2.ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true }
+                { provide: core_1.ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true }
             ],
         };
     };
-    AgGridModule.forRoot = function () {
-        console.warn("AgGridModule.forRoot() is deprecated - please use AgGridModule.withComponents([...optional components...]) instead.");
+    AgGridModule.forRoot = function (components) {
         return {
             ngModule: AgGridModule,
             providers: [
-                ng2ComponentFactory_1.Ng2ComponentFactory,
-                { provide: baseComponentFactory_1.BaseComponentFactory, useExisting: ng2ComponentFactory_1.Ng2ComponentFactory }
+                { provide: core_1.ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true }
             ],
         };
     };

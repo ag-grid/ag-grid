@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -43,6 +43,7 @@ var BandScale = /** @class */ (function () {
                     index[value] = domain.push(value) - 1;
                 }
             });
+            this.rescale();
         },
         enumerable: true,
         configurable: true

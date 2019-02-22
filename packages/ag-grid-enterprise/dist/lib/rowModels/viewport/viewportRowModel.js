@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20,6 +20,8 @@ var ViewportRowModel = /** @class */ (function () {
         this.rowCount = -1;
         this.rowNodesByIndex = {};
     }
+    // we don't implement as lazy row heights is not supported in this row model
+    ViewportRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ViewportRowModel.prototype.init = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
@@ -32,8 +34,13 @@ var ViewportRowModel = /** @class */ (function () {
         return true;
     };
     ViewportRowModel.prototype.destroyDatasource = function () {
-        if (this.viewportDatasource && this.viewportDatasource.destroy) {
-            this.viewportDatasource.destroy();
+        if (this.viewportDatasource) {
+            if (this.viewportDatasource.destroy) {
+                this.viewportDatasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.firstRow = -1;
+            this.lastRow = -1;
         }
     };
     ViewportRowModel.prototype.calculateFirstRow = function (firstRenderedRow) {
@@ -246,6 +253,10 @@ var ViewportRowModel = /** @class */ (function () {
         ag_grid_community_1.Autowired('columnApi'),
         __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], ViewportRowModel.prototype, "columnApi", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('rowRenderer'),
+        __metadata("design:type", ag_grid_community_1.RowRenderer)
+    ], ViewportRowModel.prototype, "rowRenderer", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

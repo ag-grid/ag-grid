@@ -13,7 +13,7 @@ export default Vue.extend({
                  :gridOptions="gridOptions"
                  :columnDefs="colDefs"
                  :rowData="rowData"
-                 :gridReady="onGridReady">
+                 @grid-ready="onGridReady">
             </ag-grid-vue>
         </div>
     `,

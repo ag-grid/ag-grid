@@ -52,6 +52,8 @@ export class ServerSideBlock extends RowNodeBlock {
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
+    public static readonly DefaultBlockSize = 100;
+
     constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
         super(pageNumber, params);
         this.params = params;
@@ -180,7 +182,7 @@ export class ServerSideBlock extends RowNodeBlock {
             const idToUse = this.createIdForIndex(index);
 
             rowNode.setDataAndId(data, idToUse);
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
 
             if (this.usingTreeData) {
                 const getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
@@ -367,7 +369,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 // then check if current row contains a detail row with pixel in range
                 const expandedMasterRow = rowNode.master && rowNode.expanded;
                 if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
-                    return rowNode.rowIndex;
+                    return rowNode.detailNode.rowIndex;
                 }
 
                 // then check if it's a group row with a child cache with pixel in range

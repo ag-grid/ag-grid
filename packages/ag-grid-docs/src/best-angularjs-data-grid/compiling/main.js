@@ -50,6 +50,7 @@ module.controller("exampleCtrl", function($scope, $http) {
 module.directive('country', function () {
 
     var FLAG_CODES = {
+        'Great Britain': 'gb',
         'Ireland': 'ie',
         'United States': 'us',
         'Russia': 'ru',

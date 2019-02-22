@@ -1,4 +1,4 @@
-// ag-grid-aurelia v20.0.0
+// ag-grid-aurelia v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {

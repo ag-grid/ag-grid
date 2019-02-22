@@ -52,6 +52,19 @@ export class Utils {
 
     private static doOnceFlags: { [key: string]: boolean } = {};
 
+    // https://ag-grid.com/forum/showthread.php?tid=4362
+    // when in IE or Edge, when you are editing a cell, then click on another cell,
+    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
+    // don't work. appears that when you update the dom in IE it looses focus
+    static doIeFocusHack(el: HTMLElement): void {
+        if (_.isBrowserIE() || _.isBrowserEdge()) {
+            if (_.missing(document.activeElement) || document.activeElement === document.body) {
+                // console.log('missing focus');
+                el.focus();
+            }
+        }
+    }
+
     // if the key was passed before, then doesn't execute the func
     static doOnce(func: () => void, key: string) {
         if (this.doOnceFlags[key]) {
@@ -83,7 +96,7 @@ export class Utils {
         return Math.max(diffX, diffY) <= pixelCount;
     }
 
-    public static jsonEquals(val1: any, val2: any): boolean {
+    static jsonEquals(val1: any, val2: any): boolean {
 
         const val1Json = val1 ? JSON.stringify(val1) : null;
         const val2Json = val2 ? JSON.stringify(val2) : null;
@@ -239,10 +252,6 @@ export class Utils {
             }
         }
         element.scrollLeft = value;
-    }
-
-    static clearElement(el: HTMLElement): void {
-        while (el.firstChild) { el.removeChild(el.firstChild); }
     }
 
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
@@ -534,7 +543,7 @@ export class Utils {
             const printableCharacter = event.key.length === 1;
 
             // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
-            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browers
+            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browsers
             const numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
 
             return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
@@ -608,12 +617,8 @@ export class Utils {
         return value != null && this.exists(value) && value.length > 0;
     }
 
-    static removeAllChildren(node: HTMLElement) {
-        if (node) {
-            while (node.hasChildNodes() && node.lastChild) {
-                node.removeChild(node.lastChild);
-            }
-        }
+    static clearElement(el: HTMLElement): void {
+        while (el && el.firstChild) { el.removeChild(el.firstChild); }
     }
 
     static removeElement(parent: HTMLElement, cssSelector: string) {
@@ -1054,7 +1059,7 @@ export class Utils {
         columnGroupClosed: 'contracted',
         columnSelectClosed: 'tree-closed',
         columnSelectOpen: 'tree-open',
-        // from deprecated header, remove at some point
+        /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',
         sortUnSort: 'none'
@@ -1110,6 +1115,7 @@ export class Utils {
                 throw new Error(`${iconName} did not find class`);
             }
             span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            span.setAttribute("unselectable", "on");
             return span;
         }
     }
@@ -1276,7 +1282,8 @@ export class Utils {
     static isBrowserChrome(): boolean {
         if (this.isChrome === undefined) {
             const win = window as any;
-            this.isChrome = !!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime);
+            this.isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
+                            (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
         }
         return this.isChrome;
     }
@@ -1302,6 +1309,19 @@ export class Utils {
     static getTarget(event: Event): Element {
         const eventNoType = event as any;
         return eventNoType.target || eventNoType.srcElement;
+    }
+
+    static isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
+        let counter = 0;
+        while (element) {
+            if (this.containsClass(element, cls)) {
+                return true;
+            }
+            element = element.parentElement;
+            if (maxNest && ++counter > maxNest) { break; }
+        }
+
+        return false;
     }
 
     static isElementInEventPath(element: HTMLElement, event: Event): boolean {
@@ -1655,10 +1675,9 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function() {
+        return function(...args: any[]) {
             // reference the context and args for the setTimeout function
             const context = this;
-            const args = arguments;
 
             // Should the function be called now? If immediate is true
             //   and not already in a timeout then the answer is: Yes
@@ -1802,7 +1821,9 @@ export class Utils {
         if (!rowNodes) {
             return;
         }
-        rowNodes.sort((nodeA: RowNode, nodeB: RowNode) => {
+
+        const comparator = (nodeA: RowNode, nodeB: RowNode) => {
+
             const positionA = rowNodeOrder[nodeA.id];
             const positionB = rowNodeOrder[nodeB.id];
 
@@ -1820,16 +1841,44 @@ export class Utils {
                 // when comparing two filler nodes, we have no index to compare them
                 // against, however we want this sorting to be deterministic, so that
                 // the rows don't jump around as the user does delta updates. so we
-                // want the same sort result. so we use the id - which doesn't make sense
+                // want the same sort result. so we use the __objectId - which doesn't make sense
                 // from a sorting point of view, but does give consistent behaviour between
                 // calls. otherwise groups jump around as delta updates are done.
-                return nodeA.id > nodeB.id ? 1 : -1;
+                // note: previously here we used nodeId, however this gave a strange order
+                // as string ordering of numbers is wrong, so using id based on creation order
+                // as least gives better looking order.
+                return nodeA.__objectId - nodeB.__objectId;
             } else if (aHasIndex) {
                 return 1;
-            } else {
-                return -1;
             }
-        });
+
+            return -1;
+        };
+
+        // const a = new Date().getTime();
+
+        // check if the list first needs sorting
+        let rowNodeA: RowNode;
+        let rowNodeB: RowNode;
+        let atLeastOneOutOfOrder = false;
+        for (let i = 0; i < rowNodes.length - 1; i++) {
+            rowNodeA = rowNodes[i];
+            rowNodeB = rowNodes[i + 1];
+            if (comparator(rowNodeA, rowNodeB) > 0) {
+                atLeastOneOutOfOrder = true;
+                break;
+            }
+        }
+
+        // const b = new Date().getTime();
+
+        if (atLeastOneOutOfOrder) {
+            rowNodes.sort(comparator);
+        }
+
+        // const c = new Date().getTime();
+
+        // console.log(`${this.count}: ${rowNodes.length} items, ${b-a}ms ${atLeastOneOutOfOrder} ${c-b}ms`);
     }
 
     public static fuzzyCheckStrings(inputValues: string[],

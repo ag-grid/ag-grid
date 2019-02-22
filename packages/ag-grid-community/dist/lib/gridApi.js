@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,6 @@ var valueService_1 = require("./valueService/valueService");
 var eventService_1 = require("./eventService");
 var constants_1 = require("./constants");
 var context_1 = require("./context/context");
-var gridCore_1 = require("./gridCore");
 var sortController_1 = require("./sortController");
 var focusedCellController_1 = require("./focusedCellController");
 var gridCell_1 = require("./entities/gridCell");
@@ -54,6 +53,9 @@ var GridApi = /** @class */ (function () {
     }
     GridApi.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
+    };
+    GridApi.prototype.registerGridCore = function (gridCore) {
+        this.gridCore = gridCore;
     };
     GridApi.prototype.registerHeaderRootComp = function (headerRootComp) {
         this.headerRootComp = headerRootComp;
@@ -112,7 +114,7 @@ var GridApi = /** @class */ (function () {
         }
         this.excelCreator.exportDataAsExcel(params);
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.setEnterpriseDatasource = function (datasource) {
         console.warn("ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()");
         this.setServerSideDatasource(datasource);
@@ -163,32 +165,32 @@ var GridApi = /** @class */ (function () {
             console.warn('cannot call setRowData unless using normal row model');
         }
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.setFloatingTopRowData = function (rows) {
         console.warn('ag-Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()');
         this.setPinnedTopRowData(rows);
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.setFloatingBottomRowData = function (rows) {
         console.warn('ag-Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()');
         this.setPinnedBottomRowData(rows);
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.getFloatingTopRowCount = function () {
         console.warn('ag-Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()');
         return this.getPinnedTopRowCount();
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.getFloatingBottomRowCount = function () {
         console.warn('ag-Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()');
         return this.getPinnedBottomRowCount();
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.getFloatingTopRow = function (index) {
         console.warn('ag-Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
         return this.getPinnedTopRow(index);
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.getFloatingBottomRow = function (index) {
         console.warn('ag-Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
         return this.getPinnedBottomRow(index);
@@ -228,9 +230,7 @@ var GridApi = /** @class */ (function () {
         this.gridOptionsWrapper.setProperty('alwaysShowVerticalScroll', show);
     };
     GridApi.prototype.refreshToolPanel = function () {
-        if (this.sideBarComp) {
-            this.sideBarComp.refresh();
-        }
+        this.gridCore.refreshSideBar();
     };
     GridApi.prototype.refreshCells = function (params) {
         if (params === void 0) { params = {}; }
@@ -292,26 +292,26 @@ var GridApi = /** @class */ (function () {
             console.log('average reflow = ' + (totalReflow / iterationCount) + 'ms');
         }
     };
-    // *** deprecated
+    /** @deprecated */
     GridApi.prototype.refreshView = function () {
         console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
         this.redrawRows();
     };
-    // *** deprecated
+    //** @deprecated */
     GridApi.prototype.refreshRows = function (rowNodes) {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({ rowNodes: rowNodes });
     };
-    // *** deprecated
+    /** @deprecated */
     GridApi.prototype.rowDataChanged = function (rows) {
         console.warn('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node');
         this.redrawRows();
     };
-    // *** deprecated
+    /** @deprecated */
     GridApi.prototype.softRefreshView = function () {
         console.error('ag-Grid: since v16, softRefreshView() is no longer supported. Please check the documentation on how to refresh.');
     };
-    // *** deprecated
+    /** @deprecated */
     GridApi.prototype.refreshGroupRows = function () {
         console.warn('ag-Grid: since v11.1, refreshGroupRows() is no longer supported, call refreshCells() instead. ' +
             'Because refreshCells() now does dirty checking, it will only refresh cells that have changed, so it should ' +
@@ -329,7 +329,7 @@ var GridApi = /** @class */ (function () {
         return this.filterManager.isAnyFilterPresent();
     };
     GridApi.prototype.isAdvancedFilterPresent = function () {
-        console.log('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
+        console.warn('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
         return this.isColumnFilterPresent();
     };
     GridApi.prototype.isColumnFilterPresent = function () {
@@ -615,6 +615,9 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.setDomLayout = function (domLayout) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     };
+    GridApi.prototype.setEnableCellTextSelection = function (selectable) {
+        this.gridPanel.setCellTextSelection(selectable);
+    };
     GridApi.prototype.getPreferredWidth = function () {
         console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()');
         return this.gridCore.getPreferredWidth();
@@ -717,6 +720,9 @@ var GridApi = /** @class */ (function () {
         this.eventService.dispatchEvent(event);
     };
     GridApi.prototype.destroy = function () {
+        // destroy the UI first (as they use the services)
+        this.gridCore.destroy();
+        // destroy the services
         this.context.destroy();
     };
     GridApi.prototype.resetQuickFilter = function () {
@@ -912,7 +918,7 @@ var GridApi = /** @class */ (function () {
             console.warn("ag-Grid: api.purgeInfiniteCache is only available when rowModelType='infinite'.");
         }
     };
-    // DEPRECATED
+    /** @deprecated */
     GridApi.prototype.purgeEnterpriseCache = function (route) {
         console.warn("ag-grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.purgeServerSideCache()");
         this.purgeServerSideCache(route);
@@ -925,21 +931,6 @@ var GridApi = /** @class */ (function () {
             console.warn("ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.");
         }
     };
-    // public removeFromEnterpriseCache(route: string[], items: any[]): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.removeFromCache(route, items);
-    //     } else {
-    //         console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
-    //
-    // public addToEnterpriseCache(route: string[], items: any[], index: number): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.addToCache(route, items, index);
-    //     } else {
-    //         console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
     GridApi.prototype.getVirtualRowCount = function () {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
         return this.getInfiniteRowCount();
@@ -1059,10 +1050,6 @@ var GridApi = /** @class */ (function () {
         context_1.Optional('excelCreator'),
         __metadata("design:type", Object)
     ], GridApi.prototype, "excelCreator", void 0);
-    __decorate([
-        context_1.Autowired('gridCore'),
-        __metadata("design:type", gridCore_1.GridCore)
-    ], GridApi.prototype, "gridCore", void 0);
     __decorate([
         context_1.Autowired('rowRenderer'),
         __metadata("design:type", rowRenderer_1.RowRenderer)

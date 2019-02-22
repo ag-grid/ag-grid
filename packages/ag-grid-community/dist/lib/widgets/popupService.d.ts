@@ -1,14 +1,16 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { GridCore } from "../gridCore";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 export declare class PopupService {
-    private gridCore;
     private gridOptionsWrapper;
     private environment;
     private eventService;
     private activePopupElements;
+    private gridCore;
+    registerGridCore(gridCore: GridCore): void;
     private getDocument;
     private getPopupParent;
     positionPopupForMenu(params: {
@@ -20,6 +22,8 @@ export declare class PopupService {
         column?: Column;
         type: string;
         mouseEvent: MouseEvent | Touch;
+        nudgeX?: number;
+        nudgeY?: number;
         ePopup: HTMLElement;
     }): void;
     private calculatePointerAlign;

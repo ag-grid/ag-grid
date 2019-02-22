@@ -1,3 +1,4 @@
+import { ColGroupDef } from "../../entities/colDef";
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
@@ -66,7 +67,7 @@ export class HeaderGroupWrapperComp extends Component {
     @PostConstruct
     private postConstruct(): void {
 
-        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
 
         const displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
@@ -95,12 +96,25 @@ export class HeaderGroupWrapperComp extends Component {
         this.onColumnMovingChanged();
     }
 
-    private setupTooltip(): void {
-        const colGroupDef = this.columnGroup.getColGroupDef();
+    public getComponentHolder(): ColGroupDef {
+        return this.columnGroup.getColGroupDef();
+    }
 
-        // add tooltip if exists
-        if (colGroupDef && colGroupDef.headerTooltip) {
-            this.getGui().title = colGroupDef.headerTooltip;
+    public getTooltipText(): string | undefined {
+        const colGroupDef = this.getComponentHolder();
+
+        return colGroupDef && colGroupDef.headerTooltip;
+    }
+
+    private setupTooltip(): void {
+        const tooltipText = this.getTooltipText();
+
+        if (tooltipText == null) { return; }
+
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            this.getGui().setAttribute('title', tooltipText);
+        } else {
+            this.beans.tooltipManager.registerTooltip(this);
         }
     }
 
@@ -108,11 +122,7 @@ export class HeaderGroupWrapperComp extends Component {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        if (this.columnGroup.isMoving()) {
-            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
-        } else {
-            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
-        }
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.columnGroup.isMoving());
     }
 
     private addAttributes(): void {
@@ -189,7 +199,7 @@ export class HeaderGroupWrapperComp extends Component {
     public getDragItemForGroup(): DragItem {
         const allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
 
-        // capture visible state, used when reentering grid to dictate which columns should be visible
+        // capture visible state, used when re-entering grid to dictate which columns should be visible
         const visibleState: { [key: string]: boolean } = {};
         allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
 
@@ -235,8 +245,8 @@ export class HeaderGroupWrapperComp extends Component {
 
         this.onWidthChanged();
 
-        // the child listeners are not tied to this components lifecycle, as children can get added and removed
-        // to the group - hence they are on a different lifecycle. so we must make sure the existing children
+        // the child listeners are not tied to this components life-cycle, as children can get added and removed
+        // to the group - hence they are on a different life-cycle. so we must make sure the existing children
         // listeners are removed when we finally get destroyed
         this.addDestroyFunc(this.destroyListenersOnChildrenColumns.bind(this));
     }

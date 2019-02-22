@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ordinalScale_1 = require("./ordinalScale");
@@ -16,6 +16,7 @@ test('implicit domain creation and explicit unknown', function () {
     expect(scale.convert(1)).toBe(undefined);
     expect(scale.domain).toEqual([3, 2, 1]);
     expect(scale.range).toEqual([]);
+    expect(scale.unknown).toBe(undefined);
     var unknown = 'derp';
     scale.unknown = unknown;
     expect(scale.convert(4)).toBe(unknown);

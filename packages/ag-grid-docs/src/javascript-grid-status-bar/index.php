@@ -178,7 +178,7 @@ gridOptions: {
 
 <p>
     The example below demonstrates providing parameters to the status bar components.
-    Note the following:
+    Note the following:a
     <ul>
         <li>
             The component <code>agAggregationComponent</code> is provided with
@@ -192,6 +192,29 @@ gridOptions: {
 </p>
 
 <?= example('Status Bar Params', 'status-bar-params', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+<h2>Initialisation of Status Bar Components</h2>
+
+<p>The status bar components will be instantiated before the grid is fully initialised - specifically they will be initialised
+before any row data has been rendered.</p>
+
+<p>If you have a component that you wish to work on data once it's ready (calculate the sum of a column for example) then you'll
+need to hook into either the <code>gridReady</code> or the <code>firstDataRendered</code> events.</p>
+
+<snippet>
+function ClickableStatusBarComponent() {
+}
+
+ClickableStatusBarComponent.prototype.init = function (params) {
+    this.params = params;
+
+    console.log(params.api.getModel().rowsToDisplay);       // No rows will be available yet
+
+    params.api.addEventListener('gridReady', () => {        // Or the firstDataRendered event
+        console.log(params.api.getModel().rowsToDisplay);   // Rows will now be available
+    });
+}
+</snippet>
 
 <h2>Status Bar Height</h2>
 

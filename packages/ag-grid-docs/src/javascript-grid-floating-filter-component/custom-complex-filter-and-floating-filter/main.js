@@ -1,4 +1,3 @@
-
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', floatingFilterComponentParams:{
         debounceMs:2000

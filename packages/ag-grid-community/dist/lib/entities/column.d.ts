@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -8,6 +8,7 @@ import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEventType } from "../events";
 import { ColumnGroup } from "./columnGroup";
+import { OriginalColumnGroup } from "./originalColumnGroup";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
     static EVENT_MOVING_CHANGED: string;
     static EVENT_LEFT_CHANGED: string;
@@ -31,9 +32,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private frameworkFactory;
     private columnApi;
     private gridApi;
-    private readonly colDef;
     private readonly colId;
-    private readonly userProvidedColDef;
+    private colDef;
+    private userProvidedColDef;
     private actualWidth;
     private visible;
     private pinned;
@@ -44,9 +45,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private sortedAt;
     private moving;
     private menuVisible;
-    private lockPosition;
-    private lockPinned;
-    private lockVisible;
+    private readonly lockPosition;
+    private readonly lockPinned;
+    private readonly lockVisible;
     private lastLeftPinned;
     private firstRightPinned;
     private minWidth;
@@ -60,13 +61,17 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private aggregationActive;
     private readonly primary;
     private parent;
+    private originalParent;
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean);
+    setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void;
     getUserProvidedColDef(): ColDef;
     isLockPosition(): boolean;
     isLockVisible(): boolean;
     isLockPinned(): boolean;
     setParent(parent: ColumnGroup): void;
     getParent(): ColumnGroup;
+    setOriginalParent(originalParent: OriginalColumnGroup | null): void;
+    getOriginalParent(): OriginalColumnGroup | null;
     initialise(): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;

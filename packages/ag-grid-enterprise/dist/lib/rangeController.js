@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -228,6 +228,17 @@ var RangeController = /** @class */ (function () {
         }
         this.gridPanel.addScrollEventListener(this.bodyScrollListener);
         this.dragging = true;
+        var _a = this.gridPanel.getFloatingTopBottom(), eTop = _a[0], eBottom = _a[1];
+        var target = mouseEvent.target;
+        if (eTop.contains(target)) {
+            this.startedFrom = 'top';
+        }
+        else if (eBottom.contains(target)) {
+            this.startedFrom = 'bottom';
+        }
+        else {
+            this.startedFrom = 'body';
+        }
         this.lastMouseEvent = mouseEvent;
         this.selectionChanged(false, true);
     };
@@ -266,6 +277,7 @@ var RangeController = /** @class */ (function () {
         this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
+        this.startedFrom = null;
         this.dispatchChangedEvent(true, false);
     };
     RangeController.prototype.onDragging = function (mouseEvent) {
@@ -273,7 +285,14 @@ var RangeController = /** @class */ (function () {
             return;
         }
         this.lastMouseEvent = mouseEvent;
-        this.autoScrollService.check(mouseEvent);
+        var _a = this.gridPanel.getFloatingTopBottom(), eTop = _a[0], eBottom = _a[1];
+        var target = mouseEvent.target;
+        var skipVerticalScroll = false;
+        if ((this.startedFrom === 'top' && eTop.contains(target)) ||
+            (this.startedFrom === 'bottom' && eBottom.contains(target))) {
+            skipVerticalScroll = true;
+        }
+        this.autoScrollService.check(mouseEvent, skipVerticalScroll);
         var cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
         if (ag_grid_community_1._.missing(cell)) {
             return;
@@ -375,7 +394,8 @@ var AutoScrollService = /** @class */ (function () {
         this.gridPanel = gridPanel;
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
-    AutoScrollService.prototype.check = function (mouseEvent) {
+    AutoScrollService.prototype.check = function (mouseEvent, skipVerticalScroll) {
+        if (skipVerticalScroll === void 0) { skipVerticalScroll = false; }
         // we don't do ticking if grid is auto height
         if (this.gridOptionsWrapper.getDomLayout() !== ag_grid_community_1.Constants.DOM_LAYOUT_NORMAL) {
             return;
@@ -383,8 +403,8 @@ var AutoScrollService = /** @class */ (function () {
         var rect = this.gridPanel.getBodyClientRect();
         this.tickLeft = mouseEvent.clientX < (rect.left + 20);
         this.tickRight = mouseEvent.clientX > (rect.right - 20);
-        this.tickUp = mouseEvent.clientY < (rect.top + 20);
-        this.tickDown = mouseEvent.clientY > (rect.bottom - 20);
+        this.tickUp = mouseEvent.clientY < (rect.top + 20) && !skipVerticalScroll;
+        this.tickDown = mouseEvent.clientY > (rect.bottom - 20) && !skipVerticalScroll;
         if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
             this.ensureTickingStarted();
         }

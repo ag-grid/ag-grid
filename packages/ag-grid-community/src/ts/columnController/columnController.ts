@@ -180,6 +180,8 @@ export class ColumnController {
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
 
+        const colsPreviouslyExisted = !!this.columnDefs;
+
         this.columnDefs = columnDefs;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
@@ -209,6 +211,10 @@ export class ColumnController {
 
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
+
+        if (this.gridOptionsWrapper.isDeltaColumnMode() && colsPreviouslyExisted) {
+            this.resetColumnState(true, source);
+        }
 
         const eventEverythingChanged: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
@@ -386,7 +392,7 @@ export class ColumnController {
 
         // keep track of which cols we have resized in here
         const columnsAutosized: Column[] = [];
-        // initialise with anything except 0 so that while loop executs at least once
+        // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
         while (changesThisTimeAround !== 0) {
@@ -538,7 +544,9 @@ export class ColumnController {
 
             const col = displayedColumns[i];
 
-            const colSpan = col.getColSpan(rowNode);
+            const maxAllowedColSpan = displayedColumns.length - i;
+            const colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
+
             const columnsToCheckFilter: Column[] = [col];
             if (colSpan > 1) {
                 const colsToRemove = colSpan - 1;
@@ -1193,7 +1201,7 @@ export class ColumnController {
     public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
         let rulePassed = true;
 
-        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, child => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, child => {
             if (!(child instanceof OriginalColumnGroup)) {
                 return;
             }
@@ -1596,7 +1604,7 @@ export class ColumnController {
         });
     }
 
-    public resetColumnState(source: ColumnEventType = "api"): void {
+    public resetColumnState(suppressEverythingEvent = false, source: ColumnEventType = "api"): void {
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         const primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
         const columnStates: ColumnState[] = [];
@@ -1638,10 +1646,10 @@ export class ColumnController {
             });
         }
 
-        this.setColumnState(columnStates, source);
+        this.setColumnState(columnStates, suppressEverythingEvent, source);
     }
 
-    public setColumnState(columnState: ColumnState[], source: ColumnEventType = "api"): boolean {
+    public setColumnState(columnState: ColumnState[], suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
@@ -1709,13 +1717,15 @@ export class ColumnController {
 
         this.updateDisplayedColumns(source);
 
-        const event: ColumnEverythingChangedEvent = {
-            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(event);
+        if (!suppressEverythingEvent) {
+            const event: ColumnEverythingChangedEvent = {
+                type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event);
+        }
 
         this.raiseColumnEvents(columnStateBefore, source);
 
@@ -1755,7 +1765,7 @@ export class ColumnController {
                 columnStateBeforeMap[col.colId] = col;
             });
 
-            this.allDisplayedColumns.forEach(column => {
+            this.gridColumns.forEach(column => {
                 const colStateBefore = columnStateBeforeMap[column.getColId()];
                 if (!colStateBefore || changedPredicate(colStateBefore, column)) {
                     changedColumns.push(column);
@@ -1780,7 +1790,8 @@ export class ColumnController {
         this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
 
         const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide === c.isVisible();
-        this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
+        const cols = getChangedColumns(visibilityChangePredicate);
+        this.raiseColumnVisibleEvent(cols, source);
 
         const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width !== c.getActualWidth();
         this.raiseColumnResizeEvent(getChangedColumns(resizeChangePredicate), source);
@@ -2265,7 +2276,7 @@ export class ColumnController {
     public resetColumnGroupState(source: ColumnEventType = "api"): void {
         const stateItems: { groupId: string, open: boolean | undefined }[] = [];
 
-        this.columnUtils.depthFirstOriginalTreeSearch(this.primaryColumnTree, child => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.primaryColumnTree, child => {
             if (child instanceof OriginalColumnGroup) {
                 const groupState = {
                     groupId: child.getGroupId(),
@@ -2280,7 +2291,7 @@ export class ColumnController {
 
     public getColumnGroupState(): { groupId: string, open: boolean }[] {
         const columnGroupState: { groupId: string, open: boolean }[] = [];
-        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof OriginalColumnGroup) {
                 const originalColumnGroup = node;
                 columnGroupState.push({
@@ -2352,7 +2363,7 @@ export class ColumnController {
 
         // otherwise, search for the column group by id
         let res: OriginalColumnGroup | null = null;
-        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
+        this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof OriginalColumnGroup) {
                 const originalColumnGroup = node;
                 if (originalColumnGroup.getId() === key) {
@@ -2555,34 +2566,52 @@ export class ColumnController {
             return;
         }
 
-        // order cols in teh same order as before. we need to make sure that all
+        // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
         const oldColsOrdered = this.lastPrimaryOrder.filter(col => this.gridColumns.indexOf(col) >= 0);
-        const newColsOrdered = this.gridColumns.filter(col => this.lastPrimaryOrder.indexOf(col) < 0);
-        this.gridColumns = oldColsOrdered.concat(newColsOrdered);
+        const newColsOrdered = this.gridColumns.filter(col => oldColsOrdered.indexOf(col) < 0);
 
-        // let gridColsBeforeSort = this.gridColumns.slice();
-        //
-        // this.gridColumns.sort( (colA: Column, colB: Column): number => {
-        //     let indexA = this.lastPrimaryOrder.indexOf(colA);
-        //     let indexB = this.lastPrimaryOrder.indexOf(colB);
-        //
-        //     let bothColsExistedBefore = indexA>=0 && indexB>=0;
-        //     let neitherColsExistedBefore = indexA<0 && indexB<0;
-        //
-        //     if (bothColsExistedBefore) {
-        //         return indexA - indexB;
-        //     } else if (neitherColsExistedBefore) {
-        //         // if both cols are new, keep current order
-        //         let currentIndexA = gridColsBeforeSort.indexOf(colA);
-        //         let currentIndexB = gridColsBeforeSort.indexOf(colB);
-        //         return currentIndexA - currentIndexB;
-        //     } else if (indexA>0) {
-        //         return -1;
-        //     } else {
-        //         return 1;
-        //     }
-        // });
+        // add in the new columns, at the end (if no group), or at the end of the group (if a group)
+        const newGridColumns = oldColsOrdered.slice();
+        newColsOrdered.forEach(newCol => {
+
+            let parent = newCol.getOriginalParent();
+
+            // if no parent, means we are not grouping, so just add the column to the end
+            if (!parent) {
+                newGridColumns.push(newCol);
+                return;
+            }
+
+            // find the group the column belongs to. if no siblings at the current level (eg col in group on it's
+            // own) then go up one level and look for siblings there.
+            const siblings: Column[] = [];
+            while (!siblings.length && parent) {
+                const leafCols = parent.getLeafColumns();
+                leafCols.forEach(leafCol => {
+                    const presentInNewGriColumns = newGridColumns.indexOf(leafCol) >= 0;
+                    const noYetInSiblings = siblings.indexOf(leafCol) < 0;
+                    if (presentInNewGriColumns && noYetInSiblings) {
+                        siblings.push(leafCol);
+                    }
+                });
+                parent = parent.getOriginalParent();
+            }
+
+            // if no siblings exist at any level, this means the col is in a group (or parent groups) on it's own
+            if (!siblings.length) {
+                newGridColumns.push(newCol);
+                return;
+            }
+
+            // find index of last column in the group
+            const indexes = siblings.map(col => newGridColumns.indexOf(col));
+            const lastIndex = Math.max(...indexes);
+
+            _.insertIntoArray(newGridColumns, newCol, lastIndex + 1);
+        });
+
+        this.gridColumns = newGridColumns;
     }
 
     public isPrimaryColumnGroupsPresent(): boolean {

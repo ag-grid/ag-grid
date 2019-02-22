@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -56,7 +56,11 @@ var FilteredRowsComp = /** @class */ (function (_super) {
     };
     FilteredRowsComp.prototype.getFilteredRowCountValue = function () {
         var filteredRowCount = 0;
-        this.gridApi.forEachNodeAfterFilter(function (node) { return filteredRowCount += 1; });
+        this.gridApi.forEachNodeAfterFilter(function (node) {
+            if (!node.group) {
+                filteredRowCount += 1;
+            }
+        });
         return filteredRowCount;
     };
     FilteredRowsComp.prototype.init = function () { };

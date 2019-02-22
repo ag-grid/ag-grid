@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -7,9 +7,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var OrdinalScale = /** @class */ (function () {
     function OrdinalScale() {
+        /**
+         * Using an object as a map prevents us from uniquely identifying objects and arrays:
+         *
+         *     index[{}]   === index[{foo: 'bar'}]    // true
+         *     index[[{}]] === index[[{foo: 'bar'}]]  // true
+         *
+         * Use `Map` when IE11 is irrelevant.
+         */
+        this.index = {}; // new Map<D, number>();
         this._domain = [];
         this._range = [];
-        this.index = {}; // new Map<D, number>();
     }
     Object.defineProperty(OrdinalScale.prototype, "domain", {
         get: function () {
@@ -19,10 +27,10 @@ var OrdinalScale = /** @class */ (function () {
             var domain = this._domain;
             var index = this.index = {};
             domain.length = 0;
-            values.forEach(function (value) {
-                if (index[value] === undefined) {
-                    domain.push(value);
-                    index[value] = domain.length - 1;
+            values.forEach(function (d) {
+                var key = d + '';
+                if (!index[key]) {
+                    index[key] = domain.push(d);
                 }
             });
         },
@@ -34,24 +42,32 @@ var OrdinalScale = /** @class */ (function () {
             return this._range;
         },
         set: function (values) {
-            var _a;
-            this._range.length = 0;
-            (_a = this._range).push.apply(_a, values);
+            var n = values.length;
+            var range = this._range;
+            range.length = n;
+            for (var i = 0; i < n; i++) {
+                range[i] = values[i];
+            }
         },
         enumerable: true,
         configurable: true
     });
     OrdinalScale.prototype.convert = function (d) {
-        var i = this.index[d];
-        if (i === undefined) {
-            this.domain.push(d);
-            this.index[d] = i = this.domain.length - 1;
+        // Since `d` in `this.index[d]` will be implicitly converted to a string
+        // anyway, we explicitly convert it, because we might have to use it twice.
+        var key = d + '';
+        var i = this.index[key];
+        if (!i) {
+            if (this.unknown !== undefined) {
+                return this.unknown;
+            }
+            this.index[key] = i = this.domain.push(d);
         }
         var range = this.range;
-        if (range.length === 0) {
-            return this.unknown;
-        }
-        return range[i % range.length];
+        // if (range.length === 0) {
+        //     return this.unknown;
+        // }
+        return range[(i - 1) % range.length];
     };
     return OrdinalScale;
 }());

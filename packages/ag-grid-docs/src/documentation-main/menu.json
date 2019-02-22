@@ -108,6 +108,10 @@
         },
         "items": [
           {
+            "title": "Using Node.js & MySQL",
+            "url": "nodejs-server-side-operations/"
+          },
+          {
             "title": "Using GraphQL & MySQL",
             "url": "graphql-server-side-operations/"
           },
@@ -324,7 +328,7 @@
         "url": "javascript-grid-cell-editing/"
       },
       {
-        "title": "Keyboard Navigation",
+        "title": "Keyboard Interaction",
         "url": "javascript-grid-keyboard-navigation/"
       },
       {
@@ -610,6 +614,10 @@
         "url": "javascript-grid-cell-editor/"
       },
       {
+        "title": "Date Component",
+        "url": "javascript-grid-date-component/"
+      },
+      {
         "title": "Filter Component",
         "url": "javascript-grid-filter-component/"
       },
@@ -622,8 +630,8 @@
         "url": "javascript-grid-header-rendering/"
       },
       {
-        "title": "Date Component",
-        "url": "javascript-grid-date-component/"
+        "title": "Loading Cell Renderer",
+        "url": "javascript-grid-loading-cell-renderer/"
       },
       {
         "title": "Overlay Component",
@@ -636,6 +644,10 @@
       {
         "title": "Tool Panel Component",
         "url": "javascript-grid-tool-panel-component/"
+      },
+      {
+        "title": "Tooltip Component",
+        "url": "javascript-grid-tooltip-component/"
       }
     ]
   },

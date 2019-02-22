@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,36 +27,33 @@ var SortService = /** @class */ (function () {
     SortService.prototype.init = function () {
         this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
     };
-    SortService.prototype.sort = function (rowNode, sortOptions, sortActive, deltaSort, dirtyLeafNodes, changedPath) {
+    SortService.prototype.sort = function (sortOptions, sortActive, deltaSort, dirtyLeafNodes, changedPath, noAggregations) {
         var _this = this;
-        // we clear out the 'pull down open parents' first, as the values mix up the sorting
-        this.pullDownDataForHideOpenParents(rowNode.childrenAfterFilter, true);
-        // RE https://ag-grid.atlassian.net/browse/AG-444
-        // Javascript sort is non deterministic when all the array items are equals
-        // ie Comparator always returns 0, so if you want to ensure the array keeps its
-        // order, then you need to add an additional sorting condition manually, in this
-        // case we are going to inspect the original array position. This is what SortedRowNode
-        // object is for
-        if (sortActive) {
-            var sortedRowNodes = deltaSort ?
-                this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath)
-                : this.doFullSort(rowNode, sortOptions);
-            rowNode.childrenAfterSort = sortedRowNodes.map(function (sorted) { return sorted.rowNode; });
-        }
-        else {
-            rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
-        }
-        this.updateChildIndexes(rowNode);
-        this.pullDownDataForHideOpenParents(rowNode.childrenAfterSort, false);
-        // sort any groups recursively
-        rowNode.childrenAfterFilter.forEach(function (child) {
-            if (child.hasChildren()) {
-                _this.sort(child, sortOptions, sortActive, deltaSort, dirtyLeafNodes, changedPath);
+        var callback = function (rowNode) {
+            // we clear out the 'pull down open parents' first, as the values mix up the sorting
+            _this.pullDownDataForHideOpenParents(rowNode.childrenAfterFilter, true);
+            // RE https://ag-grid.atlassian.net/browse/AG-444
+            // Javascript sort is non deterministic when all the array items are equals
+            // ie Comparator always returns 0, so if you want to ensure the array keeps its
+            // order, then you need to add an additional sorting condition manually, in this
+            // case we are going to inspect the original array position. This is what SortedRowNode
+            // object is for
+            if (sortActive) {
+                var sortedRowNodes = deltaSort ?
+                    _this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
+                    : _this.doFullSort(rowNode, sortOptions);
+                rowNode.childrenAfterSort = sortedRowNodes.map(function (sorted) { return sorted.rowNode; });
             }
-        });
-        if (this.postSortFunc) {
-            this.postSortFunc(rowNode.childrenAfterSort);
-        }
+            else {
+                rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
+            }
+            _this.updateChildIndexes(rowNode);
+            _this.pullDownDataForHideOpenParents(rowNode.childrenAfterSort, false);
+            if (_this.postSortFunc) {
+                _this.postSortFunc(rowNode.childrenAfterSort);
+            }
+        };
+        changedPath.forEachChangedNodeDepthFirst(callback);
     };
     SortService.prototype.doFullSort = function (rowNode, sortOptions) {
         var sortedRowNodes = rowNode.childrenAfterFilter
@@ -67,7 +64,7 @@ var SortService = /** @class */ (function () {
     SortService.prototype.mapNodeToSortedNode = function (rowNode, pos) {
         return { currentPos: pos, rowNode: rowNode };
     };
-    SortService.prototype.doDeltaSort = function (rowNode, sortOptions, dirtyLeafNodes, changedPath) {
+    SortService.prototype.doDeltaSort = function (rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations) {
         // clean nodes will be a list of all row nodes that remain in the set
         // and ordered. we start with the old sorted set and take out any nodes
         // that were removed or changed (but not added, added doesn't make sense,
@@ -84,7 +81,7 @@ var SortService = /** @class */ (function () {
             // note: changed path is not active if a) no value columns or b) no transactions. it is never
             // (b) in deltaSort as we only do deltaSort for transactions. for (a) if no value columns, then
             // there is no value in the group that could of changed (ie no aggregate values)
-            var passesChangedPathCheck = changedPath.isActive() ? !changedPath.isInPath(rowNode) : true;
+            var passesChangedPathCheck = noAggregations || changedPath.canSkip(rowNode);
             return passesDirtyNodesCheck && passesChangedPathCheck;
         })
             .map(this.mapNodeToSortedNode.bind(this));
@@ -172,13 +169,15 @@ var SortService = /** @class */ (function () {
         if (utils_1._.missing(rowNode.childrenAfterSort)) {
             return;
         }
-        rowNode.childrenAfterSort.forEach(function (child, index) {
-            var firstChild = index === 0;
-            var lastChild = index === rowNode.childrenAfterSort.length - 1;
+        var listToSort = rowNode.childrenAfterSort;
+        for (var i = 0; i < listToSort.length; i++) {
+            var child = listToSort[i];
+            var firstChild = i === 0;
+            var lastChild = i === rowNode.childrenAfterSort.length - 1;
             child.setFirstChild(firstChild);
             child.setLastChild(lastChild);
-            child.setChildIndex(index);
-        });
+            child.setChildIndex(i);
+        }
     };
     SortService.prototype.pullDownDataForHideOpenParents = function (rowNodes, clearOperation) {
         var _this = this;

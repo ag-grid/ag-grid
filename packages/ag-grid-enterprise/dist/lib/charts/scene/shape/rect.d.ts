@@ -1,35 +1,29 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { Shape } from "./shape";
-import { Path } from "../path";
+import { Path2D } from "../path2D";
 export declare class Rect extends Shape {
-    protected static defaults: {
-        fillStyle: string;
-        strokeStyle: string;
-        lineWidth: number;
-        opacity: number;
-    } & {
-        fillStyle: string;
-        strokeStyle: string;
+    static create(x: number, y: number, width: number, height: number, radius?: number): Rect;
+    protected path: Path2D;
+    private _isDirtyPath;
+    isDirtyPath: boolean;
+    private _x;
+    x: number;
+    private _y;
+    y: number;
+    private _width;
+    width: number;
+    private _height;
+    height: number;
+    private _radius;
+    radius: number;
+    updatePath(): void;
+    readonly getBBox: () => {
         x: number;
         y: number;
         width: number;
         height: number;
-        radius: number;
     };
-    constructor();
-    protected path: Path;
-    _x: number;
-    x: number;
-    _y: number;
-    y: number;
-    _width: number;
-    width: number;
-    _height: number;
-    height: number;
-    _radius: number;
-    radius: number;
-    updatePath(): void;
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean;
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean;
+    isPointInPath(x: number, y: number): boolean;
+    isPointInStroke(x: number, y: number): boolean;
     render(ctx: CanvasRenderingContext2D): void;
 }

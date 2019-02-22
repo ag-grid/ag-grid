@@ -35,6 +35,10 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
+            loadingCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
@@ -100,6 +104,10 @@ export class ComponentMetadataProvider {
             toolPanel: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached']
+            },
+            tooltipComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
             }
         };
     }

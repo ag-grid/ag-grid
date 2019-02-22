@@ -43,7 +43,7 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
 
         this.componentRecipes.newLoadingOverlayComponent().then(renderer => {
             const loadingOverlayWrapper: HTMLElement = this.getRefElement("loadingOverlayWrapper");
-            _.removeAllChildren(loadingOverlayWrapper);
+            _.clearElement(loadingOverlayWrapper);
             loadingOverlayWrapper.appendChild(renderer.getGui());
         });
 
@@ -68,7 +68,7 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
 
         this.componentRecipes.newNoRowsOverlayComponent().then(renderer => {
             const noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");
-            _.removeAllChildren(noRowsOverlayWrapper);
+            _.clearElement(noRowsOverlayWrapper);
             noRowsOverlayWrapper.appendChild(renderer.getGui());
         });
 
@@ -76,13 +76,13 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
     }
 
     public hideOverlay(eOverlayWrapper: HTMLElement): void {
-        _.removeAllChildren(eOverlayWrapper);
+        _.clearElement(eOverlayWrapper);
         _.setVisible(eOverlayWrapper, false);
     }
 
     private showOverlay(eOverlayWrapper: HTMLElement, overlay: HTMLElement): void {
         if (overlay) {
-            _.removeAllChildren(eOverlayWrapper);
+            _.clearElement(eOverlayWrapper);
             _.setVisible(eOverlayWrapper, true);
             eOverlayWrapper.appendChild(overlay);
         } else {

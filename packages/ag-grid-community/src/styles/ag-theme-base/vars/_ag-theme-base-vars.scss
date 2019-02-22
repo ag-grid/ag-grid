@@ -23,9 +23,18 @@ $secondary-font-family: $font-family !default;
 $secondary-font-size: 14px !default;
 $secondary-font-weight: 400 !default;
 
+// Tooltip
+$tooltip-background-color: #535353 !default;
+$tooltip-foreground-color: white !default;
+$tooltip-border-radius: 2px !default;
+$tooltip-padding: 5px !default;
+$tooltip-border-width: 1px !default;
+$tooltip-border-style: solid !default;
+$tooltip-border-color: #ebebeb !default;
+
 // Misc
-$card-shadow: none;
-$card-radius: 0;
+$card-shadow: none !default;
+$card-radius: 0 !default;
 $row-border-width: 0 !default;
 $transition-speed: 120ms !default;
 
@@ -35,3 +44,4 @@ $row-group-indent-size: $grid-size * 3 + $icon-size !default;
 $header-cell-moving-background-color: rgb(190, 190, 190) !default;
 $input-disabled-background-color: #ebebeb !default;
 $cell-horizontal-border: none !default;
+$scroll-spacer-border: 1px solid if($border-color, $border-color, lightgrey) !default;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { Column, Component, Context, DragAndDropService, EventService, GridOptionsWrapper, LoggerFactory } from "ag-grid-community/main";
 export interface BaseDropZonePanelParams {
     dragAndDropIcon: string;

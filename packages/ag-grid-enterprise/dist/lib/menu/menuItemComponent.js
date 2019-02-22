@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -54,7 +54,13 @@ var MenuItemComponent = /** @class */ (function (_super) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
         if (this.params.tooltip) {
-            this.getGui().setAttribute('title', this.params.tooltip);
+            this.tooltip = this.params.tooltip;
+            if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                this.getGui().setAttribute('title', this.tooltip);
+            }
+            else {
+                this.tooltipManager.registerTooltip(this);
+            }
         }
         if (this.params.shortcut) {
             this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
@@ -82,6 +88,12 @@ var MenuItemComponent = /** @class */ (function (_super) {
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(function (it) { return ag_grid_community_1._.addCssClass(_this.getGui(), it); });
         }
+    };
+    MenuItemComponent.prototype.getTooltipText = function () {
+        return this.tooltip;
+    };
+    MenuItemComponent.prototype.getComponentHolder = function () {
+        return undefined;
     };
     MenuItemComponent.prototype.onOptionSelected = function (mouseEvent) {
         var event = {
@@ -113,6 +125,10 @@ var MenuItemComponent = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('tooltipManager'),
+        __metadata("design:type", ag_grid_community_1.TooltipManager)
+    ], MenuItemComponent.prototype, "tooltipManager", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

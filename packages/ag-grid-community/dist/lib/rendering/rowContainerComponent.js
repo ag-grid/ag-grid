@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,7 +60,6 @@ var RowContainerComponent = /** @class */ (function () {
         this.eContainer.style.height = height + "px";
         if (this.eWrapper) {
             this.eWrapper.style.height = height + "px";
-            this.eWrapper.style.minHeight = '100%';
         }
     };
     RowContainerComponent.prototype.flushRowTemplates = function () {

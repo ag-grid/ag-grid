@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var column_1 = require("../entities/column");
 var rowNode_1 = require("../entities/rowNode");
@@ -33,10 +44,12 @@ var CellComp = /** @class */ (function (_super) {
     function CellComp(scope, beans, column, rowNode, rowComp, autoHeightCell, printLayout) {
         var _this = _super.call(this) || this;
         _this.editingCell = false;
+        _this.suppressRefreshCell = false;
+        _this.scope = null;
         // every time we go into edit mode, or back again, this gets incremented.
         // it's the components way of dealing with the async nature of framework components,
         // so if a framework component takes a while to be created, we know if the object
-        // is still relevant when creating is finished. eg we could click edit / unedit 20
+        // is still relevant when creating is finished. eg we could click edit / un-edit 20
         // times before the first React edit component comes back - we should discard
         // the first 19.
         _this.cellEditorVersion = 0;
@@ -64,6 +77,7 @@ var CellComp = /** @class */ (function (_super) {
         return _this;
     }
     CellComp.prototype.getCreateTemplate = function () {
+        var unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'unselectable="on"' : '';
         var templateParts = [];
         var col = this.column;
         var width = this.getCellWidth();
@@ -79,18 +93,19 @@ var CellComp = /** @class */ (function (_super) {
         var cssClasses = this.getInitialCssClasses();
         var stylesForRowSpanning = this.getStylesForRowSpanning();
         if (this.usingWrapper) {
-            wrapperStartTemplate = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
+            wrapperStartTemplate = "<span ref=\"eCellWrapper\" class=\"ag-cell-wrapper\"><span ref=\"eCellValue\" class=\"ag-cell-value\" " + unselectable + ">";
             wrapperEndTemplate = '</span></span>';
         }
-        // hey, this looks like React!!!
         templateParts.push("<div");
         templateParts.push(" tabindex=\"-1\"");
-        templateParts.push(" unselectable=\"on\""); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
+        templateParts.push(" " + unselectable); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
         templateParts.push(" role=\"gridcell\"");
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
         templateParts.push(" class=\"" + cssClasses.join(' ') + "\"");
-        templateParts.push(utils_1._.exists(tooltipSanitised) ? " title=\"" + tooltipSanitised + "\"" : "");
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && utils_1._.exists(tooltipSanitised)) {
+            templateParts.push("title=\"" + tooltipSanitised + "\"");
+        }
         templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + " " + stylesForRowSpanning + "\" >");
         templateParts.push(wrapperStartTemplate);
         if (utils_1._.exists(valueSanitised, true)) {
@@ -139,6 +154,9 @@ var CellComp = /** @class */ (function (_super) {
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
+        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            this.beans.tooltipManager.registerTooltip(this);
+        }
     };
     CellComp.prototype.onColumnHover = function () {
         var isHovered = this.beans.columnHoverService.isHovered(this.column);
@@ -177,7 +195,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.setupColSpan = function () {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (utils_1._.missing(this.column.getColDef().colSpan)) {
+        if (utils_1._.missing(this.getComponentHolder().colSpan)) {
             return;
         }
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
@@ -185,7 +203,7 @@ var CellComp = /** @class */ (function (_super) {
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.colsSpanning = this.getColSpanningList();
     };
@@ -265,7 +283,7 @@ var CellComp = /** @class */ (function (_super) {
                 return '';
             }
         }
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
@@ -309,8 +327,13 @@ var CellComp = /** @class */ (function (_super) {
         if (this.editingCell) {
             return;
         }
+        // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
+        if (this.suppressRefreshCell) {
+            return;
+        }
+        var colDef = this.getComponentHolder();
         var newData = params && params.newData;
-        var suppressFlash = (params && params.suppressFlash) || this.column.getColDef().suppressCellFlash;
+        var suppressFlash = (params && params.suppressFlash) || colDef.suppressCellFlash;
         var forceRefresh = params && params.forceRefresh;
         var oldValue = this.value;
         this.getValueAndFormat();
@@ -323,24 +346,25 @@ var CellComp = /** @class */ (function (_super) {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
-            var cellRendererRefreshed = (newData || suppressFlash) ? false : this.attemptCellRendererRefresh();
+            var cellRendererRefreshed = newData ? false : this.attemptCellRendererRefresh();
             // we do the replace if not doing refresh, or if refresh was unsuccessful.
             // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
             // wrapper has the refresh method, but the underlying component doesn't
             if (!cellRendererRefreshed) {
                 this.replaceContentsAfterRefresh();
             }
-            if (!suppressFlash) {
-                var flashCell = this.beans.gridOptionsWrapper.isEnableCellChangeFlash()
-                    || this.column.getColDef().enableCellChangeFlash;
-                if (flashCell) {
-                    this.flashCell();
-                }
+            var flashCell = !suppressFlash &&
+                (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || colDef.enableCellChangeFlash);
+            if (flashCell) {
+                this.flashCell();
             }
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
             this.postProcessStylesFromColDef();
             this.postProcessClassesFromColDef();
         }
+        // we can't readily determine if the data in an angularjs template has changed, so here we just update
+        // and recompile (if applicable)
+        this.updateAngular1ScopeAndCompile();
         this.refreshToolTip();
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -369,7 +393,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.replaceContentsAfterRefresh = function () {
         // otherwise we rip out the cell and replace it
-        utils_1._.removeAllChildren(this.eParentOfValue);
+        utils_1._.clearElement(this.eParentOfValue);
         // remove old renderer component if it exists
         if (this.cellRenderer && this.cellRenderer.destroy) {
             this.cellRenderer.destroy();
@@ -379,6 +403,12 @@ var CellComp = /** @class */ (function (_super) {
         // populate
         this.putDataIntoCellAfterRefresh();
         this.angular1Compile();
+    };
+    CellComp.prototype.updateAngular1ScopeAndCompile = function () {
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows() && this.scope) {
+            this.scope.data = __assign({}, this.rowNode.data);
+            this.angular1Compile();
+        }
     };
     CellComp.prototype.angular1Compile = function () {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
@@ -401,7 +431,7 @@ var CellComp = /** @class */ (function (_super) {
         return utils_1._.cssStyleObjectToMarkup(stylesToUse);
     };
     CellComp.prototype.processStylesFromColDef = function () {
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         if (colDef.cellStyle) {
             var cssToUse = void 0;
             if (typeof colDef.cellStyle === 'function') {
@@ -434,11 +464,12 @@ var CellComp = /** @class */ (function (_super) {
         return res;
     };
     CellComp.prototype.processClassesFromColDef = function (onApplicableClass) {
-        this.beans.stylingService.processStaticCellClasses(this.column.getColDef(), {
+        var colDef = this.getComponentHolder();
+        this.beans.stylingService.processStaticCellClasses(colDef, {
             value: this.value,
             data: this.rowNode.data,
             node: this.rowNode,
-            colDef: this.column.getColDef(),
+            colDef: colDef,
             rowIndex: this.rowNode.rowIndex,
             $scope: this.scope,
             api: this.beans.gridOptionsWrapper.getApi(),
@@ -447,7 +478,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.putDataIntoCellAfterRefresh = function () {
         // template gets preference, then cellRenderer, then do it ourselves
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
@@ -461,15 +492,20 @@ var CellComp = /** @class */ (function (_super) {
             if (template) {
                 this.eParentOfValue.innerHTML = template;
             }
-            // use cell renderer if it exists
-        }
-        else if (this.usingCellRenderer) {
-            this.attachCellRenderer();
         }
         else {
-            var valueToUse = this.getValueToUse();
-            if (valueToUse !== null && valueToUse !== undefined) {
-                this.eParentOfValue.innerText = valueToUse;
+            // we can switch from using a cell renderer back to the default if a user
+            // is using cellRendererSelect
+            if (this.usingCellRenderer) {
+                if (!this.attachCellRenderer()) {
+                    this.usingCellRenderer = false;
+                }
+            }
+            if (!this.usingCellRenderer) {
+                var valueToUse = this.getValueToUse();
+                if (valueToUse !== null && valueToUse !== undefined) {
+                    this.eParentOfValue.innerHTML = utils_1._.escape(valueToUse);
+                }
             }
         }
     };
@@ -478,9 +514,10 @@ var CellComp = /** @class */ (function (_super) {
             return false;
         }
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
-        // note: should pass in params here instead of value?? so that client has formattedValue
         var params = this.createCellRendererParams();
-        var result = this.cellRenderer.refresh(params);
+        // take any custom params off of the user
+        var finalParams = this.beans.componentResolver.mergeParams(this.getComponentHolder(), this.cellRendererType, params, params);
+        var result = this.cellRenderer.refresh(finalParams);
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
         // returned nothing, if the method existed, we assumed it refreshed. so for
         // backwards compatibility, we assume if method exists and returns nothing,
@@ -491,6 +528,9 @@ var CellComp = /** @class */ (function (_super) {
         var newTooltip = this.getToolTip();
         if (this.tooltip !== newTooltip) {
             this.tooltip = newTooltip;
+            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                return;
+            }
             if (utils_1._.exists(newTooltip)) {
                 var tooltipSanitised = utils_1._.escape(this.tooltip);
                 this.eParentOfValue.setAttribute('title', tooltipSanitised);
@@ -502,29 +542,29 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.valuesAreEqual = function (val1, val2) {
         // if the user provided an equals method, use that, otherwise do simple comparison
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         var equalsMethod = colDef ? colDef.equals : null;
         if (equalsMethod) {
             return equalsMethod(val1, val2);
         }
-        else {
-            return val1 === val2;
-        }
+        return val1 === val2;
     };
     CellComp.prototype.getToolTip = function () {
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         var data = this.rowNode.data;
         if (colDef.tooltipField && utils_1._.exists(data)) {
             return utils_1._.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
         }
-        if (colDef.tooltip) {
-            return colDef.tooltip({
+        var valueGetter = colDef.tooltipValueGetter || colDef.tooltip;
+        if (valueGetter) {
+            return valueGetter({
                 value: this.value,
                 valueFormatted: this.valueFormatted,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                colDef: this.column.getColDef(),
+                colDef: colDef,
                 api: this.beans.gridOptionsWrapper.getApi(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext(),
                 rowIndex: this.gridCell.rowIndex
@@ -532,12 +572,17 @@ var CellComp = /** @class */ (function (_super) {
         }
         return null;
     };
+    CellComp.prototype.getTooltipText = function (escape) {
+        if (escape === void 0) { escape = true; }
+        return escape ? utils_1._.escape(this.tooltip) : this.tooltip;
+    };
     CellComp.prototype.processCellClassRules = function (onApplicableClass, onNotApplicableClass) {
-        this.beans.stylingService.processClassRules(this.column.getColDef().cellClassRules, {
+        var colDef = this.getComponentHolder();
+        this.beans.stylingService.processClassRules(colDef.cellClassRules, {
             value: this.value,
             data: this.rowNode.data,
             node: this.rowNode,
-            colDef: this.column.getColDef(),
+            colDef: colDef,
             rowIndex: this.gridCell.rowIndex,
             api: this.beans.gridOptionsWrapper.getApi(),
             $scope: this.scope,
@@ -564,7 +609,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     // a wrapper is used when we are putting a selection checkbox in the cell with the value
     CellComp.prototype.setUsingWrapper = function () {
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         // never allow selection or dragging on pinned rows
         if (this.rowNode.rowPinned) {
             this.usingWrapper = false;
@@ -580,7 +625,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.chooseCellRenderer = function () {
         // template gets preference, then cellRenderer, then do it ourselves
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         // templates are for ng1, ideally we wouldn't have these, they are ng1 support
         // inside the core which is bad
         if (colDef.template || colDef.templateUrl) {
@@ -591,11 +636,11 @@ var CellComp = /** @class */ (function (_super) {
         var cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', params);
         var pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', params);
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
-            this.cellRendererType = 'pinnedRowCellRenderer';
+            this.cellRendererType = CellComp.CELL_RENDERER_TYPE_PINNED;
             this.usingCellRenderer = true;
         }
         else if (cellRenderer) {
-            this.cellRendererType = 'cellRenderer';
+            this.cellRendererType = CellComp.CELL_RENDERER_TYPE_NORMAL;
             this.usingCellRenderer = true;
         }
         else {
@@ -606,7 +651,14 @@ var CellComp = /** @class */ (function (_super) {
         var params = this.createCellRendererParams();
         this.cellRendererVersion++;
         var callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
-        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, params).then(callback);
+        // this can return null in the event that the user has switched from a renderer component to nothing, for example
+        // when using a cellRendererSelect to return a component or null depending on row data etc
+        var componentPromise = this.beans.componentResolver.createAgGridComponent(this.getComponentHolder(), params, this.cellRendererType, params, undefined, false);
+        if (componentPromise) {
+            componentPromise.then(callback);
+            return true;
+        }
+        return false;
     };
     CellComp.prototype.afterCellRendererCreated = function (cellRendererVersion, cellRenderer) {
         // see if daemon
@@ -629,9 +681,9 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.attachCellRenderer = function () {
         if (!this.usingCellRenderer) {
-            return;
+            return false;
         }
-        this.createCellRendererInstance();
+        return this.createCellRendererInstance();
     };
     CellComp.prototype.createCellRendererParams = function () {
         var _this = this;
@@ -645,7 +697,7 @@ var CellComp = /** @class */ (function (_super) {
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
             node: this.rowNode,
-            colDef: this.column.getColDef(),
+            colDef: this.getComponentHolder(),
             column: this.column,
             $scope: this.scope,
             rowIndex: this.gridCell.rowIndex,
@@ -681,6 +733,9 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.getValueAndFormat = function () {
         this.value = this.getValue();
+        if (this.scope) {
+            this.scope.data.value = this.value;
+        }
         this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
     };
     CellComp.prototype.getValue = function () {
@@ -692,7 +747,7 @@ var CellComp = /** @class */ (function (_super) {
         var isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
         // are we showing group footers
         var groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
-        // if doing footers, we noramlly don't show agg data at group level when group is open
+        // if doing footers, we normally don't show agg data at group level when group is open
         var groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -722,7 +777,7 @@ var CellComp = /** @class */ (function (_super) {
         }
     };
     CellComp.prototype.dispatchCellContextMenuEvent = function (event) {
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         var cellContextMenuEvent = this.createEvent(event, events_1.Events.EVENT_CELL_CONTEXT_MENU);
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
         if (colDef.onCellContextMenu) {
@@ -736,7 +791,7 @@ var CellComp = /** @class */ (function (_super) {
             data: this.rowNode.data,
             value: this.value,
             column: this.column,
-            colDef: this.column.getColDef(),
+            colDef: this.getComponentHolder(),
             context: this.beans.gridOptionsWrapper.getContext(),
             api: this.beans.gridApi,
             columnApi: this.beans.columnApi,
@@ -762,7 +817,7 @@ var CellComp = /** @class */ (function (_super) {
         this.beans.columnHoverService.setMouseOver([this.column]);
     };
     CellComp.prototype.onCellDoubleClicked = function (mouseEvent) {
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         // always dispatch event to eventService
         var cellDoubleClickedEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_DOUBLE_CLICKED);
         this.beans.eventService.dispatchEvent(cellDoubleClickedEvent);
@@ -806,7 +861,7 @@ var CellComp = /** @class */ (function (_super) {
         this.cellEditorVersion++;
         var callback = this.afterCellEditorCreated.bind(this, this.cellEditorVersion);
         var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params).then(callback);
+        this.beans.cellEditorFactory.createCellEditor(this.getComponentHolder(), params).then(callback);
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
         // of user hitting tab quickly (more quickly than renderers getting created) won't work
@@ -861,7 +916,7 @@ var CellComp = /** @class */ (function (_super) {
         this.beans.eventService.dispatchEvent(event);
     };
     CellComp.prototype.addInCellEditor = function () {
-        utils_1._.removeAllChildren(this.getGui());
+        utils_1._.clearElement(this.getGui());
         if (this.cellEditor) {
             this.getGui().appendChild(this.cellEditor.getGui());
         }
@@ -951,18 +1006,19 @@ var CellComp = /** @class */ (function (_super) {
         }
     };
     CellComp.prototype.parseValue = function (newValue) {
+        var colDef = this.getComponentHolder();
         var params = {
             node: this.rowNode,
             data: this.rowNode.data,
             oldValue: this.value,
             newValue: newValue,
-            colDef: this.column.getColDef(),
+            colDef: colDef,
             column: this.column,
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext()
         };
-        var valueParser = this.column.getColDef().valueParser;
+        var valueParser = colDef.valueParser;
         return utils_1._.exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     };
     CellComp.prototype.focusCell = function (forceBrowserFocus) {
@@ -988,10 +1044,6 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
-        // give user a chance to cancel event processing
-        if (this.doesUserWantToCancelKeyboardEvent(event)) {
-            return;
-        }
         switch (key) {
             case constants_1.Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -1015,27 +1067,6 @@ var CellComp = /** @class */ (function (_super) {
             case constants_1.Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
-        }
-    };
-    CellComp.prototype.doesUserWantToCancelKeyboardEvent = function (event) {
-        var callback = this.column.getColDef().suppressKeyboardEvent;
-        if (!callback || utils_1._.missing(callback)) {
-            return false;
-        }
-        else {
-            // if editing is null or undefined, this sets it to false
-            var params = {
-                event: event,
-                editing: this.editingCell,
-                column: this.column,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                node: this.rowNode,
-                data: this.rowNode.data,
-                colDef: this.column.getColDef(),
-                context: this.beans.gridOptionsWrapper.getContext(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
-            };
-            return callback(params);
         }
     };
     CellComp.prototype.setFocusOutOnEditor = function () {
@@ -1070,9 +1101,6 @@ var CellComp = /** @class */ (function (_super) {
         this.beans.rowRenderer.ensureCellVisible(endCell);
     };
     CellComp.prototype.onTabKeyDown = function (event) {
-        if (this.beans.gridOptionsWrapper.isSuppressTabbing()) {
-            return;
-        }
         this.beans.rowRenderer.onTabKeyDown(this, event);
     };
     CellComp.prototype.onBackspaceOrDeleteKeyPressed = function (key) {
@@ -1157,6 +1185,12 @@ var CellComp = /** @class */ (function (_super) {
         // the focus doesn't get to the text field, instead to goes to the div
         // behind, making it impossible to select the text field.
         var forceBrowserFocus = false;
+        // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
+        // we do range selection, however if user is clicking checking, they are probably only interested
+        // in row selection.
+        if (utils_1._.isElementChildOfClass(mouseEvent.target, 'ag-selection-checkbox', 3)) {
+            return;
+        }
         if (utils_1._.isBrowserIE()) {
             var target = mouseEvent.target;
             if (target.classList.contains('ag-cell')) {
@@ -1196,12 +1230,12 @@ var CellComp = /** @class */ (function (_super) {
         // iPad.
         if (this.isDoubleClickOnIPad()) {
             this.onCellDoubleClicked(mouseEvent);
-            mouseEvent.preventDefault(); // if we don't do this, then ipad zooms in
+            mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
             return;
         }
         var cellClickedEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_CLICKED);
         this.beans.eventService.dispatchEvent(cellClickedEvent);
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
             window.setTimeout(function () { return colDef.onCellClicked(cellClickedEvent); }, 0);
@@ -1211,19 +1245,7 @@ var CellComp = /** @class */ (function (_super) {
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
-        this.doIeFocusHack();
-    };
-    // https://ag-grid.com/forum/showthread.php?tid=4362
-    // when in IE or Edge, when you are editing a cell, then click on another cell,
-    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
-    // don't work. appears that when you update the dom in IE it looses focus
-    CellComp.prototype.doIeFocusHack = function () {
-        if (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) {
-            if (utils_1._.missing(document.activeElement) || document.activeElement === document.body) {
-                // console.log('missing focus');
-                this.getGui().focus();
-            }
-        }
+        utils_1._.doIeFocusHack(this.getGui());
     };
     CellComp.prototype.createGridCellVo = function () {
         var gridCellDef = {
@@ -1244,6 +1266,9 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.getColumn = function () {
         return this.column;
+    };
+    CellComp.prototype.getComponentHolder = function () {
+        return this.column.getColDef();
     };
     CellComp.prototype.detach = function () {
         this.eParentRow.removeChild(this.getGui());
@@ -1374,7 +1399,7 @@ var CellComp = /** @class */ (function (_super) {
         }
         var rowDraggingComp = new rowDragComp_1.RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
         this.addFeature(this.beans.context, rowDraggingComp);
-        // let visibleFunc = this.column.getColDef().checkboxSelection;
+        // let visibleFunc = this.getComponentHolder().checkboxSelection;
         // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
         // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
         // put the checkbox in before the value
@@ -1383,7 +1408,7 @@ var CellComp = /** @class */ (function (_super) {
     CellComp.prototype.addSelectionCheckbox = function () {
         var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
         this.beans.context.wireBean(cbSelectionComponent);
-        var visibleFunc = this.column.getColDef().checkboxSelection;
+        var visibleFunc = this.getComponentHolder().checkboxSelection;
         visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
         this.addDestroyFunc(function () { return cbSelectionComponent.destroy(); });
@@ -1414,7 +1439,9 @@ var CellComp = /** @class */ (function (_super) {
         // if this cell was just focused, see if we need to force browser focus, his can
         // happen if focus is programmatically set.
         if (cellFocused && event && event.forceBrowserFocus) {
-            this.getGui().focus();
+            var eGui = this.getGui();
+            eGui.focus();
+            utils_1._.doIeFocusHack(eGui);
         }
         // if another cell was focused, and we are editing, then stop editing
         var fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
@@ -1471,7 +1498,7 @@ var CellComp = /** @class */ (function (_super) {
             this.hideEditorPopup = null;
         }
         else {
-            utils_1._.removeAllChildren(this.getGui());
+            utils_1._.clearElement(this.getGui());
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
@@ -1495,8 +1522,13 @@ var CellComp = /** @class */ (function (_super) {
         }
         this.setInlineEditingClass();
         if (newValueExists) {
+            // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
+            // getting triggered, which results in all cells getting refreshed. we do not want this refresh
+            // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
+            // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
+            this.suppressRefreshCell = true;
             this.rowNode.setDataValue(this.column, newValue);
-            this.getValueAndFormat();
+            this.suppressRefreshCell = false;
         }
         // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
         // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
@@ -1506,6 +1538,8 @@ var CellComp = /** @class */ (function (_super) {
         this.beans.eventService.dispatchEvent(event);
     };
     CellComp.DOM_DATA_KEY_CELL_COMP = 'cellComp';
+    CellComp.CELL_RENDERER_TYPE_NORMAL = 'cellRenderer';
+    CellComp.CELL_RENDERER_TYPE_PINNED = 'pinnedRowCellRenderer';
     return CellComp;
 }(component_1.Component));
 exports.CellComp = CellComp;

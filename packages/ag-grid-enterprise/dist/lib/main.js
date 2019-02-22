@@ -1,7 +1,6 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var filtersToolPanel_1 = require("./sideBar/providedPanels/filters/filtersToolPanel");
 var ag_grid_community_1 = require("ag-grid-community");
 var enterpriseMenu_1 = require("./menu/enterpriseMenu");
 var rangeController_1 = require("./rangeController");
@@ -25,20 +24,15 @@ var excelXmlFactory_1 = require("./exporter/excelXmlFactory");
 var excelXlsxFactory_1 = require("./exporter/excelXlsxFactory");
 var serverSideRowModel_1 = require("./rowModels/serverSide/serverSideRowModel");
 var horizontalResizeComp_1 = require("./sideBar/horizontalResizeComp");
-var columnToolPanel_1 = require("./sideBar/providedPanels/columns/columnToolPanel");
 var sideBarButtonsComp_1 = require("./sideBar/sideBarButtonsComp");
 var statusBarService_1 = require("./statusBar/statusBarService");
 var statusBar_1 = require("./statusBar/statusBar");
-var aggregationComp_1 = require("./statusBar/providedPanels/aggregationComp");
 var nameValueComp_1 = require("./statusBar/providedPanels/nameValueComp");
-var selectedRowsComp_1 = require("./statusBar/providedPanels/selectedRowsComp");
-var totalRowsComp_1 = require("./statusBar/providedPanels/totalRowsComp");
-var filteredRowsComp_1 = require("./statusBar/providedPanels/filteredRowsComp");
-var totalAndFilteredRowsComp_1 = require("./statusBar/providedPanels/totalAndFilteredRowsComp");
 var primaryColsHeaderPanel_1 = require("./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel");
 var primaryColsListPanel_1 = require("./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel");
 var gridHeaderDropZones_1 = require("./sideBar/providedPanels/columns/gridHeaderDropZones");
 var chartingService_1 = require("./charts/chartingService");
+var watermark_1 = require("./license/watermark");
 var aggregationStage_2 = require("./rowStages/aggregationStage");
 exports.AggregationStage = aggregationStage_2.AggregationStage;
 var groupStage_2 = require("./rowStages/groupStage");
@@ -111,6 +105,8 @@ var excelXlsxFactory_2 = require("./exporter/excelXlsxFactory");
 exports.ExcelXlsxFactory = excelXlsxFactory_2.ExcelXlsxFactory;
 var chartingService_2 = require("./charts/chartingService");
 exports.ChartingService = chartingService_2.ChartingService;
+var watermark_2 = require("./license/watermark");
+exports.WatermarkComp = watermark_2.WatermarkComp;
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
 ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, excelXlsxFactory_1.ExcelXlsxFactory, rowGroupCompFactory_1.RowGroupCompFactory,
     pivotCompFactory_1.PivotCompFactory, rangeController_1.RangeController, clipboardService_1.ClipboardService, pivotStage_1.PivotStage, pivotColDefService_1.PivotColDefService,
@@ -125,13 +121,5 @@ ag_grid_community_1.Grid.setEnterpriseComponents([
     { componentName: 'AgNameValue', theClass: nameValueComp_1.NameValueComp },
     { componentName: 'AgGridHeaderDropZones', theClass: gridHeaderDropZones_1.GridHeaderDropZones },
     { componentName: 'AgSideBarButtons', theClass: sideBarButtonsComp_1.SideBarButtonsComp },
-]);
-ag_grid_community_1.Grid.setEnterpriseDefaultComponents([
-    { componentName: 'agAggregationComponent', theClass: aggregationComp_1.AggregationComp },
-    { componentName: 'agColumnsToolPanel', theClass: columnToolPanel_1.ColumnToolPanel },
-    { componentName: 'agFiltersToolPanel', theClass: filtersToolPanel_1.FiltersToolPanel },
-    { componentName: 'agSelectedRowCountComponent', theClass: selectedRowsComp_1.SelectedRowsComp },
-    { componentName: 'agTotalRowCountComponent', theClass: totalRowsComp_1.TotalRowsComp },
-    { componentName: 'agFilteredRowCountComponent', theClass: filteredRowsComp_1.FilteredRowsComp },
-    { componentName: 'agTotalAndFilteredRowCountComponent', theClass: totalAndFilteredRowsComp_1.TotalAndFilteredRowsComp }
+    { componentName: 'AgWatermark', theClass: watermark_1.WatermarkComp }
 ]);

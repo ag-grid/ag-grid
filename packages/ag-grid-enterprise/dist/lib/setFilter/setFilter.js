@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -51,7 +51,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.eIndeterminateCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.filterParams.column);
     };
     SetFilter.prototype.updateCheckboxIcon = function () {
-        ag_grid_community_1._.removeAllChildren(this.eSelectAll);
+        ag_grid_community_1._.clearElement(this.eSelectAll);
         var icon;
         switch (this.selectAllState) {
             case CheckboxState.INTERMEDIATE:

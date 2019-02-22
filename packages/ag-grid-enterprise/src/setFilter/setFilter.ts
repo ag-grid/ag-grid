@@ -57,7 +57,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
     }
 
     private updateCheckboxIcon() {
-        _.removeAllChildren(this.eSelectAll);
+        _.clearElement(this.eSelectAll);
 
         let icon: HTMLElement;
         switch (this.selectAllState) {

@@ -5,6 +5,7 @@ import {
     GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
+    TooltipManager,
     _
 } from "ag-grid-community";
 
@@ -24,6 +25,7 @@ export interface MenuItemSelectedEvent extends AgEvent {
 export class MenuItemComponent extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('tooltipManager') private tooltipManager: TooltipManager;
 
     // private instance = Math.random();
 
@@ -38,6 +40,7 @@ export class MenuItemComponent extends Component {
     public static EVENT_ITEM_SELECTED = 'itemSelected';
 
     private params: MenuItemDef;
+    private tooltip: string;
 
     constructor(params: MenuItemDef) {
         super(MenuItemComponent.TEMPLATE);
@@ -65,7 +68,12 @@ export class MenuItemComponent extends Component {
         }
 
         if (this.params.tooltip) {
-            this.getGui().setAttribute('title', this.params.tooltip);
+            this.tooltip = this.params.tooltip;
+            if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                this.getGui().setAttribute('title', this.tooltip);
+            } else {
+                this.tooltipManager.registerTooltip(this);
+            }
         }
 
         if (this.params.shortcut) {
@@ -93,6 +101,14 @@ export class MenuItemComponent extends Component {
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(it => _.addCssClass(this.getGui(), it));
         }
+    }
+
+    public getTooltipText(): string {
+        return this.tooltip;
+    }
+
+    public getComponentHolder(): undefined {
+        return undefined;
     }
 
     private onOptionSelected(mouseEvent: MouseEvent): void {

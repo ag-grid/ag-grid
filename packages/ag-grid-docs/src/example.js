@@ -135,6 +135,7 @@ var gridOptions = {
     rowDragManaged: true,
     // popupParent: document.body,
     // ensureDomOrder: true,
+    // enableCellTextSelection: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
     // },
@@ -180,6 +181,7 @@ var gridOptions = {
     // suppressMakeColumnVisibleAfterUnGroup: true,
     // unSortIcon: true,
     // enableRtl: true,
+    enableCharts: true,
     multiSortKey: 'ctrl',
     animateRows: true,
     enableRangeSelection: true,
@@ -188,13 +190,17 @@ var gridOptions = {
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     // pagination: true,
-    // embedFullWidthRows: true,
+    // paginationPageSize: 20,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
     // suppressContextMenu: true,
     // suppressFieldDotNotation: true,
     autoGroupColumnDef: groupColumn,
+    // suppressActionCtrlC: true,
+    // suppressActionCtrlV: true,
+    // suppressActionCtrlD: true,
+    // suppressActionCtrlA: true,
     // suppressCellSelection: true,
     // suppressMultiSort: true,
     // scrollbarWidth: 20,
@@ -414,8 +420,7 @@ var gridOptions = {
 };
 
 function getContextMenuItems(params) {
-    if (params.node == null) return null;
-    var result = params.defaultItems.splice(0);
+    var result = params.defaultItems ? params.defaultItems.splice(0) : [];
     result.push(
         {
             name: 'Custom Menu Item',
@@ -583,7 +588,6 @@ var defaultCols = [
                 // pivotIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                enableValue: true,
                 cellClass: 'booleanType',
                 cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
@@ -1244,3 +1248,14 @@ function countryCellRenderer(params) {
     }
 }
 
+// setTimeout( function(){
+//     columnApi.setRowGroupColumns(['country']);
+//     columnApi.setValueColumns(['jan']);
+//     columnApi.setPivotMode(true);
+// }, 5000);
+
+function movePopup() {
+    var e = document.querySelector('.ag-popup-window');
+    e.style.top = '400px';
+    e.style.left = '100px';
+}

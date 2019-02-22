@@ -29,7 +29,7 @@ meta_and_links("Current Opportunities at ag-Grid", "ag-Grid jobs", "We are looki
             <h1>Working at ag-Grid</h1>
 
             <p>
-            ag-Grid is used by thousands of banks, insurance companies, government agencies and blue chip software companies all over the world. Our customers rely on us to be experts in our field of data grids and integration with various frameworks. Following a very succesful introduction to the market in March 2016, we are rapidly expanding into 2018 to challenge the market with our superior product. As a provider of a leading software library, we stay ahead of the curve and are experts in JavaScript and associated libraries such as Angular, React, Vue, Aurelia and Web Components.
+            ag-Grid is used by thousands of banks, insurance companies, government agencies and blue chip software companies all over the world. Our customers rely on us to be experts in our field of data grids and integration with various frameworks. Following a very succesful introduction to the market in March 2016, we are rapidly expanding into 2018 to challenge the market with our superior product. As a provider of a leading software library, we stay ahead of the curve and are experts in JavaScript and associated libraries such as Angular, React, Vue, Polymer and Web Components.
             </p>
 
             <h4>Life at ag-Grid</h4>
@@ -95,7 +95,6 @@ meta_and_links("Current Opportunities at ag-Grid", "ag-Grid jobs", "We are looki
                         <li>Angular</li>
                         <li>React</li>
                         <li>Vue</li>
-                        <li>Aurelia</li>
                         <li>Polymer</li>
                         <li>npm</li>
                         <li>Webpack</li>

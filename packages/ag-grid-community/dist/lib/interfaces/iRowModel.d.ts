@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -46,4 +46,6 @@ export interface IRowModel {
      * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.
      */
     isLastRowFound(): boolean;
+    /** Used by CSRM only - is makes sure there are now estimated row heights within the range. */
+    ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
 }

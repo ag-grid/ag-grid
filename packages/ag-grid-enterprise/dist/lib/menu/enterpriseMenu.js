@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -142,22 +142,22 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.init = function () {
         var _this = this;
-        var items = this.column.getMenuTabs(this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT)
-            .filter(function (menuTabName) {
-            return _this.isValidMenuTabItem(menuTabName);
-        })
-            .filter(function (menuTabName) {
-            return _this.isNotSuppressed(menuTabName);
-        })
-            .map(function (menuTabName) {
-            return _this.createTab(menuTabName);
-        });
+        var tabs = this.getTabsToCreate()
+            .map(function (menuTabName) { return _this.createTab(menuTabName); });
         this.tabbedLayout = new ag_grid_community_1.TabbedLayout({
-            items: items,
+            items: tabs,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this),
             onItemClicked: this.onTabItemClicked.bind(this)
         });
+    };
+    EnterpriseMenu.prototype.getTabsToCreate = function () {
+        var _this = this;
+        if (this.restrictTo)
+            return this.restrictTo;
+        return this.column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT)
+            .filter(function (tabName) { return _this.isValidMenuTabItem(tabName); })
+            .filter(function (tabName) { return _this.isNotSuppressed(tabName); });
     };
     EnterpriseMenu.prototype.isValidMenuTabItem = function (menuTabName) {
         var isValid = true;

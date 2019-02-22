@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -63,11 +63,15 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.getColumn = function () {
         return this.column;
     };
+    HeaderWrapperComp.prototype.getComponentHolder = function () {
+        return this.column.getColDef();
+    };
     HeaderWrapperComp.prototype.init = function () {
         this.instantiate(this.context);
+        var colDef = this.getComponentHolder();
         var displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
-        var enableSorting = this.column.getColDef().sortable;
-        var enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
+        var enableSorting = colDef.sortable;
+        var enableMenu = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
         this.appendHeaderComp(displayName, enableSorting, enableMenu);
         this.setupWidth();
         this.setupMovingCss();
@@ -84,7 +88,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         this.addAttributes();
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
     HeaderWrapperComp.prototype.addColumnHoverListener = function () {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -148,7 +152,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
         var _this = this;
         var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
-            || this.column.getColDef().suppressMovable
+            || this.getComponentHolder().suppressMovable
             || this.column.isLockPosition();
         if (suppressMove) {
             return;
@@ -177,7 +181,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     };
     HeaderWrapperComp.prototype.setupResize = function () {
         var _this = this;
-        var colDef = this.column.getColDef();
+        var colDef = this.getComponentHolder();
         // if no eResize in template, do nothing
         if (!this.eResize) {
             return;
@@ -218,11 +222,21 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         this.resizeWithShiftKey = shiftKey;
         utils_1._.addCssClass(this.getGui(), 'ag-column-resizing');
     };
+    HeaderWrapperComp.prototype.getTooltipText = function () {
+        var colDef = this.getComponentHolder();
+        return colDef.headerTooltip;
+    };
     HeaderWrapperComp.prototype.setupTooltip = function () {
-        var colDef = this.column.getColDef();
+        var tooltipText = this.getTooltipText();
         // add tooltip if exists
-        if (colDef.headerTooltip) {
-            this.getGui().title = colDef.headerTooltip;
+        if (tooltipText == null) {
+            return;
+        }
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            this.getGui().setAttribute('title', tooltipText);
+        }
+        else {
+            this.beans.tooltipManager.registerTooltip(this);
         }
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {
@@ -264,7 +278,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         }
         return result;
     };
-    HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell" role="presentation" >' +
+    HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell" role="presentation" unselectable="on">' +
         '<div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
         '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
         // <inner component goes here>

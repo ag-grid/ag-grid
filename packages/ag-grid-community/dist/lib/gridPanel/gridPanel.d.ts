@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
@@ -96,6 +96,7 @@ export declare class GridPanel extends Component {
     private onDomLayoutChanged;
     private onCenterViewportResized;
     setColumnMovingCss(moving: boolean): void;
+    setCellTextSelection(selectable?: boolean): void;
     private setupOverlay;
     private addRowDragListener;
     private addStopEditingWhenGridLosesFocus;
@@ -109,13 +110,14 @@ export declare class GridPanel extends Component {
     getBodyClientRect(): ClientRect;
     private getRowForEvent;
     private processKeyboardEvent;
+    private doClipboardOperations;
+    private isUserSuppressingKeyboardEvent;
     scrollToTop(): void;
     private processMouseEvent;
     private mockContextMenuForIPad;
     private handleContextMenuMouseEvent;
     private onContextMenu;
     private preventDefaultOnContextMenu;
-    private addShortcutKeyListeners;
     private onCtrlAndA;
     private onCtrlAndC;
     private onCtrlAndV;
@@ -142,6 +144,7 @@ export declare class GridPanel extends Component {
     private setupRowAnimationCssClass;
     private suppressScrollOnFloatingRow;
     getRowContainers(): RowContainerComponents;
+    getFloatingTopBottom(): HTMLElement[];
     onDisplayedColumnsChanged(): void;
     private onDisplayedColumnsWidthChanged;
     private setWidthsOfContainers;

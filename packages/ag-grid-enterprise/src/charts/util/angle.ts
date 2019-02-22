@@ -1,24 +1,32 @@
 /**
- * Normalize the given angle to [0, 2π) interval.
- * @param angle Angle in radians.
+ * Normalize the given angle to be in the [0, 2π) interval.
+ * @param radians Angle in radians.
  */
-export function normalizeAngle(angle: number): number {
-    angle %= Math.PI * 2;
-    angle += Math.PI * 2;
-    angle %= Math.PI * 2;
-    return angle;
+export function normalizeAngle360(radians: number): number {
+    radians %= Math.PI * 2;
+    radians += Math.PI * 2;
+    radians %= Math.PI * 2;
+    return radians;
 }
 
 /**
- * Normalize the given angle to [-π, π) interval.
- * @param angle Angle in radians.
+ * Normalize the given angle to be in the [-π, π) interval.
+ * @param radians Angle in radians.
  */
-export function normalizeAngle180(angle: number): number {
-    angle %= Math.PI * 2;
-    if (angle < -Math.PI) {
-        angle += Math.PI * 2;
-    } else if (angle >= Math.PI) {
-        angle -= Math.PI * 2;
+export function normalizeAngle180(radians: number): number {
+    radians %= Math.PI * 2;
+    if (radians < -Math.PI) {
+        radians += Math.PI * 2;
+    } else if (radians >= Math.PI) {
+        radians -= Math.PI * 2;
     }
-    return angle;
+    return radians;
+}
+
+export function toRadians(degrees: number): number {
+    return degrees / 180 * Math.PI;
+}
+
+export function toDegrees(radians: number): number {
+    return radians / Math.PI * 180;
 }

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -19,9 +19,9 @@ export declare class SortService {
     private gridOptionsWrapper;
     private postSortFunc;
     init(): void;
-    sort(rowNode: RowNode, sortOptions: SortOption[], sortActive: boolean, deltaSort: boolean, dirtyLeafNodes: {
+    sort(sortOptions: SortOption[], sortActive: boolean, deltaSort: boolean, dirtyLeafNodes: {
         [nodeId: string]: boolean;
-    }, changedPath: ChangedPath): void;
+    }, changedPath: ChangedPath, noAggregations: boolean): void;
     private doFullSort;
     private mapNodeToSortedNode;
     private doDeltaSort;

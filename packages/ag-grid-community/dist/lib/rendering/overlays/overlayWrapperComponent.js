@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,7 +45,7 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         this.setTemplate(OverlayWrapperComponent.LOADING_WRAPPER_OVERLAY_TEMPLATE);
         this.componentRecipes.newLoadingOverlayComponent().then(function (renderer) {
             var loadingOverlayWrapper = _this.getRefElement("loadingOverlayWrapper");
-            utils_1._.removeAllChildren(loadingOverlayWrapper);
+            utils_1._.clearElement(loadingOverlayWrapper);
             loadingOverlayWrapper.appendChild(renderer.getGui());
         });
         this.showOverlay(eOverlayWrapper, this.getGui());
@@ -65,18 +65,18 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         utils_1._.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-print', domLayoutPrint);
         this.componentRecipes.newNoRowsOverlayComponent().then(function (renderer) {
             var noRowsOverlayWrapper = _this.getRefElement("noRowsOverlayWrapper");
-            utils_1._.removeAllChildren(noRowsOverlayWrapper);
+            utils_1._.clearElement(noRowsOverlayWrapper);
             noRowsOverlayWrapper.appendChild(renderer.getGui());
         });
         this.showOverlay(eOverlayWrapper, this.getGui());
     };
     OverlayWrapperComponent.prototype.hideOverlay = function (eOverlayWrapper) {
-        utils_1._.removeAllChildren(eOverlayWrapper);
+        utils_1._.clearElement(eOverlayWrapper);
         utils_1._.setVisible(eOverlayWrapper, false);
     };
     OverlayWrapperComponent.prototype.showOverlay = function (eOverlayWrapper, overlay) {
         if (overlay) {
-            utils_1._.removeAllChildren(eOverlayWrapper);
+            utils_1._.clearElement(eOverlayWrapper);
             utils_1._.setVisible(eOverlayWrapper, true);
             eOverlayWrapper.appendChild(overlay);
         }

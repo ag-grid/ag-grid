@@ -1,4 +1,3 @@
-import { FiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 import { Grid } from "ag-grid-community";
 import { EnterpriseMenuFactory } from "./menu/enterpriseMenu";
 import { RangeController } from "./rangeController";
@@ -22,20 +21,15 @@ import { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 import { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 import { ServerSideRowModel } from "./rowModels/serverSide/serverSideRowModel";
 import { HorizontalResizeComp } from "./sideBar/horizontalResizeComp";
-import { ColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPanel";
 import { SideBarButtonsComp } from "./sideBar/sideBarButtonsComp";
 import { StatusBarService } from "./statusBar/statusBarService";
 import { StatusBar } from "./statusBar/statusBar";
-import { AggregationComp } from "./statusBar/providedPanels/aggregationComp";
 import { NameValueComp } from "./statusBar/providedPanels/nameValueComp";
-import { SelectedRowsComp } from "./statusBar/providedPanels/selectedRowsComp";
-import { TotalRowsComp } from "./statusBar/providedPanels/totalRowsComp";
-import { FilteredRowsComp } from "./statusBar/providedPanels/filteredRowsComp";
-import { TotalAndFilteredRowsComp } from "./statusBar/providedPanels/totalAndFilteredRowsComp";
 import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
-import {ChartingService} from "./charts/chartingService";
+import { ChartingService } from "./charts/chartingService";
+import { WatermarkComp } from "./license/watermark";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -73,6 +67,7 @@ export { ExcelCreator } from "./exporter/excelCreator";
 export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 export { ChartingService } from "./charts/chartingService";
+export { WatermarkComp } from "./license/watermark";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
@@ -86,21 +81,9 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgPrimaryColsList', theClass: PrimaryColsListPanel},
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgSideBar', theClass: SideBarComp},
-
     {componentName: 'AgStatusBar', theClass: StatusBar},
     {componentName: 'AgNameValue', theClass: NameValueComp},
-
     {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
-
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
-]);
-
-Grid.setEnterpriseDefaultComponents([
-    {componentName: 'agAggregationComponent', theClass: AggregationComp},
-    {componentName: 'agColumnsToolPanel', theClass: ColumnToolPanel},
-    {componentName: 'agFiltersToolPanel', theClass: FiltersToolPanel},
-    {componentName: 'agSelectedRowCountComponent', theClass: SelectedRowsComp},
-    {componentName: 'agTotalRowCountComponent', theClass: TotalRowsComp},
-    {componentName: 'agFilteredRowCountComponent', theClass: FilteredRowsComp},
-    {componentName: 'agTotalAndFilteredRowCountComponent', theClass: TotalAndFilteredRowsComp}
+    {componentName: 'AgWatermark', theClass: WatermarkComp}
 ]);

@@ -76,7 +76,7 @@ export abstract class BaseDropZonePanel extends Component {
     protected abstract getIconName(): string;
 
     constructor(horizontal: boolean, valueColumn: boolean, name: string) {
-        super(`<div class="ag-column-drop ag-font-style ag-column-drop-${horizontal ? 'horizontal' : 'vertical'} ag-column-drop-${name}"></div>`);
+        super(`<div class="ag-column-drop ag-unselectable ag-column-drop-${horizontal ? 'horizontal' : 'vertical'} ag-column-drop-${name}"></div>`);
         this.horizontal = horizontal;
         this.valueColumn = valueColumn;
 
@@ -100,8 +100,8 @@ export abstract class BaseDropZonePanel extends Component {
         this.guiDestroyFunctions.forEach((func) => func());
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        _.removeAllChildren(this.getGui());
-        _.removeAllChildren(this.eColumnDropList);
+        _.clearElement(this.getGui());
+        _.clearElement(this.eColumnDropList);
     }
 
     public init(params: BaseDropZonePanelParams): void {

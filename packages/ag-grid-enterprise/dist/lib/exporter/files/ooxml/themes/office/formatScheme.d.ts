@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { ExcelOOXMLTemplate } from 'ag-grid-community';
 declare const formatScheme: ExcelOOXMLTemplate;
 export default formatScheme;

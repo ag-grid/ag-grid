@@ -26,6 +26,10 @@ include '../documentation-main/documentation_header.php';
             To customises editing of a cell.
         </li>
         <li>
+            <a href="../javascript-grid-date-component/">Date Component</a>:
+            To customise the date selection component in the date filter.
+        </li>
+        <li>
             <a href="../javascript-grid-filter-component/">Filter Component</a>:
             For custom column filter that appears inside the column menu.
         </li>
@@ -34,12 +38,12 @@ include '../documentation-main/documentation_header.php';
             For custom column filter that appears inside the column menu.
         </li>
         <li>
-            <a href="../javascript-grid-date-component/">Date Component</a>:
-            To customise the date selection component in the date filter.
-        </li>
-        <li>
             <a href="../javascript-grid-header-rendering/">Header Component</a>:
             To customise the header of a column and column groups.
+        </li>
+        <li>
+            <a href="../javascript-grid-loading-cell-renderer/">Loading Cell Renderer</a>:
+            To customise the loading cell row when using Server Side row model.
         </li>
         <li>
             <a href="../javascript-grid-overlay-component/">Overlay Component</a>:
@@ -175,7 +179,6 @@ gridOptions = {
                 1
                 compiling to use AngularJS bindings inside ag-Grid.
             </li>
-            <li><b>Aurelia</b>: Aurelia uses templates instead of components.</li>
         </ul>
 
         <p>
@@ -291,6 +294,12 @@ gridOptions = {
                 <td>Grid Option</td>
                 <td>groupRowInnerRenderer</td>
                 <td>groupRowInnerRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Loading Cell Renderer</td>
+                <td>Grid Option</td>
+                <td>loadingCellRenderer</td>
+                <td>loadingCellRenderer<b>Framework</b></td>
             </tr>
             <tr class="item-row">
                 <td>Loading Overlay</td>

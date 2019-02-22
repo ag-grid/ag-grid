@@ -1,6 +1,6 @@
 import { Constants } from "../../constants";
-import { Component } from "../../widgets/component";
-import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
+import { PopupComponent } from "../../widgets/popupComponent";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { _ } from '../../utils';
 
 /**
@@ -11,7 +11,7 @@ export interface ITextCellEditorParams extends ICellEditorParams {
     useFormatter: boolean;
 }
 
-export class TextCellEditor extends Component implements ICellEditorComp {
+export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
     private static TEMPLATE = '<div class="ag-input-text-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
 
@@ -91,9 +91,9 @@ export class TextCellEditor extends Component implements ICellEditorComp {
         if (this.highlightAllOnFocus) {
             eInput.select();
         } else {
-            // when we started editing, we want the carot at the end, not the start.
+            // when we started editing, we want the caret at the end, not the start.
             // this comes into play in two scenarios: a) when user hits F2 and b)
-            // when user hits a printable character, then on IE (and only IE) the carot
+            // when user hits a printable character, then on IE (and only IE) the caret
             // was placed after the first character, thus 'apply' would end up as 'pplea'
             const length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
@@ -117,5 +117,8 @@ export class TextCellEditor extends Component implements ICellEditorComp {
     private getStartValue(params: ITextCellEditorParams) {
         const formatValue = params.useFormatter || params.column.getColDef().refData;
         return formatValue ? params.formatValue(params.value) : params.value;
+    }
+    public isPopup() {
+        return false;
     }
 }

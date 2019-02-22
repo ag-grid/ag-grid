@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -184,7 +184,6 @@ var MoveColumnController = /** @class */ (function () {
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
         var oldIndex = this.calculateOldIndex(allMovingColumns);
-        // fromEnter = false;
         for (var i = 0; i < validMoves.length; i++) {
             var newIndex = validMoves[i];
             // the two check below stop an error when the user grabs a group my a middle column, then
@@ -241,18 +240,20 @@ var MoveColumnController = /** @class */ (function () {
             movingDisplayedCols.forEach(function (col) { return widthOfMovingDisplayedCols_1 += col.getActualWidth(); });
             availableWidth -= widthOfMovingDisplayedCols_1;
         }
-        // now count how many of the displayed columns will fit to the left
-        for (var i = 0; i < otherDisplayedCols.length; i++) {
-            var col = otherDisplayedCols[i];
-            availableWidth -= col.getActualWidth();
-            if (availableWidth < 0) {
-                break;
+        if (availableWidth > 0) {
+            // now count how many of the displayed columns will fit to the left
+            for (var i = 0; i < otherDisplayedCols.length; i++) {
+                var col = otherDisplayedCols[i];
+                availableWidth -= col.getActualWidth();
+                if (availableWidth < 0) {
+                    break;
+                }
+                displayIndex++;
             }
-            displayIndex++;
-        }
-        // trial and error, if going right, we adjust by one, i didn't manage to quantify why, but it works
-        if (draggingRight) {
-            displayIndex++;
+            // trial and error, if going right, we adjust by one, i didn't manage to quantify why, but it works
+            if (draggingRight) {
+                displayIndex++;
+            }
         }
         // the display index is with respect to all the showing columns, however when we move, it's with
         // respect to all grid columns, so we need to translate from display index to grid index

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var matrix_1 = require("./matrix");
@@ -25,6 +25,18 @@ test('multiplySelf', function () {
     expect(C.d).toBe(24);
     expect(C.e).toBe(26);
     expect(C.f).toBe(36);
+});
+test('preMultiplySelf', function () {
+    var A = new matrix_1.Matrix([1, 2, 3, 4, 5, 6]);
+    var B = new matrix_1.Matrix([1, 4, 2, 5, 3, 6]);
+    var C = A.preMultiplySelf(B);
+    expect(C).toEqual(A);
+    expect(C.a).toBe(5);
+    expect(C.b).toBe(14);
+    expect(C.c).toBe(11);
+    expect(C.d).toBe(32);
+    expect(C.e).toBe(20);
+    expect(C.f).toBe(56);
 });
 test('inverse', function () {
     var A = new matrix_1.Matrix([1, 2, 3, 4, 5, 6]);

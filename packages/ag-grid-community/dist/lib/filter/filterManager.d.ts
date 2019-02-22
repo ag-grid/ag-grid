@@ -1,16 +1,16 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
 import { Column } from "../entities/column";
 import { ColumnEventType } from "../events";
 import { IFilterComp } from "../interfaces/iFilter";
+import { GridCore } from "../gridCore";
 export declare type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 export declare class FilterManager {
     private $compile;
     private $scope;
     private gridOptionsWrapper;
-    private gridCore;
     private popupService;
     private valueService;
     private columnController;
@@ -27,6 +27,8 @@ export declare class FilterManager {
     private quickFilterParts;
     private advancedFilterPresent;
     private externalFilterPresent;
+    private gridCore;
+    registerGridCore(gridCore: GridCore): void;
     init(): void;
     private setQuickFilterParts;
     setFilterModel(model: any): void;

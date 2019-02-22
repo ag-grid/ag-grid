@@ -325,12 +325,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/best-aurelia-data-grid/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-dragging/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -998,12 +992,6 @@
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-react-data-grid/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/ag-grid-datagrid-aurelia/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

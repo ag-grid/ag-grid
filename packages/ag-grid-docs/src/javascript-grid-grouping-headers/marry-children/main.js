@@ -1,38 +1,35 @@
-var columnDefs = [
-    {
-        headerName: "Athlete Details",
-        marryChildren: true,
-        children: [
-            {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            {headerName: "Country", field: "country", width: 120}
-        ]
-    },
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', hide: true},
-    {
-        headerName: "Sports Results",
-        marryChildren: true,
-        children: [
-            {headerName: "Sport", field: "sport", width: 110},
-            {headerName: "Total", columnGroupShow: 'closed', field: "total", width: 100, filter: 'agNumberColumnFilter'},
-            {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100, filter: 'agNumberColumnFilter'},
-            {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100, filter: 'agNumberColumnFilter'},
-            {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100, filter: 'agNumberColumnFilter'}
-        ]
-    },
-    {headerName: "Extra 1", field: '1', width: 100, hide: true},
-    {headerName: "Extra 2", field: '2', width: 100},
-    {headerName: "Extra 3", field: '3', width: 100},
-    {headerName: "Extra 4", field: '4', width: 100}
-];
+function createNormalColDefs() {
+    return [
+        {
+            headerName: 'Athlete Details',
+            marryChildren: true,
+            children: [
+                {field: 'athlete', colId: 'athlete'},
+                {field: 'country', colId: 'country'}
+            ]
+        },
+        {field: 'age', colId: 'age'},
+        {
+            headerName: 'Sports Results',
+            marryChildren: true,
+            children: [
+                {field: 'sport', colId: 'sport'},
+                {field: 'total', colId: 'total'},
+                {field: 'gold', colId: 'gold'},
+                {field: 'silver', colId: 'silver'},
+                {field: 'bronze', colId: 'bronze'}
+            ]
+        }
+    ];
+}
 
 var gridOptions = {
     defaultColDef: {
-        sortable: true,
         resizable: true,
-        filter: true
+        width: 100
     },
     debug: true,
-    columnDefs: columnDefs,
+    columnDefs: createNormalColDefs(),
     rowData: null
 };
 

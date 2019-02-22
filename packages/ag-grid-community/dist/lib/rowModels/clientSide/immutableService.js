@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,7 +45,8 @@ var ImmutableService = /** @class */ (function () {
             add: []
         };
         var existingNodesMap = this.clientSideRowModel.getCopyOfNodesMap();
-        var orderMap = {};
+        var suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
+        var orderMap = suppressSortOrder ? null : {};
         if (utils_1._.exists(data)) {
             // split all the new data in the following:
             // if new, push to 'add'
@@ -54,7 +55,9 @@ var ImmutableService = /** @class */ (function () {
             data.forEach(function (dataItem, index) {
                 var id = getRowNodeIdFunc(dataItem);
                 var existingNode = existingNodesMap[id];
-                orderMap[id] = index;
+                if (orderMap) {
+                    orderMap[id] = index;
+                }
                 if (existingNode) {
                     var dataHasChanged = existingNode.data !== dataItem;
                     if (dataHasChanged) {

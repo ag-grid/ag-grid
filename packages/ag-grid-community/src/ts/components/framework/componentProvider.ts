@@ -15,7 +15,7 @@ import { ComponentType } from "./componentResolver";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
-import { LoadingCellRenderer } from "../../rendering/rowComp";
+import { LoadingCellRenderer } from "../../rendering/cellRenderers/loadingCellRenderer";
 import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
 import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
 import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
@@ -24,6 +24,7 @@ import { TextFilter } from "../../filter/textFilter";
 import { NumberFilter } from "../../filter/numberFilter";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
+import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { GridOptions } from "../../entities/gridOptions";
 import { _ } from "../../utils";
 
@@ -97,7 +98,10 @@ export class ComponentProvider {
 
         //overlays
         agLoadingOverlay: LoadingOverlayComponent,
-        agNoRowsOverlay: NoRowsOverlayComponent
+        agNoRowsOverlay: NoRowsOverlayComponent,
+
+        // tooltips
+        agTooltipComponent: TooltipComponent
     };
 
     private agDeprecatedNames: { [key: string]: DeprecatedComponentName } = {
@@ -256,7 +260,7 @@ export class ComponentProvider {
         if (deprecatedInfo != null) {
             _.doOnce(() => {
                 console.warn(`ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
-            }, 'DEPREACTE_COMPONENT_' + raw);
+            }, 'DEPRECATE_COMPONENT_' + raw);
             return deprecatedInfo.newComponentName;
         }
         return raw;

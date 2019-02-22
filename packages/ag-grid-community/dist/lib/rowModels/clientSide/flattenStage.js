@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,10 +37,6 @@ var FlattenStage = /** @class */ (function () {
         // is where the pivot values are
         var showRootNode = skipLeafNodes && rootNode.leafGroup;
         var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
-        // set all row tops to null, then set row tops on all visible rows. if we don't
-        // do this, then the algorithm below only sets row tops, old row tops from old rows
-        // will still lie around
-        this.resetRowTops(rootNode);
         this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
         // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
         var includeGroupTotalFooter = !showRootNode && this.gridOptionsWrapper.isGroupIncludeTotalFooter();
@@ -49,22 +45,6 @@ var FlattenStage = /** @class */ (function () {
             this.addRowNodeToRowsToDisplay(rootNode.sibling, result, nextRowTop, 0);
         }
         return result;
-    };
-    FlattenStage.prototype.resetRowTops = function (rowNode) {
-        rowNode.clearRowTop();
-        if (rowNode.hasChildren()) {
-            if (rowNode.childrenAfterGroup) {
-                for (var i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                    this.resetRowTops(rowNode.childrenAfterGroup[i]);
-                }
-            }
-            if (rowNode.sibling) {
-                rowNode.sibling.clearRowTop();
-            }
-        }
-        if (rowNode.detailNode) {
-            rowNode.detailNode.clearRowTop();
-        }
     };
     FlattenStage.prototype.recursivelyAddToRowsToDisplay = function (rowsToFlatten, result, nextRowTop, skipLeafNodes, uiLevel) {
         if (utils_1._.missingOrEmpty(rowsToFlatten)) {
@@ -120,15 +100,8 @@ var FlattenStage = /** @class */ (function () {
     // duplicated method, it's also in floatingRowModel
     FlattenStage.prototype.addRowNodeToRowsToDisplay = function (rowNode, result, nextRowTop, uiLevel) {
         result.push(rowNode);
-        if (utils_1._.missing(rowNode.rowHeight)) {
-            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-            rowNode.setRowHeight(rowHeight);
-        }
         var isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
         rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
-        rowNode.setRowTop(nextRowTop.value);
-        rowNode.setRowIndex(result.length - 1);
-        nextRowTop.value += rowNode.rowHeight;
     };
     FlattenStage.prototype.ensureFooterNodeExists = function (groupNode) {
         // only create footer node once, otherwise we have daemons and

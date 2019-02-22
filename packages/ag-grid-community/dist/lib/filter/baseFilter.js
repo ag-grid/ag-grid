@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,19 +69,52 @@ var DEFAULT_TRANSLATIONS = {
 var BaseFilter = /** @class */ (function (_super) {
     __extends(BaseFilter, _super);
     function BaseFilter() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.customFilterOptions = {};
+        return _this;
     }
     BaseFilter.prototype.init = function (params) {
+        var _this = this;
         this.filterParams = params;
         this.defaultFilter = this.filterParams.defaultOption;
+        // strip out incorrectly defined FilterOptionDefs
+        if (params.filterOptions) {
+            params.filterOptions.forEach(function (filterOption) {
+                if (typeof filterOption === 'string') {
+                    return;
+                }
+                if (!filterOption.displayKey) {
+                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
+                    return;
+                }
+                if (!filterOption.displayName) {
+                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayName'");
+                    return;
+                }
+                if (!filterOption.test) {
+                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'test'");
+                    return;
+                }
+                _this.customFilterOptions[filterOption.displayKey] = filterOption;
+            });
+        }
         if (this.filterParams.filterOptions && !this.defaultFilter) {
             if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0) {
-                this.defaultFilter = this.filterParams.filterOptions[0];
+                var firstFilterOption = this.filterParams.filterOptions[0];
+                if (typeof firstFilterOption === 'string') {
+                    this.defaultFilter = firstFilterOption;
+                }
+                else if (firstFilterOption.displayKey) {
+                    this.defaultFilter = firstFilterOption.displayKey;
+                }
+                else {
+                    console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
+                }
             }
         }
         this.customInit();
-        this.filter = this.defaultFilter;
-        this.filterCondition = this.defaultFilter;
+        this.selectedFilter = this.defaultFilter;
+        this.selectedFilterCondition = this.defaultFilter;
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
         this.applyActive = ((params.applyButton === true) || (params.apply === true));
@@ -274,7 +307,11 @@ var BaseFilter = /** @class */ (function (_super) {
     };
     BaseFilter.prototype.translate = function (toTranslate) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
+        var defaultTranslation = DEFAULT_TRANSLATIONS[toTranslate];
+        if (!defaultTranslation && this.customFilterOptions[toTranslate]) {
+            defaultTranslation = this.customFilterOptions[toTranslate].displayName;
+        }
+        return translate(toTranslate, defaultTranslation);
     };
     BaseFilter.prototype.getDebounceMs = function (filterParams) {
         if (filterParams.applyButton && filterParams.debounceMs) {
@@ -354,9 +391,10 @@ var ComparableBaseFilter = /** @class */ (function (_super) {
         var defaultFilterTypes = this.getApplicableFilterTypes();
         var restrictedFilterTypes = this.filterParams.filterOptions;
         var actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
-        var optionsHtml = actualFilterTypes.map(function (filterType) {
-            var localeFilterName = _this.translate(filterType);
-            return "<option value=\"" + filterType + "\">" + localeFilterName + "</option>";
+        var optionsHtml = actualFilterTypes.map(function (filter) {
+            var filterName = (typeof filter === 'string') ? filter : filter.displayKey;
+            var localeFilterName = _this.translate(filterName);
+            return "<option value=\"" + filterName + "\">" + localeFilterName + "</option>";
         });
         var readOnly = optionsHtml.length == 1 ? 'disabled' : '';
         var id = type == FilterConditionType.MAIN ? 'filterType' : 'filterConditionType';
@@ -367,20 +405,20 @@ var ComparableBaseFilter = /** @class */ (function (_super) {
     ComparableBaseFilter.prototype.initialiseFilterBodyUi = function (type) {
         var _this = this;
         if (type === FilterConditionType.MAIN) {
-            this.setFilterType(this.filter, type);
+            this.setFilterType(this.selectedFilter, type);
             this.addDestroyableEventListener(this.eTypeSelector, "change", function () { return _this.onFilterTypeChanged(type); });
         }
         else {
-            this.setFilterType(this.filterCondition, type);
+            this.setFilterType(this.selectedFilterCondition, type);
             this.addDestroyableEventListener(this.eTypeConditionSelector, "change", function () { return _this.onFilterTypeChanged(type); });
         }
     };
     ComparableBaseFilter.prototype.onFilterTypeChanged = function (type) {
         if (type === FilterConditionType.MAIN) {
-            this.filter = this.eTypeSelector.value;
+            this.selectedFilter = this.eTypeSelector.value;
         }
         else {
-            this.filterCondition = this.eTypeConditionSelector.value;
+            this.selectedFilterCondition = this.eTypeConditionSelector.value;
         }
         this.refreshFilterBodyUi(type);
         // we check if filter is active, so that if user changes the type (eg from 'less than' to 'equals'),
@@ -392,7 +430,7 @@ var ComparableBaseFilter = /** @class */ (function (_super) {
     };
     ComparableBaseFilter.prototype.isFilterActive = function () {
         var rawFilterValues = this.filterValues(FilterConditionType.MAIN);
-        if (rawFilterValues && this.filter === BaseFilter.IN_RANGE) {
+        if (rawFilterValues && this.selectedFilter === BaseFilter.IN_RANGE) {
             var filterValueArray = rawFilterValues;
             return filterValueArray[0] != null && filterValueArray[1] != null;
         }
@@ -402,14 +440,14 @@ var ComparableBaseFilter = /** @class */ (function (_super) {
     };
     ComparableBaseFilter.prototype.setFilterType = function (filterType, type) {
         if (type === FilterConditionType.MAIN) {
-            this.filter = filterType;
+            this.selectedFilter = filterType;
             if (!this.eTypeSelector) {
                 return;
             }
             this.eTypeSelector.value = filterType;
         }
         else {
-            this.filterCondition = filterType;
+            this.selectedFilterCondition = filterType;
             if (!this.eTypeConditionSelector) {
                 return;
             }
@@ -444,22 +482,22 @@ var ScalarBaseFilter = /** @class */ (function (_super) {
         return function (filterValue, gridValue) {
             if (gridValue == null) {
                 var nullValue = _this.translateNull(type);
-                if (_this.filter === BaseFilter.EQUALS) {
+                if (_this.selectedFilter === BaseFilter.EQUALS) {
                     return nullValue ? 0 : 1;
                 }
-                if (_this.filter === BaseFilter.GREATER_THAN) {
+                if (_this.selectedFilter === BaseFilter.GREATER_THAN) {
                     return nullValue ? 1 : -1;
                 }
-                if (_this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
+                if (_this.selectedFilter === BaseFilter.GREATER_THAN_OR_EQUAL) {
                     return nullValue ? 1 : -1;
                 }
-                if (_this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
+                if (_this.selectedFilter === BaseFilter.LESS_THAN_OR_EQUAL) {
                     return nullValue ? -1 : 1;
                 }
-                if (_this.filter === BaseFilter.LESS_THAN) {
+                if (_this.selectedFilter === BaseFilter.LESS_THAN) {
                     return nullValue ? -1 : 1;
                 }
-                if (_this.filter === BaseFilter.NOT_EQUAL) {
+                if (_this.selectedFilter === BaseFilter.NOT_EQUAL) {
                     return nullValue ? 1 : 0;
                 }
             }
@@ -480,17 +518,21 @@ var ScalarBaseFilter = /** @class */ (function (_super) {
         return ScalarBaseFilter.DEFAULT_NULL_COMPARATOR[reducedType];
     };
     ScalarBaseFilter.prototype.individualFilterPasses = function (params, type) {
-        return this.doIndividualFilterPasses(params, type, type === FilterConditionType.MAIN ? this.filter : this.filterCondition);
+        return this.doIndividualFilterPasses(params, type, type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition);
     };
     ScalarBaseFilter.prototype.doIndividualFilterPasses = function (params, type, filter) {
-        var value = this.filterParams.valueGetter(params.node);
-        var comparator = this.nullComparator(filter);
+        var cellValue = this.filterParams.valueGetter(params.node);
         var rawFilterValues = this.filterValues(type);
-        var from = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
-        if (from == null) {
+        var filterValue = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
+        if (filterValue == null) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         }
-        var compareResult = comparator(from, value);
+        var customFilterOption = this.customFilterOptions[filter];
+        if (customFilterOption) {
+            return customFilterOption.test(filterValue, cellValue);
+        }
+        var comparator = this.nullComparator(filter);
+        var compareResult = comparator(filterValue, cellValue);
         if (filter === BaseFilter.EQUALS) {
             return compareResult === 0;
         }
@@ -510,7 +552,7 @@ var ScalarBaseFilter = /** @class */ (function (_super) {
             return compareResult != 0;
         }
         //From now on the type is a range and rawFilterValues must be an array!
-        var compareToResult = comparator(rawFilterValues[1], value);
+        var compareToResult = comparator(rawFilterValues[1], cellValue);
         if (filter === BaseFilter.IN_RANGE) {
             if (!this.filterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
@@ -519,7 +561,7 @@ var ScalarBaseFilter = /** @class */ (function (_super) {
                 return compareResult >= 0 && compareToResult <= 0;
             }
         }
-        throw new Error('Unexpected type of filter!: ' + filter);
+        throw new Error('Unexpected type of filter: ' + filter);
     };
     ScalarBaseFilter.DEFAULT_NULL_COMPARATOR = {
         equals: false,

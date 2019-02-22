@@ -1,10 +1,10 @@
-import { Component } from "../../widgets/component";
-import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
+import { PopupComponent } from "../../widgets/popupComponent";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { _ } from "../../utils";
 
-export class PopupEditorWrapper extends Component implements ICellEditorComp {
+export class PopupEditorWrapper extends PopupComponent implements ICellEditorComp {
 
     private cellEditor: ICellEditorComp;
     private params: any;
@@ -66,10 +66,6 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
 
     public getValue(): any {
         return this.cellEditor.getValue();
-    }
-
-    public isPopup(): boolean {
-        return true;
     }
 
     public isCancelBeforeStart(): boolean {

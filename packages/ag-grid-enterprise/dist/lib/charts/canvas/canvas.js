@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // This is the property we set on an HTMLCanvasElement to let us know we've applied
@@ -96,7 +96,12 @@ exports.resizeCanvas = resizeCanvas;
  * @param bias If alignment is necessary, which side to prefer.
  */
 function pixelSnap(value, bias) {
-    if (bias === void 0) { bias = 1; }
+    if (bias === void 0) { bias = PixelSnapBias.Positive; }
     return value % 1 === 0 ? bias * value % 2 / 2 : value;
 }
 exports.pixelSnap = pixelSnap;
+var PixelSnapBias;
+(function (PixelSnapBias) {
+    PixelSnapBias[PixelSnapBias["Negative"] = -1] = "Negative";
+    PixelSnapBias[PixelSnapBias["Positive"] = 1] = "Positive";
+})(PixelSnapBias = exports.PixelSnapBias || (exports.PixelSnapBias = {}));

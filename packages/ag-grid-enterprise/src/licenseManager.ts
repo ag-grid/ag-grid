@@ -1,13 +1,15 @@
-import { Autowired, Bean, _ } from 'ag-grid-community';
+import { Autowired, Bean, PreConstruct, _ } from 'ag-grid-community';
 import { MD5 } from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = 'MTU0Njk2NjI4MDE0OA==';
+    private static RELEASE_INFORMATION:string = 'MTU1MDY4Mjk4NTgyMA==';
     private static licenseKey:string;
+    private displayWatermark: boolean = false;
 
     @Autowired('md5') private md5: MD5;
 
+    @PreConstruct
     public validateLicense(): void {
         const gridReleaseDate = LicenseManager.getGridReleaseDate();
         let valid: boolean = false;
@@ -31,12 +33,14 @@ export class LicenseManager {
         if (!valid) {
             LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
                 '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
+            this.displayWatermark = true;
         } else if (!current) {
             const formattedExpiryDate = LicenseManager.formatDate(expiry);
             const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
             LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
                 `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. Please ` +
                 'contact accounts@ag-grid.com to renew your license');
+            this.displayWatermark = true;
         }
     }
 
@@ -67,6 +71,10 @@ export class LicenseManager {
             valid,
             expiry: valid ? LicenseManager.formatDate(expiry) : null
         };
+    }
+
+    public isDisplayWatermark(): boolean {
+        return this.displayWatermark;
     }
 
     private static outputMessage(header: string, message: string) {

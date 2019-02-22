@@ -395,7 +395,12 @@ export class DragAndDropService {
 
     private createGhost(): void {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
-        _.addCssClass(this.eGhost, this.environment.getTheme());
+        const theme = this.environment.getTheme();
+
+        if (theme) {
+            _.addCssClass(this.eGhost, theme);
+        }
+
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
 
         this.setGhostIcon(null);
@@ -410,6 +415,7 @@ export class DragAndDropService {
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
         this.eGhostParent = usrDocument.querySelector('body') as HTMLElement;
+
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         } else {
@@ -419,7 +425,7 @@ export class DragAndDropService {
     }
 
     public setGhostIcon(iconName: string, shake = false): void {
-        _.removeAllChildren(this.eGhostIcon);
+        _.clearElement(this.eGhostIcon);
         let eIcon: HTMLElement;
         switch (iconName) {
             case DragAndDropService.ICON_ADD: eIcon = this.ePlusIcon; break;

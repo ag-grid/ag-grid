@@ -62,11 +62,16 @@ export class ClipboardService implements IClipboardService {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
     private logger: Logger;
+
+    private gridCore: GridCore;
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+    }
 
     @PostConstruct
     private init(): void {
@@ -220,15 +225,14 @@ export class ClipboardService implements IClipboardService {
         } as PasteStartEvent);
 
         const cellsToFlash = {} as any;
-        let firstRowValues: any[] = [];
+        const firstRowValues: any[] = [];
 
         const updatedRowNodes: RowNode[] = [];
         const updatedColumnIds: string[] = [];
 
         const rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
             // take reference of first row, this is the one we will be using to copy from
-            if (!firstRowValues) {
-                firstRowValues = [];
+            if (!firstRowValues.length) {
                 // two reasons for looping through columns
                 columns.forEach(column => {
                     // reason 1 - to get the initial values to copy down
@@ -293,8 +297,8 @@ export class ClipboardService implements IClipboardService {
                 rowIndex: rowNode.rowIndex,
                 rowPinned: rowNode.rowPinned,
                 context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi()
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!
             };
             this.eventService.dispatchEvent(event);
         });
@@ -507,9 +511,7 @@ export class ClipboardService implements IClipboardService {
 
     private copyFocusedCellToClipboard(includeHeaders = false): void {
         const focusedCell = this.focusedCellController.getFocusedCell();
-        if (_.missing(focusedCell)) {
-            return;
-        }
+        if (_.missing(focusedCell)) { return; }
 
         const currentRow = focusedCell.getGridRow();
         const rowNode = this.getRowNode(currentRow);

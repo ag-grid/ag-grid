@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -63,7 +63,9 @@ var DragService = /** @class */ (function () {
         var eDocument = this.gridOptionsWrapper.getDocument();
         var eBody = eDocument.querySelector('body');
         if (utils_1._.exists(eBody)) {
-            utils_1._.addOrRemoveCssClass(eBody, 'ag-body-no-select', noSelect);
+            // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
+            // the mouse isn't selecting text when dragging.
+            utils_1._.addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
         }
     };
     DragService.prototype.addDragSource = function (params, includeTouch) {

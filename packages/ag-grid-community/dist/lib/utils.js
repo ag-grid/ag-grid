@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,6 +35,18 @@ var reUnescapedHtml = /[&<>"']/g;
 var Utils = /** @class */ (function () {
     function Utils() {
     }
+    // https://ag-grid.com/forum/showthread.php?tid=4362
+    // when in IE or Edge, when you are editing a cell, then click on another cell,
+    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
+    // don't work. appears that when you update the dom in IE it looses focus
+    Utils.doIeFocusHack = function (el) {
+        if (exports._.isBrowserIE() || exports._.isBrowserEdge()) {
+            if (exports._.missing(document.activeElement) || document.activeElement === document.body) {
+                // console.log('missing focus');
+                el.focus();
+            }
+        }
+    };
     // if the key was passed before, then doesn't execute the func
     Utils.doOnce = function (func, key) {
         if (this.doOnceFlags[key]) {
@@ -167,11 +179,6 @@ var Utils = /** @class */ (function () {
             }
         }
         element.scrollLeft = value;
-    };
-    Utils.clearElement = function (el) {
-        while (el.firstChild) {
-            el.removeChild(el.firstChild);
-        }
     };
     Utils.iterateNamedNodeMap = function (map, callback) {
         if (!map) {
@@ -430,7 +437,7 @@ var Utils = /** @class */ (function () {
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
             var printableCharacter = event.key.length === 1;
             // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
-            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browers
+            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browsers
             var numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
             return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
         }
@@ -499,11 +506,9 @@ var Utils = /** @class */ (function () {
     Utils.existsAndNotEmpty = function (value) {
         return value != null && this.exists(value) && value.length > 0;
     };
-    Utils.removeAllChildren = function (node) {
-        if (node) {
-            while (node.hasChildNodes() && node.lastChild) {
-                node.removeChild(node.lastChild);
-            }
+    Utils.clearElement = function (el) {
+        while (el && el.firstChild) {
+            el.removeChild(el.firstChild);
         }
     };
     Utils.removeElement = function (parent, cssSelector) {
@@ -933,6 +938,7 @@ var Utils = /** @class */ (function () {
                 throw new Error(iconName + " did not find class");
             }
             span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            span.setAttribute("unselectable", "on");
             return span;
         }
     };
@@ -1070,7 +1076,8 @@ var Utils = /** @class */ (function () {
     Utils.isBrowserChrome = function () {
         if (this.isChrome === undefined) {
             var win = window;
-            this.isChrome = !!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime);
+            this.isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
+                (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
         }
         return this.isChrome;
     };
@@ -1093,6 +1100,19 @@ var Utils = /** @class */ (function () {
     Utils.getTarget = function (event) {
         var eventNoType = event;
         return eventNoType.target || eventNoType.srcElement;
+    };
+    Utils.isElementChildOfClass = function (element, cls, maxNest) {
+        var counter = 0;
+        while (element) {
+            if (this.containsClass(element, cls)) {
+                return true;
+            }
+            element = element.parentElement;
+            if (maxNest && ++counter > maxNest) {
+                break;
+            }
+        }
+        return false;
     };
     Utils.isElementInEventPath = function (element, event) {
         if (!event || !element) {
@@ -1416,9 +1436,12 @@ var Utils = /** @class */ (function () {
         var timeout;
         // Calling debounce returns a new anonymous function
         return function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
             // reference the context and args for the setTimeout function
             var context = this;
-            var args = arguments;
             // Should the function be called now? If immediate is true
             //   and not already in a timeout then the answer is: Yes
             var callNow = immediate && !timeout;
@@ -1542,7 +1565,7 @@ var Utils = /** @class */ (function () {
         if (!rowNodes) {
             return;
         }
-        rowNodes.sort(function (nodeA, nodeB) {
+        var comparator = function (nodeA, nodeB) {
             var positionA = rowNodeOrder[nodeA.id];
             var positionB = rowNodeOrder[nodeB.id];
             var aHasIndex = positionA !== undefined;
@@ -1558,18 +1581,38 @@ var Utils = /** @class */ (function () {
                 // when comparing two filler nodes, we have no index to compare them
                 // against, however we want this sorting to be deterministic, so that
                 // the rows don't jump around as the user does delta updates. so we
-                // want the same sort result. so we use the id - which doesn't make sense
+                // want the same sort result. so we use the __objectId - which doesn't make sense
                 // from a sorting point of view, but does give consistent behaviour between
                 // calls. otherwise groups jump around as delta updates are done.
-                return nodeA.id > nodeB.id ? 1 : -1;
+                // note: previously here we used nodeId, however this gave a strange order
+                // as string ordering of numbers is wrong, so using id based on creation order
+                // as least gives better looking order.
+                return nodeA.__objectId - nodeB.__objectId;
             }
             else if (aHasIndex) {
                 return 1;
             }
-            else {
-                return -1;
+            return -1;
+        };
+        // const a = new Date().getTime();
+        // check if the list first needs sorting
+        var rowNodeA;
+        var rowNodeB;
+        var atLeastOneOutOfOrder = false;
+        for (var i = 0; i < rowNodes.length - 1; i++) {
+            rowNodeA = rowNodes[i];
+            rowNodeB = rowNodes[i + 1];
+            if (comparator(rowNodeA, rowNodeB) > 0) {
+                atLeastOneOutOfOrder = true;
+                break;
             }
-        });
+        }
+        // const b = new Date().getTime();
+        if (atLeastOneOutOfOrder) {
+            rowNodes.sort(comparator);
+        }
+        // const c = new Date().getTime();
+        // console.log(`${this.count}: ${rowNodes.length} items, ${b-a}ms ${atLeastOneOutOfOrder} ${c-b}ms`);
     };
     Utils.fuzzyCheckStrings = function (inputValues, validValues, allSuggestions) {
         var _this = this;
@@ -1698,7 +1741,7 @@ var Utils = /** @class */ (function () {
         columnGroupClosed: 'contracted',
         columnSelectClosed: 'tree-closed',
         columnSelectOpen: 'tree-open',
-        // from deprecated header, remove at some point
+        /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',
         sortUnSort: 'none'

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,7 +56,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         return _this;
     }
     HeaderGroupWrapperComp.prototype.postConstruct = function () {
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
         var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.appendHeaderGroupComp(displayName);
         this.setupResize();
@@ -79,23 +79,30 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         });
         this.onColumnMovingChanged();
     };
+    HeaderGroupWrapperComp.prototype.getComponentHolder = function () {
+        return this.columnGroup.getColGroupDef();
+    };
+    HeaderGroupWrapperComp.prototype.getTooltipText = function () {
+        var colGroupDef = this.getComponentHolder();
+        return colGroupDef && colGroupDef.headerTooltip;
+    };
     HeaderGroupWrapperComp.prototype.setupTooltip = function () {
-        var colGroupDef = this.columnGroup.getColGroupDef();
-        // add tooltip if exists
-        if (colGroupDef && colGroupDef.headerTooltip) {
-            this.getGui().title = colGroupDef.headerTooltip;
+        var tooltipText = this.getTooltipText();
+        if (tooltipText == null) {
+            return;
+        }
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            this.getGui().setAttribute('title', tooltipText);
+        }
+        else {
+            this.beans.tooltipManager.registerTooltip(this);
         }
     };
     HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        if (this.columnGroup.isMoving()) {
-            utils_1._.addCssClass(this.getGui(), 'ag-header-cell-moving');
-        }
-        else {
-            utils_1._.removeCssClass(this.getGui(), 'ag-header-cell-moving');
-        }
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.columnGroup.isMoving());
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
         this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
@@ -165,7 +172,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     // and in the order they are currently in the screen.
     HeaderGroupWrapperComp.prototype.getDragItemForGroup = function () {
         var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
-        // capture visible state, used when reentering grid to dictate which columns should be visible
+        // capture visible state, used when re-entering grid to dictate which columns should be visible
         var visibleState = {};
         allColumnsOriginalOrder.forEach(function (column) { return visibleState[column.getId()] = column.isVisible(); });
         var allColumnsCurrentOrder = [];
@@ -200,8 +207,8 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         // the children belonging to this group can change, so we need to add and remove listeners as they change
         this.addDestroyableEventListener(this.columnGroup, columnGroup_1.ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
         this.onWidthChanged();
-        // the child listeners are not tied to this components lifecycle, as children can get added and removed
-        // to the group - hence they are on a different lifecycle. so we must make sure the existing children
+        // the child listeners are not tied to this components life-cycle, as children can get added and removed
+        // to the group - hence they are on a different life-cycle. so we must make sure the existing children
         // listeners are removed when we finally get destroyed
         this.addDestroyFunc(this.destroyListenersOnChildrenColumns.bind(this));
     };

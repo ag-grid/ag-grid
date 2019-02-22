@@ -1,5 +1,5 @@
 import { Autowired, Bean, Context, PostConstruct } from "../context/context";
-import { ICellEditorComp, ICellEditorParams } from "./cellEditors/iCellEditor";
+import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColDef } from "../entities/colDef";

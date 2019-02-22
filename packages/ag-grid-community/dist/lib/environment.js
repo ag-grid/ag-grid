@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,52 +17,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var utils_1 = require("./utils");
-var themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
-var themes = themeNames.concat(themeNames.map(function (name) { return "theme-" + name; }));
-var themeClass = new RegExp("ag-(" + themes.join('|') + ")");
-var matGridSize = 8;
-var freshGridSize = 4;
-var balhamGridSize = 4;
+var MAT_GRID_SIZE = 8;
+var FRESH_GRID_SIZE = 4;
+var BALHAM_GRID_SIZE = 4;
 var HARD_CODED_SIZES = {
     'ag-theme-material': {
-        headerHeight: matGridSize * 7,
-        virtualItemHeight: matGridSize * 5,
-        rowHeight: matGridSize * 6
+        headerHeight: MAT_GRID_SIZE * 7,
+        virtualItemHeight: MAT_GRID_SIZE * 5,
+        rowHeight: MAT_GRID_SIZE * 6
     },
     'ag-theme-classic': {
         headerHeight: 25,
-        virtualItemHeight: freshGridSize * 5,
+        virtualItemHeight: FRESH_GRID_SIZE * 5,
         rowHeight: 25
     },
     'ag-theme-balham': {
-        headerHeight: balhamGridSize * 8,
-        virtualItemHeight: balhamGridSize * 7,
-        rowHeight: balhamGridSize * 7
+        headerHeight: BALHAM_GRID_SIZE * 8,
+        virtualItemHeight: BALHAM_GRID_SIZE * 7,
+        rowHeight: BALHAM_GRID_SIZE * 7
     }
 };
 var Environment = /** @class */ (function () {
     function Environment() {
-        this.sassVariables = {};
     }
-    // Approach described here:
-    // https://www.ofcodeandcolor.com/2017/04/02/encoding-data-in-css/
-    Environment.prototype.loadSassVariables = function () {
-        /*
-        var element = document.createElement('div');
-        element.className = 'sass-variables';
-        this.eGridDiv.appendChild(element);
-
-        var content = window.getComputedStyle(element, '::after').content;
-
-        try {
-            this.sassVariables = JSON.parse(JSON.parse(content));
-        } catch (e) {
-            throw new Error("Failed loading the theme sizing - check that you have the theme set up correctly.");
-        }
-
-        this.eGridDiv.removeChild(element);
-        */
-    };
     Environment.prototype.getSassVariable = function (theme, key) {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];
@@ -71,37 +48,28 @@ var Environment = /** @class */ (function () {
             return HARD_CODED_SIZES['ag-theme-balham'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];
-        /*
-        const result = parseInt(this.sassVariables[key]);
-        if (!result || isNaN(result)) {
-            throw new Error(`Failed loading ${key} Sass variable from ${this.sassVariables}`);
-        }
-        return result;
-        */
     };
     Environment.prototype.getTheme = function () {
+        var reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
+        var el = this.eGridDiv;
         var themeMatch;
-        var element = this.eGridDiv;
-        while (element != document.documentElement && themeMatch == null) {
-            themeMatch = element.className.match(themeClass);
-            element = element.parentElement;
-            if (element == null) {
+        while (el) {
+            themeMatch = reg.exec(el.className);
+            el = el.parentElement;
+            if (el == null || themeMatch) {
                 break;
             }
         }
-        if (themeMatch) {
-            var userTheme_1 = themeMatch[0];
-            var oldThemes = ['ag-fresh', 'ag-dark', 'ag-blue', 'ag-material', 'ag-bootstrap'];
-            var usingOldTheme = oldThemes.indexOf(userTheme_1) >= 0;
-            if (usingOldTheme) {
-                var newTheme_1 = userTheme_1.replace('ag-', 'ag-theme-');
-                utils_1._.doOnce(function () { return console.warn("ag-Grid: As of v19 old theme are no longer provided. Please replacement " + userTheme_1 + " with " + newTheme_1 + "."); }, 'using-old-theme');
-            }
-            return userTheme_1;
+        if (!themeMatch) {
+            return;
         }
-        else {
-            return 'ag-theme-fresh';
+        var theme = themeMatch[0];
+        var usingOldTheme = themeMatch[2] === undefined;
+        if (usingOldTheme) {
+            var newTheme_1 = theme.replace('ag-', 'ag-theme-');
+            utils_1._.doOnce(function () { return console.warn("ag-Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
         }
+        return theme;
     };
     __decorate([
         context_1.Autowired('eGridDiv'),

@@ -47,7 +47,7 @@ $secondary-font-size: 12px !default; // font-secondary-size
 $secondary-font-weight: 700 !default; // font-secondary-weight
 
 // Misc
-$card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+$card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
 $card-radius: 2px;
 
 // Colors
@@ -112,6 +112,7 @@ $params: (
     disabled-foreground-color: $disabled-foreground-color,
 
     border-color: $border-color,
+    scroll-spacer-border: $scroll-spacer-border,
 
     panel-background-color: $panel-background-color,
     tool-panel-background-color: $tool-panel-background-color,
@@ -165,5 +166,13 @@ $params: (
     use-icons-for-pager-buttons: true,
     customize-inputs: true,
     customize-buttons: true,
-    full-width-tabs: true
+    full-width-tabs: true,
+
+    tooltip-background-color: $tooltip-background-color,
+    tooltip-foreground-color: $tooltip-foreground-color,
+    tooltip-padding: $tooltip-padding,
+    tooltip-border-radius: $tooltip-border-radius,
+    tooltip-border-color: $tooltip-border-color,
+    tooltip-border-width: $tooltip-border-width,
+    tooltip-border-style: $tooltip-border-style
 );

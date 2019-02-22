@@ -1,22 +1,10 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { Shape } from "./shape";
+/**
+ * Circular arc node that uses the experimental `Path2D` class to define
+ * the arc path for further rendering and hit-testing.
+ */
 export declare class Arc extends Shape {
-    protected static defaults: {
-        fillStyle: string;
-        strokeStyle: string;
-        lineWidth: number;
-        opacity: number;
-    } & {
-        fillStyle: string;
-        strokeStyle: string;
-        x: number;
-        y: number;
-        radius: number;
-        startAngle: number;
-        endAngle: number;
-        anticlockwise: boolean;
-    };
-    constructor();
     protected path: Path2D;
     private _x;
     x: number;
@@ -28,10 +16,10 @@ export declare class Arc extends Shape {
     startAngle: number;
     private _endAngle;
     endAngle: number;
-    private _anticlockwise;
-    anticlockwise: boolean;
+    private _isCounterClockwise;
+    isCounterClockwise: boolean;
     updatePath(): void;
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean;
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean;
+    isPointInPath(x: number, y: number): boolean;
+    isPointInStroke(x: number, y: number): boolean;
     render(ctx: CanvasRenderingContext2D): void;
 }

@@ -1,12 +1,12 @@
 import { Bean, Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { StageExecuteParams } from "../../interfaces/iRowNodeStage";
-import {SortOption, SortService} from "../../rowNodes/sortService";
-import {RowNode} from "../../entities/rowNode";
-import {SortController} from "../../sortController";
-import {_} from "../../utils";
-import {RowNodeTransaction} from "./clientSideRowModel";
-import {ChangedPath} from "./changedPath";
+import { SortOption, SortService } from "../../rowNodes/sortService";
+import { RowNode } from "../../entities/rowNode";
+import { SortController } from "../../sortController";
+import { RowNodeTransaction } from "./clientSideRowModel";
+import { ColumnController } from "../../columnController/columnController";
+import { _ } from "../../utils";
 
 @Bean('sortStage')
 export class SortStage {
@@ -14,6 +14,7 @@ export class SortStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortService') private sortService: SortService;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): void {
         const sortOptions: SortOption[] = this.sortController.getSortForRowController();
@@ -31,7 +32,11 @@ export class SortStage {
         const dirtyLeafNodes = deltaSort ?
             this.calculateDirtyNodes(params.rowNodeTransactions) : null;
 
-        this.sortService.sort(params.rowNode, sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath);
+        const valueColumns = this.columnController.getValueColumns();
+        const noAggregations = _.missingOrEmpty(valueColumns);
+
+        this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes,
+            params.changedPath, noAggregations);
     }
 
     private calculateDirtyNodes(rowNodeTransactions: RowNodeTransaction[]): {[nodeId: string]: boolean} {
@@ -40,12 +45,12 @@ export class SortStage {
 
         const addNodesFunc = (rowNodes: RowNode[]) => {
             if (rowNodes) {
-                rowNodes.forEach( rowNode => dirtyNodes[rowNode.id] = true);
+                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id] = true);
             }
         };
 
         // all leaf level nodes in the transaction were impacted
-        rowNodeTransactions.forEach( tran => {
+        rowNodeTransactions.forEach(tran => {
             addNodesFunc(tran.add);
             addNodesFunc(tran.update);
             addNodesFunc(tran.remove);

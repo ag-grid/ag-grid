@@ -1,5 +1,5 @@
 <div class="col-md-3 offset-1" class="blog-author">
-    <img src="../../images/team/niall.jpg" class="img-fluid">
+    <img src="../../images/team/niall.jpg" alt="Niall Crosby" class="img-fluid">
 <h4>Niall Crosby</h4>
 
 <p class="lead">CEO / CTO</p>

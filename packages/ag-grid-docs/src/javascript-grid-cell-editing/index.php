@@ -256,7 +256,7 @@ cellDefs.forEach( function(cellDef) {
     </p>
     <ul class="content">
         <li><code>cellEditingStarted: </code> editing has started on a cell.</li>
-        <li><code>cellEditingStopped: </code> editing has stopped on a row.</li>
+        <li><code>cellEditingStopped: </code> editing has stopped on a cell.</li>
         <li><code>rowEditingStarted: </code> editing has started on a row. Only for full row editing.</li>
         <li><code>rowEditingStopped: </code> editing has stopped on a row. Only for full row editing.</li>
     </ul>
@@ -704,23 +704,19 @@ cellEditorParams: function(params) {
     <h2>Controlling keyboard while editing</h2>
     <p>
     While editing, the grid will listen to navigation events coming from the keyboard, this includes navigate to next cell,
-    next row... If you want to avoid this events from being consumed by the grid you can do so by configuring
+    next row etc. If you want to avoid this events from being consumed by the grid you can do so by configuring
     <code>colDef.suppressKeyboardEvent</code>.
     </p>
 
-
     <p>
-    The following example shows a simple example where each cell contains a number and the arrows are used to manipulate
-    its value.
-
-    Note how the arrows are used to increase or decrease the value of the cell while editing and they are not used for
-    navigation
+        See <a href="../javascript-grid-keyboard-navigation/#suppressKeyboardEvents">
+        Suppress Grid Keyboard Events</a> for full details of this callback.
     </p>
 
-    <snippet>
-suppressKeyboardEvent: function(event){
-    if (event.editing) return true;
-}</snippet>
+    <p>
+        The following example has each cell containing a number. When editing, the arrows are used to manipulate
+        its value instead of navigate cells.
+    </p>
 
     <?= example('Controlling keyboard while editing', 'controlling-keyboard-while-editing', 'generated', array("processVue" => true)) ?>
 

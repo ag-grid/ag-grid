@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,6 +28,7 @@ var clipboardService_1 = require("../clipboardService");
 var menuItemComponent_1 = require("./menuItemComponent");
 var menuList_1 = require("./menuList");
 var menuItemMapper_1 = require("./menuItemMapper");
+var rangeController_1 = require("../rangeController");
 var ContextMenuFactory = /** @class */ (function () {
     function ContextMenuFactory() {
     }
@@ -60,7 +61,12 @@ var ContextMenuFactory = /** @class */ (function () {
             // nothing to show, perhaps tool panels???
         }
         if (this.gridOptionsWrapper.isEnableCharts()) {
-            defaultMenuOptions.push('createChart');
+            if (!this.rangeController.isEmpty()) {
+                defaultMenuOptions.push('chartRange');
+            }
+            if (this.rowModel.getType() === ag_grid_community_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+                defaultMenuOptions.push('chartEverything');
+            }
         }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             var userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
@@ -122,6 +128,10 @@ var ContextMenuFactory = /** @class */ (function () {
         ag_grid_community_1.Autowired('rowModel'),
         __metadata("design:type", Object)
     ], ContextMenuFactory.prototype, "rowModel", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('rangeController'),
+        __metadata("design:type", rangeController_1.RangeController)
+    ], ContextMenuFactory.prototype, "rangeController", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

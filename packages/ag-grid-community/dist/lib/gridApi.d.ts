@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -6,6 +6,7 @@ import { GridPanel } from "./gridPanel/gridPanel";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
+import { GridCore } from "./gridCore";
 import { IRowModel } from "./interfaces/iRowModel";
 import { AddRangeSelectionParams, RangeSelection } from "./interfaces/iRangeController";
 import { GridCell, GridCellDef } from "./entities/gridCell";
@@ -19,7 +20,7 @@ import { RowDataTransaction, RowNodeTransaction } from "./rowModels/clientSide/c
 import { AlignedGridsService } from "./alignedGridsService";
 import { AgEvent, ColumnEventType } from "./events";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
+import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
@@ -55,7 +56,6 @@ export declare class GridApi {
     private immutableService;
     private csvCreator;
     private excelCreator;
-    private gridCore;
     private rowRenderer;
     private filterManager;
     private columnController;
@@ -82,12 +82,14 @@ export declare class GridApi {
     private animationFrameService;
     private statusBarService;
     private gridPanel;
+    private gridCore;
     private headerRootComp;
     private clientSideRowModel;
     private infinitePageRowModel;
     private serverSideRowModel;
     private detailGridInfoMap;
     registerGridComp(gridPanel: GridPanel): void;
+    registerGridCore(gridCore: GridCore): void;
     registerHeaderRootComp(headerRootComp: HeaderRootComp): void;
     private init;
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -100,16 +102,23 @@ export declare class GridApi {
     exportDataAsCsv(params?: CsvExportParams): void;
     getDataAsExcel(params?: ExcelExportParams): string;
     exportDataAsExcel(params?: ExcelExportParams): void;
+    /** @deprecated */
     setEnterpriseDatasource(datasource: IServerSideDatasource): void;
     setServerSideDatasource(datasource: IServerSideDatasource): void;
     setDatasource(datasource: IDatasource): void;
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
     setRowData(rowData: any[]): void;
+    /** @deprecated */
     setFloatingTopRowData(rows: any[]): void;
+    /** @deprecated */
     setFloatingBottomRowData(rows: any[]): void;
+    /** @deprecated */
     getFloatingTopRowCount(): number;
+    /** @deprecated */
     getFloatingBottomRowCount(): number;
+    /** @deprecated */
     getFloatingTopRow(index: number): RowNode;
+    /** @deprecated */
     getFloatingBottomRow(index: number): RowNode;
     setPinnedTopRowData(rows: any[]): void;
     setPinnedBottomRowData(rows: any[]): void;
@@ -133,10 +142,14 @@ export declare class GridApi {
     flashCells(params?: FlashCellsParams): void;
     redrawRows(params?: RedrawRowsParams): void;
     timeFullRedraw(count?: number): void;
+    /** @deprecated */
     refreshView(): void;
     refreshRows(rowNodes: RowNode[]): void;
+    /** @deprecated */
     rowDataChanged(rows: any): void;
+    /** @deprecated */
     softRefreshView(): void;
+    /** @deprecated */
     refreshGroupRows(): void;
     setFunctionsReadOnly(readOnly: boolean): void;
     refreshHeader(): void;
@@ -206,6 +219,7 @@ export declare class GridApi {
     setHeaderHeight(headerHeight: number): void;
     setGridAutoHeight(gridAutoHeight: boolean): void;
     setDomLayout(domLayout: string): void;
+    setEnableCellTextSelection(selectable: boolean): void;
     getPreferredWidth(): number;
     setGroupHeaderHeight(headerHeight: number): void;
     setFloatingFiltersHeight(headerHeight: number): void;
@@ -268,6 +282,7 @@ export declare class GridApi {
     purgeVirtualPageCache(): void;
     purgeInfinitePageCache(): void;
     purgeInfiniteCache(): void;
+    /** @deprecated */
     purgeEnterpriseCache(route?: string[]): void;
     purgeServerSideCache(route?: string[]): void;
     getVirtualRowCount(): number;

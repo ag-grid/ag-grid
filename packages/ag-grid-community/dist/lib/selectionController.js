@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,7 @@ var constants_1 = require("./constants");
 var columnApi_1 = require("./columnController/columnApi");
 var gridApi_1 = require("./gridApi");
 var utils_1 = require("./utils");
+var changedPath_1 = require("./rowModels/clientSide/changedPath");
 var SelectionController = /** @class */ (function () {
     function SelectionController() {
     }
@@ -80,7 +81,7 @@ var SelectionController = /** @class */ (function () {
         });
     };
     // should only be called if groupSelectsChildren=true
-    SelectionController.prototype.updateGroupsFromChildrenSelections = function () {
+    SelectionController.prototype.updateGroupsFromChildrenSelections = function (changedPath) {
         // we only do this when group selection state depends on selected children
         if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
             return;
@@ -90,13 +91,22 @@ var SelectionController = /** @class */ (function () {
             return;
         }
         var clientSideRowModel = this.rowModel;
-        clientSideRowModel.getTopLevelNodes().forEach(function (rowNode) {
-            rowNode.depthFirstSearch(function (node) {
-                if (node.group) {
-                    node.calculateSelectedFromChildren();
-                }
-            });
+        var rootNode = clientSideRowModel.getRootNode();
+        if (!changedPath) {
+            changedPath = new changedPath_1.ChangedPath(true, rootNode);
+            changedPath.setInactive();
+        }
+        changedPath.forEachChangedNodeDepthFirst(function (rowNode) {
+            if (rowNode !== rootNode) {
+                rowNode.calculateSelectedFromChildren();
+            }
         });
+        // clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
+        //     rowNode.depthFirstSearch((node) => {
+        //         if (node.group) {
+        //         }
+        //     });
+        // });
     };
     SelectionController.prototype.getNodeForIdIfSelected = function (id) {
         return this.selectedNodes[id];
@@ -181,7 +191,7 @@ var SelectionController = /** @class */ (function () {
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function () {
         if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('getBestCostNodeSelection is only avilable when using normal row model');
+            console.warn('getBestCostNodeSelection is only available when using normal row model');
         }
         var clientSideRowModel = this.rowModel;
         var topLevelNodes = clientSideRowModel.getTopLevelNodes();
@@ -278,24 +288,36 @@ var SelectionController = /** @class */ (function () {
         };
         this.eventService.dispatchEvent(event);
     };
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     SelectionController.prototype.selectNode = function (rowNode, tryMulti) {
         if (rowNode) {
             rowNode.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
         }
     };
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     SelectionController.prototype.deselectIndex = function (rowIndex) {
         var node = this.rowModel.getRow(rowIndex);
         this.deselectNode(node);
     };
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     SelectionController.prototype.deselectNode = function (rowNode) {
         if (rowNode) {
             rowNode.setSelectedParams({ newValue: false, clearSelection: false });
         }
     };
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     SelectionController.prototype.selectIndex = function (index, tryMulti) {
         var node = this.rowModel.getRow(index);
         this.selectNode(node, tryMulti);

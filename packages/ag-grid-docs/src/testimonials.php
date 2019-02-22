@@ -187,7 +187,7 @@ AG-Grid has made my life as a developer a lot easier
 <h2>Want to become a user of ag-Grid as well?</h2>
 <p>Use our Community edition or trial ag-Grid Enterprise for free.</p>
 <div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,6 +62,74 @@ var ClientSideRowModel = /** @class */ (function () {
         this.rootNode = new rowNode_1.RowNode();
         this.nodeManager = new clientSideNodeManager_1.ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController, this.gridApi, this.columnApi, this.selectionController);
         this.context.wireBean(this.rootNode);
+    };
+    ClientSideRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) {
+        var atLeastOneChange;
+        var res = false;
+        // we do this multiple times as changing the row heights can also change the first and last rows,
+        // so the first pass can make lots of rows smaller, which means the second pass we end up changing
+        // more rows.
+        do {
+            atLeastOneChange = false;
+            var rowAtStartPixel = this.getRowIndexAtPixel(startPixel);
+            var rowAtEndPixel = this.getRowIndexAtPixel(endPixel);
+            // keep check to current page if doing pagination
+            var firstRow = Math.max(rowAtStartPixel, startLimitIndex);
+            var lastRow = Math.min(rowAtEndPixel, endLimitIndex);
+            for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                var rowNode = this.getRow(rowIndex);
+                if (rowNode.rowHeightEstimated) {
+                    var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+                    rowNode.setRowHeight(rowHeight.height);
+                    atLeastOneChange = true;
+                    res = true;
+                }
+            }
+            if (atLeastOneChange) {
+                this.setRowTops();
+            }
+        } while (atLeastOneChange);
+        return res;
+    };
+    ClientSideRowModel.prototype.setRowTops = function () {
+        var nextRowTop = 0;
+        for (var i = 0; i < this.rowsToDisplay.length; i++) {
+            // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
+            // with these two layouts.
+            var allowEstimate = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_NORMAL;
+            var rowNode = this.rowsToDisplay[i];
+            if (utils_1._.missing(rowNode.rowHeight)) {
+                var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode, allowEstimate);
+                rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
+            }
+            rowNode.setRowTop(nextRowTop);
+            rowNode.setRowIndex(i);
+            nextRowTop += rowNode.rowHeight;
+        }
+    };
+    ClientSideRowModel.prototype.resetRowTops = function (rowNode, changedPath) {
+        rowNode.clearRowTop();
+        if (rowNode.hasChildren()) {
+            if (rowNode.childrenAfterGroup) {
+                // if a changedPath is active, it means we are here because of a transaction update or
+                // a change detection. neither of these impacts the open/closed state of groups. so if
+                // a group is not open this time, it was not open last time. so we know all closed groups
+                // already have their top positions cleared. so there is no need to traverse all the way
+                // when changedPath is active and the rowNode is not expanded.
+                var skipChildren = changedPath.isActive() && !rowNode.expanded;
+                if (!skipChildren) {
+                    for (var i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+                        this.resetRowTops(rowNode.childrenAfterGroup[i], changedPath);
+                    }
+                }
+            }
+            if (rowNode.sibling) {
+                rowNode.sibling.clearRowTop();
+            }
+        }
+        if (rowNode.detailNode) {
+            rowNode.detailNode.clearRowTop();
+        }
     };
     // returns false if row was moved, otherwise true
     ClientSideRowModel.prototype.ensureRowAtPixel = function (rowNode, pixel) {
@@ -137,11 +205,9 @@ var ClientSideRowModel = /** @class */ (function () {
         // each column is different. that way the changedPath is used so that only
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
-        var valueColumns = this.columnController.getValueColumns();
-        var noValueColumns = utils_1._.missingOrEmpty(valueColumns);
         var noTransactions = utils_1._.missingOrEmpty(rowNodeTransactions);
-        var changedPath = new changedPath_1.ChangedPath(false);
-        if (noValueColumns || noTransactions) {
+        var changedPath = new changedPath_1.ChangedPath(false, this.rootNode);
+        if (noTransactions) {
             changedPath.setInactive();
         }
         return changedPath;
@@ -166,7 +232,7 @@ var ClientSideRowModel = /** @class */ (function () {
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_FILTER:
                 // start = new Date().getTime();
-                this.doFilter();
+                this.doFilter(changedPath);
             // console.log('filter = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_PIVOT:
                 this.doPivot(changedPath);
@@ -183,6 +249,11 @@ var ClientSideRowModel = /** @class */ (function () {
                 this.doRowsToDisplay();
             // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
+        // set all row tops to null, then set row tops on all visible rows. if we don't
+        // do this, then the algorithm below only sets row tops, old row tops from old rows
+        // will still lie around
+        this.resetRowTops(this.rootNode, changedPath);
+        this.setRowTops();
         var event = {
             type: events_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
@@ -349,7 +420,7 @@ var ClientSideRowModel = /** @class */ (function () {
     // nodes - the rowNodes to traverse
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
-    // index - works similar to the index in forEach in javascripts array function
+    // index - works similar to the index in forEach in javascript's array function
     ClientSideRowModel.prototype.recursivelyWalkNodesAndCallback = function (nodes, callback, recursionType, index) {
         if (nodes) {
             for (var i = 0; i < nodes.length; i++) {
@@ -455,7 +526,7 @@ var ClientSideRowModel = /** @class */ (function () {
                 this.restoreGroupState(groupState);
             }
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
-                this.selectionController.updateGroupsFromChildrenSelections();
+                this.selectionController.updateGroupsFromChildrenSelections(changedPath);
             }
         }
         else {
@@ -475,8 +546,8 @@ var ClientSideRowModel = /** @class */ (function () {
             }
         });
     };
-    ClientSideRowModel.prototype.doFilter = function () {
-        this.filterStage.execute({ rowNode: this.rootNode });
+    ClientSideRowModel.prototype.doFilter = function (changedPath) {
+        this.filterStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
     };
     ClientSideRowModel.prototype.doPivot = function (changedPath) {
         if (this.pivotStage) {

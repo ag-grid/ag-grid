@@ -1,60 +1,106 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var hdpiCanvas_1 = require("../canvas/hdpiCanvas");
 var shape_1 = require("./shape/shape");
 var Scene = /** @class */ (function () {
-    function Scene(parent, width, height) {
+    function Scene(width, height) {
         if (width === void 0) { width = 800; }
         if (height === void 0) { height = 600; }
         var _this = this;
+        this.id = this.createId();
         this.onMouseMove = function (e) {
-            var pixelRatio = _this.hdpiCanvas.pixelRatio;
-            var x = e.offsetX * pixelRatio;
-            var y = e.offsetY * pixelRatio;
-            var node = _this.root;
-            if (node) {
-                var children = node.children;
-                var n = children.length;
-                for (var i = 0; i < n; i++) {
-                    var child = children[i];
-                    if (child instanceof shape_1.Shape) {
-                        if (child.isPointInPath(_this.ctx, x, y)) {
-                            child.fillStyle = 'yellow';
+            var x = e.offsetX;
+            var y = e.offsetY;
+            if (_this.root) {
+                var node = _this.pickNode(_this.root, x, y);
+                if (node) {
+                    if (node instanceof shape_1.Shape) {
+                        if (!_this.lastPick) {
+                            _this.lastPick = { node: node, fillStyle: node.fillStyle };
                         }
-                        else {
-                            child.fillStyle = 'red';
+                        else if (_this.lastPick.node !== node) {
+                            _this.lastPick.node.fillStyle = _this.lastPick.fillStyle;
+                            _this.lastPick = { node: node, fillStyle: node.fillStyle };
                         }
-                        if (child.isPointInStroke(_this.ctx, x, y)) {
-                            child.strokeStyle = 'lime';
-                        }
-                        else {
-                            child.strokeStyle = 'black';
-                        }
+                        node.fillStyle = 'yellow';
                     }
+                }
+                else if (_this.lastPick) {
+                    _this.lastPick.node.fillStyle = _this.lastPick.fillStyle;
+                    _this.lastPick = undefined;
                 }
             }
         };
-        this._dirty = false;
+        this._isDirty = false;
+        this._root = null;
+        this._frameIndex = 0;
+        this._isRenderFrameIndex = false;
         this.render = function () {
-            _this.ctx.clearRect(0, 0, _this.width, _this.height);
+            var ctx = _this.ctx;
+            ctx.clearRect(0, 0, _this.width, _this.height);
             if (_this.root) {
-                _this.root.render(_this.ctx);
+                ctx.save();
+                if (_this.root.isVisible) {
+                    _this.root.render(ctx);
+                }
+                ctx.restore();
             }
-            _this.dirty = false;
+            _this._frameIndex++;
+            if (_this.isRenderFrameIndex) {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, 40, 15);
+                ctx.fillStyle = 'black';
+                ctx.fillText(_this.frameIndex.toString(), 0, 10);
+            }
+            _this.isDirty = false;
         };
         this.hdpiCanvas = new hdpiCanvas_1.HdpiCanvas(this._width = width, this._height = height);
-        var canvas = this.hdpiCanvas.canvas;
-        this.ctx = canvas.getContext('2d');
-        parent.appendChild(canvas);
-        this.setupListeners(canvas);
+        this.ctx = this.hdpiCanvas.context;
+        this.setupListeners(this.hdpiCanvas.canvas); // debug
     }
+    Object.defineProperty(Scene.prototype, "parent", {
+        get: function () {
+            return this.hdpiCanvas.parent;
+        },
+        set: function (value) {
+            this.hdpiCanvas.parent = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Scene.prototype.createId = function () {
+        return this.constructor.name + '-' + (Scene.id++);
+    };
+    ;
     Scene.prototype.setupListeners = function (canvas) {
         canvas.addEventListener('mousemove', this.onMouseMove);
+    };
+    Scene.prototype.pickNode = function (node, x, y) {
+        if (!node.isVisible || !node.isPointInNode(x, y)) {
+            return;
+        }
+        var children = node.children;
+        if (children.length) {
+            // Nodes added later should be hit-tested first,
+            // as they are rendered on top of the previously added nodes.
+            for (var i = children.length - 1; i >= 0; i--) {
+                var hit = this.pickNode(children[i], x, y);
+                if (hit) {
+                    return hit;
+                }
+            }
+        }
+        else if (node instanceof shape_1.Shape) {
+            return node;
+        }
     };
     Object.defineProperty(Scene.prototype, "width", {
         get: function () {
             return this._width;
+        },
+        set: function (value) {
+            this.size = [value, this._height];
         },
         enumerable: true,
         configurable: true
@@ -63,27 +109,32 @@ var Scene = /** @class */ (function () {
         get: function () {
             return this._height;
         },
+        set: function (value) {
+            this.size = [this._width, value];
+        },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Scene.prototype, "size", {
         set: function (value) {
-            var _a;
-            (_a = this.hdpiCanvas).resize.apply(_a, value);
-            this._width = value[0], this._height = value[1];
+            if (this._width !== value[0] || this._height !== value[1]) {
+                this.hdpiCanvas.resize(value[0], value[1]);
+                this._width = value[0], this._height = value[1];
+                this.isDirty = true;
+            }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Scene.prototype, "dirty", {
+    Object.defineProperty(Scene.prototype, "isDirty", {
         get: function () {
-            return this._dirty;
+            return this._isDirty;
         },
         set: function (dirty) {
-            if (dirty && !this._dirty) {
+            if (dirty && !this._isDirty) {
                 requestAnimationFrame(this.render);
             }
-            this._dirty = dirty;
+            this._isDirty = dirty;
         },
         enumerable: true,
         configurable: true
@@ -93,11 +144,20 @@ var Scene = /** @class */ (function () {
             return this._root;
         },
         set: function (node) {
+            if (node === this._root)
+                return;
+            if (this._root) {
+                this._root._setScene(null);
+            }
             this._root = node;
             if (node) {
-                node.scene = this;
+                // If `node` is the root node of another scene ...
+                if (node.parent === null && node.scene && node.scene !== this) {
+                    node.scene.root = null;
+                }
+                node._setScene(this);
             }
-            this.dirty = true;
+            this.isDirty = true;
         },
         enumerable: true,
         configurable: true
@@ -126,6 +186,27 @@ var Scene = /** @class */ (function () {
             }
         }
     };
+    Object.defineProperty(Scene.prototype, "frameIndex", {
+        get: function () {
+            return this._frameIndex;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Scene.prototype, "isRenderFrameIndex", {
+        get: function () {
+            return this._isRenderFrameIndex;
+        },
+        set: function (value) {
+            if (this._isRenderFrameIndex !== value) {
+                this._isRenderFrameIndex = value;
+                this.isDirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Scene.id = 1;
     return Scene;
 }());
 exports.Scene = Scene;

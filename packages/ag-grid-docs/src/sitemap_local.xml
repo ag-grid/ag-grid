@@ -325,12 +325,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/best-aurelia-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>http://localhost:8080/javascript-grid-row-dragging/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -1004,12 +998,6 @@
   </url>
   <url>
     <loc>http://localhost:8080/best-react-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>http://localhost:8080/ag-grid-datagrid-aurelia/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

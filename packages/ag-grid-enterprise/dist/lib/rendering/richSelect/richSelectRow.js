@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26,9 +26,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
 var RichSelectRow = /** @class */ (function (_super) {
     __extends(RichSelectRow, _super);
-    function RichSelectRow(columnDef) {
+    function RichSelectRow(params) {
         var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
-        _this.columnDef = columnDef;
+        _this.params = params;
         return _this;
     }
     RichSelectRow.prototype.setState = function (value, valueFormatted, selected) {
@@ -53,7 +53,7 @@ var RichSelectRow = /** @class */ (function (_super) {
     };
     RichSelectRow.prototype.populateWithRenderer = function (value, valueFormatted) {
         var _this = this;
-        var promise = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), { value: value, valueFormatted: valueFormatted });
+        var promise = this.cellRendererService.useRichSelectCellRenderer(this.params, this.getGui(), { value: value, valueFormatted: valueFormatted });
         var foundRenderer = ag_grid_community_1._.exists(promise);
         if (foundRenderer) {
             promise.then(function (childComponent) {

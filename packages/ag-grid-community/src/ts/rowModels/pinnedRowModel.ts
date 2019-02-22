@@ -82,7 +82,7 @@ export class PinnedRowModel {
                 rowNode.data = dataItem;
                 rowNode.rowPinned = isTop ? Constants.PINNED_TOP : Constants.PINNED_BOTTOM;
                 rowNode.setRowTop(nextRowTop);
-                rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+                rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
                 rowNode.setRowIndex(index);
                 nextRowTop += rowNode.rowHeight;
                 rowNodes.push(rowNode);

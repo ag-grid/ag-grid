@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -19,7 +19,7 @@ var dropZoneColumnComp_1 = require("./dropZoneColumnComp");
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends(BaseDropZonePanel, _super);
     function BaseDropZonePanel(horizontal, valueColumn, name) {
-        var _this = _super.call(this, "<div class=\"ag-column-drop ag-font-style ag-column-drop-" + (horizontal ? 'horizontal' : 'vertical') + " ag-column-drop-" + name + "\"></div>") || this;
+        var _this = _super.call(this, "<div class=\"ag-column-drop ag-unselectable ag-column-drop-" + (horizontal ? 'horizontal' : 'vertical') + " ag-column-drop-" + name + "\"></div>") || this;
         _this.state = BaseDropZonePanel.STATE_NOT_DRAGGING;
         _this.guiDestroyFunctions = [];
         _this.childColumnComponents = [];
@@ -42,8 +42,8 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         this.guiDestroyFunctions.forEach(function (func) { return func(); });
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        main_1._.removeAllChildren(this.getGui());
-        main_1._.removeAllChildren(this.eColumnDropList);
+        main_1._.clearElement(this.getGui());
+        main_1._.clearElement(this.eColumnDropList);
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;

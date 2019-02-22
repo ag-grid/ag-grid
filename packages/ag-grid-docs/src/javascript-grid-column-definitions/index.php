@@ -146,7 +146,7 @@ var gridOptions = {
         The following examples demonstrates this configuration.
     </p>
 
-<?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, "processVue" => true, 'grid' => array('height' => '100%'))) ?>
+<?= example('Column Definition Example', 'column-definition', 'generated', array("processVue" => true, 'grid' => array('height' => '100%'))) ?>
 
 <h2>Provided Column Types</h2>
 
@@ -165,34 +165,6 @@ var gridOptions = {
         { headerName: "Column B", field: "b", type: "numericColumn" }
     ]
 }</snippet>
-
-<h2 id="changing-column-headers">Updating Column Definitions</h2>
-
-<p>
-    After the grid has been initialised it may be necessary to update the column definition. It is important to understand
-    that when a column is created it is assigned a copy of the column definition defined in the GridOptions. For this reason
-    it is necessary to obtain the column definition directly from the column.
-</p>
-
-<p>
-    The following example shows how to update a column header name after the grid has been initialised. As we want to update
-    the header name immediately we explicitly invoke <code>refreshHeader()</code> via the <a href="../javascript-grid-api/">Grid API</a>.
-</p>
-
-<snippet>
-// get a reference to the column
-var col = gridOptions.columnApi.getColumn("colId");
-
-// obtain the column definition from the column
-var colDef = col.getColDef();
-
-// update the header name
-colDef.headerName = "New Header";
-
-// the column is now updated. to reflect the header change, get the grid refresh the header
-gridOptions.api.refreshHeader();</snippet>
-
-
 
 <h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
 
@@ -323,29 +295,90 @@ Examples of state include column visibility, width, row groups and values.
 
 <?= example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-<h2 id="group-changes">Group Changes</h2>
+<h2 id="delta-columns">Delta Columns</h2>
 
 <p>
-    Similar to adding and removing columns, you can also add and remove column groups.
-    If the column definitions passed in have column groups, then the columns will grouped
-    to the new configuration.
+    By default when new columns are loaded into the grid, the following properties are not used:
+    <ul>
+        <li>Column Order</li>
+        <li>Aggregation Function <code>(colDef.aggFunc)</code></li>
+        <li>Width (<code>colDef.width</code>)</li>
+        <li>Pivot (<code>colDef.pivot or colDef.pivotIndex</code>)</li>
+        <li>Row Group (<code>colDef.rowGroup or colDef.rowGroupIndex</code>)</li>
+        <li>Pinned (<code>colDef.pinned</code>)</li>
+    </ul>
+    This is done on purpose to avoid unexpected behaviour for the application user.
 </p>
 
 <p>
-    In the example below, note the following:
+    For example - suppose the application user rearranges the order of the columns. Then if the application
+    sets new column definitions for the purposes of adding one extra column into the grid, then it would be
+    a bad user experience to reset the order of all the columns.
+</p>
+
+<p>
+    Likewise if the user changes an aggregation function, or the width of a column, or whether a column was
+    pinned, all of these changes the user does should not get undone because the application decided
+    to update the column definitions.
+</p>
+
+<p>
+    To change this behaviour and have column attributes above (order, width, row group etc) take effect
+    each time the application updates the grid columns, then set <code>gridOption.deltaColumnMode=true</code>.
+    The responsibility is then on your application to make sure the provided column definitions are in sync
+    with what is in the grid if you don't want undesired visible changes - eg if the user changes the width
+    of a column, the application should listen to the grid event <code>columnWidthChanged</code> and update
+    the applications column definition with the new width - otherwise the width will reset back to the default
+    after the application updates the column definitions into the grid.
+</p>
+
+<p>
+    The example below demonstrates Delta Column Mode. Note the following:
     <ul>
-        <li>Select <b>No Groups</b> to show all columns without any grouping.</li>
-        <li>Select <b>Participant in Group</b> to show all participant columns only in a group.</li>
-        <li>Select <b>Medals in Group</b> to show all medal columns only in a group.</li>
-        <li>Select <b>Participant and Medals in Group</b> to show participant and medal columns in groups.</li>
         <li>
-            As groups are added and removed, note that the state of the individual columns is preserved.
-            To observe this, try moving, resizing, sorting, filtering etc and then add and remove groups,
-            all the changed state will be preserved.
+            Grid property <code>deltaColumnMode</code> is set to true.
+        </li>
+        <li>
+            Each button sets a different list of columns into the grid. Because each column
+            definition provides an ID, the grid knows the instance of the column is to be kept.
+            This means any active sorting or filtering associated with the column will be kept
+            between column changes.
+        </li>
+        <li>
+            Each button changes the column definitions in a way that would be otherwise ignored
+            if <code>deltaColumnMode</code> was not set. The changes are as follows:
+            <ul>
+                <li>
+                    <b>Normal</b>: Columns are set as normal. This is the default. It will make
+                    the other button actions easier to understand if Normal is pressed before
+                    pushing the other buttons.
+                </li>
+                <li>
+                    <b>Reverse Order</b>: Columns are provided in reverse order.
+                </li>
+                <li>
+                    <b>Widths</b>: Columns are provided with different widths.
+                </li>
+                <li>
+                    <b>Visibility</b>: Columns are provided with <code>colDef.hidden=true</code>.
+                    The columns will still be in the grid and listed in the tool panel, however
+                    they will not be visible.
+                </li>
+                <li>
+                    <b>Grouping</b>: Rows will be grouped by Sport.
+                </li>
+                <li>
+                    <b>No Resize or Sort</b>: Clicking the columns will not sort and it will not be possible
+                    to resize the column via dragging it's edge.
+                </li>
+                <li>
+                    <b>Pinned</b>: Columns will be pinned to the left and right.
+                </li>
+            </ul>
         </li>
     </ul>
 </p>
 
-<?= example('Column Changes 2', 'column-changes-2', 'generated', array("processVue" => true)) ?>
+<?= example('Delta Columns', 'delta-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

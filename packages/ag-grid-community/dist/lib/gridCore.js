@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,16 +49,23 @@ var utils_1 = require("./utils");
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
-        return _super.call(this) || this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    GridCore_1 = GridCore;
     GridCore.prototype.init = function () {
         var _this = this;
         this.logger = this.loggerFactory.create('GridCore');
-        var template = this.enterprise ? GridCore_1.TEMPLATE_ENTERPRISE : GridCore_1.TEMPLATE_NORMAL;
+        var template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
         this.instantiate(this.context);
+        // register with services that need grid core
+        [
+            this.gridApi,
+            this.filterManager,
+            this.rowRenderer,
+            this.popupService
+        ].forEach(function (service) { return service.registerGridCore(_this); });
         if (this.enterprise) {
+            this.clipboardService.registerGridCore(this);
             this.sideBarComp.registerGridComp(this.gridPanel);
         }
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
@@ -76,8 +83,6 @@ var GridCore = /** @class */ (function (_super) {
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
         // which doLayout indirectly depends on
         this.addRtlSupport();
-        this.finished = false;
-        this.addDestroyFunc(function () { return _this.finished = true; });
         this.logger.log('ready');
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
@@ -93,7 +98,7 @@ var GridCore = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(event);
     };
-    // this was deprecated in v19, we can drop in v20
+    /** @deprecated since v19, we can drop in v20 */
     GridCore.prototype.getPreferredWidth = function () {
         var widthForCols = this.columnController.getBodyContainerWidth()
             + this.columnController.getPinnedLeftContainerWidth()
@@ -132,6 +137,11 @@ var GridCore = /** @class */ (function (_super) {
     };
     GridCore.prototype.getSideBar = function () {
         return this.gridOptions.sideBar;
+    };
+    GridCore.prototype.refreshSideBar = function () {
+        if (this.sideBarComp) {
+            this.sideBarComp.refresh();
+        }
     };
     GridCore.prototype.setSideBar = function (def) {
         this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
@@ -191,9 +201,8 @@ var GridCore = /** @class */ (function (_super) {
             this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     };
-    var GridCore_1;
     GridCore.TEMPLATE_NORMAL = "<div class=\"ag-root-wrapper\">\n            <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n            </div>\n            <ag-pagination></ag-pagination>\n        </div>";
-    GridCore.TEMPLATE_ENTERPRISE = "<div class=\"ag-root-wrapper\">\n            <ag-grid-header-drop-zones></ag-grid-header-drop-zones>\n            <div ref=\"rootWrapperBody\" class=\"ag-root-wrapper-body\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                <ag-side-bar ref=\"sideBar\"></ag-side-bar>\n            </div>\n            <ag-status-bar ref=\"statusBar\"></ag-status-bar>\n            <ag-pagination></ag-pagination>\n        </div>";
+    GridCore.TEMPLATE_ENTERPRISE = "<div class=\"ag-root-wrapper\">\n            <ag-grid-header-drop-zones></ag-grid-header-drop-zones>\n            <div ref=\"rootWrapperBody\" class=\"ag-root-wrapper-body\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                <ag-side-bar ref=\"sideBar\"></ag-side-bar>\n            </div>\n            <ag-status-bar ref=\"statusBar\"></ag-status-bar>\n            <ag-pagination></ag-pagination>\n            <ag-watermark></ag-watermark>\n        </div>";
     __decorate([
         context_1.Autowired('enterprise'),
         __metadata("design:type", Boolean)
@@ -279,6 +288,10 @@ var GridCore = /** @class */ (function (_super) {
         __metadata("design:type", Object)
     ], GridCore.prototype, "pivotCompFactory", void 0);
     __decorate([
+        context_1.Optional('clipboardService'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "clipboardService", void 0);
+    __decorate([
         componentAnnotations_1.RefSelector('gridPanel'),
         __metadata("design:type", gridPanel_1.GridPanel)
     ], GridCore.prototype, "gridPanel", void 0);
@@ -302,10 +315,6 @@ var GridCore = /** @class */ (function (_super) {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], GridCore.prototype, "destroy", null);
-    GridCore = GridCore_1 = __decorate([
-        context_1.Bean('gridCore'),
-        __metadata("design:paramtypes", [])
-    ], GridCore);
     return GridCore;
 }(component_1.Component));
 exports.GridCore = GridCore;

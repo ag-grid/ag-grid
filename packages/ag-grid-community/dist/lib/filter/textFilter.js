@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,7 +49,7 @@ var TextFilter = /** @class */ (function (_super) {
     };
     TextFilter.prototype.modelFromFloatingFilter = function (from) {
         return {
-            type: this.filter,
+            type: this.selectedFilter,
             filter: from,
             filterType: 'text'
         };
@@ -67,7 +67,7 @@ var TextFilter = /** @class */ (function (_super) {
         _super.prototype.initialiseFilterBodyUi.call(this, type);
         this.addFilterChangedListener(type);
         this.setFilter(this.filterConditionText, baseFilter_1.FilterConditionType.CONDITION);
-        this.setFilterType(this.filterCondition, baseFilter_1.FilterConditionType.CONDITION);
+        this.setFilterType(this.selectedFilterCondition, baseFilter_1.FilterConditionType.CONDITION);
     };
     TextFilter.prototype.addFilterChangedListener = function (type) {
         var _this = this;
@@ -89,7 +89,7 @@ var TextFilter = /** @class */ (function (_super) {
     };
     TextFilter.prototype.individualFilterPasses = function (params, type) {
         var filterText = type == baseFilter_1.FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
-        var filter = type == baseFilter_1.FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        var filter = type == baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         if (!filterText) {
             return type === baseFilter_1.FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         }
@@ -98,12 +98,17 @@ var TextFilter = /** @class */ (function (_super) {
         }
     };
     TextFilter.prototype.checkIndividualFilter = function (params, filterType, filterText) {
-        var value = this.filterParams.valueGetter(params.node);
-        if (value == null || value === undefined) {
+        var cellValue = this.filterParams.valueGetter(params.node);
+        var filterTextFormatted = this.formatter(filterText);
+        var customFilterOption = this.customFilterOptions[filterType];
+        if (customFilterOption) {
+            var valueFormatted_1 = this.formatter(cellValue);
+            return customFilterOption.test(filterTextFormatted, valueFormatted_1);
+        }
+        if (cellValue == null || cellValue === undefined) {
             return filterType === baseFilter_1.BaseFilter.NOT_EQUAL || filterType === baseFilter_1.BaseFilter.NOT_CONTAINS;
         }
-        var filterTextFormatted = this.formatter(filterText);
-        var valueFormatted = this.formatter(value);
+        var valueFormatted = this.formatter(cellValue);
         return this.comparator(filterType, valueFormatted, filterTextFormatted);
     };
     TextFilter.prototype.onFilterTextFieldChanged = function (type) {
@@ -174,7 +179,7 @@ var TextFilter = /** @class */ (function (_super) {
         this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.CONDITION);
     };
     TextFilter.prototype.serialize = function (type) {
-        var filter = type === baseFilter_1.FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        var filter = type === baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         var filterText = type === baseFilter_1.FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
         return {
             type: filter ? filter : this.defaultFilter,

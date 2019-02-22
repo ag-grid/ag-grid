@@ -2,13 +2,11 @@ import {
     Autowired,
     Component,
     Context,
-    Events,
     EventService,
     GridApi,
     GridOptionsWrapper,
     IToolPanelComp,
     IToolPanelParams,
-    ToolPanelVisibleChangedEvent,
     _
 } from "ag-grid-community/main";
 import { PivotModePanel } from "./panels/pivotModePanel";
@@ -53,13 +51,6 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
         if (visible && !this.initialised) {
             this.init(this.params);
         }
-
-        const event: ToolPanelVisibleChangedEvent = {
-            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(event);
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -109,7 +100,7 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
     public destroyChildren(): void {
         this.childDestroyFuncs.forEach(func => func());
         this.childDestroyFuncs.length = 0;
-        _.removeAllChildren(this.getGui());
+        _.clearElement(this.getGui());
     }
 
     public refresh(): void {

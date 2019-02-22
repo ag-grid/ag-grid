@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -55,6 +55,11 @@ export interface IDoesFilterPassParams {
     node: RowNode;
     data: any;
 }
+export interface IFilterOptionDef {
+    displayKey: string;
+    displayName: string;
+    test: (filterValue: any, cellValue: any) => boolean;
+}
 export interface IFilterParams {
     clearButton?: boolean;
     applyButton?: boolean;
@@ -68,7 +73,7 @@ export interface IFilterParams {
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
     $scope: any;
-    filterOptions?: string[];
+    filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
     textFormatter?: (from: string) => string;
 }

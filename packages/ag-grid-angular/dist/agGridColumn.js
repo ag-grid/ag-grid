@@ -68,6 +68,9 @@ var AgGridColumn = /** @class */ (function () {
         'floatingFilterComponent': [{ type: core_1.Input },],
         'floatingFilterComponentParams': [{ type: core_1.Input },],
         'floatingFilterComponentFramework': [{ type: core_1.Input },],
+        'tooltipComponent': [{ type: core_1.Input },],
+        'tooltipComponentParams': [{ type: core_1.Input },],
+        'tooltipComponentFramework': [{ type: core_1.Input },],
         'refData': [{ type: core_1.Input },],
         'headerName': [{ type: core_1.Input },],
         'columnGroupShow': [{ type: core_1.Input },],
@@ -116,6 +119,7 @@ var AgGridColumn = /** @class */ (function () {
         'onCellDoubleClicked': [{ type: core_1.Input },],
         'onCellContextMenu': [{ type: core_1.Input },],
         'tooltip': [{ type: core_1.Input },],
+        'tooltipValueGetter': [{ type: core_1.Input },],
         'cellRendererSelector': [{ type: core_1.Input },],
         'cellEditorSelector': [{ type: core_1.Input },],
         'suppressCellFlash': [{ type: core_1.Input },],
@@ -150,6 +154,7 @@ var AgGridColumn = /** @class */ (function () {
         'autoHeight': [{ type: core_1.Input },],
         'sortable': [{ type: core_1.Input },],
         'resizable': [{ type: core_1.Input },],
+        'singleClickEdit': [{ type: core_1.Input },],
     };
     return AgGridColumn;
 }());

@@ -46,6 +46,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.rowClassRules = undefined;
         this.detailGridOptions = undefined;
         this.detailCellRendererParams = undefined;
+        this.loadingCellRendererParams = undefined;
         this.loadingOverlayComponentParams = undefined;
         this.noRowsOverlayComponentParams = undefined;
         this.popupParent = undefined;
@@ -131,6 +132,8 @@ var AgGridNg2 = /** @class */ (function () {
         this.postProcessPopup = undefined;
         this.getChildCount = undefined;
         this.getDataPath = undefined;
+        this.loadingCellRenderer = undefined;
+        this.loadingCellRendererFramework = undefined;
         this.loadingOverlayComponent = undefined;
         this.loadingOverlayComponentFramework = undefined;
         this.noRowsOverlayComponent = undefined;
@@ -147,6 +150,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.processDataFromClipboard = undefined;
         this.getServerSideGroupKey = undefined;
         this.isServerSideGroup = undefined;
+        this.suppressKeyboardEvent = undefined;
         this.toolPanelSuppressRowGroups = undefined;
         this.toolPanelSuppressValues = undefined;
         this.toolPanelSuppressPivots = undefined;
@@ -160,6 +164,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.suppressCellSelection = undefined;
         this.suppressHorizontalScroll = undefined;
         this.debug = undefined;
+        this.enableBrowserTooltips = undefined;
         this.enableColResize = undefined;
         this.enableCellExpressions = undefined;
         this.enableSorting = undefined;
@@ -224,6 +229,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.suppressRowDrag = undefined;
         this.enableGroupEdit = undefined;
         this.embedFullWidthRows = undefined;
+        this.deprecatedEmbedFullWidthRows = undefined;
         this.suppressTabbing = undefined;
         this.suppressPaginationPanel = undefined;
         this.floatingFilter = undefined;
@@ -264,6 +270,11 @@ var AgGridNg2 = /** @class */ (function () {
         this.reactNext = undefined;
         this.suppressSetColumnStateEvents = undefined;
         this.enableCharts = undefined;
+        this.deltaColumnMode = undefined;
+        this.suppressMaintainUnsortedOrder = undefined;
+        this.enableCellTextSelection = undefined;
+        this.suppressBrowserResizeObserver = undefined;
+        this.suppressMaxRenderedRowRestriction = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -297,6 +308,8 @@ var AgGridNg2 = /** @class */ (function () {
         this.cellFocused = new core_1.EventEmitter();
         this.rowSelected = new core_1.EventEmitter();
         this.selectionChanged = new core_1.EventEmitter();
+        this.cellKeyDown = new core_1.EventEmitter();
+        this.cellKeyPress = new core_1.EventEmitter();
         this.cellMouseOver = new core_1.EventEmitter();
         this.cellMouseOut = new core_1.EventEmitter();
         this.filterChanged = new core_1.EventEmitter();
@@ -335,7 +348,6 @@ var AgGridNg2 = /** @class */ (function () {
         this.columnValueChangeRequest = new core_1.EventEmitter();
         this.columnAggFuncChangeRequest = new core_1.EventEmitter();
         this._nativeElement = elementDef.nativeElement;
-        this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
     }
@@ -467,6 +479,7 @@ var AgGridNg2 = /** @class */ (function () {
         'rowClassRules': [{ type: core_1.Input },],
         'detailGridOptions': [{ type: core_1.Input },],
         'detailCellRendererParams': [{ type: core_1.Input },],
+        'loadingCellRendererParams': [{ type: core_1.Input },],
         'loadingOverlayComponentParams': [{ type: core_1.Input },],
         'noRowsOverlayComponentParams': [{ type: core_1.Input },],
         'popupParent': [{ type: core_1.Input },],
@@ -552,6 +565,8 @@ var AgGridNg2 = /** @class */ (function () {
         'postProcessPopup': [{ type: core_1.Input },],
         'getChildCount': [{ type: core_1.Input },],
         'getDataPath': [{ type: core_1.Input },],
+        'loadingCellRenderer': [{ type: core_1.Input },],
+        'loadingCellRendererFramework': [{ type: core_1.Input },],
         'loadingOverlayComponent': [{ type: core_1.Input },],
         'loadingOverlayComponentFramework': [{ type: core_1.Input },],
         'noRowsOverlayComponent': [{ type: core_1.Input },],
@@ -568,6 +583,7 @@ var AgGridNg2 = /** @class */ (function () {
         'processDataFromClipboard': [{ type: core_1.Input },],
         'getServerSideGroupKey': [{ type: core_1.Input },],
         'isServerSideGroup': [{ type: core_1.Input },],
+        'suppressKeyboardEvent': [{ type: core_1.Input },],
         'toolPanelSuppressRowGroups': [{ type: core_1.Input },],
         'toolPanelSuppressValues': [{ type: core_1.Input },],
         'toolPanelSuppressPivots': [{ type: core_1.Input },],
@@ -581,6 +597,7 @@ var AgGridNg2 = /** @class */ (function () {
         'suppressCellSelection': [{ type: core_1.Input },],
         'suppressHorizontalScroll': [{ type: core_1.Input },],
         'debug': [{ type: core_1.Input },],
+        'enableBrowserTooltips': [{ type: core_1.Input },],
         'enableColResize': [{ type: core_1.Input },],
         'enableCellExpressions': [{ type: core_1.Input },],
         'enableSorting': [{ type: core_1.Input },],
@@ -645,6 +662,7 @@ var AgGridNg2 = /** @class */ (function () {
         'suppressRowDrag': [{ type: core_1.Input },],
         'enableGroupEdit': [{ type: core_1.Input },],
         'embedFullWidthRows': [{ type: core_1.Input },],
+        'deprecatedEmbedFullWidthRows': [{ type: core_1.Input },],
         'suppressTabbing': [{ type: core_1.Input },],
         'suppressPaginationPanel': [{ type: core_1.Input },],
         'floatingFilter': [{ type: core_1.Input },],
@@ -685,6 +703,11 @@ var AgGridNg2 = /** @class */ (function () {
         'reactNext': [{ type: core_1.Input },],
         'suppressSetColumnStateEvents': [{ type: core_1.Input },],
         'enableCharts': [{ type: core_1.Input },],
+        'deltaColumnMode': [{ type: core_1.Input },],
+        'suppressMaintainUnsortedOrder': [{ type: core_1.Input },],
+        'enableCellTextSelection': [{ type: core_1.Input },],
+        'suppressBrowserResizeObserver': [{ type: core_1.Input },],
+        'suppressMaxRenderedRowRestriction': [{ type: core_1.Input },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
         'columnPivotModeChanged': [{ type: core_1.Output },],
@@ -718,6 +741,8 @@ var AgGridNg2 = /** @class */ (function () {
         'cellFocused': [{ type: core_1.Output },],
         'rowSelected': [{ type: core_1.Output },],
         'selectionChanged': [{ type: core_1.Output },],
+        'cellKeyDown': [{ type: core_1.Output },],
+        'cellKeyPress': [{ type: core_1.Output },],
         'cellMouseOver': [{ type: core_1.Output },],
         'cellMouseOut': [{ type: core_1.Output },],
         'filterChanged': [{ type: core_1.Output },],

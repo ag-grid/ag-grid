@@ -7,6 +7,7 @@ const del = require('del');
 const ngc = require('gulp-ngc');
 const runSequence = require('run-sequence');
 const rename = require("gulp-rename");
+const gridToNg = require('./updateGridAndColumnProperties');
 
 gulp.task('clean', function () {
     return del(['aot/**', '!aot',
@@ -25,7 +26,7 @@ gulp.task('ngc', (callback) => {
     return runSequence('ngc-src', 'ngc-main', callback);
 });
 
-gulp.task('ngc-src', (callback) => {
+gulp.task('ngc-src', ['update-properties'], (callback) => {
     return ngc('./tsconfig-src.json', callback);
 });
 
@@ -57,10 +58,21 @@ gulp.task('ngc-main', (callback) => {
 
 gulp.task('watch', ['ngc-src'], () => {
     gulp.watch([
-        './src/*.ts',
-        './node_modules/ag-grid-community/dist/lib/**/*'
-    ],
-    ['ngc-src']);
+            './node_modules/ag-grid-community/src/ts/propertyKeys.ts',
+            './node_modules/ag-grid-community/src/ts/components/colDefUtil.ts'
+        ],
+        // {awaitWriteFinish: true},
+        ['update-properties']);
+
+    // gulp.watch([
+    //         './src/*.ts',
+    //         './node_modules/ag-grid-community/dist/lib/**/*'
+    //     ],
+    //     ['ngc-src']);
+});
+
+gulp.task('update-properties', (cb) => {
+    gridToNg.updatePropertiesSrc(cb);
 });
 
 

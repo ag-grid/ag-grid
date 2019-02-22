@@ -23,7 +23,7 @@ function createRowData() {
         {"row": "Row 10", "name": "Bob Mill"},
         {"row": "Row 11", "name": "Willy Walsh"},
         {"row": "Row 12", "name": "Sarah McCoy"},
-        {"row": "Row 13", "name": "Jane Jack"},
+        {"row": "Row 13", "name":  "Jane Jack"},
         {"row": "Row 14", "name": "Tina Wills"}
     ];
 }
@@ -34,12 +34,16 @@ var gridOptions = {
     enableRangeSelection: true,
     rowSelection: "multiple",
     components: {
-        statusBarComponent: ClickableStatusBarComponent
+        clickableStatusBarComponent: ClickableStatusBarComponent,
+        countStatusBarComponent: CountStatusBarComponent
     },
     statusBar: {
         statusPanels: [
             {
-                statusPanel: 'statusBarComponent'
+                statusPanel: 'countStatusBarComponent'
+            },
+            {
+                statusPanel: 'clickableStatusBarComponent'
             },
             {
                 statusPanel: 'agAggregationComponent',

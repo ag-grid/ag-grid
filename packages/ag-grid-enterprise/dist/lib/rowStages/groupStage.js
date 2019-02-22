@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -80,17 +80,13 @@ var GroupStage = /** @class */ (function () {
             this.removeNodes(tran.remove, details);
         }
         if (details.rowNodeOrder) {
-            this.recursiveSortChildren(details.rootNode, details);
+            this.sortChildren(details);
         }
     };
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
-    GroupStage.prototype.recursiveSortChildren = function (node, details) {
-        var _this = this;
-        ag_grid_community_1._.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
-        node.childrenAfterGroup.forEach(function (childNode) {
-            if (childNode.childrenAfterGroup) {
-                _this.recursiveSortChildren(childNode, details);
-            }
+    GroupStage.prototype.sortChildren = function (details) {
+        details.changedPath.forEachChangedNodeDepthFirst(function (rowNode) {
+            ag_grid_community_1._.sortRowNodesByOrder(rowNode.childrenAfterGroup, details.rowNodeOrder);
         });
     };
     GroupStage.prototype.sortGroupsWithComparator = function (rootNode) {
@@ -392,7 +388,14 @@ var GroupStage = /** @class */ (function () {
         }
     };
     GroupStage.prototype.getGroupInfoFromCallback = function (rowNode) {
-        var keys = this.getDataPath ? this.getDataPath(rowNode.data) : null;
+        var keys = null;
+        if (this.getDataPath) {
+            var path = this.getDataPath(rowNode.data);
+            if (path) {
+                // sanitize
+                keys = path.map(function (p) { return ag_grid_community_1._.escape(p); });
+            }
+        }
         if (keys === null || keys === undefined || keys.length === 0) {
             ag_grid_community_1._.doOnce(function () { return console.warn("getDataPath() should not return an empty path for data", rowNode.data); }, 'groupStage.getGroupInfoFromCallback');
         }

@@ -11,6 +11,7 @@ export class ColDefUtil {
         'sort',
         'field',
         'type',
+        'tooltipComponent',
         'tooltipField',
         'headerTooltip',
         'cellClass',
@@ -43,6 +44,9 @@ export class ColDefUtil {
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
+        'tooltipComponent',
+        'tooltipComponentParams',
+        'tooltipComponentFramework',
         'refData'];
 
     public static ARRAY_PROPERTIES = [
@@ -94,7 +98,8 @@ export class ColDefUtil {
         'rowDrag',
         'autoHeight',
         'sortable',
-        'resizable'
+        'resizable',
+        'singleClickEdit'
     ];
 
     public static FUNCTION_PROPERTIES = [
@@ -121,6 +126,9 @@ export class ColDefUtil {
         'onCellDoubleClicked',
         'onCellContextMenu',
         'tooltip',
+        'tooltipValueGetter',
+        'tooltipComponent',
+        'tooltipComponentFramework',
         'cellRendererSelector',
         'cellEditorSelector'];
 
@@ -132,7 +140,7 @@ export class ColDefUtil {
         .concat(ColDefUtil.BOOLEAN_PROPERTIES);
 
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-    // properties to coldefs, gridOptions etc
+    // properties to colDefs, gridOptions etc
     public static FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
         'toColDef', 'createColDefFromGridColumn'];
 }

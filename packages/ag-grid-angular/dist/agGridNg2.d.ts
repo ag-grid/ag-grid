@@ -51,6 +51,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     rowClassRules: any;
     detailGridOptions: any;
     detailCellRendererParams: any;
+    loadingCellRendererParams: any;
     loadingOverlayComponentParams: any;
     noRowsOverlayComponentParams: any;
     popupParent: any;
@@ -136,6 +137,8 @@ export declare class AgGridNg2 implements AfterViewInit {
     postProcessPopup: any;
     getChildCount: any;
     getDataPath: any;
+    loadingCellRenderer: any;
+    loadingCellRendererFramework: any;
     loadingOverlayComponent: any;
     loadingOverlayComponentFramework: any;
     noRowsOverlayComponent: any;
@@ -152,6 +155,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     processDataFromClipboard: any;
     getServerSideGroupKey: any;
     isServerSideGroup: any;
+    suppressKeyboardEvent: any;
     toolPanelSuppressRowGroups: any;
     toolPanelSuppressValues: any;
     toolPanelSuppressPivots: any;
@@ -165,6 +169,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressCellSelection: any;
     suppressHorizontalScroll: any;
     debug: any;
+    enableBrowserTooltips: any;
     enableColResize: any;
     enableCellExpressions: any;
     enableSorting: any;
@@ -229,6 +234,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressRowDrag: any;
     enableGroupEdit: any;
     embedFullWidthRows: any;
+    deprecatedEmbedFullWidthRows: any;
     suppressTabbing: any;
     suppressPaginationPanel: any;
     floatingFilter: any;
@@ -269,6 +275,11 @@ export declare class AgGridNg2 implements AfterViewInit {
     reactNext: any;
     suppressSetColumnStateEvents: any;
     enableCharts: any;
+    deltaColumnMode: any;
+    suppressMaintainUnsortedOrder: any;
+    enableCellTextSelection: any;
+    suppressBrowserResizeObserver: any;
+    suppressMaxRenderedRowRestriction: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;
@@ -302,6 +313,8 @@ export declare class AgGridNg2 implements AfterViewInit {
     cellFocused: EventEmitter<any>;
     rowSelected: EventEmitter<any>;
     selectionChanged: EventEmitter<any>;
+    cellKeyDown: EventEmitter<any>;
+    cellKeyPress: EventEmitter<any>;
     cellMouseOver: EventEmitter<any>;
     cellMouseOut: EventEmitter<any>;
     filterChanged: EventEmitter<any>;

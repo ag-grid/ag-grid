@@ -38,9 +38,19 @@ export class AggregationStage implements IRowNodeStage {
         const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) { return null; }
 
+        // if changed path is active, it means we came from a) change detection or b) transaction update.
+        // for both of these, if no value columns are present, it means there is nothing to aggregate now
+        // and there is no cleanup to be done (as value columns don't change between transactions or change
+        // detections). if no value columns and no changed path, means we have to go through all nodes in
+        // case we need to clean up agg data from before.
+        const noValueColumns = _.missingOrEmpty(this.columnController.getValueColumns());
+        const noUserAgg = !this.gridOptionsWrapper.getGroupRowAggNodesFunc();
+        const changedPathActive = params.changedPath && params.changedPath.isActive();
+        if (noValueColumns && noUserAgg && changedPathActive) { return; }
+
         const aggDetails = this.createAggDetails(params);
 
-        this.recursivelyCreateAggData(params.rowNode, aggDetails);
+        this.recursivelyCreateAggData(aggDetails);
     }
 
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
@@ -59,35 +69,34 @@ export class AggregationStage implements IRowNodeStage {
         return aggDetails;
     }
 
-    private recursivelyCreateAggData(rowNode: RowNode, aggDetails: AggregationDetails) {
+    private recursivelyCreateAggData(aggDetails: AggregationDetails) {
 
-        // aggregate all children first, as we use the result in this nodes calculations
-        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
-            const nodeHasChildren = child.hasChildren();
-            if (nodeHasChildren) {
-                this.recursivelyCreateAggData(child, aggDetails);
-            } else {
-                if (child.aggData) {
-                    child.setAggData(null);
+        const callback = (rowNode: RowNode) => {
+
+            let hasNoChildren = !rowNode.hasChildren();
+            if (hasNoChildren) {
+                // this check is needed for TreeData, in case the node is no longer a child,
+                // but it was a child previously.
+                if (rowNode.aggData) {
+                    rowNode.setAggData(null);
                 }
+                // never agg data for leaf nodes
+                return;
             }
-        });
 
-        //Optionally prevent the aggregation at the root Node
-        //https://ag-grid.atlassian.net/browse/AG-388
-        const isRootNode = rowNode.level === -1;
-        if (isRootNode) {
-            const notPivoting = !this.columnController.isPivotMode();
-            const suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
-            if (suppressAggAtRootLevel && notPivoting) { return; }
-        }
+            //Optionally prevent the aggregation at the root Node
+            //https://ag-grid.atlassian.net/browse/AG-388
+            const isRootNode = rowNode.level === -1;
+            if (isRootNode) {
+                const notPivoting = !this.columnController.isPivotMode();
+                const suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+                if (suppressAggAtRootLevel && notPivoting) { return; }
+            }
 
-        const skipBecauseNoChangedPath = aggDetails.changedPath.isActive()
-            && !aggDetails.changedPath.isInPath(rowNode);
+            this.aggregateRowNode(rowNode, aggDetails);
+        };
 
-        if (skipBecauseNoChangedPath) { return; }
-
-        this.aggregateRowNode(rowNode, aggDetails);
+        aggDetails.changedPath.forEachChangedNodeDepthFirst(callback, true);
     }
 
     private aggregateRowNode(rowNode: RowNode, aggDetails: AggregationDetails): void {

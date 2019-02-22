@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./dist/lib/columnController/columnFactory";
@@ -48,7 +48,7 @@ export { TabbedLayout } from "./dist/lib/layout/tabbedLayout";
 export { VerticalStack } from "./dist/lib/layout/verticalStack";
 export { TabbedItem } from "./dist/lib/layout/tabbedLayout";
 export { simpleHttpRequest } from "./dist/lib/misc/simpleHttpRequest";
-export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./dist/lib/rendering/cellEditors/iCellEditor";
+export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./dist/lib/interfaces/iCellEditor";
 export { LargeTextCellEditor } from "./dist/lib/rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./dist/lib/rendering/cellEditors/popupEditorWrapper";
 export { PopupSelectCellEditor } from "./dist/lib/rendering/cellEditors/popupSelectCellEditor";
@@ -59,7 +59,7 @@ export { ICellRenderer, ICellRendererFunc, ICellRendererComp } from "./dist/lib/
 export { AnimateShowChangeCellRenderer } from "./dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./dist/lib/rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer } from "./dist/lib/rendering/cellRenderers/groupCellRenderer";
-export { IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./dist/lib/interfaces/iStatusPanel";
+export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./dist/lib/interfaces/iStatusPanel";
 export { IStatusBarService } from "./dist/lib/interfaces/iStatusBarService";
 export { IToolPanel, IToolPanelComp, IToolPanelParams } from "./dist/lib/interfaces/iToolPanel";
 export { ILoadingOverlayComp, ILoadingOverlayParams } from "./dist/lib/rendering/overlays/loadingOverlayComponent";
@@ -75,6 +75,7 @@ export { RowComp } from "./dist/lib/rendering/rowComp";
 export { RowRenderer } from "./dist/lib/rendering/rowRenderer";
 export { ValueFormatterService } from "./dist/lib/rendering/valueFormatterService";
 export { TextFormatter } from "./dist/lib/filter/textFilter";
+export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./dist/lib/rendering/cellRenderers/loadingCellRenderer";
 export { FilterStage } from "./dist/lib/rowModels/clientSide/filterStage";
 export { FlattenStage } from "./dist/lib/rowModels/clientSide/flattenStage";
 export { SortStage } from "./dist/lib/rowModels/clientSide/sortStage";
@@ -86,6 +87,7 @@ export { InfiniteRowModel } from "./dist/lib/rowModels/infinite/infiniteRowModel
 export { InfiniteCacheParams } from "./dist/lib/rowModels/infinite/infiniteCache";
 export { RowNodeBlock } from "./dist/lib/rowModels/cache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./dist/lib/rowModels/cache/rowNodeBlockLoader";
+export { PaginationProxy } from "./dist/lib/rowModels/paginationProxy";
 export { ColumnVO } from "./dist/lib/interfaces/iColumnVO";
 export { IServerSideDatasource } from "./dist/lib/interfaces/iServerSideDatasource";
 export { IServerSideGetRowsParams } from "./dist/lib/interfaces/iServerSideDatasource";
@@ -97,7 +99,10 @@ export { RowNodeCache, RowNodeCacheParams } from "./dist/lib/rowModels/cache/row
 export { IGetRowsParams, IDatasource } from "./dist/lib/rowModels/iDatasource";
 export { StylingService } from "./dist/lib/styling/stylingService";
 export { AgCheckbox } from "./dist/lib/widgets/agCheckbox";
+export { PopupWindow } from "./dist/lib/widgets/popupWindow";
+export { PopupMessageBox } from "./dist/lib/widgets/popupMessageBox";
 export { Component, VisibleChangedEvent } from "./dist/lib/widgets/component";
+export { PopupComponent } from "./dist/lib/widgets/popupComponent";
 export { PopupService } from "./dist/lib/widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./dist/lib/widgets/touchListener";
 export { RangeSelection, AddRangeSelectionParams } from "./dist/lib/interfaces/iRangeController";
@@ -139,18 +144,19 @@ export { IMenuFactory } from "./dist/lib/interfaces/iMenuFactory";
 export { IAggFunc, ColGroupDef } from "./dist/lib/entities/colDef";
 export { GridCellDef } from "./dist/lib/entities/gridCell";
 export { ColDef } from "./dist/lib/entities/colDef";
-export { ValueSetterParams, ValueParserParams, ValueFormatterParams, ColSpanParams, RowSpanParams, SuppressKeyboardEventParams, ValueGetterParams, NewValueParams, CellClassParams, TooltipParams } from "./dist/lib/entities/colDef";
+export { ValueSetterParams, ValueParserParams, ValueFormatterParams, ColSpanParams, RowSpanParams, SuppressKeyboardEventParams, ValueGetterParams, NewValueParams, CellClassParams } from "./dist/lib/entities/colDef";
 export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, GetDataPath, IsRowMaster, IsRowSelectable, MenuItemDef, GetNodeChildDetails, NodeChildDetails, GetMainMenuItemsParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams, NavigateToNextCellParams, TabToNextCellParams, PostProcessPopupParams } from "./dist/lib/entities/gridOptions";
 export { OriginalColumnGroupChild } from "./dist/lib/entities/originalColumnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./dist/lib/interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./dist/lib/interfaces/iContextMenuFactory";
 export { ICompFactory } from "./dist/lib/interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./dist/lib/interfaces/iRowNodeStage";
-export { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "./dist/lib/interfaces/iFilter";
+export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, SerializedFilter } from "./dist/lib/interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./dist/lib/interfaces/iSetFilterParams";
 export { SerializedSetFilter } from "./dist/lib/interfaces/iSerializedSetFilter";
 export { IDateParams, IDate, IDateComp } from "./dist/lib/rendering/dateComponent";
-export { IAfterGuiAttachedParams, IComponent } from "./dist/lib/interfaces/iComponent";
+export { IAfterGuiAttachedParams } from "./dist/lib/interfaces/iAfterGuiAttachedParams";
+export { IComponent } from "./dist/lib/interfaces/iComponent";
 export { IFilter, IFilterComp } from "./dist/lib/interfaces/iFilter";
 export { IHeaderParams } from "./dist/lib/headerRendering/header/headerComp";
 export { GetQuickFilterTextParams } from "./dist/lib/entities/colDef";
@@ -167,4 +173,6 @@ export { FrameworkComponentWrapper } from "./dist/lib/components/framework/frame
 export { IFrameworkFactory } from "./dist/lib/interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./dist/lib/filter/numberFilter";
 export { Environment } from "./dist/lib/environment";
+export { ITooltipComp, ITooltipParams } from "./dist/lib/rendering/tooltipComponent";
+export { TooltipManager } from "./dist/lib/widgets/tooltipManager";
 export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent, ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent, RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent, DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent, BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent, ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent, ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent, CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent, ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent, RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent, PasteEndEvent, PasteStartEvent, GridSizeChangedEvent } from "./dist/lib/events";

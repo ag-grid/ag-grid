@@ -51,7 +51,7 @@ interface ICellRendererComp {
     // Mandatory - Get the cell to refresh. Return true if the refresh succeeded, otherwise return false.
     // If you return false, the grid will remove the component from the DOM and create
     // a new component in it's place with the new values.
-    refresh(params: any): boolean;
+    refresh(params: ICellRendererParams): boolean;
 }
 </snippet>
 
@@ -464,8 +464,6 @@ if (instances.length > 0) {
 <?php include './vuejs.php'; ?>
 
 <?php include './polymer.php'; ?>
-
-<?php include './aurelia.php'; ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var componentResolver_1 = require("./componentResolver");
 var groupCellRenderer_1 = require("../../rendering/cellRenderers/groupCellRenderer");
 var animateShowChangeCellRenderer_1 = require("../../rendering/cellRenderers/animateShowChangeCellRenderer");
 var animateSlideCellRenderer_1 = require("../../rendering/cellRenderers/animateSlideCellRenderer");
-var rowComp_1 = require("../../rendering/rowComp");
+var loadingCellRenderer_1 = require("../../rendering/cellRenderers/loadingCellRenderer");
 var selectCellEditor_1 = require("../../rendering/cellEditors/selectCellEditor");
 var popupTextCellEditor_1 = require("../../rendering/cellEditors/popupTextCellEditor");
 var popupSelectCellEditor_1 = require("../../rendering/cellEditors/popupSelectCellEditor");
@@ -34,6 +34,7 @@ var textFilter_1 = require("../../filter/textFilter");
 var numberFilter_1 = require("../../filter/numberFilter");
 var loadingOverlayComponent_1 = require("../../rendering/overlays/loadingOverlayComponent");
 var noRowsOverlayComponent_1 = require("../../rendering/overlays/noRowsOverlayComponent");
+var tooltipComponent_1 = require("../../rendering/tooltipComponent");
 var utils_1 = require("../../utils");
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
@@ -58,7 +59,7 @@ var ComponentProvider = /** @class */ (function () {
             agAnimateSlideCellRenderer: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
             agGroupCellRenderer: groupCellRenderer_1.GroupCellRenderer,
             agGroupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
-            agLoadingCellRenderer: rowComp_1.LoadingCellRenderer,
+            agLoadingCellRenderer: loadingCellRenderer_1.LoadingCellRenderer,
             //editors
             agCellEditor: textCellEditor_1.TextCellEditor,
             agTextCellEditor: textCellEditor_1.TextCellEditor,
@@ -72,7 +73,9 @@ var ComponentProvider = /** @class */ (function () {
             agDateColumnFilter: dateFilter_1.DateFilter,
             //overlays
             agLoadingOverlay: loadingOverlayComponent_1.LoadingOverlayComponent,
-            agNoRowsOverlay: noRowsOverlayComponent_1.NoRowsOverlayComponent
+            agNoRowsOverlay: noRowsOverlayComponent_1.NoRowsOverlayComponent,
+            // tooltips
+            agTooltipComponent: tooltipComponent_1.TooltipComponent
         };
         this.agDeprecatedNames = {
             set: {
@@ -218,7 +221,7 @@ var ComponentProvider = /** @class */ (function () {
         if (deprecatedInfo != null) {
             utils_1._.doOnce(function () {
                 console.warn("ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename " + deprecatedInfo.propertyHolder + ":" + raw + " to " + deprecatedInfo.propertyHolder + ":" + deprecatedInfo.newComponentName);
-            }, 'DEPREACTE_COMPONENT_' + raw);
+            }, 'DEPRECATE_COMPONENT_' + raw);
             return deprecatedInfo.newComponentName;
         }
         return raw;

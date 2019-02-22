@@ -27,11 +27,12 @@ export interface AgEvent {
 }
 
 export interface AgGridEvent extends AgEvent {
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
+    source: string;
 }
 
 export interface AnimationQueueEmptyEvent extends AgGridEvent {
@@ -303,6 +304,12 @@ export interface CellEvent extends RowEvent {
     column: Column;
     colDef: ColDef;
     value: any;
+}
+
+export interface CellKeyDownEvent extends CellEvent {
+}
+
+export interface CellKeyPressEvent extends CellEvent {
 }
 
 export interface CellClickedEvent extends CellEvent {

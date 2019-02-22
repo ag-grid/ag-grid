@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -122,6 +122,13 @@ var ComponentRecipes = /** @class */ (function () {
             api: this.gridApi,
             columnApi: this.columnApi
         }, "agNoRowsOverlay");
+    };
+    ComponentRecipes.prototype.newTooltipComponent = function (params) {
+        var colDef = params.column && params.column.getColDef();
+        return this.componentResolver.createAgGridComponent(colDef, params, "tooltipComponent", {
+            api: this.gridApi,
+            columnApi: this.columnApi
+        }, 'agTooltipComponent');
     };
     ComponentRecipes.prototype.getFilterComponentPrototype = function (colDef) {
         return this.componentResolver.getComponentToUse(colDef, "filter", {

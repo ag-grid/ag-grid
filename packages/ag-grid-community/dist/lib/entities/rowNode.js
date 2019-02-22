@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,9 @@ var RowNode = /** @class */ (function () {
         this.childrenMapped = {};
         /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
         this.selectable = true;
+        /** Used by sorting service - to give deterministic sort to groups. Previously we
+         * just id for this, however id is a string and had slower sorting compared to numbers. */
+        this.__objectId = RowNode.OBJECT_ID_SEQUENCE++;
         /** True when nodes with the same id are being removed and added as part of the same batch transaction */
         this.alreadyRendered = false;
         this.selected = false;
@@ -212,8 +215,10 @@ var RowNode = /** @class */ (function () {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     };
-    RowNode.prototype.setRowHeight = function (rowHeight) {
+    RowNode.prototype.setRowHeight = function (rowHeight, estimated) {
+        if (estimated === void 0) { estimated = false; }
         this.rowHeight = rowHeight;
+        this.rowHeightEstimated = estimated;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }
@@ -565,6 +570,7 @@ var RowNode = /** @class */ (function () {
         }
         return foundFirstChildPath ? nodeToSwapIn : null;
     };
+    RowNode.OBJECT_ID_SEQUENCE = 0;
     RowNode.EVENT_ROW_SELECTED = 'rowSelected';
     RowNode.EVENT_DATA_CHANGED = 'dataChanged';
     RowNode.EVENT_CELL_CHANGED = 'cellChanged';

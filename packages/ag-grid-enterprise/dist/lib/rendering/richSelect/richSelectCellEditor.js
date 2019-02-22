@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -89,7 +89,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         var _this = this;
         var valueFormatted = this.params.formatValue(this.selectedValue);
         var eValue = this.getRefElement('eValue');
-        var promise = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, { value: this.selectedValue, valueFormatted: valueFormatted });
+        var promise = this.cellRendererService.useRichSelectCellRenderer(this.params, eValue, { value: this.selectedValue, valueFormatted: valueFormatted });
         var foundRenderer = ag_grid_community_1._.exists(promise);
         if (foundRenderer) {
             promise.then(function (renderer) {
@@ -120,7 +120,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     RichSelectCellEditor.prototype.createRowComponent = function (value) {
         var valueFormatted = this.params.formatValue(value);
-        var row = new richSelectRow_1.RichSelectRow(this.params.column.getColDef());
+        var row = new richSelectRow_1.RichSelectRow(this.params);
         this.context.wireBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
         return row;
@@ -164,9 +164,6 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
             return this.originalSelectedValue;
         }
     };
-    RichSelectCellEditor.prototype.isPopup = function () {
-        return true;
-    };
     // tab index is needed so we can focus, which is needed for keyboard events
     RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
     __decorate([
@@ -178,5 +175,5 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         __metadata("design:type", ag_grid_community_1.CellRendererService)
     ], RichSelectCellEditor.prototype, "cellRendererService", void 0);
     return RichSelectCellEditor;
-}(ag_grid_community_1.Component));
+}(ag_grid_community_1.PopupComponent));
 exports.RichSelectCellEditor = RichSelectCellEditor;

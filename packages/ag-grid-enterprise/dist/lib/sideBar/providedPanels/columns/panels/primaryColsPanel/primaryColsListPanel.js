@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -47,7 +47,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.updateVisibilityOfRows();
     };
     PrimaryColsListPanel.prototype.destroyColumnComps = function () {
-        main_1._.removeAllChildren(this.getGui());
+        main_1._.clearElement(this.getGui());
         if (this.columnComps) {
             main_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
         }

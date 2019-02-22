@@ -23,14 +23,14 @@ meta_and_links($title, $keywords, $description, false);
 
         <section id="punch">
             <div id="doodle-container">
-                <div id="doodle-misc"><img inline src="_assets/doodles/misc.svg" /></div>
-                <div id="doodle-checkbox-selection"><img inline src="_assets/doodles/checkbox-selection.svg" /></div>
-                <div id="doodle-context-menu"><img inline src="_assets/doodles/context-menu.svg" /></div>
-                <div id="doodle-editing"><img inline src="_assets/doodles/editing.svg" /></div>
-                <div id="doodle-range-selection"><img inline src="_assets/doodles/range-selection.svg" /></div>
-                <div id="doodle-quick-filter"><img inline src="_assets/doodles/quick-filter.svg" /></div>
-                <div id="doodle-tree-data"><img inline src="_assets/doodles/tree-data.svg" /></div>
-                <div id="doodle-column-menu"><img inline src="_assets/doodles/column-menu.svg" /></div>
+                <div id="doodle-misc"><img inline src="_assets/doodles/misc.svg" alt="doodle-misc" /></div>
+                <div id="doodle-checkbox-selection"><img inline src="_assets/doodles/checkbox-selection.svg" alt="doodle-checkbox-selection" /></div>
+                <div id="doodle-context-menu"><img inline src="_assets/doodles/context-menu.svg" alt="doodle-context-menu" /></div>
+                <div id="doodle-editing"><img inline src="_assets/doodles/editing.svg" alt="doodle-editing" /></div>
+                <div id="doodle-range-selection"><img inline src="_assets/doodles/range-selection.svg" alt="doodle-range-selection" /></div>
+                <div id="doodle-quick-filter"><img inline src="_assets/doodles/quick-filter.svg" alt="doodle-quick-filter" /></div>
+                <div id="doodle-tree-data"><img inline src="_assets/doodles/tree-data.svg" alt="doodle-tree-data" /></div>
+                <div id="doodle-column-menu"><img inline src="_assets/doodles/column-menu.svg" alt="doodle-column-menu" /></div>
             </div>
 
             <div>
@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                11th Jan 2019: <a href="./ag-grid-changelog/?fixVersion=20.0.0">Version 20.0.0</a> Server Side Master Detail, Vue.js improvements and bug fixes
+                22nd Feb 2019: <a href="./ag-grid-changelog/?fixVersion=20.1.0">Version 20.1.0</a> Tooltip Components, Custom Filters Options, Loading Components and bug fixes
             </div>
         </section>
 
@@ -91,7 +91,6 @@ meta_and_links($title, $keywords, $description, false);
                     <li id="fw-vue"><a href="./best-vuejs-data-grid/">Vue.js</a></li>
                     <li id="fw-angularjs"><a href="./best-angularjs-data-grid/">AngularJS 1.x</a></li>
                     <li id="fw-polymer"><a href="./best-polymer-data-grid/">Polymer</a></li>
-                    <li id="fw-aurelia"><a href="./best-aurelia-data-grid/">Aurelia</a></li>
                     <li id="fw-webcomponents"><a href="./best-web-component-data-grid/">Web Components</a></li>
                 </ul>
             </div>

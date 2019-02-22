@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { Component, IToolPanelComp } from "ag-grid-community";
 export declare class FiltersToolPanel extends Component implements IToolPanelComp {
     private static TEMPLATE;

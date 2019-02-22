@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -282,7 +282,10 @@ var DragAndDropService = /** @class */ (function () {
     };
     DragAndDropService.prototype.createGhost = function () {
         this.eGhost = utils_1._.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
-        utils_1._.addCssClass(this.eGhost, this.environment.getTheme());
+        var theme = this.environment.getTheme();
+        if (theme) {
+            utils_1._.addCssClass(this.eGhost, theme);
+        }
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
         this.setGhostIcon(null);
         var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
@@ -301,7 +304,7 @@ var DragAndDropService = /** @class */ (function () {
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
-        utils_1._.removeAllChildren(this.eGhostIcon);
+        utils_1._.clearElement(this.eGhostIcon);
         var eIcon;
         switch (iconName) {
             case DragAndDropService_1.ICON_ADD:

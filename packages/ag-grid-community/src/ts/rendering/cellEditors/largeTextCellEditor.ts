@@ -1,7 +1,6 @@
-import { ICellEditorComp } from "./iCellEditor";
-import { ICellEditorParams } from "./iCellEditor";
-import { Component } from "../../widgets/component";
+import { PopupComponent } from "../../widgets/popupComponent";
 import { Constants } from "../../constants";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { _ } from "../../utils";
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
@@ -10,7 +9,7 @@ export interface ILargeTextEditorParams extends ICellEditorParams {
     cols: number;
 }
 
-export class LargeTextCellEditor extends Component implements ICellEditorComp {
+export class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE =
         // tab index is needed so we can focus, which is needed for keyboard events
         '<div class="ag-large-text" tabindex="0">' +
@@ -63,9 +62,5 @@ export class LargeTextCellEditor extends Component implements ICellEditorComp {
 
     public getValue(): any {
         return this.params.parseValue(this.textarea.value);
-    }
-
-    public isPopup(): boolean {
-        return true;
     }
 }

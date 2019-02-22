@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -48,7 +48,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
     };
     TotalRowsComp.prototype.getRowCountValue = function () {
         var totalRowCount = 0;
-        this.gridApi.forEachNode(function (node) { return totalRowCount += 1; });
+        this.gridApi.forEachLeafNode(function (node) { return totalRowCount += 1; });
         return "" + totalRowCount;
     };
     TotalRowsComp.prototype.init = function () {

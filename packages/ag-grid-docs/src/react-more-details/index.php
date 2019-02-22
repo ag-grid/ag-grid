@@ -305,25 +305,9 @@ class TopMoversGrid extends Component {
     <h3 id="react-portal-redux">React Portals with Redux</h3>
     <p>One of the downsides of using the React Portal functionality is that there are a few more steps required for the newly
     created React components to be Redux aware.</p>
-    <h3>Make the Store Available to ag-Grid</h3>
-    <p>When using React Portals we need to explicity suplly the store to the dynamically created component. In order to
-    be able to do this you in turn need to supply the store to ag-Grid React via the React <code>context</code>:</p>
-<snippet>
-// Grid Definition
-&lt;AgGridReact
-    reactNext={true}
-    reduxStore={this.context.store} // must be supplied when using redux with reactNext
-    ...other bindings
-</snippet>
-    <p>To ensure the store is available on the context you need to add it to the parent component <code>contextTypes</code>:</p>
-<snippet>
-GridComponent.contextTypes = {
-    store: PropTypes.object
-};
-</snippet>
     <h3 id="higher-order-components">Higher Order Components</h3>
     <p>If you use <code>connect</code> to use Redux, or if you're using a Higher Order Component to wrap the React component at all,
-        you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>withRef</code>
+        you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>forwardRef</code>
     is set:</p>
     <snippet>
 export default connect(
@@ -340,7 +324,9 @@ export default connect(
     </snippet>
     <h3 id="context-api">React Context API</h3>
     <p>If you're using the new React Context API then you can access the context in the components used within the grid.</p>
-    
+
+    <p>Note: You'll need to be using <a href="#react-portals">React Portals</a> and <code>reactNext</code> if you wish to you the new React Context API.</p>
+
     <p>First, let's create a context we can use in our components:</p>
     
     <snippet>
@@ -370,21 +356,30 @@ class StyledRenderer extends Component {
     <h3>Working Example</h3>
     <p>You can find a fully working example at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
 The Simple Redux Example makes use of <code>reactNext</code> together with <code>Redux</code>.</p>
-<hr>
-<h2>Test our React Grid component</h2>
-<br>
+
+    <h2 id="react-hooks">React Hooks</h2>
+    <p>React Hooks are fully supported - please refer to our working example in <a
+                href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
+<div class="card" style="background-color: aliceblue">
+  <div class="card-body">
+<h2 id="angular-grid-resources" style="margin-top: 10px"> 
+    React Grid Resources
+</h2>
+<br/>
 <ul>
-    <li>Stress-test the grid with 100,000 rows on our <a href="">React Grid Demo</a>.</li>
-    <br>
-    <li>Have a play with our <a href="">API</a>.</li>
-    <br>
-    <li>Test <a href="">ag-Grid React's features</a> before implementing.</li>
-    <br>
+    <li>
+        Get started with React Grid in 5 minutes in our <strong><a href="../react-getting-started/" target="_blank">guide</a></strong>.
+    </li>
+    <br/>
+    <li>
+        Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React. 
+    </li>
 </ul>
-<hr>
+</div>
+</div>
 <h2 id="next-steps">Next Steps</h2>
 <p>
-    Now you can go to <a href="../javascript-grid-reference-overview/">reference</a>
+    Now you can go to our react grid <a href="../javascript-grid-reference-overview/">reference</a>
     to learn about accessing all the features of the grid.
 </p>
 

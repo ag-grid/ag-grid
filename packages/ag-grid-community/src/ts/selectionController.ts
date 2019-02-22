@@ -14,6 +14,7 @@ import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
 import { _ } from './utils';
+import { ChangedPath } from "./rowModels/clientSide/changedPath";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -86,7 +87,7 @@ export class SelectionController {
     }
 
     // should only be called if groupSelectsChildren=true
-    public updateGroupsFromChildrenSelections(): void {
+    public updateGroupsFromChildrenSelections(changedPath?: ChangedPath): void {
         // we only do this when group selection state depends on selected children
         if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
             return;
@@ -97,13 +98,26 @@ export class SelectionController {
         }
 
         const clientSideRowModel = this.rowModel as ClientSideRowModel;
-        clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
-            rowNode.depthFirstSearch((node) => {
-                if (node.group) {
-                    node.calculateSelectedFromChildren();
-                }
-            });
+        const rootNode = clientSideRowModel.getRootNode();
+
+        if (!changedPath) {
+            changedPath = new ChangedPath(true, rootNode);
+            changedPath.setInactive();
+        }
+
+        changedPath.forEachChangedNodeDepthFirst(rowNode => {
+            if (rowNode !== rootNode) {
+                rowNode.calculateSelectedFromChildren();
+            }
         });
+
+        // clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
+        //     rowNode.depthFirstSearch((node) => {
+        //         if (node.group) {
+        //         }
+        //     });
+        // });
+
     }
 
     public getNodeForIdIfSelected(id: number): RowNode | undefined {
@@ -196,7 +210,7 @@ export class SelectionController {
     public getBestCostNodeSelection() {
 
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('getBestCostNodeSelection is only avilable when using normal row model');
+            console.warn('getBestCostNodeSelection is only available when using normal row model');
         }
 
         const clientSideRowModel = this.rowModel as ClientSideRowModel;
@@ -309,27 +323,39 @@ export class SelectionController {
         this.eventService.dispatchEvent(event);
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public selectNode(rowNode: RowNode | null, tryMulti: boolean) {
         if (rowNode) {
             rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
         }
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public deselectIndex(rowIndex: number) {
         const node = this.rowModel.getRow(rowIndex);
         this.deselectNode(node);
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public deselectNode(rowNode: RowNode | null) {
         if (rowNode) {
             rowNode.setSelectedParams({newValue: false, clearSelection: false});
         }
     }
 
-    // Deprecated method
+    /**
+     * @method
+     * @deprecated
+     */
     public selectIndex(index: any, tryMulti: boolean) {
         const node = this.rowModel.getRow(index);
         this.selectNode(node, tryMulti);

@@ -240,7 +240,9 @@ module.controller("exampleCtrl", function ($scope, $compile) {
 
         this.$scope.$watch('popup.opened', function (newVal, oldVal) {
             if (!newVal && oldVal) {
-                window.setTimeout(() => that.$scope.params.stopEditing(), 0)
+                window.setTimeout(function () {
+                    return that.$scope.params.stopEditing();
+                }, 0)
             }
         });
 
@@ -295,7 +297,9 @@ module.controller("exampleCtrl", function ($scope, $compile) {
         var that = this;
         this.$scope.$watch('dt', function (newVal, oldVal) {
             if (newVal !== oldVal) {
-                window.setTimeout(() => that.$scope.params.onDateChanged(), 0)
+                window.setTimeout(function () {
+                    return that.$scope.params.onDateChanged();
+                }, 0)
             }
         });
 

@@ -1,5 +1,5 @@
-// ag-grid-enterprise v20.0.0
-import { Column, IClipboardService } from "ag-grid-community";
+// ag-grid-enterprise v20.1.0
+import { Column, GridCore, IClipboardService } from "ag-grid-community";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
     private loggerFactory;
@@ -14,10 +14,11 @@ export declare class ClipboardService implements IClipboardService {
     private eventService;
     private cellNavigationService;
     private gridOptionsWrapper;
-    private gridCore;
     private columnApi;
     private gridApi;
     private logger;
+    private gridCore;
+    registerGridCore(gridCore: GridCore): void;
     private init;
     pasteFromClipboard(): void;
     private pasteToRange;

@@ -1,8 +1,8 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
+import { IFilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
 import { Context } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { FloatingFilterChange } from "./floatingFilter";
@@ -41,12 +41,15 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     static STARTS_WITH: string;
     static ENDS_WITH: string;
     private newRowsActionKeep;
+    customFilterOptions: {
+        [name: string]: IFilterOptionDef;
+    };
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
     defaultFilter: string;
-    filter: string;
-    filterCondition: string;
+    selectedFilter: string;
+    selectedFilterCondition: string;
     private eButtonsPanel;
     private eFilterBodyWrapper;
     private eApplyButton;

@@ -34,6 +34,7 @@
     $background-color: map-get($params, "background-color");
     $border-color: map-get($params, "border-color");
     $row-border-width: map-get($params, "row-border-width");
+    $scroll-spacer-border: map-get($params, "scroll-spacer-border");
 
     $button-background-color: map-get($params, "button-background-color");
 
@@ -69,6 +70,14 @@
     $card-radius: map-get($params, "card-radius");
     $card-shadow: map-get($params, "card-shadow");
     $focused-textbox-border: map-get($params, "focused-textbox-border");
+
+    $tooltip-background-color: map-get($params, "tooltip-background-color");
+    $tooltip-foreground-color: map-get($params, "tooltip-foreground-color");
+    $tooltip-border-radius: map-get($params, "tooltip-border-radius");
+    $tooltip-padding: map-get($params, "tooltip-padding");
+    $tooltip-border-width: map-get($params, "tooltip-border-width");
+    $tooltip-border-style: map-get($params, "tooltip-border-style");
+    $tooltip-border-color: map-get($params, "tooltip-border-color");
 
     $value-change-delta-up-color: map-get($params, "value-change-delta-up-color");
     $value-change-delta-down-color: map-get($params, "value-change-delta-down-color");
@@ -118,7 +127,7 @@
         .ag-cell-no-focus {
             border-right: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell {
+        .ag-row, .ag-cell:not(.ag-cell-focus) {
             &.ag-cell-first-right-pinned {
                 border-left: 1px solid $border-color;
             }
@@ -135,7 +144,7 @@
         .ag-cell-no-focus {
             border-left: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell {
+        .ag-row, .ag-cell:not(.ag-cell-focus) {
             &.ag-cell-first-right-pinned {
                 border-left: 1px solid $border-color;
             }
@@ -223,6 +232,19 @@
 
         .ag-row-even {
             background-color: map-get($params, "background-color");
+        }
+    }
+
+    .ag-horizontal-left-spacer {
+        border-right: $scroll-spacer-border;
+        &.ag-scroller-corner {
+            border-right: none;
+        }
+    } 
+    .ag-horizontal-right-spacer  {
+        border-left: $scroll-spacer-border;
+        &.ag-scroller-corner {
+            border-left: none;
         }
     }
 
@@ -323,6 +345,10 @@
         height: 100%;
         width: $icon-size + $grid-size * 3;
         cursor: grab;
+    }
+
+    .ag-row-dragging, .ag-row-dragging .ag-row-drag {
+        cursor: move;
     }
 
     .ag-rtl .ag-row-drag {
@@ -456,7 +482,7 @@
             margin-left: -$grid-size;
 
             & > span {
-                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{encodecolor($border-color)}'/> </svg>");
+                background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'#{$grid-size * 2}'%20viewBox%3D'0%200%201%20#{$grid-size * 2}'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'#{$grid-size}'%20x2%3D'1'%20y2%3D'#{$grid-size}'%20stroke-width%3D'1'%20stroke%3D'#{encodecolor($border-color)}'%2F%3E%3C%2Fsvg%3E");
                 height: $grid-size * 2;
             }
         }
@@ -482,7 +508,7 @@
         margin: 0;
         padding: 0 $grid-size * 2;
         transform: translateY($grid-size * 2);
-        z-index: 5;
+        z-index: 10000;
 
         span,
         div {
@@ -911,12 +937,15 @@
     // Editing
     ////////////////////////////////////////
     .ag-cell-inline-editing {
+        padding: $cell-horizontal-padding;
+        height: $row-height + $grid-size * 3;
+        z-index: 2;
+    }
+
+    .ag-cell-inline-editing, .ag-popup-editor {
         @include card($params);
 
         background-color: $editor-background-color-color;
-        height: $row-height + $grid-size * 3;
-        padding: $cell-horizontal-padding;
-        z-index: 2;
 
         input[type="text"],
         input[type="tel"],
@@ -931,10 +960,6 @@
     }
 
     .ag-popup-editor {
-        @include card($params);
-
-        background-color: $editor-background-color-color;
-        padding: 0;
         z-index: 1;
 
         .ag-large-textarea textarea {
@@ -1024,6 +1049,23 @@
     }
 
     ////////////////////////////////////////
+    // Tooltip
+    ////////////////////////////////////////
+    .ag-tooltip {
+        background-color: $tooltip-background-color;
+        color: $tooltip-foreground-color;
+        border-radius: $tooltip-border-radius;
+        padding: $tooltip-padding;
+        border-width: $tooltip-border-width;
+        border-style: $tooltip-border-style; 
+        border-color: $tooltip-border-color;
+        transition: opacity 1s;
+
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
+    }
+    ////////////////////////////////////////
     // Expanding headers
     ////////////////////////////////////////
     .ag-header-group-cell-label {
@@ -1057,14 +1099,14 @@
     ////////////////////////////////////////
     .ag-selection-checkbox,
     .ag-group-checkbox:not(.ag-invisible),
-    .ag-group-expanded,
-    .ag-group-contracted {
-        + .ag-cell-value, + .ag-group-value {
+    .ag-group-expanded:not(.ag-hidden),
+    .ag-group-contracted:not(.ag-hidden) {
+        ~ .ag-cell-value, + .ag-group-value {
             &:not(:empty) {
                 margin-left: $cell-horizontal-padding;
             }
         }
-        + .ag-group-checkbox {
+        ~ .ag-group-checkbox {
             margin-left: $cell-horizontal-padding;
         }
     }   
@@ -1091,7 +1133,7 @@
 
         // nasty fix for inline-block approach with half-width.
         &.ag-width-half {
-            margin-bottom: -3px;
+            margin-bottom: -5px;
         }
 
         span {

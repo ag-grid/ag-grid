@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,6 +21,7 @@ var ColDefUtil = /** @class */ (function () {
         'sort',
         'field',
         'type',
+        'tooltipComponent',
         'tooltipField',
         'headerTooltip',
         'cellClass',
@@ -52,6 +53,9 @@ var ColDefUtil = /** @class */ (function () {
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
+        'tooltipComponent',
+        'tooltipComponentParams',
+        'tooltipComponentFramework',
         'refData'
     ];
     ColDefUtil.ARRAY_PROPERTIES = [
@@ -103,7 +107,8 @@ var ColDefUtil = /** @class */ (function () {
         'rowDrag',
         'autoHeight',
         'sortable',
-        'resizable'
+        'resizable',
+        'singleClickEdit'
     ];
     ColDefUtil.FUNCTION_PROPERTIES = [
         'valueGetter',
@@ -129,6 +134,9 @@ var ColDefUtil = /** @class */ (function () {
         'onCellDoubleClicked',
         'onCellContextMenu',
         'tooltip',
+        'tooltipValueGetter',
+        'tooltipComponent',
+        'tooltipComponentFramework',
         'cellRendererSelector',
         'cellEditorSelector'
     ];
@@ -139,7 +147,7 @@ var ColDefUtil = /** @class */ (function () {
         .concat(ColDefUtil.FUNCTION_PROPERTIES)
         .concat(ColDefUtil.BOOLEAN_PROPERTIES);
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-    // properties to coldefs, gridOptions etc
+    // properties to colDefs, gridOptions etc
     ColDefUtil.FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
         'toColDef', 'createColDefFromGridColumn'];
     return ColDefUtil;

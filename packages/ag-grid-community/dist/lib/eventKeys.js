@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,6 +64,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_CELL_FOCUSED = 'cellFocused';
     Events.EVENT_ROW_SELECTED = 'rowSelected';
     Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
+    Events.EVENT_CELL_KEY_DOWN = 'cellKeyDown';
+    Events.EVENT_CELL_KEY_PRESS = 'cellKeyPress';
     Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
     Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */

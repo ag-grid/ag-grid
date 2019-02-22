@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,7 +54,7 @@ var touchListener_1 = require("../widgets/touchListener");
 var componentRecipes_1 = require("../components/framework/componentRecipes");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var rowDragFeature_1 = require("./rowDragFeature");
-var heightScaler_1 = require("../rendering/heightScaler");
+var maxDivHeightScaler_1 = require("../rendering/maxDivHeightScaler");
 var component_1 = require("../widgets/component");
 var autoHeightCalculator_1 = require("../rendering/autoHeightCalculator");
 var columnAnimationService_1 = require("../rendering/columnAnimationService");
@@ -66,7 +66,7 @@ var resizeObserverService_1 = require("../misc/resizeObserverService");
 var utils_1 = require("../utils");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-font-style\" role=\"grid\" unselectable=\"on\">\n        <ag-header-root ref=\"headerRoot\" unselectable=\"on\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-center-cols-clipper\" ref=\"eCenterColsClipper\">\n                <div class=\"ag-center-cols-viewport\" ref=\"eCenterViewport\" role=\"presentation\" unselectable=\"on\">\n                    <div class=\"ag-center-cols-container\" ref=\"eCenterContainer\" role=\"presentation\" unselectable=\"on\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-horizontal-scroll\" ref=\"eHorizontalScrollBody\">\n            <div class=\"ag-horizontal-left-spacer\" ref=\"eHorizontalLeftSpacer\"></div>\n            <div class=\"ag-body-horizontal-scroll-viewport\" ref=\"eBodyHorizontalScrollViewport\">\n                <div class=\"ag-body-horizontal-scroll-container\" ref=\"eBodyHorizontalScrollContainer\"></div>\n            </div>\n            <div class=\"ag-horizontal-right-spacer\" ref=\"eHorizontalRightSpacer\"></div>\n        </div>\n        <div class=\"ag-overlay\" ref=\"eOverlay\"></div>\n    </div>";
+var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-unselectable\" role=\"grid\" unselectable=\"on\">\n        <ag-header-root ref=\"headerRoot\" unselectable=\"on\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-center-cols-clipper\" ref=\"eCenterColsClipper\">\n                <div class=\"ag-center-cols-viewport\" ref=\"eCenterViewport\" role=\"presentation\" unselectable=\"on\">\n                    <div class=\"ag-center-cols-container\" ref=\"eCenterContainer\" role=\"presentation\" unselectable=\"on\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-horizontal-scroll\" ref=\"eHorizontalScrollBody\">\n            <div class=\"ag-horizontal-left-spacer\" ref=\"eHorizontalLeftSpacer\"></div>\n            <div class=\"ag-body-horizontal-scroll-viewport\" ref=\"eBodyHorizontalScrollViewport\">\n                <div class=\"ag-body-horizontal-scroll-container\" ref=\"eBodyHorizontalScrollContainer\"></div>\n            </div>\n            <div class=\"ag-horizontal-right-spacer\" ref=\"eHorizontalRightSpacer\"></div>\n        </div>\n        <div class=\"ag-overlay\" ref=\"eOverlay\"></div>\n    </div>";
 var GridPanel = /** @class */ (function (_super) {
     __extends(GridPanel, _super);
     function GridPanel() {
@@ -131,10 +131,10 @@ var GridPanel = /** @class */ (function (_super) {
         if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
             this.showLoadingOverlay();
         }
+        this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
         this.setPinnedContainerSize();
         this.setHeaderAndFloatingHeights();
         this.disableBrowserDragging();
-        this.addShortcutKeyListeners();
         this.addMouseListeners();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
@@ -179,6 +179,11 @@ var GridPanel = /** @class */ (function (_super) {
     // used by ColumnAnimationService
     GridPanel.prototype.setColumnMovingCss = function (moving) {
         this.addOrRemoveCssClass('ag-column-moving', moving);
+    };
+    GridPanel.prototype.setCellTextSelection = function (selectable) {
+        if (selectable === void 0) { selectable = false; }
+        [this.eTop, this.eCenterContainer, this.eBottom]
+            .forEach(function (ct) { return utils_1._.addOrRemoveCssClass(ct, 'ag-selectable', selectable); });
     };
     GridPanel.prototype.setupOverlay = function () {
         this.overlayWrapper = this.componentRecipes.newOverlayWrapperComponent();
@@ -313,7 +318,7 @@ var GridPanel = /** @class */ (function (_super) {
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         var listener = function (mouseEvent) {
             var target = utils_1._.getTarget(mouseEvent);
-            if (target === _this.eBodyViewport) {
+            if (target === _this.eBodyViewport || target === _this.eCenterViewport) {
                 // show it
                 _this.onContextMenu(mouseEvent, null, null, null, null);
                 _this.preventDefaultOnContextMenu(mouseEvent);
@@ -344,22 +349,99 @@ var GridPanel = /** @class */ (function (_super) {
         return null;
     };
     GridPanel.prototype.processKeyboardEvent = function (eventName, keyboardEvent) {
-        var renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
-        if (!renderedCell) {
+        var cellComp = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        if (!cellComp) {
             return;
         }
-        switch (eventName) {
-            case 'keydown':
-                // first see if it's a scroll key, page up / down, home / end etc
-                var wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
-                // if not a scroll key, then we pass onto cell
-                if (!wasScrollKey) {
-                    renderedCell.onKeyDown(keyboardEvent);
-                }
-                break;
-            case 'keypress':
-                renderedCell.onKeyPress(keyboardEvent);
-                break;
+        var gridProcessingAllowed = !this.isUserSuppressingKeyboardEvent(keyboardEvent, cellComp);
+        if (gridProcessingAllowed) {
+            switch (eventName) {
+                case 'keydown':
+                    // first see if it's a scroll key, page up / down, home / end etc
+                    var wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+                    // if not a scroll key, then we pass onto cell
+                    if (!wasScrollKey) {
+                        cellComp.onKeyDown(keyboardEvent);
+                    }
+                    this.doClipboardOperations(keyboardEvent, cellComp);
+                    break;
+                case 'keypress':
+                    cellComp.onKeyPress(keyboardEvent);
+                    break;
+            }
+        }
+        if (eventName === 'keydown') {
+            var cellKeyDownEvent = cellComp.createEvent(event, events_1.Events.EVENT_CELL_KEY_DOWN);
+            this.beans.eventService.dispatchEvent(cellKeyDownEvent);
+        }
+        if (eventName === 'keypress') {
+            var cellKeyPressEvent = cellComp.createEvent(event, events_1.Events.EVENT_CELL_KEY_PRESS);
+            this.beans.eventService.dispatchEvent(cellKeyPressEvent);
+        }
+    };
+    GridPanel.prototype.doClipboardOperations = function (keyboardEvent, cellComp) {
+        // check if ctrl or meta key pressed
+        if (!keyboardEvent.ctrlKey && !keyboardEvent.metaKey) {
+            return;
+        }
+        // if the cell the event came from is editing, then we do not
+        // want to do the default shortcut keys, otherwise the editor
+        // (eg a text field) would not be able to do the normal cut/copy/paste
+        if (cellComp.isEditing()) {
+            return;
+        }
+        // for copy / paste, we don't want to execute when the event
+        // was from a child grid (happens in master detail)
+        if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) {
+            return;
+        }
+        switch (keyboardEvent.which) {
+            case constants_1.Constants.KEY_A:
+                return this.onCtrlAndA(keyboardEvent);
+            case constants_1.Constants.KEY_C:
+                return this.onCtrlAndC(keyboardEvent);
+            case constants_1.Constants.KEY_V:
+                return this.onCtrlAndV();
+            case constants_1.Constants.KEY_D:
+                return this.onCtrlAndD(keyboardEvent);
+        }
+    };
+    // allows use to tell grid to skip specific keyboard events
+    GridPanel.prototype.isUserSuppressingKeyboardEvent = function (keyboardEvent, cellComp) {
+        var rowNode = cellComp.getRenderedRow().getRowNode();
+        var column = cellComp.getColumn();
+        var gridOptionsFunc = this.gridOptionsWrapper.getSuppressKeyboardEventFunc();
+        var colDefFunc = column.getColDef().suppressKeyboardEvent;
+        // if no callbacks provided by user, then do nothing
+        if (!gridOptionsFunc && !colDefFunc) {
+            return false;
+        }
+        var params = {
+            event: keyboardEvent,
+            editing: cellComp.isEditing(),
+            column: column,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+        };
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            var colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) {
+                return true;
+            }
+        }
+        if (gridOptionsFunc) {
+            // if gridOption func, return the result
+            return gridOptionsFunc(params);
+        }
+        else {
+            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+            return false;
         }
     };
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
@@ -388,7 +470,7 @@ var GridPanel = /** @class */ (function (_super) {
     };
     GridPanel.prototype.mockContextMenuForIPad = function () {
         var _this = this;
-        // we do NOT want this when not in ipad, otherwise we will be doing
+        // we do NOT want this when not in iPad, otherwise we will be doing
         if (!utils_1._.isUserAgentIPad()) {
             return;
         }
@@ -439,36 +521,6 @@ var GridPanel = /** @class */ (function (_super) {
             mouseEvent.preventDefault();
         }
     };
-    GridPanel.prototype.addShortcutKeyListeners = function () {
-        var _this = this;
-        this.eAllCellContainers.forEach(function (container) {
-            _this.addDestroyableEventListener(container, 'keydown', function (event) {
-                var renderedCell = _this.mouseEventService.getRenderedCellForEvent(event);
-                if (
-                // if the cell the event came from is editing, then we do not
-                // want to do the default shortcut keys, otherwise the editor
-                // (eg a text field) would not be able to do the normal cut/copy/paste
-                renderedCell && renderedCell.isEditing() ||
-                    // for copy / paste, we don't want to execute when the event
-                    // was from a child grid (happens in master detail)
-                    !_this.mouseEventService.isEventFromThisGrid(event)) {
-                    return;
-                }
-                if (event.ctrlKey || event.metaKey) {
-                    switch (event.which) {
-                        case constants_1.Constants.KEY_A:
-                            return _this.onCtrlAndA(event);
-                        case constants_1.Constants.KEY_C:
-                            return _this.onCtrlAndC(event);
-                        case constants_1.Constants.KEY_V:
-                            return _this.onCtrlAndV(event);
-                        case constants_1.Constants.KEY_D:
-                            return _this.onCtrlAndD(event);
-                    }
-                }
-            });
-        });
-    };
     GridPanel.prototype.onCtrlAndA = function (event) {
         var _a = this, columnController = _a.columnController, pinnedRowModel = _a.pinnedRowModel, paginationProxy = _a.paginationProxy, rangeController = _a.rangeController;
         var PINNED_BOTTOM = constants_1.Constants.PINNED_BOTTOM, PINNED_TOP = constants_1.Constants.PINNED_TOP;
@@ -502,10 +554,9 @@ var GridPanel = /** @class */ (function (_super) {
             });
         }
         event.preventDefault();
-        return false;
     };
     GridPanel.prototype.onCtrlAndC = function (event) {
-        if (!this.clipboardService) {
+        if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) {
             return;
         }
         var focusedCell = this.focusedCellController.getFocusedCell();
@@ -517,14 +568,12 @@ var GridPanel = /** @class */ (function (_super) {
         if (focusedCell) {
             this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
         }
-        return false;
     };
-    GridPanel.prototype.onCtrlAndV = function (event) {
+    GridPanel.prototype.onCtrlAndV = function () {
         if (!this.enterprise || this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             return;
         }
         this.clipboardService.pasteFromClipboard();
-        return false;
     };
     GridPanel.prototype.onCtrlAndD = function (event) {
         if (!this.enterprise) {
@@ -532,7 +581,6 @@ var GridPanel = /** @class */ (function (_super) {
         }
         this.clipboardService.copyRangeDown();
         event.preventDefault();
-        return false;
     };
     // Valid values for position are bottom, middle and top
     // position should be {'top','middle','bottom', or undefined/null}.
@@ -553,44 +601,55 @@ var GridPanel = /** @class */ (function (_super) {
         }
         this.paginationProxy.goToPageWithIndex(index);
         var rowNode = this.paginationProxy.getRow(index);
-        var paginationOffset = this.paginationProxy.getPixelOffset();
-        var rowTopPixel = rowNode.rowTop - paginationOffset;
-        var rowBottomPixel = rowTopPixel + rowNode.rowHeight;
-        var scrollPosition = this.getVScrollPosition();
-        var heightOffset = this.heightScaler.getOffset();
-        var vScrollTop = scrollPosition.top + heightOffset;
-        var vScrollBottom = scrollPosition.bottom + heightOffset;
-        var viewportHeight = vScrollBottom - vScrollTop;
-        // work out the pixels for top, middle and bottom up front,
-        // make the if/else below easier to read
-        var pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
-        var pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
-        // make sure if middle, the row is not outside the top of the grid
-        var pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
-        var rowBelowViewport = vScrollTop > rowTopPixel;
-        var rowAboveViewport = vScrollBottom < rowBottomPixel;
-        var newScrollPosition = null;
-        if (position === 'top') {
-            newScrollPosition = pxTop;
-        }
-        else if (position === 'bottom') {
-            newScrollPosition = pxBottom;
-        }
-        else if (position === 'middle') {
-            newScrollPosition = pxMiddle;
-        }
-        else if (rowBelowViewport) {
-            // if row is before, scroll up with row at top
-            newScrollPosition = pxTop;
-        }
-        else if (rowAboveViewport) {
-            // if row is below, scroll down with row at bottom
-            newScrollPosition = pxBottom;
-        }
-        if (newScrollPosition !== null) {
-            this.eBodyViewport.scrollTop = newScrollPosition;
-            this.rowRenderer.redrawAfterScroll();
-        }
+        var rowGotShiftedDuringOperation;
+        do {
+            var startingRowTop = rowNode.rowTop;
+            var startingRowHeight = rowNode.rowHeight;
+            var paginationOffset = this.paginationProxy.getPixelOffset();
+            var rowTopPixel = rowNode.rowTop - paginationOffset;
+            var rowBottomPixel = rowTopPixel + rowNode.rowHeight;
+            var scrollPosition = this.getVScrollPosition();
+            var heightOffset = this.heightScaler.getOffset();
+            var vScrollTop = scrollPosition.top + heightOffset;
+            var vScrollBottom = scrollPosition.bottom + heightOffset;
+            var viewportHeight = vScrollBottom - vScrollTop;
+            // work out the pixels for top, middle and bottom up front,
+            // make the if/else below easier to read
+            var pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
+            var pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
+            // make sure if middle, the row is not outside the top of the grid
+            var pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
+            var rowBelowViewport = vScrollTop > rowTopPixel;
+            var rowAboveViewport = vScrollBottom < rowBottomPixel;
+            var newScrollPosition = null;
+            if (position === 'top') {
+                newScrollPosition = pxTop;
+            }
+            else if (position === 'bottom') {
+                newScrollPosition = pxBottom;
+            }
+            else if (position === 'middle') {
+                newScrollPosition = pxMiddle;
+            }
+            else if (rowBelowViewport) {
+                // if row is before, scroll up with row at top
+                newScrollPosition = pxTop;
+            }
+            else if (rowAboveViewport) {
+                // if row is below, scroll down with row at bottom
+                newScrollPosition = pxBottom;
+            }
+            if (newScrollPosition !== null) {
+                this.eBodyViewport.scrollTop = newScrollPosition;
+                this.rowRenderer.redrawAfterScroll();
+            }
+            // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),
+            // the height of a row changes due to lazy calculation of row heights when using
+            // colDef.autoHeight or gridOptions.getRowHeight.
+            // if row was shifted, then the position we scrolled to is incorrect.
+            rowGotShiftedDuringOperation = (startingRowTop !== rowNode.rowTop)
+                || (startingRowHeight !== rowNode.rowHeight);
+        } while (rowGotShiftedDuringOperation);
         // so when we return back to user, the cells have rendered
         this.animationFrameService.flushAllFrames();
     };
@@ -633,17 +692,25 @@ var GridPanel = /** @class */ (function (_super) {
             verticalScrollShowing: false
         };
         params.verticalScrollShowing = this.isVerticalScrollShowing();
-        params.horizontalScrollShowing = !this.gridOptionsWrapper.isSuppressHorizontalScroll() && this.isHorizontalScrollShowing();
+        params.horizontalScrollShowing = this.isHorizontalScrollShowing();
         this.scrollVisibleService.setScrollsVisible(params);
         this.setHorizontalScrollVisible(params.horizontalScrollShowing);
         this.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
     };
     GridPanel.prototype.setHorizontalScrollVisible = function (visible) {
-        var height = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
-        this.eCenterViewport.style.height = "calc(100% + " + height + "px)";
-        utils_1._.setFixedHeight(this.eHorizontalScrollBody, height);
-        utils_1._.setFixedHeight(this.eBodyHorizontalScrollViewport, height);
-        utils_1._.setFixedHeight(this.eBodyHorizontalScrollContainer, height);
+        var isSuppressHorizontalScroll = this.gridOptionsWrapper.isSuppressHorizontalScroll();
+        var scrollSize = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+        var scrollContainerSize = !isSuppressHorizontalScroll ? scrollSize : 0;
+        var addIEPadding = utils_1._.isBrowserIE() && visible;
+        this.eCenterViewport.style.height = "calc(100% + " + scrollSize + "px)";
+        utils_1._.setFixedHeight(this.eHorizontalScrollBody, scrollContainerSize);
+        // we have to add an extra pixel to the scroller viewport on IE because
+        // if the container has the same size as the scrollbar, the scroll button won't work
+        utils_1._.setFixedHeight(this.eBodyHorizontalScrollViewport, scrollContainerSize + (addIEPadding ? 1 : 0));
+        if (addIEPadding) {
+            this.eBodyHorizontalScrollViewport.style.bottom = '1px';
+        }
+        utils_1._.setFixedHeight(this.eBodyHorizontalScrollContainer, scrollContainerSize);
     };
     GridPanel.prototype.setVerticalScrollPaddingVisible = function (show) {
         var scroller = show ? "scroll" : "hidden";
@@ -824,6 +891,9 @@ var GridPanel = /** @class */ (function (_super) {
     GridPanel.prototype.getRowContainers = function () {
         return this.rowContainerComponents;
     };
+    GridPanel.prototype.getFloatingTopBottom = function () {
+        return [this.eTop, this.eBottom];
+    };
     GridPanel.prototype.onDisplayedColumnsChanged = function () {
         this.setPinnedContainerSize();
         this.setHeaderAndFloatingHeights();
@@ -904,6 +974,7 @@ var GridPanel = /** @class */ (function (_super) {
             rightSpacing += this.scrollWidth;
         }
         utils_1._.setFixedWidth(this.eHorizontalRightSpacer, rightSpacing);
+        utils_1._.addOrRemoveCssClass(this.eHorizontalRightSpacer, 'ag-scroller-corner', rightSpacing <= this.scrollWidth);
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
         var leftSpacing = this.columnController.getPinnedLeftContainerWidth();
@@ -912,6 +983,7 @@ var GridPanel = /** @class */ (function (_super) {
             leftSpacing += this.scrollWidth;
         }
         utils_1._.setFixedWidth(this.eHorizontalLeftSpacer, leftSpacing);
+        utils_1._.addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= this.scrollWidth);
     };
     GridPanel.prototype.checkBodyHeight = function () {
         var bodyHeight = this.eBodyViewport.clientHeight;
@@ -1205,8 +1277,8 @@ var GridPanel = /** @class */ (function (_super) {
         __metadata("design:type", dragAndDropService_1.DragAndDropService)
     ], GridPanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        context_1.Autowired('heightScaler'),
-        __metadata("design:type", heightScaler_1.HeightScaler)
+        context_1.Autowired('maxDivHeightScaler'),
+        __metadata("design:type", maxDivHeightScaler_1.MaxDivHeightScaler)
     ], GridPanel.prototype, "heightScaler", void 0);
     __decorate([
         context_1.Autowired('enterprise'),

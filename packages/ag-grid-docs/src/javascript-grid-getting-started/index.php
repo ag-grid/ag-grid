@@ -58,7 +58,6 @@ include '../getting-started/header.php';
 <ul>
 <li><a href="../best-angularjs-data-grid/">Use ag-Grid in AngularJS 1.x Project</a></li>
 <li><a href="../polymer-getting-started/">Use ag-Grid with Polymer</a></li>
-<li><a href="../best-aurelia-data-grid/">Use ag-Grid with Aurelia</a></li>
 <li><a href="../best-web-component-data-grid/">Use ag-Grid as a Web Component</a></li>
 </ul>
 

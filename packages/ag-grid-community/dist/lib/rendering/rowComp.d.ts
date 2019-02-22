@@ -1,23 +1,12 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
 import { RowNode } from "../entities/rowNode";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Column } from "../entities/column";
-import { ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../widgets/component";
 import { Beans } from "./beans";
-export declare class LoadingCellRenderer extends Component {
-    private static TEMPLATE;
-    gridOptionsWrapper: GridOptionsWrapper;
-    private eLoadingIcon;
-    private eLoadingText;
-    constructor();
-    init(params: ICellRendererParams): void;
-    refresh(params: any): boolean;
-}
 export declare class RowComp extends Component {
     static DOM_DATA_KEY_RENDERED_ROW: string;
     private static FULL_WIDTH_CELL_RENDERER;

@@ -1,6 +1,5 @@
 import { CellComp } from "./cellComp";
 import { CellChangedEvent, DataChangedEvent, RowNode } from "../entities/rowNode";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Column } from "../entities/column";
 import {
     Events,
@@ -12,11 +11,11 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import { Autowired } from "../context/context";
-import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
+
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../widgets/component";
-import { RefSelector } from "../widgets/componentAnnotations";
+
 import { Beans } from "./beans";
 import { ProcessRowParams } from "../entities/gridOptions";
 import { _ } from "../utils";
@@ -24,36 +23,6 @@ import { _ } from "../utils";
 interface CellTemplate {
     template: string;
     cellComps: CellComp[];
-}
-
-export class LoadingCellRenderer extends Component {
-
-    private static TEMPLATE =
-        `<div class="ag-stub-cell">
-            <span class="ag-loading-icon" ref="eLoadingIcon"></span>
-            <span class="ag-loading-text" ref="eLoadingText"></span>
-        </div>`;
-
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-
-    @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
-    @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
-
-    constructor() {
-        super(LoadingCellRenderer.TEMPLATE);
-    }
-
-    public init(params: ICellRendererParams): void {
-        const eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
-        this.eLoadingIcon.appendChild(eLoadingIcon);
-
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
-    }
-
-    public refresh(params: any): boolean {
-        return false;
-    }
 }
 
 export class RowComp extends Component {
@@ -254,7 +223,7 @@ export class RowComp extends Component {
         // if sliding in, we take the old row top. otherwise we just set the current row top.
         const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
         const afterPaginationPixels = this.applyPaginationOffset(pixels);
-        const afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        const afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
         const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
 
         return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
@@ -320,7 +289,7 @@ export class RowComp extends Component {
         }
 
         const newChildScope = this.parentScope.$new();
-        newChildScope.data = data;
+        newChildScope.data = {...data };
         newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
 
@@ -516,11 +485,9 @@ export class RowComp extends Component {
     }
 
     private onExpandedChanged(): void {
-        if (this.rowNode.group && !this.rowNode.footer) {
-            const expanded = this.rowNode.expanded;
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded));
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded));
-        }
+        const rowNode = this.rowNode;
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', rowNode.expanded));
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !rowNode.expanded));
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -864,7 +831,10 @@ export class RowComp extends Component {
             this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
 
-            this.angular1Compile(eRow);
+            const isDetailRow = this.beans.doingMasterDetail && this.rowNode.detail;
+            if (!isDetailRow) {
+                this.angular1Compile(eRow);
+            }
         });
     }
 
@@ -898,6 +868,8 @@ export class RowComp extends Component {
 
     private getInitialRowClasses(extraCssClass: string): string[] {
         const classes: string[] = [];
+        const isTreeData = this.beans.gridOptionsWrapper.isTreeData();
+        const rowNode = this.rowNode;
 
         if (_.exists(extraCssClass)) {
             classes.push(extraCssClass);
@@ -912,24 +884,24 @@ export class RowComp extends Component {
 
         classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
 
-        if (this.rowNode.isSelected()) {
+        if (rowNode.isSelected()) {
             classes.push('ag-row-selected');
         }
 
-        if (this.rowNode.group) {
+        if (rowNode.group) {
             classes.push('ag-row-group');
             // if a group, put the level of the group in
-            classes.push('ag-row-level-' + this.rowNode.level);
+            classes.push('ag-row-level-' + rowNode.level);
 
-            if (this.rowNode.footer) {
+            if (rowNode.footer) {
                 classes.push('ag-row-footer');
             }
         } else {
             // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            classes.push('ag-row-level-' + (this.rowNode.parent ? (this.rowNode.parent.level + 1) : '0'));
+            classes.push('ag-row-level-' + (rowNode.parent ? (rowNode.parent.level + 1) : '0'));
         }
 
-        if (this.rowNode.stub) {
+        if (rowNode.stub) {
             classes.push('ag-row-stub');
         }
 
@@ -937,11 +909,16 @@ export class RowComp extends Component {
             classes.push('ag-full-width-row');
         }
 
-        if (this.rowNode.group && !this.rowNode.footer) {
-            classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
+        const addExpandedClass = isTreeData ?
+            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
+            rowNode.allChildrenCount :
+            // if normal row grouping, we add expanded classes to groups only
+            rowNode.group && !rowNode.footer;
+        if (addExpandedClass) {
+            classes.push(rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
 
-        if (this.rowNode.dragging) {
+        if (rowNode.dragging) {
             classes.push('ag-row-dragging');
         }
 
@@ -1396,7 +1373,7 @@ export class RowComp extends Component {
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
-            const afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+            const afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
 
             if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {

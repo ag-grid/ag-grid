@@ -1,21 +1,53 @@
+type Size = { width: number, height: number };
+
+/**
+ * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
+ * provide resolution independent rendering based on `window.devicePixelRatio`.
+ */
 export class HdpiCanvas {
+    // The width/height attributes of the Canvas element default to
+    // 300/150 according to w3.org.
     constructor(width = 300, height = 150) {
         this.updatePixelRatio(0, false);
         this.resize(width, height);
     }
 
-    _canvas = document.createElement('canvas');
-    get canvas(): HTMLCanvasElement {
-        return this._canvas;
+    private _parent: HTMLElement | null = null;
+    set parent(value: HTMLElement | null) {
+        if (this._parent !== value) {
+            this.remove();
+            if (value) {
+                value.appendChild(this.canvas);
+            }
+            this._parent = value;
+        }
+
+    }
+    get parent(): HTMLElement | null {
+        return this._parent;
     }
 
+    private remove() {
+        const parent = this.canvas.parentNode;
+
+        if (parent !== null) {
+            parent.removeChild(this.canvas);
+        }
+    }
+
+    readonly canvas = document.createElement('canvas');
+
+    readonly context = this.canvas.getContext('2d')!;
+
     destroy() {
-        this._canvas.remove();
+        this.canvas.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
     }
 
-    _pixelRatio: number = 1;
+    // `NaN` is deliberate here, so that overrides are always applied
+    // and the `resetTransform` inside the `resize` method works in IE11.
+    _pixelRatio: number = NaN;
     get pixelRatio(): number {
         return this._pixelRatio;
     }
@@ -36,13 +68,13 @@ export class HdpiCanvas {
             return;
         }
 
-        const canvas = this._canvas;
-        const ctx = canvas.getContext('2d')!;
+        const canvas = this.canvas;
+        const ctx = this.context;
         const overrides = this.overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
         for (const name in overrides) {
             if (overrides.hasOwnProperty(name)) {
                 // Save native methods under prefixed names,
-                // if this hasn't been done by previous overrides already.
+                // if this hasn't been done by the previous overrides already.
                 if (!(ctx as any)['$' + name]) {
                     (ctx as any)['$' + name] = (ctx as any)[name];
                 }
@@ -75,7 +107,118 @@ export class HdpiCanvas {
         canvas.style.width = Math.round(width) + 'px';
         canvas.style.height = Math.round(height) + 'px';
 
-        canvas.getContext('2d')!.resetTransform();
+        this.context.resetTransform();
+    }
+
+    // 2D canvas context for measuring text.
+    private static readonly textContext: CanvasRenderingContext2D = (() => {
+        const canvas = document.createElement('canvas');
+        return canvas.getContext('2d')!;
+    })();
+
+    // Offscreen SVGTextElement for measuring text
+    // (this fallback method is at least 25 times slower).
+    // Using a <span> and its `getBoundingClientRect` for the same purpose
+    // often results in a grossly incorrect measured height.
+    private static _svgText: SVGTextElement;
+    private static get svgText(): SVGTextElement {
+        if (HdpiCanvas._svgText) {
+            return HdpiCanvas._svgText;
+        }
+
+        const xmlns = 'http://www.w3.org/2000/svg';
+
+        const svg = document.createElementNS(xmlns, 'svg');
+        svg.setAttribute('width', '100');
+        svg.setAttribute('height', '100');
+        svg.style.position = 'absolute';
+        svg.style.top = '-1000px';
+        svg.style.visibility = 'hidden';
+
+        const svgText = document.createElementNS(xmlns, 'text');
+        svgText.setAttribute('x', '0');
+        svgText.setAttribute('y', '30');
+        svgText.setAttribute('text', 'black');
+
+        svg.appendChild(svgText);
+        document.body.appendChild(svg);
+
+        HdpiCanvas._svgText = svgText;
+
+        return svgText;
+    };
+
+    static readonly supports = Object.freeze({
+        textMetrics: HdpiCanvas.textContext.measureText('test')
+            .actualBoundingBoxDescent !== undefined,
+        getTransform: HdpiCanvas.textContext.getTransform !== undefined
+    });
+
+    static measureText(text: string, font: string,
+                       textBaseline: CanvasTextBaseline,
+                       textAlign: CanvasTextAlign): TextMetrics {
+        const ctx = HdpiCanvas.textContext;
+        ctx.font = font;
+        ctx.textBaseline = textBaseline;
+        ctx.textAlign = textAlign;
+        return ctx.measureText(text);
+    }
+
+    /**
+     * Returns the width and height of the measured text.
+     * @param text The single-line text to measure.
+     * @param font The font shorthand string.
+     */
+    static getTextSize(text: string, font: string): Size {
+        if (HdpiCanvas.supports.textMetrics) {
+            HdpiCanvas.textContext.font = font;
+            const metrics = HdpiCanvas.textContext.measureText(text);
+
+            return {
+                width: metrics.width,
+                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+            };
+        } else {
+            return HdpiCanvas.measureSvgText(text, font);
+        }
+    }
+
+    private static textSizeCache: { [font: string]: { [text: string] : Size } } = {};
+
+    private static measureSvgText(text: string, font: string): Size {
+        const cache = HdpiCanvas.textSizeCache;
+        const fontCache = cache[font];
+
+        // Note: consider not caching the size of numeric strings.
+        // For example: if (isNaN(+text)) { // skip
+
+        if (fontCache) {
+            const size = fontCache[text];
+            if (size) {
+                return size;
+            }
+        } else {
+            cache[font] = {};
+        }
+
+        const svgText = HdpiCanvas.svgText;
+
+        svgText.style.font = font;
+        svgText.textContent = text;
+
+        // `getBBox` returns an instance of `SVGRect` with the same `width` and `height`
+        // measurements as `DOMRect` instance returned by the `getBoundingClientRect`.
+        // But the `SVGRect` instance has half the properties of the `DOMRect`,
+        // so we use the `getBBox` method.
+        const bbox = svgText.getBBox();
+        const size: Size = {
+            width: bbox.width,
+            height: bbox.height
+        };
+
+        cache[font][text] = size;
+
+        return size;
     }
 
     private static makeHdpiOverrides(pixelRatio: number) {

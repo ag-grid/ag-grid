@@ -1,21 +1,21 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { CellComp } from "./cellComp";
+import { GridCore } from "../gridCore";
 import { LoggerFactory } from "../logger";
 import { GridCell, GridCellDef } from "../entities/gridCell";
 import { BeanStub } from "../context/beanStub";
 import { FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "../gridApi";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./cellEditors/iCellEditor";
+import { ICellEditorComp } from "../interfaces/iCellEditor";
 export declare class RowRenderer extends BeanStub {
     private paginationProxy;
     private columnController;
     private gridOptionsWrapper;
-    private gridCore;
     private $scope;
     private expressionService;
     private templateService;
@@ -29,7 +29,7 @@ export declare class RowRenderer extends BeanStub {
     private columnApi;
     private gridApi;
     private beans;
-    private heightScaler;
+    private maxDivHeightScaler;
     private animationFrameService;
     private rangeController;
     private gridPanel;
@@ -45,9 +45,12 @@ export declare class RowRenderer extends BeanStub {
     private logger;
     private printLayout;
     private embedFullWidthRows;
+    private gridCore;
+    registerGridCore(gridCore: GridCore): void;
     agWire(loggerFactory: LoggerFactory): void;
     registerGridComp(gridPanel: GridPanel): void;
     private onDomLayoutChanged;
+    datasourceChanged(): void;
     private onPageLoaded;
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshFloatingRowComps(): void;
@@ -88,6 +91,7 @@ export declare class RowRenderer extends BeanStub {
     private destroyRowComps;
     private checkAngularCompile;
     private workOutFirstAndLastRowsToRender;
+    private ensureAllRowsInRangeHaveHeightsCalculated;
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
     private keepRowBecauseEditing;

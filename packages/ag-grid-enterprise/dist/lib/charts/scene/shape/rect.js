@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -15,37 +15,63 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var shape_1 = require("./shape");
-var path_1 = require("../path");
-var object_1 = require("../../util/object");
+var path2D_1 = require("../path2D");
+var bbox_1 = require("../bbox");
 var Rect = /** @class */ (function (_super) {
     __extends(Rect, _super);
     function Rect() {
-        var _this = _super.call(this) || this;
-        _this.path = new path_1.Path();
-        _this._x = Rect.defaults.x;
-        _this._y = Rect.defaults.y;
-        _this._width = Rect.defaults.width;
-        _this._height = Rect.defaults.height;
-        _this._radius = Rect.defaults.radius;
-        // Override the base class defaults.
-        _this.fillStyle = Rect.defaults.fillStyle;
-        _this.strokeStyle = Rect.defaults.strokeStyle;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.path = new path2D_1.Path2D();
+        _this._isDirtyPath = true;
+        _this._x = 0;
+        _this._y = 0;
+        _this._width = 10;
+        _this._height = 10;
+        _this._radius = 0;
+        _this.getBBox = function () {
+            return {
+                x: _this.x,
+                y: _this.y,
+                width: _this.width,
+                height: _this.height
+            };
+        };
         return _this;
-        // Alternatively we can do:
-        // this.restoreOverriddenDefaults();
-        // This call can even happen in the base class constructor,
-        // so that we don't worry about forgetting calling it in subclasses.
-        // This will figure out the properties (above) to apply
-        // automatically, but makes construction more expensive.
-        // TODO: measure the performance impact.
     }
+    Rect.create = function (x, y, width, height, radius) {
+        if (radius === void 0) { radius = 0; }
+        var rect = new Rect();
+        rect.x = x;
+        rect.y = y;
+        rect.width = width;
+        rect.height = height;
+        rect.radius = radius;
+        return rect;
+    };
+    Object.defineProperty(Rect.prototype, "isDirtyPath", {
+        get: function () {
+            return this._isDirtyPath;
+        },
+        set: function (value) {
+            if (this._isDirtyPath !== value) {
+                this._isDirtyPath = value;
+                if (value) {
+                    this.isDirty = true;
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Rect.prototype, "x", {
         get: function () {
             return this._x;
         },
         set: function (value) {
-            this._x = value;
-            this.dirty = true;
+            if (this._x !== value) {
+                this._x = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
@@ -55,8 +81,10 @@ var Rect = /** @class */ (function (_super) {
             return this._y;
         },
         set: function (value) {
-            this._y = value;
-            this.dirty = true;
+            if (this._y !== value) {
+                this._y = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
@@ -66,8 +94,10 @@ var Rect = /** @class */ (function (_super) {
             return this._width;
         },
         set: function (value) {
-            this._width = value;
-            this.dirty = true;
+            if (this._width !== value) {
+                this._width = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
@@ -77,8 +107,10 @@ var Rect = /** @class */ (function (_super) {
             return this._height;
         },
         set: function (value) {
-            this._height = value;
-            this.dirty = true;
+            if (this._height !== value) {
+                this._height = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
@@ -88,13 +120,17 @@ var Rect = /** @class */ (function (_super) {
             return this._radius;
         },
         set: function (value) {
-            this._radius = value;
-            this.dirty = true;
+            if (this._radius !== value) {
+                this._radius = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
     });
     Rect.prototype.updatePath = function () {
+        if (!this.isDirtyPath)
+            return;
         var path = this.path;
         var radius = this.radius;
         path.clear();
@@ -103,35 +139,35 @@ var Rect = /** @class */ (function (_super) {
         }
         else {
             // TODO: rect radius, this will require implementing
-            //       another `arcTo` method in the `Path` class.
+            //       another `arcTo` method in the `Path2D` class.
             throw "TODO";
         }
+        this.isDirtyPath = false;
     };
-    Rect.prototype.isPointInPath = function (ctx, x, y) {
-        return false;
+    Rect.prototype.isPointInPath = function (x, y) {
+        var point = this.transformPoint(x, y);
+        var bbox = this.getBBox();
+        return bbox_1.isPointInBBox(bbox, point.x, point.y);
     };
-    Rect.prototype.isPointInStroke = function (ctx, x, y) {
+    Rect.prototype.isPointInStroke = function (x, y) {
         return false;
     };
     Rect.prototype.render = function (ctx) {
-        if (this.scene) {
-            this.updatePath();
-            this.applyContextAttributes(ctx);
-            this.scene.appendPath(this.path);
+        if (this.isDirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+        this.applyContextAttributes(ctx);
+        this.updatePath();
+        this.scene.appendPath(this.path);
+        if (this.fillStyle) {
             ctx.fill();
+        }
+        if (this.strokeStyle) {
             ctx.stroke();
         }
-        this.dirty = false;
+        this.isDirty = false;
     };
-    Rect.defaults = object_1.chainObjects(shape_1.Shape.defaults, {
-        fillStyle: 'red',
-        strokeStyle: 'black',
-        x: 0,
-        y: 0,
-        width: 10,
-        height: 10,
-        radius: 0
-    });
     return Rect;
 }(shape_1.Shape));
 exports.Rect = Rect;

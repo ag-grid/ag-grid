@@ -135,6 +135,89 @@ export class ClientSideRowModel {
         this.context.wireBean(this.rootNode);
     }
 
+    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
+
+        let atLeastOneChange: boolean;
+        let res = false;
+
+        // we do this multiple times as changing the row heights can also change the first and last rows,
+        // so the first pass can make lots of rows smaller, which means the second pass we end up changing
+        // more rows.
+        do {
+            atLeastOneChange = false;
+
+            const rowAtStartPixel = this.getRowIndexAtPixel(startPixel);
+            const rowAtEndPixel = this.getRowIndexAtPixel(endPixel);
+
+            // keep check to current page if doing pagination
+            const firstRow = Math.max(rowAtStartPixel, startLimitIndex);
+            const lastRow = Math.min(rowAtEndPixel, endLimitIndex);
+
+            for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                const rowNode = this.getRow(rowIndex);
+                if (rowNode.rowHeightEstimated) {
+                    const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+                    rowNode.setRowHeight(rowHeight.height);
+                    atLeastOneChange = true;
+                    res = true;
+                }
+            }
+
+            if (atLeastOneChange) {
+                this.setRowTops();
+            }
+
+        } while (atLeastOneChange);
+
+        return res;
+    }
+
+    private setRowTops(): void {
+        let nextRowTop = 0;
+        for (let i = 0; i < this.rowsToDisplay.length; i++) {
+
+            // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
+            // with these two layouts.
+            const allowEstimate = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+
+            const rowNode = this.rowsToDisplay[i];
+            if (_.missing(rowNode.rowHeight)) {
+                const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode, allowEstimate);
+                rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
+            }
+
+            rowNode.setRowTop(nextRowTop);
+            rowNode.setRowIndex(i);
+            nextRowTop += rowNode.rowHeight;
+        }
+    }
+
+    private resetRowTops(rowNode: RowNode, changedPath: ChangedPath): void {
+        rowNode.clearRowTop();
+        if (rowNode.hasChildren()) {
+            if (rowNode.childrenAfterGroup) {
+
+                // if a changedPath is active, it means we are here because of a transaction update or
+                // a change detection. neither of these impacts the open/closed state of groups. so if
+                // a group is not open this time, it was not open last time. so we know all closed groups
+                // already have their top positions cleared. so there is no need to traverse all the way
+                // when changedPath is active and the rowNode is not expanded.
+                const skipChildren = changedPath.isActive() && !rowNode.expanded;
+                if (!skipChildren) {
+                    for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+                        this.resetRowTops(rowNode.childrenAfterGroup[i], changedPath);
+                    }
+                }
+            }
+            if (rowNode.sibling) {
+                rowNode.sibling.clearRowTop();
+            }
+        }
+        if (rowNode.detailNode) {
+            rowNode.detailNode.clearRowTop();
+        }
+    }
+
     // returns false if row was moved, otherwise true
     public ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
@@ -221,14 +304,11 @@ export class ClientSideRowModel {
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        const valueColumns = this.columnController.getValueColumns();
-
-        const noValueColumns = _.missingOrEmpty(valueColumns);
         const noTransactions = _.missingOrEmpty(rowNodeTransactions);
 
-        const changedPath = new ChangedPath(false);
+        const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noValueColumns || noTransactions) {
+        if (noTransactions) {
             changedPath.setInactive();
         }
 
@@ -259,7 +339,7 @@ export class ClientSideRowModel {
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
-                this.doFilter();
+                this.doFilter(changedPath);
             // console.log('filter = ' + (new Date().getTime() - start));
             case constants.STEP_PIVOT:
                 this.doPivot(changedPath);
@@ -276,6 +356,12 @@ export class ClientSideRowModel {
                 this.doRowsToDisplay();
             // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
+
+        // set all row tops to null, then set row tops on all visible rows. if we don't
+        // do this, then the algorithm below only sets row tops, old row tops from old rows
+        // will still lie around
+        this.resetRowTops(this.rootNode, changedPath);
+        this.setRowTops();
 
         const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
@@ -476,7 +562,7 @@ export class ClientSideRowModel {
     // nodes - the rowNodes to traverse
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
-    // index - works similar to the index in forEach in javascripts array function
+    // index - works similar to the index in forEach in javascript's array function
     private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: Function, recursionType: RecursionType, index: number) {
         if (nodes) {
             for (let i = 0; i < nodes.length; i++) {
@@ -595,7 +681,7 @@ export class ClientSideRowModel {
             }
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
-                this.selectionController.updateGroupsFromChildrenSelections();
+                this.selectionController.updateGroupsFromChildrenSelections(changedPath);
             }
 
         } else {
@@ -618,8 +704,8 @@ export class ClientSideRowModel {
         });
     }
 
-    private doFilter() {
-        this.filterStage.execute({rowNode: this.rootNode});
+    private doFilter(changedPath: ChangedPath) {
+        this.filterStage.execute({rowNode: this.rootNode, changedPath: changedPath});
     }
 
     private doPivot(changedPath: ChangedPath) {

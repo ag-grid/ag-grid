@@ -17,6 +17,8 @@ export class BandScale<D> implements Scale<D, number> {
                 index[value] =  domain.push(value) - 1;
             }
         });
+
+        this.rescale();
     }
     get domain(): D[] {
         return this._domain;

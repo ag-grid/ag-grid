@@ -1,13 +1,5 @@
-import {Component, ContentChildren, Input, QueryList} from "@angular/core";
-import {
-    ColDef,
-    ColGroupDef,
-    GetQuickFilterTextParams,
-    IAggFunc,
-    ICellRendererFunc,
-    IsColumnFunc,
-    RowNode
-} from "ag-grid-community";
+import { Component, ContentChildren, Input, QueryList } from "@angular/core";
+import { ColDef } from "ag-grid-community";
 
 @Component({
     selector: 'ag-grid-column',
@@ -74,6 +66,9 @@ export class AgGridColumn {
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
+    @Input() public tooltipComponent: any;
+    @Input() public tooltipComponentParams: any;
+    @Input() public tooltipComponentFramework: any;
     @Input() public refData: any;
     @Input() public headerName: any;
     @Input() public columnGroupShow: any;
@@ -122,6 +117,7 @@ export class AgGridColumn {
     @Input() public onCellDoubleClicked: any;
     @Input() public onCellContextMenu: any;
     @Input() public tooltip: any;
+    @Input() public tooltipValueGetter: any;
     @Input() public cellRendererSelector: any;
     @Input() public cellEditorSelector: any;
     @Input() public suppressCellFlash: any;
@@ -156,6 +152,7 @@ export class AgGridColumn {
     @Input() public autoHeight: any;
     @Input() public sortable: any;
     @Input() public resizable: any;
+    @Input() public singleClickEdit: any;
     // @END@
 
 }

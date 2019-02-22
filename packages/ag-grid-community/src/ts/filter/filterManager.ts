@@ -14,6 +14,7 @@ import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces
 import { ColDef, GetQuickFilterTextParams } from "../entities/colDef";
 import { GridApi } from "../gridApi";
 import { ComponentResolver } from "../components/framework/componentResolver";
+import { GridCore } from "../gridCore";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -23,7 +24,6 @@ export class FilterManager {
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridCore') private gridCore: any;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -43,6 +43,12 @@ export class FilterManager {
 
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
+
+    private gridCore: GridCore;
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+    }
 
     @PostConstruct
     public init(): void {

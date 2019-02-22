@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,7 +43,7 @@ var DateFilter = /** @class */ (function (_super) {
         return {
             dateFrom: from,
             dateTo: this.getDateTo(),
-            type: this.filter,
+            type: this.selectedFilter,
             filterType: 'date'
         };
     };
@@ -61,12 +61,12 @@ var DateFilter = /** @class */ (function (_super) {
         if (type === baseFilter_1.FilterConditionType.MAIN) {
             this.setDateFrom_date(this.dateFrom, baseFilter_1.FilterConditionType.MAIN);
             this.setDateTo_date(this.dateTo, baseFilter_1.FilterConditionType.MAIN);
-            this.setFilterType(this.filterCondition, baseFilter_1.FilterConditionType.MAIN);
+            this.setFilterType(this.selectedFilter, baseFilter_1.FilterConditionType.MAIN);
         }
         else {
             this.setDateFrom_date(this.dateFromCondition, baseFilter_1.FilterConditionType.CONDITION);
             this.setDateTo_date(this.dateToCondition, baseFilter_1.FilterConditionType.CONDITION);
-            this.setFilterType(this.filterCondition, baseFilter_1.FilterConditionType.CONDITION);
+            this.setFilterType(this.selectedFilterCondition, baseFilter_1.FilterConditionType.CONDITION);
         }
     };
     DateFilter.prototype.createComponents = function (type) {
@@ -134,11 +134,11 @@ var DateFilter = /** @class */ (function (_super) {
         var filterTypeValue;
         if (type === baseFilter_1.FilterConditionType.MAIN) {
             panel = this.eDateToPanel;
-            filterTypeValue = this.filter;
+            filterTypeValue = this.selectedFilter;
         }
         else {
             panel = this.eDateToConditionPanel;
-            filterTypeValue = this.filterCondition;
+            filterTypeValue = this.selectedFilterCondition;
         }
         if (!panel) {
             return;
@@ -163,7 +163,7 @@ var DateFilter = /** @class */ (function (_super) {
     DateFilter.prototype.serialize = function (type) {
         var dateToComponent = type === baseFilter_1.FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
         var dateFromComponent = type === baseFilter_1.FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
-        var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         return {
             dateTo: utils_1._.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
             dateFrom: utils_1._.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
@@ -176,14 +176,14 @@ var DateFilter = /** @class */ (function (_super) {
             if (!this.dateFromComponent) {
                 return null;
             }
-            return this.filter !== baseFilter_1.BaseFilter.IN_RANGE ?
+            return this.selectedFilter !== baseFilter_1.BaseFilter.IN_RANGE ?
                 this.dateFromComponent.getDate() :
                 [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
         }
         if (!this.dateFromConditionComponent) {
             return null;
         }
-        return this.filterCondition !== baseFilter_1.BaseFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== baseFilter_1.BaseFilter.IN_RANGE ?
             this.dateFromConditionComponent.getDate() :
             [this.dateFromConditionComponent.getDate(), this.dateToConditionComponent.getDate()];
     };
@@ -197,7 +197,7 @@ var DateFilter = /** @class */ (function (_super) {
     };
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     DateFilter.prototype.getFilterType = function () {
-        return this.filter;
+        return this.selectedFilter;
     };
     DateFilter.prototype.setDateFrom = function (date, type) {
         var parsedDate = utils_1._.parseYyyyMmDdToDate(date, "-");

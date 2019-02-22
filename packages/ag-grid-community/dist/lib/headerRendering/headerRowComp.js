@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -300,7 +300,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
                     if (filterComponent.onFloatingFilterChanged) {
                         //If going through this branch of code the user MUST
                         //be passing an object of type change that contains
-                        //a model propery inside and some other stuff
+                        //a model property inside and some other stuff
                         var result = filterComponent.onFloatingFilterChanged(change);
                         captureModelChangedResolveFunc(result);
                     }
@@ -316,7 +316,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
                 });
                 return modelChanged.resolveNow(true, function (changed) { return changed; });
             },
-            //This one might be overriden from the colDef
+            //This one might be overridden from the colDef
             suppressFilterButton: false
         };
         return baseParams;

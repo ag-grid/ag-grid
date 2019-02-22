@@ -27,9 +27,9 @@ import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCells
 import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { HeightScaler } from "./heightScaler";
+import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./cellEditors/iCellEditor";
+import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { _ } from "../utils";
 
 @Bean("rowRenderer")
@@ -38,7 +38,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired("gridCore") private gridCore: GridCore;
     @Autowired("$scope") private $scope: any;
     @Autowired("expressionService") private expressionService: ExpressionService;
     @Autowired("templateService") private templateService: TemplateService;
@@ -52,7 +51,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
-    @Autowired("heightScaler") private heightScaler: HeightScaler;
+    @Autowired("maxDivHeightScaler") private maxDivHeightScaler: MaxDivHeightScaler;
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Optional("rangeController") private rangeController: IRangeController;
 
@@ -82,6 +81,12 @@ export class RowRenderer extends BeanStub {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
+
+    private gridCore: GridCore;
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
+    }
 
     public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");
@@ -118,6 +123,15 @@ export class RowRenderer extends BeanStub {
         if (destroyRows) {
             this.redrawAfterModelUpdate();
         }
+    }
+
+    // for row models that have datasources, when we update the datasource, we need to force the rowRenderer
+    // to redraw all rows. otherwise the old rows from the old datasource will stay displayed.
+    public datasourceChanged(): void {
+        this.firstRenderedRow = 0;
+        this.lastRenderedRow = -1;
+        const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
+        this.removeRowComps(rowIndexesToRemove);
     }
 
     private onPageLoaded(refreshEvent?: ModelUpdatedEvent): void {
@@ -254,7 +268,7 @@ export class RowRenderer extends BeanStub {
         }
 
         // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
+        // called to what's rendered. if the row isn't rendered, we don't care
         const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 
         // remove the rows
@@ -348,9 +362,9 @@ export class RowRenderer extends BeanStub {
             containerHeight = 1;
         }
 
-        this.heightScaler.setModelHeight(containerHeight);
+        this.maxDivHeightScaler.setModelHeight(containerHeight);
 
-        const realHeight = this.heightScaler.getUiContainerHeight();
+        const realHeight = this.maxDivHeightScaler.getUiContainerHeight();
 
         containers.forEach(container => container.setHeight(realHeight));
     }
@@ -620,7 +634,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private redraw(rowsToRecycle?: { [key: string]: RowComp }, animate = false, afterScroll = false) {
-        this.heightScaler.update();
+        this.maxDivHeightScaler.updateOffset();
         this.workOutFirstAndLastRowsToRender();
 
         // the row can already exist and be in the following:
@@ -799,38 +813,50 @@ export class RowRenderer extends BeanStub {
             newFirst = this.paginationProxy.getPageFirstRow();
             newLast = this.paginationProxy.getPageLastRow();
         } else {
+
+            const paginationOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            const maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
+
+            const bodyVRange = this.gridPanel.getVScrollPosition();
+            const bodyTopPixel = bodyVRange.top;
+            const bodyBottomPixel = bodyVRange.bottom;
+
+            const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
+
+            const firstPixel = bodyTopPixel + paginationOffset + maxDivHeightScaler - bufferPixels;
+            const lastPixel = bodyBottomPixel + paginationOffset + maxDivHeightScaler + bufferPixels;
+
+            this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
+
+            let firstRowIndex = this.paginationProxy.getRowIndexAtPixel(firstPixel);
+            let lastRowIndex = this.paginationProxy.getRowIndexAtPixel(lastPixel);
+
             const pageFirstRow = this.paginationProxy.getPageFirstRow();
             const pageLastRow = this.paginationProxy.getPageLastRow();
 
-            const pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
-            const heightOffset = this.heightScaler.getOffset();
-
-            const bodyVRange = this.gridPanel.getVScrollPosition();
-            const topPixel = bodyVRange.top;
-            const bottomPixel = bodyVRange.bottom;
-
-            const realPixelTop = topPixel + pixelOffset + heightOffset;
-            const realPixelBottom = bottomPixel + pixelOffset + heightOffset;
-
-            let first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
-            let last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
-
-            //add in buffer
-            const buffer = this.gridOptionsWrapper.getRowBuffer();
-            first = first - buffer;
-            last = last + buffer;
-
             // adjust, in case buffer extended actual size
-            if (first < pageFirstRow) {
-                first = pageFirstRow;
+            if (firstRowIndex < pageFirstRow) {
+                firstRowIndex = pageFirstRow;
             }
 
-            if (last > pageLastRow) {
-                last = pageLastRow;
+            if (lastRowIndex > pageLastRow) {
+                lastRowIndex = pageLastRow;
             }
 
-            newFirst = first;
-            newLast = last;
+            newFirst = firstRowIndex;
+            newLast = lastRowIndex;
+        }
+
+        // sometimes user doesn't set CSS right and ends up with grid with no height and grid ends up
+        // trying to render all the rows, eg 10,000+ rows. this will kill the browser. so instead of
+        // killing the browser, we limit the number of rows. just in case some use case we didn't think
+        // of, we also have a property to not do this operation.
+        const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+        const suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
+        if (rowLayoutNormal && !suppressRowCountRestriction) {
+            if (newLast - newFirst > 500) {
+                newLast = newFirst + 500;
+            }
         }
 
         const firstDiffers = newFirst !== this.firstRenderedRow;
@@ -861,6 +887,18 @@ export class RowRenderer extends BeanStub {
             };
 
             this.eventService.dispatchEventOnce(event);
+        }
+    }
+
+    private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): void {
+        // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
+        // all the other row models just hard code so the method just returns back false
+        const rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        if (rowHeightsChanged) {
+            // if row heights have changed, we need to resize the containers the rows sit it
+            this.sizeContainerToPageHeight();
+            // we also need to update heightScaler as this has dependency of row container height
+            this.maxDivHeightScaler.updateOffset();
         }
     }
 
@@ -986,6 +1024,7 @@ export class RowRenderer extends BeanStub {
         this.ensureCellVisible(nextCell);
 
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
+
         if (this.rangeController) {
             const gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
             this.rangeController.setRangeToCell(gridCell);

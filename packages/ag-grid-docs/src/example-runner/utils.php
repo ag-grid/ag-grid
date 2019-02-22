@@ -143,6 +143,117 @@ function getTypes($dir)
 
 function example($title, $dir, $type = 'vanilla', $options = array())
 {
+    $options['skipDirs'] = $options['skipDirs'] ? $options['skipDirs'] : array();
+
+    $packaged = strrpos($type,"-packaged") !== false;
+    if($packaged) {
+        $type = 'as-is';
+        array_push($options['skipDirs'], 'prebuilt');
+        $options['usePath'] = '/prebuilt/';
+        $options['noPlunker'] = 1;
+    }
+
+    $section = basename(dirname($_SERVER['SCRIPT_NAME']));
+    $multi = $type === 'multi';
+    $generated = $type === 'generated';
+
+
+    $config = array(
+        'type' => $type,
+        'name' => $dir,
+        'section' => $section,
+        'types' => array(),
+        'title' => $title,
+        'sourcePrefix' => RUNNER_SOURCE_PREFIX,
+        'options' => $options
+    );
+
+    if ($generated) {
+        $types = array('vanilla', 'angular', 'react', 'vue');
+    } else if ($multi) {
+        $types = getTypes($dir);
+    } else {
+        $types = [$type];
+    }
+
+    $query = array(
+        "section" => $section,
+        "example" => $dir
+    );
+
+    if ($options['extras']) {
+        foreach ($options['extras'] as $extra) {
+            $query[$extra] = "1";
+        }
+    }
+
+    if ($options['enterprise']) {
+        $query['enterprise'] = true;
+    }
+
+    if ($options['noStyle']) {
+        $query['noStyle'] = true;
+    }
+
+    if ($options['usePath']) {
+        $query['usePath'] = $options['usePath'];
+    }
+
+    if ($multi) {
+        $query['multi'] = 1;
+    }
+
+    if ($generated) {
+        $query['generated'] = 1;
+    }
+
+    $gridSettings = array(
+        'theme' => 'ag-theme-balham',
+        'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
+        'height' => '100%',
+        'width' => '100%',
+        'enterprise' => $options['enterprise']
+    );
+
+    if (isset($options['grid'])) {
+        $gridSettings = array_merge($gridSettings, $options['grid']);
+    }
+
+    $config['options']['grid'] = $gridSettings;
+
+    $query['grid'] = json_encode($gridSettings);
+
+    $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
+
+    foreach ($types as $theType) {
+        $entry = array();
+        if ($multi) {
+            $entry['files'] = getDirContents($dir . "/" . $theType);
+        } else if ($generated) {
+            $entry['files'] = getDirContents($dir . "/_gen/" . $theType);
+        } else {
+            $entry['files'] = getDirContents($dir, $options['skipDirs']);
+        }
+
+        if ($theType != "vanilla" && $theType != "as-is") {
+            $entry['boilerplatePath'] = "../example-runner/$theType-boilerplate";
+            $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
+        }
+
+        $entry['resultUrl'] = "../example-runner/$theType.php?$queryString";
+
+        $config['types'][$theType] = $entry;
+    }
+
+    $jsonConfig = htmlspecialchars(json_encode($config));
+
+    return <<<NG
+    <example-runner config="$jsonConfig"></example-runner>
+NG;
+}
+
+function packagedExample($title, $dir, $type = 'vanilla', $options = array())
+{
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $multi = $type === 'multi';
     $generated = $type === 'generated';
@@ -360,6 +471,7 @@ function getExampleInfo($boilerplatePrefix)
 function renderExampleExtras($config)
 {
 
+
     // bootstrap script wants jQuery
     if ($config['bootstrap']) {
         $config['jquery'] = 1;
@@ -370,6 +482,7 @@ function renderExampleExtras($config)
         $config['jquery'] = 1;
     }
 
+    /* !!!!  IF YOU UPDATE THIS PLEASE UPDATE packaged-example-builder.js */
     $extras = array(
         'xlsx' => array(
             'scripts' => array(

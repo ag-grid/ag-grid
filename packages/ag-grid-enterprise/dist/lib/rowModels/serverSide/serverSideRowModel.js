@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,11 +28,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
 var serverSideCache_1 = require("./serverSideCache");
+var serverSideBlock_1 = require("./serverSideBlock");
 var ServerSideRowModel = /** @class */ (function (_super) {
     __extends(ServerSideRowModel, _super);
     function ServerSideRowModel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    // we don't implement as lazy row heights is not supported in this row model
+    ServerSideRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ServerSideRowModel.prototype.postConstruct = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
@@ -45,10 +48,13 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ServerSideRowModel.prototype.destroyDatasource = function () {
-        if (this.datasource && this.datasource.destroy) {
-            this.datasource.destroy();
+        if (this.datasource) {
+            if (this.datasource.destroy) {
+                this.datasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.datasource = undefined;
         }
-        this.datasource = undefined;
     };
     ServerSideRowModel.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideRowModel');
@@ -300,7 +306,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
         if (!(params.blockSize >= 1)) {
-            params.blockSize = 100;
+            params.blockSize = serverSideBlock_1.ServerSideBlock.DefaultBlockSize;
         }
         // if user doesn't give initial rows to display, we assume zero
         if (!(params.initialRowCount >= 1)) {
@@ -425,13 +431,6 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         if (route === void 0) { route = []; }
         this.executeOnCache(route, function (cache) { return cache.purgeCache(); });
     };
-    ServerSideRowModel.prototype.removeFromCache = function (route, items) {
-        this.executeOnCache(route, function (cache) { return cache.removeFromCache(items); });
-        this.rowNodeBlockLoader.checkBlockToLoad();
-    };
-    ServerSideRowModel.prototype.addToCache = function (route, items, index) {
-        this.executeOnCache(route, function (cache) { return cache.addToCache(items, index); });
-    };
     ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
         if (ag_grid_community_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
@@ -551,7 +550,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             detailNode.data = masterNode.data;
             detailNode.level = masterNode.level + 1;
             var defaultDetailRowHeight = 200;
-            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode);
+            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
             detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
             masterNode.detailNode = detailNode;
             return detailNode;
@@ -589,6 +588,10 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('columnApi'),
         __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], ServerSideRowModel.prototype, "columnApi", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('rowRenderer'),
+        __metadata("design:type", ag_grid_community_1.RowRenderer)
+    ], ServerSideRowModel.prototype, "rowRenderer", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

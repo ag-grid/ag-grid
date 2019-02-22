@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,7 +17,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var constants_1 = require("../constants");
 var context_1 = require("../context/context");
-var gridCore_1 = require("../gridCore");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var environment_1 = require("../environment");
 var eventService_1 = require("../eventService");
@@ -27,6 +26,9 @@ var PopupService = /** @class */ (function () {
     function PopupService() {
         this.activePopupElements = [];
     }
+    PopupService.prototype.registerGridCore = function (gridCore) {
+        this.gridCore = gridCore;
+    };
     PopupService.prototype.getDocument = function () {
         return this.gridOptionsWrapper.getDocument();
     };
@@ -36,9 +38,7 @@ var PopupService = /** @class */ (function () {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         }
-        else {
-            return this.gridCore.getRootGui();
-        }
+        return this.gridCore.getRootGui();
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -92,10 +92,13 @@ var PopupService = /** @class */ (function () {
     };
     PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
         var _a = this.calculatePointerAlign(params.mouseEvent), x = _a.x, y = _a.y;
+        var ePopup = params.ePopup, nudgeX = params.nudgeX, nudgeY = params.nudgeY;
         this.positionPopup({
-            ePopup: params.ePopup,
+            ePopup: ePopup,
             x: x,
             y: y,
+            nudgeX: nudgeX,
+            nudgeY: nudgeY,
             keepWithinBounds: true
         });
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
@@ -251,16 +254,18 @@ var PopupService = /** @class */ (function () {
         }
         eChild.style.top = '0px';
         eChild.style.left = '0px';
-        var popupAlreadyShown = utils_1._.isVisible(eChild);
-        if (popupAlreadyShown) {
-            return function () {
-            };
-        }
         var ePopupParent = this.getPopupParent();
+        var popupAlreadyShown = utils_1._.isVisible(eChild);
+        if (popupAlreadyShown && ePopupParent.contains(eChild)) {
+            return function () { };
+        }
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         var eWrapper = document.createElement('div');
-        utils_1._.addCssClass(eWrapper, this.environment.getTheme());
+        var theme = this.environment.getTheme();
+        if (theme) {
+            utils_1._.addCssClass(eWrapper, theme);
+        }
         eWrapper.appendChild(eChild);
         ePopupParent.appendChild(eWrapper);
         this.activePopupElements.push(eChild);
@@ -334,7 +339,7 @@ var PopupService = /** @class */ (function () {
             // `ag-custom-component-popup` class to be detected as part of the Custom Component
             var el = event.target;
             while (el && el != document.body) {
-                if (el.classList.contains('ag-custom-component-popup')) {
+                if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                     return true;
                 }
                 el = el.parentElement;
@@ -371,10 +376,6 @@ var PopupService = /** @class */ (function () {
         }
         return false;
     };
-    __decorate([
-        context_1.Autowired('gridCore'),
-        __metadata("design:type", gridCore_1.GridCore)
-    ], PopupService.prototype, "gridCore", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)

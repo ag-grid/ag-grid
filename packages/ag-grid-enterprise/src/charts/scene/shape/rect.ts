@@ -1,83 +1,95 @@
-import { Shape } from "./shape";
-import { Path } from "../path";
-import {chainObjects} from "../../util/object";
+import {Shape} from "./shape";
+import {Path2D} from "../path2D";
+import {BBox, isPointInBBox} from "../bbox";
 
 export class Rect extends Shape {
 
-    protected static defaults = chainObjects(Shape.defaults, {
-        fillStyle: 'red',
-        strokeStyle: 'black',
+    static create(x: number, y: number, width: number, height: number, radius = 0): Rect {
+        const rect = new Rect();
 
-        x: 0,
-        y: 0,
-        width: 10,
-        height: 10,
-        radius: 0
-    });
+        rect.x = x;
+        rect.y = y;
+        rect.width = width;
+        rect.height = height;
+        rect.radius = radius;
 
-    constructor() {
-        super();
-
-        // Override the base class defaults.
-        this.fillStyle = Rect.defaults.fillStyle;
-        this.strokeStyle = Rect.defaults.strokeStyle;
-        // Alternatively we can do:
-        // this.restoreOverriddenDefaults();
-        // This call can even happen in the base class constructor,
-        // so that we don't worry about forgetting calling it in subclasses.
-        // This will figure out the properties (above) to apply
-        // automatically, but makes construction more expensive.
-        // TODO: measure the performance impact.
+        return rect;
     }
 
-    protected path = new Path();
+    protected path = new Path2D();
 
-    _x: number = Rect.defaults.x;
+    private _isDirtyPath = true;
+    set isDirtyPath(value: boolean) {
+        if (this._isDirtyPath !== value) {
+            this._isDirtyPath = value;
+            if (value) {
+                this.isDirty = true;
+            }
+        }
+    }
+    get isDirtyPath(): boolean {
+        return this._isDirtyPath;
+    }
+
+    private _x: number = 0;
     set x(value: number) {
-        this._x = value;
-        this.dirty = true;
+        if (this._x !== value) {
+            this._x = value;
+            this.isDirtyPath = true;
+        }
     }
     get x(): number {
         return this._x;
     }
 
-    _y: number = Rect.defaults.y;
+    private _y: number = 0;
     set y(value: number) {
-        this._y = value;
-        this.dirty = true;
+        if (this._y !== value) {
+            this._y = value;
+            this.isDirtyPath = true;
+        }
     }
     get y(): number {
         return this._y;
     }
 
-    _width: number = Rect.defaults.width;
+    private _width: number = 10;
     set width(value: number) {
-        this._width = value;
-        this.dirty = true;
+        if (this._width !== value) {
+            this._width = value;
+            this.isDirtyPath = true;
+        }
     }
     get width(): number {
         return this._width;
     }
 
-    _height: number = Rect.defaults.height;
+    private _height: number = 10;
     set height(value: number) {
-        this._height = value;
-        this.dirty = true;
+        if (this._height !== value) {
+            this._height = value;
+            this.isDirtyPath = true;
+        }
     }
     get height(): number {
         return this._height;
     }
 
-    _radius: number = Rect.defaults.radius;
+    private _radius: number = 0;
     set radius(value: number) {
-        this._radius = value;
-        this.dirty = true;
+        if (this._radius !== value) {
+            this._radius = value;
+            this.isDirtyPath = true;
+        }
     }
     get radius(): number {
         return this._radius;
     }
 
     updatePath() {
+        if (!this.isDirtyPath)
+            return;
+
         const path = this.path;
         const radius = this.radius;
 
@@ -87,28 +99,50 @@ export class Rect extends Shape {
             path.rect(this.x, this.y, this.width, this.height);
         } else {
             // TODO: rect radius, this will require implementing
-            //       another `arcTo` method in the `Path` class.
+            //       another `arcTo` method in the `Path2D` class.
             throw "TODO";
         }
+
+        this.isDirtyPath = false;
     }
 
-    isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
-        return false;
+    readonly getBBox = () => {
+        return {
+            x: this.x,
+            y: this.y,
+            width: this.width,
+            height: this.height
+        };
+    };
+
+    isPointInPath(x: number, y: number): boolean {
+        const point = this.transformPoint(x, y);
+        const bbox = this.getBBox();
+
+        return isPointInBBox(bbox, point.x, point.y);
     }
 
-    isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean {
+    isPointInStroke(x: number, y: number): boolean {
         return false;
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.scene) {
-            this.updatePath();
-            this.applyContextAttributes(ctx);
-            this.scene.appendPath(this.path);
+        if (this.isDirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+
+        this.applyContextAttributes(ctx);
+        this.updatePath();
+        this.scene!.appendPath(this.path);
+
+        if (this.fillStyle) {
             ctx.fill();
+        }
+        if (this.strokeStyle) {
             ctx.stroke();
         }
 
-        this.dirty = false;
+        this.isDirty = false;
     }
 }

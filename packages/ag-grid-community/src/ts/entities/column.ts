@@ -22,6 +22,7 @@ import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
+import { OriginalColumnGroup } from "./originalColumnGroup";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -70,14 +71,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private readonly colDef: ColDef;
     private readonly colId: any;
+    private colDef: ColDef;
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
     // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private readonly userProvidedColDef: ColDef;
+    private userProvidedColDef: ColDef;
 
     private actualWidth: any;
 
@@ -93,9 +94,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     // we copy this from col def, as if it's value changes are column is created,
     // it will break the logic in the column controller
-    private lockPosition: boolean;
-    private lockPinned: boolean;
-    private lockVisible: boolean;
+    private readonly lockPosition: boolean;
+    private readonly lockPinned: boolean;
+    private readonly lockVisible: boolean;
 
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
@@ -117,6 +118,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private readonly primary: boolean;
 
     private parent: ColumnGroup;
+    private originalParent: OriginalColumnGroup;
 
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
         this.colDef = colDef;
@@ -129,6 +131,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.lockPosition = colDef.lockPosition === true;
         this.lockPinned = colDef.lockPinned === true;
         this.lockVisible = colDef.lockVisible === true;
+    }
+
+    // gets called when user provides an alternative colDef, eg
+    public setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void {
+        this.colDef = colDef;
+        this.userProvidedColDef = userProvidedColDef;
     }
 
     public getUserProvidedColDef(): ColDef {
@@ -153,6 +161,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getParent(): ColumnGroup {
         return this.parent;
+    }
+
+    public setOriginalParent(originalParent: OriginalColumnGroup | null): void {
+        this.originalParent = originalParent;
+    }
+
+    public getOriginalParent(): OriginalColumnGroup | null {
+        return this.originalParent;
     }
 
     // this is done after constructor as it uses gridOptionsWrapper
@@ -210,7 +226,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public isFilterAllowed(): boolean {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        const filterDefined = !!this.colDef.filter;
+        const filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
         return this.primary && filterDefined;
     }
 
@@ -238,7 +254,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         if (this.gridOptionsWrapper.isTreeData()) {
             const itemsNotAllowedWithTreeData =
-                ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+                ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (_.exists(colDefAny[item])) {
                     console.warn(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`);
@@ -311,6 +327,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.colDef.resizable = false;
         }
 
+        if (colDefAny.tooltip) {
+            console.warn(`ag-Grid: since v20.1, colDef.tooltip is gone, instead use colDef.tooltipValueGetter.`, this.colDef);
+            this.colDef.tooltipValueGetter = colDefAny.tooltip;
+        }
+
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -372,7 +393,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isResizable(): boolean {
-        return this.colDef.resizable===true;
+        return this.colDef.resizable === true;
     }
 
     private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {

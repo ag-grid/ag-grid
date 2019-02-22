@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -66,6 +66,8 @@ export declare class GridOptionsWrapper {
     isRowModelDefault(): boolean;
     isFullRowEdit(): boolean;
     isSuppressFocusAfterRefresh(): boolean;
+    isSuppressBrowserResizeObserver(): boolean;
+    isSuppressMaintainUnsortedOrder(): boolean;
     isShowToolPanel(): boolean;
     getSideBar(): SideBarDef;
     isSuppressTouch(): boolean;
@@ -94,6 +96,7 @@ export declare class GridOptionsWrapper {
     isSuppressRowDrag(): boolean;
     getDomLayout(): string;
     isSuppressHorizontalScroll(): boolean;
+    isSuppressMaxRenderedRowRestriction(): boolean;
     isAlwaysShowVerticalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
@@ -127,10 +130,12 @@ export declare class GridOptionsWrapper {
     getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined;
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
+    getSuppressKeyboardEventFunc(): (params: import("./entities/colDef").SuppressKeyboardEventParams) => boolean;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getApi(): GridApi | undefined | null;
     getColumnApi(): ColumnApi | undefined | null;
     isDeltaRowDataMode(): boolean;
+    isDeltaColumnMode(): boolean;
     isEnsureDomOrder(): boolean;
     isEnableCharts(): boolean;
     getColResizeDefault(): string;
@@ -165,6 +170,7 @@ export declare class GridOptionsWrapper {
     getViewportDatasource(): IViewportDatasource;
     getServerSideDatasource(): IServerSideDatasource | undefined;
     isAccentedSort(): boolean;
+    isEnableBrowserTooltips(): boolean;
     isEnableCellExpressions(): boolean;
     isEnableGroupEdit(): boolean;
     isSuppressMiddleClickScrolls(): boolean;
@@ -201,9 +207,11 @@ export declare class GridOptionsWrapper {
     getOverlayLoadingTemplate(): string;
     getOverlayNoRowsTemplate(): string;
     isSuppressAutoSize(): boolean;
+    isEnableCellTextSelection(): boolean;
     isSuppressParentsInRowNodes(): boolean;
     isFunctionsReadOnly(): boolean;
     isFloatingFilter(): boolean | undefined;
+    isEnableCellTextSelect(): boolean;
     isEnableOldSetFilterModel(): boolean;
     getDefaultColDef(): ColDef | undefined;
     getDefaultColGroupDef(): ColGroupDef | undefined;
@@ -256,7 +264,7 @@ export declare class GridOptionsWrapper {
     getMinColWidth(): number;
     getMaxColWidth(): number;
     getColWidth(): number;
-    getRowBuffer(): number;
+    getRowBufferInPixels(): number;
     getScrollbarWidth(): number;
     private checkForDeprecated;
     private checkForViolations;
@@ -264,7 +272,10 @@ export declare class GridOptionsWrapper {
     getLocaleTextFunc(): Function;
     globalEventHandler(eventName: string, event?: any): void;
     getRowHeightAsNumber(): number;
-    getRowHeightForNode(rowNode: RowNode): number | undefined;
+    getRowHeightForNode(rowNode: RowNode, allowEstimate?: boolean): {
+        height: number;
+        estimated: boolean;
+    };
     isDynamicRowHeight(): boolean;
     getVirtualItemHeight(): number;
     private isNumeric;

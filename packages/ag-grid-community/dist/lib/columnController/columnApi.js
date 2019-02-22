@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,9 +27,9 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this.columnController.getDisplayNameForColumn(column, location); };
     ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location); };
     ColumnApi.prototype.getColumn = function (key) { return this.columnController.getPrimaryColumn(key); };
-    ColumnApi.prototype.setColumnState = function (columnState) { return this.columnController.setColumnState(columnState, 'api'); };
+    ColumnApi.prototype.setColumnState = function (columnState) { return this.columnController.setColumnState(columnState, false, 'api'); };
     ColumnApi.prototype.getColumnState = function () { return this.columnController.getColumnState(); };
-    ColumnApi.prototype.resetColumnState = function () { this.columnController.resetColumnState('api'); };
+    ColumnApi.prototype.resetColumnState = function () { this.columnController.resetColumnState(false, 'api'); };
     ColumnApi.prototype.getColumnGroupState = function () { return this.columnController.getColumnGroupState(); };
     ColumnApi.prototype.setColumnGroupState = function (stateItems) { this.columnController.setColumnGroupState(stateItems, 'api'); };
     ColumnApi.prototype.resetColumnGroupState = function () { this.columnController.resetColumnGroupState('api'); };

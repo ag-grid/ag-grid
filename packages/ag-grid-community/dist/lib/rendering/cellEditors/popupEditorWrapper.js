@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = require("../../widgets/component");
+var popupComponent_1 = require("../../widgets/popupComponent");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var PopupEditorWrapper = /** @class */ (function (_super) {
@@ -74,9 +74,6 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
     PopupEditorWrapper.prototype.getValue = function () {
         return this.cellEditor.getValue();
     };
-    PopupEditorWrapper.prototype.isPopup = function () {
-        return true;
-    };
     PopupEditorWrapper.prototype.isCancelBeforeStart = function () {
         if (this.cellEditor.isCancelBeforeStart) {
             return this.cellEditor.isCancelBeforeStart();
@@ -103,5 +100,5 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], PopupEditorWrapper.prototype, "gridOptionsWrapper", void 0);
     return PopupEditorWrapper;
-}(component_1.Component));
+}(popupComponent_1.PopupComponent));
 exports.PopupEditorWrapper = PopupEditorWrapper;

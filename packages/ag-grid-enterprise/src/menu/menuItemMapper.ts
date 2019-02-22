@@ -88,7 +88,7 @@ export class MenuItemMapper {
             };
             case 'resetColumns': return {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
-                action: () => this.columnController.resetColumnState("contextMenu")
+                action: () => this.columnController.resetColumnState(false,"contextMenu")
             };
             case 'expandAll': return {
                 name: localeTextFunc('expandAll', 'Expand All'),
@@ -147,10 +147,18 @@ export class MenuItemMapper {
                 })
             };
             case 'separator': return 'separator';
-            case 'createChart': return {
-                name: 'Create Chart',
+            case 'chartRange': return {
+                name: 'Chart Range',
                 action: () => {
-                    this.chartingService.createChart();
+                    this.chartingService.chartRange();
+
+                }
+            };
+            case 'chartEverything': return {
+                name: 'Chart Everything',
+                action: () => {
+                    this.chartingService.chartEverything();
+
                 }
             };
             default:

@@ -6,6 +6,8 @@ import {
     GridPanel,
     PostConstruct,
     ToolPanelDef,
+    Events,
+    ToolPanelVisibleChangedEvent,
     _
 } from "ag-grid-community";
 
@@ -89,7 +91,7 @@ export class SideBarButtonsComp extends Component {
         const panelToProcess = this.panels[key];
 
         if (!panelToProcess) {
-            console.warn(`ag-grid: can't change the visibility for the non existing tool panel item [${key}]`)
+            console.warn(`ag-grid: can't change the visibility for the non existing tool panel item [${key}]`);
             return;
         }
 
@@ -98,6 +100,14 @@ export class SideBarButtonsComp extends Component {
         if (button.parentElement) {
             _.addOrRemoveCssClass(button.parentElement, 'ag-selected', show);
         }
+
+        const event: ToolPanelVisibleChangedEvent = {
+            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            source: key,
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public clear() {

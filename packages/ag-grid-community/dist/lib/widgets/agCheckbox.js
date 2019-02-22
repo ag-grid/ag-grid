@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,9 +53,9 @@ var AgCheckbox = /** @class */ (function (_super) {
         }
     };
     AgCheckbox.prototype.loadIcons = function () {
-        utils_1._.removeAllChildren(this.eChecked);
-        utils_1._.removeAllChildren(this.eUnchecked);
-        utils_1._.removeAllChildren(this.eIndeterminate);
+        utils_1._.clearElement(this.eChecked);
+        utils_1._.clearElement(this.eUnchecked);
+        utils_1._.clearElement(this.eIndeterminate);
         if (this.readOnly) {
             this.eChecked.appendChild(utils_1._.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
             this.eUnchecked.appendChild(utils_1._.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
@@ -119,6 +119,9 @@ var AgCheckbox = /** @class */ (function (_super) {
         }
         else if (selected === false) {
             this.selected = false;
+        }
+        else {
+            this.selected = undefined;
         }
         this.updateIcons();
         var event = {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24,8 +24,19 @@ var AggregationStage = /** @class */ (function () {
         if (doingLegacyTreeData) {
             return null;
         }
+        // if changed path is active, it means we came from a) change detection or b) transaction update.
+        // for both of these, if no value columns are present, it means there is nothing to aggregate now
+        // and there is no cleanup to be done (as value columns don't change between transactions or change
+        // detections). if no value columns and no changed path, means we have to go through all nodes in
+        // case we need to clean up agg data from before.
+        var noValueColumns = ag_grid_community_1._.missingOrEmpty(this.columnController.getValueColumns());
+        var noUserAgg = !this.gridOptionsWrapper.getGroupRowAggNodesFunc();
+        var changedPathActive = params.changedPath && params.changedPath.isActive();
+        if (noValueColumns && noUserAgg && changedPathActive) {
+            return;
+        }
         var aggDetails = this.createAggDetails(params);
-        this.recursivelyCreateAggData(params.rowNode, aggDetails);
+        this.recursivelyCreateAggData(aggDetails);
     };
     AggregationStage.prototype.createAggDetails = function (params) {
         var pivotActive = this.columnController.isPivotActive();
@@ -38,36 +49,32 @@ var AggregationStage = /** @class */ (function () {
         };
         return aggDetails;
     };
-    AggregationStage.prototype.recursivelyCreateAggData = function (rowNode, aggDetails) {
+    AggregationStage.prototype.recursivelyCreateAggData = function (aggDetails) {
         var _this = this;
-        // aggregate all children first, as we use the result in this nodes calculations
-        rowNode.childrenAfterFilter.forEach(function (child) {
-            var nodeHasChildren = child.hasChildren();
-            if (nodeHasChildren) {
-                _this.recursivelyCreateAggData(child, aggDetails);
-            }
-            else {
-                if (child.aggData) {
-                    child.setAggData(null);
+        var callback = function (rowNode) {
+            var hasNoChildren = !rowNode.hasChildren();
+            if (hasNoChildren) {
+                // this check is needed for TreeData, in case the node is no longer a child,
+                // but it was a child previously.
+                if (rowNode.aggData) {
+                    rowNode.setAggData(null);
                 }
-            }
-        });
-        //Optionally prevent the aggregation at the root Node
-        //https://ag-grid.atlassian.net/browse/AG-388
-        var isRootNode = rowNode.level === -1;
-        if (isRootNode) {
-            var notPivoting = !this.columnController.isPivotMode();
-            var suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
-            if (suppressAggAtRootLevel && notPivoting) {
+                // never agg data for leaf nodes
                 return;
             }
-        }
-        var skipBecauseNoChangedPath = aggDetails.changedPath.isActive()
-            && !aggDetails.changedPath.isInPath(rowNode);
-        if (skipBecauseNoChangedPath) {
-            return;
-        }
-        this.aggregateRowNode(rowNode, aggDetails);
+            //Optionally prevent the aggregation at the root Node
+            //https://ag-grid.atlassian.net/browse/AG-388
+            var isRootNode = rowNode.level === -1;
+            if (isRootNode) {
+                var notPivoting = !_this.columnController.isPivotMode();
+                var suppressAggAtRootLevel = _this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+                if (suppressAggAtRootLevel && notPivoting) {
+                    return;
+                }
+            }
+            _this.aggregateRowNode(rowNode, aggDetails);
+        };
+        aggDetails.changedPath.forEachChangedNodeDepthFirst(callback, true);
     };
     AggregationStage.prototype.aggregateRowNode = function (rowNode, aggDetails) {
         var measureColumnsMissing = aggDetails.valueColumns.length === 0;

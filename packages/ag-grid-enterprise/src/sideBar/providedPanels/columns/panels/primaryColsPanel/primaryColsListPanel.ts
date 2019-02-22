@@ -63,7 +63,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private destroyColumnComps(): void {
-        _.removeAllChildren(this.getGui());
+        _.clearElement(this.getGui());
         if (this.columnComps) {
             _.iterateObject(this.columnComps, (key: string, renderedItem: Component) => renderedItem.destroy());
         }

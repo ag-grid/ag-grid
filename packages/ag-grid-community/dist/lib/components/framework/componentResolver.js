@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -239,7 +239,7 @@ var ComponentResolver = /** @class */ (function () {
      */
     ComponentResolver.prototype.createAgGridComponent = function (holderOpt, agGridParams, propertyName, dynamicComponentParams, defaultComponentName, mandatory, customInitParamsCb) {
         if (mandatory === void 0) { mandatory = true; }
-        var holder = holderOpt == null ? this.gridOptions : holderOpt;
+        var holder = holderOpt || this.gridOptions;
         //Create the component instance
         var componentAndParams = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory);
         if (!componentAndParams) {

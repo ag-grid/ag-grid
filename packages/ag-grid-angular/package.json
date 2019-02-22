@@ -1,12 +1,12 @@
 {
   "name": "ag-grid-angular",
-  "version": "20.0.0",
+  "version": "20.1.0",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "update-properties": "node updateGridAndColumnProperties.js",
+    "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
     "verify-properties": "node agGridPropertiesCheck.js",
     "build": "npm run clean && npm run build-no-verify && npm run verify-properties",
     "build-gulp": "npm run build-no-verify-gulp && npm run verify-properties",
@@ -39,7 +39,7 @@
     "@angular/compiler": "^4.4.7",
     "@angular/compiler-cli": "^4.4.7",
     "@angular/core": "^4.4.7",
-    "ag-grid-community": "^20.0.0",
+    "ag-grid-community": "^20.1.0",
     "core-js": "^2.5.7",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
@@ -53,13 +53,14 @@
     "run-sequence": "^2.2.1",
     "rxjs": "^5.5.11",
     "typescript": "^2.9.2",
+    "typescript-simple": "8.0.6",
     "zone.js": "^0.8.26"
   },
   "peerDependencies": {
     "@angular/compiler": ">=2.1.x",
     "@angular/compiler-cli": ">=2.1.x",
     "@angular/core": ">=2.1.x",
-    "ag-grid-community": "^20.0.0",
+    "ag-grid-community": "^20.1.0",
     "core-js": "^2.4.1",
     "rxjs": ">=5.0.0-beta.12",
     "zone.js": ">=0.6.x"

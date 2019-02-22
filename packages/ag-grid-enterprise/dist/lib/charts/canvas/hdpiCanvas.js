@@ -1,24 +1,49 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
+ * provide resolution independent rendering based on `window.devicePixelRatio`.
+ */
 var HdpiCanvas = /** @class */ (function () {
+    // The width/height attributes of the Canvas element default to
+    // 300/150 according to w3.org.
     function HdpiCanvas(width, height) {
         if (width === void 0) { width = 300; }
         if (height === void 0) { height = 150; }
-        this._canvas = document.createElement('canvas');
-        this._pixelRatio = 1;
+        this._parent = null;
+        this.canvas = document.createElement('canvas');
+        this.context = this.canvas.getContext('2d');
+        // `NaN` is deliberate here, so that overrides are always applied
+        // and the `resetTransform` inside the `resize` method works in IE11.
+        this._pixelRatio = NaN;
         this.updatePixelRatio(0, false);
         this.resize(width, height);
     }
-    Object.defineProperty(HdpiCanvas.prototype, "canvas", {
+    Object.defineProperty(HdpiCanvas.prototype, "parent", {
         get: function () {
-            return this._canvas;
+            return this._parent;
+        },
+        set: function (value) {
+            if (this._parent !== value) {
+                this.remove();
+                if (value) {
+                    value.appendChild(this.canvas);
+                }
+                this._parent = value;
+            }
         },
         enumerable: true,
         configurable: true
     });
+    HdpiCanvas.prototype.remove = function () {
+        var parent = this.canvas.parentNode;
+        if (parent !== null) {
+            parent.removeChild(this.canvas);
+        }
+    };
     HdpiCanvas.prototype.destroy = function () {
-        this._canvas.remove();
+        this.canvas.remove();
         this._canvas = undefined;
         Object.freeze(this);
     };
@@ -43,13 +68,13 @@ var HdpiCanvas = /** @class */ (function () {
         if (pixelRatio === this.pixelRatio) {
             return;
         }
-        var canvas = this._canvas;
-        var ctx = canvas.getContext('2d');
+        var canvas = this.canvas;
+        var ctx = this.context;
         var overrides = this.overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
         for (var name_1 in overrides) {
             if (overrides.hasOwnProperty(name_1)) {
                 // Save native methods under prefixed names,
-                // if this hasn't been done by previous overrides already.
+                // if this hasn't been done by the previous overrides already.
                 if (!ctx['$' + name_1]) {
                     ctx['$' + name_1] = ctx[name_1];
                 }
@@ -75,7 +100,86 @@ var HdpiCanvas = /** @class */ (function () {
         canvas.height = Math.round(height * this.pixelRatio);
         canvas.style.width = Math.round(width) + 'px';
         canvas.style.height = Math.round(height) + 'px';
-        canvas.getContext('2d').resetTransform();
+        this.context.resetTransform();
+    };
+    Object.defineProperty(HdpiCanvas, "svgText", {
+        get: function () {
+            if (HdpiCanvas._svgText) {
+                return HdpiCanvas._svgText;
+            }
+            var xmlns = 'http://www.w3.org/2000/svg';
+            var svg = document.createElementNS(xmlns, 'svg');
+            svg.setAttribute('width', '100');
+            svg.setAttribute('height', '100');
+            svg.style.position = 'absolute';
+            svg.style.top = '-1000px';
+            svg.style.visibility = 'hidden';
+            var svgText = document.createElementNS(xmlns, 'text');
+            svgText.setAttribute('x', '0');
+            svgText.setAttribute('y', '30');
+            svgText.setAttribute('text', 'black');
+            svg.appendChild(svgText);
+            document.body.appendChild(svg);
+            HdpiCanvas._svgText = svgText;
+            return svgText;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ;
+    HdpiCanvas.measureText = function (text, font, textBaseline, textAlign) {
+        var ctx = HdpiCanvas.textContext;
+        ctx.font = font;
+        ctx.textBaseline = textBaseline;
+        ctx.textAlign = textAlign;
+        return ctx.measureText(text);
+    };
+    /**
+     * Returns the width and height of the measured text.
+     * @param text The single-line text to measure.
+     * @param font The font shorthand string.
+     */
+    HdpiCanvas.getTextSize = function (text, font) {
+        if (HdpiCanvas.supports.textMetrics) {
+            HdpiCanvas.textContext.font = font;
+            var metrics = HdpiCanvas.textContext.measureText(text);
+            return {
+                width: metrics.width,
+                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+            };
+        }
+        else {
+            return HdpiCanvas.measureSvgText(text, font);
+        }
+    };
+    HdpiCanvas.measureSvgText = function (text, font) {
+        var cache = HdpiCanvas.textSizeCache;
+        var fontCache = cache[font];
+        // Note: consider not caching the size of numeric strings.
+        // For example: if (isNaN(+text)) { // skip
+        if (fontCache) {
+            var size_1 = fontCache[text];
+            if (size_1) {
+                return size_1;
+            }
+        }
+        else {
+            cache[font] = {};
+        }
+        var svgText = HdpiCanvas.svgText;
+        svgText.style.font = font;
+        svgText.textContent = text;
+        // `getBBox` returns an instance of `SVGRect` with the same `width` and `height`
+        // measurements as `DOMRect` instance returned by the `getBoundingClientRect`.
+        // But the `SVGRect` instance has half the properties of the `DOMRect`,
+        // so we use the `getBBox` method.
+        var bbox = svgText.getBBox();
+        var size = {
+            width: bbox.width,
+            height: bbox.height
+        };
+        cache[font][text] = size;
+        return size;
     };
     HdpiCanvas.makeHdpiOverrides = function (pixelRatio) {
         var depth = 0;
@@ -104,6 +208,17 @@ var HdpiCanvas = /** @class */ (function () {
             }
         };
     };
+    // 2D canvas context for measuring text.
+    HdpiCanvas.textContext = (function () {
+        var canvas = document.createElement('canvas');
+        return canvas.getContext('2d');
+    })();
+    HdpiCanvas.supports = Object.freeze({
+        textMetrics: HdpiCanvas.textContext.measureText('test')
+            .actualBoundingBoxDescent !== undefined,
+        getTransform: HdpiCanvas.textContext.getTransform !== undefined
+    });
+    HdpiCanvas.textSizeCache = {};
     return HdpiCanvas;
 }());
 exports.HdpiCanvas = HdpiCanvas;

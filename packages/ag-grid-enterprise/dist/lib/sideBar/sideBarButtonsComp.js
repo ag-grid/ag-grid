@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -93,6 +93,13 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         if (button.parentElement) {
             ag_grid_community_1._.addOrRemoveCssClass(button.parentElement, 'ag-selected', show);
         }
+        var event = {
+            type: ag_grid_community_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            source: key,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
     };
     SideBarButtonsComp.prototype.clear = function () {
         this.setTemplate(SideBarButtonsComp.TEMPLATE);

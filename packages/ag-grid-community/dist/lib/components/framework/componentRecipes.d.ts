@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
@@ -16,6 +16,7 @@ import { Promise } from "../../utils";
 import { IOverlayWrapperComp } from "../../rendering/overlays/overlayWrapperComponent";
 import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
 export declare class ComponentRecipes {
     private componentResolver;
     private gridOptions;
@@ -35,6 +36,7 @@ export declare class ComponentRecipes {
     newOverlayWrapperComponent(): IOverlayWrapperComp;
     newLoadingOverlayComponent(): Promise<ILoadingOverlayComp>;
     newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp>;
+    newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp>;
     private getFilterComponentPrototype;
     private newEmptyFloatingFilterWrapperComponent;
 }

@@ -108,7 +108,7 @@ include '../getting-started/header.php';
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community">Github</a>
             </td>
         </tr>
     </table>

@@ -46,7 +46,7 @@ import { AgEvent, ColumnEventType } from "./events";
 import { ISideBar } from "./interfaces/ISideBar";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
+import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
@@ -94,7 +94,6 @@ export class GridApi {
     @Autowired('immutableService') private immutableService: ImmutableService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
-    @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnController') private columnController: ColumnController;
@@ -122,16 +121,21 @@ export class GridApi {
     @Optional('statusBarService') private statusBarService: IStatusBarService;
 
     private gridPanel: GridPanel;
-    private headerRootComp: HeaderRootComp;
+    private gridCore: GridCore;
 
+    private headerRootComp: HeaderRootComp;
     private clientSideRowModel: ClientSideRowModel;
     private infinitePageRowModel: InfiniteRowModel;
+
     private serverSideRowModel: IServerSideRowModel;
 
     private detailGridInfoMap: {[id: string]: DetailGridInfo} = {};
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
+    }
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
     }
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
@@ -199,7 +203,7 @@ export class GridApi {
         this.excelCreator.exportDataAsExcel(params);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public setEnterpriseDatasource(datasource: IServerSideDatasource) {
         console.warn(`ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
         this.setServerSideDatasource(datasource);
@@ -250,37 +254,37 @@ export class GridApi {
         }
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public setFloatingTopRowData(rows: any[]): void {
         console.warn('ag-Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()');
         this.setPinnedTopRowData(rows);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public setFloatingBottomRowData(rows: any[]): void {
         console.warn('ag-Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()');
         this.setPinnedBottomRowData(rows);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingTopRowCount(): number {
         console.warn('ag-Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()');
         return this.getPinnedTopRowCount();
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingBottomRowCount(): number {
         console.warn('ag-Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()');
         return this.getPinnedBottomRowCount();
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingTopRow(index: number): RowNode {
         console.warn('ag-Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
         return this.getPinnedTopRow(index);
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public getFloatingBottomRow(index: number): RowNode {
         console.warn('ag-Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
         return this.getPinnedBottomRow(index);
@@ -331,9 +335,7 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        if (this.sideBarComp) {
-            this.sideBarComp.refresh();
-        }
+        this.gridCore.refreshSideBar();
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -402,30 +404,30 @@ export class GridApi {
         }
     }
 
-    // *** deprecated
+    /** @deprecated */
     public refreshView() {
         console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
         this.redrawRows();
     }
 
-    // *** deprecated
+    //** @deprecated */
     public refreshRows(rowNodes: RowNode[]): void {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({rowNodes: rowNodes});
     }
 
-    // *** deprecated
+    /** @deprecated */
     public rowDataChanged(rows:any) {
         console.warn('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node');
         this.redrawRows();
     }
 
-    // *** deprecated
+    /** @deprecated */
     public softRefreshView() {
         console.error('ag-Grid: since v16, softRefreshView() is no longer supported. Please check the documentation on how to refresh.');
     }
 
-    // *** deprecated
+    /** @deprecated */
     public refreshGroupRows() {
         console.warn('ag-Grid: since v11.1, refreshGroupRows() is no longer supported, call refreshCells() instead. ' +
             'Because refreshCells() now does dirty checking, it will only refresh cells that have changed, so it should ' +
@@ -447,7 +449,7 @@ export class GridApi {
     }
 
     public isAdvancedFilterPresent(): boolean {
-        console.log('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
+        console.warn('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
         return this.isColumnFilterPresent();
     }
 
@@ -778,6 +780,10 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     }
 
+    public setEnableCellTextSelection(selectable: boolean) {
+        this.gridPanel.setCellTextSelection(selectable);
+    }
+
     public getPreferredWidth(): number {
         console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()');
         return this.gridCore.getPreferredWidth();
@@ -905,6 +911,9 @@ export class GridApi {
     }
 
     public destroy(): void {
+        // destroy the UI first (as they use the services)
+        this.gridCore.destroy();
+        // destroy the services
         this.context.destroy();
     }
 
@@ -1116,7 +1125,7 @@ export class GridApi {
         }
     }
 
-    // DEPRECATED
+    /** @deprecated */
     public purgeEnterpriseCache(route?: string[]): void {
         console.warn(`ag-grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.purgeServerSideCache()`);
         this.purgeServerSideCache(route);
@@ -1129,22 +1138,6 @@ export class GridApi {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
         }
     }
-
-    // public removeFromEnterpriseCache(route: string[], items: any[]): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.removeFromCache(route, items);
-    //     } else {
-    //         console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
-    //
-    // public addToEnterpriseCache(route: string[], items: any[], index: number): void {
-    //     if (this.serverSideRowModel) {
-    //         this.serverSideRowModel.addToCache(route, items, index);
-    //     } else {
-    //         console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
-    //     }
-    // }
 
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');

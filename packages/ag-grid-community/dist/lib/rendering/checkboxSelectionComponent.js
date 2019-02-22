@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,7 +40,7 @@ var utils_1 = require("../utils");
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
-        return _super.call(this, "<span class=\"ag-selection-checkbox\"/>") || this;
+        return _super.call(this, "<span class=\"ag-selection-checkbox\" unselectable=\"on\"/>") || this;
     }
     CheckboxSelectionComponent.prototype.createAndAddIcons = function () {
         this.eCheckedIcon = utils_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -90,7 +90,7 @@ var MenuItemMapper = /** @class */ (function () {
             };
             case 'resetColumns': return {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
-                action: function () { return _this.columnController.resetColumnState("contextMenu"); }
+                action: function () { return _this.columnController.resetColumnState(false, "contextMenu"); }
             };
             case 'expandAll': return {
                 name: localeTextFunc('expandAll', 'Expand All'),
@@ -149,10 +149,16 @@ var MenuItemMapper = /** @class */ (function () {
                 }); }
             };
             case 'separator': return 'separator';
-            case 'createChart': return {
-                name: 'Create Chart',
+            case 'chartRange': return {
+                name: 'Chart Range',
                 action: function () {
-                    _this.chartingService.createChart();
+                    _this.chartingService.chartRange();
+                }
+            };
+            case 'chartEverything': return {
+                name: 'Chart Everything',
+                action: function () {
+                    _this.chartingService.chartEverything();
                 }
             };
             default:

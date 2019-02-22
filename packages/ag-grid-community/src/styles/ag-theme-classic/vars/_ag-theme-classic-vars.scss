@@ -23,6 +23,7 @@ $params: (
     disabled-foreground-color: $disabled-foreground-color,
 
     border-color: $border-color,
+    scroll-spacer-border: $scroll-spacer-border,
 
     panel-background-color: $panel-background-color,
     tool-panel-background-color: $tool-panel-background-color,
@@ -86,5 +87,13 @@ $params: (
     button-text-transform: uppercase,
     icons-path: $icons-path,
     card-radius: $card-radius,
-    card-shadow: $card-shadow
+    card-shadow: $card-shadow,
+
+    tooltip-background-color: $tooltip-background-color,
+    tooltip-foreground-color: $tooltip-foreground-color,
+    tooltip-padding: $tooltip-padding,
+    tooltip-border-radius: $tooltip-border-radius,
+    tooltip-border-color: $tooltip-border-color,
+    tooltip-border-width: $tooltip-border-width,
+    tooltip-border-style: $tooltip-border-style
 );

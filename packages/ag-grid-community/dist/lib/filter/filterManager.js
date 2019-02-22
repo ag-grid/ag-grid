@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,9 @@ var FilterManager = /** @class */ (function () {
         this.quickFilterParts = null;
     }
     FilterManager_1 = FilterManager;
+    FilterManager.prototype.registerGridCore = function (gridCore) {
+        this.gridCore = gridCore;
+    };
     FilterManager.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
@@ -505,10 +508,6 @@ var FilterManager = /** @class */ (function () {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], FilterManager.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('gridCore'),
-        __metadata("design:type", Object)
-    ], FilterManager.prototype, "gridCore", void 0);
     __decorate([
         context_1.Autowired('popupService'),
         __metadata("design:type", popupService_1.PopupService)

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -19,6 +19,7 @@ export declare class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_KEY;
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
     private static doOnceFlags;
+    static doIeFocusHack(el: HTMLElement): void;
     static doOnce(func: () => void, key: string): void;
     static isLeftClick(mouseEvent: MouseEvent): boolean;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
@@ -37,7 +38,6 @@ export declare class Utils {
     static decToHex: (number: number, bytes: number) => string;
     static utf8_encode: (s: string) => string;
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
-    static clearElement(el: HTMLElement): void;
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     static iterateObject<T>(object: {
         [p: string]: T;
@@ -76,7 +76,7 @@ export declare class Utils {
     static firstExistingValue<A>(...values: A[]): A | null;
     static anyExists(values: any[]): boolean;
     static existsAndNotEmpty(value?: any[] | null): boolean;
-    static removeAllChildren(node: HTMLElement): void;
+    static clearElement(el: HTMLElement): void;
     static removeElement(parent: HTMLElement, cssSelector: string): void;
     static removeFromParent(node: Element | null): void;
     static isVisible(element: HTMLElement): boolean;
@@ -139,6 +139,7 @@ export declare class Utils {
     static isBrowserFirefox(): boolean;
     static isUserAgentIPad(): boolean;
     static getTarget(event: Event): Element;
+    static isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean;
     static isElementInEventPath(element: HTMLElement, event: Event): boolean;
     static createEventPath(event: Event): EventTarget[];
     static addAgGridEventPath(event: Event): void;
@@ -260,7 +261,7 @@ export declare class Utils {
     /**
      * https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
      */
-    static debounce(func: () => void, wait: number, immediate?: boolean): () => void;
+    static debounce(func: () => void, wait: number, immediate?: boolean): (...args: any[]) => void;
     static stopPropagationForAgGrid(event: Event): void;
     static isStopPropagationForAgGrid(event: Event): boolean;
     static executeInAWhile(funcs: Function[]): void;

@@ -1,16 +1,20 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
+import { CellEvent } from "../events";
 import { GridCell } from "../entities/gridCell";
-import { ICellEditorComp } from "./cellEditors/iCellEditor";
 import { Component } from "../widgets/component";
+import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { ColDef } from "../entities/colDef";
 import { Beans } from "./beans";
 import { RowComp } from "./rowComp";
 export declare class CellComp extends Component {
     static DOM_DATA_KEY_CELL_COMP: string;
+    private static CELL_RENDERER_TYPE_NORMAL;
+    private static CELL_RENDERER_TYPE_PINNED;
     private eCellWrapper;
     private eParentOfValue;
     private beans;
@@ -41,6 +45,7 @@ export declare class CellComp extends Component {
     private valueFormatted;
     private colsSpanning;
     private rowSpan;
+    private suppressRefreshCell;
     private tooltip;
     private scope;
     private readonly printLayout;
@@ -72,6 +77,7 @@ export declare class CellComp extends Component {
     flashCell(): void;
     private animateCell;
     private replaceContentsAfterRefresh;
+    private updateAngular1ScopeAndCompile;
     private angular1Compile;
     private postProcessStylesFromColDef;
     private preProcessStylesFromColDef;
@@ -84,6 +90,7 @@ export declare class CellComp extends Component {
     private refreshToolTip;
     private valuesAreEqual;
     private getToolTip;
+    getTooltipText(escape?: boolean): any;
     private processCellClassRules;
     private postProcessCellClassRules;
     private preProcessCellClassRules;
@@ -99,7 +106,7 @@ export declare class CellComp extends Component {
     private getValue;
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     dispatchCellContextMenuEvent(event: Event): void;
-    private createEvent;
+    createEvent(domEvent: Event | null, eventType: string): CellEvent;
     private onMouseOut;
     private onMouseOver;
     private onCellDoubleClicked;
@@ -118,7 +125,6 @@ export declare class CellComp extends Component {
     setFocusInOnEditor(): void;
     isEditing(): boolean;
     onKeyDown(event: KeyboardEvent): void;
-    doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean;
     setFocusOutOnEditor(): void;
     private onNavigationKeyPressed;
     private onShiftRangeSelect;
@@ -133,12 +139,12 @@ export declare class CellComp extends Component {
     private onMouseDown;
     private isDoubleClickOnIPad;
     private onCellClicked;
-    private doIeFocusHack;
     private createGridCellVo;
     getGridCell(): GridCell;
     getParentRow(): HTMLElement;
     setParentRow(eParentRow: HTMLElement): void;
     getColumn(): Column;
+    getComponentHolder(): ColDef;
     detach(): void;
     destroy(): void;
     private onLeftChanged;

@@ -34,7 +34,7 @@ function extractFixVersions($data)
     // to be released versions
     // order is important - add the versions desc
     // this is temporary - a better longer term solution will be added post release
-    array_push($fixVersions, '20.0.0');
+    array_push($fixVersions, '20.1.0');
 
     for ($i = 0; $i < count($data->{'issues'}); $i++) {
         $fixVersion = filter_var($data->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'});
@@ -165,7 +165,7 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                          height="16" width="16" border="0"/> Feature Request
                 </span>
                 <span style="margin-right: 10px">
-                    <i class="fa fa-external-link-alt"></i> Documentation URL
+                    <i class="fa fa-external-link"></i> Documentation URL
                 </span>
                 <span style="margin-right: 10px">
                     <span class='aui-lozenge-complete' style='padding: 1px; border-radius: 2px'>D</span> Deprecation
@@ -252,7 +252,7 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                                     ?>
 
                                     <a href="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'}, FILTER_SANITIZE_STRING); ?>"
-                                       target="_blank"><i class="fa fa-external-link-alt"></i></a>
+                                       target="_blank"><i class="fa fa-external-link"></i></a>
                                     <?php
                                 }
                                 ?>

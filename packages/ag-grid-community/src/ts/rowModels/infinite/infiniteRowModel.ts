@@ -17,6 +17,7 @@ import { RowDataTransaction } from "../clientSide/clientSideRowModel";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { NumberSequence, _ } from "../../utils";
+import { RowRenderer } from "../../rendering/rowRenderer";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {
@@ -29,6 +30,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private infiniteCache: InfiniteCache | null;
     private rowNodeBlockLoader: RowNodeBlockLoader | null;
@@ -46,6 +48,9 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         };
     }
 
+    // we don't implement as lazy row heights is not supported in this row model
+    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
+
     @PostConstruct
     public init(): void {
         if (!this.gridOptionsWrapper.isRowModelInfinite()) {
@@ -62,10 +67,13 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     @PreDestroy
     private destroyDatasource(): void {
-        if (this.datasource && this.datasource.destroy) {
-            this.datasource.destroy();
+        if (this.datasource) {
+            if (this.datasource.destroy) {
+                this.datasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.datasource = null;
         }
-        this.datasource = null;
     }
 
     public isLastRowFound(): boolean {
@@ -165,7 +173,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
             return;
         }
 
-        // if user is providing id's, then this means we can keep the selection between datsource hits,
+        // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
         const userGeneratingIds = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());

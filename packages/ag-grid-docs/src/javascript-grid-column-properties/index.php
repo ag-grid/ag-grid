@@ -77,7 +77,7 @@ include '../documentation-main/documentation_header.php';
             <th>hide</th>
             <td>Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field
                 'visible' and mark it false to hide, however we want all default values to be false and we want columns to be
-                visible by default. <span style="font-style: italic;">Note</span>: this property is called <code>hideCol</code> when used with Aurelia.</td>
+                visible by default.</td>
         </tr>
         <tr>
             <th>pinned</th>

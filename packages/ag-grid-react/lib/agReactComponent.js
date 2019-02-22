@@ -1,4 +1,4 @@
-// ag-grid-react v20.0.0
+// ag-grid-react v20.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
@@ -12,6 +12,9 @@ var AgReactComponent = /** @class */ (function () {
     }
     AgReactComponent.prototype.getFrameworkComponentInstance = function () {
         return this.componentInstance;
+    };
+    AgReactComponent.prototype.getReactComponentName = function () {
+        return this.reactComponent.name;
     };
     AgReactComponent.prototype.init = function (params) {
         var _this = this;
@@ -76,7 +79,7 @@ var AgReactComponent = /** @class */ (function () {
         var ReactComponent = React.createElement(this.reactComponent, params);
         var portal = ReactDOM.createPortal(ReactComponent, this.eParentElement);
         this.portal = portal;
-        this.parentComponent.mountReactPortal(portal, resolve);
+        this.parentComponent.mountReactPortal(portal, this, resolve);
     };
     return AgReactComponent;
 }());

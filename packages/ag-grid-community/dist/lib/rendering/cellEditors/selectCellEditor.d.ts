@@ -1,12 +1,12 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Component } from "../../widgets/component";
-import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
+import { PopupComponent } from "../../widgets/popupComponent";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 export interface ISelectCellEditorParams extends ICellEditorParams {
     values: any[];
 }
-export declare class SelectCellEditor extends Component implements ICellEditorComp {
+export declare class SelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached;
     private eSelect;
     private gridOptionsWrapper;
@@ -16,4 +16,5 @@ export declare class SelectCellEditor extends Component implements ICellEditorCo
     afterGuiAttached(): void;
     focusIn(): void;
     getValue(): any;
+    isPopup(): boolean;
 }

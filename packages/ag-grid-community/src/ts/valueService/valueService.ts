@@ -43,7 +43,7 @@ export class ValueService {
         }
 
         if (!rowNode) {
-            return undefined;
+            return;
         }
 
         // pull these out to make code below easier to read
@@ -58,7 +58,7 @@ export class ValueService {
         const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
         if (forFilter && colDef.filterValueGetter) {
-            result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
+            result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
         } else if (this.gridOptionsWrapper.isTreeData() && aggDataExists) {
             result = rowNode.aggData[colId];
         } else if (this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
@@ -73,8 +73,6 @@ export class ValueService {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (field && data) {
             result = _.getValueUsingField(data, field, column.isFieldContainsDots());
-        } else {
-            result = undefined;
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
@@ -204,7 +202,22 @@ export class ValueService {
         return !valuesAreSame;
     }
 
-    private executeValueGetter(filterValueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+        const params: ValueGetterParams = {
+            data: data,
+            node: rowNode,
+            column: column,
+            colDef: column.getColDef(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext(),
+            getValue: this.getValueCallback.bind(this, rowNode)
+        };
+
+        return this.expressionService.evaluate(valueGetter, params);
+    }
+
+    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
 
         const colId = column.getId();
 
@@ -226,7 +239,7 @@ export class ValueService {
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
-        const result = this.expressionService.evaluate(filterValueGetter, params);
+        const result = this.expressionService.evaluate(valueGetter, params);
 
         // if a turn is active, store the value in case the grid asks for it again
         this.valueCache.setValue(rowNode, colId, result);
@@ -234,29 +247,25 @@ export class ValueService {
         return result;
     }
 
-    private getValueCallback(node: RowNode, field: string): any {
+    private getValueCallback(node: RowNode, field: string | Column): any {
         const otherColumn = this.columnController.getPrimaryColumn(field);
+
         if (otherColumn) {
             return this.getValue(otherColumn, node);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
     public getKeyForNode(col: Column, rowNode: RowNode): any {
         const value = this.getValue(col, rowNode);
-        let result: any;
         const keyCreator = col.getColDef().keyCreator;
 
-        if (keyCreator) {
-            result = keyCreator({value: value});
-        } else {
-            result = value;
-        }
+        let result = keyCreator ? keyCreator({value: value}) : value;
 
         // if already a string, or missing, just return it
-        if (typeof result === 'string' || result === null || result === undefined) {
+        if (typeof result === 'string' || result == null) {
             return result;
         }
 

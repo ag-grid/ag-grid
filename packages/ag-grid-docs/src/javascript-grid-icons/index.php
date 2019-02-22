@@ -77,7 +77,7 @@ $ag-icons-path: "./my-icons/";
 @import "~ag-grid/src/styles/ag-grid.scss";
 @import "~ag-grid/src/styles/ag-theme-balham.scss";</snippet>
 
-<p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">ag grid seed repository</a>.
+<p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
 
 <h2>Set the icons through <code>gridOptions</code> (JavaScript)</h2>
 

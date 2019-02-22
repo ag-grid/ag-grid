@@ -147,6 +147,9 @@ function createTradeId() {
             sortable: true,
             resizable: true
         },
+        autoGroupColumnDef: {
+            width: 200
+        },
         onGridReady: function(params) {
             // kick off the feed
             timeoutTarget(params.api);

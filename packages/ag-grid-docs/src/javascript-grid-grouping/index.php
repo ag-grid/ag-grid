@@ -419,55 +419,6 @@ gridOptions.groupRowRendererParams: {
 
     <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2>Full Width Group Rows - Embedding</h2>
-
-    <p>
-        You have two choices when using full width groups using the property <code>embedFullWidthRows</code> as follows:
-</p>
-    <ul class="content">
-        <li><b>embedFullWidthRows = false: </b> The group row will always
-            span the width of the grid including pinned areas and is not impacted by horizontal scrolling.
-            This is the most common usage and thus the default. The only drawback is that for some
-            browsers (IE in particular), as you scroll vertically, the group row will lag behind the other rows.</li>
-        <li><b>embedFullWidthRows = true: </b> The group row will be split into three sections for center,
-            pinned left and pinned right. This is not ideal but works much faster with no IE issues.</li>
-    </ul>
-    <p>
-    So you might ask which one to use? The answer is the first one (just leave the property out, it's defaulted
-    to false) unless you want to avoid IE performance issues.
-    </p>
-
-    <p> The examples below demonstrate embedFullWidthRows on and off as follows:</p>
-
-    <ul class="content">
-        <li>Both grids have columns pinned left and right.</li>
-        <li>Both grids have group rows spanning the grid width.</li>
-        <li>The top grid as embedFullWidthRows=false, the bottom grid has embedFullWidthRows=true.</li>
-    </ul>
-
-    <p>So with this setup, you will notice the following difference:</p>
-
-    <ul class="content">
-        <li>
-            In the top grid, the group rows are not impacted by the pinning. In the bottom grid,
-            the groups are truncated if you make the Athlete & Year columns to small,
-            as the groups are sitting in the pinned section.
-        </li>
-        <li>
-            In the bottom grid, if you unpin the columns (via the column menu) then the group jumps
-            to the center.
-        </li>
-    </ul>
-
-    <?= example('Full Width Group Rows - embedFullWidthRows=false', 'full-width-group-rows-embedding-false', 'generated', array("enterprise" => 1, "exampleHeight" => 200, "processVue" => true)) ?>
-    <?= example('Full Width Group Rows - embedFullWidthRows=true', 'full-width-group-rows-embedding-true', 'generated', array("enterprise" => 1, "exampleHeight" => 200, "processVue" => true)) ?>
-
-    <p>
-        If you are using custom group row rendering (explained below) and embedFullWidthRows = true, the panel
-        you are rendering in is provided via the <code>pinned</code> parameter.
-    </p>
-
-
     <h2 id="default-group-order">Default Group Order</h2>
 
     <p>

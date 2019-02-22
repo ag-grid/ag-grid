@@ -7,8 +7,9 @@
  * IE11 and Edge 44 also don't have the support.
  * Thus this class, to keep track of the current transform and
  * combine transformations.
- * Standards: https://html.spec.whatwg.org/dev/canvas.html
- *           https://www.w3.org/TR/geometry-1/
+ * Standards:
+ * https://html.spec.whatwg.org/dev/canvas.html
+ * https://www.w3.org/TR/geometry-1/
  */
 export class Matrix {
 
@@ -17,7 +18,7 @@ export class Matrix {
     // `1` means first column
     // `2` means second row
 
-    private elements: number[];
+    private readonly elements: number[];
 
     constructor(elements: number[] = [1, 0, 0, 1, 0, 0]) {
         this.elements = elements;
@@ -26,6 +27,18 @@ export class Matrix {
     setElements(elements: number[]): Matrix {
         const e = this.elements;
 
+        // `this.elements = elements.slice()` is 4-5 times slower
+        // (in Chrome 71 and FF 64) than manually copying elements,
+        // since slicing allocates new memory.
+        // The performance of passing parameters individually
+        // vs as an array is about the same in both browsers, so we
+        // go with a single (array of elements) parameter, because
+        // `setElements(elements)` and `setElements([a, b, c, d, e, f])`
+        // calls give us roughly the same performance, versus
+        // `setElements(...elements)` and `setElements(a, b, c, d, e, f)`,
+        // where the spread operator causes a 20-30x performance drop
+        // (30x when compiled to ES5's `.apply(this, elements)`
+        //  20x when used natively).
         e[0] = elements[0];
         e[1] = elements[1];
         e[2] = elements[2];
@@ -36,13 +49,26 @@ export class Matrix {
         return this;
     }
 
+    setIdentityElements() {
+        const e = this.elements;
+
+        e[0] = 1;
+        e[1] = 0;
+        e[2] = 0;
+        e[3] = 1;
+        e[4] = 0;
+        e[5] = 0;
+
+        return this;
+    }
+
     get isIdentity(): boolean {
         const e = this.elements;
         return e[0] === 1 && e[1] === 0 && e[2] === 0 &&
                e[3] === 1 && e[4] === 0 && e[5] === 0;
     }
 
-    _a = 1;
+    private _a = 1;
     set a(value: number) {
         this.elements[0] = value;
     }
@@ -50,7 +76,7 @@ export class Matrix {
         return this.elements[0];
     }
 
-    _b = 0;
+    private _b = 0;
     set b(value: number) {
         this.elements[1] = value;
     }
@@ -58,7 +84,7 @@ export class Matrix {
         return this.elements[1];
     }
 
-    _c = 0;
+    private _c = 0;
     set c(value: number) {
         this.elements[2] = value;
     }
@@ -66,7 +92,7 @@ export class Matrix {
         return this.elements[2];
     }
 
-    _d = 1;
+    private _d = 1;
     set d(value: number) {
         this.elements[3] = value;
     }
@@ -74,7 +100,7 @@ export class Matrix {
         return this.elements[3];
     }
 
-    _e = 0;
+    private _e = 0;
     set e(value: number) {
         this.elements[4] = value;
     }
@@ -82,7 +108,7 @@ export class Matrix {
         return this.elements[4];
     }
 
-    _f = 0;
+    private _f = 0;
     set f(value: number) {
         this.elements[5] = value;
     }
@@ -91,21 +117,29 @@ export class Matrix {
     }
 
     /**
+     * Performs the AxB matrix multiplication and saves the result
+     * to `C`, if given, or to `A` otherwise.
+     */
+    private AxB(A: number[], B: number[], C?: number[]) {
+        const [m11, m12, m21, m22, m31, m32] = A;
+        const [o11, o12, o21, o22, o31, o32] = B;
+
+        C = C || A;
+        C[0] = m11 * o11 + m21 * o12;
+        C[1] = m12 * o11 + m22 * o12;
+        C[2] = m11 * o21 + m21 * o22;
+        C[3] = m12 * o21 + m22 * o22;
+        C[4] = m11 * o31 + m21 * o32 + m31;
+        C[5] = m12 * o31 + m22 * o32 + m32;
+    }
+
+    /**
      * The `other` matrix gets post-multiplied to the current matrix.
      * Returns the current matrix.
      * @param other
      */
     multiplySelf(other: Matrix): Matrix {
-        const elements = this.elements;
-        const [m11, m12, m21, m22, m31, m32] = elements;
-        const [o11, o12, o21, o22, o31, o32] = other.elements;
-
-        elements[0] = m11 * o11 + m21 * o12;
-        elements[1] = m12 * o11 + m22 * o12;
-        elements[2] = m11 * o21 + m21 * o22;
-        elements[3] = m12 * o21 + m22 * o22;
-        elements[4] = m11 * o31 + m21 * o32 + m31;
-        elements[5] = m12 * o31 + m22 * o32 + m32;
+        this.AxB(this.elements, other.elements);
 
         return this;
     }
@@ -117,19 +151,21 @@ export class Matrix {
      */
     multiply(other: Matrix): Matrix {
         const elements = new Array(6);
-        const [m11, m12, m21, m22, m31, m32] = this.elements;
-        const [o11, o12, o21, o22, o31, o32] = other.elements;
 
-        elements[0] = m11 * o11 + m21 * o12;
-        elements[1] = m12 * o11 + m22 * o12;
-        elements[2] = m11 * o21 + m21 * o22;
-        elements[3] = m12 * o21 + m22 * o22;
-        elements[4] = m11 * o31 + m21 * o32 + m31;
-        elements[5] = m12 * o31 + m22 * o32 + m32;
+        this.AxB(this.elements, other.elements, elements);
 
         return new Matrix(elements);
     }
 
+    preMultiplySelf(other: Matrix): Matrix {
+        this.AxB(other.elements, this.elements, this.elements);
+
+        return this;
+    }
+
+    /**
+     * Returns the inverse of this matrix as a new matrix.
+     */
     inverse(): Matrix {
         let [a, b, c, d, e, f] = this.elements;
         const rD = 1 / (a * d - b * c); // reciprocal of determinant
@@ -140,6 +176,23 @@ export class Matrix {
         d *= rD;
 
         return new Matrix([d, -b, -c, a, c * f - d * e, b * e - a * f]);
+    }
+
+    /**
+     * Save the inverse of this matrix to the given matrix.
+     */
+    inverseTo(other: Matrix): Matrix {
+        let [a, b, c, d, e, f] = this.elements;
+        const rD = 1 / (a * d - b * c); // reciprocal of determinant
+
+        a *= rD;
+        b *= rD;
+        c *= rD;
+        d *= rD;
+
+        other.setElements([d, -b, -c, a, c * f - d * e, b * e - a * f]);
+
+        return this;
     }
 
     invertSelf(): Matrix {
@@ -162,5 +215,56 @@ export class Matrix {
         return this;
     }
 
+    clone(): Matrix {
+        return new Matrix(this.elements.slice());
+    }
 
+    transformPoint(x: number, y: number): { x: number, y: number } {
+        const e = this.elements;
+        return {
+            x: x * e[0] + y * e[2] + e[4],
+            y: x * e[1] + y * e[3] + e[5]
+        };
+    }
+
+    toContext(ctx: CanvasRenderingContext2D) {
+        // It's fair to say that matrix multiplications are not cheap.
+        // However, updating path definitions on every frame isn't either, so
+        // it may be cheaper to just translate paths. It's also fair to
+        // say, that most paths will have to be re-rendered anyway, say
+        // rectangle paths in a bar chart, where an animation would happen when
+        // the data set changes and existing bars are morphed into new ones.
+        // Or a pie chart, where old sectors are also morphed into new ones.
+        // Same for the line chart. The only plausible case where translating
+        // existing paths would be enough, is the scatter chart, where marker
+        // icons, typically circles, stay the same size. But if circle radii
+        // are bound to some data points, even circle paths would have to be
+        // updated. And thus it makes sense to optimize for fewer matrix
+        // transforms, where transform matrices of paths are mostly identity
+        // matrices and `x`/`y`, `centerX`/`centerY` and similar properties
+        // are used to define a path at specific coordinates. And only groups
+        // are used to collectively apply a transform to a set of nodes.
+
+        // If the matrix is mostly identity (95% of the time),
+        // the `if (this.isIdentity)` check can make this call 3-4 times
+        // faster on average: https://jsperf.com/matrix-check-first-vs-always-set
+        if (this.isIdentity)
+            return;
+
+        const e = this.elements;
+        ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);
+    }
+
+    private static matrix = new Matrix();
+    static flyweight(elements?: number[] | Matrix): Matrix {
+        if (elements)
+            if (elements instanceof Matrix)
+                Matrix.matrix.setElements(elements.elements);
+            else
+                Matrix.matrix.setElements(elements);
+        else
+            Matrix.matrix.setIdentityElements();
+
+        return Matrix.matrix;
+    }
 }

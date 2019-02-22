@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: Getting Started with Vue";
-$pageDescription = "ag-Grid is a feature-rich Vue datagrid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
+$pageTitle = "Get Started with Vue Grid: ag-Grid Reference";
+$pageDescription = "ag-Grid is a feature-rich Vue grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
 $pageKeyboards = "Vue Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
@@ -63,8 +63,8 @@ npm install --save ag-grid-community ag-grid-vue vue-property-decorator
 
 <snippet>
 &lt;style lang="scss"&gt;
-  @import "~ag-grid-community/dist/styles/ag-grid.css";
-  @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+  @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+  @import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
 &lt;/style&gt;
 </snippet>
 
@@ -274,7 +274,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                      :rowData="rowData"
                      rowSelection="multiple"
 
-                     :gridReady="onGridReady"&gt;
+                     @grid-ready="onGridReady"&gt;
         &lt;/ag-grid-vue&gt;
     &lt;/div&gt;
 &lt;/template&gt;
@@ -381,7 +381,7 @@ import App from './App'
                      :rowData="rowData"
                      rowSelection="multiple"
 
-                     :gridReady="onGridReady"&gt;
+                     @grid-ready="onGridReady"&gt;
         &lt;/ag-grid-vue&gt;
     &lt;/div&gt;
 &lt;/template&gt;
@@ -460,10 +460,10 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 
 <snippet language="scss">
 &lt;style lang="scss"&gt;
-  $ag-icons-path: "~ag-grid-community/src/styles/icons/";
+  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
 
-  @import "~ag-grid-community/src/styles/ag-grid.scss";
-  @import "~ag-grid-community/src/styles/ag-theme-balham.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 &lt;/style&gt;
 </snippet>
 
@@ -473,7 +473,7 @@ In fact, by specifying the icons path, we also made our first theme override! We
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
 
 <snippet language="diff">
-  $ag-icons-path: "~ag-grid-community/src/styles/icons/";
+  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
 +$odd-row-background-color: #CFD8DC;
 </snippet>
 
@@ -499,7 +499,7 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
 <br><br>
 <div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

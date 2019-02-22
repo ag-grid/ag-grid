@@ -60,12 +60,6 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-
-    // these hide enterprise features, so they are not confusing
-    // you if using ag-Grid standard
-    suppressContextMenu: true,
-    suppressMenuMainPanel: true,
-    suppressMenuColumnPanel: true,
     floatingFilter:true
 };
 

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -35,8 +35,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         var _this = this;
         this.params = params;
         var displayName = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
-        var displayNameSanitised = ag_grid_community_1._.escape(displayName);
-        this.eFilterName.innerText = displayNameSanitised;
+        this.eFilterName.innerText = displayName;
         this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_FILTER_OPENED, function (event) { return _this.onFilterOpened(event); });
         this.addInIcon('filter', this.eFilterIcon, this.params.column);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -15,54 +15,117 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var shape_1 = require("./shape");
-var object_1 = require("../../util/object");
-var path_1 = require("../path");
+var path2D_1 = require("../path2D");
+var bbox_1 = require("../bbox");
+/**
+ * Elliptical arc node.
+ */
 var Arc = /** @class */ (function (_super) {
     __extends(Arc, _super);
     function Arc() {
-        var _this = _super.call(this) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         // Declare a path to retain for later rendering and hit testing
-        // using custom Path class. It's pure TypeScript and works in all browsers.
-        _this.path = new path_1.Path();
-        _this._x = Arc.defaults.x;
-        _this._y = Arc.defaults.y;
-        _this._radius = Arc.defaults.radius;
-        _this._startAngle = Arc.defaults.startAngle;
-        _this._endAngle = Arc.defaults.endAngle;
-        _this._anticlockwise = Arc.defaults.anticlockwise;
-        _this.fillStyle = Arc.defaults.fillStyle;
-        _this.strokeStyle = Arc.defaults.strokeStyle;
+        // using custom Path2D class. It's pure TypeScript and works in all browsers.
+        _this.path = new path2D_1.Path2D();
+        /**
+         * It's not always that the path has to be updated.
+         * For example, if transform attributes (such as `translationX`)
+         * are changed, we don't have to update the path. The `dirtyFlag`
+         * is how we keep track if the path has to be updated or not.
+         */
+        _this._isDirtyPath = true;
+        _this._centerX = 0;
+        _this._centerY = 0;
+        _this._radiusX = 10;
+        _this._radiusY = 10;
+        _this._startAngle = 0;
+        _this._endAngle = Math.PI * 2;
+        _this._isCounterClockwise = false;
+        _this.getBBox = function () {
+            return {
+                x: _this.centerX - _this.radiusX,
+                y: _this.centerY - _this.radiusY,
+                width: _this.radiusX * 2,
+                height: _this.radiusY * 2
+            };
+        };
         return _this;
     }
-    Object.defineProperty(Arc.prototype, "x", {
+    Arc.create = function (centerX, centerY, radiusX, radiusY, startAngle, endAngle, isCounterClockwise) {
+        if (isCounterClockwise === void 0) { isCounterClockwise = false; }
+        var arc = new Arc();
+        arc.centerX = centerX;
+        arc.centerY = centerY;
+        arc.radiusX = radiusX;
+        arc.radiusY = radiusY;
+        arc.startAngle = startAngle;
+        arc.endAngle = endAngle;
+        arc.isCounterClockwise = isCounterClockwise;
+        return arc;
+    };
+    Object.defineProperty(Arc.prototype, "isDirtyPath", {
         get: function () {
-            return this._x;
+            return this._isDirtyPath;
         },
         set: function (value) {
-            this._x = value;
-            this.dirty = true;
+            if (this._isDirtyPath !== value) {
+                this._isDirtyPath = value;
+                if (value) {
+                    this.isDirty = true;
+                }
+            }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Arc.prototype, "y", {
+    Object.defineProperty(Arc.prototype, "centerX", {
         get: function () {
-            return this._y;
+            return this._centerX;
         },
         set: function (value) {
-            this._y = value;
-            this.dirty = true;
+            if (this._centerX !== value) {
+                this._centerX = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Arc.prototype, "radius", {
+    Object.defineProperty(Arc.prototype, "centerY", {
         get: function () {
-            return this._radius;
+            return this._centerY;
         },
         set: function (value) {
-            this._radius = value;
-            this.dirty = true;
+            if (this._centerY !== value) {
+                this._centerY = value;
+                this.isDirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Arc.prototype, "radiusX", {
+        get: function () {
+            return this._radiusX;
+        },
+        set: function (value) {
+            if (this._radiusX !== value) {
+                this._radiusX = value;
+                this.isDirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Arc.prototype, "radiusY", {
+        get: function () {
+            return this._radiusY;
+        },
+        set: function (value) {
+            if (this._radiusY !== value) {
+                this._radiusY = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
@@ -72,8 +135,10 @@ var Arc = /** @class */ (function (_super) {
             return this._startAngle;
         },
         set: function (value) {
-            this._startAngle = value;
-            this.dirty = true;
+            if (this._startAngle !== value) {
+                this._startAngle = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
@@ -83,24 +148,50 @@ var Arc = /** @class */ (function (_super) {
             return this._endAngle;
         },
         set: function (value) {
-            this._endAngle = value;
-            this.dirty = true;
+            if (this._endAngle !== value) {
+                this._endAngle = value;
+                this.isDirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Arc.prototype, "anticlockwise", {
+    Object.defineProperty(Arc.prototype, "isCounterClockwise", {
         get: function () {
-            return this._anticlockwise;
+            return this._isCounterClockwise;
         },
         set: function (value) {
-            this._anticlockwise = value;
-            this.dirty = true;
+            if (this._isCounterClockwise !== value) {
+                this._isCounterClockwise = value;
+                this.isDirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Arc.prototype, "startAngleDeg", {
+        get: function () {
+            return this.startAngle / Math.PI * 180;
+        },
+        set: function (value) {
+            this.startAngle = value / 180 * Math.PI;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Arc.prototype, "endAngleDeg", {
+        get: function () {
+            return this.endAngle / Math.PI * 180;
+        },
+        set: function (value) {
+            this.endAngle = value / 180 * Math.PI;
         },
         enumerable: true,
         configurable: true
     });
     Arc.prototype.updatePath = function () {
+        if (!this.isDirtyPath)
+            return;
         var path = this.path;
         path.clear(); // No need to recreate the Path, can simply clear the existing one.
         // This is much faster than the native Path2D implementation even though this `cubicArc`
@@ -108,38 +199,35 @@ var Arc = /** @class */ (function (_super) {
         // where you can specify two radii and rotation, while Path2D's `arc` method simply produces
         // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
         // maybe it's because we have to create a new instance of it on each render, who knows...
-        path.cubicArc(this.x, this.y, this.radius, this.radius, 0, this.startAngle, this.endAngle, this.anticlockwise ? 1 : 0);
+        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.isCounterClockwise ? 1 : 0);
         path.closePath();
+        this.isDirtyPath = false;
     };
-    Arc.prototype.isPointInPath = function (ctx, x, y) {
-        // TODO: implement hit testing in the Path class.
-        // For example:
-        // return this.path.isPointInPath(x, y);
-        return false;
+    Arc.prototype.isPointInPath = function (x, y) {
+        var point = this.transformPoint(x, y);
+        var bbox = this.getBBox();
+        return bbox_1.isPointInBBox(bbox, point.x, point.y)
+            && this.path.isPointInPath(point.x, point.y);
     };
-    Arc.prototype.isPointInStroke = function (ctx, x, y) {
+    Arc.prototype.isPointInStroke = function (x, y) {
         return false;
     };
     Arc.prototype.render = function (ctx) {
-        if (this.scene) {
-            this.updatePath();
-            this.applyContextAttributes(ctx);
-            this.scene.appendPath(this.path);
+        if (this.isDirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+        this.applyContextAttributes(ctx);
+        this.updatePath();
+        this.scene.appendPath(this.path);
+        if (this.fillStyle) {
             ctx.fill();
+        }
+        if (this.strokeStyle) {
             ctx.stroke();
         }
-        this.dirty = false;
+        this.isDirty = false;
     };
-    Arc.defaults = object_1.chainObjects(shape_1.Shape.defaults, {
-        fillStyle: 'red',
-        strokeStyle: 'black',
-        x: 0,
-        y: 0,
-        radius: 10,
-        startAngle: 0,
-        endAngle: Math.PI * 2,
-        anticlockwise: false
-    });
     return Arc;
 }(shape_1.Shape));
 exports.Arc = Arc;

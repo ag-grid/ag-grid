@@ -8,11 +8,12 @@ import { EventService } from "./eventService";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
-import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
+import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { FocusedCellController } from "./focusedCellController";
 import { Component } from "./widgets/component";
 import { ICompFactory } from "./interfaces/iCompFactory";
+import { IClipboardService } from "./interfaces/iClipboardService";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { GridApi } from "./gridApi";
 import { ISideBar } from "./interfaces/ISideBar";
@@ -22,7 +23,6 @@ import { ResizeObserverService } from "./misc/resizeObserverService";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { _ } from "./utils";
 
-@Bean('gridCore')
 export class GridCore extends Component {
 
     private static TEMPLATE_NORMAL =
@@ -42,6 +42,7 @@ export class GridCore extends Component {
             </div>
             <ag-status-bar ref="statusBar"></ag-status-bar>
             <ag-pagination></ag-pagination>
+            <ag-watermark></ag-watermark>
         </div>`;
 
     @Autowired('enterprise') private enterprise: boolean;
@@ -69,19 +70,15 @@ export class GridCore extends Component {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
+    @Optional('clipboardService') private clipboardService: IClipboardService;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
-    private finished: boolean;
     private doingVirtualPaging: boolean;
 
     private logger: Logger;
-
-    constructor() {
-        super();
-    }
 
     @PostConstruct
     public init(): void {
@@ -92,7 +89,16 @@ export class GridCore extends Component {
         this.setTemplate(template);
         this.instantiate(this.context);
 
+        // register with services that need grid core
+        [
+            this.gridApi,
+            this.filterManager,
+            this.rowRenderer,
+            this.popupService
+        ].forEach(service => service.registerGridCore(this));
+
         if (this.enterprise) {
+            this.clipboardService.registerGridCore(this);
             this.sideBarComp.registerGridComp(this.gridPanel);
         }
 
@@ -116,9 +122,6 @@ export class GridCore extends Component {
         // which doLayout indirectly depends on
         this.addRtlSupport();
 
-        this.finished = false;
-        this.addDestroyFunc(() => this.finished = true);
-
         this.logger.log('ready');
 
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
@@ -139,7 +142,7 @@ export class GridCore extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    // this was deprecated in v19, we can drop in v20
+    /** @deprecated since v19, we can drop in v20 */
     public getPreferredWidth(): number {
         const widthForCols = this.columnController.getBodyContainerWidth()
             + this.columnController.getPinnedLeftContainerWidth()
@@ -187,6 +190,12 @@ export class GridCore extends Component {
 
     public getSideBar(): SideBarDef {
         return this.gridOptions.sideBar as SideBarDef;
+    }
+
+    public refreshSideBar() {
+        if (this.sideBarComp) {
+            this.sideBarComp.refresh();
+        }
     }
 
     public setSideBar(def: SideBarDef | string | boolean): void {

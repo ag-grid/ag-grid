@@ -571,6 +571,12 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>setEnableCellTextSelection()</th>
+            <td>
+                Sets the enableCellTextSelection property.
+            </td>
+        </tr>
+        <tr>
             <th>setGridAutoHeight(value)</th>
             <td>
                 Sets the gridAutoHeight property.
@@ -582,6 +588,15 @@ include '../documentation-main/documentation_header.php';
                 Returns true if the grid has animation frames to execute.
             </td>
         </tr>
+        <tr>
+            <th>purgeServerSideCache(route)</th>
+            <td>
+                Purges the server-Side cache. If you pass no parameters, then the top level cache is purged. To purge a
+                child cache, then pass in the string of keys to get to the child cache. For more details see:
+                <a href="../javascript-grid-server-side-model-grouping/#purging-groups">Purging Groups</a>.
+            </td>
+        </tr>
+
     </table>
 
 <?php include '../documentation-main/documentation_footer.php';?>

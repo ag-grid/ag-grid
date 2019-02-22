@@ -63,11 +63,11 @@ include '../landing-pages/header.php';
                 </div>
                 <div class="col" style="margin-top: 10px">
                     <p>Sorting</p>
-                    <img src="/best-angular-2-data-grid/sorting.gif" alt="Sorting">
+                    <img src="./sorting.gif" alt="Sorting">
                 </div>
                 <div class="col" style="margin-top: 10px">
                     <p>Filtering</p>
-                    <img src="/best-angular-2-data-grid/filtering.gif" alt="filtering">
+                    <img src="./filtering.gif" alt="filtering">
                 </div>
             </div>
             <div class="row">
@@ -75,17 +75,17 @@ include '../landing-pages/header.php';
                     <h2><strong>Enterprise</strong></h2>
                     <hr>
                     <p><strong>Powerful, advanced features designed for Enterprise Applications.</strong><br>
-                        Availalbe in ag-Grid Enterprise.
+                        Available in ag-Grid Enterprise.
                     </p>
                     <a href="https://www.ag-grid.com/start-trial.php" target="_blank">Start Free Trial</a>
                 </div>
                 <div class="col" style="margin-top: 10px">
                     <p>Aggregation</p>
-                    <img src="/best-angular-2-data-grid/selection.gif" alt="aggregation">
+                    <img src="./selection.gif" alt="aggregation">
                 </div>
                 <div class="col" style="margin-top: 10px">
                     <p>Pivoting</p>
-                    <img src="/best-angular-2-data-grid/pivoting.gif" alt="pivoting">
+                    <img src="./pivoting.gif" alt="pivoting">
                 </div>
             </div>
             
@@ -105,7 +105,7 @@ include '../landing-pages/header.php';
                         <div class="col">
                             <div>
                                 <br>
-                                <img src="/best-angular-2-data-grid/performance.gif" alt="Performance"">
+                                <img src="./performance.gif" alt="Performance"">
                             </div>
                             <br>
                         </div>
@@ -139,7 +139,7 @@ include '../landing-pages/header.php';
                         </div>
                         <div class="col"><br>
                             <div class="col" style="margin-top: 10px;margin-bottom: -50px">
-                                <?=example('ag-Grid in Vue', 'rich-grid', 'as-is', array("noPlunker" => 1, "skipDirs" => array("dist"))) ?>
+                                <?=example('ag-Grid in Vue', 'rich-grid', 'vue-packaged', array("enterprise" => 1)) ?>
                             </div><br><br>
                             <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">Vue Grid Demo</button></a>
                         </div>

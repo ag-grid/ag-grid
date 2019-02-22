@@ -54,7 +54,6 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
             <li><hr></li>
             <li class="misc"><a class="<?=($article_id == "best-angularjs-data-grid/" ? 'active' : '') ?>" href="../best-angularjs-data-grid/">AngularJS 1.x</a></li>
             <li class="misc"><a class="<?=($article_id == "polymer-getting-started/" ? 'active' : '') ?>" href="../polymer-getting-started/">Polymer</a></li>
-            <li class="misc"><a class="<?=($article_id == "best-aurelia-data-grid/" ? 'active' : '') ?>" href="../best-aurelia-data-grid/">Aurelia</a></li>
             <li class="misc"><a class="<?=($article_id == "best-web-component-data-grid/" ? 'active' : '') ?>" href="../best-web-component-data-grid/">Web Components</a></li>
             <li><hr></li>
             <li class="misc"><a class="<?=($article_id == "ag-grid-tutorials/" ? 'active' : '') ?>" href="../ag-grid-tutorials/">Tutorial</a></li>

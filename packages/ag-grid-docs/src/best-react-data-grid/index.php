@@ -7,46 +7,48 @@ $pageGroup = "basics";
 include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
-<script src="/best-react-grid/js/ag-grid-enterprise@18.1.1.js" defer></script>
-<script src="/best-react-grid/js/grid-performance.js" type="module"></script>
-<script src="/best-react-grid/js/grid-api.js" type="module"></script>
+<script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
+<script src="./js/grid-performance.js" inline></script>
+<script src="./js/grid-api.js" inline></script>
 <section>
-    
-    <div id="head-top">
+    <div class="head-top">
         <div class="logo">
-            <img alt="ag-Grid React Component" src="/best-angular-grid/assets/images/angular-grid.svg">
+            <img alt="ag-Grid React Component" src="./images/ag-grid.png">
         </a>
     </div>
-    <h1>ag-Grid: World's Leading React Datagrid</h1>
-    <p class="lead-description" id="opener">ag-Grid is designed to integrate deeply into React.<br>
+    <h1>World's Leading React Data Grid Component</h1>
+    <p class="lead-description" id="react-data-grid-overview">ag-Grid is designed to integrate deeply into React.<br>
         Use our grid as a React component to quickly add a react grid table to your application.<br>
-        Discover the versions, key benefits and resources available to quickly add a data grid or React datatable to your React application.
+        Discover the versions9 key benefits and resources available to quickly add a data grid or React datatable to your React application.
     </p>
     <div class="container">
-        <div class="row">
-            <div class="col">
-                <p class="lead-description">
-                    &#10003; Fully Featured Data Grid<br>
-                    &#10003; Deep Documentation<br>
-                    &#10003; Well-Maintained
-                </p>
+        <div class="container">
+  <div class="row">
+    <div class="col">
+       <ul class="contents">
+                    <li><a class="jump-to" href="#Features">&#10003; Fully Featured Data Grid</a></li>
+                    <li><a class="jump-to" href="#Documentation">&#10003; Deep Documentation</a></li>
+                    <li><a class="jump-to" href="#Guides">&#10003; Well-Maintained</a></li>
+                </ul>
                 <br>
-                <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">View Demo</button></a>
-            </div>
-            <div class="col">
-                <p class="lead-description">
-                    &#10003; Built to deal with large data sets<br>
-                    &#10003; Deep and Intuitive API<br>
-                    &#10003; Ease of Integration/Customization
-                </p>
+                <a href="https://www.ag-grid.com/example.php#/" target="_blank"><button type="button" class="btn btn-primary">View Demo</button></a>
+    </div>
+    <div class="col">
+      <ul class="contents">
+                    <li><a class="jump-to" href="#Performance">&#10003; Built to deal with large data sets</a></li>
+                    <li><a class="jump-to" href="#Grid-API">&#10003; Deep and Intuitive API</a></li>
+                    <li><a class="jump-to" href="#Customization">&#10003; Ease of Integration/Customization</a></li>
+                </ul>
                 <br>
                 <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
-            </div>
-        </div>
     </div>
 </div>
+</div>
+</div>
+</div>
+<section>
 <div class="container">
-    <h2>React Grid Example</h2>
+    <h2 id="Example">React Grid Example</h2>
     <br>
     <div class="container">
         <p class="lead-description">
@@ -78,12 +80,12 @@ include '../landing-pages/convert-header.php';
                 </div>
             </div>
             <div class="col"><br>
-                <?= example('ag-Grid React', 'full-rich-markup', 'react', array( "enterprise" => 1, "exampleHeight" => 300 , "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+                <?= example('ag-Grid React', 'full-rich-markup', 'react-packaged', array("exampleHeight" => 300)) ?>
                 <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">React Grid Demo</button></a>
             </div>
         </div>
         <div>
-            <h2>Fully Featured React Grid Table</h2>
+            <h2 id="Features">Fully Featured React Grid Table</h2>
             <hr>
             <p class="lead-description">
                 The most well maintained, web feature-rich React Data Grid component on the market.
@@ -148,12 +150,12 @@ include '../landing-pages/convert-header.php';
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank">Github</a>
+            <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-react" target="_blank">Github</a>
             <hr>
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank">npm-react-grid</a>
+            <a href="https://www.npmjs.com/package/ag-grid-react" target="_blank">npm</a>
             <hr>
         </div>
     </div>
@@ -213,7 +215,7 @@ include '../landing-pages/convert-header.php';
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Features Overview</button></a>
+            <a href="https://www.ag-grid.com/features-overview/" target="_blank"><button type="button" class="btn btn-primary">Features Overview</button></a>
             <hr>
         </div>
         <div class="col">
@@ -226,7 +228,7 @@ include '../landing-pages/convert-header.php';
 </div>
 </div>
 <section class="performance">
-<h2>Delivers outstanding performance</h2>
+<h2 id="Performance">Delivers outstanding performance</h2>
 <div class="container" id="performance">
 <div class="description">
     <h4>It's ridiculously fast</h4>
@@ -261,7 +263,7 @@ include '../landing-pages/convert-header.php';
 <div class="row">
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Stress Test Demo</button></a>
+    <a href="https://www.ag-grid.com/example.php#/" target="_blank"><button type="button" class="btn btn-primary">Stress Test Demo</button></a>
     <hr>
 </div>
 <div class="col">
@@ -272,8 +274,9 @@ include '../landing-pages/convert-header.php';
 </div>
 </section>
 <section class="api">
-<h2>Easy to integrate and customize</h2>
+<h2 id="Grid-API">Easy to integrate and customize</h2>
 <hr>
+
 <p class="lead-description">
 Easy to deeply customize many areas of our React Grid component.<br>
 Waste no time in integrating ag-Grid React into your Web Application.</p>
@@ -289,20 +292,18 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
     <pre></pre>
 </div>
 <div>
-    <img alt="Prompt to click on API links" src="/best-React-grid/assets/images/prompt-to-click-on-api-links.jpg">
+    <img alt="Prompt to click on API links" src="./images/prompt-to-click-on-api-links.png">
     <ul class="api-operations">
         <li data-action="sort-by-one-column"><a>Sort by one column (Country)</a></li>
         <li data-action="sort-by-two-columns"><a>Sort by two columns (Country & Year)</a></li>
         <li data-action="clear-sorting"><a>Clear sorting</a></li>
     </ul>
     <ul class="api-operations">
-        <li data-action="set-filter-by-one-column"><a>Filter by one column (United States)</a></li>
+        <li data-action="set-filter-by-one-column"><a>Filter by one column (Great Britain)</a></li>
         <li data-action="remove-filter"><a>Clear filtering</a></li>
     </ul>
     <ul class="api-operations">
-        <li data-action="group-by-three-columns">
-            <a>Group by three columns (Country, Year & Sport)</a>
-        </li>
+        <li data-action="group-by-three-columns"><a>Group by three columns (Country, Year & Sport)</a></li>
         <li data-action="expand-top-level-rows"><a>Expand top level rows</a></li>
         <li data-action="collapse-top-level-rows"><a>Collapse top level rows</a></li>
         <li data-action="remove-grouping"><a>Remove grouping</a></li>
@@ -317,7 +318,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
 <div class="row">
 <div class="col">
 <hr>
-<a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Grid API</button></a>
+<a href="https://www.ag-grid.com/javascript-grid-api/" target="_blank"><button type="button" class="btn btn-primary">Grid API</button></a>
 <hr>
 </div>
 <div class="col">
@@ -328,7 +329,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
 </div>
 </section>
 <div class="container">
-<h2>
+<h2 id="Customization">
 Customize React Grid
 </h2>
 <br>
@@ -350,27 +351,27 @@ You can easily extend the default functionality by creating your custom React co
     <p class="lead-description">
         If you want more complex HTML inside the cell or need to customise the value before it’s rendered, you can do it with a custom cell renderer.
     </p>
-    <img src="/images/customise/cell-renderer.png" class="center zoom">
+    <img src="/images/customise/cell-renderer.png" alt="react-cell-renderer" class="center zoom">
 </div>
 <div class="col-sm">
     <p class="lead">Custom Cell Editor</p><hr>
     <p class="lead-description">
         Our React grid also provides rich inline editing experience so your users can update any record in a dataset with just a few clicks.
     </p>
-    <img src="/images/customise/cell-editor.png" class="center zoom">
+    <img src="/images/customise/cell-editor.png" alt="react-cell-editor" class="center zoom">
 </div>
 <div class="col-sm">
     <p class="lead">Custom Column Filter</p><hr>
     <p class="lead-description">
         Filtering is one of the most useful features of data grids. It allows users to zoom in on a particular set of records. We provide a simple string filtering out of the box.
     </p>
-    <img src="/images/customise/custom-filter.png" class="center zoom">
+    <img src="/images/customise/custom-filter.png" alt="react-custom-filter" class="center zoom">
 </div>
 </div>
 <div class="row">
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Customize React Grid Blog</button></a>
+    <a href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb" target="_blank"><button type="button" class="btn btn-primary">Customize React Grid Blog</button></a>
     <hr>
 </div>
 <div class="col">
@@ -414,20 +415,20 @@ React Responsive Grid Layout
 </div>
 <div class="row" id="images">
 <div class="col">
-    <img src="/images/themes/material.png" class="center2 zoom">
-    <img src="/images/themes/bootstrap.png" class="center2 zoom">
+    <img src="/images/themes/material.png" alt="ag-grid-material-theme" class="center2 zoom">
+    <img src="/images/themes/bootstrap.png" alt="ag-grid-bootstrap-theme" class="center2 zoom">
     <br>
-    <img src="/images/themes/balham.png" class="center2 zoom">
-    <img src="/images/themes/balham-dark.png" class="center2 zoom">
+    <img src="/images/themes/balham.png" alt="ag-grid-balham-theme" class="center2 zoom">
+    <img src="/images/themes/balham-dark.png" alt="ag-grid-balham-dark-theme" class="center2 zoom">
     <div class="row">
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Responsive Grid</button></a>
+            <a href="https://www.ag-grid.com/javascript-grid-responsiveness/" target="_blank"><button type="button" class="btn btn-primary">Responsive Grid</button></a>
             <hr>
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">ag-Grid Themes</button></a>
+            <a href="https://www.ag-grid.com/javascript-grid-styling/" target="_blank"><button type="button" class="btn btn-primary">ag-Grid Themes</button></a>
             <hr>
         </div>
         <div class="col">
@@ -439,14 +440,14 @@ React Responsive Grid Layout
 </div>
 </div>
 </div>
-<h2>React Grid Resources</h2>
+<h2 id="guides">React Grid Resources</h2>
 <div class="container" id="resources">
 <div class="row">
 <div class="col">
-    <h3>
+    <h3 id="Documentation">
         Documentation<hr>
     </h3>
-    <img class="icons" src="/images/icons/docs.svg">
+    <img class="icons" alt="ag-grid-docs" src="/images/icons/docs.svg">
     <p class="lead-description">
         Save time up front by using our detailed documentation with live demos and evaluate the Grid’s functionality without having to build it in to your product.
     </p>
@@ -456,7 +457,7 @@ React Responsive Grid Layout
     <h3>
         React Grid Demo<hr>
     </h3>
-    <img class="icons" src="/images/icons/demo.svg">
+    <img class="icons" alt="ag-grid-demo" src="/images/icons/demo.svg">
     <p class="lead-description">
         Test our React Grid component's core and enterprise features ranging from sorting, filtering, paging, grouping and ability to handle large data sets with our Kitchen Sink demo. 
 </div>
@@ -466,7 +467,7 @@ React Responsive Grid Layout
     <h3>
         Features<hr>
     </h3>
-    <img class="icons" src="/images/icons/features.svg">
+    <img class="icons" alt="ag-grid-features" src="/images/icons/features.svg">
     <p class="lead-description"> 
         Most fully featured React grid on the market.
         Run through our core and enterprise features, designed to match all your needs. Filter, Sort, Group on Large Data Sets.
@@ -475,17 +476,17 @@ React Responsive Grid Layout
 </div>
 <div class="row">
     <div class="col">
-        <a href=""><p>
+        <a href="https://www.ag-grid.com/documentation-main/documentation.php"><p>
             ag-Grid React Documentation
         </p></a>
     </div>
         <div class="col">
-            <a href=""> <p>
+            <a href="https://www.ag-grid.com/example.php#/"> <p>
                 Kitchen Sink Demo
             </p></a>
         </div>
             <div class="col">
-                <a href=""><p>
+                <a href="https://www.ag-grid.com/features-overview/"><p>
                     View all Features 
                 </p></a>
             </div>
@@ -503,28 +504,28 @@ React Responsive Grid Layout
 </p>
 <div class="row">
     <div class="col">
-        <a href=""><p class="lead-description">
+        <a href="https://www.ag-grid.com/react-more-details/"><p class="lead-description">
             ag-Grid React Overview
         </p></a>
-        <img class="icons" src="/images/icons/overview.svg">
+        <img class="icons" alt="ag-grid-react-overview" src="/images/icons/overview.svg">
         <p class="lead-description">
             Every feature of ag-Grid is available when using the ag-Grid React Component. The React Component wraps the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and React ag-Grid when it comes to features.
         </p>
     </div>
         <div class="col">
-            <a href=""> <p class="lead-description">
+            <a href="https://www.ag-grid.com/react-getting-started/"> <p class="lead-description">
                 Getting started with React Grid[Guide]
             </p></a>
-            <img class="icons" src="/images/icons/guide.svg">
+            <img class="icons" alt="ag-grid-react-guide" src="/images/icons/guide.svg">
             <p class="lead-description">
                 In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the essential features of it.
             </p>
         </div>
             <div class="col">
-                <a href=""><p class="lead-description">
+                <a href="https://medium.com/ag-grid/get-started-with-react-grid-in-5-minutes-f6e5fb16afa"><p class="lead-description">
                     Get Started with React Grid[Blog]
                 </p></a>
-                <img class="icons" src="/images/icons/blog.svg">
+                <img class="icons" alt="ag-grid-react-blog" src="/images/icons/blog.svg">
                 <p class="lead-description">
                     This article describes the React grid example and shows you how easy it is to integrate and configure it. It’s a 5 minute getting started guide with examples that you can copy/paste and hit the ground running.
                 </p>

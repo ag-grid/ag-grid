@@ -33,11 +33,6 @@ export class FlattenStage implements IRowNodeStage {
         const showRootNode = skipLeafNodes && rootNode.leafGroup;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
-        // set all row tops to null, then set row tops on all visible rows. if we don't
-        // do this, then the algorithm below only sets row tops, old row tops from old rows
-        // will still lie around
-        this.resetRowTops(rootNode);
-
         this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
 
         // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
@@ -48,23 +43,6 @@ export class FlattenStage implements IRowNodeStage {
         }
 
         return result;
-    }
-
-    private resetRowTops(rowNode: RowNode): void {
-        rowNode.clearRowTop();
-        if (rowNode.hasChildren()) {
-            if (rowNode.childrenAfterGroup) {
-                for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                    this.resetRowTops(rowNode.childrenAfterGroup[i]);
-                }
-            }
-            if (rowNode.sibling) {
-                rowNode.sibling.clearRowTop();
-            }
-        }
-        if (rowNode.detailNode) {
-            rowNode.detailNode.clearRowTop();
-        }
     }
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],
@@ -132,17 +110,8 @@ export class FlattenStage implements IRowNodeStage {
     // duplicated method, it's also in floatingRowModel
     private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper, uiLevel: number): void {
         result.push(rowNode);
-        if (_.missing(rowNode.rowHeight)) {
-            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-            rowNode.setRowHeight(rowHeight);
-        }
-
         const isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
-
         rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
-        rowNode.setRowTop(nextRowTop.value);
-        rowNode.setRowIndex(result.length - 1);
-        nextRowTop.value += rowNode.rowHeight;
     }
 
     private ensureFooterNodeExists(groupNode: RowNode): void {

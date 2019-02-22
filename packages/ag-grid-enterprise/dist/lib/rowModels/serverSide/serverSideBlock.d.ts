@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 import { NumberSequence, RowBounds, RowNode, RowNodeBlock } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 export declare class ServerSideBlock extends RowNodeBlock {
@@ -23,6 +23,7 @@ export declare class ServerSideBlock extends RowNodeBlock {
     private nodeIdPrefix;
     private usingTreeData;
     private usingMasterDetail;
+    static readonly DefaultBlockSize = 100;
     constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache);
     protected init(): void;
     private setBeans;

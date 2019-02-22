@@ -28,9 +28,11 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowNodeCache,
-    SortController
+    SortController,
+    RowRenderer
 } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+import {ServerSideBlock} from "./serverSideBlock";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -43,6 +45,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -54,6 +57,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private logger: Logger;
 
     private rowNodeBlockLoader: RowNodeBlockLoader | undefined;
+
+    // we don't implement as lazy row heights is not supported in this row model
+    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
 
     @PostConstruct
     private postConstruct(): void {
@@ -73,10 +79,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PreDestroy
     private destroyDatasource(): void {
-        if (this.datasource && this.datasource.destroy) {
-            this.datasource.destroy();
+        if (this.datasource) {
+            if (this.datasource.destroy) {
+                this.datasource.destroy();
+            }
+            this.rowRenderer.datasourceChanged();
+            this.datasource = undefined;
         }
-        this.datasource = undefined;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -249,8 +258,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const modelUpdatedEvent: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             newPage: false,
             newData: false,
             animate: shouldAnimate(),
@@ -376,7 +385,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
         if (!(params.blockSize as number >= 1)) {
-            params.blockSize = 100;
+            params.blockSize = ServerSideBlock.DefaultBlockSize;
         }
         // if user doesn't give initial rows to display, we assume zero
         if (!(params.initialRowCount >= 1)) {
@@ -526,15 +535,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.executeOnCache(route, cache => cache.purgeCache());
     }
 
-    public removeFromCache(route: string[], items: any[]): void {
-        this.executeOnCache(route, cache => cache.removeFromCache(items));
-        this.rowNodeBlockLoader!.checkBlockToLoad();
-    }
-
-    public addToCache(route: string[], items: any[], index: number): void {
-        this.executeOnCache(route, cache => cache.addToCache(items, index));
-    }
-
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
         if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
@@ -677,7 +677,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             detailNode.level = masterNode.level + 1;
 
             const defaultDetailRowHeight = 200;
-            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode);
+            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
             detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
 
             masterNode.detailNode = detailNode;

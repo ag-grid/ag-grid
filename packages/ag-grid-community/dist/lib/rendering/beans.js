@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,7 +40,8 @@ var componentResolver_1 = require("../components/framework/componentResolver");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var sortController_1 = require("../sortController");
 var filterManager_1 = require("../filter/filterManager");
-var heightScaler_1 = require("./heightScaler");
+var maxDivHeightScaler_1 = require("./maxDivHeightScaler");
+var tooltipManager_1 = require("../widgets/tooltipManager");
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
@@ -172,9 +173,13 @@ var Beans = /** @class */ (function () {
         __metadata("design:type", filterManager_1.FilterManager)
     ], Beans.prototype, "filterManager", void 0);
     __decorate([
-        context_1.Autowired('heightScaler'),
-        __metadata("design:type", heightScaler_1.HeightScaler)
-    ], Beans.prototype, "heightScaler", void 0);
+        context_1.Autowired('maxDivHeightScaler'),
+        __metadata("design:type", maxDivHeightScaler_1.MaxDivHeightScaler)
+    ], Beans.prototype, "maxDivHeightScaler", void 0);
+    __decorate([
+        context_1.Autowired('tooltipManager'),
+        __metadata("design:type", tooltipManager_1.TooltipManager)
+    ], Beans.prototype, "tooltipManager", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

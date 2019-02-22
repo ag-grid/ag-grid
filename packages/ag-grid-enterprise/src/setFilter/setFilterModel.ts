@@ -156,7 +156,8 @@ export class SetFilterModel {
                 success: this.onAsyncValuesLoaded.bind(this),
                 colDef: this.colDef
             };
-            callback(params);
+
+            window.setTimeout(() => callback(params), 0);
         }
     }
 
@@ -456,7 +457,7 @@ export class SetFilterModel {
             for (let i = 0; i < model.length; i++) {
                 const rawValue = model[i];
                 const value = this.keyToValue(rawValue);
-                if (value && this.allUniqueValues.indexOf(value) >= 0) {
+                if (this.allUniqueValues.indexOf(value) >= 0) {
                     this.selectValue(value);
                 }
             }

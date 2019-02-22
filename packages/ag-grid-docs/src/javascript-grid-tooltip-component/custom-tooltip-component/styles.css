@@ -1,0 +1,22 @@
+.custom-tooltip {
+    position: absolute;
+    width: 150px;
+    height: 70px;
+    border: 1px solid cornflowerblue;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 1s;
+}
+
+.custom-tooltip.ag-tooltip-hiding {
+    opacity: 0;
+}
+
+.custom-tooltip p {
+    margin: 5px;
+    white-space: nowrap;
+}
+
+.custom-tooltip p:first-of-type {
+    font-weight: bold;
+}

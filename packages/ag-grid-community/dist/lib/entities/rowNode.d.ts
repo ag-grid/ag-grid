@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -27,6 +27,7 @@ export interface CellChangedEvent extends RowNodeEvent {
     newValue: any;
 }
 export declare class RowNode implements IEventEmitter {
+    private static OBJECT_ID_SEQUENCE;
     static EVENT_ROW_SELECTED: string;
     static EVENT_DATA_CHANGED: string;
     static EVENT_CELL_CHANGED: string;
@@ -135,6 +136,11 @@ export declare class RowNode implements IEventEmitter {
     sibling: RowNode;
     /** The height, in pixels, of this row */
     rowHeight: number;
+    /** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation
+     * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each
+     * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do
+     * the row height calculation and set rowHeightEstimated=false.*/
+    rowHeightEstimated: boolean;
     /** The top pixel for this row */
     rowTop: number;
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
@@ -152,6 +158,9 @@ export declare class RowNode implements IEventEmitter {
         [colId: string]: any;
     };
     __cacheVersion: number;
+    /** Used by sorting service - to give deterministic sort to groups. Previously we
+     * just id for this, however id is a string and had slower sorting compared to numbers. */
+    __objectId: number;
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     alreadyRendered: boolean;
     private selected;
@@ -175,7 +184,7 @@ export declare class RowNode implements IEventEmitter {
     setRowTop(rowTop: number | null): void;
     setDragging(dragging: boolean): void;
     setAllChildrenCount(allChildrenCount: number | null): void;
-    setRowHeight(rowHeight: number | undefined | null): void;
+    setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
     setRowIndex(rowIndex: number): void;
     setUiLevel(uiLevel: number): void;
     setExpanded(expanded: boolean): void;

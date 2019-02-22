@@ -8,7 +8,7 @@ include '../jira_reports/jira_utilities.php';
 <html lang="en">
 <head lang="en">
     <?php
-    meta_and_links("ag-Grid: Pipeline of Upcoming Features and Roadmap", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 19 is out now.", false);
+    meta_and_links("ag-Grid: Pipeline of Upcoming Features and Roadmap", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 20 is out now.", false);
     ?>
     <link rel="stylesheet" href="../dist/homepage.css">
     <link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">
@@ -83,7 +83,7 @@ function extractMoreInformationMap($data)
 <div class="info-page" id="page-pipeline">
     <div class="row">
         <section>
-            <h1>Next Release Target: TBD - 19.1.2 just released</h1>
+            <h1>Next Release Target: TBD - 20.1.0 just released</h1>
 
             <div class="note">
                 <p>

@@ -35,8 +35,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
     private getRowCountValue(): string {
         let totalRowCount = 0;
-        this.gridApi.forEachNode((node) => totalRowCount += 1);
-
+        this.gridApi.forEachLeafNode((node) => totalRowCount += 1);
         return `${totalRowCount}`;
     }
 

@@ -1,5 +1,5 @@
 import { RowNode } from "./rowNode";
-import { ICellEditorComp } from "../rendering/cellEditors/iCellEditor";
+import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
 import { Column } from "./column";
 import { IFilterComp } from "../interfaces/iFilter";
@@ -8,6 +8,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
 import { IFloatingFilterComp } from "../filter/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
+import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { DynamicComponentDef, DynamicComponentParams } from "../components/framework/componentResolver";
 
 /****************************************************************
@@ -32,6 +33,10 @@ export interface AbstractColDef {
     suppressToolPanel?: boolean;
     /** Tooltip for the column header */
     headerTooltip?: string;
+
+    tooltipComponent?: { new(): ITooltipComp } | string;
+    tooltipComponentFramework?: any;
+    tooltipComponentParams?: ITooltipParams;
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -93,8 +98,11 @@ export interface ColDef extends AbstractColDef {
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
 
+    /** @deprecated since v20.1, use colDef.tooltipValueGetter instead*/
+    tooltip?: (params: ITooltipParams) => string;
+
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
-    tooltip?: (params: TooltipParams) => string;
+    tooltipValueGetter?: (params: ITooltipParams) => string;
 
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
@@ -200,7 +208,8 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if sorting allowed for this column. */
     sortable?: boolean;
 
-    suppressSorting?: boolean; // // as of v20 deprecated, use colDef.sortable=false instead
+    /** @deprecated since v20, use colDef.sortable=false instead */
+    suppressSorting?: boolean;
 
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
@@ -217,7 +226,8 @@ export interface ColDef extends AbstractColDef {
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
     lockPinned?: boolean;
 
-    suppressFilter?: boolean; // as of v20 deprecated, use colDef.filter=false instead
+    /** @deprecated since v20, use colDef.filter=false instead */
+    suppressFilter?: boolean;
 
     /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
@@ -225,7 +235,8 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
     suppressSizeToFit?: boolean;
 
-    suppressResize?: boolean; // as of v20 deprecated, use colDef.resizable=false instead
+    /** @deprecated since v20, use colDef.resizable=false instead */
+    suppressResize?: boolean;
 
     /** Set to true if this column should be resizable */
     resizable?: boolean;
@@ -233,6 +244,7 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
 
+    /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     /** If true, GUI will allow adding this columns as a row group */
@@ -394,18 +406,6 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
 
 export interface CellClassParams {
     value: any;
-    data: any;
-    node: RowNode;
-    colDef: ColDef;
-    rowIndex: number;
-    $scope: any;
-    api: GridApi | null | undefined;
-    context: any;
-}
-
-export interface TooltipParams {
-    value: any;
-    valueFormatted: any;
     data: any;
     node: RowNode;
     colDef: ColDef;

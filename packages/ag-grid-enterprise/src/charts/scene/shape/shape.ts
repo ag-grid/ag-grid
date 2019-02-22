@@ -1,103 +1,222 @@
 import {Node} from "../node";
 import {chainObjects} from "../../util/object";
+import {DropShadow} from "../dropShadow";
 
-// TODO: Should we call this class `Path`?
-// `Text` sprite will also have basic attributes like `fillStyle`, `strokeStyle`
-// and `opacity`, but the `Shape` isn't a proper base class for `Text`.
-// Move the `render` method here and make `Rect` and `Arc` only supply the
-// `updatePath` method.
+export type ShapeLineCap = null | 'round' | 'square';  // null is for 'butt'
+export type ShapeLineJoin = null | 'round' | 'bevel';  // null is for 'miter'
+
 export abstract class Shape extends Node {
     /**
-     * Defaults for certain properties.
+     * Defaults for style properties. Note that properties that affect the position
+     * and shape of the node are not considered style properties, for example:
+     * `x`, `y`, `width`, `height`, `radius`, `rotation`, etc.
      * Can be used to reset to the original styling after some custom styling
-     * has been applied (using the `restoreOwnDefaults` and `restoreAllDefaults` methods).
+     * has been applied (using the `restoreOwnStyles` and `restoreAllStyles` methods).
      * These static defaults are meant to be inherited by subclasses.
      */
-    protected static defaults = chainObjects({}, {
-        fillStyle: 'none',
-        strokeStyle: 'none',
+    protected static defaultStyles = chainObjects({}, {
+        fillStyle: 'black' as string | null,
+        strokeStyle: null as string | null,
         lineWidth: 1,
-        opacity: 1
+        lineDash: null as number[] | null,
+        lineDashOffset: 0,
+        lineCap: null as ShapeLineCap,
+        lineJoin: null as ShapeLineJoin,
+        opacity: 1,
+        shadow: null as DropShadow | null
     });
 
     /**
-     * Restores the defaults introduced by this subclass.
+     * Restores the default styles introduced by this subclass.
      */
-    restoreOwnDefaults() {
-        const defaults = (this.constructor as any).defaults;
+    protected restoreOwnStyles() {
+        const styles = (this.constructor as any).defaultStyles;
+        const keys = Object.getOwnPropertyNames(styles);
 
-        for (const property in defaults) {
-            if (defaults.hasOwnProperty(property)) {
-                (this as any)[property] = defaults[property];
-            }
+        // getOwnPropertyNames is about 2.5 times faster than
+        // for..in with the hasOwnProperty check and in this
+        // case, where most properties are inherited, can be
+        // more then an order of magnitude faster.
+        for (let i = 0, n = keys.length; i < n; i++) {
+            const key = keys[i];
+            (this as any)[key] += styles[key];
         }
     }
 
-    restoreAllDefaults() {
-        const defaults = (this.constructor as any).defaults;
+    protected restoreAllStyles() {
+        const styles = (this.constructor as any).defaultStyles;
 
-        for (const property in defaults) {
-            (this as any)[property] = defaults[property];
+        for (const property in styles) {
+            (this as any)[property] = styles[property];
         }
     }
 
     /**
-     * Restores the base class defaults that have been overridden by this subclass.
+     * Restores the base class default styles that have been overridden by this subclass.
      */
-    restoreOverriddenDefaults() {
-        const defaults = (this.constructor as any).defaults;
-        const protoDefaults = Object.getPrototypeOf(defaults);
+    protected restoreOverriddenStyles() {
+        const styles = (this.constructor as any).defaultStyles;
+        const protoStyles = Object.getPrototypeOf(styles);
 
-        for (const property in defaults) {
-            if (defaults.hasOwnProperty(property) && protoDefaults.hasOwnProperty(property)) {
-                (this as any)[property] = defaults[property];
+        for (const property in styles) {
+            if (styles.hasOwnProperty(property) && protoStyles.hasOwnProperty(property)) {
+                (this as any)[property] = styles[property];
             }
         }
     }
 
-    private _fillStyle: string = Shape.defaults.fillStyle; //| CanvasGradient | CanvasPattern;
-    set fillStyle(value: string) {
-        this._fillStyle = value;
-        this.dirty = true;
+    private _fillStyle: string | null = Shape.defaultStyles.fillStyle; //| CanvasGradient | CanvasPattern;
+    set fillStyle(value: string | null) {
+        if (this._fillStyle !== value) {
+            this._fillStyle = value;
+            this.isDirty = true;
+        }
     }
-    get fillStyle(): string {
+    get fillStyle(): string | null {
         return this._fillStyle;
     }
 
-    private _strokeStyle: string = Shape.defaults.strokeStyle;
-    set strokeStyle(value: string) {
-        this._strokeStyle = value;
-        this.dirty = true;
+    private _strokeStyle: string | null = Shape.defaultStyles.strokeStyle;
+    set strokeStyle(value: string | null) {
+        if (this._strokeStyle !== value) {
+            this._strokeStyle = value;
+            this.isDirty = true;
+        }
     }
-    get strokeStyle(): string {
+    get strokeStyle(): string | null {
         return this._strokeStyle;
     }
 
-    private _lineWidth: number = Shape.defaults.lineWidth;
+    private _lineWidth: number = Shape.defaultStyles.lineWidth;
     set lineWidth(value: number) {
-        this._lineWidth = value;
-        this.dirty = true;
+        if (this._lineWidth !== value) {
+            this._lineWidth = value;
+            this.isDirty = true;
+        }
     }
     get lineWidth(): number {
         return this._lineWidth;
     }
 
-    private _opacity: number = Shape.defaults.opacity;
+    private _lineDash: number[] | null = Shape.defaultStyles.lineDash;
+    set lineDash(value: number[] | null) {
+        const oldValue = this._lineDash;
+
+        if (oldValue !== value) {
+            if (oldValue && value && oldValue.length === value.length) {
+                let identical = true;
+                const n = value.length;
+                for (let i = 0; i < n; i++) {
+                    if (oldValue[i] !== value[i]) {
+                        identical = false;
+                        break;
+                    }
+                }
+                if (identical) {
+                    return;
+                }
+            }
+            this._lineDash = value;
+            this.isDirty = true;
+        }
+    }
+    get lineDash(): number[] | null {
+        return this._lineDash;
+    }
+
+    private _lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
+    set lineDashOffset(value: number) {
+        if (this._lineDashOffset !== value) {
+            this._lineDashOffset = value;
+            this.isDirty = true;
+        }
+    }
+    get lineDashOffset(): number {
+        return this._lineDashOffset;
+    }
+
+    private _lineCap: ShapeLineCap = Shape.defaultStyles.lineCap;
+    set lineCap(value: ShapeLineCap) {
+        if (this._lineCap !== value) {
+            this._lineCap = value;
+            this.isDirty = true;
+        }
+    }
+    get lineCap(): ShapeLineCap {
+        return this._lineCap;
+    }
+
+    private _lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
+    set lineJoin(value: ShapeLineJoin) {
+        if (this._lineJoin !== value) {
+            this._lineJoin = value;
+            this.isDirty = true;
+        }
+    }
+    get lineJoin(): ShapeLineJoin {
+        return this._lineJoin;
+    }
+
+    private _opacity: number = Shape.defaultStyles.opacity;
     set opacity(value: number) {
-        this._opacity = value;
-        this.dirty = true;
+        value = Math.min(1, Math.max(0, value));
+        if (this._opacity !== value) {
+            this._opacity = value;
+            this.isDirty = true;
+        }
     }
     get opacity(): number {
         return this._opacity;
     }
 
-    applyContextAttributes(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.fillStyle;
-        ctx.strokeStyle = this.strokeStyle;
-        ctx.lineWidth = this.lineWidth;
-        ctx.globalAlpha = this.opacity;
+    private _shadow: DropShadow | null = Shape.defaultStyles.shadow;
+    set shadow(value: DropShadow | null) {
+        if (this._shadow !== value) {
+            this._shadow = value;
+            this.isDirty = true;
+        }
+    }
+    get shadow(): DropShadow | null {
+        return this._shadow;
     }
 
-    abstract isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean
-    abstract isPointInStroke(ctx: CanvasRenderingContext2D, x: number, y: number): boolean
+    applyContextAttributes(ctx: CanvasRenderingContext2D) {
+        if (this.fillStyle) {
+            ctx.fillStyle = this.fillStyle;
+        }
+        if (this.strokeStyle) {
+            ctx.strokeStyle = this.strokeStyle;
+            ctx.lineWidth = this.lineWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
+            }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+        }
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+
+        const shadow = this.shadow;
+        if (shadow) {
+            ctx.shadowColor = shadow.color;
+            ctx.shadowOffsetX = shadow.offset.x;
+            ctx.shadowOffsetY = shadow.offset.y;
+            ctx.shadowBlur = shadow.blur;
+        }
+    }
+
+    isPointInNode(x: number, y: number): boolean {
+        return this.isPointInPath(x, y);
+    }
+
+    abstract isPointInPath(x: number, y: number): boolean
+    abstract isPointInStroke(x: number, y: number): boolean
 }

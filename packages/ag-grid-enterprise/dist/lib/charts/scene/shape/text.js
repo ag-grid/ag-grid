@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -16,30 +16,189 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var shape_1 = require("./shape");
 var object_1 = require("../../util/object");
+var hdpiCanvas_1 = require("../../canvas/hdpiCanvas");
+var bbox_1 = require("../bbox");
 var Text = /** @class */ (function (_super) {
     __extends(Text, _super);
     function Text() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._x = 0;
+        _this._y = 0;
+        _this.lineBreakRe = /\r?\n/g;
+        _this.lines = [];
+        _this._text = '';
+        _this._font = Text.defaultStyles.font;
+        _this._textAlign = Text.defaultStyles.textAlign;
+        _this._textBaseline = Text.defaultStyles.textBaseline;
+        _this.getBBox = hdpiCanvas_1.HdpiCanvas.supports.textMetrics
+            ? function () {
+                var metrics = hdpiCanvas_1.HdpiCanvas.measureText(_this.text, _this.font, _this.textBaseline, _this.textAlign);
+                return {
+                    x: _this.x - metrics.actualBoundingBoxLeft,
+                    y: _this.y - metrics.actualBoundingBoxAscent,
+                    width: metrics.width,
+                    height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+                };
+            }
+            : function () {
+                var size = hdpiCanvas_1.HdpiCanvas.getTextSize(_this.text, _this.font);
+                var x = _this.x;
+                var y = _this.y;
+                switch (_this.textAlign) {
+                    case 'end':
+                    case 'right':
+                        x -= size.width;
+                        break;
+                    case 'center':
+                        x -= size.width / 2;
+                }
+                switch (_this.textBaseline) {
+                    case 'alphabetic':
+                        y -= size.height * 0.7;
+                        break;
+                    case 'middle':
+                        y -= size.height * 0.45;
+                        break;
+                    case 'ideographic':
+                        y -= size.height;
+                        break;
+                    case 'hanging':
+                        y -= size.height * 0.2;
+                        break;
+                    case 'bottom':
+                        y -= size.height;
+                        break;
+                }
+                return { x: x, y: y, width: size.width, height: size.height };
+            };
+        return _this;
     }
-    Text.prototype.isPointInPath = function (ctx, x, y) {
+    Object.defineProperty(Text.prototype, "x", {
+        get: function () {
+            return this._x;
+        },
+        set: function (value) {
+            if (this._x !== value) {
+                this._x = value;
+                this.isDirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "y", {
+        get: function () {
+            return this._y;
+        },
+        set: function (value) {
+            if (this._y !== value) {
+                this._y = value;
+                this.isDirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Text.prototype.splitText = function () {
+        this.lines = this._text.split(this.lineBreakRe);
+    };
+    Object.defineProperty(Text.prototype, "text", {
+        get: function () {
+            return this._text;
+        },
+        set: function (value) {
+            if (this._text !== value) {
+                this._text = value;
+                this.splitText();
+                this.isDirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "font", {
+        get: function () {
+            return this._font;
+        },
+        set: function (value) {
+            if (this._font !== value) {
+                this._font = value;
+                this.isDirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "textAlign", {
+        get: function () {
+            return this._textAlign;
+        },
+        set: function (value) {
+            if (this._textAlign !== value) {
+                this._textAlign = value;
+                this.isDirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "textBaseline", {
+        get: function () {
+            return this._textBaseline;
+        },
+        set: function (value) {
+            if (this._textBaseline !== value) {
+                this._textBaseline = value;
+                this.isDirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Text.prototype.isPointInPath = function (x, y) {
+        var point = this.transformPoint(x, y);
+        var bbox = this.getBBox();
+        return bbox_1.isPointInBBox(bbox, point.x, point.y);
+    };
+    Text.prototype.isPointInStroke = function (x, y) {
         return false;
     };
-    Text.prototype.isPointInStroke = function (ctx, x, y) {
-        return false;
+    Text.prototype.applyContextAttributes = function (ctx) {
+        _super.prototype.applyContextAttributes.call(this, ctx);
+        ctx.font = this.font;
+        ctx.textAlign = this.textAlign;
+        ctx.textBaseline = this.textBaseline;
     };
     Text.prototype.render = function (ctx) {
-        if (this.scene) {
-            this.applyContextAttributes(ctx);
-            // this.scene.appendPath(this.path);
-            ctx.fill();
-            ctx.stroke();
+        if (!this.scene)
+            return;
+        var lines = this.lines;
+        var lineCount = lines.length;
+        if (!lineCount)
+            return;
+        if (this.isDirtyTransform) {
+            this.computeTransformMatrix();
         }
-        this.dirty = false;
+        this.matrix.toContext(ctx);
+        this.applyContextAttributes(ctx);
+        if (lineCount > 1) {
+            // TODO: multi-line text
+        }
+        else if (lineCount === 1) {
+            if (this.fillStyle) {
+                ctx.fillText(this.text, this.x, this.y);
+            }
+            if (this.strokeStyle) {
+                ctx.strokeText(this.text, this.x, this.y);
+            }
+        }
+        // renderBBox(ctx, this.getBBox()); // debug
+        this.isDirty = false;
     };
-    Text.defaults = object_1.chainObjects(shape_1.Shape.defaults, {
-        fillStyle: 'black',
-        x: 0,
-        y: 0
+    Text.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
+        textAlign: 'start',
+        font: '10px sans-serif',
+        textBaseline: 'alphabetic'
     });
     return Text;
 }(shape_1.Shape));

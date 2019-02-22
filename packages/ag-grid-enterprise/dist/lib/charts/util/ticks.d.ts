@@ -1,2 +1,6 @@
-// ag-grid-enterprise v20.0.0
-export default function (a: number, b: number, count: number): number[];
+// ag-grid-enterprise v20.1.0
+export default function (a: number, b: number, count: number): NumericTicks;
+export declare class NumericTicks extends Array<number> {
+    constructor(decimalDigits: number, size?: number);
+    readonly decimalDigits: number;
+}

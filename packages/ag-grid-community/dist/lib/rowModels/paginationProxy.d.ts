@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -33,6 +33,7 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     private topRowBounds;
     private bottomRowBounds;
     private postConstruct;
+    ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     isLastRowFound(): boolean;
     private onModelUpdated;
     goToPage(page: number): void;

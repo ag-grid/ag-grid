@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,7 +62,10 @@ var ClientSideNodeManager = /** @class */ (function () {
             return;
         }
         // kick off recursion
-        var result = this.recursiveFunction(rowData, null, ClientSideNodeManager.TOP_LEVEL);
+        // we add rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
+        // sets the parent node on each row (even if we are not grouping). so setting parent node
+        // here is for benefit of ag-grid-community users
+        var result = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
         if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
@@ -137,7 +140,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         return rowNodeTransaction;
     };
     ClientSideNodeManager.prototype.addRowNode = function (data, index) {
-        var newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
+        var newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
         if (utils_1._.exists(index)) {
             utils_1._.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
         }
@@ -180,7 +183,7 @@ var ClientSideNodeManager = /** @class */ (function () {
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTop();
             utils_1._.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-            this.allNodesMap[rowNode.id] = undefined;
+            delete this.allNodesMap[rowNode.id];
         }
     };
     ClientSideNodeManager.prototype.recursiveFunction = function (rowData, parent, level) {
@@ -209,7 +212,8 @@ var ClientSideNodeManager = /** @class */ (function () {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = node.master; // deprecated, is now 'master'
+            /** @deprecated is now 'master' */
+            node.canFlower = node.master;
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         }
@@ -282,29 +286,6 @@ var ClientSideNodeManager = /** @class */ (function () {
                 }
             });
         }
-    };
-    ClientSideNodeManager.prototype.insertItemsAtIndex = function (index, rowData) {
-        if (this.isLegacyTreeData()) {
-            return null;
-        }
-        var nodeList = this.rootNode.allLeafChildren;
-        if (index > nodeList.length) {
-            console.warn("ag-Grid: invalid index " + index + ", max index is " + nodeList.length);
-            return;
-        }
-        var newNodes = [];
-        // go through the items backwards, otherwise they get added in reverse order
-        for (var i = rowData.length - 1; i >= 0; i--) {
-            var data = rowData[i];
-            var newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
-            utils_1._.insertIntoArray(nodeList, newNode, index);
-            newNodes.push(newNode);
-        }
-        return newNodes.length > 0 ? newNodes : null;
-    };
-    ClientSideNodeManager.prototype.addItems = function (items) {
-        var nodeList = this.rootNode.allLeafChildren;
-        return this.insertItemsAtIndex(nodeList.length, items);
     };
     ClientSideNodeManager.prototype.isLegacyTreeData = function () {
         var rowsAlreadyGrouped = utils_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());

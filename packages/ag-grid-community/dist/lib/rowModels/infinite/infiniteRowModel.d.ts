@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0
+// Type definitions for ag-grid-community v20.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -15,12 +15,14 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private context;
     private gridApi;
     private columnApi;
+    private rowRenderer;
     private infiniteCache;
     private rowNodeBlockLoader;
     private datasource;
     private rowHeight;
     private cacheParams;
     getRowBounds(index: number): RowBounds;
+    ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     init(): void;
     private destroyDatasource;
     isLastRowFound(): boolean;

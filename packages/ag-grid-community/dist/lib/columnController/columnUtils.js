@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -104,16 +104,16 @@ var ColumnUtils = /** @class */ (function () {
                 }
             }
         }*/
-    ColumnUtils.prototype.depthFirstOriginalTreeSearch = function (tree, callback) {
+    ColumnUtils.prototype.depthFirstOriginalTreeSearch = function (parent, tree, callback) {
         var _this = this;
         if (!tree) {
             return;
         }
         tree.forEach(function (child) {
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
-                _this.depthFirstOriginalTreeSearch(child.getChildren(), callback);
+                _this.depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
             }
-            callback(child);
+            callback(child, parent);
         });
     };
     ColumnUtils.prototype.depthFirstAllColumnTreeSearch = function (tree, callback) {

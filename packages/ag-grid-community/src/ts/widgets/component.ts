@@ -285,12 +285,10 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private removeAnnotatedEventListeners(): void {
-        if (!this.annotatedEventListeners) {
+        if (!this.annotatedEventListeners || !this.eGui) {
             return;
         }
-        if (!this.eGui) {
-            return;
-        }
+
         this.annotatedEventListeners.forEach((eventListener: any) => {
             this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
         });
@@ -380,11 +378,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
     public getAttribute(key: string): string | null {
         const eGui = this.getGui();
-        if (eGui) {
-            return eGui.getAttribute(key);
-        } else {
-            return null;
-        }
+        return eGui ? eGui.getAttribute(key) : null;
     }
 
     public getRefElement(refName: string): HTMLElement {

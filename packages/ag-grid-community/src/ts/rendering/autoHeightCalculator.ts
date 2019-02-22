@@ -78,7 +78,7 @@ export class AutoHeightCalculator {
         });
 
         // in case anything left over from last time
-        _.removeAllChildren(this.eDummyContainer);
+        _.clearElement(this.eDummyContainer);
 
         return maxCellHeight;
     }

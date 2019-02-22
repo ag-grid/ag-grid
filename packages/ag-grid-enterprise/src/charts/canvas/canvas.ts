@@ -98,6 +98,11 @@ export function resizeCanvas(canvas: HTMLCanvasElement, width: number, height: n
  * @param value Typically line width is assumed. Fractional values won't be aligned.
  * @param bias If alignment is necessary, which side to prefer.
  */
-export function pixelSnap(value: number, bias: 1 | -1 = 1): number {
+export function pixelSnap(value: number, bias = PixelSnapBias.Positive): number {
     return value % 1 === 0 ? bias * value % 2 / 2 : value;
+}
+
+export enum PixelSnapBias {
+    Negative = -1,
+    Positive = 1
 }

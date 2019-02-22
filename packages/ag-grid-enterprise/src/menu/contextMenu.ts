@@ -18,12 +18,14 @@ import {
     MenuItemDef,
     PopupService,
     PostConstruct,
-    RowNode
+    RowNode,
+    Constants
 } from "ag-grid-community";
 import { ClipboardService } from "../clipboardService";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
+import {RangeController} from "../rangeController";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {
@@ -32,6 +34,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rangeController') private rangeController: RangeController;
 
     private activeMenu: ContextMenu | null;
 
@@ -70,7 +73,12 @@ export class ContextMenuFactory implements IContextMenuFactory {
         }
 
         if (this.gridOptionsWrapper.isEnableCharts()) {
-            defaultMenuOptions.push('createChart');
+            if (!this.rangeController.isEmpty()) {
+                defaultMenuOptions.push('chartRange');
+            }
+            if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+                defaultMenuOptions.push('chartEverything');
+            }
         }
 
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20,16 +20,28 @@ var Group = /** @class */ (function (_super) {
     function Group() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    // We consider a group to be boundless, thus any point belongs to it.
+    Group.prototype.isPointInNode = function (x, y) {
+        return true;
+    };
     Group.prototype.render = function (ctx) {
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
         // so all children can be transformed at once.
-        // TODO: stable sort the child nodes by the zIndex before rendering them.
-        this.children.forEach(function (child) {
+        if (this.isDirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+        var children = this.children;
+        var n = children.length;
+        for (var i = 0; i < n; i++) {
             ctx.save();
-            child.render(ctx);
+            var child = children[i];
+            if (child.isVisible) {
+                child.render(ctx);
+            }
             ctx.restore();
-        });
+        }
     };
     return Group;
 }(node_1.Node));

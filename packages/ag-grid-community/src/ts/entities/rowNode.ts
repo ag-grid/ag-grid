@@ -23,7 +23,7 @@ export interface SetSelectedParams {
     clearSelection?: boolean;
     // true when action is NOT on this node, ie user clicked a group and this is the child of a group
     suppressFinishActions?: boolean;
-    // gets used when user shif-selects a range
+    // gets used when user shift-selects a range
     rangeSelect?: boolean;
     // used in group selection, if true, filtered out children will not be selected
     groupSelectsFiltered?: boolean;
@@ -45,6 +45,8 @@ export interface CellChangedEvent extends RowNodeEvent {
 }
 
 export class RowNode implements IEventEmitter {
+
+    private static OBJECT_ID_SEQUENCE = 0;
 
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
@@ -163,6 +165,11 @@ export class RowNode implements IEventEmitter {
 
     /** The height, in pixels, of this row */
     public rowHeight: number;
+    /** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation
+     * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each
+     * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do
+     * the row height calculation and set rowHeightEstimated=false.*/
+    public rowHeightEstimated: boolean;
     /** The top pixel for this row */
     public rowTop: number;
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
@@ -180,6 +187,10 @@ export class RowNode implements IEventEmitter {
     /** Used by the value service, stores values for a particular change detection turn. */
     public __cacheData: { [colId: string]: any };
     public __cacheVersion: number;
+
+    /** Used by sorting service - to give deterministic sort to groups. Previously we
+     * just id for this, however id is a string and had slower sorting compared to numbers. */
+    public __objectId: number = RowNode.OBJECT_ID_SEQUENCE++;
 
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
@@ -390,8 +401,9 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setRowHeight(rowHeight: number | undefined | null): void {
+    public setRowHeight(rowHeight: number | undefined | null, estimated = false): void {
         this.rowHeight = rowHeight;
+        this.rowHeightEstimated = estimated;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }

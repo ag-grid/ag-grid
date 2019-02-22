@@ -9,4 +9,19 @@ declare module "ag-grid-react" {
     }
     export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGroupProps, {}> {
     }
+
+    export {ICellEditorReactComp} from './lib/interfaces';
+    export {AgReactFrameworkComponent}  from './lib/interfaces';
+    export {IHeaderGroupReactComp }  from './lib/interfaces';
+    export {IHeaderReactComp }  from './lib/interfaces';
+    export {IDateReactComp }  from './lib/interfaces';
+    export {IFilterReactComp }  from './lib/interfaces';
+    export {ICellRendererReactComp }  from './lib/interfaces';
+    export {ILoadingCellRendererReactComp }  from './lib/interfaces';
+    export {ILoadingOverlayReactComp }  from './lib/interfaces';
+    export {INoRowsOverlayReactComp }  from './lib/interfaces';
+    export {IStatusPanelReactComp }  from './lib/interfaces';
+    export {IToolPanelReactComp }  from './lib/interfaces';
 }
+
+

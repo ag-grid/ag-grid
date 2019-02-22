@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0
+ * @version v20.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -183,6 +183,8 @@ var rowNodeBlock_1 = require("./dist/lib/rowModels/cache/rowNodeBlock");
 exports.RowNodeBlock = rowNodeBlock_1.RowNodeBlock;
 var rowNodeBlockLoader_1 = require("./dist/lib/rowModels/cache/rowNodeBlockLoader");
 exports.RowNodeBlockLoader = rowNodeBlockLoader_1.RowNodeBlockLoader;
+var paginationProxy_1 = require("./dist/lib/rowModels/paginationProxy");
+exports.PaginationProxy = paginationProxy_1.PaginationProxy;
 var rowNodeCache_1 = require("./dist/lib/rowModels/cache/rowNodeCache");
 exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
 //styling
@@ -191,8 +193,14 @@ exports.StylingService = stylingService_1.StylingService;
 // widgets
 var agCheckbox_1 = require("./dist/lib/widgets/agCheckbox");
 exports.AgCheckbox = agCheckbox_1.AgCheckbox;
+var popupWindow_1 = require("./dist/lib/widgets/popupWindow");
+exports.PopupWindow = popupWindow_1.PopupWindow;
+var popupMessageBox_1 = require("./dist/lib/widgets/popupMessageBox");
+exports.PopupMessageBox = popupMessageBox_1.PopupMessageBox;
 var component_1 = require("./dist/lib/widgets/component");
 exports.Component = component_1.Component;
+var popupComponent_1 = require("./dist/lib/widgets/popupComponent");
+exports.PopupComponent = popupComponent_1.PopupComponent;
 var popupService_1 = require("./dist/lib/widgets/popupService");
 exports.PopupService = popupService_1.PopupService;
 var touchListener_1 = require("./dist/lib/widgets/touchListener");
@@ -264,3 +272,5 @@ var frameworkComponentWrapper_1 = require("./dist/lib/components/framework/frame
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = require("./dist/lib/environment");
 exports.Environment = environment_1.Environment;
+var tooltipManager_1 = require("./dist/lib/widgets/tooltipManager");
+exports.TooltipManager = tooltipManager_1.TooltipManager;

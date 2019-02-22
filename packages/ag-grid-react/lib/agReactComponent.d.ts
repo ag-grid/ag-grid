@@ -1,4 +1,4 @@
-// ag-grid-react v20.0.0
+// ag-grid-react v20.1.0
 import { Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 export declare class AgReactComponent {
@@ -9,6 +9,7 @@ export declare class AgReactComponent {
     private portal;
     constructor(reactComponent: any, parentComponent?: AgGridReact);
     getFrameworkComponentInstance(): any;
+    getReactComponentName(): string;
     init(params: any): Promise<void>;
     private useLegacyReact;
     getGui(): HTMLElement;

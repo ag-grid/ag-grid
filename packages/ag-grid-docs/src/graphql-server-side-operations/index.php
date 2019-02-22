@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         This guide we will develop an Olympic Medals application that demonstrates how to integrate a GraphQL endpoint
         with ag-Grid's <a href="/javascript-grid-server-side-model/">Server-side Row Model</a>. Specifically it will
-        show how can be lazy-loaded as required, even when performing group, filter, sort operations when working
+        show how data can be lazy-loaded as required, even when performing group, filter, sort operations when working
         with large datasets.
     </p>
 

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.0.0
+// ag-grid-enterprise v20.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -15,6 +15,13 @@ var setFilter_1 = require("./setFilter/setFilter");
 var richSelectCellEditor_1 = require("./rendering/richSelect/richSelectCellEditor");
 var licenseManager_1 = require("./licenseManager");
 var detailCellRenderer_1 = require("./rendering/detail/detailCellRenderer");
+var totalRowsComp_1 = require("./statusBar/providedPanels/totalRowsComp");
+var totalAndFilteredRowsComp_1 = require("./statusBar/providedPanels/totalAndFilteredRowsComp");
+var columnToolPanel_1 = require("./sideBar/providedPanels/columns/columnToolPanel");
+var aggregationComp_1 = require("./statusBar/providedPanels/aggregationComp");
+var selectedRowsComp_1 = require("./statusBar/providedPanels/selectedRowsComp");
+var filteredRowsComp_1 = require("./statusBar/providedPanels/filteredRowsComp");
+var filtersToolPanel_1 = require("./sideBar/providedPanels/filters/filtersToolPanel");
 var EnterpriseBoot = /** @class */ (function () {
     function EnterpriseBoot() {
     }
@@ -23,7 +30,13 @@ var EnterpriseBoot = /** @class */ (function () {
         this.componentProvider.registerDefaultComponent('agRichSelectCellEditor', richSelectCellEditor_1.RichSelectCellEditor);
         this.componentProvider.registerDefaultComponent('agSetColumnFilter', setFilter_1.SetFilter);
         this.componentProvider.registerDefaultComponent('agDetailCellRenderer', detailCellRenderer_1.DetailCellRenderer);
-        this.licenseManager.validateLicense();
+        this.componentProvider.registerDefaultComponent('agAggregationComponent', aggregationComp_1.AggregationComp);
+        this.componentProvider.registerDefaultComponent('agColumnsToolPanel', columnToolPanel_1.ColumnToolPanel);
+        this.componentProvider.registerDefaultComponent('agFiltersToolPanel', filtersToolPanel_1.FiltersToolPanel);
+        this.componentProvider.registerDefaultComponent('agSelectedRowCountComponent', selectedRowsComp_1.SelectedRowsComp);
+        this.componentProvider.registerDefaultComponent('agTotalRowCountComponent', totalRowsComp_1.TotalRowsComp);
+        this.componentProvider.registerDefaultComponent('agFilteredRowCountComponent', filteredRowsComp_1.FilteredRowsComp);
+        this.componentProvider.registerDefaultComponent('agTotalAndFilteredRowCountComponent', totalAndFilteredRowsComp_1.TotalAndFilteredRowsComp);
     };
     __decorate([
         ag_grid_community_1.Autowired('filterManager'),
