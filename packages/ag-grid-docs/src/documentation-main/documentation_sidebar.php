@@ -1,26 +1,52 @@
 <div id="side-bar-announcements">
-
 </div>
 <br>
-
-    <div id="ag-grid-conf">
-        <p></p>
-        <div class="card card-highlight">
-            <div class="card-body">
-                <h5 class="card-title"><a href="https://www.ag-grid-conf.com">ag-Grid Conf</a></h5>
-                Our ag-Grid Conf videos are now live!<br><br>
-                <a href="http://ag-grid-conf.com/"><img src="/images/complex-performance.png" alt="complex-performance-niall" style="width: 100%"></a>
-                <br><br>
-                        <p class="text-right">
-            <a class="learn-more" href="http://ag-grid-conf.com/">All Videos</a>
-        </p>
-            </div>
-        </div>
-
-
+<div class="card card-highlight">
+    <div class="card-body">
+        <h5 class="card-title">ag-Grid News</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Conferences</h6>
+        <p class="font-weight-normal">ag-Grid will be the <strong>premier sponsors</strong> of the world's largest Angular conferences</p>
+        <img src="../images/flags/united-states.png" style="height: 18px; width: 18px"><a class="learn-more" href="https://www.ng-conf.org" target="_blank"> ng-Conf</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 1st-3rd</p>
+        <img src="../images/flags/united-kingdom.png"><a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Sept 19th-20th</p>
+        <img src="../images/flags/den.png"><a class="learn-more" href="https://ngvikings.org/" target="_blank"> ng-Vikings</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 27th-28th</p>
+        <br>
+        <p>ag-Grid will be sponsoring the following React conferences:</p>
+        <img src="../images/flags/netherlands.png"><a class="learn-more" href="https://react.amsterdam/" target="_blank"> React Amsterdam</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">April 10th-12th</p>
+    </div>
+</div>
 <br>
 <p>Latest Release:</p>
 
+<div class="card card-highlight">
+    <div class="card-body">
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.1.0">Version 20.1.0 Released</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Feb 22</h6>
+        <p class="card-text">
+            Minor release with new features and bug fixes:
+        </p>
+        <ul>
+            <li><a class="learn-more" href="https://www.ag-grid.com/javascript-grid-tooltip-component">
+                    Tooltip Components</a></li>
+
+            <li><a class="learn-more" href="https://www.ag-grid.com/javascript-grid-filtering/#adding-custom-filter-options">
+                    Custom Filters Options</a></li>
+
+            <li><a class="learn-more" href="https://www.ag-grid.com/javascript-grid-loading-cell-renderer">
+                    Loading Components</a></li>
+
+            <li><a class="learn-more" href="https://www.ag-grid.com/nodejs-server-side-operations">
+                    SSRM with Node.js Guide</a></li>
+        </ul>
+        <p class="text-right">
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=20.1.0">Change Log</a>
+        </p>
+    </div>
+</div>
+<br>
 <div class="card card-highlight">
     <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.0.0">Version 20.0.0 Released</a></h5>
@@ -43,23 +69,8 @@
     </div>
 </div>
 <br>
-<div class="card card-highlight">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.4">Version 19.1.4 Released</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Nov 22</h6>
-        <p class="card-text">
-            Patch release with the bug fixes:
-        </p>
-
-        <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.4">Change Log</a>
-        </p>
-    </div>
-</div>
-
 
 <hr>
-
 <!-- Begin Mailchimp Signup Form -->
 <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 <style type="text/css">
