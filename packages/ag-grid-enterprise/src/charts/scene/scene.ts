@@ -102,7 +102,7 @@ export class Scene {
         }
     }
 
-    _isDirty = false;
+    private _isDirty = false;
     set isDirty(dirty: boolean) {
         if (dirty && !this._isDirty) {
             requestAnimationFrame(this.render);
@@ -115,8 +115,9 @@ export class Scene {
 
     _root: Node | null = null;
     set root(node: Node | null) {
-        if (node === this._root)
+        if (node === this._root) {
             return;
+        }
 
         if (this._root) {
             this._root._setScene(null);
