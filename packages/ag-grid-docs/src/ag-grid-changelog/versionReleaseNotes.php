@@ -14,8 +14,8 @@
                 Allow for Custom Loading Renderer Component
             </a></li>
 
-        <li><a href="https://www.ag-grid.com/nodejs-server-side-operations">
-                AG-2185 - New Server-side Row Model guide for Node.js with MySql</a></li>
+        <li>AG-2185 - <a href="https://www.ag-grid.com/nodejs-server-side-operations">
+                New Server-side Row Model guide for Node.js with MySql</a></li>
 
         <li>AG-1972 - Performance improvements for small changes to large datasets</li>
         <li>AG-2289 - Better management of Column Definitions after grid is created</li>

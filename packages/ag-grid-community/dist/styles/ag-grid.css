@@ -931,6 +931,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   margin: 0;
   width: 100%; }
 
+.ag-floating-filter-full-body input[type="range"] {
+  height: 100%; }
+
 .ag-floating-filter {
   display: inline-block;
   position: absolute; }
@@ -940,8 +943,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   margin-right: 25px; }
 
 .ag-floating-filter-full-body {
-  height: 20px;
+  height: 100%;
   width: 100%; }
+  .ag-floating-filter-full-body .ag-react-container {
+    height: 100%; }
 
 .ag-floating-filter-input {
   width: 100%; }
