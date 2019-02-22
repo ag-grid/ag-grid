@@ -8,8 +8,8 @@ include '../landing-pages/convert-header.php';
 <style><?php include './css/performance.css'; ?></style>
 <style><?php include './css/api.css'; ?></style>
 <script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
-<script src="/best-angular-2-data-grid/js/grid-performance.js" inline></script>
-<script src="/best-angular-2-data-grid/js/grid-api.js" inline></script>
+<script src="./js/grid-performance.js" inline></script>
+<script src="./js/grid-api.js" inline></script>
 <div>
 
 

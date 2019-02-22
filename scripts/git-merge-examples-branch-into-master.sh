@@ -7,7 +7,7 @@ if [ "$#" -ne 1 ]
     exit 1
 fi
 
-examples=(ag-grid-angular-cli-example ag-grid-aurelia-example ag-grid-react-example ag-grid-vue-example)
+examples=(ag-grid-angular-cli-example ag-grid-aurelia-example ag-grid-react-example ag-grid-vue-example ag-grid-polymer-example)
 
 pwd
 for example in ${examples[@]}; do
