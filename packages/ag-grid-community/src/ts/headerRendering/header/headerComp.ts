@@ -155,8 +155,8 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        // we don't show the menu if on an ipad/iphone, as the user cannot have a pointer device
-        // Note: If supressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
+        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device
+        // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
         const dontShowMenu = !this.params.enableMenu || (_.isUserAgentIPad() && !suppressMenuHide);

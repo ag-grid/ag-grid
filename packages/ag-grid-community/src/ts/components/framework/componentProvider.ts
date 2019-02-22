@@ -260,7 +260,7 @@ export class ComponentProvider {
         if (deprecatedInfo != null) {
             _.doOnce(() => {
                 console.warn(`ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
-            }, 'DEPREACTE_COMPONENT_' + raw);
+            }, 'DEPRECATE_COMPONENT_' + raw);
             return deprecatedInfo.newComponentName;
         }
         return raw;

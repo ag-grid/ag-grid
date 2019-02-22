@@ -1,13 +1,12 @@
 import { Bean, Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { StageExecuteParams } from "../../interfaces/iRowNodeStage";
-import {SortOption, SortService} from "../../rowNodes/sortService";
-import {RowNode} from "../../entities/rowNode";
-import {SortController} from "../../sortController";
-import {_} from "../../utils";
-import {RowNodeTransaction} from "./clientSideRowModel";
-import {ChangedPath} from "./changedPath";
-import {ColumnController} from "../../columnController/columnController";
+import { SortOption, SortService } from "../../rowNodes/sortService";
+import { RowNode } from "../../entities/rowNode";
+import { SortController } from "../../sortController";
+import { RowNodeTransaction } from "./clientSideRowModel";
+import { ColumnController } from "../../columnController/columnController";
+import { _ } from "../../utils";
 
 @Bean('sortStage')
 export class SortStage {
@@ -46,12 +45,12 @@ export class SortStage {
 
         const addNodesFunc = (rowNodes: RowNode[]) => {
             if (rowNodes) {
-                rowNodes.forEach( rowNode => dirtyNodes[rowNode.id] = true);
+                rowNodes.forEach(rowNode => dirtyNodes[rowNode.id] = true);
             }
         };
 
         // all leaf level nodes in the transaction were impacted
-        rowNodeTransactions.forEach( tran => {
+        rowNodeTransactions.forEach(tran => {
             addNodesFunc(tran.add);
             addNodesFunc(tran.update);
             addNodesFunc(tran.remove);

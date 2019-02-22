@@ -92,13 +92,13 @@ export class TooltipManager {
 
         if (!activeComponent) {
             if (this.lastHoveredComponent) {
-                const constainsElement = this.lastHoveredComponent.getGui().contains(relatedTarget);
+                const containsElement = this.lastHoveredComponent.getGui().contains(relatedTarget);
 
-                if (this.showTimeoutId && constainsElement) {
+                if (this.showTimeoutId && containsElement) {
                     // if we are hovering within a component with multiple child elements before
                     // the tooltip has been displayed, we should cancel this event
                     return;
-                } else if (!constainsElement) {
+                } else if (!containsElement) {
                     // when a click hides the tooltip we need to reset the lastHoveredComponent
                     // otherwise the tooltip won't appear until another registered component is hovered.
                     this.lastHoveredComponent = undefined;
@@ -123,7 +123,7 @@ export class TooltipManager {
     private processMouseMove(e: MouseEvent): void {
         // there is a delay from the time we mouseOver a component and the time the
         // tooltip is displayed, so we need to track mousemove to be able to correctly
-        // position the tootip when showTooltip is called.
+        // position the tooltip when showTooltip is called.
         this.lastMouseEvent = e;
     }
 
