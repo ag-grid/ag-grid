@@ -1,6 +1,14 @@
 #!/bin/bash
 
-checkFileExists $FILENAME
+function checkFileExists {
+    file=$1
+    if ! [[ -f "$file" ]]
+    then
+        echo "File [$file] doesn't exist - exiting script.";
+        exit;
+    fi
+}
+
 checkFileExists ~/aggrid/aggrid.txt
 checkFileExists ~/.ssh/ag_ssh
 checkFileExists ~/aggrid/.creds
