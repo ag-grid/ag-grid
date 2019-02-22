@@ -138,19 +138,13 @@ gridOptions.getRowHeight = function(params) {
         the child rows are visible.
     </p>
 
-    <h3>Auto Height Considerations</h3>
+    <h3>Auto Height Performance Consideration</h3>
 
     <p>
         Because auto-height is a DOM intensive operation, consideration should be given
-        when and how to use it. The following are recommendations:
+        when and how to use it. Only apply auto height to columns where it makes sense. For example if you have
+        many columns that do not require a variable height, then do not set them to auto-height.
     </p>
-
-    <ul>
-        <li>
-            Only apply auto height to columns where it makes sense. For example if you have
-            many columns that do not require a variable height, then do not set them to auto-height.
-        </li>
-    </ul>
 
     <h2>Changing Row Height</h2>
 

@@ -1,10 +1,15 @@
-.grid-wrapper {
+.outer-div {
     height: 100%;
-    padding-top: 26px;
+    display: flex;
+    flex-direction: column;
 }
 
 .button-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
+    padding-bottom: 4px;
 }
+
+.grid-wrapper {
+    height: 20px;
+    flex: 1;
+}
+

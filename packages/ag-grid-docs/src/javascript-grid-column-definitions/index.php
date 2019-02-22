@@ -166,34 +166,6 @@ var gridOptions = {
     ]
 }</snippet>
 
-<h2 id="changing-column-headers">Updating Column Definitions</h2>
-
-<p>
-    After the grid has been initialised it may be necessary to update the column definition. It is important to understand
-    that when a column is created it is assigned a copy of the column definition defined in the GridOptions. For this reason
-    it is necessary to obtain the column definition directly from the column.
-</p>
-
-<p>
-    The following example shows how to update a column header name after the grid has been initialised. As we want to update
-    the header name immediately we explicitly invoke <code>refreshHeader()</code> via the <a href="../javascript-grid-api/">Grid API</a>.
-</p>
-
-<snippet>
-// get a reference to the column
-var col = gridOptions.columnApi.getColumn("colId");
-
-// obtain the column definition from the column
-var colDef = col.getColDef();
-
-// update the header name
-colDef.headerName = "New Header";
-
-// the column is now updated. to reflect the header change, get the grid refresh the header
-gridOptions.api.refreshHeader();</snippet>
-
-
-
 <h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
 
 <p>

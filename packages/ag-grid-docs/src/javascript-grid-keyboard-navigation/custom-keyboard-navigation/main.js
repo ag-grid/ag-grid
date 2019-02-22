@@ -127,7 +127,7 @@ function navigateToNextCell(params) {
         case KEY_RIGHT:
             return suggestedNextCell;
         default:
-            throw 'this will never happen, navigation is always on of the 4 keys above';
+            throw 'this will never happen, navigation is always one of the 4 keys above';
     }
 }
 

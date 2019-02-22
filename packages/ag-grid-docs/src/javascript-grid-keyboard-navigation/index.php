@@ -253,24 +253,24 @@ myInput.addEventListener("keydown", function (event) {
     </p>
 
     <ul>
-        <li><code>suppressActionCtrlA</code>: Ctrl & A will not select all cells into a range.</li>
-        <li><code>suppressActionCtrlC</code>: Ctrl & C will not copy to clipboard.</li>
-        <li><code>suppressActionCtrlV</code>: Ctrl & V will not paste from clipboard.</li>
-        <li><code>suppressActionCtrlD</code>: Ctrl & D will not copy range down.</li>
+        <li><code>suppressActionCtrlA</code>: <kbd>Ctrl & A</kbd> will not select all cells into a range.</li>
+        <li><code>suppressActionCtrlC</code>: <kbd>Ctrl & C</kbd> will not copy to clipboard.</li>
+        <li><code>suppressActionCtrlV</code>: <kbd>Ctrl & V</kbd> will not paste from clipboard.</li>
+        <li><code>suppressActionCtrlD</code>: <kbd>Ctrl & D</kbd> will not copy range down.</li>
         <li>
-            <code>suppressActionEnter</code>: Enter will either a) not start editing or b) not move down
+            <code>suppressActionEnter</code>: <kbd>Enter</kbd> will either a) not start editing or b) not move down
             (if <code>enterMovesDown=true</code>).
         </li>
-        <li><code>suppressActionPageUpDown</code>: Page Up and Page Down will not get handled by the grid.</li>
-        <li><code>suppressActionHome</code>: Home will not focus top left cell.</li>
-        <li><code>suppressActionEnd</code>: End will not focus bottom right cell.</li>
-        <li><code>suppressActionArrowKeyNavigation</code>: Arrow keys will not navigate focused cell.</li>
-        <li><code>suppressActionF2</code>: F2 will not start editing.</li>
-        <li><code>suppressActionDelete</code>: Delete will not start editing.</li>
-        <li><code>suppressActionBackspace</code>: Backspace will not start editing.</li>
-        <li><code>suppressActionEscape</code>: Escape will not cancel editing.</li>
-        <li><code>suppressActionSpace</code>: Space will not select current row.</li>
-        <li><code>suppressTabbing</code>: Tabbing will not be handled by the grid.</li>
+        <li><code>suppressActionPageUpDown</code>: <kbd>Page Up</kbd> and <kbd>Page Down</kbd> will not get handled by the grid.</li>
+        <li><code>suppressActionHome</code>: <kbd>Home</kbd> will not focus top left cell.</li>
+        <li><code>suppressActionEnd</code>: <kbd>End</kbd> will not focus bottom right cell.</li>
+        <li><code>suppressActionArrowKeyNavigation</code>: <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&rarr;</kbd> <kbd>&darr;</kbd> Arrow keys will not navigate focused cell.</li>
+        <li><code>suppressActionF2</code>: <kbd>F2</kbd> will not start editing.</li>
+        <li><code>suppressActionDelete</code>: <kbd>Delete</kbd> will not start editing.</li>
+        <li><code>suppressActionBackspace</code>: <kbd>Backspace</kbd> will not start editing.</li>
+        <li><code>suppressActionEscape</code>: <kbd>Escape</kbd> will not cancel editing.</li>
+        <li><code>suppressActionSpace</code>: <kbd>Space</kbd> will not select current row.</li>
+        <li><code>suppressTabbing</code>: <kbd>Tab</kbd> will not be handled by the grid.</li>
     </ul>
 
     <p>
