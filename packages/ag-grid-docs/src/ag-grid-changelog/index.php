@@ -250,9 +250,8 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                                 <?php
                                 if (!empty($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'})) {
                                     ?>
-
                                     <a href="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'}, FILTER_SANITIZE_STRING); ?>"
-                                       target="_blank"><i class="fa fa-external-link"></i></a>
+                                       target="_blank"><i class="fas fa-external-link-alt"></i></a>
                                     <?php
                                 }
                                 ?>
