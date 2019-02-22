@@ -210,26 +210,27 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // API method for updating data
-    function updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+// API method for updating data
+function updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
 
-    // params for above
-    interface RowDataTransaction {
+// params for above
+interface RowDataTransaction {
 
     // rows to add
     add?: any[];
+
     // index for rows to add
-    addIndex?: number,
+    addIndex?: number;
 
     // rows to remove
     remove?: any[];
 
     // rows to update
     update?: any[];
-    }
+}
 
-    // result for above
-    interface RowDataTransaction {
+// result for above
+interface RowDataTransaction {
 
     // Row Nodes added
     add: RowNode[];
@@ -239,7 +240,7 @@ include '../documentation-main/documentation_header.php';
 
     // Row Nodes updated
     update: RowNode[];
-    }</snippet>
+}</snippet>
 
 <h3>Adding Rows</h3>
 
