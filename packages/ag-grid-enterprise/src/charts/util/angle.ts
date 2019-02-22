@@ -1,11 +1,22 @@
+const twoPi = Math.PI * 2;
+
 /**
  * Normalize the given angle to be in the [0, 2π) interval.
  * @param radians Angle in radians.
  */
 export function normalizeAngle360(radians: number): number {
-    radians %= Math.PI * 2;
-    radians += Math.PI * 2;
-    radians %= Math.PI * 2;
+    radians %= twoPi;
+    radians += twoPi;
+    radians %= twoPi;
+    return radians;
+}
+
+export function normalizeAngle360Inclusive(radians: number): number {
+    radians %= twoPi;
+    radians += twoPi;
+    if (radians !== twoPi) {
+        radians %= twoPi;
+    }
     return radians;
 }
 
@@ -14,11 +25,11 @@ export function normalizeAngle360(radians: number): number {
  * @param radians Angle in radians.
  */
 export function normalizeAngle180(radians: number): number {
-    radians %= Math.PI * 2;
+    radians %= twoPi;
     if (radians < -Math.PI) {
-        radians += Math.PI * 2;
+        radians += twoPi;
     } else if (radians >= Math.PI) {
-        radians -= Math.PI * 2;
+        radians -= twoPi;
     }
     return radians;
 }
