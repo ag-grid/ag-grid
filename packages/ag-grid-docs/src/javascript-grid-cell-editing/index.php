@@ -708,16 +708,15 @@ cellEditorParams: function(params) {
     <code>colDef.suppressKeyboardEvent</code>.
     </p>
 
+    <p>
+        See <a href="../javascript-grid-keyboard-navigation/#suppressKeyboardEvents">
+        Suppress Grid Keyboard Events</a> for full details of this callback.
+    </p>
 
     <p>
         The following example has each cell containing a number. When editing, the arrows are used to manipulate
         its value instead of navigate cells.
     </p>
-
-    <snippet>
-suppressKeyboardEvent: function(event){
-    if (event.editing) return true;
-}</snippet>
 
     <?= example('Controlling keyboard while editing', 'controlling-keyboard-while-editing', 'generated', array("processVue" => true)) ?>
 
