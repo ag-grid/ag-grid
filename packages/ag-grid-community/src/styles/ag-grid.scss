@@ -641,6 +641,9 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         margin: 0;
         width: 100%;
     }
+    input[type="range"] {
+        height: 100%;
+    }
 }
 
 .ag-floating-filter {
@@ -654,8 +657,11 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-floating-filter-full-body {
-    height: 20px;
+    height: 100%;
     width: 100%;
+    .ag-react-container {
+        height: 100%;
+    }
 }
 
 .ag-floating-filter-input {
