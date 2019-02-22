@@ -3,6 +3,7 @@
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
+import { CellEvent } from "../events";
 import { GridCell } from "../entities/gridCell";
 import { Component } from "../widgets/component";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
@@ -105,7 +106,7 @@ export declare class CellComp extends Component {
     private getValue;
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     dispatchCellContextMenuEvent(event: Event): void;
-    private createEvent;
+    createEvent(domEvent: Event | null, eventType: string): CellEvent;
     private onMouseOut;
     private onMouseOver;
     private onCellDoubleClicked;
@@ -124,7 +125,6 @@ export declare class CellComp extends Component {
     setFocusInOnEditor(): void;
     isEditing(): boolean;
     onKeyDown(event: KeyboardEvent): void;
-    doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean;
     setFocusOutOnEditor(): void;
     private onNavigationKeyPressed;
     private onShiftRangeSelect;

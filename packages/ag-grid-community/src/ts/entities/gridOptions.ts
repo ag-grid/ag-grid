@@ -4,7 +4,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
-import { ColDef, ColGroupDef, IAggFunc } from "./colDef";
+import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
@@ -148,20 +148,9 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
-    suppressActionCtrlA?: boolean;
-    suppressActionCtrlC?: boolean;
-    suppressActionCtrlV?: boolean;
-    suppressActionCtrlD?: boolean;
-    suppressActionEnter?: boolean;
-    suppressActionPageUpDown?: boolean;
-    suppressActionHome?: boolean;
-    suppressActionEnd?: boolean;
-    suppressActionArrowKeyNavigation?: boolean;
-    suppressActionF2?: boolean;
-    suppressActionBackspace?: boolean;
-    suppressActionEscape?: boolean;
-    suppressActionSpace?: boolean;
-    suppressActionDelete?: boolean;
+
+    /** Allows user to suppress certain keyboard events */
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;

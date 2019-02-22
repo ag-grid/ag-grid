@@ -135,7 +135,6 @@ var GridPanel = /** @class */ (function (_super) {
         this.setPinnedContainerSize();
         this.setHeaderAndFloatingHeights();
         this.disableBrowserDragging();
-        this.addShortcutKeyListeners();
         this.addMouseListeners();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
@@ -350,58 +349,99 @@ var GridPanel = /** @class */ (function (_super) {
         return null;
     };
     GridPanel.prototype.processKeyboardEvent = function (eventName, keyboardEvent) {
-        var renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
-        if (!renderedCell) {
+        var cellComp = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        if (!cellComp) {
             return;
         }
-        if (this.isUserSuppressingKeyboardEvent(keyboardEvent)) {
-            return;
+        var gridProcessingAllowed = !this.isUserSuppressingKeyboardEvent(keyboardEvent, cellComp);
+        if (gridProcessingAllowed) {
+            switch (eventName) {
+                case 'keydown':
+                    // first see if it's a scroll key, page up / down, home / end etc
+                    var wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+                    // if not a scroll key, then we pass onto cell
+                    if (!wasScrollKey) {
+                        cellComp.onKeyDown(keyboardEvent);
+                    }
+                    this.doClipboardOperations(keyboardEvent, cellComp);
+                    break;
+                case 'keypress':
+                    cellComp.onKeyPress(keyboardEvent);
+                    break;
+            }
         }
-        switch (eventName) {
-            case 'keydown':
-                // first see if it's a scroll key, page up / down, home / end etc
-                var wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
-                // if not a scroll key, then we pass onto cell
-                if (!wasScrollKey) {
-                    renderedCell.onKeyDown(keyboardEvent);
-                }
-                break;
-            case 'keypress':
-                renderedCell.onKeyPress(keyboardEvent);
-                break;
+        if (eventName === 'keydown') {
+            var cellKeyDownEvent = cellComp.createEvent(event, events_1.Events.EVENT_CELL_KEY_DOWN);
+            this.beans.eventService.dispatchEvent(cellKeyDownEvent);
+        }
+        if (eventName === 'keypress') {
+            var cellKeyPressEvent = cellComp.createEvent(event, events_1.Events.EVENT_CELL_KEY_PRESS);
+            this.beans.eventService.dispatchEvent(cellKeyPressEvent);
         }
     };
-    GridPanel.prototype.isUserSuppressingKeyboardEvent = function (keyboardEvent) {
-        var key = keyboardEvent.which || keyboardEvent.keyCode;
-        switch (key) {
-            case constants_1.Constants.KEY_LEFT:
-            case constants_1.Constants.KEY_RIGHT:
-            case constants_1.Constants.KEY_UP:
-            case constants_1.Constants.KEY_DOWN:
-                return this.gridOptionsWrapper.isSuppressActionArrowKeyNavigation();
-            case constants_1.Constants.KEY_TAB:
-                return this.gridOptionsWrapper.isSuppressTabbing();
-            case constants_1.Constants.KEY_ENTER:
-                return this.gridOptionsWrapper.isSuppressActionEnter();
-            case constants_1.Constants.KEY_PAGE_UP:
-            case constants_1.Constants.KEY_PAGE_DOWN:
-                return this.gridOptionsWrapper.isSuppressActionPageUpDown();
-            case constants_1.Constants.KEY_F2:
-                return this.gridOptionsWrapper.isSuppressActionF2();
-            case constants_1.Constants.KEY_BACKSPACE:
-                return this.gridOptionsWrapper.isSuppressActionBackspace();
-            case constants_1.Constants.KEY_ESCAPE:
-                return this.gridOptionsWrapper.isSuppressActionEscape();
-            case constants_1.Constants.KEY_SPACE:
-                return this.gridOptionsWrapper.isSuppressActionSpace();
-            case constants_1.Constants.KEY_DELETE:
-                return this.gridOptionsWrapper.isSuppressActionDelete();
-            case constants_1.Constants.KEY_PAGE_HOME:
-                return this.gridOptionsWrapper.isSuppressActionHome();
-            case constants_1.Constants.KEY_PAGE_END:
-                return this.gridOptionsWrapper.isSuppressActionEnd();
-            default:
-                return false;
+    GridPanel.prototype.doClipboardOperations = function (keyboardEvent, cellComp) {
+        // check if ctrl or meta key pressed
+        if (!keyboardEvent.ctrlKey && !keyboardEvent.metaKey) {
+            return;
+        }
+        // if the cell the event came from is editing, then we do not
+        // want to do the default shortcut keys, otherwise the editor
+        // (eg a text field) would not be able to do the normal cut/copy/paste
+        if (cellComp.isEditing()) {
+            return;
+        }
+        // for copy / paste, we don't want to execute when the event
+        // was from a child grid (happens in master detail)
+        if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) {
+            return;
+        }
+        switch (keyboardEvent.which) {
+            case constants_1.Constants.KEY_A:
+                return this.onCtrlAndA(keyboardEvent);
+            case constants_1.Constants.KEY_C:
+                return this.onCtrlAndC(keyboardEvent);
+            case constants_1.Constants.KEY_V:
+                return this.onCtrlAndV();
+            case constants_1.Constants.KEY_D:
+                return this.onCtrlAndD(keyboardEvent);
+        }
+    };
+    // allows use to tell grid to skip specific keyboard events
+    GridPanel.prototype.isUserSuppressingKeyboardEvent = function (keyboardEvent, cellComp) {
+        var rowNode = cellComp.getRenderedRow().getRowNode();
+        var column = cellComp.getColumn();
+        var gridOptionsFunc = this.gridOptionsWrapper.getSuppressKeyboardEventFunc();
+        var colDefFunc = column.getColDef().suppressKeyboardEvent;
+        // if no callbacks provided by user, then do nothing
+        if (!gridOptionsFunc && !colDefFunc) {
+            return false;
+        }
+        var params = {
+            event: keyboardEvent,
+            editing: cellComp.isEditing(),
+            column: column,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+        };
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            var colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) {
+                return true;
+            }
+        }
+        if (gridOptionsFunc) {
+            // if gridOption func, return the result
+            return gridOptionsFunc(params);
+        }
+        else {
+            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+            return false;
         }
     };
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
@@ -481,40 +521,7 @@ var GridPanel = /** @class */ (function (_super) {
             mouseEvent.preventDefault();
         }
     };
-    GridPanel.prototype.addShortcutKeyListeners = function () {
-        var _this = this;
-        this.eAllCellContainers.forEach(function (container) {
-            _this.addDestroyableEventListener(container, 'keydown', function (event) {
-                var renderedCell = _this.mouseEventService.getRenderedCellForEvent(event);
-                if (
-                // if the cell the event came from is editing, then we do not
-                // want to do the default shortcut keys, otherwise the editor
-                // (eg a text field) would not be able to do the normal cut/copy/paste
-                renderedCell && renderedCell.isEditing() ||
-                    // for copy / paste, we don't want to execute when the event
-                    // was from a child grid (happens in master detail)
-                    !_this.mouseEventService.isEventFromThisGrid(event)) {
-                    return;
-                }
-                if (event.ctrlKey || event.metaKey) {
-                    switch (event.which) {
-                        case constants_1.Constants.KEY_A:
-                            return _this.onCtrlAndA(event);
-                        case constants_1.Constants.KEY_C:
-                            return _this.onCtrlAndC(event);
-                        case constants_1.Constants.KEY_V:
-                            return _this.onCtrlAndV(event);
-                        case constants_1.Constants.KEY_D:
-                            return _this.onCtrlAndD(event);
-                    }
-                }
-            });
-        });
-    };
     GridPanel.prototype.onCtrlAndA = function (event) {
-        if (this.gridOptionsWrapper.isSuppressActionCtrlA()) {
-            return;
-        }
         var _a = this, columnController = _a.columnController, pinnedRowModel = _a.pinnedRowModel, paginationProxy = _a.paginationProxy, rangeController = _a.rangeController;
         var PINNED_BOTTOM = constants_1.Constants.PINNED_BOTTOM, PINNED_TOP = constants_1.Constants.PINNED_TOP;
         if (rangeController && paginationProxy.isRowsToRender()) {
@@ -547,14 +554,10 @@ var GridPanel = /** @class */ (function (_super) {
             });
         }
         event.preventDefault();
-        return false;
     };
     GridPanel.prototype.onCtrlAndC = function (event) {
-        if (this.gridOptionsWrapper.isSuppressActionCtrlC()) {
-            return;
-        }
         if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) {
-            return false;
+            return;
         }
         var focusedCell = this.focusedCellController.getFocusedCell();
         this.clipboardService.copyToClipboard();
@@ -565,28 +568,19 @@ var GridPanel = /** @class */ (function (_super) {
         if (focusedCell) {
             this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
         }
-        return false;
     };
-    GridPanel.prototype.onCtrlAndV = function (event) {
-        if (this.gridOptionsWrapper.isSuppressActionCtrlV()) {
-            return;
-        }
+    GridPanel.prototype.onCtrlAndV = function () {
         if (!this.enterprise || this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             return;
         }
         this.clipboardService.pasteFromClipboard();
-        return false;
     };
     GridPanel.prototype.onCtrlAndD = function (event) {
-        if (this.gridOptionsWrapper.isSuppressActionCtrlD()) {
-            return;
-        }
         if (!this.enterprise) {
             return;
         }
         this.clipboardService.copyRangeDown();
         event.preventDefault();
-        return false;
     };
     // Valid values for position are bottom, middle and top
     // position should be {'top','middle','bottom', or undefined/null}.

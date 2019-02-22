@@ -110,6 +110,7 @@ export declare class GridPanel extends Component {
     getBodyClientRect(): ClientRect;
     private getRowForEvent;
     private processKeyboardEvent;
+    private doClipboardOperations;
     private isUserSuppressingKeyboardEvent;
     scrollToTop(): void;
     private processMouseEvent;
@@ -117,7 +118,6 @@ export declare class GridPanel extends Component {
     private handleContextMenuMouseEvent;
     private onContextMenu;
     private preventDefaultOnContextMenu;
-    private addShortcutKeyListeners;
     private onCtrlAndA;
     private onCtrlAndC;
     private onCtrlAndV;

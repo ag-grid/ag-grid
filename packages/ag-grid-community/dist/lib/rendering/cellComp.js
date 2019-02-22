@@ -1044,10 +1044,6 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
-        // give user a chance to cancel event processing
-        if (this.doesUserWantToCancelKeyboardEvent(event)) {
-            return;
-        }
         switch (key) {
             case constants_1.Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -1071,30 +1067,6 @@ var CellComp = /** @class */ (function (_super) {
             case constants_1.Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
-        }
-        var cellKeyDownEvent = this.createEvent(event, events_1.Events.EVENT_CELL_KEY_DOWN);
-        this.beans.eventService.dispatchEvent(cellKeyDownEvent);
-    };
-    CellComp.prototype.doesUserWantToCancelKeyboardEvent = function (event) {
-        var colDef = this.getComponentHolder();
-        var callback = colDef.suppressKeyboardEvent;
-        if (!callback || utils_1._.missing(callback)) {
-            return false;
-        }
-        else {
-            // if editing is null or undefined, this sets it to false
-            var params = {
-                event: event,
-                editing: this.editingCell,
-                column: this.column,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                node: this.rowNode,
-                data: this.rowNode.data,
-                colDef: colDef,
-                context: this.beans.gridOptionsWrapper.getContext(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
-            };
-            return callback(params);
         }
     };
     CellComp.prototype.setFocusOutOnEditor = function () {
@@ -1195,8 +1167,6 @@ var CellComp = /** @class */ (function (_super) {
                 }
             }
         }
-        var cellKeyPressEvent = this.createEvent(event, events_1.Events.EVENT_CELL_KEY_PRESS);
-        this.beans.eventService.dispatchEvent(cellKeyPressEvent);
     };
     CellComp.prototype.onSpaceKeyPressed = function (event) {
         if (!this.editingCell && this.beans.gridOptionsWrapper.isRowSelection()) {

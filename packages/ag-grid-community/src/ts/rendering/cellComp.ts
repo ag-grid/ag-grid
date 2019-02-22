@@ -966,7 +966,7 @@ export class CellComp extends Component {
         }
     }
 
-    private createEvent(domEvent: Event | null, eventType: string): CellEvent {
+    public createEvent(domEvent: Event | null, eventType: string): CellEvent {
         const event: CellEvent = {
             node: this.rowNode,
             data: this.rowNode.data,
@@ -1270,11 +1270,6 @@ export class CellComp extends Component {
     public onKeyDown(event: KeyboardEvent): void {
         const key = event.which || event.keyCode;
 
-        // give user a chance to cancel event processing
-        if (this.doesUserWantToCancelKeyboardEvent(event)) {
-            return;
-        }
-
         switch (key) {
             case Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -1298,31 +1293,6 @@ export class CellComp extends Component {
             case Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
-        }
-
-        const cellKeyDownEvent: CellKeyDownEvent = this.createEvent(event, Events.EVENT_CELL_KEY_DOWN);
-        this.beans.eventService.dispatchEvent(cellKeyDownEvent);
-    }
-
-    public doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean {
-        const colDef = this.getComponentHolder();
-        const callback = colDef.suppressKeyboardEvent;
-        if (!callback || _.missing(callback)) {
-            return false;
-        } else {
-            // if editing is null or undefined, this sets it to false
-            const params: SuppressKeyboardEventParams = {
-                event: event,
-                editing: this.editingCell,
-                column: this.column,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                node: this.rowNode,
-                data: this.rowNode.data,
-                colDef: colDef,
-                context: this.beans.gridOptionsWrapper.getContext(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
-            };
-            return callback(params);
         }
     }
 
@@ -1437,9 +1407,6 @@ export class CellComp extends Component {
                 }
             }
         }
-
-        const cellKeyPressEvent: CellKeyPressEvent = this.createEvent(event, Events.EVENT_CELL_KEY_PRESS);
-        this.beans.eventService.dispatchEvent(cellKeyPressEvent);
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {

@@ -155,6 +155,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     processDataFromClipboard: any;
     getServerSideGroupKey: any;
     isServerSideGroup: any;
+    suppressKeyboardEvent: any;
     toolPanelSuppressRowGroups: any;
     toolPanelSuppressValues: any;
     toolPanelSuppressPivots: any;
@@ -279,20 +280,6 @@ export declare class AgGridNg2 implements AfterViewInit {
     enableCellTextSelection: any;
     suppressBrowserResizeObserver: any;
     suppressMaxRenderedRowRestriction: any;
-    suppressActionCtrlA: any;
-    suppressActionCtrlV: any;
-    suppressActionCtrlC: any;
-    suppressActionCtrlD: any;
-    suppressActionEnter: any;
-    suppressActionPageUpDown: any;
-    suppressActionArrowKeyNavigation: any;
-    suppressActionF2: any;
-    suppressActionBackspace: any;
-    suppressActionEscape: any;
-    suppressActionSpace: any;
-    suppressActionDelete: any;
-    suppressActionHome: any;
-    suppressActionEnd: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;

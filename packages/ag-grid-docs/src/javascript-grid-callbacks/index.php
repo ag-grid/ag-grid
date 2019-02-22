@@ -151,6 +151,14 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-grouping/#default-group-order">Default Group Order</a>.
             </td>
         </tr>
+        <tr>
+            <th>suppressKeyboardEvent(params)</th>
+            <td>
+                Suppress the grid taking action for the relevant keyboard event.
+                See <a href="../javascript-grid-keyboard-navigation/#suppressKeyboardEvents">
+                Suppress Grid Keyboard Events</a>.
+            </td>
+        </tr>
 
         <?php include_once '../javascript-grid-pagination/paginationProperties.php' ?>
         <?php printPropertiesRows($paginationCallbacks) ?>

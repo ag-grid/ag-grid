@@ -65,20 +65,6 @@ export declare class GridOptionsWrapper {
     isRowModelServerSide(): boolean;
     isRowModelDefault(): boolean;
     isFullRowEdit(): boolean;
-    isSuppressActionArrowKeyNavigation(): boolean;
-    isSuppressActionPageUpDown(): boolean;
-    isSuppressActionF2(): boolean;
-    isSuppressActionBackspace(): boolean;
-    isSuppressActionEscape(): boolean;
-    isSuppressActionDelete(): boolean;
-    isSuppressActionHome(): boolean;
-    isSuppressActionEnd(): boolean;
-    isSuppressActionSpace(): boolean;
-    isSuppressActionEnter(): boolean;
-    isSuppressActionCtrlA(): boolean;
-    isSuppressActionCtrlC(): boolean;
-    isSuppressActionCtrlV(): boolean;
-    isSuppressActionCtrlD(): boolean;
     isSuppressFocusAfterRefresh(): boolean;
     isSuppressBrowserResizeObserver(): boolean;
     isSuppressMaintainUnsortedOrder(): boolean;
@@ -144,6 +130,7 @@ export declare class GridOptionsWrapper {
     getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined;
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
+    getSuppressKeyboardEventFunc(): (params: import("./entities/colDef").SuppressKeyboardEventParams) => boolean;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getApi(): GridApi | undefined | null;
     getColumnApi(): ColumnApi | undefined | null;

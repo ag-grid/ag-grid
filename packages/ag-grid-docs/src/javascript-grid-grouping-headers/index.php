@@ -44,6 +44,12 @@ gridOptions.columnDefs = [
     }
 ];</snippet>
 
+    <p>
+        Below shows an example of column group configuration.
+    </p>
+
+    <?= example('Basic Grouping', 'basic-grouping', 'generated', array("processVue" => true)) ?>
+
     <h2>Column Definitions vs Column Group Definitions</h2>
 
     <p>
@@ -154,14 +160,6 @@ Change the theme class to the one you use.
     float: right;
 }
 </snippet>
-
-    <h2 id="grouping-example">Grouping Example</h2>
-
-    <p>
-        Here is a basic example of grouping in action.
-    </p>
-
-    <?= example('Basic Grouping', 'basic-grouping', 'generated', array("processVue" => true)) ?>
 
     <h2 id="grouping-example-with-marrychildren-set">Marry Children</h2>
 

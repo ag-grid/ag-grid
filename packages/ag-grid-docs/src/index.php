@@ -67,12 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                22nd Feb 2019: <a href="./ag-grid-changelog/?fixVersion=20.1.0">Version 20.1.0</a> Improvements and bug fixes
-            </div>
-        </section>
-        <section id="news-flash">
-            <div>
-                11th Jan 2019: <a href="./ag-grid-changelog/?fixVersion=20.0.0">Version 20.0.0</a> Server Side Master Detail, Vue.js improvements and bug fixes
+                22nd Feb 2019: <a href="./ag-grid-changelog/?fixVersion=20.1.0">Version 20.1.0</a> Tooltip Components, Custom Filters Options, Loading Components and bug fixes
             </div>
         </section>
 

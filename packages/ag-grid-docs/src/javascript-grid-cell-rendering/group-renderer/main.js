@@ -41,7 +41,6 @@ var columnDefs = [
         cellRendererParams: {
             suppressCount: true,
             checkbox: true,
-            padding: 20,
             innerRenderer: 'simpleCellRenderer',
             suppressDoubleClickExpand: true
         }

@@ -68,10 +68,7 @@ var PropertyKeys = /** @class */ (function () {
         'suppressRowHoverHighlight', 'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste',
         'serverSideSortingAlwaysResets', 'reactNext', 'suppressSetColumnStateEvents', 'enableCharts',
         'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver',
-        'suppressMaxRenderedRowRestriction', 'suppressActionCtrlA', 'suppressActionCtrlV', 'suppressActionCtrlC',
-        'suppressActionCtrlD', 'suppressActionEnter', 'suppressActionPageUpDown', 'suppressActionArrowKeyNavigation',
-        'suppressActionF2', 'suppressActionBackspace', 'suppressActionEscape', 'suppressActionSpace',
-        'suppressActionDelete', 'suppressActionHome', 'suppressActionEnd'
+        'suppressMaxRenderedRowRestriction'
     ];
     PropertyKeys.FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
@@ -84,7 +81,8 @@ var PropertyKeys = /** @class */ (function () {
         'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent',
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'onGridReady',
         'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard',
-        'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup'];
+        'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
+        'suppressKeyboardEvent'];
     PropertyKeys.ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)
         .concat(PropertyKeys.STRING_PROPERTIES)

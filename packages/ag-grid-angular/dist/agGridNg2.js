@@ -150,6 +150,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.processDataFromClipboard = undefined;
         this.getServerSideGroupKey = undefined;
         this.isServerSideGroup = undefined;
+        this.suppressKeyboardEvent = undefined;
         this.toolPanelSuppressRowGroups = undefined;
         this.toolPanelSuppressValues = undefined;
         this.toolPanelSuppressPivots = undefined;
@@ -274,20 +275,6 @@ var AgGridNg2 = /** @class */ (function () {
         this.enableCellTextSelection = undefined;
         this.suppressBrowserResizeObserver = undefined;
         this.suppressMaxRenderedRowRestriction = undefined;
-        this.suppressActionCtrlA = undefined;
-        this.suppressActionCtrlV = undefined;
-        this.suppressActionCtrlC = undefined;
-        this.suppressActionCtrlD = undefined;
-        this.suppressActionEnter = undefined;
-        this.suppressActionPageUpDown = undefined;
-        this.suppressActionArrowKeyNavigation = undefined;
-        this.suppressActionF2 = undefined;
-        this.suppressActionBackspace = undefined;
-        this.suppressActionEscape = undefined;
-        this.suppressActionSpace = undefined;
-        this.suppressActionDelete = undefined;
-        this.suppressActionHome = undefined;
-        this.suppressActionEnd = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -596,6 +583,7 @@ var AgGridNg2 = /** @class */ (function () {
         'processDataFromClipboard': [{ type: core_1.Input },],
         'getServerSideGroupKey': [{ type: core_1.Input },],
         'isServerSideGroup': [{ type: core_1.Input },],
+        'suppressKeyboardEvent': [{ type: core_1.Input },],
         'toolPanelSuppressRowGroups': [{ type: core_1.Input },],
         'toolPanelSuppressValues': [{ type: core_1.Input },],
         'toolPanelSuppressPivots': [{ type: core_1.Input },],
@@ -720,20 +708,6 @@ var AgGridNg2 = /** @class */ (function () {
         'enableCellTextSelection': [{ type: core_1.Input },],
         'suppressBrowserResizeObserver': [{ type: core_1.Input },],
         'suppressMaxRenderedRowRestriction': [{ type: core_1.Input },],
-        'suppressActionCtrlA': [{ type: core_1.Input },],
-        'suppressActionCtrlV': [{ type: core_1.Input },],
-        'suppressActionCtrlC': [{ type: core_1.Input },],
-        'suppressActionCtrlD': [{ type: core_1.Input },],
-        'suppressActionEnter': [{ type: core_1.Input },],
-        'suppressActionPageUpDown': [{ type: core_1.Input },],
-        'suppressActionArrowKeyNavigation': [{ type: core_1.Input },],
-        'suppressActionF2': [{ type: core_1.Input },],
-        'suppressActionBackspace': [{ type: core_1.Input },],
-        'suppressActionEscape': [{ type: core_1.Input },],
-        'suppressActionSpace': [{ type: core_1.Input },],
-        'suppressActionDelete': [{ type: core_1.Input },],
-        'suppressActionHome': [{ type: core_1.Input },],
-        'suppressActionEnd': [{ type: core_1.Input },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
         'columnPivotModeChanged': [{ type: core_1.Output },],

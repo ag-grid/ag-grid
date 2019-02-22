@@ -789,30 +789,6 @@ include '../documentation-main/documentation_header.php';
                 alternative implementation should such problems exist.
             </td>
         </tr>
-        <tr>
-            <th>
-                suppressActionCtrlC,<br/>
-                suppressActionCtrlA,<br/>
-                suppressActionCtrlV,<br/>
-                suppressActionCtrlD,<br/>
-                suppressActionEnter,<br/>
-                suppressActionPageUpDown,<br/>
-                suppressActionHome,<br/>
-                suppressActionEnd,<br/>
-                suppressActionArrowKeyNavigation,<br/>
-                suppressActionF2,<br/>
-                suppressActionBackspace,<br/>
-                suppressActionEscape,<br/>
-                suppressActionSpace,<br/>
-                suppressActionDelete,<br/>
-                suppressTabbing
-            </th>
-            <td>
-                Suppress the grid taking action for the relevant key.
-                See <a href="../javascript-grid-keyboard-navigation/#suppressKeyboardActions">
-                Suppress Grid Keyboard Actions</a>.
-            </td>
-        </tr>
     </table>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -190,48 +190,6 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isFullRowEdit = function () {
         return this.gridOptions.editType === 'fullRow';
     };
-    GridOptionsWrapper.prototype.isSuppressActionArrowKeyNavigation = function () {
-        return isTrue(this.gridOptions.suppressActionArrowKeyNavigation);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionPageUpDown = function () {
-        return isTrue(this.gridOptions.suppressActionPageUpDown);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionF2 = function () {
-        return isTrue(this.gridOptions.suppressActionF2);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionBackspace = function () {
-        return isTrue(this.gridOptions.suppressActionBackspace);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionEscape = function () {
-        return isTrue(this.gridOptions.suppressActionEscape);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionDelete = function () {
-        return isTrue(this.gridOptions.suppressActionDelete);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionHome = function () {
-        return isTrue(this.gridOptions.suppressActionHome);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionEnd = function () {
-        return isTrue(this.gridOptions.suppressActionEnd);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionSpace = function () {
-        return isTrue(this.gridOptions.suppressActionSpace);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionEnter = function () {
-        return isTrue(this.gridOptions.suppressActionEnter);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionCtrlA = function () {
-        return isTrue(this.gridOptions.suppressActionCtrlA);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionCtrlC = function () {
-        return isTrue(this.gridOptions.suppressActionCtrlC);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionCtrlV = function () {
-        return isTrue(this.gridOptions.suppressActionCtrlV);
-    };
-    GridOptionsWrapper.prototype.isSuppressActionCtrlD = function () {
-        return isTrue(this.gridOptions.suppressActionCtrlD);
-    };
     GridOptionsWrapper.prototype.isSuppressFocusAfterRefresh = function () {
         return isTrue(this.gridOptions.suppressFocusAfterRefresh);
     };
@@ -247,43 +205,6 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getSideBar = function () {
         return this.gridOptions.sideBar;
     };
-    // public isToolPanelSuppressValues() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressValues);
-    // }
-    //
-    // public isToolPanelSuppressPivots() {
-    //     // we don't allow pivots when doing tree data
-    //     return isTrue(this.gridOptions.toolPanelSuppressPivots) || this.isTreeData();
-    // }
-    //
-    // public isToolPanelSuppressRowGroups() {
-    //     // we don't allow row grouping when doing tree data
-    //     return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
-    // }
-    //
-    // public isToolPanelSuppressSideButtons() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressSideButtons);
-    // }
-    //
-    // public isToolPanelSuppressPivotMode() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
-    // }
-    //
-    // public isContractColumnSelection() {
-    //     return isTrue(this.gridOptions.contractColumnSelection);
-    // }
-    //
-    // public isToolPanelSuppressColumnFilter() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressColumnFilter);
-    // }
-    //
-    // public isToolPanelSuppressColumnSelectAll() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressColumnSelectAll);
-    // }
-    //
-    // public isToolPanelSuppressColumnExpandAll() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll);
-    // }
     GridOptionsWrapper.prototype.isSuppressTouch = function () {
         return isTrue(this.gridOptions.suppressTouch);
     };
@@ -477,6 +398,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () {
         return isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
+    };
+    GridOptionsWrapper.prototype.getSuppressKeyboardEventFunc = function () {
+        return this.gridOptions.suppressKeyboardEvent;
     };
     GridOptionsWrapper.prototype.getBusinessKeyForNodeFunc = function () {
         return this.gridOptions.getBusinessKeyForNode;
@@ -1181,6 +1105,9 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
         if (options.embedFullWidthRows) {
             console.warn("ag-Grid: since v20.1, embedFullWidthRows is now gone. This property was introduced to allow faster vertical scrolling when using slow browsers (IE) and full width rows. However in v20 the dom layout was redesigned and this performance problem no longer exists, hence this property 'hack' is no longer necessary.");
+        }
+        if (options.suppressTabbing) {
+            console.warn("ag-Grid: since v20.1, suppressTabbing is replaced with the more powerful grid callback suppressKeyboardEvent(params) which can suppress any keyboard event including tabbing.");
         }
     };
     GridOptionsWrapper.prototype.checkForViolations = function () {
