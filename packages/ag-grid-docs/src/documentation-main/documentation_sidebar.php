@@ -40,25 +40,6 @@
         </div>
     </div>
     <div class="card card-highlight">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.0.0">Version 20.0.0 Released</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Jan 11</h6>
-        <p class="card-text">
-            Major release with the following feature highlights:
-        <ul>
-            <li>
-                <a class="learn-more" href="https://www.ag-grid.com/javascript-grid-server-side-model-master-detail/">Server Side Master Detail</a>.
-            </li>
-            <li>
-                <a class="learn-more" href="https://www.ag-grid.com/best-vuejs-data-grid/">Vue.js Improvements</a>.
-            </li>
-        </ul>
-        </p>
-
-        <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=20.0.0">Change Log</a>
-        </p>
-    </div>
 </div>
 <br>
 
