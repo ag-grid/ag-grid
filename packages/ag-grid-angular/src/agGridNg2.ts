@@ -293,6 +293,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public processDataFromClipboard : any = undefined;
     @Input() public getServerSideGroupKey : any = undefined;
     @Input() public isServerSideGroup : any = undefined;
+    @Input() public suppressKeyboardEvent : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
@@ -417,20 +418,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableCellTextSelection : any = undefined;
     @Input() public suppressBrowserResizeObserver : any = undefined;
     @Input() public suppressMaxRenderedRowRestriction : any = undefined;
-    @Input() public suppressActionCtrlA : any = undefined;
-    @Input() public suppressActionCtrlV : any = undefined;
-    @Input() public suppressActionCtrlC : any = undefined;
-    @Input() public suppressActionCtrlD : any = undefined;
-    @Input() public suppressActionEnter : any = undefined;
-    @Input() public suppressActionPageUpDown : any = undefined;
-    @Input() public suppressActionArrowKeyNavigation : any = undefined;
-    @Input() public suppressActionF2 : any = undefined;
-    @Input() public suppressActionBackspace : any = undefined;
-    @Input() public suppressActionEscape : any = undefined;
-    @Input() public suppressActionSpace : any = undefined;
-    @Input() public suppressActionDelete : any = undefined;
-    @Input() public suppressActionHome : any = undefined;
-    @Input() public suppressActionEnd : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();

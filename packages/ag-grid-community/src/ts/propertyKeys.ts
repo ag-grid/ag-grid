@@ -61,10 +61,7 @@ export class PropertyKeys {
         'suppressRowHoverHighlight', 'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste',
         'serverSideSortingAlwaysResets', 'reactNext', 'suppressSetColumnStateEvents', 'enableCharts',
         'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver',
-        'suppressMaxRenderedRowRestriction', 'suppressActionCtrlA', 'suppressActionCtrlV', 'suppressActionCtrlC',
-        'suppressActionCtrlD', 'suppressActionEnter', 'suppressActionPageUpDown', 'suppressActionArrowKeyNavigation',
-        'suppressActionF2', 'suppressActionBackspace', 'suppressActionEscape', 'suppressActionSpace',
-        'suppressActionDelete', 'suppressActionHome', 'suppressActionEnd'
+        'suppressMaxRenderedRowRestriction'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
@@ -78,7 +75,8 @@ export class PropertyKeys {
         'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent',
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'onGridReady',
         'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard',
-        'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup'];
+        'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
+        'suppressKeyboardEvent'];
 
     public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

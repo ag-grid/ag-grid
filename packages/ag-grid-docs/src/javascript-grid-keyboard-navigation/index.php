@@ -245,37 +245,78 @@ myInput.addEventListener("keydown", function (event) {
         </li>
     </ul>
 
-    <h2 id="suppressKeyboardActions">Suppress Grid Keyboard Actions</h2>
+    <?= example('Keyboard Events', 'keyboard-events', 'generated', array("enterprise" => 1)) ?>
+
+    <h2 id="suppressKeyboardEvents">Suppress Grid Keyboard Events</h2>
 
     <p>
-        It is possible to suppress the default grid actions of the grid. The following is a list of all
-        properties to suppress the relevant grid keyboard actions:
+        It is possible to stop the grid acting on particular events. To do this implement
+        <code>suppressKeyboardEvent</code> callback. The callback should return true if the
+        grid should suppress the events, or false to continue as normal.
+    </p>
+
+    <p>
+        The callback has the following signature:
+    </p>
+
+<snippet>function suppressKeyboardEvent(params: SuppressKeyboardEventParams) => boolean;
+
+export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
+
+    // the keyboard event the grid received. inspect this to see what key was pressed
+    event: KeyboardEvent;
+
+    // whether the cell is editing or not. sometimes you might want to suppress event
+    // only when cell is editing.
+    editing: boolean;
+
+    node: RowNode; // row node
+    data: any; // row data
+    column: Column; // column
+    colDef: ColDef; // column definition
+    context: any; // context object
+    api: GridApi | null | undefined; // grid API
+    columnApi: ColumnApi | null | undefined; // column API
+}</snippet>
+
+    <p>
+        The callback is available as a <a href="../javascript-grid-callbacks/">grid callback</a>
+        (gets called regardless of what cell the keyboard event is on) and as a
+        <a href="../javascript-grid-column-properties/">column callback</a>
+        (set on the column definition and gets called only for that column). If you provide the callback on both
+        the grid and column definition, then if either return 'true' the event
+        will be suppressed.
+    </p>
+
+    <p>
+        The example below demonstrates suppressing the following keyboard events:
     </p>
 
     <ul>
-        <li><code>suppressActionCtrlA</code>: <kbd>Ctrl & A</kbd> will not select all cells into a range.</li>
-        <li><code>suppressActionCtrlC</code>: <kbd>Ctrl & C</kbd> will not copy to clipboard.</li>
-        <li><code>suppressActionCtrlV</code>: <kbd>Ctrl & V</kbd> will not paste from clipboard.</li>
-        <li><code>suppressActionCtrlD</code>: <kbd>Ctrl & D</kbd> will not copy range down.</li>
-        <li>
-            <code>suppressActionEnter</code>: <kbd>Enter</kbd> will either a) not start editing or b) not move down
-            (if <code>enterMovesDown=true</code>).
+        <li>On the Athlete column only:
+            <ul>
+                <kbd>Enter</kbd> will not start or stop editing.
+            </ul>
         </li>
-        <li><code>suppressActionPageUpDown</code>: <kbd>Page Up</kbd> and <kbd>Page Down</kbd> will not get handled by the grid.</li>
-        <li><code>suppressActionHome</code>: <kbd>Home</kbd> will not focus top left cell.</li>
-        <li><code>suppressActionEnd</code>: <kbd>End</kbd> will not focus bottom right cell.</li>
-        <li><code>suppressActionArrowKeyNavigation</code>: <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&rarr;</kbd> <kbd>&darr;</kbd> Arrow keys will not navigate focused cell.</li>
-        <li><code>suppressActionF2</code>: <kbd>F2</kbd> will not start editing.</li>
-        <li><code>suppressActionDelete</code>: <kbd>Delete</kbd> will not start editing.</li>
-        <li><code>suppressActionBackspace</code>: <kbd>Backspace</kbd> will not start editing.</li>
-        <li><code>suppressActionEscape</code>: <kbd>Escape</kbd> will not cancel editing.</li>
-        <li><code>suppressActionSpace</code>: <kbd>Space</kbd> will not select current row.</li>
-        <li><code>suppressTabbing</code>: <kbd>Tab</kbd> will not be handled by the grid.</li>
+        <li>On all other columns:
+            <ul>
+                <li><kbd>Ctrl & A</kbd> will not select all cells into a range.</li>
+                <li><kbd>Ctrl & C</kbd> will not copy to clipboard.</li>
+                <li><kbd>Ctrl & V</kbd> will not paste from clipboard.</li>
+                <li><kbd>Ctrl & D</kbd> will not copy range down.</li>
+                <li><kbd>Page Up</kbd> and <kbd>Page Down</kbd> will not get handled by the grid.</li>
+                <li><kbd>Home</kbd> will not focus top left cell.</li>
+                <li><kbd>End</kbd> will not focus bottom right cell.</li>
+                <li><kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&rarr;</kbd> <kbd>&darr;</kbd> Arrow keys will not navigate focused cell.</li>
+                <li><kbd>F2</kbd> will not start editing.</li>
+                <li><kbd>Delete</kbd> will not start editing.</li>
+                <li><kbd>Backspace</kbd> will not start editing.</li>
+                <li><kbd>Escape</kbd> will not cancel editing.</li>
+                <li><kbd>Space</kbd> will not select current row.</li>
+                <li><kbd>Tab</kbd> will not be handled by the grid.</li>
+            </ul>
+        </li>
     </ul>
-
-    <p>
-        The example below demonstrates all the properties above.
-    </p>
 
     <?= example('Suppress Keys', 'suppress-keys', 'generated', array("enterprise" => 1)) ?>
 

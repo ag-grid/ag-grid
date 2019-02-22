@@ -287,62 +287,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.editType === 'fullRow';
     }
 
-    public isSuppressActionArrowKeyNavigation() {
-        return isTrue(this.gridOptions.suppressActionArrowKeyNavigation);
-    }
-
-    public isSuppressActionPageUpDown() {
-        return isTrue(this.gridOptions.suppressActionPageUpDown);
-    }
-
-    public isSuppressActionF2() {
-        return isTrue(this.gridOptions.suppressActionF2);
-    }
-
-    public isSuppressActionBackspace() {
-        return isTrue(this.gridOptions.suppressActionBackspace);
-    }
-
-    public isSuppressActionEscape() {
-        return isTrue(this.gridOptions.suppressActionEscape);
-    }
-
-    public isSuppressActionDelete() {
-        return isTrue(this.gridOptions.suppressActionDelete);
-    }
-
-    public isSuppressActionHome() {
-        return isTrue(this.gridOptions.suppressActionHome);
-    }
-
-    public isSuppressActionEnd() {
-        return isTrue(this.gridOptions.suppressActionEnd);
-    }
-
-    public isSuppressActionSpace() {
-        return isTrue(this.gridOptions.suppressActionSpace);
-    }
-
-    public isSuppressActionEnter() {
-        return isTrue(this.gridOptions.suppressActionEnter);
-    }
-
-    public isSuppressActionCtrlA() {
-        return isTrue(this.gridOptions.suppressActionCtrlA);
-    }
-
-    public isSuppressActionCtrlC() {
-        return isTrue(this.gridOptions.suppressActionCtrlC);
-    }
-
-    public isSuppressActionCtrlV() {
-        return isTrue(this.gridOptions.suppressActionCtrlV);
-    }
-
-    public isSuppressActionCtrlD() {
-        return isTrue(this.gridOptions.suppressActionCtrlD);
-    }
-
     public isSuppressFocusAfterRefresh() {
         return isTrue(this.gridOptions.suppressFocusAfterRefresh);
     }
@@ -362,44 +306,6 @@ export class GridOptionsWrapper {
     public getSideBar(): SideBarDef {
         return (this.gridOptions.sideBar as SideBarDef);
     }
-
-    // public isToolPanelSuppressValues() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressValues);
-    // }
-    //
-    // public isToolPanelSuppressPivots() {
-    //     // we don't allow pivots when doing tree data
-    //     return isTrue(this.gridOptions.toolPanelSuppressPivots) || this.isTreeData();
-    // }
-    //
-    // public isToolPanelSuppressRowGroups() {
-    //     // we don't allow row grouping when doing tree data
-    //     return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
-    // }
-    //
-    // public isToolPanelSuppressSideButtons() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressSideButtons);
-    // }
-    //
-    // public isToolPanelSuppressPivotMode() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
-    // }
-    //
-    // public isContractColumnSelection() {
-    //     return isTrue(this.gridOptions.contractColumnSelection);
-    // }
-    //
-    // public isToolPanelSuppressColumnFilter() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressColumnFilter);
-    // }
-    //
-    // public isToolPanelSuppressColumnSelectAll() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressColumnSelectAll);
-    // }
-    //
-    // public isToolPanelSuppressColumnExpandAll() {
-    //     return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll);
-    // }
 
     public isSuppressTouch() {
         return isTrue(this.gridOptions.suppressTouch);
@@ -652,6 +558,10 @@ export class GridOptionsWrapper {
 
     public isEmbedFullWidthRows() {
         return isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
+    }
+
+    public getSuppressKeyboardEventFunc() {
+        return this.gridOptions.suppressKeyboardEvent;
     }
 
     public getBusinessKeyForNodeFunc() {
@@ -1515,6 +1425,10 @@ export class GridOptionsWrapper {
 
         if (options.embedFullWidthRows) {
             console.warn(`ag-Grid: since v20.1, embedFullWidthRows is now gone. This property was introduced to allow faster vertical scrolling when using slow browsers (IE) and full width rows. However in v20 the dom layout was redesigned and this performance problem no longer exists, hence this property 'hack' is no longer necessary.`);
+        }
+
+        if (options.suppressTabbing) {
+            console.warn(`ag-Grid: since v20.1, suppressTabbing is replaced with the more powerful grid callback suppressKeyboardEvent(params) which can suppress any keyboard event including tabbing.`);
         }
 
     }

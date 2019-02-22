@@ -1,5 +1,7 @@
 var columnDefs = [
-    {field: "athlete", width: 200},
+    {field: "athlete", width: 200,
+        suppressKeyboardEvent: suppressEnter,
+    },
     {field: "age"},
     {field: "country"},
     {field: "year"},
@@ -11,6 +13,16 @@ var columnDefs = [
     {field: "total"}
 ];
 
+function suppressEnter(params) {
+    let KEY_ENTER = 13;
+
+    var event = params.event;
+    var key = event.which;
+    var suppress = key === KEY_ENTER;
+
+    return suppress;
+}
+
 var gridOptions = {
     rowData: null,
     columnDefs: columnDefs,
@@ -21,22 +33,45 @@ var gridOptions = {
     enableRangeSelection: true,
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
+    suppressKeyboardEvent: function(params) {
 
-    suppressActionCtrlA: true,
-    suppressActionCtrlC: true,
-    suppressActionCtrlD: true,
-    suppressActionCtrlV: true,
-    suppressActionEnter: true,
-    suppressActionPageUpDown: true,
-    suppressTabbing: true,
-    suppressActionArrowKeyNavigation: true,
-    suppressActionF2: true,
-    suppressActionBackspace: true,
-    suppressActionEscape: true,
-    suppressActionSpace: true,
-    suppressActionDelete: true,
-    suppressActionHome: true,
-    suppressActionEnd: true
+        let KEY_A = 65;
+        let KEY_C = 67;
+        let KEY_V = 86;
+        let KEY_D = 68;
+
+        let KEY_PAGE_UP = 33;
+        let KEY_PAGE_DOWN = 34;
+        let KEY_TAB = 9;
+        let KEY_LEFT = 37;
+        let KEY_UP = 38;
+        let KEY_RIGHT = 39;
+        let KEY_DOWN = 40;
+        let KEY_F2 = 113;
+        let KEY_BACKSPACE = 8;
+        let KEY_ESCAPE = 27;
+        let KEY_SPACE = 32;
+        let KEY_DELETE = 46;
+        let KEY_PAGE_HOME = 36;
+        let KEY_PAGE_END = 35;
+
+        var event = params.event;
+        var key = event.which;
+
+        var keysToSuppress = [KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_TAB, KEY_LEFT, KEY_UP, KEY_RIGHT,
+            KEY_DOWN, KEY_F2, KEY_BACKSPACE, KEY_ESCAPE, KEY_SPACE, KEY_DELETE, KEY_PAGE_HOME, KEY_PAGE_END];
+
+        if (event.ctrlKey || event.metaKey) {
+            keysToSuppress.push(KEY_A);
+            keysToSuppress.push(KEY_V);
+            keysToSuppress.push(KEY_C);
+            keysToSuppress.push(KEY_D);
+        }
+
+        var suppress = keysToSuppress.indexOf(key) >= 0;
+
+        return suppress;
+    },
 };
 
 // setup the grid after the page has finished loading
