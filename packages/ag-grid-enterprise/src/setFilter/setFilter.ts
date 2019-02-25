@@ -101,7 +101,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
             this.filterParams.valueGetter,
             this.filterParams.doesRowPassOtherFilter,
             this.filterParams.suppressSorting,
-            (values: string[], toSelect: string[]) => this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect),
+            (values: string[] | null, toSelect?: string[] | null) => this.setFilterValues(values!, toSelect ? false : true, toSelect ? true : false, toSelect!),
             this.setLoading.bind(this),
             this.valueFormatterService,
             this.filterParams.column

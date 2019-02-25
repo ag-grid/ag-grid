@@ -61,7 +61,7 @@ export class SideBarComp extends Component implements ISideBar {
 
         const allPromises: Promise<IComponent<any>>[] = [];
         if (sideBar.toolPanels) {
-            sideBar.toolPanels.forEach((toolPanel: ToolPanelDef) => {
+            (sideBar.toolPanels as ToolPanelDef[]).forEach((toolPanel: ToolPanelDef) => {
                 if (toolPanel.id == null) {
                     console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
                     return;

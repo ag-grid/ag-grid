@@ -128,8 +128,8 @@ export class ClipboardService implements IClipboardService {
         const abortRepeatingPasteIntoRows = this.rangeSize() % clipboardData.length != 0;
 
         let indexOffset = 0, dataRowIndex = 0;
-        const rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[], index: number) => {
 
+        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
             const atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {
                 if (abortRepeatingPasteIntoRows) { return; }
@@ -141,9 +141,9 @@ export class ClipboardService implements IClipboardService {
             const currentRowData = clipboardData[index - indexOffset];
 
             // otherwise we are not the first row, so copy
-            updatedRowNodes.push(rowNode);
-            columns.forEach((column: Column, idx: number) => {
-                if (!column.isCellEditable(rowNode)) { return; }
+            updatedRowNodes.push(rowNode!);
+            columns!.forEach((column: Column, idx: number) => {
+                if (!column.isCellEditable(rowNode!)) { return; }
 
                 // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
                 if (idx >= currentRowData.length) {
@@ -153,7 +153,7 @@ export class ClipboardService implements IClipboardService {
                 let firstRowValue = currentRowData[idx];
                 const processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
                 firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
-                this.valueService.setValue(rowNode, column, firstRowValue);
+                this.valueService.setValue(rowNode!, column, firstRowValue);
 
                 const gridCellDef = {
                     rowIndex: currentRow.rowIndex,
@@ -230,11 +230,11 @@ export class ClipboardService implements IClipboardService {
         const updatedRowNodes: RowNode[] = [];
         const updatedColumnIds: string[] = [];
 
-        const rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues.length) {
                 // two reasons for looping through columns
-                columns.forEach(column => {
+                columns!.forEach(column => {
                     // reason 1 - to get the initial values to copy down
                     let value = this.valueService.getValue(column, rowNode);
                     const processCellForClipboardFunc = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
@@ -245,16 +245,16 @@ export class ClipboardService implements IClipboardService {
                 });
             } else {
                 // otherwise we are not the first row, so copy
-                updatedRowNodes.push(rowNode);
-                columns.forEach((column: Column, index: number) => {
-                    if (!column.isCellEditable(rowNode)) {
+                updatedRowNodes.push(rowNode!);
+                columns!.forEach((column: Column, index: number) => {
+                    if (!column.isCellEditable(rowNode!)) {
                         return;
                     }
 
                     let firstRowValue = firstRowValues[index];
                     const processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
                     firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
-                    this.valueService.setValue(rowNode, column, firstRowValue);
+                    this.valueService.setValue(rowNode!, column, firstRowValue);
 
                     const gridCellDef = {
                         rowIndex: currentRow.rowIndex,
@@ -337,10 +337,10 @@ export class ClipboardService implements IClipboardService {
 
     private singleCellRange(parsedData: string[][], updatedRowNodes: RowNode[], currentRow: GridRow, cellsToFlash: any, updatedColumnIds: string[]) {
         const value = parsedData[0][0];
-        const rowCallback = (gridRow: GridRow, rowNode: RowNode, columns: Column[]) => {
-            updatedRowNodes.push(rowNode);
-            columns.forEach((column) => {
-                if (column.isCellEditable(rowNode)) {
+        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
+            updatedRowNodes.push(rowNode!);
+            columns!.forEach((column) => {
+                if (column.isCellEditable(rowNode!)) {
                     this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
                 }
             });
@@ -478,8 +478,8 @@ export class ClipboardService implements IClipboardService {
         };
 
         // adds cell values to the data
-        const rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[], rowIndex: number, isLastRow: boolean) => {
-            columns.forEach((column, index) => {
+        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
+            columns!.forEach((column, index) => {
                 const value = this.valueService.getValue(column, rowNode);
 
                 const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc(), Constants.EXPORT_TYPE_CLIPBOARD);
