@@ -122,7 +122,7 @@ a.jump-to {
 
 .head-top {
 background: linear-gradient(to top left, #0084e7, #00407f);
-background-size: 100%;
+background-size: cover;
 padding: 50px 0;
 padding-right: 60px;
 padding-left: 60px;

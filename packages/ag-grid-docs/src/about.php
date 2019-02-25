@@ -190,11 +190,9 @@ gtm_data_layer('about');
                                     <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
                                 </div>
                                 <h3>Dimple Unalkat</h3>
-                                <h4>Customer Experience Team</h4>
+                                <h4>Customer Experience Manager</h4>
                                 <p>
-                                    Dimple joined the company along with Bas in our first round of expansion of the customer team. She brings a wealth of
-                                    sales and customer service experience from her previous roles in B2B sales. Since joining, Dimple has taken control of
-                                    a number of important financial functions and is a specialist in customer retention.
+                                    Dimple joined ag-Grid,  in our first round of expansion of the customer team. She brings a wealth of sales and customer service experience from her previous roles in B2B sales. Since joining, Dimple has taken control of a number of important financial functions and is a specialist in customer retention. As Customer Experience Manager, her focus is on improving customer satisfaction as well as scaling ag-Grid’s growth.
                                 </p>
                             </div>
 

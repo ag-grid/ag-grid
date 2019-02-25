@@ -3,7 +3,7 @@ $pageTitle = "React Data Grid Component | Packed with features and performance
 .";
 $pageDescription = "Fastest, most feature-rich React Data Grid component from ag-Grid. Integrate seamlessly with React to deliver 63+ core and enterprise features including filtering, grouping and pagination. React Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.
 ";
-$pageGroup = "basics";
+
 include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
