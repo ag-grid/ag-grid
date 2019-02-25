@@ -168,26 +168,37 @@ export class Context {
         });
     }
 
-    private autoWireBean(bean: any): void {
-        let currentBean: any = bean;
-        while (currentBean != null) {
-            const currentConstructor: any = currentBean.constructor;
+    private forEachMetaDataInHierarchy(bean: any, callback: (metaData: any, beanName: string)=>void): void {
 
-            if (currentConstructor.__agBeanMetaData && currentConstructor.__agBeanMetaData.agClassAttributes) {
-                const attributes = currentConstructor.__agBeanMetaData.agClassAttributes;
-                if (!attributes) {
-                    return;
-                }
+        let prototype: any = Object.getPrototypeOf(bean);
+        while (prototype != null) {
 
-                const beanName = this.getBeanName(currentConstructor);
+            const constructor: any = prototype.constructor;
 
-                attributes.forEach((attribute: any) => {
-                    const otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
-                    bean[attribute.attributeName] = otherBean;
-                });
+            if (constructor.__agBeanMetaData) {
+                const metaData = constructor.__agBeanMetaData;
+                const beanName = this.getBeanName(constructor);
+                callback(metaData, beanName);
             }
-            currentBean = Object.getPrototypeOf(currentBean) ? Object.getPrototypeOf(currentBean) : null;
+
+            prototype = Object.getPrototypeOf(prototype);
         }
+    }
+
+    private autoWireBean(bean: any): void {
+
+        this.forEachMetaDataInHierarchy(bean, (metaData: any, beanName: string) => {
+            const attributes = metaData.agClassAttributes;
+            if (!attributes) {
+                return;
+            }
+
+            attributes.forEach((attribute: any) => {
+                const otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
+                bean[attribute.attributeName] = otherBean;
+            });
+        });
+
     }
 
     private getBeanName(constructor: any): string {
@@ -201,20 +212,20 @@ export class Context {
     }
 
     private methodWireBean(bean: any): void {
-        let autowiredMethods: any;
-        if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.autowireMethods) {
-            autowiredMethods = bean.constructor.__agBeanMetaData.autowireMethods;
-        }
 
-        _.iterateObject(autowiredMethods, (methodName: string, wireParams: any[]) => {
-            // skip constructor, as this is dealt with elsewhere
-            if (methodName === "agConstructor") {
-                return;
-            }
-            const beanName = this.getBeanName(bean.constructor);
-            const initParams = this.getBeansForParameters(wireParams, beanName);
-            bean[methodName].apply(bean, initParams);
+        this.forEachMetaDataInHierarchy(bean, (metaData: any, beanName: string)=> {
+
+            _.iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
+                // skip constructor, as this is dealt with elsewhere
+                if (methodName === "agConstructor") {
+                    return;
+                }
+                const initParams = this.getBeansForParameters(wireParams, beanName);
+                bean[methodName].apply(bean, initParams);
+            });
+
         });
+
     }
 
     private getBeansForParameters(parameters: any, beanName: string): any[] {
@@ -247,22 +258,39 @@ export class Context {
 
     private postConstruct(beans: any): void {
         beans.forEach((bean: any) => {
-            // try calling init methods
-            const agBeanMetaData = bean.constructor.__agBeanMetaData;
-            const postConstructMethods = agBeanMetaData &&  agBeanMetaData.postConstructMethods;
 
-            if (postConstructMethods) {
-                postConstructMethods.forEach((methodName: string) => bean[methodName]());
-            }
+            // const beanName = this.getBeanName(bean.constructor);
+            // console.log(`------------- ${beanName}`);
+
+            this.forEachMetaDataInHierarchy(bean, (metaData: any, beanName: string) => {
+                // try calling init methods
+                const postConstructMethods = <string[]> metaData.postConstructMethods;
+
+                // console.log(`>> postConstruct ${beanName} postConstructMethods`, postConstructMethods);
+                // console.log(`>> postConstruct ${beanName} metaData`, metaData);
+
+
+                if (postConstructMethods) {
+                    postConstructMethods.forEach(methodName => bean[methodName]());
+                }
+            });
+
+            // console.log(`end`);
+
         });
     }
 
     private preConstruct(beans: any): void {
+
         beans.forEach((bean: any) => {
-            // try calling init methods
-            if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.preConstructMethods) {
-                bean.constructor.__agBeanMetaData.preConstructMethods.forEach((methodName: string) => bean[methodName]());
-            }
+
+            this.forEachMetaDataInHierarchy(bean, (metaData: any)=> {
+                const preConstructMethods = <string[]> metaData.preConstructMethods;
+                if (!preConstructMethods) { return; }
+                preConstructMethods.forEach(methodName => bean[methodName]());
+
+            });
+
         });
     }
 
