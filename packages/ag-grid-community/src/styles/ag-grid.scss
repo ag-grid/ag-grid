@@ -731,12 +731,15 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 .ag-overlay-wrapper {
     display: flex;
-    flex-direction: column;
     flex: none;
     width: 100%;
     height: 100%;
+    align-items: center;
     justify-content: center;
     text-align: center;
+    &.ag-overlay-loading-wrapper {
+        pointer-events: all;
+    }
 }
 
 // for when auto height is used but there is no row data
