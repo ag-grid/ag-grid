@@ -3,7 +3,7 @@ import { INoRowsOverlayAngularComp } from "ag-grid-angular";
 
 @Component({
     selector: 'app-no-rows-overlay',
-    template: `<div class="ag-overlay-loading-center" style="background-color: lightcoral; height: 9%">` +
+    template: `<div class="ag-overlay-loading-center" style="background-color: lightcoral;">` +
               `   <i class="far fa-frown"> {{this.params.noRowsMessageFunc()}} </i>` +
               `</div>`
 })

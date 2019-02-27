@@ -3,7 +3,7 @@ import { ILoadingOverlayAngularComp } from "ag-grid-angular";
 
 @Component({
     selector: 'app-loading-overlay',
-    template: `<div class="ag-overlay-loading-center" style="background-color: lightsteelblue; height: 9%">` +
+    template: `<div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">` +
               `   <i class="fas fa-hourglass-half"> {{this.params.loadingMessage}} </i>` +
               `</div>`
 })
