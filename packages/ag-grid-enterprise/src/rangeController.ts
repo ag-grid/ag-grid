@@ -92,8 +92,10 @@ export class RangeController implements IRangeController {
             columns: columns
         };
 
+        const suppressMultiRangeSelections = this.gridOptionsWrapper.isSuppressMultiRangeSelection();
+
         // if not appending, then clear previous range selections
-        if (!appendRange || _.missing(this.cellRanges)) {
+        if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
             this.cellRanges = [];
         }
 
@@ -297,7 +299,9 @@ export class RangeController implements IRangeController {
             // (which them means onDragging and onDragStop do nothing)
             return;
         }
+
         const len = missingRanges || !this.cellRanges ? 0 : this.cellRanges.length;
+
 
         if (missingRanges || !multiSelectKeyPressed) {
             this.cellRanges = [];
