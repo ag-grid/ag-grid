@@ -114,11 +114,6 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         return !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     }
 
-    @PreDestroy
-    public destroy(): void {
-        super.destroy();
-    }
-
     public getType(): string {
         return Constants.ROW_MODEL_TYPE_INFINITE;
     }

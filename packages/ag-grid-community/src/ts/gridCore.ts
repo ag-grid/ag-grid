@@ -226,8 +226,6 @@ export class GridCore extends Component {
         return this.sideBarComp.isToolPanelShowing();
     }
 
-    // need to override, as parent class isn't marked with PreDestroy
-    @PreDestroy
     public destroy() {
         super.destroy();
         this.logger.log('Grid DOM removed');

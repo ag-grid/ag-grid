@@ -550,7 +550,6 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    @PreDestroy
     public destroy() {
         super.destroy();
 

@@ -73,11 +73,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     @PreDestroy
-    public destroy(): void {
-        super.destroy();
-    }
-
-    @PreDestroy
     private destroyDatasource(): void {
         if (this.datasource) {
             if (this.datasource.destroy) {

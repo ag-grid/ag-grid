@@ -1,8 +1,9 @@
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { EventService } from "../eventService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { AgEvent } from "../events";
-import { _ } from "../utils";
+import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {EventService} from "../eventService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {AgEvent} from "../events";
+import {_} from "../utils";
+import {PreDestroy} from "./context";
 
 export class BeanStub implements IEventEmitter {
 
@@ -14,7 +15,26 @@ export class BeanStub implements IEventEmitter {
 
     private destroyed = false;
 
+    // constructor() {
+    //     setTimeout(()=> {
+    //         if (this.isAlive()) {
+    //             let prototype: any = Object.getPrototypeOf(this);
+    //             const constructor: any = prototype.constructor;
+    //             const constructorString = constructor.toString();
+    //             const beanName = constructorString.substring(9, constructorString.indexOf("("));
+    //             console.log('is alive ' + beanName);
+    //         }
+    //     }, 5000);
+    // }
+
+    @PreDestroy
     public destroy(): void {
+
+        // let prototype: any = Object.getPrototypeOf(this);
+        // const constructor: any = prototype.constructor;
+        // const constructorString = constructor.toString();
+        // const beanName = constructorString.substring(9, constructorString.indexOf("("));
+
         this.destroyFunctions.forEach(func => func());
         this.destroyFunctions.length = 0;
         this.destroyed = true;

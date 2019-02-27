@@ -214,12 +214,6 @@ export class GridPanel extends Component {
         return result;
     }
 
-    // we override this, as the base class is missing the annotation
-    @PreDestroy
-    public destroy() {
-        super.destroy();
-    }
-
     private onRowDataChanged(): void {
         this.showOrHideOverlay();
     }

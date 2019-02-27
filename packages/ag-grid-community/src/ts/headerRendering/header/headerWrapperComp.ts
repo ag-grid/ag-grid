@@ -160,10 +160,6 @@ export class HeaderWrapperComp extends Component {
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
         this.appendChild(headerComp);
         this.setupMove(headerComp.getGui(), displayName);
-
-        if (headerComp.destroy) {
-            this.addDestroyFunc(headerComp.destroy.bind(headerComp));
-        }
     }
 
     private onColumnMovingChanged(): void {
