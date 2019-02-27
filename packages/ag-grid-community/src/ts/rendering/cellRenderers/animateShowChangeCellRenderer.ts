@@ -2,8 +2,8 @@ import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { _ } from "../../utils";
 
-const ARROW_UP = '&#65514;';
-const ARROW_DOWN = '&#65516;';
+const ARROW_UP = '\u2191';
+const ARROW_DOWN = '\u2193';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
 
