@@ -278,7 +278,6 @@ export {
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams} from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
-export { ICompFactory } from "./interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
 export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, SerializedFilter } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";

@@ -12,7 +12,6 @@ import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "./conte
 import { IRowModel } from "./interfaces/iRowModel";
 import { FocusedCellController } from "./focusedCellController";
 import { Component } from "./widgets/component";
-import { ICompFactory } from "./interfaces/iCompFactory";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { GridApi } from "./gridApi";
@@ -68,8 +67,6 @@ export class GridCore extends Component {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
-    @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
