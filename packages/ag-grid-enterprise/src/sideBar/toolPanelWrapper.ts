@@ -16,7 +16,7 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
 
     private componentToResize: Component;
 
-    init(params: ToolPanelWrapperParams): void {
+    public init(params: ToolPanelWrapperParams): void {
         this.params = params;
         this.componentToResize = params.innerComp;
         this.setTemplate(ToolPanelWrapper.TEMPLATE);
@@ -28,9 +28,12 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
         resizeBar.addCssClass('ag-tool-panel-horizontal-resize');
         this.getGui().appendChild(resizeBar.getGui());
         this.getGui().appendChild(params.innerComp.getGui());
+
+        this.addDestroyFunc( ()=> resizeBar.destroy() );
+        this.addDestroyFunc( ()=> params.innerComp.destroy() );
     }
 
-    refresh(): void {
+    public refresh(): void {
         this.params.innerComp.refresh();
     }
 }

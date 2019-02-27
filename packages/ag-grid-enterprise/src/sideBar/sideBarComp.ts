@@ -30,6 +30,7 @@ export class SideBarComp extends Component implements ISideBar {
     @Autowired("componentResolver") private componentResolver: ComponentResolver;
 
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
+
     private panelComps: { [p: string]: ToolPanelWrapper } = {};
 
     private static readonly TEMPLATE = `<div class="ag-side-bar">
@@ -174,5 +175,12 @@ export class SideBarComp extends Component implements ISideBar {
         this.panelComps = {};
         this.setTemplate(SideBarComp.TEMPLATE);
         this.postConstruct();
+    }
+
+    public destroy(): void {
+        super.destroy();
+        _.iterateObject(this.panelComps, (key: string, wrapper: ToolPanelWrapper)=> {
+            wrapper.destroy();
+        });
     }
 }

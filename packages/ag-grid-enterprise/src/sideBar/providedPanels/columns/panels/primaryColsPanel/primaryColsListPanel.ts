@@ -147,11 +147,11 @@ export class PrimaryColsListPanel extends Component {
             return;
         }
 
-        const renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
-        this.context.wireBean(renderedColumn);
-        this.getGui().appendChild(renderedColumn.getGui());
+        const columnComp = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
+        this.context.wireBean(columnComp);
+        this.getGui().appendChild(columnComp.getGui());
 
-        this.columnComps[column.getId()] = renderedColumn;
+        this.columnComps[column.getId()] = columnComp;
     }
 
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number, groupsExist: boolean): void {
