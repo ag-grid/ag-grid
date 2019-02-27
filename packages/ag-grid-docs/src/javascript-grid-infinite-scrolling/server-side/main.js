@@ -133,7 +133,8 @@ var columnDefs = [
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['equals', 'lessThan', 'greaterThan'],
-            newRowsAction: 'keep'
+            newRowsAction: 'keep',
+            suppressAndOrCondition: true
         }
     },
     {
