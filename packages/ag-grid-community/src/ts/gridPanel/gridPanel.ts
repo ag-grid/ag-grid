@@ -527,13 +527,13 @@ export class GridPanel extends Component {
             }
         }
 
-        if (eventName==='keydown') {
-            const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(event, Events.EVENT_CELL_KEY_DOWN);
+        if (eventName === 'keydown') {
+            const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
             this.beans.eventService.dispatchEvent(cellKeyDownEvent);
         }
 
-        if (eventName==='keypress') {
-            const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(event, Events.EVENT_CELL_KEY_PRESS);
+        if (eventName === 'keypress') {
+            const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
             this.beans.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
