@@ -102,10 +102,12 @@ colDef = {
 
         // provide comparator function
         comparator: function (filterLocalDateAtMidnight, cellValue) {
+            var dateAsString = cellValue;
+            if (dateAsString == null) return 0;
 
             // In the example application, dates are stored as dd/mm/yyyy
             // We create a Date object for comparison against the filter date
-            var dateParts  = cellValue.split("/");
+            var dateParts = dateAsString.split("/");
             var day = Number(dateParts[2]);
             var month = Number(dateParts[1]) - 1;
             var year = Number(dateParts[0]);
