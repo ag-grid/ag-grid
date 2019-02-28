@@ -15,6 +15,9 @@ export class BeanStub implements IEventEmitter {
 
     private destroyed = false;
 
+    // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
+    // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
+    // points to a bean or component that was not properly disposed of.
     // constructor() {
     //     setTimeout(()=> {
     //         if (this.isAlive()) {

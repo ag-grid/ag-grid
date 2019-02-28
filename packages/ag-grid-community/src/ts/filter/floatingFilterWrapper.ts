@@ -127,6 +127,12 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
                 floatingFilterComp.afterGuiAttached();
             }
 
+            this.addDestroyFunc( () => {
+                if (floatingFilterComp.destroy) {
+                    floatingFilterComp.destroy();
+                }
+            });
+
             this.wireQuerySelectors();
             this.addEventListeners();
         });

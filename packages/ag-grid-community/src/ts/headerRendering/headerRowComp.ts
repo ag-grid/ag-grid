@@ -67,9 +67,7 @@ export class HeaderRowComp extends Component {
         idsToDestroy.forEach(id => {
             const childHeaderComp: IComponent<any> = this.headerComps[id];
             this.getGui().removeChild(childHeaderComp.getGui());
-            if (childHeaderComp.destroy) {
-                childHeaderComp.destroy();
-            }
+            childHeaderComp.destroy();
             delete this.headerComps[id];
         });
     }
@@ -262,8 +260,7 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
-                const column = columnGroupChild as Column;
-                result = this.createFloatingFilterWrapper(column);
+                result = this.createFloatingFilterWrapper(columnGroupChild as Column);
                 break;
         }
 
