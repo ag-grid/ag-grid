@@ -2,7 +2,7 @@ import Vue from "vue";
 
 export default Vue.extend({
     template: `
-            <div class="ag-overlay-loading-center" style="background-color: lightcoral; height: 9%">
+            <div class="ag-overlay-loading-center" style="background-color: lightcoral;">
                 <i class="far fa-frown"> {{params.noRowsMessageFunc()}}</i>
             </div>
     `,
