@@ -26,7 +26,7 @@ import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCell
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { Promise } from "../../utils";
-import { IOverlayWrapperComp, OverlayWrapperComponent } from "../../rendering/overlays/overlayWrapperComponent";
+import { OverlayWrapperComponent } from "../../rendering/overlays/overlayWrapperComponent";
 import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
@@ -198,13 +198,6 @@ export class ComponentRecipes {
 
     public newFullRowGroupRenderer(params:ICellRendererParams):Promise<ICellRendererComp> {
         return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", params, null);
-    }
-
-    public newOverlayWrapperComponent(): IOverlayWrapperComp {
-        return this.componentResolver.createInternalAgGridComponent (
-            OverlayWrapperComponent,
-            null
-        );
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
