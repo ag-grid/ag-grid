@@ -1103,6 +1103,7 @@
     .ag-group-contracted:not(.ag-hidden) {
         ~ .ag-cell-value, + .ag-group-value {
             &:not(:empty) {
+                display: inline-block;
                 margin-left: $cell-horizontal-padding;
             }
         }
@@ -1410,6 +1411,7 @@
         .ag-group-contracted {
             + .ag-cell-value, + .ag-group-value {
                 &:not(:empty) {
+                    display: inline-block;
                     margin-right: $cell-horizontal-padding;
                     margin-left: initial;
                 }
