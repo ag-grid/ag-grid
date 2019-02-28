@@ -36,8 +36,6 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('$scope') private $scope: any;
 
-    private columnTree: OriginalColumnGroupChild[];
-
     private initialised = false;
 
     constructor() {
@@ -56,12 +54,13 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     public onColumnsChanged(): void {
         const eGui = this.getGui();
         _.clearElement(eGui);
-        this.columnTree = this.columnController.getPrimaryColumnTree();
-        const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
-        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.setTemplateFromElement(eGui);
+        const primaryCols = this.columnController.getAllPrimaryColumns();
+        if (!primaryCols) { return; }
+        const primaryColsWithFilter = primaryCols.filter( col => col.isFilterAllowed() );
+        primaryColsWithFilter.forEach( col => this.addColumnComps(col) );
     }
 
+    // we don't support refreshing, but must implement because it's on the tool panel interface
     public refresh(): void {
     }
 
@@ -73,26 +72,10 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
         }
     }
 
-    private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number, groupsExist: boolean): void {
-        tree.forEach(child => {
-            if (child instanceof OriginalColumnGroup) {
-                this.recursivelyAddComps(child.getChildren(), dept, groupsExist);
-            } else {
-                this.recursivelyAddColumnComps(child as Column);
-            }
-        });
-    }
-
-    private recursivelyAddColumnComps(column: Column): void {
-
-        if (!column.isFilterAllowed()) {
-            return;
-        }
-
-        const renderedFilter = this.componentResolver.createInternalAgGridComponent(ToolPanelFilterComp, {
-            column: column
-        });
-        this.context.wireBean(renderedFilter);
-        this.getGui().appendChild(renderedFilter.getGui());
+    private addColumnComps(column: Column): void {
+        const toolPanelFilterComp = new ToolPanelFilterComp();
+        this.context.wireBean(toolPanelFilterComp);
+        toolPanelFilterComp.setColumn(column);
+        this.appendChild(toolPanelFilterComp);
     }
 }

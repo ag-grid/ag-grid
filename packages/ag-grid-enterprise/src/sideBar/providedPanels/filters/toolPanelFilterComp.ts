@@ -14,10 +14,6 @@ import {
     _
 } from "ag-grid-community";
 
-export interface ToolPanelFilterCompParams {
-    column: Column
-}
-
 export class ToolPanelFilterComp extends Component {
 
     @Autowired('gridApi') private gridApi: GridApi;
@@ -26,7 +22,7 @@ export class ToolPanelFilterComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
-    private params: ToolPanelFilterCompParams;
+    private column: Column;
     private expanded: boolean = false;
     private filter: IFilterComp;
 
@@ -65,17 +61,17 @@ export class ToolPanelFilterComp extends Component {
         super(ToolPanelFilterComp.TEMPLATE);
     }
 
-    init(params: ToolPanelFilterCompParams) {
-        this.params = params;
-        const displayName: any = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
+    public setColumn(column: Column): void {
+        this.column = column;
+        const displayName: any = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
         this.eFilterName.innerText = displayName;
         this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
         this.eventService.addEventListener(Events.EVENT_FILTER_OPENED, (event: FilterOpenedEvent) => this.onFilterOpened(event));
 
-        this.addInIcon('filter', this.eFilterIcon, this.params.column);
+        this.addInIcon('filter', this.eFilterIcon, this.column);
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         _.addCssClass(this.eExpandChecked, 'ag-hidden');
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
@@ -87,7 +83,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private isFilterActive(): boolean {
-        return this.filterManager.isFilterActive(this.params.column);
+        return this.filterManager.isFilterActive(this.column);
     }
 
     private onFilterChanged(): void {
@@ -106,7 +102,7 @@ export class ToolPanelFilterComp extends Component {
     private doExpand(): void {
         this.expanded = true;
         const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-air" />`)
-        this.filterManager.getOrCreateFilterWrapper(this.params.column, 'TOOLBAR').filterPromise.then((filter: IFilterComp): void => {
+        this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise.then((filter: IFilterComp): void => {
             this.filter = filter;
             container.appendChild(filter.getGui());
             this.eAgFilterToolpanelBody.appendChild(container);
@@ -129,7 +125,7 @@ export class ToolPanelFilterComp extends Component {
 
     private onFilterOpened(event: FilterOpenedEvent): void {
         if (event.source !== 'COLUMN_MENU') { return; }
-        if (event.column !== this.params.column) { return; }
+        if (event.column !== this.column) { return; }
         if (!this.expanded) { return; }
 
         this.doCollapse();
