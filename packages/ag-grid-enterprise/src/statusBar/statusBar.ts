@@ -79,11 +79,22 @@ export class StatusBar extends Component {
         );
 
         Promise.all(componentDetails.map((details) => details.promise))
-            .then((ignored: any) => {
+            .then(() => {
                 _.forEach(componentDetails, (componentDetail) => {
                     componentDetail.promise.then((component: Component) => {
-                        this.statusBarService.registerStatusPanel(componentDetail.key, component);
-                        ePanelComponent.appendChild(component.getGui());
+                        const destroyFunc = () => {
+                            if (component.destroy) {
+                                component.destroy();
+                            }
+                        };
+
+                        if (this.isAlive()) {
+                            this.statusBarService.registerStatusPanel(componentDetail.key, component);
+                            ePanelComponent.appendChild(component.getGui());
+                            this.addDestroyFunc(destroyFunc);
+                        } else {
+                            destroyFunc();
+                        }
                     })
                 });
             });

@@ -24,7 +24,7 @@ export class ToolPanelFilterComp extends Component {
 
     private column: Column;
     private expanded: boolean = false;
-    private filter: IFilterComp;
+    // private filter: IFilterComp;
 
     @RefSelector('eFilterToolpanelHeader')
     private eFilterToolpanelHeader: HTMLElement;
@@ -103,7 +103,6 @@ export class ToolPanelFilterComp extends Component {
         this.expanded = true;
         const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-air" />`)
         this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise.then((filter: IFilterComp): void => {
-            this.filter = filter;
             container.appendChild(filter.getGui());
             this.eAgFilterToolpanelBody.appendChild(container);
             if (filter.afterGuiAttached) {
