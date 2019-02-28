@@ -81,7 +81,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             </div>
             <div class="ag-horizontal-right-spacer" ref="eHorizontalRightSpacer"></div>
         </div>
-        <div class="ag-overlay" ref="eOverlay"></div>
+        <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
     </div>`;
 
 export type RowContainerComponentNames =
@@ -167,11 +167,10 @@ export class GridPanel extends Component {
     @RefSelector('eBottomFullWidthContainer') private eBottomFullWidthContainer: HTMLElement;
 
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
+    @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
 
     private rowContainerComponents: RowContainerComponents;
     private eAllCellContainers: HTMLElement[];
-
-    private eOverlay: HTMLElement;
 
     private scrollLeft = -1;
     private scrollTop = -1;
@@ -188,8 +187,6 @@ export class GridPanel extends Component {
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
     private pinningLeft: boolean;
-
-    private overlayWrapper: OverlayWrapperComponent;
 
     private printLayout: boolean;
 
@@ -256,8 +253,6 @@ export class GridPanel extends Component {
         this.addDragListeners();
 
         this.addScrollListener();
-
-        this.setupOverlay();
 
         if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
             this.showLoadingOverlay();
@@ -326,14 +321,6 @@ export class GridPanel extends Component {
     public setCellTextSelection(selectable: boolean = false): void {
         [this.eTop, this.eCenterContainer, this.eBottom]
             .forEach(ct => _.addOrRemoveCssClass(ct, 'ag-selectable', selectable));
-    }
-
-    private setupOverlay(): void {
-        this.overlayWrapper = new OverlayWrapperComponent();
-        this.context.wireBean(this.overlayWrapper);
-        this.eOverlay = this.queryForHtmlElement('[ref="eOverlay"]');
-        this.overlayWrapper.hideOverlay(this.eOverlay);
-        this.addDestroyFunc( ()=> this.overlayWrapper.destroy() );
     }
 
     private addRowDragListener(): void {
@@ -1009,18 +996,18 @@ export class GridPanel extends Component {
 
     public showLoadingOverlay() {
         if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
-            this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+            this.overlayWrapper.showLoadingOverlay();
         }
     }
 
     public showNoRowsOverlay() {
         if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
-            this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+            this.overlayWrapper.showNoRowsOverlay();
         }
     }
 
     public hideOverlay() {
-        this.overlayWrapper.hideOverlay(this.eOverlay);
+        this.overlayWrapper.hideOverlay();
     }
 
     // method will call itself if no available width. this covers if the grid

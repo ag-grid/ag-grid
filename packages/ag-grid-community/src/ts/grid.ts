@@ -77,6 +77,7 @@ import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
+import {OverlayWrapperComponent} from "./rendering/overlays/overlayWrapperComponent";
 
 export interface GridParams {
     // used by Web Components
@@ -181,6 +182,7 @@ export class Grid {
             {componentName: 'AgGridComp', theClass: GridPanel},
             {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
             {componentName: 'AgPagination', theClass: PaginationComp},
+            {componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent}
         ];
 
         if (Grid.enterpriseComponents) {
