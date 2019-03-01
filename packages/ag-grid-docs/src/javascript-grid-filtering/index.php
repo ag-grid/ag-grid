@@ -457,7 +457,7 @@ export interface IFilterOptionDef {
                 displayKey: 'lessThanWithNulls',
                 displayName: 'Less Than with Nulls',
                 test: function(filterValue, cellValue) {
-                    return dataValue == null || dataValue < filterValue;
+                    return cellValue == null || cellValue < filterValue;
                 }
             },
             'greaterThan',
@@ -465,7 +465,7 @@ export interface IFilterOptionDef {
                 displayKey: 'greaterThanWithNulls',
                 displayName: 'Greater Than with Nulls',
                 test: function(filterValue, cellValue) {
-                    return dataValue == null || dataValue > filterValue;
+                    return cellValue == null || cellValue > filterValue;
                 }
             }
         ]
