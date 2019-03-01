@@ -143,12 +143,15 @@ export class TooltipManager {
         };
 
         this.createTooltipComponent(params, registeredComponent, e);
-        this.activeComponent = this.lastHoveredComponent;
-        this.hideTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
     }
 
     private createTooltipComponent(params: ITooltipParams, cmp: RegisteredComponent, e: MouseEvent): void {
         this.componentRecipes.newTooltipComponent(params).then(tooltipComp => {
+            // if the component was unregistered while creating
+            // the tooltip (async) we should return undefined here.
+            if (!cmp) {
+                return;
+            }
             cmp.tooltipComp = tooltipComp;
             const eGui = tooltipComp.getGui();
 
@@ -166,6 +169,9 @@ export class TooltipManager {
                 ePopup: eGui,
                 nudgeY: 18
             });
+
+            this.activeComponent = this.lastHoveredComponent;
+            this.hideTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
         });
     }
 
