@@ -1,8 +1,13 @@
-import { Autowired, Context } from "../context/context";
+import {Autowired, Context, PostConstruct} from "../context/context";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { Column } from "../entities/column";
 import { SetLeftFeature } from "../rendering/features/setLeftFeature";
-import { IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange } from "./floatingFilter";
+import {
+    IFloatingFilterParams,
+    IFloatingFilterComp,
+    FloatingFilterChange,
+    ReadModelAsStringFloatingFilterComp
+} from "./floatingFilter";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { IComponent } from "../interfaces/iComponent";
@@ -14,47 +19,104 @@ import { EventService } from "../eventService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
 import { CombinedFilter } from "./baseFilter";
 import { _, Promise } from "../utils";
+import {ColDef} from "../entities/colDef";
+import {IFilterComp} from "../interfaces/iFilter";
+import {ComponentRecipes, ComponentToUse} from "../components/framework/componentRecipes";
+import {ComponentResolver} from "../components/framework/componentResolver";
+import {GridApi} from "../gridApi";
+import {ColumnApi} from "../columnController/columnApi";
+import {FilterManager} from "./filterManager";
 
-export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
-    column: Column;
-    floatingFilterComp: Promise<IFloatingFilterComp<M, F, P>>;
-    suppressFilterButton: boolean;
-}
+export class FloatingFilterWrapper extends Component {
 
-export interface IFloatingFilterWrapper<M> {
-    onParentModelChanged(parentModel: M): void;
-}
-
-export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> {
-}
-
-export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
+    private static TEMPLATE =
+        `<div class="ag-header-cell" aria-hidden="true">
+            <div ref="eFloatingFilterBody" aria-hidden="true"></div>
+            <div class="ag-floating-filter-button" ref="eButtonWrapper" aria-hidden="true">
+                    <button type="button" (click)="showParentFilter" ref="eButtonShowMainFilter"></button>
+            </div>
+        </div>`;
 
     @Autowired('context') private context: Context;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('beans') private beans: Beans;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired("componentResolver") private componentResolver: ComponentResolver;
+    @Autowired("gridApi") private gridApi: GridApi;
+    @Autowired("columnApi") private columnApi: ColumnApi;
+    @Autowired("filterManager") private filterManager: FilterManager;
+    @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
-    column: Column;
+    @RefSelector('eFloatingFilterBody') private eFloatingFilterBody: HTMLElement;
+    @RefSelector('eButtonWrapper') private eButtonWrapper: HTMLElement;
+    @RefSelector('eButtonShowMainFilter') private eButtonShowMainFilter: HTMLElement;
 
-    init(params: P): void | Promise<void> {
-        this.column = params.column;
+    private readonly column: Column;
 
-        const base: HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
-        this.enrichBody(base);
+    private suppressFilterButton: boolean;
 
-        this.setTemplateFromElement(base);
+    private floatingFilterCompPromise: Promise<IFloatingFilterComp<any, any, any>>;
+
+    constructor(column: Column) {
+        super(FloatingFilterWrapper.TEMPLATE);
+        this.column = column;
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.instantiate(this.context);
+
+        this.setupFloatingFilter();
         this.setupWidth();
-        this.addColumnHoverListener();
-
+        this.setupLeftPositioning();
+        this.setupColumnHover();
         this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
+    }
 
+    private setupFloatingFilter(): void {
+        const colDef = this.column.getColDef();
+        if (colDef.filter) {
+            this.floatingFilterCompPromise = this.getFloatingFilterInstance();
+            this.floatingFilterCompPromise.then( compInstance => {
+                if (compInstance) {
+                    this.setupWithFloatingFilter(compInstance);
+                } else {
+                    this.setupEmpty();
+                }
+            });
+            this.setupSyncWithFilter();
+        } else {
+            this.setupEmpty();
+        }
+    }
+
+    private setupLeftPositioning(): void {
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
-    private addColumnHoverListener(): void {
+    private setupSyncWithFilter(): void {
+        const syncWithFilter = () => {
+            const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI');
+            this.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
+        };
+
+        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
+
+        const cachedFilter = this.filterManager.cachedFilter(this.column);
+        if (cachedFilter) {
+            syncWithFilter();
+        }
+    }
+
+    // linked to event listener in template
+    private showParentFilter() {
+        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
+    }
+
+    private setupColumnHover(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.onColumnHover();
     }
@@ -64,10 +126,6 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
-    abstract onParentModelChanged(parentModel: M): void;
-
-    abstract enrichBody(body: HTMLElement): void;
-
     private setupWidth(): void {
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
@@ -76,93 +134,168 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     private onColumnWidthChanged(): void {
         this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
-}
 
-export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
+    private setupWithFloatingFilter(floatingFilterComp: IFloatingFilterComp<any,any,any>): void {
 
-    @RefSelector('eButtonShowMainFilter')
-    eButtonShowMainFilter: HTMLInputElement;
+        const disposeFunc = () => {
+            if (floatingFilterComp.destroy) {
+                floatingFilterComp.destroy();
+            }
+        };
 
-    @Autowired('menuFactory')
-    private menuFactory: IMenuFactory;
-    @Autowired('gridOptionsWrapper')
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    floatingFilterCompPromise: Promise<IFloatingFilterComp<M, F, PC>>;
-    suppressFilterButton: boolean;
-
-    init(params: P): void {
-        this.floatingFilterCompPromise = params.floatingFilterComp;
-        this.suppressFilterButton = params.suppressFilterButton;
-        super.init(params);
-
-        this.addEventListeners();
-
-    }
-
-    private addEventListeners(): void {
-        if (!this.suppressFilterButton && this.eButtonShowMainFilter) {
-            this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        if (!this.isAlive()) {
+            disposeFunc();
+            return;
         }
+
+        this.addDestroyFunc(disposeFunc);
+
+        const floatingFilterCompUi = floatingFilterComp.getGui();
+
+        _.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-body', !this.suppressFilterButton);
+        _.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-full-body', this.suppressFilterButton);
+
+        _.setVisible(this.eButtonWrapper, !this.suppressFilterButton);
+
+        const eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
+        this.eButtonShowMainFilter.appendChild(eIcon);
+
+        this.eFloatingFilterBody.appendChild(floatingFilterCompUi);
+
+        if (floatingFilterComp.afterGuiAttached) {
+            floatingFilterComp.afterGuiAttached();
+        }
+
+        this.wireQuerySelectors();
     }
 
-    enrichBody(body: HTMLElement): void {
-        this.floatingFilterCompPromise.then(floatingFilterComp => {
-            const floatingFilterBody: HTMLElement = body.querySelector('.ag-floating-filter-body') as HTMLElement;
-            const floatingFilterCompUi = floatingFilterComp.getGui();
-            if (this.suppressFilterButton) {
-                floatingFilterBody.appendChild(floatingFilterCompUi);
-                _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
-                _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
-            } else {
-                floatingFilterBody.appendChild(floatingFilterCompUi);
-                body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
-                        <button type="button" ref="eButtonShowMainFilter"></button>
-                </div>`));
+    private getFloatingFilterInstance(): Promise<IFloatingFilterComp<any, any, any>> {
+        const colDef = this.column.getColDef();
+        let defaultFloatingFilterType: string;
 
-                const eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-                body.querySelector('button[ref="eButtonShowMainFilter"]').appendChild(eIcon);
+        if (typeof colDef.filter === 'string') {
+            // will be undefined if not in the map
+            defaultFloatingFilterType = ComponentRecipes.filterToFloatingFilterNames[colDef.filter];
+        } else if (colDef.filter===true) {
+            defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
+        }
+
+        const params = this.createFloatingFilterParams();
+        const dynamicParams = this.createDynamicParams();
+
+        // this is unusual - we need a value from the merged params OUTSIDE the component the params are for. the params
+        // are for the floating filter component, but this property is actually for the wrapper.
+        const mergedParams = this.componentResolver.mergeParams(colDef, 'floatingFilterComponent', dynamicParams, params);
+        this.suppressFilterButton = mergedParams.suppressFilterButton; // used later in setupWithFilter()
+
+        let promise: Promise<IFloatingFilterComp<any, any, any>> = this.componentResolver.createAgGridComponent<IFloatingFilterComp<any, any, any>>(
+            colDef,
+            params,
+            "floatingFilterComponent",
+            dynamicParams,
+            defaultFloatingFilterType,
+            false
+        );
+
+        if (!promise) {
+            const filterComponent = this.getFilterComponentPrototype(colDef);
+            const getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
+
+            if (getModelAsStringExists) {
+                const rawModelFn = params.currentParentModel;
+                params.currentParentModel = () => {
+                    const parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI');
+                    return parentPromise.resolveNow(null, parent => parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null) as any;
+                };
+                const compInstance = this.componentResolver.createInternalAgGridComponent<any, IFloatingFilterComp<any, any, any>>(
+                    ReadModelAsStringFloatingFilterComp,
+                    params
+                );
+                promise = Promise.resolve(compInstance);
             }
-            if (floatingFilterComp.afterGuiAttached) {
-                floatingFilterComp.afterGuiAttached();
-            }
+        }
 
-            this.addDestroyFunc( () => {
-                if (floatingFilterComp.destroy) {
-                    floatingFilterComp.destroy();
-                }
-            });
+        return promise;
+    }
 
-            this.wireQuerySelectors();
-            this.addEventListeners();
+    private createDynamicParams(): any {
+        return {
+            column: this.column,
+            colDef: this.column.getColDef(),
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+    }
+
+    private getFilterComponentPrototype(colDef: ColDef): {new(): any} {
+        const resolvedComponent = this.componentResolver.getComponentToUse(colDef, "filter", this.createDynamicParams());
+        return resolvedComponent ? resolvedComponent.component : null;
+    }
+
+    private setupEmpty(): void {
+        _.setVisible(this.eButtonWrapper, false);
+    }
+
+    private createFloatingFilterParams(): IFloatingFilterParams<any, any> {
+        return {
+            api: this.gridApi,
+            column: this.column,
+            currentParentModel: this.currentParentModel.bind(this),
+            onFloatingFilterChanged: this.onFloatingFilterChanged.bind(this),
+            suppressFilterButton: false // This one might be overridden from the colDef
+        };
+    }
+
+    private currentParentModel(): any {
+        const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI') as any;
+        const wholeParentFilter: CombinedFilter<any> | any = filterComponentPromise.resolveNow(null, (filter: any) =>
+            (filter.getNullableModel) ?
+                filter.getNullableModel() :
+                filter.getModel()
+        );
+        return (wholeParentFilter && (wholeParentFilter as CombinedFilter<any>).operator != null) ?
+            (wholeParentFilter as CombinedFilter<any>).condition1
+            : wholeParentFilter as any;
+    }
+
+    private onFloatingFilterChanged(change: any): boolean {
+        let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
+        const modelChanged: Promise<boolean> = new Promise((resolve) => {
+            captureModelChangedResolveFunc = resolve;
         });
+        const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI') as any;
+        filterComponentPromise.then(filterComponent => {
+            if (filterComponent.onFloatingFilterChanged) {
+                //If going through this branch of code the user MUST
+                //be passing an object of type change that contains
+                //a model property inside and some other stuff
+                const result: boolean = filterComponent.onFloatingFilterChanged(change as any);
+                captureModelChangedResolveFunc(result);
+            } else {
+                //If going through this branch of code the user MUST
+                //be passing the plain model and delegating to ag-Grid
+                //the responsibility to set the parent model and refresh
+                //the filters
+                filterComponent.setModel(change as any);
+                this.filterManager.onFilterChanged();
+                captureModelChangedResolveFunc(true);
+            }
+        });
+        return modelChanged.resolveNow(true, changed => changed);
     }
 
-    onParentModelChanged(parentModel: M | CombinedFilter<M>): void {
-        let combinedFilter: CombinedFilter<M>;
-        let mainModel: M = null;
-        if (parentModel && (parentModel as CombinedFilter<M>).operator) {
-            combinedFilter = (parentModel as CombinedFilter<M>);
+    private onParentModelChanged(parentModel: any | CombinedFilter<any>): void {
+        let combinedFilter: CombinedFilter<any>;
+        let mainModel: any = null;
+        if (parentModel && (parentModel as CombinedFilter<any>).operator) {
+            combinedFilter = (parentModel as CombinedFilter<any>);
             mainModel = combinedFilter.condition1;
         } else {
-            mainModel = parentModel as M;
+            mainModel = parentModel;
         }
+
         this.floatingFilterCompPromise.then(floatingFilterComp => {
             floatingFilterComp.onParentModelChanged(mainModel, combinedFilter);
         });
-    }
-
-    private showParentFilter() {
-        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
-    }
-
-}
-
-export class EmptyFloatingFilterWrapperComp extends BaseFilterWrapperComp<any, any, any, any> {
-    enrichBody(body: HTMLElement): void {
-
-    }
-
-    onParentModelChanged(parentModel: any): void {
     }
 }

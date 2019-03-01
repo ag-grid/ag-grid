@@ -7,7 +7,7 @@ export class HoverFeature extends BeanStub {
 
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
-    private columns: Column[];
+    private readonly columns: Column[];
 
     constructor(columns: Column[], element: HTMLElement) {
         super();

@@ -53,10 +53,9 @@ interface IFloatingFilterComp {
     // The init(params) method is called on the floating filter once. See below for details on the parameters.
     init(params: IFilterFloatingParams): void;
 
-    // This is a method that ag-Grid will call every time the model from the associated
-    rich filter
-    // for this floating filter changes. Typically this would be used so that you can refresh your UI and show
-    // on it a visual representation of the latest model for the filter as it is being updated somewhere else.
+    // Gets called every time the model from the associated rich filter for this floating filter changes.
+    // Typically this would be used so that you can refresh your UI and show on it a visual representation
+    // of the latest model for the filter as it is being updated somewhere else.
     onParentModelChanged(parentModel:any)
 
     // Returns the dom html element for this floating filter.
@@ -87,8 +86,7 @@ interface IFloatingFilterParams {
     // The column this filter is for
     column: Column;
 
-    // This is the callback you need to invoke from your component every time that you
-    want
+    // This is the callback you need to invoke from your component every time that you want
     // to update the model from your parent rich filter. In order to make this call you need to be able to produce a
     // model object like the one this rich filter will produce through getModel(). After this call is completed,
     // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.
