@@ -21,6 +21,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 
   .custom-date-filter:after {
     content: '\f073';
+    display: block;
     font-weight: 400;
     font-family: 'Font Awesome 5 Free';
     position: relative;

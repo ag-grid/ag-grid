@@ -627,6 +627,13 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Floating Filter
  ****************************
 */
+
+.ag-floating-filter-full-body, .ag-floating-filter-body {
+    .ag-react-container {
+        height: 100%;
+    }
+}
+
 .ag-floating-filter-body {
     input {
         height: 19px;
@@ -659,9 +666,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-floating-filter-full-body {
     height: 100%;
     width: 100%;
-    .ag-react-container {
-        height: 100%;
-    }
 }
 
 .ag-floating-filter-input {
