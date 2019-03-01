@@ -152,11 +152,6 @@
         border: 1px solid $border-color;
     }
 
-    // bootstrap overrides
-    .ag-tab {
-        box-sizing: initial;
-    }
-
     .ag-filter .ag-filter-value {
         line-height: $icon-size + $grid-size;
     }

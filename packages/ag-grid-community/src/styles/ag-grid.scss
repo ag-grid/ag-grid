@@ -886,6 +886,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     user-select: none;
 }
 
+.ag-tab {
+    box-sizing: content-box;
+}
+
 .ag-menu-column-select-wrapper {
     height: 265px;
     overflow: auto;
