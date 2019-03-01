@@ -1,33 +1,40 @@
 import {Autowired, Context, PostConstruct} from "../context/context";
-import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { Column } from "../entities/column";
-import { SetLeftFeature } from "../rendering/features/setLeftFeature";
-import {
-    IFloatingFilterParams,
-    IFloatingFilterComp,
-    FloatingFilterChange,
-    ReadModelAsStringFloatingFilterComp
-} from "./floatingFilter";
-import { Component } from "../widgets/component";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { IComponent } from "../interfaces/iComponent";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Beans } from "../rendering/beans";
-import { HoverFeature } from "../headerRendering/hoverFeature";
-import { Events } from "../events";
-import { EventService } from "../eventService";
-import { ColumnHoverService } from "../rendering/columnHoverService";
-import { CombinedFilter } from "./baseFilter";
-import { _, Promise } from "../utils";
+import {IMenuFactory} from "../interfaces/iMenuFactory";
+import {Column} from "../entities/column";
+import {SetLeftFeature} from "../rendering/features/setLeftFeature";
+import {IFloatingFilterComp, IFloatingFilterParams, ReadModelAsStringFloatingFilterComp} from "./floatingFilter";
+import {Component} from "../widgets/component";
+import {RefSelector} from "../widgets/componentAnnotations";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Beans} from "../rendering/beans";
+import {HoverFeature} from "../headerRendering/hoverFeature";
+import {Events} from "../events";
+import {EventService} from "../eventService";
+import {ColumnHoverService} from "../rendering/columnHoverService";
+import {CombinedFilter} from "./baseFilter";
+import {_, Promise} from "../utils";
 import {ColDef} from "../entities/colDef";
 import {IFilterComp} from "../interfaces/iFilter";
-import {ComponentRecipes, ComponentToUse} from "../components/framework/componentRecipes";
 import {ComponentResolver} from "../components/framework/componentResolver";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnApi";
 import {FilterManager} from "./filterManager";
 
 export class FloatingFilterWrapper extends Component {
+
+    private static filterToFloatingFilterNames: {[p:string]:string} = {
+        set:'agSetColumnFloatingFilter',
+        agSetColumnFilter:'agSetColumnFloatingFilter',
+
+        number:'agNumberColumnFloatingFilter',
+        agNumberColumnFilter:'agNumberColumnFloatingFilter',
+
+        date:'agDateColumnFloatingFilter',
+        agDateColumnFilter:'agDateColumnFloatingFilter',
+
+        text:'agTextColumnFloatingFilter',
+        agTextColumnFilter:'agTextColumnFloatingFilter'
+    };
 
     private static TEMPLATE =
         `<div class="ag-header-cell" aria-hidden="true">
@@ -175,7 +182,7 @@ export class FloatingFilterWrapper extends Component {
 
         if (typeof colDef.filter === 'string') {
             // will be undefined if not in the map
-            defaultFloatingFilterType = ComponentRecipes.filterToFloatingFilterNames[colDef.filter];
+            defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
         } else if (colDef.filter===true) {
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }

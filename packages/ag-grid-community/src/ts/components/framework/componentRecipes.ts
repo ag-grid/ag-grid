@@ -19,19 +19,6 @@ import {ITooltipComp, ITooltipParams} from "../../rendering/tooltipComponent";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
 
-enum ComponentType {
-    AG_GRID, FRAMEWORK
-}
-
-/**
- * B the business interface (ie IHeader)
- * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
- */
-export interface ComponentToUse<A extends IComponent<any> & B, B> {
-    component:{new(): A} | {new(): B};
-    type:ComponentType;
-}
-
 @Bean('componentRecipes')
 export class ComponentRecipes {
     @Autowired("componentResolver")
@@ -51,20 +38,6 @@ export class ComponentRecipes {
 
     @Autowired('filterManager')
     private filterManager: FilterManager;
-
-    public static filterToFloatingFilterNames: {[p:string]:string} = {
-        set:'agSetColumnFloatingFilter',
-        agSetColumnFilter:'agSetColumnFloatingFilter',
-
-        number:'agNumberColumnFloatingFilter',
-        agNumberColumnFilter:'agNumberColumnFloatingFilter',
-
-        date:'agDateColumnFloatingFilter',
-        agDateColumnFilter:'agDateColumnFloatingFilter',
-
-        text:'agTextColumnFloatingFilter',
-        agTextColumnFilter:'agTextColumnFloatingFilter'
-    };
 
     public newDateComponent(params: IDateParams): Promise<IDateComp> {
         return this.componentResolver.createAgGridComponent<IDateComp>(
