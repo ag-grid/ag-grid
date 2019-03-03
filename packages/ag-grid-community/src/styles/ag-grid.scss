@@ -1126,6 +1126,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-status-bar {
     display: flex;
     justify-content: space-between;
+    overflow: hidden;
 
     .ag-status-panel {
         display: inline-flex;
