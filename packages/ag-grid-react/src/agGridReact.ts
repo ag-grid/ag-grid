@@ -18,7 +18,7 @@ import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetec
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
-    rowDataChangeDetectionStrategy: ChangeDetectionStrategyType;
+    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
 }
 
 export class AgGridReact extends React.Component<AgGridReactProps, {}> {
@@ -29,7 +29,6 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     gridOptions: AgGrid.GridOptions;
 
     changeDetectionService = new ChangeDetectionService();
-    rowDataChangeDetectionStrategy: ChangeDetectionStrategyType = null;
 
     api: AgGrid.GridApi;
     columnApi: AgGrid.ColumnApi;
@@ -66,8 +65,6 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
     componentDidMount() {
-        this.rowDataChangeDetectionStrategy = !!this.props.rowDataChangeDetectionStrategy ? this.props.rowDataChangeDetectionStrategy : this.getDefaultChangeDetectionStrategy();
-
         const gridParams = {
             seedBeanInstances: {
                 agGridReact: this
@@ -138,10 +135,19 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         this.batchUpdate();
     }
 
-    private getDefaultChangeDetectionStrategy() {
-        if (this.props['deltaRowDataMode']) {
-            return ChangeDetectionStrategyType.IdentityCheck;
+    private getStrategyTypeForProp(propKey: string) {
+        if (propKey === 'rowData') {
+            // for row data we either return the supplied strategy, or:
+            // if deltaRowDataMode we default to IdentityChecks,
+            // if not we default to DeepValueChecks (with the rest of the properties)
+            if (!!this.props.rowDataChangeDetectionStrategy) {
+                return this.props.rowDataChangeDetectionStrategy;
+            } else if (this.props['deltaRowDataMode']) {
+                return ChangeDetectionStrategyType.IdentityCheck;
+            }
         }
+
+        // all non row data properties will default to DeepValueCheck
         return ChangeDetectionStrategyType.DeepValueCheck;
     }
 
@@ -152,7 +158,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
-                const changeDetectionStrategy = this.changeDetectionService.getStrategyForProperty(propKey, this.rowDataChangeDetectionStrategy);
+                const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
                 if (!changeDetectionStrategy.areEqual(this.props[propKey], nextProps[propKey])) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);

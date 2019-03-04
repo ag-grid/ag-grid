@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "target": "es5",
+    "types": [
+      "react",
+      "react-dom"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
+}

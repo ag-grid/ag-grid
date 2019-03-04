@@ -1,4 +1,4 @@
-export const enum ChangeDetectionStrategyType {
+export enum ChangeDetectionStrategyType {
     IdentityCheck = 'IdentityCheck',
     DeepValueCheck = 'DeepValueCheck',
     NoCheck = 'NoCheck'
@@ -11,20 +11,8 @@ export class ChangeDetectionService {
         [ChangeDetectionStrategyType.NoCheck]: new SimpleFunctionalStrategy((a, b) => true)
     };
 
-    private static isRowDataModeApplicable(propKey) {
-        return propKey === 'rowData';
-    }
-
-    public getStrategyForProperty(propKey: string, changeDetectionStrategy: ChangeDetectionStrategyType): ChangeDetectionStrategy {
-        if (ChangeDetectionService.isRowDataModeApplicable(propKey)) {
-            return this.rowDataChangeDetectionStrategy(changeDetectionStrategy);
-        }
-
-        return this.strategyMap[ChangeDetectionStrategyType.DeepValueCheck];
-    }
-
-    private rowDataChangeDetectionStrategy(changeDetectionStrategy: ChangeDetectionStrategyType): ChangeDetectionStrategy {
-        return this.strategyMap[changeDetectionStrategy]
+    public getStrategy(changeDetectionStrategy: ChangeDetectionStrategyType): ChangeDetectionStrategy {
+        return this.strategyMap[changeDetectionStrategy];
     }
 }
 
@@ -33,9 +21,9 @@ export interface ChangeDetectionStrategy {
 }
 
 class SimpleFunctionalStrategy implements ChangeDetectionStrategy {
-    private strategy: (a, b) => boolean;
+    private strategy: (a: any, b: any) => boolean;
 
-    constructor(strategy: (a, b) => boolean) {
+    constructor(strategy: (a: any, b: any) => boolean) {
         this.strategy = strategy;
     }
 
@@ -44,7 +32,7 @@ class SimpleFunctionalStrategy implements ChangeDetectionStrategy {
     }
 }
 
-export class DeepValueStrategy implements ChangeDetectionStrategy {
+class DeepValueStrategy implements ChangeDetectionStrategy {
     areEqual(a: any, b: any): boolean {
         return DeepValueStrategy.areEquivalent(DeepValueStrategy.copy(a), DeepValueStrategy.copy(b));
     }
@@ -52,12 +40,12 @@ export class DeepValueStrategy implements ChangeDetectionStrategy {
     /*
      * deeper object comparison - taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
      */
-    static unwrapStringOrNumber(obj) {
+    static unwrapStringOrNumber(obj: any) {
         return obj instanceof Number || obj instanceof String ? obj.valueOf() : obj;
     }
 
     // sigh, here for ie compatibility
-    static copy(value) {
+    static copy(value: any): any {
         if (!value) {
             return value;
         }
@@ -93,7 +81,7 @@ export class DeepValueStrategy implements ChangeDetectionStrategy {
      * For eg, if a user updates the columnDefs via property binding, but the actual columns defs are the same before and
      * after, then we don't want the grid to re-render
      */
-    static areEquivalent(a, b) {
+    static areEquivalent(a: any, b: any) {
         a = DeepValueStrategy.unwrapStringOrNumber(a);
         b = DeepValueStrategy.unwrapStringOrNumber(b);
         if (a === b) return true; //e.g. a and b both null
@@ -115,14 +103,14 @@ export class DeepValueStrategy implements ChangeDetectionStrategy {
             if (newA) {
                 a.areEquivPropertyTracking = [];
             } else if (
-                a.areEquivPropertyTracking.some(function (other) {
+                a.areEquivPropertyTracking.some(function (other: any) {
                     return other === b;
                 })
             )
                 return true;
             if (newB) {
                 b.areEquivPropertyTracking = [];
-            } else if (b.areEquivPropertyTracking.some(other => other === a)) {
+            } else if (b.areEquivPropertyTracking.some((other: any) => other === a)) {
                 return true;
             }
             a.areEquivPropertyTracking.push(b);
@@ -131,11 +119,11 @@ export class DeepValueStrategy implements ChangeDetectionStrategy {
             const tmp = {};
             for (prop in a)
                 if (prop != "areEquivPropertyTracking") {
-                    tmp[prop] = null;
+                    (tmp as any)[prop] = null;
                 }
             for (prop in b)
                 if (prop != "areEquivPropertyTracking") {
-                    tmp[prop] = null;
+                    (tmp as any)[prop] = null;
                 }
 
             for (prop in tmp) {
