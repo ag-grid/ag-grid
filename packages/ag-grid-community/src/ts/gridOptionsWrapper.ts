@@ -17,7 +17,7 @@ import { EventService } from "./eventService";
 import { Constants } from "./constants";
 import { ComponentUtil } from "./components/componentUtil";
 import { GridApi } from "./gridApi";
-import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
+import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./entities/colDef";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
@@ -560,7 +560,7 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     }
 
-    public getSuppressKeyboardEventFunc() {
+    public getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean {
         return this.gridOptions.suppressKeyboardEvent;
     }
 
