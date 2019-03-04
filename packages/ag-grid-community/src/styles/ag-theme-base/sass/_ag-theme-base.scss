@@ -379,20 +379,11 @@
     // Navigation
     ////////////////////////////////////////
 
-    // we do this twice, .ag-ltr and .ag-rtl,
-    // so that it gets preference over the pinned
-    // section borders (which would otherwise have
-    // more granular css selectors which would get
-    // precedence over these). this way, this gets
-    // precedence as it's further down the file
-    // and equal weighted selectors.
-    .ag-ltr .ag-cell-focus {
-        border: 1px solid $primary-color;
-        outline: initial;
-    }
-    .ag-rtl .ag-cell-focus {
-        border: 1px solid $primary-color;
-        outline: initial;
+    .ag-ltr, .ag-rtl {
+        .ag-cell-focus {
+            border: 1px solid $primary-color;
+            outline: initial;
+        }
     }
 
     ////////////////////////////////////////
