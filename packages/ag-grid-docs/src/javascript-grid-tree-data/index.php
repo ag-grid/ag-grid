@@ -29,8 +29,11 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options using:
-        <code>gridOptions.treeData = true</code>.
     </p>
+
+<snippet>
+    treeData = true
+</snippet>
 
     <h2 id="supplying-tree-data">Supplying Tree Data</h2>
 
@@ -191,26 +194,27 @@ var rowData = [
     <h2 id="tree-data-filtering">Tree Data Filtering</h2>
 
     <p>
-        Other than the <a href="../javascript-grid-filter-set/">Set Filter</a>, filtering works the same way
-        with Tree Data.
-    </p>
-
-    <p>
-        When using Tree Data the Set Filter will contain a list all unique values across each level of the group hierarchy.
-    </p>
-
-    <p>
-        Also note that as filtering is performed across all group levels, a group will be included if:
+        As Tree Data has parent / child relationships, by default all child nodes will be included when a parent passes
+        a filter, and as filtering is performed across all group levels, a group will be included if:
         <dl style="margin-left: 25px;">
-            <dd>a) it has any children, or</dd>
+            <dd>a) it has any children that pass the filter, or</dd>
             <dd>b) its data passes the filter</dd>
         </dl>
     </p>
 
     <p>
-        The <a href="#example-file-browser">File Browser</a> example below demonstrates the Set Filter works with Tree Data.
+        To override this behaviour to use regular filtering instead, enable the following grid options property:
     </p>
 
+    <snippet>
+        excludeChildrenWhenTreeDataFiltering = true
+    </snippet>
+
+    <p>
+        Also note the <a href="../javascript-grid-filter-set/">Set Filter</a> will contain a list all unique values
+        across each level of the group hierarchy. The <a href="#example-file-browser">File Browser</a> example below
+        demonstrates how the Set Filter works with Tree Data.
+    </p>
 
     <h2>Example - File Browser</h2>
 

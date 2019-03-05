@@ -213,6 +213,7 @@ export interface GridOptions {
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
+    excludeChildrenWhenTreeDataFiltering?: boolean;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;

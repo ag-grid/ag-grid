@@ -213,8 +213,8 @@ export class FilterManager {
             return null;
         }
 
-        if (this.gridOptionsWrapper.isRowModelInfinite()) {
-            console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
+        if (!this.gridOptionsWrapper.isRowModelDefault()) {
+            console.warn('ag-grid: quick filtering only works with the Client-side Row Model');
             return null;
         }
 

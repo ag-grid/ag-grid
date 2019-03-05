@@ -436,6 +436,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressMaxRenderedRowRestriction);
     }
 
+    public isExcludeChildrenWhenTreeDataFiltering() {
+        return isTrue(this.gridOptions.excludeChildrenWhenTreeDataFiltering);
+    }
+
     public isAlwaysShowVerticalScroll() {
         return isTrue(this.gridOptions.alwaysShowVerticalScroll);
     }

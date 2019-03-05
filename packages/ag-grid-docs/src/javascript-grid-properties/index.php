@@ -139,6 +139,13 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a>
             </td>
         </tr>
+        <tr>
+            <th>excludeChildrenWhenTreeDataFiltering</th>
+            <td>
+                Set to true to override the default tree data filtering behaviour to instead exclude child nodes from
+                filter results. See <a href="../javascript-grid-tree-data/#tree-data-filtering">Tree Data Filtering</a>.
+            </td>
+        </tr>
         </table>
     <h2>Selection</h2>
 
