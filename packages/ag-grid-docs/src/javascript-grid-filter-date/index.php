@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Data Filter: Core Feature of our Datagrid";
+$pageTitle = "Date Filter: Core Feature of our Datagrid";
 $pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Date Filter. Date Filter allows filtering dates with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Date Filter";
 $pageGroup = "feature";
@@ -40,7 +40,7 @@ colDef: {
         If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
     <li><code>applyButton:</code> Set to true to include an 'Apply' button with the filter and not filter
         automatically as the selection changes.</li>
-    <li><code>clearButton:</code> Set to true to include a 'Clear' button with the filter which when cliked
+    <li><code>clearButton:</code> Set to true to include a 'Clear' button with the filter which when clicked
         will remove the filter conditions to this filter.</li>
     <li><code>comparator:</code> Needed if the data for this column are not native JS objects. See section below</li>
     <li><code>inRangeInclusive:</code> Set to true so that when doing inRange date filters it will include
