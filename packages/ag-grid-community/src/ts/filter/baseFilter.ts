@@ -157,8 +157,6 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
         const anyButtonVisible: boolean = this.applyActive || this.clearActive;
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
 
-        this.instantiate(this.context);
-
         this.initialiseFilterBodyUi(FilterConditionType.MAIN);
         this.refreshFilterBodyUi(FilterConditionType.MAIN);
     }

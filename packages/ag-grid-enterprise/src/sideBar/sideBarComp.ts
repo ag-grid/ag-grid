@@ -154,12 +154,12 @@ export class SideBarComp extends Component implements ISideBar {
 
     public reset(): void {
         this.sideBarButtonsComp.clear();
-        this.destroyToolWrappers();
+        this.destroyToolPanelWrappers();
         this.setTemplate(SideBarComp.TEMPLATE);
         this.postConstruct();
     }
 
-    private destroyToolWrappers(): void {
+    private destroyToolPanelWrappers(): void {
         _.iterateObject(this.toolPanelWrappers, (key: string, wrapper: ToolPanelWrapper) => {
             wrapper.destroy();
         });
@@ -168,6 +168,6 @@ export class SideBarComp extends Component implements ISideBar {
 
     public destroy(): void {
         super.destroy();
-        this.destroyToolWrappers();
+        this.destroyToolPanelWrappers();
     }
 }

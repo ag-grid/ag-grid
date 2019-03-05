@@ -292,6 +292,8 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private onParentModelChanged(parentModel: any | CombinedFilter<any>): void {
+        if (!this.floatingFilterCompPromise) { return; }
+
         let combinedFilter: CombinedFilter<any>;
         let mainModel: any = null;
         if (parentModel && (parentModel as CombinedFilter<any>).operator) {
