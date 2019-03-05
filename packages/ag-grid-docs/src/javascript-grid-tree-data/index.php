@@ -203,7 +203,7 @@ var rowData = [
     </p>
 
     <p>
-        To override this behaviour to use regular filtering instead, enable the following grid options property:
+        To override this behaviour to use regular filtering instead, enable the following Grid Options property:
     </p>
 
     <snippet>
@@ -211,7 +211,7 @@ var rowData = [
     </snippet>
 
     <p>
-        Also note the <a href="../javascript-grid-filter-set/">Set Filter</a> will contain a list all unique values
+        Also note the <a href="../javascript-grid-filter-set/">Set Filter</a> will contain a list of all unique values
         across each level of the group hierarchy. The <a href="#example-file-browser">File Browser</a> example below
         demonstrates how the Set Filter works with Tree Data.
     </p>
