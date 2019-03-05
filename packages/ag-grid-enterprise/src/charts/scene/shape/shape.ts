@@ -39,7 +39,7 @@ export abstract class Shape extends Node {
         // more then an order of magnitude faster.
         for (let i = 0, n = keys.length; i < n; i++) {
             const key = keys[i];
-            (this as any)[key] += styles[key];
+            (this as any)[key] = styles[key];
         }
     }
 
