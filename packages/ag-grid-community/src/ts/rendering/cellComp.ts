@@ -289,7 +289,7 @@ export class CellComp extends Component {
         this.colsSpanning = this.getColSpanningList();
     }
 
-    private getColSpanningList(): Column[] {
+    public getColSpanningList(): Column[] {
         const colSpan = this.column.getColSpan(this.rowNode);
         const colsSpanning: Column[] = [];
 

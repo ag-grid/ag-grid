@@ -979,12 +979,27 @@ export class RowRenderer extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent | null, key: number, previousCell: GridCell, allowUserOverride: boolean) {
-        let nextCell = previousCell;
+    public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: GridCell, allowUserOverride: boolean) {
+        let nextCell: GridCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
-            nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
+
+            const cellComp = this.getComponentForCell(currentCell);
+            const colSpanningList = cellComp.getColSpanningList();
+
+            // if the current cell is spanning across multiple columns, we need to move
+            // our current position to be the last cell on the right before finding the
+            // the next target.
+            if (key === Constants.KEY_RIGHT && colSpanningList.length > 1) {
+                currentCell = new GridCell({
+                    rowIndex: currentCell.rowIndex,
+                    column: colSpanningList[colSpanningList.length - 1],
+                    floating: currentCell.floating
+                });
+            }
+
+            nextCell = this.cellNavigationService.getNextCellToFocus(key, currentCell);
 
             if (_.missing(nextCell)) { break; }
 
@@ -995,6 +1010,9 @@ export class RowRenderer extends BeanStub {
             if (!rowNode.group) { break; }
         }
 
+        const cellComp = this.getComponentForCell(nextCell);
+        nextCell = cellComp.getGridCell();
+
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
@@ -1002,7 +1020,7 @@ export class RowRenderer extends BeanStub {
             if (_.exists(userFunc)) {
                 const params = {
                     key: key,
-                    previousCellDef: previousCell,
+                    previousCellDef: currentCellComp.getGridCell(),
                     nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
                     event: event
                 } as NavigateToNextCellParams;

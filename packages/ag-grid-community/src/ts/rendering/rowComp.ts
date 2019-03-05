@@ -1395,8 +1395,18 @@ export class RowComp extends Component {
         return this.rowNode;
     }
 
-    public getRenderedCellForColumn(column: Column): CellComp {
-        return this.cellComps[column.getColId()];
+    public getRenderedCellForColumn(column: Column): CellComp | undefined {
+        const cellComp = this.cellComps[column.getColId()];
+
+        if (cellComp) {
+            return cellComp;
+        }
+
+        const spanList = Object.keys(this.cellComps)
+            .map(name => this.cellComps[name])
+            .filter(cmp => cmp.getColSpanningList().indexOf(column) !== -1);
+
+        return spanList.length ? spanList[0] : undefined;
     }
 
     private onRowIndexChanged(): void {
