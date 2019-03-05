@@ -1,23 +1,23 @@
-import {Autowired, Bean} from "../../context/context";
-import {IDateComp, IDateParams} from "../../rendering/dateComponent";
-import {GridOptions} from "../../entities/gridOptions";
-import {IComponent} from "../../interfaces/iComponent";
-import {ColDef} from "../../entities/colDef";
-import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
-import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {FilterManager} from "../../filter/filterManager";
-import {ComponentResolver} from "./componentResolver";
-import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
-import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
-import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
-import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
-import {Promise} from "../../utils";
-import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
-import {ITooltipComp, ITooltipParams} from "../../rendering/tooltipComponent";
-import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnApi";
+import { Autowired, Bean } from "../../context/context";
+import { IDateComp, IDateParams } from "../../rendering/dateComponent";
+import { GridOptions } from "../../entities/gridOptions";
+import { IComponent } from "../../interfaces/iComponent";
+import { ColDef } from "../../entities/colDef";
+import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
+import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { FilterManager } from "../../filter/filterManager";
+import { ComponentResolver } from "./componentResolver";
+import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+import { Promise } from "../../utils";
+import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
 
 @Bean('componentRecipes')
 export class ComponentRecipes {

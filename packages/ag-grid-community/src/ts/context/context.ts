@@ -181,7 +181,7 @@ export class Context {
 
     private methodWireBeans(beanInstances: any[]): void {
         beanInstances.forEach(beanInstance => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string)=> {
+            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
                 _.iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
                     // skip constructor, as this is dealt with elsewhere
                     if (methodName === "agConstructor") {
@@ -194,7 +194,7 @@ export class Context {
         });
     }
 
-    private forEachMetaDataInHierarchy(beanInstance: any, callback: (metaData: any, beanName: string)=>void): void {
+    private forEachMetaDataInHierarchy(beanInstance: any, callback: (metaData: any, beanName: string) => void): void {
 
         let prototype: any = Object.getPrototypeOf(beanInstance);
         while (prototype != null) {
@@ -251,8 +251,8 @@ export class Context {
 
     private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
         beanInstances.forEach((beanInstance: any) => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any)=> {
-                const methods = <string[]> metaData[lifeCycleMethod];
+            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
+                const methods = metaData[lifeCycleMethod] as string[];
                 if (!methods) { return; }
                 methods.forEach(methodName => beanInstance[methodName]());
             });

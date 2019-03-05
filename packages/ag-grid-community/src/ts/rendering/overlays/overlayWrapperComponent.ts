@@ -1,10 +1,10 @@
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, PostConstruct} from "../../context/context";
-import {Component} from "../../widgets/component";
-import {ComponentRecipes} from "../../components/framework/componentRecipes";
-import {_} from '../../utils';
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {ILoadingOverlayComp} from "./loadingOverlayComponent";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Autowired, PostConstruct } from "../../context/context";
+import { Component } from "../../widgets/component";
+import { ComponentRecipes } from "../../components/framework/componentRecipes";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { ILoadingOverlayComp } from "./loadingOverlayComponent";
+import { _ } from '../../utils';
 
 enum LoadingType {Loading, NoRows}
 
@@ -37,8 +37,8 @@ export class OverlayWrapperComponent extends Component {
     }
 
     private setWrapperTypeClass(loadingType: LoadingType): void {
-        _.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType===LoadingType.Loading);
-        _.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType===LoadingType.NoRows);
+        _.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
+        _.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
     }
 
     public showLoadingOverlay(): void {

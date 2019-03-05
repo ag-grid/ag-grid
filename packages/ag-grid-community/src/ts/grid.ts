@@ -77,7 +77,7 @@ import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
-import {OverlayWrapperComponent} from "./rendering/overlays/overlayWrapperComponent";
+import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 
 export interface GridParams {
     // used by Web Components

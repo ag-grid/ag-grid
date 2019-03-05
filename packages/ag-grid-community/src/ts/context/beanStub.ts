@@ -1,9 +1,9 @@
-import {IEventEmitter} from "../interfaces/iEventEmitter";
-import {EventService} from "../eventService";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {AgEvent} from "../events";
-import {_} from "../utils";
-import {PreDestroy} from "./context";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { EventService } from "../eventService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { AgEvent } from "../events";
+import { PreDestroy } from "./context";
+import { _ } from "../utils";
 
 export class BeanStub implements IEventEmitter {
 

@@ -1,22 +1,22 @@
-import {Component} from "../widgets/component";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnGroup} from "../entities/columnGroup";
-import {ColumnController} from "../columnController/columnController";
-import {Column} from "../entities/column";
-import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import {EventService} from "../eventService";
-import {Events} from "../events";
-import {HeaderWrapperComp} from "./header/headerWrapperComp";
-import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
-import {FilterManager} from "../filter/filterManager";
-import {IComponent} from "../interfaces/iComponent";
-import {ComponentRecipes} from "../components/framework/componentRecipes";
-import {GridApi} from "../gridApi";
-import {Constants} from "../constants";
-import {_} from "../utils";
-import {FloatingFilterWrapper} from "../filter/floatingFilterWrapper";
+import { Component } from "../widgets/component";
+import { Autowired, Context, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { ColumnGroup } from "../entities/columnGroup";
+import { ColumnController } from "../columnController/columnController";
+import { Column } from "../entities/column";
+import { DropTarget } from "../dragAndDrop/dragAndDropService";
+import { EventService } from "../eventService";
+import { Events } from "../events";
+import { HeaderWrapperComp } from "./header/headerWrapperComp";
+import { HeaderGroupWrapperComp } from "./headerGroup/headerGroupWrapperComp";
+import { FilterManager } from "../filter/filterManager";
+import { IComponent } from "../interfaces/iComponent";
+import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { GridApi } from "../gridApi";
+import { Constants } from "../constants";
+import { _ } from "../utils";
+import { FloatingFilterWrapper } from "../filter/floatingFilterWrapper";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER

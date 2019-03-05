@@ -1,8 +1,8 @@
-import {SerializedFilter} from "../interfaces/iFilter";
-import {QuerySelector} from "../widgets/componentAnnotations";
-import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
-import {INumberFilterParams} from "./textFilter";
-import {_} from "../utils";
+import { SerializedFilter } from "../interfaces/iFilter";
+import { QuerySelector } from "../widgets/componentAnnotations";
+import { BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter } from "./baseFilter";
+import { INumberFilterParams } from "./textFilter";
+import { _ } from "../utils";
 
 export interface SerializedNumberFilter extends SerializedFilter {
     filter: number;

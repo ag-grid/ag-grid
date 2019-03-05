@@ -1,4 +1,4 @@
-import {IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
+import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
 import {
     ComparableBaseFilter,
     BaseFilter,
@@ -46,12 +46,12 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     private formatter: TextFormatter;
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
-    };
+    }
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    };
+    }
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -73,7 +73,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             console.warn('invalid filter type ' + filter);
             return false;
         }
-    };
+    }
 
     public getDefaultType(): string {
         return BaseFilter.CONTAINS;

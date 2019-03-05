@@ -52,7 +52,7 @@ export class HeaderRootComp extends Component {
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
-        this.childContainers.forEach( c => c.registerGridComp(gridPanel));
+        this.childContainers.forEach(c => c.registerGridComp(gridPanel));
     }
 
     @PostConstruct
