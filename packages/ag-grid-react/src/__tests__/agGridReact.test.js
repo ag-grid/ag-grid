@@ -1,29 +1,12 @@
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
 
+import {ensureGridApiHasBeenSet} from "./utils"
+
 import {mount} from 'enzyme';
 
 let component = null;
 let agGridReact = null;
-
-// you probably want to have some sort of timeout here so this doesn't hang in the event of some
-// other grid related issue
-const ensureGridApiHasBeenSet = (component) => {
-    return new Promise(function (resolve, reject) {
-        (function waitForGridReady() {
-            // we need to wait for the gridReady event before we can start interacting with the grid
-            // in this case we're looking at the api property in our App component, but it could be anything (ie a boolean flag)
-            if (component.instance().api) {
-
-                // once our condition has been met we can start the tests
-                return resolve();
-            }
-
-            // not set - wait a bit longer
-            setTimeout(waitForGridReady, 10);
-        })();
-    });
-};
 
 beforeEach((done) => {
     component = mount((
