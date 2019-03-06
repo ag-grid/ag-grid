@@ -4,9 +4,7 @@
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
-    "tsc": "tsc -p tests/config/tsconfig.json",
-    "test": "concurrently \"http-server -p 8085 -s\" \"protractor tests/config/e2e.conf.js\" --kill-others --success first",
-    "e2e-win": "concurrently \"http-server -p 8085 -s\" \"protractor tests/config/e2e.conf.win.js\" --kill-others --success first"
+    "tsc": "tsc -p tests/config/tsconfig.json"
   },
   "repository": {
     "type": "git",
