@@ -37,7 +37,9 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     searchOoo: 'Search...',
     selectAll: 'Select All',
     applyFilter: 'Apply Filter',
-    clearFilter: 'Clear Filter'
+    clearFilter: 'Clear Filter',
+    andCondition: 'AND',
+    orCondition: 'OR'
 };
 
 /**
@@ -351,8 +353,10 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     private createConditionTemplate(type:FilterConditionType): string {
         return `<div class="ag-filter-condition">
-            <input id="andId" type="radio" class="and" name="booleanLogic" value="AND" checked="checked" /><label style="display: inline" for="andId">AND</label>
-            <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline" for="orId">OR</label>
+            <input id="andId" type="radio" class="and" name="booleanLogic" value=${this.translate('AND')} 
+                   checked="checked" /><label style="display: inline" for="andId">${this.translate('andCondition')}</label>
+            <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline" 
+                   for="orId">${this.translate('orCondition')}</label>
             <div>${this.createConditionBody(type)}</div>
         </div>`;
     }
