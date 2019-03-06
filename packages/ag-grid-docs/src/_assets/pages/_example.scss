@@ -210,6 +210,10 @@ button[disabled] {
             align-items: center;
             flex-direction: column;
             justify-content: center;
+            overflow: hidden;
+            > div {
+                overflow: hidden;
+            }
             label {
                 width: 80px;
             }
