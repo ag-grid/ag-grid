@@ -206,7 +206,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     }
 
     /**
-     * Runs the given callback for every node in the selection.
+     * Runs the given callback for every node in this selection and returns this selection.
      * @param cb
      */
     each(cb: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => void): this {
@@ -270,6 +270,10 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         return new Selection<G, P, GDatum, PDatum>(merges, this.parents);
     }
 
+    /**
+     * Return the first non-null element in this selection.
+     * If the selection is empty, returns null.
+     */
     node(): G | null {
         const groups = this.groups;
         const numGroups = groups.length;
@@ -306,12 +310,20 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         return this;
     }
 
+    /**
+     * Invokes the given function once, passing in this selection.
+     * Returns this selection. Facilitates method chaining.
+     * @param cb
+     */
     call(cb: (selection: this) => void) {
         cb(this);
 
         return this;
     }
 
+    /**
+     * Returns the total number of nodes in this selection.
+     */
     get size(): number {
         let size = 0;
 
@@ -320,6 +332,9 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         return size;
     }
 
+    /**
+     * Returns the array of data for the selected elements.
+     */
     get data(): GDatum[] {
         const data: GDatum[] = [];
 
@@ -332,29 +347,58 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
     private exitGroups?: (G | undefined)[][];
 
     get enter() {
-        return new Selection<EnterNode, P, GDatum, PDatum>(this.enterGroups ? this.enterGroups : [[]], this.parents);
+        return new Selection<EnterNode, P, GDatum, PDatum>(
+            this.enterGroups ? this.enterGroups : [[]],
+            this.parents
+        );
     }
 
     get exit() {
-        return new Selection<G, P, GDatum, PDatum>(this.exitGroups ? this.exitGroups : [[]], this.parents);
+        return new Selection<G, P, GDatum, PDatum>(
+            this.exitGroups ? this.exitGroups : [[]],
+            this.parents
+        );
     }
 
+    /**
+     * Binds the given value to each selected node and returns this selection
+     * with its {@link GDatum} type changed to the type of the given value.
+     * This method doesn't compute a join and doesn't affect indexes or the enter and exit selections.
+     * This method can also be used to clear bound data.
+     * @param value
+     */
     setDatum<GDatum>(value: GDatum): Selection<G, P, GDatum, PDatum> {
-        const node = this.node();
-
-        if (node) {
+        return this.each(node => {
             node.datum = value;
-        }
-
-        return this as unknown as Selection<G, P, GDatum, PDatum>;
+        }) as unknown as Selection<G, P, GDatum, PDatum>;
     }
 
-    setData<GDatum>(value: GDatum[] | ValueFn<P, GDatum, PDatum>,
+    /**
+     * Returns the bound datum for the first non-null element in the selection.
+     * This is generally useful only if you know the selection contains exactly one element.
+     */
+    get datum(): GDatum {
+        const node = this.node();
+        return node ? node.datum : null;
+    }
+
+    /**
+     * Binds the specified array of values with the selected nodes, returning a new selection
+     * that represents the _update_ selection: the nodes successfully bound to the values.
+     * Also defines the {@link enter} and {@link exit} selections on the returned selection,
+     * which can be used to add or remove the nodes to correspond to the new data.
+     * The `values` is an array of values of a particular type, or a function that returns
+     * an array of values for each group.
+     * When values are assigned to the nodes, they are stored in the {@link Node.datum} property.
+     * @param values
+     * @param key
+     */
+    setData<GDatum>(values: GDatum[] | ValueFn<P, GDatum, PDatum>,
                     key?: KeyFn<Node | EnterNode, G | GDatum, GDatum>): Selection<G, P, GDatum, PDatum> {
 
-        if (typeof value !== 'function') {
-            const data = value;
-            value = () => data;
+        if (typeof values !== 'function') {
+            const data = values;
+            values = () => data;
         }
 
         const groups = this.groups;
@@ -373,7 +417,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             }
 
             const groupSize = group.length;
-            const data: GDatum[] = value(parent, parent.datum, j, parents);
+            const data: GDatum[] = values(parent, parent.datum, j, parents);
             const dataSize = data.length;
 
             const enterGroup = enterGroups[j] = new Array<EnterNode | undefined>(dataSize);

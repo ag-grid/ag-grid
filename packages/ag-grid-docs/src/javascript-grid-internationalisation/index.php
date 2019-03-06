@@ -55,6 +55,10 @@ localeText = {
         startsWith: 'daStarts dawith',
         endsWith: 'daEnds dawith',
 
+        // filter conditions
+        andCondition: 'daAND',
+        orCondition: 'daOR',
+
         // the header of the default group column
         group: 'laGroup',
 
