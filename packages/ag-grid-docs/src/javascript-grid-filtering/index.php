@@ -412,9 +412,9 @@ on the combination of filter type and your <code>columnDef.filterParams.nullComp
 <h2>Adding Custom Filter Options</h2>
 
 <p>
-    For applications that have bespoke filtering requirements, it is also possible to can add new custom filtering
-    options to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be
-    included alongside the built in 'Not Equal' option.
+    For applications that have bespoke filtering requirements, it is also possible to add new custom filtering options
+    to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be included
+    alongside the built in 'Not Equal' option.
 </p>
 
 <p>
@@ -442,7 +442,7 @@ export interface IFilterOptionDef {
 </p>
 
 <p>
-    Custom <code>FilterOptionDef's</code> can be supplied alongside built-in filter option <code>string</code> keys
+    Custom <code>FilterOptionDef's</code> can be supplied alongside the built-in filter option <code>string</code> keys
     as shown below:
 </p>
 
@@ -474,7 +474,7 @@ export interface IFilterOptionDef {
 </snippet>
 
 <p>
-    The example demonstrates several custom filter options:
+    The following example demonstrates several custom filter options:
 </p>
 <ul class="content">
     <li>The 'Age' column contains two custom filter options <code>lessThanWithNulls</code> and
