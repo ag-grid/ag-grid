@@ -17,6 +17,7 @@ type PieSectorData = {
 
     fillStyle: string,
     strokeStyle: string,
+    lineWidth: number,
 
     label?: {
         text: string,
@@ -216,7 +217,8 @@ export class PieSeries extends PolarSeries {
                 midAngle: normalizeAngle180(midAngle),
 
                 fillStyle: colors[sectorIndex % colors.length],
-                strokeStyle: 'black',
+                strokeStyle: this.strokeStyle,
+                lineWidth: this.lineWidth,
 
                 label: isLabelVisible ? {
                     text: labelData[sectorIndex],
@@ -265,8 +267,8 @@ export class PieSeries extends PolarSeries {
                 arc.startAngle = datum.startAngle;
                 arc.endAngle = datum.endAngle;
                 arc.fillStyle = datum.fillStyle;
-                arc.strokeStyle = this.strokeStyle;
-                arc.lineWidth = this.lineWidth;
+                arc.strokeStyle = datum.strokeStyle;
+                arc.lineWidth = datum.lineWidth;
                 arc.lineJoin = 'round';
             });
 
