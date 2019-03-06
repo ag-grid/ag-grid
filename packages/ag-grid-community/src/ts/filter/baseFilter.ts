@@ -172,13 +172,13 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     public abstract isFilterActive(): boolean;
     public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
-    public abstract bodyTemplate(type:FilterConditionType): string;
-    public abstract resetState(): void;
-    public abstract serialize(type:FilterConditionType): M;
-    public abstract parse(toParse: M, type:FilterConditionType): void;
-    public abstract refreshFilterBodyUi(type:FilterConditionType): void;
-    public abstract initialiseFilterBodyUi(type:FilterConditionType): void;
-    public abstract isFilterConditionActive(type:FilterConditionType): boolean;
+    public abstract bodyTemplate(type: FilterConditionType): string;
+    public abstract resetState(resetConditionFilterOnly?: boolean): void;
+    public abstract serialize(type: FilterConditionType): M;
+    public abstract parse(toParse: M, type: FilterConditionType): void;
+    public abstract refreshFilterBodyUi(type: FilterConditionType): void;
+    public abstract initialiseFilterBodyUi(type: FilterConditionType): void;
+    public abstract isFilterConditionActive(type: FilterConditionType): boolean;
 
     public floatingFilter(from: string): void {
         if (from !== '') {
@@ -283,6 +283,11 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             });
             this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
         } else if (filterCondition && !this.isFilterActive()) {
+
+            // reset condition filter state
+            this.conditionValue = 'AND';
+            this.resetState(true);
+
             this.eFilterBodyWrapper.removeChild(this.eConditionWrapper);
             this.eConditionWrapper = null;
         } else {

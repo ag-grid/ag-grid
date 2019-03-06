@@ -213,10 +213,12 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         _.setVisible(panel, visible);
     }
 
-    public resetState(): void {
-        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
-        this.setFilter(null, FilterConditionType.MAIN);
-        this.setFilterTo(null, FilterConditionType.MAIN);
+    public resetState(resetConditionFilterOnly: boolean = false): void {
+        if (!resetConditionFilterOnly) {
+            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+            this.setFilter(null, FilterConditionType.MAIN);
+            this.setFilterTo(null, FilterConditionType.MAIN);
+        }
 
         this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
         this.setFilter(null, FilterConditionType.CONDITION);

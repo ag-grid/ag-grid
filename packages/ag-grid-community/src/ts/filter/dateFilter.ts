@@ -260,14 +260,16 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         }
     }
 
-    public resetState(): void {
-        this.setDateFrom(null, FilterConditionType.MAIN);
-        this.setDateTo(null, FilterConditionType.MAIN);
-        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+    public resetState(resetConditionFilterOnly: boolean = false): void {
+        if (!resetConditionFilterOnly) {
+            this.setDateFrom(null, FilterConditionType.MAIN);
+            this.setDateTo(null, FilterConditionType.MAIN);
+            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+        }
 
+        this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
         this.setDateFrom(null, FilterConditionType.CONDITION);
         this.setDateTo(null, FilterConditionType.CONDITION);
-        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
     }
 
     public parse(model: SerializedDateFilter, type:FilterConditionType): void {

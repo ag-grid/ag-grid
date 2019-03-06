@@ -229,12 +229,14 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         return this.filterText;
     }
 
-    public resetState(): void {
-        this.setFilter(null, FilterConditionType.MAIN);
-        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+    public resetState(resetConditionFilterOnly: boolean = false): void {
+        if (!resetConditionFilterOnly) {
+            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+            this.setFilter(null, FilterConditionType.MAIN);
+        }
 
-        this.setFilter(null, FilterConditionType.CONDITION);
         this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
+        this.setFilter(null, FilterConditionType.CONDITION);
     }
 
     public serialize(type:FilterConditionType): SerializedTextFilter {
