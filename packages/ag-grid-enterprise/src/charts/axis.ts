@@ -26,15 +26,14 @@ export type GridStyle = {
  * of linear axis.
  */
 export class Axis<D> {
-    constructor(scale: Scale<D, number>, group: Group) {
+    constructor(scale: Scale<D, number>) {
         this.scale = scale;
-        this.group = group;
-        this.groupSelection = Selection.select(group).selectAll<Group>();
-        group.append(this.line);
+        this.groupSelection = Selection.select(this.group).selectAll<Group>();
+        this.group.append(this.line);
     }
 
     readonly scale: Scale<D, number>;
-    readonly group: Group;
+    readonly group = new Group();
     private groupSelection: Selection<Group, Group, D, D>;
     private line = new Line();
 
