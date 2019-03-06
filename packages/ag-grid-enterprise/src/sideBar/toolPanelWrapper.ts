@@ -23,11 +23,18 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
 
     private toolPanelCompInstance: IToolPanelComp;
 
+    private toolPanelId: string;
+
     constructor() {
         super(ToolPanelWrapper.TEMPLATE);
     }
 
+    public getToolPanelId(): string {
+        return this.toolPanelId;
+    }
+
     public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
+        this.toolPanelId = toolPanelDef.id;
         const componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
             toolPanelDef,
             toolPanelDef.toolPanelParams,

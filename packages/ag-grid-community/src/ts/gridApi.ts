@@ -784,11 +784,6 @@ export class GridApi {
         this.gridPanel.setCellTextSelection(selectable);
     }
 
-    public getPreferredWidth(): number {
-        console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()');
-        return this.gridCore.getPreferredWidth();
-    }
-
     public setGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
         this.doLayout();

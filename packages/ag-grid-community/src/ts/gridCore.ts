@@ -96,7 +96,6 @@ export class GridCore extends Component {
 
         if (this.enterprise) {
             this.clipboardService.registerGridCore(this);
-            this.sideBarComp.registerGridComp(this.gridPanel);
         }
 
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
@@ -137,15 +136,6 @@ export class GridCore extends Component {
             clientHeight: this.eGridDiv.clientHeight
         };
         this.eventService.dispatchEvent(event);
-    }
-
-    /** @deprecated since v19, we can drop in v20 */
-    public getPreferredWidth(): number {
-        const widthForCols = this.columnController.getBodyContainerWidth()
-            + this.columnController.getPinnedLeftContainerWidth()
-            + this.columnController.getPinnedRightContainerWidth();
-        const widthForToolpanel = this.sideBarComp ? this.sideBarComp.getPreferredWidth() : 0;
-        return widthForCols + widthForToolpanel;
     }
 
     private addRtlSupport(): void {

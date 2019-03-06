@@ -6,15 +6,15 @@ import {
     Context,
     EventService,
     GridOptionsWrapper,
-    GridPanel,
+    ToolPanelVisibleChangedEvent,
     IComponent,
     ISideBar,
     PostConstruct,
     RefSelector,
     SideBarDef,
-    ToolPanelDef
+    ToolPanelDef, Events
 } from "ag-grid-community";
-import {SideBarButtonsComp} from "./sideBarButtonsComp";
+import {SideBarButtonClickedEvent, SideBarButtonsComp} from "./sideBarButtonsComp";
 import {ToolPanelWrapper} from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
@@ -26,13 +26,13 @@ export class SideBarComp extends Component implements ISideBar {
     @Autowired("context") private context: Context;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired("componentResolver") private componentResolver: ComponentResolver;
 
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 
-    private toolPanelWrappers: { [p: string]: ToolPanelWrapper } = {};
+    private toolPanelWrappers: ToolPanelWrapper[] = [];
 
-    private static readonly TEMPLATE = `<div class="ag-side-bar">
+    private static readonly TEMPLATE =
+        `<div class="ag-side-bar">
               <ag-side-bar-buttons ref="sideBarButtons">
           </div>`;
 
@@ -40,134 +40,125 @@ export class SideBarComp extends Component implements ISideBar {
         super(SideBarComp.TEMPLATE);
     }
 
-    /** @deprecated in v19, we can drop in v20 */
-    public getPreferredWidth(): number {
-        return this.getGui().clientWidth;
-    }
-
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.sideBarButtonsComp.registerGridComp(gridPanel);
-    }
-
     @PostConstruct
     private postConstruct(): void {
         this.instantiate(this.context);
-        const sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
+        this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
+        this.setSideBarDef();
+    }
 
-        if (sideBar == null || !sideBar.toolPanels) {
-            this.getGui().removeChild(this.sideBarButtonsComp.getGui());
-            return;
+    private onToolPanelButtonClicked(event: SideBarButtonClickedEvent): void {
+        const id = event.toolPanelId;
+        const openedItem = this.openedItem();
+
+        // if item was already open, we close it
+        if (openedItem === id) {
+            this.openToolPanel(undefined); // passing undefined closes
+        } else {
+            this.openToolPanel(id);
         }
+    }
 
-        const toolPanelDefs = sideBar.toolPanels as ToolPanelDef[];
-        toolPanelDefs.forEach(toolPanelDef => {
-            if (toolPanelDef.id == null) {
+    private clearDownUi(): void {
+        this.sideBarButtonsComp.clearButtons();
+        this.destroyToolPanelWrappers();
+    }
+
+    private setSideBarDef(): void {
+        const sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
+        const sideBarExists = !!sideBar && !!sideBar.toolPanels;
+        this.setVisible(sideBarExists);
+
+        if (sideBarExists) {
+            const toolPanelDefs = <ToolPanelDef[]> sideBar.toolPanels;
+            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
+            this.setupToolPanels(toolPanelDefs);
+            this.openToolPanel(sideBar.defaultToolPanel);
+        }
+    }
+
+    private setupToolPanels(defs: ToolPanelDef[]): void {
+        defs.forEach(def => {
+            if (def.id == null) {
                 console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
                 return;
             }
 
             const wrapper = new ToolPanelWrapper();
             this.context.wireBean(wrapper);
-            wrapper.setToolPanelDef(toolPanelDef);
+            wrapper.setToolPanelDef(def);
             wrapper.setVisible(false);
             this.getGui().appendChild(wrapper.getGui());
 
-            this.toolPanelWrappers[toolPanelDef.id] = wrapper;
-            this.sideBarButtonsComp.registerPanelComp(toolPanelDef.id, wrapper);
+            this.toolPanelWrappers.push(wrapper);
         });
-
-        if (this.sideBarButtonsComp.defaultPanelKey) {
-            this.sideBarButtonsComp.setPanelVisibility(this.sideBarButtonsComp.defaultPanelKey, true);
-            this.setVisible(true);
-        }
     }
 
     public refresh(): void {
-        Object.keys(this.toolPanelWrappers).forEach(key => {
-            const currentComp = this.toolPanelWrappers[key];
-            currentComp.refresh();
-        });
+        this.toolPanelWrappers.forEach( wrapper => wrapper.refresh());
     }
 
-    public setVisible(show: boolean): void {
-        if (_.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []).length === 0) { return; }
-
-        super.setVisible(show);
-        if (show) {
-            let keyOfTabToShow: string | undefined | null  = this.getActiveToolPanelItem();
-
-            if (!keyOfTabToShow) { return; }
-
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getSideBar().defaultToolPanel;
-
-            const tabToShow: Component | null = keyOfTabToShow ? this.toolPanelWrappers[keyOfTabToShow] : null;
-            if (!tabToShow) {
-                console.warn(`ag-grid: can't set the visibility of the tool panel item [${keyOfTabToShow}] since it can't be found`);
-                return;
-            }
-            tabToShow.setVisible(true);
-        }
-    }
-
-    public openToolPanel(key: string) {
-        const currentlyOpenedKey = this.getActiveToolPanelItem();
+    public openToolPanel(key: string | undefined): void {
+        const currentlyOpenedKey = this.openedItem();
         if (currentlyOpenedKey === key) { return; }
 
-        const tabToShow: Component = this.toolPanelWrappers[key];
-        if (!tabToShow) {
-            console.warn(`ag-grid: invalid tab key [${key}] to open for the tool panel`);
-            return;
-        }
+        this.toolPanelWrappers.forEach( wrapper => {
+            const show = key === wrapper.getToolPanelId();
+            wrapper.setVisible(show);
+        });
 
-        if (currentlyOpenedKey != null) {
-            this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
+        const newlyOpenedKey = this.openedItem();
+        const openToolPanelChanged = currentlyOpenedKey !== newlyOpenedKey;
+        if (openToolPanelChanged) {
+            this.sideBarButtonsComp.setActiveButton(key);
+            this.raiseToolPanelVisibleEvent(key);
         }
-        this.sideBarButtonsComp.setPanelVisibility(key, true);
+    }
+
+    private raiseToolPanelVisibleEvent(key: string|undefined): void {
+        const event: ToolPanelVisibleChangedEvent = {
+            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            source: key,
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public close(): void {
-        const currentlyOpenedKey = this.getActiveToolPanelItem();
-        if (!currentlyOpenedKey) { return; }
-
-        this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
+        this.openToolPanel(undefined);
     }
 
     public isToolPanelShowing(): boolean {
-        return this.getActiveToolPanelItem() != null;
+        return !!this.openedItem();
     }
 
-    public getActiveToolPanelItem(): string | null {
+    public openedItem(): string | null {
         let activeToolPanel: string | null = null;
-        Object.keys(this.toolPanelWrappers).forEach(key => {
-            const currentComp = this.toolPanelWrappers[key];
-            if (currentComp.isVisible()) {
-                activeToolPanel = key;
+        this.toolPanelWrappers.forEach( wrapper => {
+            if (wrapper.isVisible()) {
+                activeToolPanel = wrapper.getToolPanelId();
             }
         });
         return activeToolPanel;
     }
 
-    public openedItem(): string | null {
-        return this.getActiveToolPanelItem();
-    }
-
+    // get called after user sets new sideBarDef via the API
     public reset(): void {
-        this.sideBarButtonsComp.clear();
-        this.destroyToolPanelWrappers();
-        this.setTemplate(SideBarComp.TEMPLATE);
-        this.postConstruct();
+        this.clearDownUi();
+        this.setSideBarDef();
     }
 
     private destroyToolPanelWrappers(): void {
-        _.iterateObject(this.toolPanelWrappers, (key: string, wrapper: ToolPanelWrapper) => {
+        this.toolPanelWrappers.forEach( wrapper => {
+            _.removeFromParent(wrapper.getGui());
             wrapper.destroy();
         });
-        this.toolPanelWrappers = {};
+        this.toolPanelWrappers.length = 0;
     }
 
     public destroy(): void {
-        super.destroy();
         this.destroyToolPanelWrappers();
+        super.destroy();
     }
 }

@@ -1,117 +1,118 @@
 import {
     Autowired,
     Component,
-    EventService,
     GridOptionsWrapper,
-    GridPanel,
     PostConstruct,
     ToolPanelDef,
-    Events,
-    ToolPanelVisibleChangedEvent,
-    _
+    Context,
+    _, RefSelector, AgEvent
 } from "ag-grid-community";
+
+export interface SideBarButtonClickedEvent extends AgEvent {
+    toolPanelId: string;
+}
 
 export class SideBarButtonsComp extends Component {
 
-    private panels: { [key: string]: Component } = {};
-    public defaultPanelKey: string | null = null;
+    public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
 
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired("eventService") private eventService: EventService;
-
-    private gridPanel: GridPanel;
+    @Autowired("context") private context: Context;
 
     private static readonly TEMPLATE: string = `<div class="ag-side-buttons"></div>`;
+
+    private buttonComps: SideBarButtonComp[] = [];
 
     constructor() {
         super(SideBarButtonsComp.TEMPLATE);
     }
 
-    public registerPanelComp(key: string, panelComponent: Component): void {
-        this.panels[key] = panelComponent;
+    public setToolPanelDefs(toolPanelDefs: ToolPanelDef[]): void {
+        toolPanelDefs.forEach(this.addButtonComp.bind(this));
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
+    public setActiveButton(id: string | undefined): void {
+        this.buttonComps.forEach( comp => {
+            comp.setSelected(id === comp.getToolPanelId());
+        });
+    }
+
+    private addButtonComp(def: ToolPanelDef): void {
+        const buttonComp = new SideBarButtonComp(def);
+        this.context.wireBean(buttonComp);
+        this.buttonComps.push(buttonComp);
+        this.getGui().appendChild(buttonComp.getGui());
+
+        buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
+            this.dispatchEvent({
+                type: SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
+                toolPanelId: def.id
+            })
+        });
+    }
+
+    public clearButtons(): void {
+        if (this.buttonComps) {
+            this.buttonComps.forEach( comp => comp.destroy() );
+        }
+        _.clearElement(this.getGui());
+        this.buttonComps.length = 0;
+    }
+
+    public destroy(): void {
+        this.clearButtons();
+        super.destroy();
+    }
+}
+
+class SideBarButtonComp extends Component {
+
+    public static EVENT_TOGGLE_BUTTON_CLICKED  = 'toggleButtonClicked';
+
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
+
+    @RefSelector('eToggleButton') private eToggleButton: HTMLButtonElement;
+
+    private readonly toolPanelDef: ToolPanelDef;
+
+    constructor(toolPanelDef: ToolPanelDef) {
+        super();
+        this.toolPanelDef = toolPanelDef;
+    }
+
+    public getToolPanelId(): string {
+        return this.toolPanelDef.id;
     }
 
     @PostConstruct
-    public postConstruct(): void {
-        const buttons: { [p: string]: ToolPanelDef } = {};
-        const toolPanels: ToolPanelDef[] = _.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []);
-        toolPanels.forEach((toolPanel: ToolPanelDef) => {
-            buttons[toolPanel.id] = toolPanel;
-        });
+    private postConstruct(): void {
+        const template = this.createTemplate();
+        this.setTemplate(template);
 
-        this.createButtonsHtml(buttons);
+        this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     }
 
-    private createButtonsHtml(componentButtons: { [p: string]: ToolPanelDef }): void {
+    private createTemplate(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        let html: string = '';
-        const keys = Object.keys(componentButtons);
-        keys.forEach(key => {
-            const def: ToolPanelDef = componentButtons[key];
-            html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}"><div><span class="ag-icon-${def.iconKey}"></span></div><span>${translate(def.labelKey, def.labelDefault)}</span></button></div>`
-        });
-
-        this.getGui().innerHTML = html;
-
-        keys.forEach(key => {
-            this.addButtonEvents(key);
-        });
-
-        this.defaultPanelKey = _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
-        const defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${this.defaultPanelKey}`);
-        if (defaultButtonElement && defaultButtonElement.parentElement) {
-            _.addOrRemoveCssClass(defaultButtonElement.parentElement, 'ag-selected', true);
-        }
+        const def = this.toolPanelDef;
+        const label = translate(def.labelKey, def.labelDefault);
+        const res =
+            `<div class="ag-side-button">
+                <button type="button" ref="eToggleButton">
+                    <div>
+                        <span class="ag-icon-${def.iconKey}"></span>
+                    </div>
+                    <span>${label}</span>
+                </button>
+            </div>`;
+        return res;
     }
 
-    private addButtonEvents(keyToProcess: string) {
-        const btShow = this.getRefElement(`toggle-button-${keyToProcess}`);
-        this.addDestroyableEventListener(btShow, 'click', () => this.onButtonPressed(keyToProcess));
+    private onButtonPressed(): void {
+        this.dispatchEvent({type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED})
     }
 
-    private onButtonPressed(keyPressed: string): void {
-        Object.keys(this.panels).forEach(keyToProcess => {
-            this.processKeyAfterKeyPressed(keyToProcess, keyPressed);
-        })
-    }
-
-    private processKeyAfterKeyPressed(keyToProcess: string, keyPressed: string) {
-        const panelToProcess = this.panels[keyToProcess];
-        const clickingThisPanel = keyToProcess === keyPressed;
-        const showThisPanel = clickingThisPanel ? !panelToProcess.isVisible() : false;
-        this.setPanelVisibility(keyToProcess, showThisPanel);
-    }
-
-    public setPanelVisibility(key: string, show: boolean) {
-        const panelToProcess = this.panels[key];
-
-        if (!panelToProcess) {
-            console.warn(`ag-grid: can't change the visibility for the non existing tool panel item [${key}]`);
-            return;
-        }
-
-        panelToProcess.setVisible(show);
-        const button: HTMLElement = this.getRefElement(`toggle-button-${key}`);
-        if (button.parentElement) {
-            _.addOrRemoveCssClass(button.parentElement, 'ag-selected', show);
-        }
-
-        const event: ToolPanelVisibleChangedEvent = {
-            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!
-        };
-        this.eventService.dispatchEvent(event);
-    }
-
-    public clear() {
-        this.setTemplate(SideBarButtonsComp.TEMPLATE);
-        this.panels = {};
+    public setSelected(selected: boolean): void {
+        this.addOrRemoveCssClass( 'ag-selected', selected);
     }
 }
