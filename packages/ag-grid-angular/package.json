@@ -5,7 +5,6 @@
   "main": "main.js",
   "typings": "main.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
     "verify-properties": "node agGridPropertiesCheck.js",
     "build": "npm run clean && npm run build-no-verify && npm run verify-properties",
