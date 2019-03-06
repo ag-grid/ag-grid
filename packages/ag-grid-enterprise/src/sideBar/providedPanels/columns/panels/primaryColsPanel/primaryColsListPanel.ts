@@ -27,10 +27,9 @@ export class PrimaryColsListPanel extends Component {
     @Autowired('eventService') private globalEventService: EventService;
     @Autowired('context') private context: Context;
 
-    private props: {
-        allowDragging: boolean;
-        params: ToolPanelColumnCompParams;
-    };
+
+    private allowDragging: boolean;
+    private params: ToolPanelColumnCompParams;
 
     private columnTree: OriginalColumnGroupChild[];
     private columnComps: { [key: string]: ColumnItem };
@@ -45,10 +44,12 @@ export class PrimaryColsListPanel extends Component {
         super(PrimaryColsListPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    public init(): void {
+    public init(params: ToolPanelColumnCompParams, allowDragging: boolean): void {
+        this.params = params;
+        this.allowDragging = allowDragging;
+
         this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.expandGroupsByDefault = !this.props.params.contractColumnSelection;
+        this.expandGroupsByDefault = !this.params.contractColumnSelection;
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -80,7 +81,7 @@ export class PrimaryColsListPanel extends Component {
 
         if (!columnGroup.isPadding()) {
             const renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this),
-                this.props.allowDragging, this.expandGroupsByDefault);
+                this.allowDragging, this.expandGroupsByDefault);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
@@ -147,7 +148,7 @@ export class PrimaryColsListPanel extends Component {
             return;
         }
 
-        const columnComp = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
+        const columnComp = new ToolPanelColumnComp(column, dept, this.allowDragging, groupsExist);
         this.context.wireBean(columnComp);
         this.getGui().appendChild(columnComp.getGui());
 
