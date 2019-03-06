@@ -7,7 +7,8 @@
   "scripts": {
     "build": "gulp",
     "umd": "rollup -c",
-    "test": "react-scripts test --verbose=false"
+    "test": "CI=true react-scripts test --verbose=false",
+    "test:watch": "react-scripts test --verbose=false"
   },
   "repository": {
     "type": "git",

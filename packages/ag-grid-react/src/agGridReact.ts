@@ -1,11 +1,14 @@
 import * as React from "react";
+import {ReactPortal} from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid-community";
 import {
     Autowired,
     BaseComponentWrapper,
     Bean,
+    ColumnApi,
     FrameworkComponentWrapper,
+    GridApi,
     GridOptions,
     IComponent,
     Promise,
@@ -26,16 +29,16 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
 
     destroyed: boolean = false;
 
-    gridOptions: AgGrid.GridOptions;
+    gridOptions!: AgGrid.GridOptions;
 
     changeDetectionService = new ChangeDetectionService();
 
-    api: AgGrid.GridApi;
-    columnApi: AgGrid.ColumnApi;
-    portals = [];
+    api: GridApi | null = null;
+    columnApi!: ColumnApi;
+    portals: ReactPortal[] = [];
     hasPendingPortalUpdate = false;
 
-    protected eGridDiv: HTMLElement;
+    protected eGridDiv!: HTMLElement;
 
     private static MAX_COMPONENT_CREATION_TIME: number = 1000; // a second should be more than enough to instantiate a component
 
@@ -46,7 +49,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     render() {
         return React.createElement<any>("div", {
             style: this.createStyleForDiv(),
-            ref: e => {
+            ref: (e: HTMLElement) => {
                 this.eGridDiv = e;
             }
         }, this.portals);
@@ -81,8 +84,8 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         // don't need the return value
         new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
 
-        this.api = this.gridOptions.api;
-        this.columnApi = this.gridOptions.columnApi;
+        this.api = this.gridOptions.api!;
+        this.columnApi = this.gridOptions.columnApi!;
     }
 
     shouldComponentUpdate() {
@@ -92,7 +95,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         return false;
     }
 
-    waitForInstance(reactComponent: AgReactComponent, resolve, runningTime = 0) {
+    waitForInstance(reactComponent: AgReactComponent, resolve: (value: any) => void, runningTime = 0) {
         if (reactComponent.getFrameworkComponentInstance()) {
             resolve(null);
         } else {
@@ -109,12 +112,12 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
      * We do this because we want all portals to be in the same tree - in order to get
      * Context to work properly.
      */
-    mountReactPortal(portal, reactComponent, resolve) {
+    mountReactPortal(portal: ReactPortal, reactComponent: AgReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
         this.batchUpdate(this.waitForInstance(reactComponent, resolve));
     }
 
-    batchUpdate(callback?) {
+    batchUpdate(callback?: any) {
         if (this.hasPendingPortalUpdate) {
             return callback && callback();
         }
@@ -130,7 +133,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
 
-    destroyPortal(portal) {
+    destroyPortal(portal: ReactPortal) {
         this.portals = this.portals.filter(curPortal => curPortal !== portal);
         this.batchUpdate();
     }
@@ -184,7 +187,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         });
 
 
-        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
     }
 
     componentWillUnmount() {
@@ -209,13 +212,13 @@ addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 
 function addProperties(listOfProps: string[], propType: any) {
     listOfProps.forEach((propKey: string) => {
-        AgGridReact[propKey] = propType;
+        (AgGridReact as any)[propKey] = propType;
     });
 }
 
 @Bean("frameworkComponentWrapper")
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
-    @Autowired("agGridReact") private agGridReact: AgGridReact;
+    @Autowired("agGridReact") private agGridReact!: AgGridReact;
 
     createWrapper(ReactComponent: { new(): any }): WrapableInterface {
         let _self = this;
@@ -245,13 +248,13 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
                     window.setTimeout(() => this.callMethod(name, args), 100);
                 } else {
                     let method = wrapper.getFrameworkComponentInstance()[name];
-                    if (method == null) return null;
+                    if (method == null) return;
                     return method.apply(frameworkComponentInstance, args);
                 }
             }
 
             addMethod(name: string, callback: Function): void {
-                wrapper[name] = callback;
+                (wrapper as any)[name] = callback;
             }
         }
 

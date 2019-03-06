@@ -27,8 +27,10 @@
     "buildAurelia": "lerna run build --scope ag-grid-community --scope ag-grid-aurelia",
     "docs": "cd packages/ag-grid-docs && gulp serve",
     "updateAndRebuild": "npm run updateDependencies && npm run build",
+    "updateAndRebuildFull": "npm run updateDependencies && npm run fullBuild",
     "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
-    "init": "npm run initLatest && npm run updateAndRebuild"
+    "init": "npm run initLatest && npm run updateAndRebuild",
+    "initFullBuild": "npm run initLatest && npm run updateAndRebuildFull"
   },
   "devDependencies": {
     "archiver": "^3.0.0",

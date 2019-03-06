@@ -7,14 +7,14 @@ import { AgGridReact } from "./agGridReact";
 
 export class AgReactComponent {
 
-    private eParentElement: HTMLElement;
+    private eParentElement!: HTMLElement;
     private componentInstance: any;
 
     private reactComponent: any;
     private parentComponent: AgGridReact;
-    private portal: ReactPortal;
+    private portal: ReactPortal | null = null;
 
-    constructor(reactComponent: any, parentComponent?: AgGridReact) {
+    constructor(reactComponent: any, parentComponent: AgGridReact) {
         this.reactComponent = reactComponent;
         this.parentComponent = parentComponent;
     }
@@ -61,7 +61,7 @@ export class AgReactComponent {
 
     public destroy(): void {
         if (!this.useLegacyReact()) {
-            return this.parentComponent.destroyPortal(this.portal);
+            return this.parentComponent.destroyPortal(this.portal as ReactPortal);
         }
         ReactDOM.unmountComponentAtNode(this.eParentElement);
     }
@@ -70,14 +70,12 @@ export class AgReactComponent {
         const self = this;
         const ReactComponent = React.createElement(this.reactComponent, params);
         if (!this.parentComponent) {
-
             // MUST be a function, not an arrow function
             ReactDOM.render(ReactComponent, this.eParentElement, function() {
-                self.componentInstance = this;
+                self.componentInstance = this ;
                 resolve(null);
             });
         } else {
-
             // MUST be a function, not an arrow function
             ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function() {
                 self.componentInstance = this;
@@ -89,7 +87,7 @@ export class AgReactComponent {
     private createReactComponent(params: any, resolve: (value: any) => void) {
         // grab hold of the actual instance created - we use a react ref for this as there is no other mechanism to
         // retrieve the created instance from either createPortal or render
-        params.ref = element => {
+        params.ref = (element:any) => {
             this.componentInstance = element;
         };
 
@@ -99,6 +97,6 @@ export class AgReactComponent {
             this.eParentElement
         );
         this.portal = portal;
-        this.parentComponent.mountReactPortal(portal, this, resolve);
+        this.parentComponent.mountReactPortal(portal!, this, resolve);
     }
 }
