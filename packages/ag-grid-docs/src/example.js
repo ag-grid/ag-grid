@@ -101,6 +101,11 @@ function suppressColumnMoveAnimation() {
     return isFirefox || isSafari || isIE;
 }
 
+function toggleOptionsCollapsed() {
+    var optionsEl = document.querySelector('.example-toolbar');
+
+    optionsEl.classList.toggle('collapsed');
+}
 var gridOptions = {
     statusBar: {
         statusPanels: [
@@ -312,6 +317,10 @@ var gridOptions = {
     },
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
+
+        if (document.documentElement.clientWidth <= 1024) {
+            event.api.closeToolPanel();
+        }
         //event.api.addGlobalListener(function(type, event) {
         //    console.log('event ' + type);
         //});
