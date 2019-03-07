@@ -1,4 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
+    var select = document.getElementById('data-size');
+
+    if (select) {
+        var rowsCols = [
+            [100, defaultColCount],
+            [1000, defaultColCount]
+        ]
+
+        if (!isSmall) {
+            rowsCols.push(
+                [10000, 100],
+                [50000, defaultColCount],
+                [100000, defaultColCount]
+            )
+        }
+
+        for (var i = 0; i < rowsCols.length; i++) {
+            var option = document.createElement('option');
+            var rows = rowsCols[i][0];
+            var cols = rowsCols[i][1];
+
+            option.value = (rows / 1000) + 'x' + cols;
+            option.text = rows + ' Rows, ' + cols + ' Cols';
+            select.appendChild(option);
+        }
+    }
     gridDiv = document.querySelector('#myGrid');
 
     new agGrid.Grid(gridDiv, gridOptions);
@@ -9,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // for easy access in the dev console, we put api and columnApi into global variables
+var docEl = document.documentElement;
+var isSmall = docEl.clientHeight <= 415 || docEl.clientWidth <= 810;
+
 var api, columnApi;
 
 var gridDiv;
@@ -56,8 +85,6 @@ var lastNames = ["Smith", "Connell", "Flanagan", "McGee", "Unalkat", "Lopes", "B
     "Keating", "Keegan", "Kingston", "Kobe"];
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-var dataSize = '.1x22';
 
 var size = 'fill'; // model for size select
 var width = '100%'; // the div gets its width and height from here
@@ -150,12 +177,13 @@ var gridOptions = {
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
-    floatingFilter: true,
+    floatingFilter: !isSmall,
     // debug: true,
     // editType: 'fullRow',
     // debug: true,
     // suppressMultiRangeSelection: true,
-    rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
+    rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
+    suppressMenuHide: isSmall,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotColumnGroupTotals: 'before',
     pivotRowTotals: 'before',
@@ -318,7 +346,10 @@ var gridOptions = {
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
 
-        if (document.documentElement.clientWidth <= 1024) {
+        if (isSmall) {
+            event.api.setSideBarVisible(false);
+        }
+        else if (docEl.clientWidth <= 1024) {
             event.api.closeToolPanel();
         }
         //event.api.addGlobalListener(function(type, event) {
@@ -453,7 +484,7 @@ function getContextMenuItems(params) {
 //    }
 //};
 
-var defaultCols = [
+var desktopDefaultCols = [
     // {
     //     headerName: 'Test Date',
     //     editable: true,
@@ -670,12 +701,88 @@ var defaultCols = [
         }
     }
 ];
+
+var mobileDefaultCols = [
+    {
+        headerName: 'Name',
+        rowDrag: true,
+        field: 'name',
+        width: 200,
+        editable: true,
+        cellClass: 'vAlign',
+        checkboxSelection: function (params) {
+            // we put checkbox on the name if we are not doing grouping
+            return params.columnApi.getRowGroupColumns().length === 0;
+        },
+        headerCheckboxSelection: function (params) {
+            // we put checkbox on the name if we are not doing grouping
+            return params.columnApi.getRowGroupColumns().length === 0;
+        },
+        headerCheckboxSelectionFilteredOnly: true
+    },
+    {
+        headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
+        cellEditor: 'agSelectCellEditor',
+        cellClass: 'vAlign',
+        cellEditorParams: {
+            values: ['English', 'Spanish', 'French', 'Portuguese', 'German',
+                'Swedish', 'Norwegian', 'Italian', 'Greek', 'Icelandic', 'Portuguese', 'Maltese']
+        }
+    },
+    {
+        headerName: "Country", field: "country", width: 150, editable: true,
+        cellRenderer: 'countryCellRenderer',
+        cellClass: 'vAlign',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            cellRenderer: 'countryCellRenderer',
+            values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
+                "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
+                "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
+        },
+        floatCell: true,
+        icons: {
+            sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-down"/>'
+        }
+    },
+    {
+        headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
+        cellClass: function () {
+            return 'alphabet';
+        }
+    },
+    {
+        headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
+        valueFormatter: currencyFormatter,
+        type: 'numericColumn',
+        cellClassRules: {
+            'currencyCell': 'typeof x == "number"'
+        },
+        enableValue: true
+    },
+    {
+        headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter', type: 'numericColumn',
+        editable: true, valueParser: numberParser, width: 170,
+        // aggFunc: 'sum',
+        enableValue: true,
+        cellClassRules: {
+            'currencyCell': 'typeof x == "number"'
+        },
+        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
+        icons: {
+            sortAscending: '<i class="fa fa-sort-amount-up"/>',
+            sortDescending: '<i class="fa fa-sort-amount-down"/>'
+        }
+    }
+];
+
 //put in the month cols
 var monthGroup = {
     headerName: 'Monthly Breakdown',
     children: []
 };
-defaultCols.push(monthGroup);
+
 months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
@@ -694,6 +801,22 @@ months.forEach(function (month) {
         }
     });
 });
+
+var defaultCols;
+var defaultColCount;
+
+if (isSmall) {
+    defaultCols = mobileDefaultCols;
+    defaultCols = defaultCols.concat(monthGroup.children);
+    defaultColCount = defaultCols.length;
+} else {
+    defaultCols = desktopDefaultCols;
+    defaultCols.push(monthGroup);
+    defaultColCount = 22;
+}
+
+var dataSize = '.1x' + defaultColCount;
+
 
 function filterDoubleClicked(event) {
     setInterval(function () {
@@ -726,8 +849,7 @@ function createCols() {
     // start with a copy of the default cols
     var columns = defaultCols.slice(0, colCount);
 
-    // there are 22 cols by default
-    for (var col = 22; col < colCount; col++) {
+    for (var col = defaultColCount; col < colCount; col++) {
         var colName = colNames[col % colNames.length];
         var colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
         columns.push(colDef);

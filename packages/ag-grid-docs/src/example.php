@@ -29,11 +29,6 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
         <div>
             <label for="data-size">Data Size:</label>
             <select onchange="onDataSizeChanged(this.value)" id="data-size">
-                <option value=".1x22">100 Rows, 22 Cols</option>
-                <option value="1x22">1,000 Rows, 22 Cols</option>
-                <option value="10x100">10,000 Rows, 100 Cols</option>
-                <option value="50x22">50,000 Rows, 22 Cols</option>
-                <option value="100x22">100,000 Rows, 22 Cols</option>
             </select>
 
             <span id="message" style="margin-left: 10px;">

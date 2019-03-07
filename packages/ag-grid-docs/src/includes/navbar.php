@@ -59,10 +59,10 @@
         mainNav = document.getElementById('main-nav');
 
     navButton.addEventListener('click', showHideMenu);
+    window.addEventListener('resize', destroyMenu);
 
     function showHideMenu() {
-        navButton.classList.toggle('expanded');
-        if (!navButton.classList.contains('expanded')) {
+        if (navButton.classList.contains('expanded')) {
             destroyMenu();
             return;
         }
@@ -74,6 +74,7 @@
     }
 
     function createMenu() {
+        navButton.classList.toggle('expanded', true);
         var menu = document.createElement('div');
         menu.classList.add('ag-main-floatingMenu');
 
@@ -92,6 +93,7 @@
     }
 
     function destroyMenu() {
+        navButton.classList.toggle('expanded', false);
         var menu = document.querySelector('.ag-main-floatingMenu');
 
         if (menu) {
