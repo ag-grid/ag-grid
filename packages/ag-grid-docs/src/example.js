@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // for easy access in the dev console, we put api and columnApi into global variables
 var docEl = document.documentElement;
-var isSmall = docEl.clientHeight <= 415 || docEl.clientWidth <= 810;
+var isSmall = docEl.clientHeight <= 415 || docEl.clientWidth < 768;
 
 var api, columnApi;
 
