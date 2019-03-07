@@ -21,7 +21,7 @@ import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
 import { Context } from "./context/context";
 import { CsvCreator } from "./exporter/csvCreator";
-import { Grid Core } from "./gridCore";
+import { GridCore } from "./gridCore";
 import { StandardMenuFactory } from "./headerRendering/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
