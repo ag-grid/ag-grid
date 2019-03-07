@@ -8,7 +8,7 @@ import {
     EventService,
     GridOptionsWrapper,
     PreConstruct,
-    QuerySelector
+    QuerySelector, RefSelector
 } from "ag-grid-community/main";
 
 export class PivotModePanel extends Component {
@@ -18,16 +18,15 @@ export class PivotModePanel extends Component {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @QuerySelector('.ag-pivot-mode-select') private cbPivotMode: AgCheckbox;
+    @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 
     constructor() {
         super();
     }
 
     private createTemplate(): string {
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         return `<div class="ag-pivot-mode-panel">
-                <ag-checkbox class="ag-pivot-mode-select" label="${localeTextFunc('pivotMode', 'Pivot Mode')}"></ag-checkbox>
+                <ag-checkbox ref="cbPivotMode" class="ag-pivot-mode-select"></ag-checkbox>
             </div>`;
     }
 
@@ -37,6 +36,8 @@ export class PivotModePanel extends Component {
         this.instantiate(this.context);
 
         this.cbPivotMode.setSelected(this.columnController.isPivotMode());
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
         this.addDestroyableEventListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));

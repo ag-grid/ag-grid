@@ -10,17 +10,6 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
-interface AttrLists {
-    normal: NameValue [];
-    events: NameValue [];
-    bindings: NameValue [];
-}
-
-interface NameValue {
-    name: string;
-    value: string;
-}
-
 export class Component extends BeanStub implements IComponent<any> {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
@@ -61,112 +50,25 @@ export class Component extends BeanStub implements IComponent<any> {
 
         childNodeList.forEach(childNode => {
             const childComp = context.createComponentFromElement(childNode as Element, (childComp) => {
-                const attrList = this.getAttrLists(childNode as Element);
-                this.copyAttributesFromNode(attrList, childComp.getGui());
-                this.createChildAttributes(attrList, childComp);
-                this.addEventListenersToComponent(attrList, childComp);
+                // copy over all attributes, including css classes, so any attributes user put on the tag
+                // wll be carried across
+                this.copyAttributesFromNode(childNode as Element, childComp.getGui());
             });
             if (childComp) {
+                // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
-            } else {
-                if (childNode.childNodes) {
-                    this.instantiateRecurse(childNode as Element, context);
-                }
-                if (childNode instanceof HTMLElement) {
-                    const attrList = this.getAttrLists(childNode as Element);
-                    this.addEventListenersToElement(attrList, childNode);
-                }
+            } else if (childNode.childNodes) {
+                this.instantiateRecurse(childNode as Element, context);
             }
         });
     }
 
-    private getAttrLists(child: Element): AttrLists {
-        const res: AttrLists = {
-            bindings: [],
-            events: [],
-            normal: []
-        };
-        _.iterateNamedNodeMap(child.attributes,
+    private copyAttributesFromNode(source: Element, dest: Element): void {
+        _.iterateNamedNodeMap(source.attributes,
             (name: string, value: string) => {
-                const firstCharacter = name.substr(0, 1);
-                if (firstCharacter === '(') {
-                    const eventName = name.replace('(', '').replace(')', '');
-                    res.events.push({
-                        name: eventName,
-                        value: value
-                    });
-                } else if (firstCharacter === '[') {
-                    const bindingName = name.replace('[', '').replace(']', '');
-                    res.bindings.push({
-                        name: bindingName,
-                        value: value
-                    });
-                } else {
-                    res.normal.push({
-                        name: name,
-                        value: value
-                    });
-                }
+                dest.setAttribute(name, value);
             }
         );
-        return res;
-    }
-
-    private addEventListenersToElement(attrLists: AttrLists, element: HTMLElement): void {
-        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any) => void) => {
-            this.addDestroyableEventListener(element, eventName, listener);
-        });
-    }
-
-    private addEventListenersToComponent(attrLists: AttrLists, component: Component): void {
-        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any) => void) => {
-            this.addDestroyableEventListener(component, eventName, listener);
-        });
-    }
-
-    private addEventListenerCommon(attrLists: AttrLists,
-                                   callback: (eventName: string, listener: (event?: any) => void) => void): void {
-        const methodAliases = this.getAgComponentMetaData('methods');
-
-        attrLists.events.forEach(nameValue => {
-            const methodName = nameValue.value;
-            const methodAlias = _.find(methodAliases, 'alias', methodName);
-
-            const methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
-
-            const listener = (this as any)[methodNameToUse];
-            if (typeof listener !== 'function') {
-                console.warn('ag-Grid: count not find callback ' + methodName);
-                return;
-            }
-
-            const eventCamelCase = _.hyphenToCamelCase(nameValue.name);
-
-            callback(eventCamelCase!, listener.bind(this));
-        });
-    }
-
-    private createChildAttributes(attrLists: AttrLists, child: any): void {
-
-        const childAttributes: any = {};
-
-        attrLists.normal.forEach(nameValue => {
-            const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase!] = nameValue.value;
-        });
-
-        attrLists.bindings.forEach(nameValue => {
-            const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase!] = (this as any)[nameValue.value];
-        });
-
-        child.props = childAttributes;
-    }
-
-    private copyAttributesFromNode(attrLists: AttrLists, childNode: Element): void {
-        attrLists.normal.forEach(nameValue => {
-            childNode.setAttribute(nameValue.name, nameValue.value);
-        });
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
