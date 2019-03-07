@@ -647,7 +647,8 @@ var desktopDefaultCols = [
         children: [
             {
                 headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
-                filter: 'winningsFilter', valueFormatter: currencyFormatter,
+                filter: 'winningsFilter', 
+                valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 cellClassRules: {
                     'currencyCell': 'typeof x == "number"'

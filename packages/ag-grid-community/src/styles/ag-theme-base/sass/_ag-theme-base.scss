@@ -1289,9 +1289,6 @@
         }
 
         .ag-header-cell-label {
-            float: right;
-            width: calc(100% - #{$icon-size});
-
             & > span {
                 float: right;
             }
