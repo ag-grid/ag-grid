@@ -69,7 +69,7 @@ export class PrimaryColsHeaderPanel extends Component {
     }
 
     @PostConstruct
-    public init(): void {
+    public postConstruct(): void {
         this.instantiate(this.context);
         this.addEventListeners();
 
@@ -80,7 +80,7 @@ export class PrimaryColsHeaderPanel extends Component {
         this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextChanged.bind(this));
     }
 
-    public setParams(params: ToolPanelColumnCompParams): void {
+    public init(params: ToolPanelColumnCompParams): void {
         this.params = params;
 
         if (this.columnController.isReady()) {

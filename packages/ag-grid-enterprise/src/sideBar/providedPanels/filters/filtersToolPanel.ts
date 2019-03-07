@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Column,
     ColumnApi,
@@ -10,14 +11,11 @@ import {
     GridApi,
     GridOptionsWrapper,
     IRowModel,
-    OriginalColumnGroup,
-    OriginalColumnGroupChild,
     IToolPanelComp,
-    ValueService,
-    _
+    ValueService
 } from "ag-grid-community";
 
-import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
 export class FiltersToolPanel extends Component implements IToolPanelComp {
 

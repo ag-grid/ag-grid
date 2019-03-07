@@ -24,13 +24,13 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column-group">
-            <span id="eColumnGroupIcons" class="ag-column-group-icons">
-                <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>
-                <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>
+            <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
+                <span class="ag-column-group-closed-icon" ref="eGroupOpenedIcon"></span>
+                <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
             </span>
-            <ag-checkbox ref="cbSelect" (change)="onCheckboxChanged" class="ag-column-select-checkbox"></ag-checkbox>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-drag" ref="eDragHandle"></span>
-            <span id="eText" class="ag-column-tool-panel-column-group" (click)="onLabelClicked"></span>
+            <span class="ag-column-tool-panel-column-group" ref="eLabel"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -41,13 +41,15 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
+    @RefSelector('eLabel') private eLabel: HTMLElement;
+
+    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
+    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
+    @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: HTMLElement;
 
     private columnGroup: OriginalColumnGroup;
     private expanded: boolean;
     private columnDept: number;
-
-    private eGroupClosedIcon: HTMLElement;
-    private eGroupOpenedIcon: HTMLElement;
 
     private expandedCallback: () => void;
 
@@ -73,8 +75,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
         this.instantiate(this.context);
 
-        const eText = this.queryForHtmlElement('#eText');
-
         // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
 
@@ -82,12 +82,15 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             this.displayName = '>>';
         }
 
-        eText.innerHTML = this.displayName ? this.displayName : '';
+        this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+
+        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+        this.addDestroyableEventListener(this.cbSelect, 'change', this.onCheckboxChanged.bind(this));
 
         this.setOpenClosedIcons();
 
@@ -138,17 +141,13 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
-        this.eGroupOpenedIcon = this.queryForHtmlElement('#eGroupOpenedIcon');
-
         this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
 
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
-        const eColumnGroupIcons = this.queryForHtmlElement('#eColumnGroupIcons');
-        const touchListener = new TouchListener(eColumnGroupIcons, true);
+        const touchListener = new TouchListener(this.eColumnGroupIcons, true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }

@@ -27,9 +27,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" (change)="onCheckboxChanged"></ag-checkbox>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-drag" ref="eDragHandle"></span>
-            <span class="ag-column-tool-panel-column-label" ref="eLabel" (click)="onLabelClicked"></span>
+            <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -89,6 +89,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.instantiate(this.context);
+
+        this.addDestroyableEventListener(this.cbSelect, 'change', this.onCheckboxChanged.bind(this));
+        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 
         this.onColumnStateChanged();
 

@@ -354,7 +354,7 @@ export class Component extends BeanStub implements IComponent<any> {
     public destroy(): void {
         super.destroy();
         this.childComponents.forEach(childComponent => {
-            if (childComponent) {
+            if (childComponent && childComponent.destroy) {
                 (childComponent as any).destroy();
             }
         });

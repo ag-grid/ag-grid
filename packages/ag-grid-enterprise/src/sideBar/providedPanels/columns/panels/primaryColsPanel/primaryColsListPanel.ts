@@ -9,7 +9,6 @@ import {
     GridOptionsWrapper,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
-    PostConstruct,
     _
 } from "ag-grid-community/main";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -26,7 +25,6 @@ export class PrimaryColsListPanel extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
     @Autowired('context') private context: Context;
-
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;

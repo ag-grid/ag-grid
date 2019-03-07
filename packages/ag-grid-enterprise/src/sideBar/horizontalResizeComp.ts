@@ -15,12 +15,14 @@ export class HorizontalResizeComp extends Component {
 
     private startingWidth: number;
 
-    props: {
-        componentToResize: Component
-    };
+    private elementToResize: HTMLElement;
 
     constructor() {
-        super(`<div></div>`);
+        super(`<div class="ag-tool-panel-horizontal-resize"></div>`);
+    }
+
+    public setElementToResize(elementToResize: HTMLElement): void {
+        this.elementToResize = elementToResize;
     }
 
     @PostConstruct
@@ -37,14 +39,12 @@ export class HorizontalResizeComp extends Component {
     }
 
     private onResizeStart(): void {
-        this.startingWidth = this.props.componentToResize.getGui().offsetWidth;
+        this.startingWidth = this.elementToResize.offsetWidth;
     }
 
     private onResizing(delta: number): void {
         const direction = this.gridOptionsWrapper.isEnableRtl() ? -1 : 1;
         const newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
-        // tslint:disable-next-line
-        this.gridOptionsWrapper.isEnableRtl
-        this.props.componentToResize.getGui().style.width = `${newWidth}px`;
+        this.elementToResize.style.width = `${newWidth}px`;
     }
 }

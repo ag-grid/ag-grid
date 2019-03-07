@@ -50,7 +50,7 @@ export class PrimaryColsPanel extends Component {
     public init(): void {
         this.instantiate(this.context);
 
-        this.primaryColsHeaderPanel.setParams(this.params);
+        this.primaryColsHeaderPanel.init(this.params);
         this.primaryColsListPanel.init(this.params, this.allowDragging);
 
         const hideFilter = this.params.suppressColumnFilter;

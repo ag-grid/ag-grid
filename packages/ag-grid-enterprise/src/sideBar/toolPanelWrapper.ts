@@ -5,7 +5,8 @@ import {
     IComponent,
     IToolPanelComp,
     Promise,
-    ToolPanelDef
+    ToolPanelDef,
+    Context, PostConstruct
 } from "ag-grid-community";
 import {IToolPanelChildComp} from "./sideBarComp";
 import {HorizontalResizeComp} from "./horizontalResizeComp";
@@ -17,6 +18,7 @@ export interface ToolPanelWrapperParams {
 export class ToolPanelWrapper extends Component implements IComponent<ToolPanelWrapperParams>, IToolPanelChildComp{
 
     @Autowired("componentResolver") private componentResolver: ComponentResolver;
+    @Autowired("context") private context: Context;
 
     private static TEMPLATE =
         `<div class="ag-tool-panel-wrapper"/>`;
@@ -48,22 +50,17 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
         componentPromise.then(this.setToolPanelComponent.bind(this));
     }
 
+    @PostConstruct
+    private setupResize(): void {
+        const resizeBar = new HorizontalResizeComp();
+        this.context.wireBean(resizeBar);
+        resizeBar.setElementToResize(this.getGui());
+        this.appendChild(resizeBar);
+    }
+
     private setToolPanelComponent(compInstance: IToolPanelComp): void {
         this.toolPanelCompInstance = compInstance;
-        const resizeBar = this.componentResolver.createInternalAgGridComponent(HorizontalResizeComp, {});
-        resizeBar.props = {
-            componentToResize: this
-        };
-        resizeBar.addCssClass('ag-tool-panel-horizontal-resize');
-        this.getGui().appendChild(resizeBar.getGui());
-        this.getGui().appendChild(compInstance.getGui());
-
-        this.addDestroyFunc( ()=> resizeBar.destroy() );
-        this.addDestroyFunc( ()=> {
-            if (compInstance.destroy) {
-                compInstance.destroy();
-            }
-        });
+        this.appendChild(compInstance);
     }
 
     public refresh(): void {
