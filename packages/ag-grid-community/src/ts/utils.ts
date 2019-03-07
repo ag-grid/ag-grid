@@ -1332,6 +1332,10 @@ export class Utils {
         return path.indexOf(element) >= 0;
     }
 
+    static isFunction(val: any): boolean {
+        return !!(val && val.constructor && val.call && val.apply);
+    }
+
     static createEventPath(event: Event): EventTarget[] {
         const res: EventTarget[] = [];
         let pointer: any = _.getTarget(event);
