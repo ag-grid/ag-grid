@@ -22,6 +22,7 @@ import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetec
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
+    componentWrappingElement?: string;
 }
 
 export class AgGridReact extends React.Component<AgGridReactProps, {}> {
