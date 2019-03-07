@@ -258,9 +258,7 @@
 
     .ag-header-cell-label {
         display: flex;
-        float: left;
         height: 100%;
-        width: calc(100% - #{$icon-size});
 
         span {
             height: 100%;
