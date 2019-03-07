@@ -84,7 +84,7 @@ export class Context {
         this.componentsMappedByName[classUpperCase] = componentMeta.theClass;
     }
 
-    public createComponent(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component {
+    public createComponentFromElement(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component {
         const key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             const newComponent = new this.componentsMappedByName[key]() as Component;
@@ -94,6 +94,13 @@ export class Context {
             return null;
         }
     }
+
+    // public createComponent(ComponentClass: new () => Component): Component {
+    //     const compInstance = new ComponentClass();
+    //     this.wireBean(compInstance);
+    //     compInstance.instantiate(this);
+    //     return compInstance;
+    // }
 
     public wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void {
         if (!bean) {
@@ -201,7 +208,7 @@ export class Context {
 
             const constructor: any = prototype.constructor;
 
-            if (constructor.__agBeanMetaData) {
+            if (constructor.hasOwnProperty('__agBeanMetaData')) {
                 const metaData = constructor.__agBeanMetaData;
                 const beanName = this.getBeanName(constructor);
                 callback(metaData, beanName);

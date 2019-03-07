@@ -60,7 +60,7 @@ export class Component extends BeanStub implements IComponent<any> {
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
         childNodeList.forEach(childNode => {
-            const childComp = context.createComponent(childNode as Element, (childComp) => {
+            const childComp = context.createComponentFromElement(childNode as Element, (childComp) => {
                 const attrList = this.getAttrLists(childNode as Element);
                 this.copyAttributesFromNode(attrList, childComp.getGui());
                 this.createChildAttributes(attrList, childComp);

@@ -54,9 +54,9 @@ export class HeaderWrapperComp extends Component {
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
-    private column: Column;
-    private dragSourceDropTarget: DropTarget;
-    private pinned: string;
+    private readonly column: Column;
+    private readonly dragSourceDropTarget: DropTarget;
+    private readonly pinned: string;
 
     private resizeStartWidth: number;
     private resizeWithShiftKey:  boolean;
