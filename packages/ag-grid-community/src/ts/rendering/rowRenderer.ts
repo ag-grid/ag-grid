@@ -621,7 +621,7 @@ export class RowRenderer extends BeanStub {
         _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
             const index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
-                if (this.keepRowBecauseEditing(rowComp)) {
+                if (this.keepRowBecauseEditingOrFocused(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -916,7 +916,7 @@ export class RowRenderer extends BeanStub {
     // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
-    private keepRowBecauseEditing(rowComp: RowComp): boolean {
+    private keepRowBecauseEditingOrFocused(rowComp: RowComp): boolean {
         const REMOVE_ROW: boolean = false;
         const KEEP_ROW: boolean = true;
         const rowNode = rowComp.getRowNode();
