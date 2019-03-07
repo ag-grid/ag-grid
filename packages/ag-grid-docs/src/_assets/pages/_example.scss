@@ -1,6 +1,7 @@
 #example-wrapper {
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
 
     max-width: 100%;
     width: 100%;
@@ -53,15 +54,36 @@ button[disabled] {
     opacity: 0.5;
 }
 
-#example-toolbar {
+.example-toolbar {
+    position: relative;
     display: flex;
     justify-content: center;
-
+    flex-direction: column;
+    overflow: hidden;
     background: $blue-4;
     border-bottom: 1px solid $blue-3;
-    select {
+
+    margin-bottom: 0;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    transition: height 1s;
+
+    select, input {
         height: 35px;
+        width: 180px;
+        border-radius: 5px;
+        border: 1px solid grey;
+        background-color: #f9f9f9;
+        color: #333;
         outline: none;
+        padding-left: 5px;
+        .dark & {
+            background-color: #636262;
+            color: white;
+        }
+        .dark &::placeholder {
+            color: #e8e8e8;
+        }
     }
     .dark & {
         background-color: #34343c;
@@ -73,66 +95,57 @@ button[disabled] {
             }
         }
     }
-    margin-bottom: 2rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
 
-    > div {
+    .options-container {
         display: flex;
         flex-wrap: wrap;
         flex: 1 0 auto;
+        margin: 5px 0;
         
         max-width: 1400px;
         width: 100%;
 
-        justify-content: space-between;
-
+        justify-content: flex-start;
+   
         > div {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            > div {
-                white-space: nowrap;
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-        }
-        .link-container {
-            display: flex;
-
-            line-height: 35px;
-            > div {
-                width: 35px;
-                height: 35px;
-                background-color: transparent;
-                background-position-x: left;
-                background-position-y: center;
-                background-repeat:  no-repeat;
-                background-size: contain;
-            }
-            > a {
-                white-space: nowrap;
-                margin-left: 5px;
-            }
-            
-            .features {
-                background-image: url("./feature-walkthrough.svg");
-                
-            }
-            .youtube {
-                background-image: url("./youtube.svg");
-            }
+            white-space: nowrap;
+            padding-left: 15px;
+            padding-right: 15px;
         }
     }
 }
 
-#search-toolbar {
-    @extend .container-fluid;
-
-    > .row {
-        max-width: $max-width;
-        margin-left: auto;
-        margin-right: auto;
+.options-expander {
+    justify-content: center;
+    user-select: none;
+    display: flex;
+    > span {
+        flex: 1;
+        padding-left: 10px;
+    }
+    > div span:before {
+        content: '\2191'
+    }
+    > div {
+        cursor: pointer;
+        display: none;
+        border: 1px solid $blue-3;
+        border-top: none;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        background-color: #4a799c;
+        padding: 2px 5px;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        .dark & {
+            border-color: #666;
+        }
+    }
+}
+.collapsed {
+    + .options-expander > div span:before {
+        content: '\2193'
     }
 }
 
@@ -186,5 +199,33 @@ button[disabled] {
     100% {
         transform: scale(1, 1);
         opacity: 1;
+    }
+}
+
+@media (max-width: 1024px) {
+    .example-toolbar {
+        padding: 0;
+        height: 124px;
+        .options-container {
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            > div {
+                overflow: hidden;
+            }
+            label {
+                width: 80px;
+            }
+        }
+        &.collapsed {
+            height: 0;
+        }
+    }
+    .options-expander {
+        margin-bottom: 10px;
+        > div {
+            display: block;
+        }
     }
 }

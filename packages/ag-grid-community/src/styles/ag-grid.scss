@@ -154,7 +154,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     &.ag-layout-auto-height {
         overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
         min-width: 0px;
-        flex: 1 1 auto;
+        flex: 1 1 0;
     }
 
     &.ag-layout-normal {

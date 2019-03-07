@@ -1,11 +1,5 @@
-<nav>
+<nav class="nav<?php if (defined('HOMEPAGE')) { ?> home<?php }?>">
     <a id="logo" href="/" title="The Best HTML 5 Grid in the World">ag-Grid</a>
-
-    <button id="navbar-toggle" 
-        type="button" 
-        data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
-        <span>&nbsp;</span>
-    </button>
     <div class="collapse navbar-collapse" id="main-nav">
         <?php if ($version == 'latest') { ?>
             <ul>
@@ -53,4 +47,57 @@
             </ul>
         <?php } ?> 
     </div>
+    <button id="navbar-toggle" 
+        type="button" 
+        aria-label="Toggle navigation">
+        <span>&nbsp;</span>
+    </button>
 </nav>
+
+<script>
+    var navButton = document.getElementById('navbar-toggle'),
+        mainNav = document.getElementById('main-nav');
+
+    navButton.addEventListener('click', showHideMenu);
+    window.addEventListener('resize', destroyMenu);
+
+    function showHideMenu() {
+        if (navButton.classList.contains('expanded')) {
+            destroyMenu();
+            return;
+        }
+
+        var menu = createMenu();
+        document.body.appendChild(menu);
+        
+        menu.style.right = document.documentElement.offsetWidth - (navButton.offsetLeft + navButton.clientWidth) + 'px';
+    }
+
+    function createMenu() {
+        navButton.classList.toggle('expanded', true);
+        var menu = document.createElement('div');
+        menu.classList.add('ag-main-floatingMenu');
+
+        var ul = document.createElement('ul');
+        menu.appendChild(ul);
+
+        var allItems = mainNav.querySelectorAll('li');
+
+        for (var i = 0; i < allItems.length; i++) {
+            if (!allItems[i].offsetParent) {
+                ul.appendChild(allItems[i].cloneNode(true));
+            }
+        }
+
+        return menu;
+    }
+
+    function destroyMenu() {
+        navButton.classList.toggle('expanded', false);
+        var menu = document.querySelector('.ag-main-floatingMenu');
+
+        if (menu) {
+            menu.parentElement.removeChild(menu);
+        }
+    }
+</script>
