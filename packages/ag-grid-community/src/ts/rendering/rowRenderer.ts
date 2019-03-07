@@ -1010,8 +1010,10 @@ export class RowRenderer extends BeanStub {
             if (!rowNode.group) { break; }
         }
 
-        const cellComp = this.getComponentForCell(nextCell);
-        nextCell = cellComp.getGridCell();
+        if (nextCell) {
+            const cellComp = this.getComponentForCell(nextCell);
+            nextCell = cellComp.getGridCell();
+        }
 
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
