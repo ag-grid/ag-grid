@@ -13,13 +13,9 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    constructor() {
-        super('filteredRowCount', 'Filtered');
-    }
-
     @PostConstruct
     protected postConstruct(): void {
-        super.postConstruct();
+        this.setLabel('filteredRowCount', 'Filtered');
 
         // this component is only really useful with client side rowmodel
         if (this.gridApi.getModel().getType() !== 'clientSide') {

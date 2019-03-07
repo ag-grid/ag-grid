@@ -6,13 +6,9 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    constructor() {
-        super('rowCount', 'Total Rows');
-    }
-
     @PostConstruct
     protected postConstruct(): void {
-        super.postConstruct();
+        this.setLabel('rowCount', 'Total Rows');
 
         // this component is only really useful with client side rowmodel
         if (this.gridApi.getModel().getType() !== 'clientSide') {
