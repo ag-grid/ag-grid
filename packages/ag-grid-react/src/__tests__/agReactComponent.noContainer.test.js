@@ -13,7 +13,6 @@ beforeEach((done) => {
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => done());
-
 });
 
 afterEach(() => {
@@ -21,8 +20,8 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('grid component container set to div renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Blerp</div></div>`);
+it('grid with no component container specified (the default)', () => {
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Blerp</div>`);
 });
 
 class GridWithComponentContainerAsDiv extends Component {

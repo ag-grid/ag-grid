@@ -7,12 +7,14 @@ import { AgGridReact } from "./agGridReact";
 
 export class AgReactComponent {
 
-    private eParentElement!: HTMLElement;
+    private eParentElement!: HTMLElement | DocumentFragment;
     private componentInstance: any;
+    private children: any = [];
 
     private reactComponent: any;
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
+    private componentWrappingElement: string | null = null;
 
     constructor(reactComponent: any, parentComponent: AgGridReact) {
         this.reactComponent = reactComponent;
@@ -29,12 +31,16 @@ export class AgReactComponent {
 
     public init(params: any): Promise<void> {
         return new Promise<void>(resolve => {
-            this.eParentElement = document.createElement('div');
-            AgGrid.Utils.addCssClass(this.eParentElement, 'ag-react-container');
+            this.componentWrappingElement = this.parentComponent.props.componentWrappingElement;
+            if(this.componentWrappingElement) {
+                this.eParentElement = this.createParentElement(this.componentWrappingElement);
 
-            // so user can have access to the react container,
-            // to add css class or style
-            params.reactContainer = this.eParentElement;
+                // so user can have access to the react container,
+                // to add css class or style
+                params.reactContainer = this.eParentElement;
+            } else {
+                this.eParentElement = document.createDocumentFragment();
+            }
 
             // at some point soon unstable_renderSubtreeIntoContainer is going to be dropped (and in a minor release at that)
             // this uses the existing mechanism as long as possible, but switches over to using Portals when
@@ -56,14 +62,26 @@ export class AgReactComponent {
     }
 
     public getGui(): HTMLElement {
-        return this.eParentElement;
+        return this.eParentElement as any;
     }
 
     public destroy(): void {
+        // if we're using doc fragments we need to add the children back in or when react tries to clean it up it'll fail
+        // (as the parent will no longer have any children when the grid appends them to the grid itself)
+        if (!this.componentWrappingElement) {
+            for (const child of this.children) {
+                this.eParentElement.append(child);
+            }
+        }
+
         if (!this.useLegacyReact()) {
             return this.parentComponent.destroyPortal(this.portal as ReactPortal);
         }
-        ReactDOM.unmountComponentAtNode(this.eParentElement);
+
+        // only attempt to unmount if not using a doc fragment
+        if (this.componentWrappingElement) {
+            ReactDOM.unmountComponentAtNode(this.eParentElement as any);
+        }
     }
 
     private createReactComponentLegacy(params: any, resolve: (value: any) => void) {
@@ -71,13 +89,13 @@ export class AgReactComponent {
         const ReactComponent = React.createElement(this.reactComponent, params);
         if (!this.parentComponent) {
             // MUST be a function, not an arrow function
-            ReactDOM.render(ReactComponent, this.eParentElement, function() {
+            ReactDOM.render(ReactComponent as any, this.eParentElement as any, function() {
                 self.componentInstance = this ;
                 resolve(null);
             });
         } else {
             // MUST be a function, not an arrow function
-            ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function() {
+            ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement as any, function() {
                 self.componentInstance = this;
                 resolve(null);
             });
@@ -89,14 +107,28 @@ export class AgReactComponent {
         // retrieve the created instance from either createPortal or render
         params.ref = (element:any) => {
             this.componentInstance = element;
+
+            // store the element children if we're using a doc fragment so that when react comes to destroy the children
+            // they'll still be there
+            if(!this.componentWrappingElement) {
+                for (let i = 0; i < this.eParentElement.children.length; i++) {
+                    this.children.push(this.eParentElement.children[i])
+                }
+            }
         };
 
         const ReactComponent = React.createElement(this.reactComponent, params);
         const portal: ReactPortal = ReactDOM.createPortal(
             ReactComponent,
-            this.eParentElement
+            this.eParentElement as any
         );
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal!, this, resolve);
+    }
+
+    private createParentElement(wrappingElement: string) {
+        const eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement);
+        AgGrid.Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
+        return eParentElement;
     }
 }

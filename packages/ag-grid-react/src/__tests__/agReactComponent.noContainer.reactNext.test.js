@@ -9,11 +9,10 @@ let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((<GridWithNoComponentContainerSpecified/>));
+    component = mount((<GridWithComponentContainerAsDiv/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => done());
-
 });
 
 afterEach(() => {
@@ -21,18 +20,27 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('grid component container set to div renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Blerp</div></div>`);
+it('grid with no component container specified (the default)', () => {
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Blerp</div>`);
 });
 
-class GridWithNoComponentContainerSpecified extends Component {
+class CellRenderer extends Component {
+    render() {
+        return(
+            <div>Blerp</div>
+        )
+    }
+}
+
+class GridWithComponentContainerAsDiv extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             columnDefs: [{
                 field: "age",
-                cellRendererFramework: () => <div>Blerp</div>,
+                // cellRendererFramework: () => <div>Blerp</div>,
+                cellRendererFramework: CellRenderer
             }],
             rowData: [{age: 24}]
         };
@@ -50,7 +58,7 @@ class GridWithNoComponentContainerSpecified extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
-                    componentWrappingElement="div"
+                    reactNext={true}
                 />
             </div>
         );
