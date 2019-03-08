@@ -1,6 +1,6 @@
 import { RowNode } from "./rowNode";
-import { ICellEditorComp } from "../interfaces/iCellEditor";
-import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import {ICellEditorComp, ICellEditorParams} from "../interfaces/iCellEditor";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "../rendering/cellRenderers/iCellRenderer";
 import { Column } from "./column";
 import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";
@@ -9,7 +9,7 @@ import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp
 import { IFloatingFilterComp } from "../filter/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { DynamicComponentDef, DynamicComponentParams } from "../components/framework/userComponentFactory";
+import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
@@ -139,13 +139,13 @@ export interface ColDef extends AbstractColDef {
     cellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
-    cellRendererSelector?: (params: DynamicComponentParams) => DynamicComponentDef;
+    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult;
 
     /** Cell editor */
     cellEditor?: { new(): ICellEditorComp } | string ;
     cellEditorFramework?: any;
     cellEditorParams?: any;
-    cellEditorSelector?: (params: DynamicComponentParams) => DynamicComponentDef;
+    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
 
     /** A function for rendering a pinned row cell. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;

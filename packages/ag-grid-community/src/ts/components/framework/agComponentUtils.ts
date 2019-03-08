@@ -2,7 +2,7 @@ import { Autowired, Bean } from "../../context/context";
 import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./userComponentRegistry";
 import { IComponent } from "../../interfaces/iComponent";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ComponentSource, ComponentType, ResolvedComponent } from "./userComponentFactory";
+import { ComponentSource, ComponentType, ComponentClassDef } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { _ } from "../../utils";
 
@@ -17,12 +17,12 @@ export class AgComponentUtils {
         hardcodedJsFunction: AgGridComponentFunctionInput,
         type: ComponentType,
         source: ComponentSource
-    ): ResolvedComponent<A, B> {
+    ): ComponentClassDef<A, B> {
         if (hardcodedJsFunction == null) { return {
             component: null,
             type: type,
             source: source,
-            dynamicParams: null
+            paramsFromSelector: null
         };
         }
 
@@ -32,7 +32,7 @@ export class AgComponentUtils {
                 type: type,
                 component: metadata.functionAdapter(hardcodedJsFunction) as { new(): A },
                 source: source,
-                dynamicParams: null
+                paramsFromSelector: null
             };
         }
         return null;

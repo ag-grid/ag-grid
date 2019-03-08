@@ -3,7 +3,7 @@ import { Autowired, Bean } from "../context/context";
 import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
 import { ColDef } from "../entities/colDef";
 import { GroupCellRendererParams } from "./cellRenderers/groupCellRenderer";
-import { UserComponentFactory, ComponentSource, ResolvedComponent } from "../components/framework/userComponentFactory";
+import { UserComponentFactory, ComponentSource, ComponentClassDef } from "../components/framework/userComponentFactory";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { IRichCellEditorParams } from "../interfaces/iRichCellEditorParams";
 import { ISetFilterParams } from "../interfaces/iSetFilterParams";
@@ -57,13 +57,13 @@ export class CellRendererService {
         params: any
     ): Promise<ICellRendererComp> {
         let rendererToUsePromise: Promise<ICellRendererComp> = null;
-        const componentToUse: ResolvedComponent<any, any> = this.userComponentFactory.getComponentToUse(target, "innerRenderer", null);
+        const componentToUse: ComponentClassDef<any, any> = this.userComponentFactory.getComponentClassDef(target, "innerRenderer", null);
 
         if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT) {
             // THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.userComponentFactoryHelper.newInnerCellRenderer(target, params);
         } else {
-            const otherRenderer: ResolvedComponent<any, any> = this.userComponentFactory.getComponentToUse(originalColumn, "cellRenderer", null);
+            const otherRenderer: ComponentClassDef<any, any> = this.userComponentFactory.getComponentClassDef(originalColumn, "cellRenderer", null);
             if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT) {
                 // Only if the original column is using an specific renderer, it it is a using a DEFAULT one
                 // ignore it

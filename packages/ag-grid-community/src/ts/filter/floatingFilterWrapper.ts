@@ -245,7 +245,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private getFilterComponentPrototype(colDef: ColDef): {new(): any} {
-        const resolvedComponent = this.userComponentFactory.getComponentToUse(colDef, "filter", this.createDynamicParams());
+        const resolvedComponent = this.userComponentFactory.getComponentClassDef(colDef, "filter", this.createDynamicParams());
         return resolvedComponent ? resolvedComponent.component : null;
     }
 
