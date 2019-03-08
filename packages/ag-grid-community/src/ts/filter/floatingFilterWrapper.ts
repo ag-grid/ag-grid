@@ -40,7 +40,7 @@ export class FloatingFilterWrapper extends Component {
         `<div class="ag-header-cell" aria-hidden="true">
             <div ref="eFloatingFilterBody" aria-hidden="true"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" aria-hidden="true">
-                    <button type="button" (click)="showParentFilter" ref="eButtonShowMainFilter"></button>
+                    <button type="button" ref="eButtonShowMainFilter"></button>
             </div>
         </div>`;
 
@@ -78,6 +78,8 @@ export class FloatingFilterWrapper extends Component {
         this.setupLeftPositioning();
         this.setupColumnHover();
         this.addFeature(this.getContext(), new HoverFeature([this.column], this.getGui()));
+
+        this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
     }
 
     private setupFloatingFilter(): void {
