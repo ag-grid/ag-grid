@@ -21,7 +21,7 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('grid component container set to div renders as expected', () => {
+it('reactNext with wrapping element set to div renders as expected', () => {
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Blerp</div></div>`);
 });
 

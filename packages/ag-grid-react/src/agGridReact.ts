@@ -1,5 +1,6 @@
 import * as React from "react";
 import {ReactPortal} from "react";
+import * as ReactDOM from "react-dom";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid-community";
 import {
@@ -10,14 +11,12 @@ import {
     FrameworkComponentWrapper,
     GridApi,
     GridOptions,
-    IComponent,
-    Promise,
     WrapableInterface
 } from "ag-grid-community";
-
 import {AgGridColumn} from "./agGridColumn";
-import {AgReactComponent} from "./agReactComponent";
+import {ReactComponent} from "./reactComponent";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
+import {LegacyReactComponent} from "./legacyReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -96,7 +95,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         return false;
     }
 
-    waitForInstance(reactComponent: AgReactComponent, resolve: (value: any) => void, runningTime = 0) {
+    waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
         if (reactComponent.getFrameworkComponentInstance()) {
             resolve(null);
         } else {
@@ -113,7 +112,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
      * We do this because we want all portals to be in the same tree - in order to get
      * Context to work properly.
      */
-    mountReactPortal(portal: ReactPortal, reactComponent: AgReactComponent, resolve: (value: any) => void) {
+    mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
         this.batchUpdate(this.waitForInstance(reactComponent, resolve));
     }
@@ -221,46 +220,20 @@ function addProperties(listOfProps: string[], propType: any) {
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
     @Autowired("agGridReact") private agGridReact!: AgGridReact;
 
-    createWrapper(ReactComponent: { new(): any }): WrapableInterface {
-        let _self = this;
+    createWrapper(UserReactComponent: { new(): any }): WrapableInterface {
+        // at some point soon unstable_renderSubtreeIntoContainer is going to be dropped (and in a minor release at that)
+        // this uses the existing mechanism as long as possible, but switches over to using Portals when
+        // unstable_renderSubtreeIntoContainer is no longer an option
+        return this.useLegacyReact() ?
+            new LegacyReactComponent(UserReactComponent, this.agGridReact) :
+            new ReactComponent(UserReactComponent, this.agGridReact);
+    }
 
-        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any>, WrapableInterface {
-            constructor() {
-                super(ReactComponent, _self.agGridReact);
-            }
-
-            public init(params: any): Promise<void> {
-                return super.init(<any>params);
-            }
-
-            hasMethod(name: string): boolean {
-                let frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
-                if (frameworkComponentInstance == null) {
-                    return false;
-                }
-                return frameworkComponentInstance[name] != null;
-            }
-
-            callMethod(name: string, args: IArguments): void {
-                let frameworkComponentInstance = this.getFrameworkComponentInstance();
-
-                // this should never happen now that AgGridReact.waitForInstance is in use
-                if (frameworkComponentInstance == null) {
-                    window.setTimeout(() => this.callMethod(name, args), 100);
-                } else {
-                    let method = wrapper.getFrameworkComponentInstance()[name];
-                    if (method == null) return;
-                    return method.apply(frameworkComponentInstance, args);
-                }
-            }
-
-            addMethod(name: string, callback: Function): void {
-                (wrapper as any)[name] = callback;
-            }
-        }
-
-        const wrapper: DynamicAgReactComponent = new DynamicAgReactComponent();
-        return wrapper;
+    private useLegacyReact() {
+        // force use of react next (ie portals) if unstable_renderSubtreeIntoContainer is no longer present
+        // or if the user elects to try it
+        return (typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function")
+            || (this.agGridReact && this.agGridReact.gridOptions && !this.agGridReact.gridOptions.reactNext);
     }
 }
 

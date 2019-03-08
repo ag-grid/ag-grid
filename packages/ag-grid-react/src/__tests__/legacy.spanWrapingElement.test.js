@@ -21,9 +21,17 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('grid component container set to div renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Blerp</div></div>`);
+it('legacy component with span wrapping element set renders as expected', () => {
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<span class=\"ag-react-container\"><div>Blerp</div></span>`);
 });
+
+class CellRenderer extends Component {
+    render() {
+        return(
+            <div>Blerp</div>
+        )
+    }
+}
 
 class GridWithNoComponentContainerSpecified extends Component {
     constructor(props) {
@@ -32,7 +40,7 @@ class GridWithNoComponentContainerSpecified extends Component {
         this.state = {
             columnDefs: [{
                 field: "age",
-                cellRendererFramework: () => <div>Blerp</div>,
+                cellRendererFramework: CellRenderer,
             }],
             rowData: [{age: 24}]
         };
@@ -50,7 +58,7 @@ class GridWithNoComponentContainerSpecified extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
-                    componentWrappingElement="div"
+                    componentWrappingElement="span"
                 />
             </div>
         );
