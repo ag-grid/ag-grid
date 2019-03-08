@@ -1,6 +1,7 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
+import {BeanStub} from "./beanStub";
 
 // steps in booting up:
 // 1. create all beans
@@ -95,10 +96,10 @@ export class Context {
         }
     }
 
-    // public createComponent(ComponentClass: new () => Component): Component {
-    //     const compInstance = new ComponentClass();
-    //     this.wireBean(compInstance);
-    //     return compInstance;
+    // public createBean(BeanClass: new () => any): Component {
+    //     const beanInstance = new BeanClass();
+    //     this.wireBean(beanInstance);
+    //     return beanInstance;
     // }
 
     public wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void {

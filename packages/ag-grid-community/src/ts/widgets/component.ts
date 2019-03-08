@@ -38,6 +38,7 @@ export class Component extends BeanStub implements IComponent<any> {
         return this.compId;
     }
 
+    // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
     private createChildComponentsFromTags(parentNode: Element): void {
 
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
