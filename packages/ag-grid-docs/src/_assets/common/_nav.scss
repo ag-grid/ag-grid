@@ -1,5 +1,6 @@
 #nav {
     @extend .bg-light;
+    -webkit-font-smoothing: antialiased;
 
     background-image: linear-gradient(to top left, $blue-2, $blue-1);
     box-shadow: inset 0 -8px 121px -50px $blue-1;

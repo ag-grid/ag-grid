@@ -336,13 +336,18 @@
     }
 
     .ag-row-drag {
-        @include icon-background($params, "grip");
         float: left;
-        background-position-x: left;
-        background-position-y: $grid-size / 2 + 2px;
         height: 100%;
         width: $icon-size + $grid-size * 3;
         cursor: grab;
+        .ag-icon-row-drag {
+            display: block;
+            width: 100%;
+            height: 100%;
+            @include icon-background($params, "grip");
+            background-position-x: left;
+            background-position-y: $grid-size / 2 + 2px;
+        }
     }
 
     .ag-row-dragging, .ag-row-dragging .ag-row-drag {
@@ -351,7 +356,9 @@
 
     .ag-rtl .ag-row-drag {
         float: right;
-        background-position-x: right;
+        .ag-icon-row-drag {
+            background-position-x: right;
+        }
     }
 
     .ag-column-drag {

@@ -3,7 +3,6 @@ import {
     Column,
     ColumnController,
     Component,
-    Context,
     Events,
     EventService,
     GridOptionsWrapper,
@@ -23,11 +22,11 @@ export class PrimaryColsHeaderPanel extends Component {
     @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eFilterTextField')
-    private eFilterTextField: HTMLInputElement;
 
-    @RefSelector('eSelectChecked') private eSelectChecked: HTMLElement;
-    @RefSelector('eSelectUnchecked') private eSelectUnchecked: HTMLElement;
-    @RefSelector('eSelectIndeterminate') private eSelectIndeterminate: HTMLElement;
+    private eFilterTextField: HTMLInputElement;
+    private eSelectChecked: HTMLElement;
+    private eSelectUnchecked: HTMLElement;
+    private eSelectIndeterminate: HTMLElement;
 
     @RefSelector('eExpandChecked') private eExpandChecked: HTMLElement;
     @RefSelector('eExpandUnchecked') private eExpandUnchecked: HTMLElement;
@@ -56,9 +55,6 @@ export class PrimaryColsHeaderPanel extends Component {
                 <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
             </a>
             <a href="javascript:void(0)" ref="eSelect">
-                <span class="ag-icon ag-icon-checkbox-checked" ref="eSelectChecked"></span>
-                <span class="ag-icon ag-icon-checkbox-unchecked" ref="eSelectUnchecked"></span>
-                <span class="ag-icon ag-icon-checkbox-indeterminate" ref="eSelectIndeterminate"></span>
             </a>
             <div class="ag-input-text-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
                 <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}">        
@@ -69,7 +65,7 @@ export class PrimaryColsHeaderPanel extends Component {
     @PostConstruct
     public postConstruct(): void {
         this.addEventListeners();
-
+        this.createCheckIcons();
         this.setExpandState(SELECTED_STATE.CHECKED);
 
         this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
@@ -84,6 +80,16 @@ export class PrimaryColsHeaderPanel extends Component {
             this.setColumnsCheckedState();
             this.showOrHideOptions();
         }
+    }
+
+    private createCheckIcons() {
+        const eSelectChecked = this.eSelectChecked = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
+        const eSelectUnchecked = this.eSelectUnchecked = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
+        const eSelectIndeterminate = this.eSelectIndeterminate =  _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
+        
+        this.eSelect.appendChild(eSelectChecked);
+        this.eSelect.appendChild(eSelectUnchecked);
+        this.eSelect.appendChild(eSelectIndeterminate);
     }
 
     // we only show expand / collapse if we are showing columns
