@@ -23,7 +23,6 @@ export interface IToolPanelChildComp extends IComponent<any> {
 
 export class SideBarComp extends Component implements ISideBar {
 
-    @Autowired("context") private context: Context;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -42,7 +41,6 @@ export class SideBarComp extends Component implements ISideBar {
 
     @PostConstruct
     private postConstruct(): void {
-        this.instantiate(this.context);
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
         this.setSideBarDef();
     }
@@ -85,7 +83,7 @@ export class SideBarComp extends Component implements ISideBar {
             }
 
             const wrapper = new ToolPanelWrapper();
-            this.context.wireBean(wrapper);
+            this.getContext().wireBean(wrapper);
             wrapper.setToolPanelDef(def);
             wrapper.setVisible(false);
             this.getGui().appendChild(wrapper.getGui());

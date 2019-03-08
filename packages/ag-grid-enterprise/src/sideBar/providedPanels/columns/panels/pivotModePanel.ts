@@ -15,7 +15,6 @@ export class PivotModePanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
@@ -33,7 +32,6 @@ export class PivotModePanel extends Component {
     @PreConstruct
     public init(): void {
         this.setTemplate(this.createTemplate());
-        this.instantiate(this.context);
 
         this.cbPivotMode.setSelected(this.columnController.isPivotMode());
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();

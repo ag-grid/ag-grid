@@ -1,8 +1,8 @@
 import { Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector } from 'ag-grid-community';
 
 export class NameValueComp extends Component {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('context') private context: Context;
 
     private static TEMPLATE =
         `<div class="ag-name-value">  

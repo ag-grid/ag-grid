@@ -24,7 +24,6 @@ export class PrimaryColsListPanel extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
-    @Autowired('context') private context: Context;
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;
@@ -80,7 +79,7 @@ export class PrimaryColsListPanel extends Component {
         if (!columnGroup.isPadding()) {
             const renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this),
                 this.allowDragging, this.expandGroupsByDefault);
-            this.context.wireBean(renderedGroup);
+            this.getContext().wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
             newDept = dept + 1;
@@ -147,7 +146,7 @@ export class PrimaryColsListPanel extends Component {
         }
 
         const columnComp = new ToolPanelColumnComp(column, dept, this.allowDragging, groupsExist);
-        this.context.wireBean(columnComp);
+        this.getContext().wireBean(columnComp);
         this.getGui().appendChild(columnComp.getGui());
 
         this.columnComps[column.getId()] = columnComp;

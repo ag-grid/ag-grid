@@ -36,7 +36,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -87,8 +86,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
-
-        this.instantiate(this.context);
 
         this.addDestroyableEventListener(this.cbSelect, 'change', this.onCheckboxChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));

@@ -17,7 +17,6 @@ export class GridHeaderDropZones extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
 
     private rowGroupComp: Component;
     private pivotComp: Component;
@@ -43,11 +42,11 @@ export class GridHeaderDropZones extends Component {
         const dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
 
         this.rowGroupComp = new RowGroupDropZonePanel(true);
-        this.context.wireBean(this.rowGroupComp);
+        this.getContext().wireBean(this.rowGroupComp);
         this.addDestroyFunc( () => this.rowGroupComp.destroy() );
 
         this.pivotComp = new PivotDropZonePanel(true);
-        this.context.wireBean(this.pivotComp);
+        this.getContext().wireBean(this.pivotComp);
         this.addDestroyFunc( () => this.pivotComp.destroy() );
 
         topPanelGui.appendChild(this.rowGroupComp.getGui());

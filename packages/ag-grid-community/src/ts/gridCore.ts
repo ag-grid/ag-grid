@@ -61,7 +61,6 @@ export class GridCore extends Component {
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Autowired('context') private context: Context;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -84,7 +83,6 @@ export class GridCore extends Component {
 
         const template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
-        this.instantiate(this.context);
 
         // register with services that need grid core
         [

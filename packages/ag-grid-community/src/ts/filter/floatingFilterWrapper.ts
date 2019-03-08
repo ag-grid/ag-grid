@@ -40,11 +40,10 @@ export class FloatingFilterWrapper extends Component {
         `<div class="ag-header-cell" aria-hidden="true">
             <div ref="eFloatingFilterBody" aria-hidden="true"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" aria-hidden="true">
-                    <button type="button" (click)="showParentFilter" ref="eButtonShowMainFilter"></button>
+                    <button type="button" ref="eButtonShowMainFilter"></button>
             </div>
         </div>`;
 
-    @Autowired('context') private context: Context;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('beans') private beans: Beans;
@@ -72,26 +71,31 @@ export class FloatingFilterWrapper extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.instantiate(this.context);
 
         this.setupFloatingFilter();
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
-        this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
+        this.addFeature(this.getContext(), new HoverFeature([this.column], this.getGui()));
+
+        this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
     }
 
     private setupFloatingFilter(): void {
         const colDef = this.column.getColDef();
         if (colDef.filter) {
             this.floatingFilterCompPromise = this.getFloatingFilterInstance();
-            this.floatingFilterCompPromise.then(compInstance => {
-                if (compInstance) {
-                    this.setupWithFloatingFilter(compInstance);
-                } else {
-                    this.setupEmpty();
-                }
-            });
+            if (this.floatingFilterCompPromise) {
+                this.floatingFilterCompPromise.then(compInstance => {
+                    if (compInstance) {
+                        this.setupWithFloatingFilter(compInstance);
+                    } else {
+                        this.setupEmpty();
+                    }
+                });
+            } else {
+                this.setupEmpty();
+            }
             this.setupSyncWithFilter();
         } else {
             this.setupEmpty();

@@ -20,7 +20,7 @@ export class PopupMessageBox extends PopupWindow {
         this.setTitle(this.title);
 
         const messageBodyComp = new MessageBody();
-        this.addFeature(this.context, messageBodyComp);
+        this.addFeature(this.getContext(), messageBodyComp);
 
         messageBodyComp.setMessage(this.message);
         this.setBody(messageBodyComp.getGui());
@@ -38,8 +38,6 @@ class MessageBody extends Component {
                 <button ref="eOk">OK</button>
             </div>
         </div>`;
-
-    @Autowired('context') private context: Context;
 
     @RefSelector('eCenter') private eCenter: HTMLElement;
     @RefSelector('eOk') private eOk: HTMLElement;

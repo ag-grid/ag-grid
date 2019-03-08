@@ -18,7 +18,6 @@ export interface ToolPanelWrapperParams {
 export class ToolPanelWrapper extends Component implements IComponent<ToolPanelWrapperParams>, IToolPanelChildComp{
 
     @Autowired("componentResolver") private componentResolver: ComponentResolver;
-    @Autowired("context") private context: Context;
 
     private static TEMPLATE =
         `<div class="ag-tool-panel-wrapper"/>`;
@@ -53,7 +52,7 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
     @PostConstruct
     private setupResize(): void {
         const resizeBar = new HorizontalResizeComp();
-        this.context.wireBean(resizeBar);
+        this.getContext().wireBean(resizeBar);
         resizeBar.setElementToResize(this.getGui());
         this.appendChild(resizeBar);
     }

@@ -40,7 +40,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -53,11 +52,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     constructor() {
         super(AggregationComp.TEMPLATE);
-    }
-
-    @PreConstruct
-    private preConstruct(): void {
-        this.instantiate(this.context);
     }
 
     @PostConstruct

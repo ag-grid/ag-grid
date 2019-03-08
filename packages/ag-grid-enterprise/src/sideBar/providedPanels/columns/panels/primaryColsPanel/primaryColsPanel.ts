@@ -27,7 +27,6 @@ export class PrimaryColsPanel extends Component {
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('primaryColsHeaderPanel')
@@ -48,7 +47,6 @@ export class PrimaryColsPanel extends Component {
 
     @PostConstruct
     public init(): void {
-        this.instantiate(this.context);
 
         this.primaryColsHeaderPanel.init(this.params);
         this.primaryColsListPanel.init(this.params, this.allowDragging);

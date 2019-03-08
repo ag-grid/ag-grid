@@ -44,7 +44,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("valueService") private valueService: ValueService;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
-    @Autowired("context") private context: Context;
     @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
     @Autowired("focusedCellController") private focusedCellController: FocusedCellController;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;

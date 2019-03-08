@@ -27,7 +27,6 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -206,7 +205,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         // there is a bi-directional dependency between the loader and the cache,
         // so we create loader here, and then pass dependencies in setDependencies() method later
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.context.wireBean(this.rowNodeBlockLoader);
+        this.getContext().wireBean(this.rowNodeBlockLoader);
 
         this.cacheParams = {
             // the user provided datasource
@@ -253,7 +252,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         }
 
         this.infiniteCache = new InfiniteCache(this.cacheParams);
-        this.context.wireBean(this.infiniteCache);
+        this.getContext().wireBean(this.infiniteCache);
 
         this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     }

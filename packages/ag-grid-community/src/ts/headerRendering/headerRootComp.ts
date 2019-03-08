@@ -31,7 +31,6 @@ export class HeaderRootComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
@@ -69,7 +68,7 @@ export class HeaderRootComp extends Component {
 
         this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
 
-        this.childContainers.forEach(container => this.context.wireBean(container));
+        this.childContainers.forEach(container => this.getContext().wireBean(container));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));

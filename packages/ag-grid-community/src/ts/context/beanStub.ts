@@ -2,7 +2,7 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { EventService } from "../eventService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
-import { PreDestroy } from "./context";
+import {Autowired, Context, PreDestroy} from "./context";
 import { _ } from "../utils";
 
 export class BeanStub implements IEventEmitter {
@@ -14,6 +14,8 @@ export class BeanStub implements IEventEmitter {
     private destroyFunctions: (() => void)[] = [];
 
     private destroyed = false;
+
+    @Autowired('context') private context: Context;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
@@ -29,6 +31,10 @@ export class BeanStub implements IEventEmitter {
     //         }
     //     }, 5000);
     // }
+
+    public getContext(): Context {
+        return this.context;
+    }
 
     @PreDestroy
     public destroy(): void {

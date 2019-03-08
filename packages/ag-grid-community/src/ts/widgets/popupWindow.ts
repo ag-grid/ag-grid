@@ -17,7 +17,6 @@ export class PopupWindow extends Component {
 
     public static DESTROY_EVENT = 'destroy';
 
-    @Autowired('context') protected context: Context;
     @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;

@@ -1,4 +1,4 @@
-import { Context } from "../context/context";
+import {Autowired, Context, PreConstruct} from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";
@@ -38,18 +38,15 @@ export class Component extends BeanStub implements IComponent<any> {
         return this.compId;
     }
 
-    public instantiate(context: Context): void {
-        this.instantiateRecurse(this.getGui(), context);
-    }
-
-    private instantiateRecurse(parentNode: Element, context: Context): void {
+    // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
+    private createChildComponentsFromTags(parentNode: Element): void {
 
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
         childNodeList.forEach(childNode => {
-            const childComp = context.createComponentFromElement(childNode as Element, (childComp) => {
+            const childComp = this.getContext().createComponentFromElement(childNode as Element, (childComp) => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 this.copyAttributesFromNode(childNode as Element, childComp.getGui());
@@ -58,7 +55,7 @@ export class Component extends BeanStub implements IComponent<any> {
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
             } else if (childNode.childNodes) {
-                this.instantiateRecurse(childNode as Element, context);
+                this.createChildComponentsFromTags(childNode as Element);
             }
         });
     }
@@ -110,6 +107,22 @@ export class Component extends BeanStub implements IComponent<any> {
         (this.eGui as any).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
+
+        // context will not be available when user sets template in constructor
+        const contextIsAvailable = !!this.getContext();
+        if (contextIsAvailable) {
+            this.createChildComponentsFromTags(this.getGui());
+        }
+    }
+
+    @PreConstruct
+    private createChildComponentsPreConstruct(): void {
+        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
+        // to be autoWired first before we can create child components.
+        const uiExists = !!this.getGui();
+        if (uiExists) {
+            this.createChildComponentsFromTags(this.getGui());
+        }
     }
 
     protected wireQuerySelectors(): void {

@@ -27,7 +27,6 @@ export class HeaderRowComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
@@ -261,7 +260,7 @@ export class HeaderRowComp extends Component {
                 break;
         }
 
-        this.context.wireBean(result);
+        this.getContext().wireBean(result);
 
         return result;
     }

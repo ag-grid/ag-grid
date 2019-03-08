@@ -143,7 +143,6 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
 class ContextMenu extends Component implements IComponent<any> {
 
-    @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -160,7 +159,7 @@ class ContextMenu extends Component implements IComponent<any> {
     @PostConstruct
     private addMenuItems(): void {
         const menuList = new MenuList();
-        this.context.wireBean(menuList);
+        this.getContext().wireBean(menuList);
 
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 
