@@ -1,5 +1,7 @@
 import {Scene} from "../scene/scene";
 import {Group} from "../scene/group";
+import {ChartAxis} from "./axis/chartAxis";
+import {Series} from "./series/series";
 
 type Padding = {
     top: number,
@@ -8,7 +10,7 @@ type Padding = {
     left: number
 };
 
-export abstract class Chart {
+export abstract class Chart<D> {
     protected scene: Scene = new Scene();
 
     constructor() {
@@ -77,4 +79,20 @@ export abstract class Chart {
     };
 
     abstract performLayout(): void;
+
+    protected _axes: ChartAxis[] = [];
+    set axes(values: ChartAxis[]) {
+        this._axes = values;
+    }
+    get axes(): ChartAxis[] {
+        return this._axes;
+    }
+
+    protected _series: Series<D>[] = [];
+    set series(values: Series<D>[]) {
+        this._series = values;
+    }
+    get series(): Series<D>[] {
+        return this._series;
+    }
 }

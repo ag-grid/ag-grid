@@ -149,6 +149,8 @@ rowGroupPanel // beside where to drop columns for row group
 pivotPanel // beside where to drop columns for pivot
 valuePanel // beside where to drop columns for value</snippet>
 
+// drag
+rowDrag // the column dragger icon
     <p>
         Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
     </p>

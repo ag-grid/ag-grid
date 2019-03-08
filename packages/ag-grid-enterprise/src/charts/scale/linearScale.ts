@@ -3,6 +3,9 @@ import ContinuousScale from "./continuousScale";
 import { naturalOrder } from "../util/compare";
 import ticks from "../util/ticks";
 
+/**
+ * Maps continuous domain to a continuous range.
+ */
 export class LinearScale<R> extends ContinuousScale<R> {
     protected deinterpolatorOf(a: number, b: number): Deinterpolator<number> {
         const d = b - a;

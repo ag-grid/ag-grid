@@ -43,16 +43,41 @@ enum PieSeriesNodeTag {
     Label
 }
 
-export class PieSeries extends PolarSeries {
-    _labelField: string = '';
-    set labelField(value: string) {
+export class PieSeries<D> extends PolarSeries<D> {
+
+    protected fieldPropertiesX: (keyof this)[] = ['angleField'];
+    protected fieldPropertiesY: (keyof this)[] = ['radiusField'];
+
+    set chart(chart: Chart<D> | null) {
+        if (this._chart !== chart) {
+            this._chart = chart;
+            this.update();
+        }
+    }
+    get chart(): Chart<D> | null {
+        return this._chart;
+    }
+
+    set angleField(value: keyof D | null) {
+        if (this._angleField !== value) {
+            this._angleField = value;
+            this.processData();
+            this.update();
+        }
+    }
+    get angleField(): keyof D | null {
+        return this._angleField;
+    }
+
+    _labelField: keyof D | null = null;
+    set labelField(value: keyof D | null) {
         if (this._labelField !== value) {
             this._labelField = value;
             this.processData();
             this.update();
         }
     }
-    get labelField(): string {
+    get labelField(): keyof D | null {
         return this._labelField;
     }
 
@@ -75,27 +100,6 @@ export class PieSeries extends PolarSeries {
         '#fa3081'
     ];
 
-    set chart(chart: Chart | null) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.update();
-        }
-    }
-    get chart(): Chart | null {
-        return this._chart;
-    }
-
-    set angleField(value: string) {
-        if (this._angleField !== value) {
-            this._angleField = value;
-            this.processData();
-            this.update();
-        }
-    }
-    get angleField(): string {
-        return this._angleField;
-    }
-
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
@@ -113,7 +117,7 @@ export class PieSeries extends PolarSeries {
     /**
      * The name of the numeric field to use to determine the radii of pie slices.
      */
-    _radiusField: string = '';
+    private _radiusField: string = '';
     set radiusField(value: string) {
         if (this._radiusField !== value) {
             this._radiusField = value;
@@ -127,6 +131,7 @@ export class PieSeries extends PolarSeries {
 
     private angleScale: LinearScale<number> = (() => {
         const scale = scaleLinear();
+        // Each slice is a ratio of the whole, where all ratios add up to 1.
         scale.domain = [0, 1];
         // Add 90 deg to start the first pie at 12 o'clock.
         scale.range = [-Math.PI, Math.PI].map(angle => angle + Math.PI / 2);
@@ -152,6 +157,14 @@ export class PieSeries extends PolarSeries {
     }
     get data(): any[] {
         return this._data;
+    }
+
+    getDomainX(): [number, number] {
+        return this.angleScale.domain as [number, number];
+    }
+
+    getDomainY(): [number, number] {
+        return this.radiusScale.domain as [number, number];
     }
 
     processData(): void {

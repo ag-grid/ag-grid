@@ -1023,6 +1023,10 @@ export class Utils {
     // }
 
     static iconNameClassMap: { [key: string]: string } = {
+        columnGroupOpened: 'expanded',
+        columnGroupClosed: 'contracted',
+        columnSelectClosed: 'tree-closed',
+        columnSelectOpen: 'tree-open',
         columnMovePin: 'pin',
         columnMoveAdd: 'plus',
         columnMoveHide: 'eye-slash',
@@ -1055,10 +1059,8 @@ export class Utils {
         pivotPanel: 'pivot',
         rowGroupPanel: 'group',
         valuePanel: 'aggregation',
-        columnGroupOpened: 'expanded',
-        columnGroupClosed: 'contracted',
-        columnSelectClosed: 'tree-closed',
-        columnSelectOpen: 'tree-open',
+        columnDrag: 'column-drag',
+        rowDrag: 'row-drag',
         /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',
@@ -1082,6 +1084,7 @@ export class Utils {
 
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
         let userProvidedIcon: Function | string | null = null;
+
         // check col for icon first
         const icons: any = (column && column.getColDef().icons) ? column.getColDef().icons : null;
         if (icons) {

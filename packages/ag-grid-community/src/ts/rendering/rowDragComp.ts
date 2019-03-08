@@ -18,7 +18,7 @@ export class RowDragComp extends Component {
     private visibleMode: 'display' | 'visibility' | null = null;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
-        super(`<span class="ag-row-drag"></span>`);
+        super(`<div class="ag-row-drag"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.cellValue = cellValue;
@@ -27,6 +27,8 @@ export class RowDragComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
+        const eGui = this.getGui();
+        eGui.appendChild(_.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
         this.addDragSource();
 
         this.checkCompatibility();
