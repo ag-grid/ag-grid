@@ -85,9 +85,7 @@ var gridOptions = {
         filter: true
     },
     components: {
-        personFilter: PersonFilter,
-        personFloatingFilterComponent: PersonFloatingFilterComponent,
-        winningsFilter: WinningsFilter
+        personFilter: PersonFilter
     },
     floatingFilter: true,
     suppressEnterprise: true,
@@ -199,7 +197,6 @@ var firstColumn = {
     enableRowGroup: true,
     // enablePivot: true,
     filter: 'personFilter',
-    floatingFilterComponent: 'personFloatingFilterComponent',
     checkboxSelection: function (params) {
         // we put checkbox on the name if we are not doing no grouping
         return params.columnApi.getRowGroupColumns().length === 0;
@@ -302,13 +299,8 @@ var defaultCols = [
         groupId: 'performance',
         children: [
             {
-                headerName: "Bank Balance", 
-                field: "bankBalance", 
-                width: 150, 
-                editable: true,
-                filter: 'winningsFilter', 
-                cellRenderer: currencyRenderer, 
-                cellStyle: currencyCssFunc,
+                headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
+                filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
                 filterParams: { cellRenderer: currencyRenderer },
                 enableValue: true,
                 // colId: 'sf',
@@ -676,35 +668,6 @@ PersonFilter.prototype.getApi = function () {
 PersonFilter.prototype.getModel = function () { };
 PersonFilter.prototype.setModel = function () { };
 
-function PersonFloatingFilterComponent() {
-}
-
-PersonFloatingFilterComponent.prototype.init = function (params) {
-    this.params = params;
-    var eGui = this.eGui = document.createElement('div');
-    eGui.className = 'ag-input-text-wrapper';
-    var input = this.input = document.createElement('input');
-    input.className = 'ag-floating-filter-input';
-    eGui.appendChild(input);
-    this.changeEventListener = function () {
-        params.onFloatingFilterChanged(input.value);
-    };
-    input.addEventListener('input', this.changeEventListener);
-};
-
-PersonFloatingFilterComponent.prototype.getGui = function () {
-    return this.eGui;
-};
-
-PersonFloatingFilterComponent.prototype.onParentModelChanged = function (model) {
-    // add in child, one for each flat
-    this.input.value = model != null ? model : '';
-};
-
-PersonFloatingFilterComponent.prototype.destroy = function () {
-    this.input.removeEventListener('input', this.changeEventListener);
-};
-
 function WinningsFilter() {
 }
 
@@ -761,32 +724,9 @@ WinningsFilter.prototype.isFilterActive = function () {
     return !this.cbNoFilter.checked;
 };
 
-WinningsFilter.prototype.getModelAsString = function (model) {
-    return model ? model : '';
-};
-
-WinningsFilter.prototype.getModel = function () {
-    if (this.cbNoFilter.checked) {
-        return '';
-    }
-    if (this.cbPositive.checked) {
-        return 'value >= 0';
-    }
-    if (this.cbNegative.checked) {
-        return 'value < 0';
-    }
-    if (this.cbGreater50.checked) {
-        return 'value >= 50000';
-    }
-    if (this.cbGreater90.checked) {
-        return 'value >= 90000';
-    }
-    console.error('invalid checkbox selection');
-};
-// lazy, the example doesn't use setModel()
-WinningsFilter.prototype.setModel = function () {
-};
-
+// lazy, the example doesn't use getModel() and setModel()
+WinningsFilter.prototype.getModel = function () { };
+WinningsFilter.prototype.setModel = function () { };
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
