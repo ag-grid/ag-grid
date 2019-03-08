@@ -84,13 +84,17 @@ export class FloatingFilterWrapper extends Component {
         const colDef = this.column.getColDef();
         if (colDef.filter) {
             this.floatingFilterCompPromise = this.getFloatingFilterInstance();
-            this.floatingFilterCompPromise.then(compInstance => {
-                if (compInstance) {
-                    this.setupWithFloatingFilter(compInstance);
-                } else {
-                    this.setupEmpty();
-                }
-            });
+            if (this.floatingFilterCompPromise) {
+                this.floatingFilterCompPromise.then(compInstance => {
+                    if (compInstance) {
+                        this.setupWithFloatingFilter(compInstance);
+                    } else {
+                        this.setupEmpty();
+                    }
+                });
+            } else {
+                this.setupEmpty();
+            }
             this.setupSyncWithFilter();
         } else {
             this.setupEmpty();
