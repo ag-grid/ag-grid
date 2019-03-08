@@ -4,7 +4,7 @@ import Scale from './scale';
  * Maps a discrete domain to a continuous numeric range.
  */
 export class BandScale<D> implements Scale<D, number> {
-    _domain: D[] = [];
+    private _domain: D[] = [];
     set domain(values: D[]) {
         const domain = this._domain;
 
@@ -24,7 +24,7 @@ export class BandScale<D> implements Scale<D, number> {
         return this._domain;
     }
 
-    _range: [number, number] = [0, 1];
+    private _range: [number, number] = [0, 1];
     set range(values: [number, number]) {
         this._range[0] = values[0];
         this._range[1] = values[1];
@@ -52,12 +52,12 @@ export class BandScale<D> implements Scale<D, number> {
 
     private index = {} as any; // new Map<D, number>();
 
-    _bandwidth: number = 1;
+    private _bandwidth: number = 1;
     get bandwidth(): number {
         return this._bandwidth;
     }
 
-    _padding = 0;
+    private _padding = 0;
     set padding(value: number) {
         value = Math.max(0, Math.min(1, value));
         this._paddingInner = value;
@@ -71,7 +71,7 @@ export class BandScale<D> implements Scale<D, number> {
     /**
      * The ratio of the range that is reserved for space between bands.
      */
-    _paddingInner = 0;
+    private _paddingInner = 0;
     set paddingInner(value: number) {
         this._paddingInner = Math.max(0, Math.min(1, value)); // [0, 1]
         this.rescale();
@@ -84,7 +84,7 @@ export class BandScale<D> implements Scale<D, number> {
      * The ratio of the range that is reserved for space before the first
      * and after the last band.
      */
-    _paddingOuter = 0;
+    private _paddingOuter = 0;
     set paddingOuter(value: number) {
         this._paddingOuter = Math.max(0, Math.min(1, value)); // [0, 1]
         this.rescale();
@@ -93,7 +93,7 @@ export class BandScale<D> implements Scale<D, number> {
         return this._paddingOuter;
     }
 
-    _round = false;
+    private _round = false;
     set round(value: boolean) {
         this._round = value;
         this.rescale();
@@ -107,7 +107,7 @@ export class BandScale<D> implements Scale<D, number> {
      * `0.5` - equal distribution of space before the first and after the last band,
      * with bands effectively centered within the range.
      */
-    _align = 0.5;
+    private _align = 0.5;
     set align(value: number) {
         this._align = Math.max(0, Math.min(1, value)); // [0, 1]
         this.rescale();

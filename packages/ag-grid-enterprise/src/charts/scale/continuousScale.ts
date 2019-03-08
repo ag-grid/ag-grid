@@ -27,23 +27,20 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
     private piecewiseDeinterpolatorFactory?: PiecewiseDeinterpolatorFactory<R>;
     private piecewiseDeinterpolator?: Deinterpolator<R>;
 
-    _domain: number[] = [0, 1];
-    _range: R[] = [];
-
+    protected _domain: number[] = [0, 1];
     set domain(values: number[]) {
         this._domain = values.slice();
         this.rescale();
     }
-
     get domain(): number[] {
         return this._domain;
     }
 
+    protected _range: R[] = [];
     set range(values: R[]) {
         this._range = values.slice();
         this.rescale();
     }
-
     get range(): R[] {
         return this._range;
     }

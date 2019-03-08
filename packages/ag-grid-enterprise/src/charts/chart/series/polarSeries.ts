@@ -1,6 +1,6 @@
 import {Series} from "./series";
 
-export abstract class PolarSeries extends Series {
+export abstract class PolarSeries<D> extends Series<D> {
     /**
      * The center of the polar series (for example, the center of a pie).
      * If the polar chart has multiple series, all of them will have their
@@ -38,7 +38,10 @@ export abstract class PolarSeries extends Series {
      * The name of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    _angleField: string = '';
-    abstract set angleField(value: string);
-    abstract get angleField(): string;
+    _angleField: keyof D | null = null;
+    abstract set angleField(value: keyof D | null);
+    abstract get angleField(): keyof D | null;
+
+    protected fieldPropertiesX: (keyof this)[] = ['angleField'];
+    protected fieldPropertiesY: (keyof this)[] = [];
 }

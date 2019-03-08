@@ -24,6 +24,8 @@ export type GridStyle = {
  * of the axis line by default. The axis can be {@link rotation | rotated} by an arbitrary angle,
  * so that it can be used as a top, right, bottom, left, radial or any other kind
  * of linear axis.
+ * The generic `D` parameter is the type of the domain of the axis' scale.
+ * The output range of the axis' scale is always numeric (screen coordinates).
  */
 export class Axis<D> {
     constructor(scale: Scale<D, number>) {
