@@ -47,7 +47,6 @@ export class PrimaryColsPanel extends Component {
 
     @PostConstruct
     public init(): void {
-        this.instantiate(this.getContext());
 
         this.primaryColsHeaderPanel.init(this.params);
         this.primaryColsListPanel.init(this.params, this.allowDragging);

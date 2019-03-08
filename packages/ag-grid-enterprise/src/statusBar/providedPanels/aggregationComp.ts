@@ -54,11 +54,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super(AggregationComp.TEMPLATE);
     }
 
-    @PreConstruct
-    private preConstruct(): void {
-        this.instantiate(this.getContext());
-    }
-
     @PostConstruct
     private postConstruct(): void {
         if (!this.isValidRowModel()) {

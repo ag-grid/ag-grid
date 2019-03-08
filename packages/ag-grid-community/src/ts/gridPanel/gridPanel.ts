@@ -234,7 +234,6 @@ export class GridPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.instantiate(this.getContext());
 
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();

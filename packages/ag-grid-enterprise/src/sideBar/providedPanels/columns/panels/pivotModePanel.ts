@@ -32,7 +32,6 @@ export class PivotModePanel extends Component {
     @PreConstruct
     public init(): void {
         this.setTemplate(this.createTemplate());
-        this.instantiate(this.getContext());
 
         this.cbPivotMode.setSelected(this.columnController.isPivotMode());
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();

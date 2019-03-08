@@ -98,7 +98,6 @@ export class Context {
     // public createComponent(ComponentClass: new () => Component): Component {
     //     const compInstance = new ComponentClass();
     //     this.wireBean(compInstance);
-    //     compInstance.instantiate(this);
     //     return compInstance;
     // }
 

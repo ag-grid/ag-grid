@@ -87,8 +87,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
 
-        this.instantiate(this.getContext());
-
         this.addDestroyableEventListener(this.cbSelect, 'change', this.onCheckboxChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 

@@ -41,7 +41,6 @@ export class SideBarComp extends Component implements ISideBar {
 
     @PostConstruct
     private postConstruct(): void {
-        this.instantiate(this.getContext());
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
         this.setSideBarDef();
     }

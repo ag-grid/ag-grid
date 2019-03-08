@@ -67,7 +67,6 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
-        this.instantiate(this.getContext());
 
         if (!this.params.suppressPivotMode) {
             this.addComponent(new PivotModePanel());

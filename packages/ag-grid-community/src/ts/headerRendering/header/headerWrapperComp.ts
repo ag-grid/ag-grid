@@ -77,7 +77,6 @@ export class HeaderWrapperComp extends Component {
 
     @PostConstruct
     public init(): void {
-        this.instantiate(this.getContext());
 
         const colDef = this.getComponentHolder();
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);

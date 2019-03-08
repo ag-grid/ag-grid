@@ -83,7 +83,6 @@ export class GridCore extends Component {
 
         const template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
-        this.instantiate(this.getContext());
 
         // register with services that need grid core
         [

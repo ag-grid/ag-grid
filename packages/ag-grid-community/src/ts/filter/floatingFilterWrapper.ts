@@ -71,7 +71,6 @@ export class FloatingFilterWrapper extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.instantiate(this.getContext());
 
         this.setupFloatingFilter();
         this.setupWidth();

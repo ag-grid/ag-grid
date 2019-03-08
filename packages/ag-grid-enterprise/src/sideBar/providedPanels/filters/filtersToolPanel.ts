@@ -40,7 +40,6 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     }
 
     public init(): void {
-        this.instantiate(this.getContext());
         this.initialised = true;
         this.eventService.addEventListener('newColumnsLoaded', () => this.onColumnsChanged());
         if (this.columnController.isReady()) {
