@@ -13,7 +13,7 @@ import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, Filte
 import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
 import { ColDef, GetQuickFilterTextParams } from "../entities/colDef";
 import { GridApi } from "../gridApi";
-import { ComponentResolver } from "../components/framework/componentResolver";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { GridCore } from "../gridCore";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
@@ -33,7 +33,7 @@ export class FilterManager {
     @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('componentResolver') private componentResolver: ComponentResolver;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -453,7 +453,7 @@ export class FilterManager {
             $scope: $scope
         };
 
-        return this.componentResolver.createAgGridComponent<IFilterComp>(
+        return this.userComponentFactory.createUserComponent<IFilterComp>(
             sanitisedColDef,
             params,
             'filter',

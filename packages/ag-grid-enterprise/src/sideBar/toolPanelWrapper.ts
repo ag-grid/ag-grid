@@ -1,7 +1,7 @@
 import {
     Autowired,
     Component,
-    ComponentResolver,
+    UserComponentFactory,
     IComponent,
     IToolPanelComp,
     Promise,
@@ -17,7 +17,7 @@ export interface ToolPanelWrapperParams {
 
 export class ToolPanelWrapper extends Component implements IComponent<ToolPanelWrapperParams>, IToolPanelChildComp{
 
-    @Autowired("componentResolver") private componentResolver: ComponentResolver;
+    @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
 
     private static TEMPLATE =
         `<div class="ag-tool-panel-wrapper"/>`;
@@ -36,7 +36,7 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
 
     public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
         this.toolPanelId = toolPanelDef.id;
-        const componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
+        const componentPromise: Promise<IComponent<any>> = this.userComponentFactory.createUserComponent(
             toolPanelDef,
             toolPanelDef.toolPanelParams,
             'toolPanel',

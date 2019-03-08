@@ -18,7 +18,7 @@ import {
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { GridApi } from "../../gridApi";
-import { ComponentRecipes } from "../../components/framework/componentRecipes";
+import { UserComponentFactoryHelper } from "../../components/framework/userComponentFactoryHelper";
 import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { _ } from "../../utils";
@@ -34,7 +34,7 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('beans') private beans: Beans;
@@ -147,7 +147,7 @@ export class HeaderGroupWrapperComp extends Component {
 
         const callback = this.afterHeaderCompCreated.bind(this, displayName);
 
-        this.componentRecipes.newHeaderGroupComponent(params).then(callback);
+        this.userComponentFactoryHelper.newHeaderGroupComponent(params).then(callback);
     }
 
     private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {

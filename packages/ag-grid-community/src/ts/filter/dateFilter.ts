@@ -4,7 +4,7 @@ import { IDateComp, IDateParams } from "../rendering/dateComponent";
 import { QuerySelector } from "../widgets/componentAnnotations";
 import { BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter } from "./baseFilter";
 import { Autowired } from "../context/context";
-import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
 import { _ } from "../utils";
 
 export interface IDateFilterParams extends IComparableFilterParams {
@@ -29,8 +29,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateToConditionComponent: IDateComp;
     private dateFromConditionComponent: IDateComp;
 
-    @Autowired('componentRecipes')
-    private componentRecipes: ComponentRecipes;
+    @Autowired('userComponentFactoryHelper')
+    private userComponentFactoryHelper: UserComponentFactoryHelper;
 
     @QuerySelector('#filterDateFromPanel')
     private eDateFromPanel: HTMLElement;
@@ -95,7 +95,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             filterParams: this.filterParams
         };
 
-        this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent => {
+        this.userComponentFactoryHelper.newDateComponent(dateComponentParams).then (dateToComponent => {
             if (type === FilterConditionType.MAIN) {
                 this.dateToComponent = dateToComponent;
             } else {
@@ -116,7 +116,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
                 }
             }
         });
-        this.componentRecipes.newDateComponent(dateComponentParams).then(dateComponent => {
+        this.userComponentFactoryHelper.newDateComponent(dateComponentParams).then(dateComponent => {
             if (type === FilterConditionType.MAIN) {
                 this.dateFromComponent = dateComponent;
             } else {

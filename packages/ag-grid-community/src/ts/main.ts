@@ -21,7 +21,7 @@ export { ComponentUtil } from "./components/componentUtil";
 
 export { ColDefUtil } from "./components/colDefUtil";
 export { ComponentProvider } from "./components/framework/componentProvider";
-export { ComponentResolver } from "./components/framework/componentResolver";
+export { UserComponentFactory } from "./components/framework/userComponentFactory";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./components/agGridWebComponent";
 

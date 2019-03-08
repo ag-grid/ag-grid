@@ -2,8 +2,6 @@ import {
     _,
     Autowired,
     Component,
-    ComponentResolver,
-    Context,
     EventService,
     GridOptionsWrapper,
     ToolPanelVisibleChangedEvent,

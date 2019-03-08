@@ -7,7 +7,7 @@ import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/head
 import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { FilterManager } from "../../filter/filterManager";
-import { ComponentResolver } from "./componentResolver";
+import { UserComponentFactory } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
@@ -19,10 +19,11 @@ import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 
-@Bean('componentRecipes')
-export class ComponentRecipes {
-    @Autowired("componentResolver")
-    private componentResolver:ComponentResolver;
+@Bean('userComponentFactoryHelper')
+export class UserComponentFactoryHelper {
+
+    @Autowired("userComponentFactory")
+    private userComponentFactory: UserComponentFactory;
 
     @Autowired("gridOptions")
     private gridOptions: GridOptions;
@@ -33,14 +34,9 @@ export class ComponentRecipes {
     @Autowired("columnApi")
     private columnApi: ColumnApi;
 
-    @Autowired("gridOptionsWrapper")
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    @Autowired('filterManager')
-    private filterManager: FilterManager;
 
     public newDateComponent(params: IDateParams): Promise<IDateComp> {
-        return this.componentResolver.createAgGridComponent<IDateComp>(
+        return this.userComponentFactory.createUserComponent<IDateComp>(
             this.gridOptions,
             params,
             "dateComponent",
@@ -53,7 +49,7 @@ export class ComponentRecipes {
     }
 
     public newHeaderComponent(params:IHeaderParams): Promise<IHeaderComp> {
-        return this.componentResolver.createAgGridComponent<IHeaderComp>(
+        return this.userComponentFactory.createUserComponent<IHeaderComp>(
             params.column.getColDef(),
             params,
             "headerComponent",
@@ -68,7 +64,7 @@ export class ComponentRecipes {
     }
 
     public newHeaderGroupComponent(params:IHeaderGroupParams): Promise<IHeaderGroupComp> {
-        return this.componentResolver.createAgGridComponent(
+        return this.userComponentFactory.createUserComponent(
             params.columnGroup.getColGroupDef(),
             params,
             "headerGroupComponent",
@@ -81,23 +77,19 @@ export class ComponentRecipes {
     }
 
     public newFullWidthGroupRowInnerCellRenderer(params:ICellRendererParams):Promise<ICellRendererComp> {
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", params, null, false);
+        return this.userComponentFactory.createUserComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", params, null, false);
     }
 
     public newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp> {
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "cellRenderer", params, null, false);
+        return this.userComponentFactory.createUserComponent<ICellRendererComp>(target, params, "cellRenderer", params, null, false);
     }
 
     public newInnerCellRenderer(target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp> {
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", params, null);
-    }
-
-    public newFullRowGroupRenderer(params:ICellRendererParams):Promise<ICellRendererComp> {
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", params, null);
+        return this.userComponentFactory.createUserComponent<ICellRendererComp>(target, params, "innerRenderer", params, null);
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
-        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(
+        return this.userComponentFactory.createUserComponent<ILoadingOverlayComp>(
             this.gridOptions,
             null,
             "loadingOverlayComponent",
@@ -110,7 +102,7 @@ export class ComponentRecipes {
     }
 
     public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp> {
-        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(
+        return this.userComponentFactory.createUserComponent<INoRowsOverlayComp>(
             this.gridOptions,
             null,
             "noRowsOverlayComponent",
@@ -124,7 +116,7 @@ export class ComponentRecipes {
 
     public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
         const colDef = params.column && params.column.getColDef();
-        return this.componentResolver.createAgGridComponent<ITooltipComp>(
+        return this.userComponentFactory.createUserComponent<ITooltipComp>(
             colDef,
             params,
             "tooltipComponent",

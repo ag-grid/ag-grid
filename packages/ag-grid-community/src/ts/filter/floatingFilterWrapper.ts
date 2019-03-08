@@ -15,7 +15,7 @@ import { CombinedFilter } from "./baseFilter";
 import { _, Promise } from "../utils";
 import { ColDef } from "../entities/colDef";
 import { IFilterComp } from "../interfaces/iFilter";
-import { ComponentResolver } from "../components/framework/componentResolver";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { FilterManager } from "./filterManager";
@@ -48,7 +48,7 @@ export class FloatingFilterWrapper extends Component {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('beans') private beans: Beans;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired("componentResolver") private componentResolver: ComponentResolver;
+    @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("filterManager") private filterManager: FilterManager;
@@ -196,10 +196,10 @@ export class FloatingFilterWrapper extends Component {
 
         // this is unusual - we need a value from the merged params OUTSIDE the component the params are for. the params
         // are for the floating filter component, but this property is actually for the wrapper.
-        const mergedParams = this.componentResolver.mergeParams(colDef, 'floatingFilterComponent', dynamicParams, params);
+        const mergedParams = this.userComponentFactory.mergeParams(colDef, 'floatingFilterComponent', dynamicParams, params);
         this.suppressFilterButton = mergedParams.suppressFilterButton; // used later in setupWithFilter()
 
-        let promise: Promise<IFloatingFilterComp<any, any, any>> = this.componentResolver.createAgGridComponent<IFloatingFilterComp<any, any, any>>(
+        let promise: Promise<IFloatingFilterComp<any, any, any>> = this.userComponentFactory.createUserComponent<IFloatingFilterComp<any, any, any>>(
             colDef,
             params,
             "floatingFilterComponent",
@@ -218,7 +218,7 @@ export class FloatingFilterWrapper extends Component {
                     const parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI');
                     return parentPromise.resolveNow(null, parent => parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null) as any;
                 };
-                const compInstance = this.componentResolver.createInternalAgGridComponent<any, IFloatingFilterComp<any, any, any>>(
+                const compInstance = this.userComponentFactory.createUserComponentFromConcreteClass<any, IFloatingFilterComp<any, any, any>>(
                     ReadModelAsStringFloatingFilterComp,
                     params
                 );
@@ -239,7 +239,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private getFilterComponentPrototype(colDef: ColDef): {new(): any} {
-        const resolvedComponent = this.componentResolver.getComponentToUse(colDef, "filter", this.createDynamicParams());
+        const resolvedComponent = this.userComponentFactory.getComponentToUse(colDef, "filter", this.createDynamicParams());
         return resolvedComponent ? resolvedComponent.component : null;
     }
 

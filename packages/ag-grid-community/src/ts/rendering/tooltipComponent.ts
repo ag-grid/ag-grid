@@ -1,6 +1,6 @@
 import { PopupComponent } from "../widgets/popupComponent";
 import { IComponent } from "../interfaces/iComponent";
-import { DynamicComponentParams } from "../components/framework/componentResolver";
+import { DynamicComponentParams } from "../components/framework/userComponentFactory";
 
 export interface ITooltipParams extends DynamicComponentParams {
     value?: any;

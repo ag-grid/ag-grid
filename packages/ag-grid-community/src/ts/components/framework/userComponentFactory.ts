@@ -67,8 +67,9 @@ export interface ResolvedComponent<A extends IComponent<any> & B, B> {
     dynamicParams: any;
 }
 
-@Bean('componentResolver')
-export class ComponentResolver {
+@Bean('userComponentFactory')
+export class UserComponentFactory {
+
     @Autowired("gridOptions")
     private gridOptions: GridOptions;
 
@@ -324,7 +325,7 @@ export class ComponentResolver {
      *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    public createAgGridComponent<A extends IComponent<any>>(holderOpt: ComponentHolder,
+    public createUserComponent<A extends IComponent<any>>(holderOpt: ComponentHolder,
                                                             agGridParams: any,
                                                             propertyName: string,
                                                             dynamicComponentParams: DynamicComponentParams | null,
@@ -333,7 +334,7 @@ export class ComponentResolver {
                                                             customInitParamsCb?: (params: any, component: A) => any): Promise<A> {
         const holder: ComponentHolder = holderOpt || this.gridOptions;
 
-        //Create the component instance
+        // Create the component instance
         const componentAndParams: [A, any] = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory) as [A, any];
         if (!componentAndParams) { return null; }
 
@@ -364,9 +365,9 @@ export class ComponentResolver {
      *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    public createInternalAgGridComponent<P, A extends IComponent<P>>(clazz: { new(): A },
-                                                                     agGridParams: P,
-                                                                     customInitParamsCb?: (params: any, component: A) => any): A {
+    public createUserComponentFromConcreteClass<P, A extends IComponent<P>>(clazz: { new(): A },
+                                                                            agGridParams: P,
+                                                                            customInitParamsCb?: (params: any, component: A) => any): A {
         const internalComponent: A = new clazz() as A;
 
         this.initialiseComponent(

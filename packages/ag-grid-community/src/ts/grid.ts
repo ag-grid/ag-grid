@@ -60,8 +60,8 @@ import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";
 import { PinnedRowModel } from "./rowModels/pinnedRowModel";
-import { ComponentResolver } from "./components/framework/componentResolver";
-import { ComponentRecipes } from "./components/framework/componentRecipes";
+import { UserComponentFactory } from "./components/framework/userComponentFactory";
+import { UserComponentFactoryHelper } from "./components/framework/userComponentFactoryHelper";
 import { ComponentProvider } from "./components/framework/componentProvider";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
 import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
@@ -195,8 +195,8 @@ export class Grid {
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
                 rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils,
-                ComponentMetadataProvider, ResizeObserverService, ComponentProvider, ComponentResolver,
-                ComponentRecipes, MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
+                ComponentMetadataProvider, ResizeObserverService, ComponentProvider, UserComponentFactory,
+                UserComponentFactoryHelper, MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
                 PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
                 SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
                 ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,

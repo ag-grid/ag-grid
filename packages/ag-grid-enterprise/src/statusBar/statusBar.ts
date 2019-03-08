@@ -2,7 +2,7 @@ import {
     Autowired,
     Component,
     ComponentProvider,
-    ComponentResolver,
+    UserComponentFactory,
     Context,
     GridApi,
     GridOptions,
@@ -25,7 +25,7 @@ export class StatusBar extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
-    @Autowired('componentResolver') private componentResolver: ComponentResolver;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
 
@@ -64,7 +64,7 @@ export class StatusBar extends Component {
                     context: this.gridOptionsWrapper.getContext()
                 };
 
-                const promise = this.componentResolver.createAgGridComponent(componentConfig,
+                const promise = this.userComponentFactory.createUserComponent(componentConfig,
                     params,
                     'statusPanel',
                     componentConfig.statusPanelParams);

@@ -9,7 +9,7 @@ import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp
 import { IFloatingFilterComp } from "../filter/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { DynamicComponentDef, DynamicComponentParams } from "../components/framework/componentResolver";
+import { DynamicComponentDef, DynamicComponentParams } from "../components/framework/userComponentFactory";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*

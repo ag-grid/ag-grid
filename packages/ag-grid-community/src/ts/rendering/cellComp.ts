@@ -640,7 +640,7 @@ export class CellComp extends Component {
         const params = this.createCellRendererParams();
 
         // take any custom params off of the user
-        const finalParams = this.beans.componentResolver.mergeParams(this.getComponentHolder(), this.cellRendererType, params, params);
+        const finalParams = this.beans.userComponentFactory.mergeParams(this.getComponentHolder(), this.cellRendererType, params, params);
 
         const result: boolean | void = this.cellRenderer.refresh(finalParams);
 
@@ -789,8 +789,8 @@ export class CellComp extends Component {
         }
 
         const params = this.createCellRendererParams();
-        const cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', params);
-        const pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', params);
+        const cellRenderer = this.beans.userComponentFactory.getComponentToUse(colDef, 'cellRenderer', params);
+        const pinnedRowCellRenderer = this.beans.userComponentFactory.getComponentToUse(colDef, 'pinnedRowCellRenderer', params);
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType =  CellComp.CELL_RENDERER_TYPE_PINNED;
@@ -811,7 +811,7 @@ export class CellComp extends Component {
 
         // this can return null in the event that the user has switched from a renderer component to nothing, for example
         // when using a cellRendererSelect to return a component or null depending on row data etc
-        const componentPromise = this.beans.componentResolver.createAgGridComponent(this.getComponentHolder(), params, this.cellRendererType, params, undefined, false);
+        const componentPromise = this.beans.userComponentFactory.createUserComponent(this.getComponentHolder(), params, this.cellRendererType, params, undefined, false);
         if (componentPromise) {
             componentPromise.then(callback);
             return true;

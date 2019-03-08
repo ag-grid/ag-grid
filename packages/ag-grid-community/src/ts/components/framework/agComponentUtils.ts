@@ -2,12 +2,13 @@ import { Autowired, Bean } from "../../context/context";
 import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./componentProvider";
 import { IComponent } from "../../interfaces/iComponent";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ComponentSource, ComponentType, ResolvedComponent } from "./componentResolver";
+import { ComponentSource, ComponentType, ResolvedComponent } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { _ } from "../../utils";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils {
+
     @Autowired("componentMetadataProvider")
     private componentMetadataProvider: ComponentMetadataProvider;
 

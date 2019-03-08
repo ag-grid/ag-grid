@@ -5,7 +5,7 @@ import {
     ColumnApi,
     ColumnController,
     Component,
-    ComponentResolver,
+    UserComponentFactory,
     Context,
     EventService,
     GridApi,
@@ -28,7 +28,7 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     @Autowired("eventService") private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('componentResolver') private componentResolver: ComponentResolver;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('$scope') private $scope: any;

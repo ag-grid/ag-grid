@@ -3,14 +3,14 @@ import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColDef } from "../entities/colDef";
-import { ComponentResolver } from "../components/framework/componentResolver";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { _, Promise } from "../utils";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
 
     @Autowired('context') private context: Context;
-    @Autowired('componentResolver') private componentResolver: ComponentResolver;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @PostConstruct
@@ -30,7 +30,7 @@ export class CellEditorFactory {
 
     public createCellEditor(column: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
 
-        const cellEditorPromise: Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
+        const cellEditorPromise: Promise<ICellEditorComp> = this.userComponentFactory.createUserComponent (
             column,
             params,
             'cellEditor',

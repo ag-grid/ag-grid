@@ -11,7 +11,7 @@ import {
     SetFloatingFilterComp,
     TextFloatingFilterComp
 } from "../../filter/floatingFilter";
-import { ComponentType } from "./componentResolver";
+import { ComponentType } from "./userComponentFactory";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";

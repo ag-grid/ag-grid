@@ -22,7 +22,7 @@ import { ColumnHoverService } from "./columnHoverService";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { PaginationProxy } from "../rowModels/paginationProxy";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { ComponentResolver } from "../components/framework/componentResolver";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
@@ -61,7 +61,7 @@ export class Beans {
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('columnHoverService') public columnHoverService: ColumnHoverService;
     @Autowired('enterprise') public enterprise: boolean;
-    @Autowired('componentResolver') public componentResolver: ComponentResolver;
+    @Autowired('userComponentFactory') public userComponentFactory: UserComponentFactory;
     @Autowired('animationFrameService') public taskQueue: AnimationFrameService;
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
