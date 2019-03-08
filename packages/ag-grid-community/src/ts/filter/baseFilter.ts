@@ -384,8 +384,10 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     }
 
     public getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number {
-        if (filterParams.applyButton && filterParams.debounceMs) {
-            console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+        if (this.applyActive) {
+            if (filterParams.debounceMs != null) {
+                console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+            }
             return 0;
         }
         return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
