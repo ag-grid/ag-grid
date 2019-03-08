@@ -84,7 +84,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
 
     public initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList();
-        this.context.wireBean(this.virtualList);
+        this.getContext().wireBean(this.virtualList);
         const richList = this.getGui().querySelector('#richList');
         if (richList) {
             richList.appendChild(this.virtualList.getGui());
@@ -137,7 +137,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
     private createSetListItem(value: any): Component {
 
         const listItem = new SetFilterListItem(value, this.filterParams.column);
-        this.context.wireBean(listItem);
+        this.getContext().wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
 
         listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, () => {

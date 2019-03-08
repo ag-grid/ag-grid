@@ -23,7 +23,6 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
         `<div class="ag-filter-panel" ref="ePanelContainer" />`;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired("context") private context: Context;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("eventService") private eventService: EventService;
@@ -41,7 +40,7 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     }
 
     public init(): void {
-        this.instantiate(this.context);
+        this.instantiate(this.getContext());
         this.initialised = true;
         this.eventService.addEventListener('newColumnsLoaded', () => this.onColumnsChanged());
         if (this.columnController.isReady()) {
@@ -72,7 +71,7 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
 
     private addColumnComps(column: Column): void {
         const toolPanelFilterComp = new ToolPanelFilterComp();
-        this.context.wireBean(toolPanelFilterComp);
+        this.getContext().wireBean(toolPanelFilterComp);
         toolPanelFilterComp.setColumn(column);
         this.appendChild(toolPanelFilterComp);
     }

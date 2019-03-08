@@ -44,7 +44,6 @@ export class FloatingFilterWrapper extends Component {
             </div>
         </div>`;
 
-    @Autowired('context') private context: Context;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('beans') private beans: Beans;
@@ -72,13 +71,13 @@ export class FloatingFilterWrapper extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.instantiate(this.context);
+        this.instantiate(this.getContext());
 
         this.setupFloatingFilter();
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
-        this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
+        this.addFeature(this.getContext(), new HoverFeature([this.column], this.getGui()));
     }
 
     private setupFloatingFilter(): void {

@@ -88,9 +88,6 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     @QuerySelector('#clearButton')
     private eClearButton: HTMLElement;
 
-    @Autowired('context')
-    public context: Context;
-
     private eConditionWrapper: HTMLElement;
     conditionValue: string;
 

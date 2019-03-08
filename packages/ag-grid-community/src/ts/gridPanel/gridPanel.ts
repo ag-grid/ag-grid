@@ -108,7 +108,6 @@ export class GridPanel extends Component {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
@@ -235,7 +234,7 @@ export class GridPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.instantiate(this.context);
+        this.instantiate(this.getContext());
 
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -326,7 +325,7 @@ export class GridPanel extends Component {
     private addRowDragListener(): void {
         const rowDragFeature = new RowDragFeature(this.eBodyViewport, this);
 
-        this.context.wireBean(rowDragFeature);
+        this.getContext().wireBean(rowDragFeature);
         this.dragAndDropService.addDropTarget(rowDragFeature);
     }
 
@@ -1091,7 +1090,7 @@ export class GridPanel extends Component {
 
         _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent) => {
             if (container) {
-                this.context.wireBean(container);
+                this.getContext().wireBean(container);
             }
         });
     }

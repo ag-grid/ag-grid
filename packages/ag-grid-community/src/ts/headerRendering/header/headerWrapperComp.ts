@@ -41,7 +41,6 @@ export class HeaderWrapperComp extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('context') private context: Context;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -78,7 +77,7 @@ export class HeaderWrapperComp extends Component {
 
     @PostConstruct
     public init(): void {
-        this.instantiate(this.context);
+        this.instantiate(this.getContext());
 
         const colDef = this.getComponentHolder();
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
@@ -95,12 +94,12 @@ export class HeaderWrapperComp extends Component {
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
 
-        this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
+        this.addFeature(this.getContext(), new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        this.addFeature(this.context, new SelectAllFeature(this.cbSelectAll, this.column));
+        this.addFeature(this.getContext(), new SelectAllFeature(this.cbSelectAll, this.column));
 
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();

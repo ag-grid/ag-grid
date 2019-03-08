@@ -30,7 +30,6 @@ export interface ServerSideCacheParams extends RowNodeCacheParams {
 export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCacheParams> implements IServerSideCache {
 
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // this will always be zero for the top level cache only,
@@ -314,7 +313,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
 
         const newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
-        this.context.wireBean(newBlock);
+        this.getContext().wireBean(newBlock);
 
         const displayIndexSequence = new NumberSequence(displayIndex);
 

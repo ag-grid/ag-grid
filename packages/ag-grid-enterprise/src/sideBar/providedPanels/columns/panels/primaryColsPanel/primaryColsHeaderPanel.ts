@@ -18,8 +18,6 @@ export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
 
 export class PrimaryColsHeaderPanel extends Component {
 
-    @Autowired('context') private context: Context;
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -70,7 +68,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        this.instantiate(this.context);
+        this.instantiate(this.getContext());
         this.addEventListeners();
 
         this.setExpandState(SELECTED_STATE.CHECKED);

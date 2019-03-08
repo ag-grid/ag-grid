@@ -34,7 +34,6 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('context') private context: Context;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -80,7 +79,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
 
-        this.addFeature(this.context, new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.addFeature(this.getContext(), new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
 
         const setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();

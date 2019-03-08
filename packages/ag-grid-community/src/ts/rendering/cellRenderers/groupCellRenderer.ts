@@ -44,7 +44,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
@@ -296,7 +295,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                 && !rowNode.detail;
         if (checkboxNeeded) {
             const cbSelectionComponent = new CheckboxSelectionComponent();
-            this.context.wireBean(cbSelectionComponent);
+            this.getContext().wireBean(cbSelectionComponent);
             cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc(() => cbSelectionComponent.destroy());

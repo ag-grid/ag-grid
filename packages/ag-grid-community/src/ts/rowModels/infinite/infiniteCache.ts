@@ -16,7 +16,6 @@ export interface InfiniteCacheParams extends RowNodeCacheParams {
 export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCacheParams> {
 
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -133,10 +132,8 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
     private createBlock(blockNumber: number): InfiniteBlock {
         const newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
-        this.context.wireBean(newBlock);
-
+        this.getContext().wireBean(newBlock);
         this.postCreateBlock(newBlock);
-
         return newBlock;
     }
 

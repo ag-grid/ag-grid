@@ -24,7 +24,6 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             <div ref="eList" class="ag-rich-select-list"></div>
         </div>`;
 
-    @Autowired('context') context: Context;
     @Autowired('cellRendererService') cellRendererService: CellRendererService;
 
     private params: IRichCellEditorParams;
@@ -55,7 +54,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.focusAfterAttached = params.cellStartedEdit;
 
         this.virtualList = new VirtualList();
-        this.context.wireBean(this.virtualList);
+        this.getContext().wireBean(this.virtualList);
 
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
 
@@ -156,7 +155,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     private createRowComponent(value: any): Component {
         const valueFormatted = this.params.formatValue(value);
         const row = new RichSelectRow(this.params);
-        this.context.wireBean(row);
+        this.getContext().wireBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
         return row;
     }

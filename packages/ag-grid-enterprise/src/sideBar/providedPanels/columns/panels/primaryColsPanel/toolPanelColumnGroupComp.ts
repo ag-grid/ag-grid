@@ -35,7 +35,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('context') private context: Context;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('eventService') private eventService: EventService;
 
@@ -73,7 +72,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
-        this.instantiate(this.context);
+        this.instantiate(this.getContext());
 
         // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');

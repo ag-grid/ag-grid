@@ -17,7 +17,6 @@ export class SideBarButtonsComp extends Component {
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
 
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired("context") private context: Context;
 
     private static readonly TEMPLATE: string = `<div class="ag-side-buttons"></div>`;
 
@@ -39,7 +38,7 @@ export class SideBarButtonsComp extends Component {
 
     private addButtonComp(def: ToolPanelDef): void {
         const buttonComp = new SideBarButtonComp(def);
-        this.context.wireBean(buttonComp);
+        this.getContext().wireBean(buttonComp);
         this.buttonComps.push(buttonComp);
         this.getGui().appendChild(buttonComp.getGui());
 
