@@ -191,13 +191,19 @@ export class FloatingFilterWrapper extends Component {
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
 
-        const params = this.createFloatingFilterParams();
+        const params: IFloatingFilterParams<any,any> = {
+            api: this.gridApi,
+            column: this.column,
+            currentParentModel: this.currentParentModel.bind(this),
+            onFloatingFilterChanged: this.onFloatingFilterChanged.bind(this),
+            suppressFilterButton: false // This one might be overridden from the colDef
+        };
+
         const dynamicParams = this.createDynamicParams();
 
-        // this is unusual - we need a value from the merged params OUTSIDE the component the params are for. the params
-        // are for the floating filter component, but this property is actually for the wrapper.
-        const mergedParams = this.userComponentFactory.mergeParams(colDef, 'floatingFilterComponent', dynamicParams, params);
-        this.suppressFilterButton = mergedParams.suppressFilterButton; // used later in setupWithFilter()
+        // this is unusual - we need a params value OUTSIDE the component the params are for.
+        // the params are for the floating filter component, but this property is actually for the wrapper.
+        this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
         let promise: Promise<IFloatingFilterComp<any, any, any>> = this.userComponentFactory.createUserComponent<IFloatingFilterComp<any, any, any>>(
             colDef,
@@ -245,16 +251,6 @@ export class FloatingFilterWrapper extends Component {
 
     private setupEmpty(): void {
         _.setVisible(this.eButtonWrapper, false);
-    }
-
-    private createFloatingFilterParams(): IFloatingFilterParams<any, any> {
-        return {
-            api: this.gridApi,
-            column: this.column,
-            currentParentModel: this.currentParentModel.bind(this),
-            onFloatingFilterChanged: this.onFloatingFilterChanged.bind(this),
-            suppressFilterButton: false // This one might be overridden from the colDef
-        };
     }
 
     private currentParentModel(): any {

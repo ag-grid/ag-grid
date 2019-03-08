@@ -69,7 +69,7 @@ import {
     VirtualRowRemovedEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
-import { AgGridRegisteredComponentInput } from "../components/framework/componentProvider";
+import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";

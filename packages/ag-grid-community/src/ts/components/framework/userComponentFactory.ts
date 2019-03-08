@@ -7,10 +7,10 @@ import { ColDef, ColGroupDef } from "../../entities/colDef";
 import {
     AgGridComponentFunctionInput,
     AgGridRegisteredComponentInput,
-    ComponentProvider,
+    UserComponentRegistry,
     RegisteredComponent,
     RegisteredComponentSource
-} from "./componentProvider";
+} from "./userComponentRegistry";
 import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
@@ -33,7 +33,7 @@ export type ComponentHolder =
 export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string | boolean;
 
 export enum ComponentType {
-    AG_GRID, FRAMEWORK
+    PLAIN_JAVASCRIPT, FRAMEWORK
 }
 
 export enum ComponentSource {
@@ -85,8 +85,8 @@ export class UserComponentFactory {
     @Autowired("componentMetadataProvider")
     private componentMetadataProvider: ComponentMetadataProvider;
 
-    @Autowired("componentProvider")
-    private componentProvider: ComponentProvider;
+    @Autowired("userComponentRegistry")
+    private userComponentRegistry: UserComponentRegistry;
 
     @Optional("frameworkComponentWrapper")
     private frameworkComponentWrapper: FrameworkComponentWrapper;
@@ -194,7 +194,7 @@ export class UserComponentFactory {
             // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
             // console.warn(`${HardcodedJsComponent}`);
             return {
-                type: ComponentType.AG_GRID,
+                type: ComponentType.PLAIN_JAVASCRIPT,
                 component: HardcodedJsComponent,
                 source: ComponentSource.HARDCODED,
                 dynamicParams: null
@@ -204,7 +204,7 @@ export class UserComponentFactory {
         if (hardcodedJsFunction) {
             // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
             // console.warn(`${hardcodedJsFunction}`);
-            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED) as ResolvedComponent<A, B>;
+            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.PLAIN_JAVASCRIPT, ComponentSource.HARDCODED) as ResolvedComponent<A, B>;
         }
 
         if (dynamicComponentFn) {
@@ -213,7 +213,7 @@ export class UserComponentFactory {
                 if (dynamicComponentDef.component == null) {
                     dynamicComponentDef.component = defaultComponentName;
                 }
-                const dynamicComponent: ResolvedComponent<A, B> = this.resolveByName(propertyName, dynamicComponentDef.component) as ResolvedComponent<A, B>;
+                const dynamicComponent: ResolvedComponent<A, B> = this.lookupFromRegisteredComponents(propertyName, dynamicComponentDef.component) as ResolvedComponent<A, B>;
                 return _.assign(
                     dynamicComponent, {
                         dynamicParams: dynamicComponentDef.params
@@ -222,22 +222,16 @@ export class UserComponentFactory {
             }
         }
 
-        //^^^^^ABOVE DEPRECATED - AT THIS POINT WE ARE RESOLVING BY NAME
-        let componentNameToUse: string;
-        if (hardcodedNameComponent) {
-            componentNameToUse = hardcodedNameComponent;
-        } else {
-            componentNameToUse = defaultComponentName;
-        }
+        const componentNameToUse = hardcodedNameComponent ? hardcodedNameComponent : defaultComponentName;
 
-        return componentNameToUse == null ? null : this.resolveByName(propertyName, componentNameToUse) as ResolvedComponent<A, B>;
+        return componentNameToUse == null ? null : this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ResolvedComponent<A, B>;
     }
 
-    private resolveByName<A extends IComponent<any> & B, B>(propertyName: string,
+    private lookupFromRegisteredComponents<A extends IComponent<any> & B, B>(propertyName: string,
                                                             componentNameOpt?: string): ResolvedComponent<A, B> {
         const componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
 
-        const registeredComponent: RegisteredComponent<A, B> = this.componentProvider.retrieve(componentName);
+        const registeredComponent: RegisteredComponent<A, B> = this.userComponentRegistry.retrieve(componentName);
         if (registeredComponent == null) { return null; }
 
         //If it is a FW it has to be registered as a component
@@ -254,7 +248,7 @@ export class UserComponentFactory {
         if (this.agComponentUtils.doesImplementIComponent(registeredComponent.component as AgGridRegisteredComponentInput<A>)) {
             return {
                 component: registeredComponent.component as { new(): A },
-                type: ComponentType.AG_GRID,
+                type: ComponentType.PLAIN_JAVASCRIPT,
                 source: (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT,
                 dynamicParams: null
             };
@@ -335,7 +329,7 @@ export class UserComponentFactory {
         const holder: ComponentHolder = holderOpt || this.gridOptions;
 
         // Create the component instance
-        const componentAndParams: [A, any] = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory) as [A, any];
+        const componentAndParams: [A, any] = this.createComponentInstance(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory) as [A, any];
         if (!componentAndParams) { return null; }
 
         // Wire the component and call the init method with the correct params
@@ -379,7 +373,7 @@ export class UserComponentFactory {
         return internalComponent;
     }
 
-    private newAgGridComponent<A extends IComponent<any> & B, B>(holder: ComponentHolder,
+    private createComponentInstance<A extends IComponent<any> & B, B>(holder: ComponentHolder,
         propertyName: string,
         dynamicComponentParams: DynamicComponentParams | null,
         defaultComponentName?: string,
@@ -387,31 +381,28 @@ export class UserComponentFactory {
     ): [A, any] {
         const componentToUse: ResolvedComponent<A, B> = this.getComponentToUse(holder, propertyName, dynamicComponentParams, defaultComponentName) as ResolvedComponent<A, B>;
 
-        if (!componentToUse || !componentToUse.component) {
-            if (mandatory) {
-                console.error(`Error creating component ${propertyName}=>${defaultComponentName}`);
-            }
+        const missing = !componentToUse || !componentToUse.component;
+        if (missing) {
+            if (mandatory) { console.error(`Error creating component ${propertyName}=>${defaultComponentName}`); }
             return null;
         }
 
-        if (componentToUse.type === ComponentType.AG_GRID) {
-            return [
-                new componentToUse.component() as A,
-                componentToUse.dynamicParams
-            ];
-        }
+        let componentInstance: A;
 
-        //Using framework component
-        const FrameworkComponentRaw: { new(): B } = componentToUse.component;
-
-        const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
-        return [
-            this.frameworkComponentWrapper.wrap(FrameworkComponentRaw,
+        if (componentToUse.type === ComponentType.PLAIN_JAVASCRIPT) {
+            // Using plain JavaScript component
+            componentInstance = new componentToUse.component() as A;
+        } else {
+            // Using framework component
+            const FrameworkComponentRaw: { new(): B } = componentToUse.component;
+            const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
+            componentInstance = this.frameworkComponentWrapper.wrap(FrameworkComponentRaw,
                 thisComponentConfig.mandatoryMethodList,
                 thisComponentConfig.optionalMethodList,
-                defaultComponentName) as A,
-            componentToUse.dynamicParams
-        ];
+                defaultComponentName) as A
+        }
+
+        return [componentInstance, componentToUse.dynamicParams];
     }
 
     private initialiseComponent<A extends IComponent<any>>(component: A,

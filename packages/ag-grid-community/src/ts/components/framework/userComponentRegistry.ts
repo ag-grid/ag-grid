@@ -53,8 +53,8 @@ export interface DeprecatedComponentName {
     newComponentName: string;
 }
 
-@Bean('componentProvider')
-export class ComponentProvider {
+@Bean('userComponentRegistry')
+export class UserComponentRegistry {
 
     @Autowired('gridOptions')
     private gridOptions: GridOptions;
@@ -234,7 +234,7 @@ export class ComponentProvider {
         }
         if (this.jsComponents[name]) {
             return {
-                type: ComponentType.AG_GRID,
+                type: ComponentType.PLAIN_JAVASCRIPT,
                 component: this.jsComponents[name] as { new(): A },
                 source: RegisteredComponentSource.REGISTERED
             };
@@ -242,7 +242,7 @@ export class ComponentProvider {
         if (this.agGridDefaults[name]) {
             return this.agGridDefaults[name] ?
                 {
-                    type: ComponentType.AG_GRID,
+                    type: ComponentType.PLAIN_JAVASCRIPT,
                     component: this.agGridDefaults[name] as { new(): A },
                     source: RegisteredComponentSource.DEFAULT
                 } :

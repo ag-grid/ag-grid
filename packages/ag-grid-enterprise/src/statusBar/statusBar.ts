@@ -1,10 +1,7 @@
 import {
     Autowired,
     Component,
-    ComponentProvider,
     UserComponentFactory,
-    Context,
-    GridApi,
     GridOptions,
     GridOptionsWrapper,
     PostConstruct,
@@ -24,9 +21,7 @@ export class StatusBar extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
-    @Autowired('componentProvider') private componentProvider: ComponentProvider;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
 
     @RefSelector('eStatusBarLeft') private eStatusBarLeft: HTMLElement;

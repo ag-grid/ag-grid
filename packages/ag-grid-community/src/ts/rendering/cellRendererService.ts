@@ -12,29 +12,10 @@ import { _, Promise } from "../utils";
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
 export class CellRendererService {
+
     @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
-    public useCellRenderer(
-        target: ColDef,
-        eTarget: HTMLElement,
-        params: any
-    ): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactoryHelper.newCellRenderer (target, params);
-        if (cellRendererPromise != null) {
-            cellRendererPromise.then(cellRenderer => {
-                if (cellRenderer == null) {
-                    eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-                } else {
-                    this.bindToHtml(cellRendererPromise, eTarget);
-                }
-            });
-        } else {
-            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-        }
-        return cellRendererPromise;
-    }
 
     public useFilterCellRenderer(
         target: ColDef,

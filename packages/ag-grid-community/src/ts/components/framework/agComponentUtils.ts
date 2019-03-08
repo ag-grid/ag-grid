@@ -1,5 +1,5 @@
 import { Autowired, Bean } from "../../context/context";
-import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./componentProvider";
+import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./userComponentRegistry";
 import { IComponent } from "../../interfaces/iComponent";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
 import { ComponentSource, ComponentType, ResolvedComponent } from "./userComponentFactory";

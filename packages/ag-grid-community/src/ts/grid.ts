@@ -62,7 +62,7 @@ import { AlignedGridsService } from "./alignedGridsService";
 import { PinnedRowModel } from "./rowModels/pinnedRowModel";
 import { UserComponentFactory } from "./components/framework/userComponentFactory";
 import { UserComponentFactoryHelper } from "./components/framework/userComponentFactoryHelper";
-import { ComponentProvider } from "./components/framework/componentProvider";
+import { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
 import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
 import { Beans } from "./rendering/beans";
@@ -194,8 +194,8 @@ export class Grid {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
-                rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils,
-                ComponentMetadataProvider, ResizeObserverService, ComponentProvider, UserComponentFactory,
+                rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+                ComponentMetadataProvider, ResizeObserverService, UserComponentRegistry, UserComponentFactory,
                 UserComponentFactoryHelper, MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
                 PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
                 SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
