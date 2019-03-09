@@ -51,45 +51,62 @@ export class CellRendererService {
     }
 
     public useInnerCellRenderer(
-        target: GroupCellRendererParams,
-        originalColumn: ColDef,
+        groupCellRendererParams: GroupCellRendererParams,
+        groupedColumnDef: ColDef, // the column this group row is for, eg 'Country'
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        let rendererToUsePromise: Promise<ICellRendererComp> = null;
-        const componentToUse: ComponentClassDef<any, any> = this.userComponentFactory.getComponentClassDef(target, "innerRenderer", null);
+        // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
+        // and then rating, we will use the country cell renderer for each country group row and likewise the rating
+        // cell renderer for each rating group row.
+        //
+        // however if the user has innerCellRenderer defined, this gets preference and we don't use cell renderers
+        // of the grouped columns.
+        //
+        // so we check and use in the following order:
+        //
+        // 1) thisColDef.cellRendererParams.innerRenderer of the column showing the groups (eg auto group column)
+        // 2) groupedColDef.cellRenderer of the grouped column
+        // 3) groupedColDef.cellRendererParams.innerRenderer
 
-        if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT) {
-            // THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
-            rendererToUsePromise = this.userComponentFactoryHelper.newInnerCellRenderer(target, params);
+        let cellRendererPromise: Promise<ICellRendererComp> = null;
+        // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
+        const groupInnerRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
+            .getComponentClassDef(groupCellRendererParams, "innerRenderer");
+
+        if (groupInnerRendererClass && groupInnerRendererClass.component != null
+            && groupInnerRendererClass.source != ComponentSource.DEFAULT) {
+            // use the renderer defined in cellRendererParams.innerRenderer
+            cellRendererPromise = this.userComponentFactoryHelper.newInnerCellRenderer(groupCellRendererParams, params);
         } else {
-            const otherRenderer: ComponentClassDef<any, any> = this.userComponentFactory.getComponentClassDef(originalColumn, "cellRenderer", null);
-            if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT) {
-                // Only if the original column is using an specific renderer, it it is a using a DEFAULT one
-                // ignore it
-                // THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
-                rendererToUsePromise = this.userComponentFactoryHelper.newCellRenderer(originalColumn, params);
-            } else if (otherRenderer && otherRenderer.source == ComponentSource.DEFAULT && (_.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
+            // otherwise see if we can use the cellRenderer of the column we are grouping by
+            const groupColumnRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
+                .getComponentClassDef(groupedColumnDef, "cellRenderer");
+            if (groupColumnRendererClass && groupColumnRendererClass.source != ComponentSource.DEFAULT) {
+                // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
+                cellRendererPromise = this.userComponentFactoryHelper.newCellRenderer(groupedColumnDef, params);
+            } else if (groupColumnRendererClass && groupColumnRendererClass.source == ComponentSource.DEFAULT
+                && (_.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 // AND HAS A INNER CELL RENDERER
-                rendererToUsePromise = this.userComponentFactoryHelper.newInnerCellRenderer(originalColumn.cellRendererParams, params);
+                cellRendererPromise = this.userComponentFactoryHelper.newInnerCellRenderer(groupedColumnDef.cellRendererParams, params);
             } else {
                 // This forces the retrieval of the default plain cellRenderer that just renders the values.
-                rendererToUsePromise = this.userComponentFactoryHelper.newCellRenderer({}, params);
+                cellRendererPromise = this.userComponentFactoryHelper.newCellRenderer({}, params);
             }
         }
-        if (rendererToUsePromise != null) {
-            rendererToUsePromise.then(rendererToUse => {
+        if (cellRendererPromise != null) {
+            cellRendererPromise.then(rendererToUse => {
                 if (rendererToUse == null) {
                     eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
                     return;
                 }
-                this.bindToHtml(rendererToUsePromise, eTarget);
+                this.bindToHtml(cellRendererPromise, eTarget);
             });
         } else {
             eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
-        return rendererToUsePromise;
+        return cellRendererPromise;
     }
 
     public useFullWidthGroupRowInnerCellRenderer(

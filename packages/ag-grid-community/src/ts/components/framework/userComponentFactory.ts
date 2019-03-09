@@ -62,9 +62,9 @@ export interface ComponentSelectorResult {
  */
 export interface ComponentClassDef<A extends IComponent<any> & B, B> {
     component: { new(): A } | { new(): B };
-    type: ComponentType;
-    source: ComponentSource;
-    paramsFromSelector: any;
+    type: ComponentType; // [Plain Javascript, Framework]
+    source: ComponentSource; // [Default, Registered by Name, Hard Coded]
+    paramsFromSelector: any; // Params the selector function provided, if any
 }
 
 @Bean('userComponentFactory')
@@ -173,18 +173,18 @@ export class UserComponentFactory {
      * method implemented without having to create the component, just by inspecting the source component
      *
      * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
      *      (global) or columnDef mostly.
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param paramsForSelector: Params to be passed to the dynamic component function in case it needs to be
+     *  @param params: Params to be passed to the dynamic component function in case it needs to be
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
     public getComponentClassDef<A extends IComponent<any> & B, B>(
-        holder: DefinitionObject,
+        definitionObject: DefinitionObject,
         propertyName: string,
-        paramsForSelector: any,
+        params: any = null,
         defaultComponentName?: string
     ): ComponentClassDef<A, B> {
         /**
@@ -201,8 +201,8 @@ export class UserComponentFactory {
         let HardcodedFwComponent: { new(): B } = null;
         let componentSelectorFunc: (params: any) => ComponentSelectorResult;
 
-        if (holder != null) {
-            const componentPropertyValue: AgComponentPropertyInput<IComponent<any>> = (holder as any)[propertyName];
+        if (definitionObject != null) {
+            const componentPropertyValue: AgComponentPropertyInput<IComponent<any>> = (definitionObject as any)[propertyName];
             // for filters only, we allow 'true' for the component, which means default filter to be used
             const usingDefaultComponent = componentPropertyValue === true;
             if (componentPropertyValue != null && !usingDefaultComponent) {
@@ -217,8 +217,8 @@ export class UserComponentFactory {
                     hardcodedJsFunction = componentPropertyValue as AgGridComponentFunctionInput;
                 }
             }
-            HardcodedFwComponent = (holder as any)[propertyName + "Framework"];
-            componentSelectorFunc = (holder as any)[propertyName + "Selector"];
+            HardcodedFwComponent = (definitionObject as any)[propertyName + "Framework"];
+            componentSelectorFunc = (definitionObject as any)[propertyName + "Selector"];
         }
 
         /**
@@ -280,7 +280,7 @@ export class UserComponentFactory {
             return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.PLAIN_JAVASCRIPT, ComponentSource.HARDCODED) as ComponentClassDef<A, B>;
         }
 
-        const selectorResult = componentSelectorFunc ? componentSelectorFunc(paramsForSelector) : null;
+        const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
 
         let componentNameToUse: string;
         if (selectorResult && selectorResult.component) {
