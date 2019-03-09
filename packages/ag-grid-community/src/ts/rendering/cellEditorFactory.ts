@@ -34,15 +34,6 @@ export class CellEditorFactory {
             column,
             params,
             'cellEditor',
-            {
-                api: params.api,
-                columnApi: params.columnApi,
-                node: params.node,
-                data: params.node.data,
-                rowIndex: params.rowIndex,
-                column: params.column,
-                colDef: params.column.getColDef()
-            },
             'agCellEditor'
         );
         return cellEditorPromise.map(cellEditor => {

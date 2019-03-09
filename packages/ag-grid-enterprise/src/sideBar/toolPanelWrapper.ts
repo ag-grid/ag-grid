@@ -6,7 +6,7 @@ import {
     IToolPanelComp,
     Promise,
     ToolPanelDef,
-    Context, PostConstruct
+    PostConstruct
 } from "ag-grid-community";
 import {IToolPanelChildComp} from "./sideBarComp";
 import {HorizontalResizeComp} from "./horizontalResizeComp";
@@ -39,8 +39,7 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
         const componentPromise: Promise<IComponent<any>> = this.userComponentFactory.createUserComponent(
             toolPanelDef,
             toolPanelDef.toolPanelParams,
-            'toolPanel',
-            null
+            'toolPanel'
         );
         if (componentPromise == null) {
             console.warn(`ag-grid: error processing tool panel component ${toolPanelDef.id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);

@@ -811,7 +811,7 @@ export class CellComp extends Component {
 
         // this can return null in the event that the user has switched from a renderer component to nothing, for example
         // when using a cellRendererSelect to return a component or null depending on row data etc
-        const componentPromise = this.beans.userComponentFactory.createUserComponent(this.getComponentHolder(), params, this.cellRendererType, params, undefined, false);
+        const componentPromise = this.beans.userComponentFactory.createUserComponent(this.getComponentHolder(), params, this.cellRendererType, undefined, false);
         if (componentPromise) {
             componentPromise.then(callback);
             return true;

@@ -457,12 +457,6 @@ export class FilterManager {
             sanitisedColDef,
             params,
             'filter',
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                column: column,
-                colDef: sanitisedColDef
-            },
             defaultFilter,
             true,
             (params, filter) => _.assign(params, {

@@ -209,7 +209,6 @@ export class FloatingFilterWrapper extends Component {
             colDef,
             params,
             "floatingFilterComponent",
-            dynamicParams,
             defaultFloatingFilterType,
             false
         );

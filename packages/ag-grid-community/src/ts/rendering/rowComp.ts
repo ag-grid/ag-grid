@@ -821,7 +821,7 @@ export class RowComp extends Component {
                 }
             };
 
-            const res = this.beans.userComponentFactory.createUserComponent<ICellRendererComp>(null, params, cellRendererType, params, cellRendererName);
+            const res = this.beans.userComponentFactory.createUserComponent<ICellRendererComp>(null, params, cellRendererType, cellRendererName);
             if (!res) {
                 console.error('ag-Grid: fullWidthCellRenderer not defined');
                 return;

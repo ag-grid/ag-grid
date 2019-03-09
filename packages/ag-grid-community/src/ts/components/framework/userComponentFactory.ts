@@ -100,8 +100,6 @@ export class UserComponentFactory {
      *      specified by the user in the configuration
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param dynamicComponentParams: Params to be passed to the dynamic component function in case it needs to be
-     *      invoked
      *  @param defaultComponentName: The actual name of the component to instantiate, this is usually the same as propertyName, but in
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
@@ -112,7 +110,6 @@ export class UserComponentFactory {
     public createUserComponent<A extends IComponent<any>>(definitionObject: DefinitionObject,
                                                           paramsFromGrid: any,
                                                           propertyName: string,
-                                                          xxx: any,
                                                           defaultComponentName?: string,
                                                           mandatory: boolean = true,
                                                           customInitParamsCb?: (params: any, component: A) => any): Promise<A> {
@@ -283,25 +280,28 @@ export class UserComponentFactory {
             return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.PLAIN_JAVASCRIPT, ComponentSource.HARDCODED) as ComponentClassDef<A, B>;
         }
 
-        if (componentSelectorFunc) {
-            const selectorResult = componentSelectorFunc(paramsForSelector);
-            if (selectorResult != null) {
-                if (selectorResult.component == null) {
-                    selectorResult.component = defaultComponentName;
-                }
-                const registeredCompDef: ComponentClassDef<A, B> = this.lookupFromRegisteredComponents(propertyName, selectorResult.component) as ComponentClassDef<A, B>;
-                return {
-                    type: registeredCompDef.type,
-                    component: registeredCompDef.component,
-                    source: registeredCompDef.source,
-                    paramsFromSelector: selectorResult.params
-                };
-            }
+        const selectorResult = componentSelectorFunc ? componentSelectorFunc(paramsForSelector) : null;
+
+        let componentNameToUse: string;
+        if (selectorResult && selectorResult.component) {
+            componentNameToUse = selectorResult.component;
+        } else if (hardcodedNameComponent) {
+            componentNameToUse = hardcodedNameComponent;
+        } else {
+            componentNameToUse = defaultComponentName;
         }
 
-        const componentNameToUse = hardcodedNameComponent ? hardcodedNameComponent : defaultComponentName;
+        if (!componentNameToUse) { return null; }
 
-        return componentNameToUse == null ? null : this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ComponentClassDef<A, B>;
+        const registeredCompClassDef = <ComponentClassDef<A, B>>
+            this.lookupFromRegisteredComponents(propertyName, componentNameToUse);
+
+        return {
+            type: registeredCompClassDef.type,
+            component: registeredCompClassDef.component,
+            source: registeredCompClassDef.source,
+            paramsFromSelector: selectorResult ? selectorResult.params : null
+        };
     }
 
     private lookupFromRegisteredComponents<A extends IComponent<any> & B, B>(propertyName: string,

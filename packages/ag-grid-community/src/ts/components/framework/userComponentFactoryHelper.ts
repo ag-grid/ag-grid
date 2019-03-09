@@ -34,16 +34,11 @@ export class UserComponentFactoryHelper {
     @Autowired("columnApi")
     private columnApi: ColumnApi;
 
-
     public newDateComponent(params: IDateParams): Promise<IDateComp> {
         return this.userComponentFactory.createUserComponent<IDateComp>(
             this.gridOptions,
             params,
             "dateComponent",
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi
-            },
             "agDateInput"
         );
     }
@@ -53,12 +48,6 @@ export class UserComponentFactoryHelper {
             params.column.getColDef(),
             params,
             "headerComponent",
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                column: params.column,
-                colDef: params.column.getColDef()
-            },
             "agColumnHeader"
         );
     }
@@ -68,24 +57,20 @@ export class UserComponentFactoryHelper {
             params.columnGroup.getColGroupDef(),
             params,
             "headerGroupComponent",
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi
-            },
             "agColumnGroupHeader"
         );
     }
 
     public newFullWidthGroupRowInnerCellRenderer(params:ICellRendererParams):Promise<ICellRendererComp> {
-        return this.userComponentFactory.createUserComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", params, null, false);
+        return this.userComponentFactory.createUserComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", null, false);
     }
 
     public newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp> {
-        return this.userComponentFactory.createUserComponent<ICellRendererComp>(target, params, "cellRenderer", params, null, false);
+        return this.userComponentFactory.createUserComponent<ICellRendererComp>(target, params, "cellRenderer", null, false);
     }
 
     public newInnerCellRenderer(target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp> {
-        return this.userComponentFactory.createUserComponent<ICellRendererComp>(target, params, "innerRenderer", params, null);
+        return this.userComponentFactory.createUserComponent<ICellRendererComp>(target, params, "innerRenderer", null);
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
@@ -93,10 +78,6 @@ export class UserComponentFactoryHelper {
             this.gridOptions,
             null,
             "loadingOverlayComponent",
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi
-            },
             "agLoadingOverlay"
         );
     }
@@ -106,10 +87,6 @@ export class UserComponentFactoryHelper {
             this.gridOptions,
             null,
             "noRowsOverlayComponent",
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi
-            },
             "agNoRowsOverlay"
         );
     }
@@ -120,10 +97,6 @@ export class UserComponentFactoryHelper {
             colDef,
             params,
             "tooltipComponent",
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi
-            },
             'agTooltipComponent'
         );
     }

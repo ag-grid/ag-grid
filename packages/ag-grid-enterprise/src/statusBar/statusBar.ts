@@ -59,10 +59,7 @@ export class StatusBar extends Component {
                     context: this.gridOptionsWrapper.getContext()
                 };
 
-                const promise = this.userComponentFactory.createUserComponent(componentConfig,
-                    params,
-                    'statusPanel',
-                    componentConfig.statusPanelParams);
+                const promise = this.userComponentFactory.createUserComponent(componentConfig, params, 'statusPanel');
 
                 componentDetails.push({
                     // default to the component name if no key supplied
