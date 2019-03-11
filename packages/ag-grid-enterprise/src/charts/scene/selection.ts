@@ -170,6 +170,8 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
      * The original nodes are then replaced by the groups of nodes returned by the selector
      * and returned as a new selection. The original nodes become the parent nodes for each
      * group in the new selection. The selected nodes do not inherit the datums of the original nodes.
+     * If called without any parameters, creates a new selection with an empty group for each
+     * node in this selection.
      */
     selectAll<N extends Node, NDatum = any>(
         selectorAll?: (node: G, datum: GDatum, index: number, group: (G | undefined)[]) => N[]

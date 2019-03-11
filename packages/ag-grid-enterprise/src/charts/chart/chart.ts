@@ -10,7 +10,7 @@ type Padding = {
     left: number
 };
 
-export abstract class Chart<D> {
+export abstract class Chart<D, X, Y> {
     protected scene: Scene = new Scene();
 
     constructor() {
@@ -80,19 +80,19 @@ export abstract class Chart<D> {
 
     abstract performLayout(): void;
 
-    protected _axes: ChartAxis[] = [];
-    set axes(values: ChartAxis[]) {
-        this._axes = values;
-    }
-    get axes(): ChartAxis[] {
-        return this._axes;
-    }
+    // protected _axes: ChartAxis[] = [];
+    // set axes(values: ChartAxis[]) {
+    //     this._axes = values;
+    // }
+    // get axes(): ChartAxis[] {
+    //     return this._axes;
+    // }
 
-    protected _series: Series<D>[] = [];
-    set series(values: Series<D>[]) {
+    protected _series: Series<D, X, Y>[] = [];
+    set series(values: Series<D, X, Y>[]) {
         this._series = values;
     }
-    get series(): Series<D>[] {
+    get series(): Series<D, X, Y>[] {
         return this._series;
     }
 }

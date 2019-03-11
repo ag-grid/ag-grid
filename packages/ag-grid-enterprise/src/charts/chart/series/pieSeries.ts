@@ -5,6 +5,7 @@ import {Arc, ArcType} from "../../scene/shape/arc";
 import {Line} from "../../scene/shape/line";
 import {Text} from "../../scene/shape/text";
 import {Selection} from "../../scene/selection";
+import {DropShadow} from "../../scene/dropShadow";
 import scaleLinear, {LinearScale} from "../../scale/linearScale";
 import {normalizeAngle180, toRadians} from "../../util/angle";
 
@@ -18,6 +19,7 @@ type PieSectorData = {
     fillStyle: string,
     strokeStyle: string,
     lineWidth: number,
+    shadow: DropShadow | null,
 
     label?: {
         text: string,
@@ -43,41 +45,46 @@ enum PieSeriesNodeTag {
     Label
 }
 
-export class PieSeries<D> extends PolarSeries<D> {
+export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     protected fieldPropertiesX: (keyof this)[] = ['angleField'];
     protected fieldPropertiesY: (keyof this)[] = ['radiusField'];
 
-    set chart(chart: Chart<D> | null) {
+    set chart(chart: Chart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.update();
         }
     }
-    get chart(): Chart<D> | null {
+    get chart(): Chart<D, X, Y> | null {
         return this._chart;
     }
 
-    set angleField(value: keyof D | null) {
+    /**
+     * The name of the numeric field to use to determine the angle (for example,
+     * a pie slice angle).
+     */
+    _angleField: Extract<keyof D, string> | null = null;
+    set angleField(value: Extract<keyof D, string> | null) {
         if (this._angleField !== value) {
             this._angleField = value;
             this.processData();
             this.update();
         }
     }
-    get angleField(): keyof D | null {
+    get angleField(): Extract<keyof D, string> | null {
         return this._angleField;
     }
 
-    _labelField: keyof D | null = null;
-    set labelField(value: keyof D | null) {
+    _labelField: Extract<keyof D, string> | null = null;
+    set labelField(value: Extract<keyof D, string> | null) {
         if (this._labelField !== value) {
             this._labelField = value;
             this.processData();
             this.update();
         }
     }
-    get labelField(): keyof D | null {
+    get labelField(): Extract<keyof D, string> | null {
         return this._labelField;
     }
 
@@ -113,6 +120,7 @@ export class PieSeries<D> extends PolarSeries<D> {
 
     strokeStyle: string = 'black';
     lineWidth: number = 2;
+    shadow: DropShadow | null = null;
 
     /**
      * The name of the numeric field to use to determine the radii of pie slices.
@@ -142,6 +150,9 @@ export class PieSeries<D> extends PolarSeries<D> {
 
     private groupSelection: Selection<Group, Group, PieSectorData, any> = Selection.select(this.group).selectAll<Group>();
 
+    /**
+     * The processed data that gets visualized.
+     */
     private sectorsData: PieSectorData[] = [];
 
     private _data: any[] = [];
@@ -232,6 +243,7 @@ export class PieSeries<D> extends PolarSeries<D> {
                 fillStyle: colors[sectorIndex % colors.length],
                 strokeStyle: this.strokeStyle,
                 lineWidth: this.lineWidth,
+                shadow: this.shadow,
 
                 label: isLabelVisible ? {
                     text: labelData[sectorIndex],
@@ -258,7 +270,9 @@ export class PieSeries<D> extends PolarSeries<D> {
     }
 
     update(): void {
-        if (this.chart && this.chart.isLayoutPending) {
+        const chart = this.chart;
+
+        if (!chart || chart && chart.isLayoutPending) {
             return;
         }
 
@@ -281,6 +295,7 @@ export class PieSeries<D> extends PolarSeries<D> {
                 arc.endAngle = datum.endAngle;
                 arc.fillStyle = datum.fillStyle;
                 arc.strokeStyle = datum.strokeStyle;
+                arc.shadow = datum.shadow;
                 arc.lineWidth = datum.lineWidth;
                 arc.lineJoin = 'round';
             });

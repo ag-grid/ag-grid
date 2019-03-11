@@ -1,17 +1,17 @@
 import {Series} from "./series";
 
-export abstract class StackedCartesianSeries<D> extends Series<D> {
+export abstract class StackedCartesianSeries<D, X, Y> extends Series<D, X, Y> {
 
     protected fieldPropertiesX: (keyof this)[] = ['xField'];
     protected fieldPropertiesY: (keyof this)[] = ['yFields'];
 
-    protected _xField: keyof D | null = null;
-    abstract set xField(value: keyof D | null);
-    abstract get xField(): keyof D | null;
+    protected _xField: Extract<keyof D, string> | null = null;
+    abstract set xField(value: Extract<keyof D, string> | null);
+    abstract get xField(): Extract<keyof D, string> | null;
 
-    protected _yFields: (keyof D)[] = [];
-    abstract set yFields(value: (keyof D)[]);
-    abstract get yFields(): (keyof D)[];
+    protected _yFields: Extract<keyof D, string>[] = [];
+    abstract set yFields(value: Extract<keyof D, string>[]);
+    abstract get yFields(): Extract<keyof D, string>[];
 
     protected _yFieldNames: string[] = [];
     abstract set yFieldNames(value: string[]);
