@@ -22,6 +22,7 @@ export { ComponentUtil } from "./components/componentUtil";
 export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory } from "./components/framework/userComponentFactory";
+export { UserComponentFactoryHelper } from "./components/framework/userComponentFactoryHelper";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./components/agGridWebComponent";
 
@@ -150,7 +151,6 @@ export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CellEditorFactory } from "./rendering/cellEditorFactory";
 export { CellRendererFactory } from "./rendering/cellRendererFactory";
-export { CellRendererService } from "./rendering/cellRendererService";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
 export { RowComp } from "./rendering/rowComp";

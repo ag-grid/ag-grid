@@ -15,7 +15,6 @@ import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { CellEditorFactory } from "./cellEditorFactory";
 import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
-import { CellRendererService } from "./cellRendererService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
 import { ColumnHoverService } from "./columnHoverService";
@@ -56,7 +55,6 @@ export class Beans {
     @Autowired('cellEditorFactory') public cellEditorFactory: CellEditorFactory;
     @Autowired('cellRendererFactory') public cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') public popupService: PopupService;
-    @Autowired('cellRendererService') public cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('columnHoverService') public columnHoverService: ColumnHoverService;

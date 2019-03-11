@@ -1,19 +1,19 @@
 import {
-    ICellEditor,
-    Component,
-    PopupComponent,
+    _,
     Autowired,
-    Context,
-    Utils,
+    Component,
     Constants,
+    ICellEditor,
     ICellRendererComp,
-    CellRendererService,
+    ICellRendererParams,
     IRichCellEditorParams,
+    PopupComponent,
     Promise,
-    _
+    UserComponentFactoryHelper,
+    Utils
 } from "ag-grid-community";
-import { RichSelectRow } from "./richSelectRow";
-import { VirtualList } from "../virtualList";
+import {RichSelectRow} from "./richSelectRow";
+import {VirtualList} from "../virtualList";
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
@@ -24,7 +24,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             <div ref="eList" class="ag-rich-select-list"></div>
         </div>`;
 
-    @Autowired('cellRendererService') cellRendererService: CellRendererService;
+    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
 
     private params: IRichCellEditorParams;
     private virtualList: VirtualList;
@@ -119,11 +119,16 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const valueFormatted = this.params.formatValue(this.selectedValue);
         const eValue = this.getRefElement('eValue') as HTMLElement;
 
-        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params, eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+        const params = <ICellRendererParams> {value: this.selectedValue, valueFormatted: valueFormatted};
 
-        const foundRenderer = _.exists(promise);
+        const promise: Promise<ICellRendererComp> = this.userComponentFactoryHelper.newCellRenderer(this.params, params);
+        if (promise != null) {
+            _.bindCellRendererToHtmlElement(promise, eValue);
+        } else {
+            eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
 
-        if (foundRenderer) {
+        if (promise) {
             promise.then(renderer => {
                 if (renderer && renderer.destroy) {
                     this.addDestroyFunc(() => renderer.destroy());

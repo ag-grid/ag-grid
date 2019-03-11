@@ -2,6 +2,7 @@ import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants";
+import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -1972,6 +1973,22 @@ export class Utils {
         }
 
         return false;
+    }
+
+    // cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
+    // can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
+    public static bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
+        cellRendererPromise.then(cellRenderer => {
+            const gui: HTMLElement | string = cellRenderer.getGui();
+            if (gui != null) {
+                if (typeof gui == 'object') {
+                    eTarget.appendChild(gui);
+                } else {
+                    eTarget.innerHTML = gui;
+                }
+            }
+
+        });
     }
 }
 

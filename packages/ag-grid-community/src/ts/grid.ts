@@ -37,7 +37,6 @@ import { Events, GridReadyEvent } from "./events";
 import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
 import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { CellRendererFactory } from "./rendering/cellRendererFactory";
-import { CellRendererService } from "./rendering/cellRendererService";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
 import { BaseFrameworkFactory } from "./baseFrameworkFactory";
@@ -203,7 +202,7 @@ export class Grid {
                 NavigationService, PopupService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
                 StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, CellEditorFactory,
-                CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
+                ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
                 ImmutableService, ChangeDetectionService, , AnimationFrameService, TooltipManager, ZipContainer
             ],
