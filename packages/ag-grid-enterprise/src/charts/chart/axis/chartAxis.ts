@@ -10,12 +10,12 @@ export enum AxisType {
     Time
 }
 
-export abstract class ChartAxis {
-    protected constructor(type: AxisType = AxisType.Linear) {
-        this.type = type;
-    }
-
-    protected type: AxisType;
+export abstract class ChartAxis<T> {
+    // protected constructor(type: AxisType = AxisType.Linear) {
+    //     this.type = type;
+    // }
+    //
+    // protected type: AxisType;
 
     protected _fields: string[] = [];
     set fields(values: string[]) {
@@ -25,7 +25,7 @@ export abstract class ChartAxis {
         return this._fields;
     }
 
-    abstract get direction(): Direction;
+    // abstract get direction(): Direction;
 
     // abstract calculateRange(): [number, number];
 

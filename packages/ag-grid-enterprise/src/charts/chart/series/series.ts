@@ -2,7 +2,7 @@ import {Group} from "../../scene/group";
 import {Chart} from "../chart";
 import {ChartAxis, Direction} from "../axis/chartAxis";
 
-export abstract class Series<D> {
+export abstract class Series<D, X, Y> {
 
     // Uniquely identify series.
     private createId(): string {
@@ -14,9 +14,9 @@ export abstract class Series<D> {
     abstract set data(data: D[]);
     abstract get data(): D[];
 
-    protected _chart: Chart<D> | null = null;
-    abstract set chart(chart: Chart<D> | null);
-    abstract get chart(): Chart<D> | null;
+    protected _chart: Chart<D, X, Y> | null = null;
+    abstract set chart(chart: Chart<D, X, Y> | null);
+    abstract get chart(): Chart<D, X, Y> | null;
 
     readonly group: Group = new Group();
 
@@ -31,21 +31,21 @@ export abstract class Series<D> {
         return this._isVisible;
     }
 
-    private _xAxis: ChartAxis;
-    set xAxis(value: ChartAxis) {
-        this._xAxis = value;
-    }
-    get xAxis(): ChartAxis {
-        return this._xAxis;
-    }
-
-    private _yAxis: ChartAxis;
-    set yAxis(value: ChartAxis) {
-        this._yAxis = value;
-    }
-    get yAxis(): ChartAxis {
-        return this._yAxis;
-    }
+    // private _xAxis: ChartAxis<X>;
+    // set xAxis(value: ChartAxis<X>) {
+    //     this._xAxis = value;
+    // }
+    // get xAxis(): ChartAxis<X> {
+    //     return this._xAxis;
+    // }
+    //
+    // private _yAxis: ChartAxis<Y>;
+    // set yAxis(value: ChartAxis<Y>) {
+    //     this._yAxis = value;
+    // }
+    // get yAxis(): ChartAxis<Y> {
+    //     return this._yAxis;
+    // }
 
     /**
      * Returns the names of all properties series use in the given direction.
@@ -59,41 +59,41 @@ export abstract class Series<D> {
      * return the values of the `openField`, `highField`, `lowField`, `closeField`.
      * @param direction
      */
-    getFields(direction: Direction): string[] {
-        let fields: string[] = (this as any)['fieldProperties' + direction];
-        // The `join().split(',')` is equivalent to `flatMap(f => f)` in this case.
-        return fields.map(field => (this as any)[field]).join().split(',');
-    }
+    // getFields(direction: Direction): string[] {
+    //     let fields: string[] = (this as any)['fieldProperties' + direction];
+    //     // The `join().split(',')` is equivalent to `flatMap(f => f)` in this case.
+    //     return fields.map(field => (this as any)[field]).join().split(',');
+    // }
 
-    updateAxes() {
-        if (!this.chart) {
-            return;
-        }
-
-        const xFields = this.getFields(Direction.X);
-        const yFields = this.getFields(Direction.Y);
-
-        const xAxes: ChartAxis[] = [];
-        const yAxes: ChartAxis[] = [];
-
-        this.chart.axes.forEach(axis => {
-            if (axis.direction === Direction.X) {
-                xAxes.push(axis)
-            } else if (axis.direction === Direction.Y) {
-                yAxes.push(axis);
-            }
-        });
-
-        const xAxis = this.findMatchingAxis(xAxes, xFields);
-        const yAxis = this.findMatchingAxis(yAxes, yFields);
-
-        if (xAxis) {
-            this.xAxis = xAxis;
-        }
-        if (yAxis) {
-            this.yAxis = yAxis;
-        }
-    }
+    // updateAxes() {
+    //     if (!this.chart) {
+    //         return;
+    //     }
+    //
+    //     const xFields = this.getFields(Direction.X);
+    //     const yFields = this.getFields(Direction.Y);
+    //
+    //     const xAxes: ChartAxis[] = [];
+    //     const yAxes: ChartAxis[] = [];
+    //
+    //     this.chart.axes.forEach(axis => {
+    //         if (axis.direction === Direction.X) {
+    //             xAxes.push(axis)
+    //         } else if (axis.direction === Direction.Y) {
+    //             yAxes.push(axis);
+    //         }
+    //     });
+    //
+    //     const xAxis = this.findMatchingAxis(xAxes, xFields);
+    //     const yAxis = this.findMatchingAxis(yAxes, yFields);
+    //
+    //     if (xAxis) {
+    //         this.xAxis = xAxis;
+    //     }
+    //     if (yAxis) {
+    //         this.yAxis = yAxis;
+    //     }
+    // }
 
     /**
      * Finds the first matching axis for the series fields.
@@ -101,30 +101,30 @@ export abstract class Series<D> {
      * @param axes
      * @param seriesFields
      */
-    private findMatchingAxis(axes: ChartAxis[], seriesFields: string[]): ChartAxis | null {
-        for (let i = 0; i < axes.length; i++) {
-            const axis = axes[i];
-            const axisFields = axis.fields;
-            // An axis may not define any fields, but if its direction matches
-            // the direction of the series' fields, we assume we can use it
-            // to map the data in those fields.
-            if (!axisFields.length) {
-                return axis;
-            } else {
-                // Otherwise, we look at least one of the axis fields
-                // to match one of the series fields.
-                for (let j = 0; j < seriesFields.length; j++) {
-                    if (axisFields.indexOf(seriesFields[j]) >= 0) {
-                        return axis;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+    // private findMatchingAxis(axes: ChartAxis[], seriesFields: string[]): ChartAxis | null {
+    //     for (let i = 0; i < axes.length; i++) {
+    //         const axis = axes[i];
+    //         const axisFields = axis.fields;
+    //         // An axis may not define any fields, but if its direction matches
+    //         // the direction of the series' fields, we assume we can use it
+    //         // to map the data in those fields.
+    //         if (!axisFields.length) {
+    //             return axis;
+    //         } else {
+    //             // Otherwise, we look at least one of the axis fields
+    //             // to match one of the series fields.
+    //             for (let j = 0; j < seriesFields.length; j++) {
+    //                 if (axisFields.indexOf(seriesFields[j]) >= 0) {
+    //                     return axis;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return null;
+    // }
 
     abstract getDomainX(): any[];
-    abstract getDomainY(): [number, number];
+    abstract getDomainY(): any[];
 
     abstract processData(): void;
     abstract update(): void;

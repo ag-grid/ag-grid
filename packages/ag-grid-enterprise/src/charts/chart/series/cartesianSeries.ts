@@ -1,6 +1,6 @@
 import {Series} from "./series";
 
-export abstract class CartesianSeries<D> extends Series<D> {
+export abstract class CartesianSeries<D, X, Y> extends Series<D, X, Y> {
 
     protected fieldPropertiesX: (keyof this)[] = ['xField'];
     protected fieldPropertiesY: (keyof this)[] = ['yField'];

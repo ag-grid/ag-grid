@@ -1,20 +1,20 @@
 import {Chart} from "./chart";
 import {PolarSeries} from "./series/polarSeries";
 
-export class PolarChart<D> extends Chart<D> {
+export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
     centerX: number = 0;
     centerY: number = 0;
 
     radius: number = 0;
 
-    protected _series: PolarSeries<D>[] = [];
+    protected _series: PolarSeries<D, X, Y>[] = [];
 
-    addSeries(series: PolarSeries<D>): void {
+    addSeries(series: PolarSeries<D, X, Y>): void {
         if (this.scene.root) {
             this.scene.root.append(series.group);
         }
         this._series.push(series);
-        series.chart = this as PolarChart<D>;
+        series.chart = this as PolarChart<D, X, Y>;
         this.isLayoutPending = true;
     }
 

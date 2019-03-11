@@ -83,7 +83,22 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
         return this.piecewiseDeinterpolator(r);
     }
 
+    /**
+     * Creates a new deinterpolator for the given pair of output range numbers.
+     * The deinterpolator accepts a single parameter `v` in the [a, b] range
+     * and returns a value in the [0, 1] range.
+     * @param a
+     * @param b
+     */
     protected abstract deinterpolatorOf(a: number, b: number): Deinterpolator<number>
+
+    /**
+     * Creates a new interpolator for the given pair of input domain numbers.
+     * The interpolator accepts a single parameter `t` in the [0, 1] range and
+     * returns a value in the [a, b] range.
+     * @param a
+     * @param b
+     */
     protected abstract reinterpolatorOf(a: number, b: number): Reinterpolator<number>
 
     protected clampDeinterpolatorFactory(deinterpolatorOf: DeinterpolatorFactory<number>): DeinterpolatorFactory<number> {

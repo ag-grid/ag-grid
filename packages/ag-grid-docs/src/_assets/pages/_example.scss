@@ -100,6 +100,7 @@ button[disabled] {
         flex-wrap: wrap;
         flex: 1 0 auto;
         margin: 5px 0;
+        overflow: hidden;
         
         max-width: 1400px;
         width: 100%;
@@ -209,7 +210,6 @@ button[disabled] {
             align-items: center;
             flex-direction: column;
             justify-content: center;
-            overflow: hidden;
             > div {
                 overflow: hidden;
             }
