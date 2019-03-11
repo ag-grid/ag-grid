@@ -2,6 +2,7 @@ import { Autowired, Bean } from "../context/context";
 import { Component } from "./component";
 import { PopupService } from "./popupService";
 import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { CellComp } from "../rendering/cellComp";
@@ -27,6 +28,7 @@ export class TooltipManager {
     @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
     private readonly MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
@@ -134,11 +136,12 @@ export class TooltipManager {
         this.hideTooltip();
 
         const params: ITooltipParams = {
-            colDef: targetCmp.getComponentHolder(),
-            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
-            column: cell.getColumn && cell.getColumn(),
             api: this.gridApi,
             columnApi: this.columnApi,
+            colDef: targetCmp.getComponentHolder(),
+            column: cell.getColumn && cell.getColumn(),
+            context: this.gridOptionsWrapper.getContext(),
+            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
             value: targetCmp.getTooltipText()
         };
 

@@ -1,7 +1,6 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
-import {BeanStub} from "./beanStub";
 
 // steps in booting up:
 // 1. create all beans

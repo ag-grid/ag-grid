@@ -32,24 +32,40 @@ interface ITooltipComp {
 
 <snippet>
 interface ITooltipParams {
-    // the value to be rendered by the tooltip
-    value?: any;
-
-    // the grid colDef
-    colDef?: any;
-
-    // the column bound to this tooltip
-    column?: any;
-
-    // the index of the row that contains the cell rendering the tooltip
-    // it does not apply on headerTooltips
-    rowIndex?: number;
-
     // the grid api
     api: any;
 
     // the column api
     columnApi: any;
+
+    // the grid colDef
+    colDef: any;
+
+    // the column bound to this tooltip
+    column: any;
+
+    // the grid context
+    context: any;
+
+    // the value to be rendered by the tooltip
+    value?: any;
+
+    // the formatted value
+    valueFormatted?: any;
+
+    /* Row and Cell Params (N/A with headerTooltips) */
+
+    // the index of the row that contains the cell rendering the tooltip
+    rowIndex?: number;
+
+    // the row node
+    node?: any;
+
+    // th row node data
+    data?: any;
+
+    // the cell component scope
+    $scope?: any;
 }
 </snippet>
 
