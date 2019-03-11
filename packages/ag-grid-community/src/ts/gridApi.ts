@@ -24,7 +24,6 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
 import { CellRendererFactory } from "./rendering/cellRendererFactory";
-import { CellEditorFactory } from "./rendering/cellEditorFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exporter/exportParams";
@@ -114,7 +113,6 @@ export class GridApi {
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
-    @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
@@ -1261,16 +1259,4 @@ export class GridApi {
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
     }
-
-    /*
-    Taking these out, as we want to reconsider how we register components
-
-    public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
-        this.cellRendererFactory.addCellRenderer(key, cellRenderer);
-    }
-
-    public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
-        this.cellEditorFactory.addCellEditor(key, cellEditor);
-    }*/
-
 }

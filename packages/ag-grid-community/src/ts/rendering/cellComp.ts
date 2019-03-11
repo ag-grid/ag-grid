@@ -25,7 +25,8 @@ import { ColDef, NewValueParams, SuppressKeyboardEventParams } from "../entities
 import { Beans } from "./beans";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
-import { _ } from "../utils";
+import {_, Promise} from "../utils";
+import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 
 export class CellComp extends Component {
 
@@ -790,8 +791,8 @@ export class CellComp extends Component {
         }
 
         const params = this.createCellRendererParams();
-        const cellRenderer = this.beans.userComponentFactory.getComponentClassDef(colDef, 'cellRenderer', params);
-        const pinnedRowCellRenderer = this.beans.userComponentFactory.getComponentClassDef(colDef, 'pinnedRowCellRenderer', params);
+        const cellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'cellRenderer', params);
+        const pinnedRowCellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params);
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType =  CellComp.CELL_RENDERER_TYPE_PINNED;
@@ -1054,7 +1055,7 @@ export class CellComp extends Component {
         const callback = this.afterCellEditorCreated.bind(this, this.cellEditorVersion);
 
         const params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        this.beans.cellEditorFactory.createCellEditor(this.getComponentHolder(), params).then(callback);
+        this.createCellEditor(params).then(callback);
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -1063,6 +1064,34 @@ export class CellComp extends Component {
         if (cellEditorAsync && cellStartedEdit) {
             this.focusCell(true);
         }
+    }
+
+
+    private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp> {
+
+        const cellEditorPromise: Promise<ICellEditorComp> = this.beans.userComponentFactory.createUserComponent (
+            this.column.getColDef(),
+            params,
+            'cellEditor',
+            'agCellEditor'
+        );
+        return cellEditorPromise.map(cellEditor => {
+
+            const isPopup = cellEditor.isPopup && cellEditor.isPopup();
+
+            if (!isPopup) { return cellEditor; }
+
+            if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+                console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                    '- either turn off fullRowEdit, or stop using popup editors.');
+            }
+
+            // if a popup, then we wrap in a popup editor and return the popup
+            const popupEditorWrapper = new PopupEditorWrapper(cellEditor);
+            this.beans.context.wireBean(popupEditorWrapper);
+            popupEditorWrapper.init(params);
+            return popupEditorWrapper;
+        });
     }
 
     private afterCellEditorCreated(cellEditorVersion: number, cellEditor: ICellEditorComp): void {

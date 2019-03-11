@@ -32,7 +32,6 @@ import { CellNavigationService } from "./cellNavigationService";
 import { FilterStage } from "./rowModels/clientSide/filterStage";
 import { SortStage } from "./rowModels/clientSide/sortStage";
 import { FlattenStage } from "./rowModels/clientSide/flattenStage";
-import { CellEditorFactory } from "./rendering/cellEditorFactory";
 import { Events, GridReadyEvent } from "./events";
 import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
 import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
@@ -201,7 +200,7 @@ export class Grid {
                 ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
                 NavigationService, PopupService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
                 StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
-                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, CellEditorFactory,
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
                 ImmutableService, ChangeDetectionService, , AnimationFrameService, TooltipManager, ZipContainer

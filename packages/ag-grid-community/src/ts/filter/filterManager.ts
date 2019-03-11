@@ -453,15 +453,19 @@ export class FilterManager {
             $scope: $scope
         };
 
+        // we modify params in a callback as we need the filter instance, and this isn't available
+        // when creating the params above
+        const modifyParamsCallback = (params: any, filter: IFilterComp) => _.assign(params, {
+            doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
+        });
+
         return this.userComponentFactory.createUserComponent<IFilterComp>(
             sanitisedColDef,
             params,
             'filter',
             defaultFilter,
             true,
-            (params, filter) => _.assign(params, {
-                doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
-            })
+            modifyParamsCallback
         );
     }
 

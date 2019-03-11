@@ -93,35 +93,48 @@ export class UserComponentFactory {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
-     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
     public createUserComponent<A extends IComponent<any>>(definitionObject: DefinitionObject,
                                                           paramsFromGrid: any,
                                                           propertyName: string,
                                                           defaultComponentName?: string,
+
+                                                          // item's passing false are: FloatingFilter, CellComp (for cellRenderer)
                                                           mandatory: boolean = true,
-                                                          customInitParamsCb?: (params: any, component: A) => any): Promise<A> {
+
+                                                          // used by FilterManager only
+                                                          modifyParamsCallback?: (params: any, component: A) => void
+                                                    ): Promise<A> {
 
         if (!definitionObject) {
             definitionObject = this.gridOptions;
         }
 
         // Create the component instance
-        const componentAndParams: {componentInstance: A, paramsFromSelector: any} = this.createComponentInstance(definitionObject, propertyName, paramsFromGrid, defaultComponentName, mandatory);
+        const componentAndParams: {componentInstance: A, paramsFromSelector: any}
+            = this.createComponentInstance(definitionObject, propertyName, paramsFromGrid, defaultComponentName, mandatory);
         if (!componentAndParams) { return null; }
         const componentInstance = componentAndParams.componentInstance;
 
         // Wire the component and call the init method with the correct params
-        const finalParams = this.createFinalParams(definitionObject, propertyName, paramsFromGrid, componentAndParams.paramsFromSelector);
+        const finalParams = this.createFinalParams(definitionObject, propertyName, paramsFromGrid,
+            componentAndParams.paramsFromSelector);
 
         // a temporary fix for AG-1574
         // AG-1715 raised to do a wider ranging refactor to improve this
-        finalParams.agGridReact = this.context.getBean('agGridReact') ? _.cloneObject(this.context.getBean('agGridReact')) : {};
+        const agGridReact = this.context.getBean('agGridReact');
+        if (agGridReact) {
+            finalParams.agGridReact = _.cloneObject(agGridReact);
+        }
         // AG-1716 - directly related to AG-1574 and AG-1715
-        finalParams.frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper') ? this.context.getBean('frameworkComponentWrapper') : {};
+        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+        if (frameworkComponentWrapper) {
+            finalParams.frameworkComponentWrapper = frameworkComponentWrapper;
+        }
 
-        const deferredInit: void | Promise<void> = this.initialiseComponent(componentInstance, finalParams, customInitParamsCb);
+        const deferredInit: void | Promise<void> = this.initialiseComponent(componentInstance, finalParams, modifyParamsCallback);
         if (deferredInit == null) {
             return Promise.resolve(componentInstance);
         } else {
@@ -170,7 +183,7 @@ export class UserComponentFactory {
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    public getComponentClassDef<A extends IComponent<any> & B, B>(
+    public lookupComponentClassDef<A extends IComponent<any> & B, B>(
         definitionObject: DefinitionObject,
         propertyName: string,
         params: any = null,
@@ -368,10 +381,11 @@ export class UserComponentFactory {
     private createComponentInstance<A extends IComponent<any> & B, B>(holder: DefinitionObject,
         propertyName: string,
         paramsForSelector: any,
-        defaultComponentName?: string,
-        mandatory: boolean = true
+        defaultComponentName: string,
+        mandatory: boolean
     ): {componentInstance: A, paramsFromSelector: any} {
-        const componentToUse: ComponentClassDef<A, B> = this.getComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B>;
+        const componentToUse: ComponentClassDef<A, B> =
+            this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B>;
 
         const missing = !componentToUse || !componentToUse.component;
         if (missing) {
@@ -398,16 +412,15 @@ export class UserComponentFactory {
     }
 
     private initialiseComponent<A extends IComponent<any>>(component: A,
-                                                           agGridParams: any,
-                                                           customInitParamsCb?: (params: any, component: A) => any): Promise<void> | void {
+                                                           finalParams: any,
+                                                           modifyParamsCallback?: (params: any, component: A) => any): Promise<void> | void {
+
         this.context.wireBean(component);
         if (component.init == null) { return; }
 
-        if (customInitParamsCb == null) {
-            return component.init(agGridParams);
-        } else {
-            return component.init(customInitParamsCb(agGridParams, component));
-        }
+        const paramsToUse = modifyParamsCallback ? modifyParamsCallback(finalParams, component) : finalParams;
+
+        return component.init(paramsToUse);
     }
 
 }

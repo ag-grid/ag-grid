@@ -1,4 +1,4 @@
-import { Autowired, Bean, CellEditorFactory, UserComponentRegistry, FilterManager, PostConstruct } from "ag-grid-community";
+import { Autowired, Bean, UserComponentRegistry, FilterManager, PostConstruct } from "ag-grid-community";
 import { SetFilter } from "./setFilter/setFilter";
 import { RichSelectCellEditor } from "./rendering/richSelect/richSelectCellEditor";
 import { LicenseManager } from "./licenseManager";
@@ -15,7 +15,6 @@ import {FiltersToolPanel} from "./sideBar/providedPanels/filters/filtersToolPane
 export class EnterpriseBoot {
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('licenseManager') private licenseManager: LicenseManager;
     @Autowired('userComponentRegistry') private userComponentRegistry: UserComponentRegistry;
 

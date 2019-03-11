@@ -199,8 +199,6 @@ export class FloatingFilterWrapper extends Component {
             suppressFilterButton: false // This one might be overridden from the colDef
         };
 
-        const dynamicParams = this.createDynamicParams();
-
         // this is unusual - we need a params value OUTSIDE the component the params are for.
         // the params are for the floating filter component, but this property is actually for the wrapper.
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
@@ -244,7 +242,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private getFilterComponentPrototype(colDef: ColDef): {new(): any} {
-        const resolvedComponent = this.userComponentFactory.getComponentClassDef(colDef, "filter", this.createDynamicParams());
+        const resolvedComponent = this.userComponentFactory.lookupComponentClassDef(colDef, "filter", this.createDynamicParams());
         return resolvedComponent ? resolvedComponent.component : null;
     }
 

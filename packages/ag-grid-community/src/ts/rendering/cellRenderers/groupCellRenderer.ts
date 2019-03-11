@@ -280,7 +280,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let cellRendererPromise: Promise<ICellRendererComp> = null;
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         const groupInnerRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
-            .getComponentClassDef(groupCellRendererParams, "innerRenderer");
+            .lookupComponentClassDef(groupCellRendererParams, "innerRenderer");
 
         if (groupInnerRendererClass && groupInnerRendererClass.component != null
             && groupInnerRendererClass.source != ComponentSource.DEFAULT) {
@@ -289,7 +289,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         } else {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
             const groupColumnRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
-                .getComponentClassDef(groupedColumnDef, "cellRenderer");
+                .lookupComponentClassDef(groupedColumnDef, "cellRenderer");
             if (groupColumnRendererClass && groupColumnRendererClass.source != ComponentSource.DEFAULT) {
                 // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
                 cellRendererPromise = this.userComponentFactoryHelper.newCellRenderer(groupedColumnDef, params);
