@@ -1,6 +1,6 @@
 import { RowNode } from "./rowNode";
-import {ICellEditorComp, ICellEditorParams} from "../interfaces/iCellEditor";
-import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "../rendering/cellRenderers/iCellRenderer";
+import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
+import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { Column } from "./column";
 import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";

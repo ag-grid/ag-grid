@@ -52,7 +52,7 @@ class MessageBody extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eOk, 'click',this.onBtOk.bind(this));
+        this.addDestroyableEventListener(this.eOk, 'click', this.onBtOk.bind(this));
     }
 
     private onBtOk() {

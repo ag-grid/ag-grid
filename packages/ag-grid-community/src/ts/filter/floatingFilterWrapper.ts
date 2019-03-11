@@ -191,7 +191,7 @@ export class FloatingFilterWrapper extends Component {
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
 
-        const params: IFloatingFilterParams<any,any> = {
+        const params: IFloatingFilterParams<any, any> = {
             api: this.gridApi,
             column: this.column,
             currentParentModel: this.currentParentModel.bind(this),

@@ -40,17 +40,6 @@ export enum ComponentSource {
     DEFAULT, REGISTERED_BY_NAME, HARDCODED
 }
 
-export interface DynamicComponentParams {
-    data?: any;
-    node?: RowNode;
-    colDef?: ColDef;
-    column?: Column;
-    $scope?: any;
-    rowIndex?: number;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
 export interface ComponentSelectorResult {
     component?: string;
     params?: any;
@@ -293,8 +282,7 @@ export class UserComponentFactory {
 
         if (!componentNameToUse) { return null; }
 
-        const registeredCompClassDef = <ComponentClassDef<A, B>>
-            this.lookupFromRegisteredComponents(propertyName, componentNameToUse);
+        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ComponentClassDef<A, B>;
 
         return {
             type: registeredCompClassDef.type,
@@ -403,7 +391,7 @@ export class UserComponentFactory {
             componentInstance = this.frameworkComponentWrapper.wrap(FrameworkComponentRaw,
                 thisComponentConfig.mandatoryMethodList,
                 thisComponentConfig.optionalMethodList,
-                defaultComponentName) as A
+                defaultComponentName) as A;
         }
 
         return {componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector};

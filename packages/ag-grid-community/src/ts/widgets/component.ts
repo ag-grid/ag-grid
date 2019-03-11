@@ -1,4 +1,4 @@
-import {Autowired, Context, PreConstruct} from "../context/context";
+import { Autowired, Context, PreConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";

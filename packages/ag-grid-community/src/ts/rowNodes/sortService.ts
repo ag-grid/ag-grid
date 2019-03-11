@@ -217,7 +217,7 @@ export class SortService {
     }
 
     private updateGroupDataForHiddenOpenParents(changedPath: ChangedPath) {
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) return;
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
 
         // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
         const callback = (rowNode: RowNode) => {

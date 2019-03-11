@@ -692,16 +692,17 @@ export class CellComp extends Component {
         const valueGetter = colDef.tooltipValueGetter || colDef.tooltip;
         if (valueGetter) {
             return valueGetter({
-                value: this.value,
-                valueFormatted: this.valueFormatted,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                colDef: colDef,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-                $scope: this.scope,
+                colDef: colDef,
+                column: this.getColumn(),
                 context: this.beans.gridOptionsWrapper.getContext(),
-                rowIndex: this.gridCell.rowIndex
+                value: this.value,
+                valueFormatted: this.valueFormatted,
+                rowIndex: this.gridCell.rowIndex,
+                node: this.rowNode,
+                data: this.rowNode.data,
+                $scope: this.scope,
             });
         }
 
