@@ -161,6 +161,44 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
         });
     }
 
+    selectAllByClass<N extends Node, NDatum = any>(Class: new () => N): Selection<N, G, NDatum, GDatum> {
+        return this.selectAll<N, NDatum>(node => {
+            const nodes: N[] = [];
+
+            if (Node.isNode(node)) {
+                const children = node.children;
+                const n = children.length;
+
+                for (let i = 0; i < n; i++) {
+                    const child = children[i];
+                    if (child instanceof Class) {
+                        nodes.push(child);
+                    }
+                }
+            }
+            return nodes;
+        });
+    }
+
+    selectAllByTag<N extends Node, NDatum = any>(tag: number): Selection<N, G, NDatum, GDatum> {
+        return this.selectAll<N, NDatum>(node => {
+            const nodes: N[] = [];
+
+            if (Node.isNode(node)) {
+                const children = node.children;
+                const n = children.length;
+
+                for (let i = 0; i < n; i++) {
+                    const child = children[i];
+                    if (child.tag === tag) {
+                        nodes.push(child as N);
+                    }
+                }
+            }
+            return nodes;
+        });
+    }
+
     private selectNone(): [] {
         return [];
     }
