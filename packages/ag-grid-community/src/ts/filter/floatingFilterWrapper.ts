@@ -203,13 +203,8 @@ export class FloatingFilterWrapper extends Component {
         // the params are for the floating filter component, but this property is actually for the wrapper.
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
-        let promise: Promise<IFloatingFilterComp<any, any, any>> = this.userComponentFactory.createUserComponent<IFloatingFilterComp<any, any, any>>(
-            colDef,
-            params,
-            "floatingFilterComponent",
-            defaultFloatingFilterType,
-            false
-        );
+        let promise: Promise<IFloatingFilterComp<any, any, any>> = this.userComponentFactory.newFloatingFilterComponent(
+            colDef, params, defaultFloatingFilterType);
 
         if (!promise) {
             const filterComponent = this.getFilterComponentPrototype(colDef);

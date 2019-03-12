@@ -10,7 +10,7 @@ import {
     ISetFilterParams,
     PostConstruct,
     Promise,
-    UserComponentFactoryHelper,
+    UserComponentFactory,
     ValueFormatterService
 } from "ag-grid-community";
 
@@ -23,7 +23,7 @@ export class SetFilterListItem extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private static TEMPLATE =
         `<label class="ag-set-filter-item">
@@ -52,7 +52,7 @@ export class SetFilterListItem extends Component {
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactoryHelper.newCellRenderer((target.filterParams as ISetFilterParams), params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer((target.filterParams as ISetFilterParams), params);
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
         } else {

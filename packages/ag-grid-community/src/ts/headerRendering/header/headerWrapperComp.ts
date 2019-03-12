@@ -17,7 +17,7 @@ import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
 import { SortController } from "../../sortController";
 import { EventService } from "../../eventService";
-import { UserComponentFactoryHelper } from "../../components/framework/userComponentFactoryHelper";
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AgCheckbox } from "../../widgets/agCheckbox";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { SelectAllFeature } from "./selectAllFeature";
@@ -46,7 +46,7 @@ export class HeaderWrapperComp extends Component {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('beans') private beans: Beans;
 
@@ -152,7 +152,7 @@ export class HeaderWrapperComp extends Component {
 
         const callback = this.afterHeaderCompCreated.bind(this, displayName);
 
-        this.userComponentFactoryHelper.newHeaderComponent(params).then(callback);
+        this.userComponentFactory.newHeaderComponent(params).then(callback);
     }
 
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {

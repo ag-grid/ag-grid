@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "../context/context";
 import { Component } from "./component";
 import { PopupService } from "./popupService";
-import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
@@ -25,7 +25,7 @@ interface RegisteredComponent {
 export class TooltipManager {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -149,7 +149,7 @@ export class TooltipManager {
     }
 
     private createTooltipComponent(params: ITooltipParams, cmp: RegisteredComponent, e: MouseEvent): void {
-        this.userComponentFactoryHelper.newTooltipComponent(params).then(tooltipComp => {
+        this.userComponentFactory.newTooltipComponent(params).then(tooltipComp => {
             // if the component was unregistered while creating
             // the tooltip (async) we should return undefined here.
             if (!cmp) {

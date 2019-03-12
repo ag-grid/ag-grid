@@ -36,11 +36,10 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
 
     public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
         this.toolPanelId = toolPanelDef.id;
-        const componentPromise: Promise<IComponent<any>> = this.userComponentFactory.createUserComponent(
-            toolPanelDef,
-            toolPanelDef.toolPanelParams,
-            'toolPanel'
-        );
+
+        const componentPromise: Promise<IToolPanelComp> = this.userComponentFactory.newToolPanelComponent(
+            toolPanelDef, toolPanelDef.toolPanelParams);
+
         if (componentPromise == null) {
             console.warn(`ag-grid: error processing tool panel component ${toolPanelDef.id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
             return;

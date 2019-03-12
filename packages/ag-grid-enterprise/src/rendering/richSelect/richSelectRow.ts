@@ -6,12 +6,12 @@ import {
     ICellRendererParams,
     IRichCellEditorParams,
     Promise,
-    UserComponentFactoryHelper
+    UserComponentFactory
 } from "ag-grid-community";
 
 export class RichSelectRow extends Component {
 
-    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private readonly params: IRichCellEditorParams;
 
@@ -47,7 +47,7 @@ export class RichSelectRow extends Component {
         // bad coder here - we are not populating all values of the cellRendererParams
         let params = <ICellRendererParams> {value: value, valueFormatted: valueFormatted};
 
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactoryHelper.newCellRenderer(this.params, params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         } else {

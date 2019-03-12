@@ -12,7 +12,6 @@ import { HeaderWrapperComp } from "./header/headerWrapperComp";
 import { HeaderGroupWrapperComp } from "./headerGroup/headerGroupWrapperComp";
 import { FilterManager } from "../filter/filterManager";
 import { IComponent } from "../interfaces/iComponent";
-import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
 import { GridApi } from "../gridApi";
 import { Constants } from "../constants";
 import { _ } from "../utils";
@@ -29,7 +28,6 @@ export class HeaderRowComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
 
     private readonly dept: number;
     private readonly pinned: string;

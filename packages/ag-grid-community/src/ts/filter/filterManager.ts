@@ -459,14 +459,7 @@ export class FilterManager {
             doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
         });
 
-        return this.userComponentFactory.createUserComponent<IFilterComp>(
-            sanitisedColDef,
-            params,
-            'filter',
-            defaultFilter,
-            true,
-            modifyParamsCallback
-        );
+        return this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
     }
 
     private createFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {

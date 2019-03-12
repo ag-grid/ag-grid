@@ -1,7 +1,7 @@
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Component } from "../../widgets/component";
-import { UserComponentFactoryHelper } from "../../components/framework/userComponentFactoryHelper";
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ILoadingOverlayComp } from "./loadingOverlayComponent";
 import { _ } from '../../utils';
@@ -20,7 +20,7 @@ export class OverlayWrapperComponent extends Component {
         </div>`;
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('userComponentFactoryHelper') userComponentFactoryHelper: UserComponentFactoryHelper;
+    @Autowired('userComponentFactory') userComponentFactory: UserComponentFactory;
 
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
 
@@ -45,7 +45,7 @@ export class OverlayWrapperComponent extends Component {
         this.setWrapperTypeClass(LoadingType.Loading);
         this.destroyActiveOverlay();
 
-        this.userComponentFactoryHelper.newLoadingOverlayComponent().then(comp => {
+        this.userComponentFactory.newLoadingOverlayComponent().then(comp => {
             this.eOverlayWrapper.appendChild(comp.getGui());
             this.activeOverlay = comp;
         });
@@ -57,7 +57,7 @@ export class OverlayWrapperComponent extends Component {
         this.setWrapperTypeClass(LoadingType.NoRows);
         this.destroyActiveOverlay();
 
-        this.userComponentFactoryHelper.newNoRowsOverlayComponent().then(comp => {
+        this.userComponentFactory.newNoRowsOverlayComponent().then(comp => {
             this.eOverlayWrapper.appendChild(comp.getGui());
             this.activeOverlay = comp;
         });
