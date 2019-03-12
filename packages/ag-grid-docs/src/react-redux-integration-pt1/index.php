@@ -14,7 +14,9 @@ include '../documentation-main/documentation_header.php';
        simplify state management.
     </p>
 
-    <p>
+<note>Be sure to refer to the <a href="../react-more-details/react-15#react-redux-hoc">React/Redux More Details</a> section
+    for more details around configuration.</note>
+<p>
         We will use the concrete example of a file view component to demonstrate how to move local component state to
         a Redux store. Updates to the files state will be retrieved from the Redux store, while UI events to add and
         delete files will be dispatched to the Redux store for processing.
@@ -232,7 +234,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 // connect our component to the redux store
-export default connect(mapStateToProps, mapDispatchToProps)(FileView);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+    null,
+    { forwardRef: true } // must be supplied for react/redux when using GridOptions.reactNext
+)(FileView);
 </snippet>
     <p>
         In the code above we pass two functions to <code>connect</code> to map the required state (mapStateToProps) and
