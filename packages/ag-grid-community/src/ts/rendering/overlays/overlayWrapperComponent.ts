@@ -45,7 +45,9 @@ export class OverlayWrapperComponent extends Component {
         this.setWrapperTypeClass(LoadingType.Loading);
         this.destroyActiveOverlay();
 
-        this.userComponentFactory.newLoadingOverlayComponent().then(comp => {
+        const params = {api: this.gridOptionsWrapper.getApi() };
+
+        this.userComponentFactory.newLoadingOverlayComponent(params).then(comp => {
             this.eOverlayWrapper.appendChild(comp.getGui());
             this.activeOverlay = comp;
         });
@@ -57,7 +59,9 @@ export class OverlayWrapperComponent extends Component {
         this.setWrapperTypeClass(LoadingType.NoRows);
         this.destroyActiveOverlay();
 
-        this.userComponentFactory.newNoRowsOverlayComponent().then(comp => {
+        const params = {api: this.gridOptionsWrapper.getApi() };
+
+        this.userComponentFactory.newNoRowsOverlayComponent(params).then(comp => {
             this.eOverlayWrapper.appendChild(comp.getGui());
             this.activeOverlay = comp;
         });

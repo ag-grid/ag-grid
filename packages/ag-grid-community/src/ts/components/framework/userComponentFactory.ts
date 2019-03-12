@@ -141,14 +141,14 @@ export class UserComponentFactory {
             target, params, "innerRenderer", null);
     }
 
-    public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
+    public newLoadingOverlayComponent(params: any): Promise<ILoadingOverlayComp> {
         return this.createUserComponent<ILoadingOverlayComp>(
-            this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlay");
+            this.gridOptions, params, "loadingOverlayComponent", "agLoadingOverlay");
     }
 
-    public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp> {
+    public newNoRowsOverlayComponent(params: any): Promise<INoRowsOverlayComp> {
         return this.createUserComponent<INoRowsOverlayComp>(
-            this.gridOptions, null, "noRowsOverlayComponent", "agNoRowsOverlay");
+            this.gridOptions, params, "noRowsOverlayComponent", "agNoRowsOverlay");
     }
 
     public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
@@ -163,8 +163,7 @@ export class UserComponentFactory {
             colDef, params, 'filter', defaultFilter, true, modifyParamsCallback);
     }
 
-    public newFloatingFilterComponent(
-        colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp<any, any, any>> {
+    public newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp<any, any, any>> {
         return this.createUserComponent<IFloatingFilterComp<any, any, any>>(
             colDef, params, "floatingFilterComponent", defaultFloatingFilter, false);
     }
@@ -474,10 +473,6 @@ export class UserComponentFactory {
         }
 
         _.mergeDeep(res, paramsFromSelector);
-
-        if (!res.api) {
-            res.api = this.gridOptions.api;
-        }
 
         return res;
     }

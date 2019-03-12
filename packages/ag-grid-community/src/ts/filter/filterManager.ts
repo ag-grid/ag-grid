@@ -442,6 +442,7 @@ export class FilterManager {
         const filterModifiedCallback = () => this.eventService.dispatchEvent(event);
 
         const params: IFilterParams = {
+            api: this.gridOptionsWrapper.getApi(),
             column: column,
             colDef: sanitisedColDef,
             rowModel: this.rowModel,

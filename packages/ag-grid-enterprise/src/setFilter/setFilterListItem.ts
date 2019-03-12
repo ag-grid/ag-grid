@@ -47,7 +47,7 @@ export class SetFilterListItem extends Component {
         this.column = column;
     }
 
-    public useCellRenderer(
+    private useCellRenderer(
         target: ColDef,
         eTarget: HTMLElement,
         params: any
@@ -112,9 +112,13 @@ export class SetFilterListItem extends Component {
         const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
 
         const colDef = this.column.getColDef();
-        const valueObj = {value: this.value, valueFormatted: valueFormatted};
+        const params = {
+            value: this.value,
+            valueFormatted: valueFormatted,
+            api: this.gridOptionsWrapper.getApi()
+        };
 
-        const componentPromise: Promise<ICellRendererComp> = this.useCellRenderer(colDef, valueElement, valueObj);
+        const componentPromise: Promise<ICellRendererComp> = this.useCellRenderer(colDef, valueElement, params);
 
         if (!componentPromise) { return; }
 

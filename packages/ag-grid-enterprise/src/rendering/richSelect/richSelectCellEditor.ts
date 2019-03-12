@@ -10,7 +10,8 @@ import {
     PopupComponent,
     Promise,
     UserComponentFactory,
-    Utils
+    Utils,
+    GridOptionsWrapper
 } from "ag-grid-community";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
@@ -25,6 +26,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         </div>`;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private params: IRichCellEditorParams;
     private virtualList: VirtualList;
@@ -119,7 +121,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const valueFormatted = this.params.formatValue(this.selectedValue);
         const eValue = this.getRefElement('eValue') as HTMLElement;
 
-        const params = <ICellRendererParams> {value: this.selectedValue, valueFormatted: valueFormatted};
+        const params = <ICellRendererParams> {
+            value: this.selectedValue,
+            valueFormatted: valueFormatted,
+            api: this.gridOptionsWrapper.getApi()
+        };
 
         const promise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
         if (promise != null) {
