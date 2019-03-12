@@ -119,27 +119,35 @@ export class UserComponentFactory {
         const componentInstance = componentAndParams.componentInstance;
 
         // Wire the component and call the init method with the correct params
-        const finalParams = this.createFinalParams(definitionObject, propertyName, paramsFromGrid,
+        const params = this.createFinalParams(definitionObject, propertyName, paramsFromGrid,
             componentAndParams.paramsFromSelector);
 
-        // a temporary fix for AG-1574
-        // AG-1715 raised to do a wider ranging refactor to improve this
-        const agGridReact = this.context.getBean('agGridReact');
-        if (agGridReact) {
-            finalParams.agGridReact = _.cloneObject(agGridReact);
-        }
-        // AG-1716 - directly related to AG-1574 and AG-1715
-        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
-        if (frameworkComponentWrapper) {
-            finalParams.frameworkComponentWrapper = frameworkComponentWrapper;
-        }
+        this.addReactHacks(params);
 
-        const deferredInit: void | Promise<void> = this.initialiseComponent(componentInstance, finalParams, modifyParamsCallback);
+        // give caller chance to set any params that depend on the componentInstance (need here as the
+        // componentInstance was not available when createUserComponent was called)
+        const paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
+
+        const deferredInit: void | Promise<void> = this.initialiseComponent(componentInstance, paramsAfterCallback);
         if (deferredInit == null) {
             return Promise.resolve(componentInstance);
         } else {
             const asPromise: Promise<void> = deferredInit as Promise<void>;
             return asPromise.map(notRelevant => componentInstance);
+        }
+    }
+
+    private addReactHacks(params: any): void {
+        // a temporary fix for AG-1574
+        // AG-1715 raised to do a wider ranging refactor to improve this
+        const agGridReact = this.context.getBean('agGridReact');
+        if (agGridReact) {
+            params.agGridReact = _.cloneObject(agGridReact);
+        }
+        // AG-1716 - directly related to AG-1574 and AG-1715
+        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+        if (frameworkComponentWrapper) {
+            params.frameworkComponentWrapper = frameworkComponentWrapper;
         }
     }
 
@@ -149,18 +157,16 @@ export class UserComponentFactory {
      *  @param clazz: The class to instantiate,
      *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration
-     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    public createUserComponentFromConcreteClass<P, A extends IComponent<P>>(clazz: { new(): A },
-                                                                            agGridParams: P,
-                                                                            customInitParamsCb?: (params: any, component: A) => any): A {
+    public createUserComponentFromConcreteClass<P, A extends IComponent<P>>(clazz: { new(): A }, agGridParams: P): A {
+
         const internalComponent: A = new clazz() as A;
 
         this.initialiseComponent(
             internalComponent,
-            agGridParams,
-            customInitParamsCb
+            agGridParams
         );
 
         return internalComponent;
@@ -411,16 +417,13 @@ export class UserComponentFactory {
         return {componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector};
     }
 
-    private initialiseComponent<A extends IComponent<any>>(component: A,
-                                                           finalParams: any,
-                                                           modifyParamsCallback?: (params: any, component: A) => any): Promise<void> | void {
-
+    private initialiseComponent<A extends IComponent<any>>(component: A, finalParams: any): Promise<void> | void {
         this.context.wireBean(component);
-        if (component.init == null) { return; }
-
-        const paramsToUse = modifyParamsCallback ? modifyParamsCallback(finalParams, component) : finalParams;
-
-        return component.init(paramsToUse);
+        if (component.init == null) {
+            return;
+        } else {
+            return component.init(finalParams);
+        }
     }
 
 }
