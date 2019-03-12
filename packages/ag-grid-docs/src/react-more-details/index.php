@@ -256,19 +256,19 @@ class GridComponent extends Component {
     <p>In a future release we'll switch to make <code>reactNext</code> the default, but for now this needs to be made explicit.</p>
 
     <h3>Control React Components Container</h3>
-    <p>By default user supplied React components will render exactly as provided, but it is possible to have your component 
-    wrapped in a container (i.e. a <code>div</code>, <code>span</code> etc), perhaps to override/control a third party component.</p>
-    
+    <p>By default user supplied React components will be rendered with a <code>div</code> container but it is possible to have your specify
+        a container (i.e. a <code>div</code>, <code>span</code> etc), perhaps to override/control a third party component.</p>
+
     <p>For example, assuming a user component as follows:</p>
-    
-<snippet>
+
+    <snippet>
 cellRenderer: () =&gt; &lt;span&gt;Hello World&lt;/span&gt;
 </snippet>
 
     <p>The default behaviour will render the following within the grid:</p>
 
-<snippet language="html">
-&lt;span&gt;Hello World&lt;/span&gt;
+    <snippet language="html">
+&lt;div class="ag-react-container"&gt;&lt;span&gt;Hello World&lt;/span&gt;&lt;/div&gt;
 </snippet>
     
     <p>In order to override this default behaviour and can specify a <code>componentWrappingElement</code>:</p>

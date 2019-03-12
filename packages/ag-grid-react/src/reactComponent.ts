@@ -15,16 +15,12 @@ export class ReactComponent extends BaseReactComponent {
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
     private componentWrappingElement: string = 'div';
-    private orphans: any[];
-    private unwrapComponent: boolean = true;
 
     constructor(reactComponent: any, parentComponent: AgGridReact) {
         super();
 
         this.reactComponent = reactComponent;
         this.parentComponent = parentComponent;
-
-        this.orphans = [];
     }
 
     public getFrameworkComponentInstance(): any {
@@ -37,40 +33,17 @@ export class ReactComponent extends BaseReactComponent {
 
     public init(params: any): Promise<void> {
         return new Promise<void>(resolve => {
-            this.unwrapComponent = this.parentComponent.props.componentWrappingElement === undefined;
-
             this.eParentElement = this.createParentElement(params);
             this.createReactComponent(params, resolve);
         });
     }
 
     public getGui(): HTMLElement {
-        if (this.unwrapComponent) {
-            const fragment = document.createDocumentFragment();
 
-            if (this.orphans.length > 0) {
-                for (const orphan of this.orphans) {
-                    fragment.appendChild(orphan)
-                }
-            } else {
-                while (this.eParentElement.firstChild) {
-                    this.orphans.push(this.eParentElement.firstChild);
-                    fragment.appendChild(this.eParentElement.firstChild)
-                }
-            }
-            return fragment as any;
-        } else {
-            return this.eParentElement;
-        }
+        return this.eParentElement;
     }
 
     public destroy(): void {
-        if (this.unwrapComponent) {
-            for (const orphan of this.orphans) {
-                this.eParentElement.appendChild(orphan);
-            }
-        }
-
         return this.parentComponent.destroyPortal(this.portal as ReactPortal);
     }
 
@@ -92,13 +65,11 @@ export class ReactComponent extends BaseReactComponent {
 
     private createParentElement(params: any) {
         const eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
-        if (!this.unwrapComponent) {
-            AgGrid.Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
+        AgGrid.Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
 
-            // so user can have access to the react container,
-            // to add css class or style
-            params.reactContainer = this.eParentElement;
-        }
+        // so user can have access to the react container,
+        // to add css class or style
+        params.reactContainer = this.eParentElement;
         return eParentElement;
     }
 }
