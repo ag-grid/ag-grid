@@ -9,16 +9,31 @@ include '../documentation-main/documentation_header.php';
     <h1>
     Ag-Grid React Overview
     </h1>
-    <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating
-    (amongst others) Rich Grids, Filtering with React Components Grid and so on.</note>
     <h2 id="ag-Grid-react-features">ag-Grid React Features</h2>
     <p>
         Every feature of ag-Grid is available when using the ag-Grid React Component. The React Component wraps the
-        functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
-        React ag-Grid when it comes to features.
+        functionality of ag-Grid so you gain all the features of ag-Grid along with all good stuff that React provides.
     </p>
+    <h2>
+        Table of Contents
+    </h2>
+    <div class="row">
+        <div class="col">
+            <ol style="columns: 2">
+                <li><a href="#configuring-aggridreact-component">Configuring the ag-Grid React Component</li></a>
+                <li><a href="#enable-sorting-and-filtering">Enable Sorting and Filtering</li></a>
+                <li><a href="#fetch-remote-data">Fetch Remote Data</li></a>
+                <li><a href="#enable-selection">Enable Selection</li></a>
+                <li><a href="#grouping(enterprise)">Grouping(Enterprise)</li></a>
+                <li><a href="#customize-the-theme-look">Customize the Theme Look</li></a>
+                <li><a href="#summary">Summary</li></a>
+                <li><a href="#next-steps">Next Steps</li></a>
+            </ol>
+        </div>
+    </div>
+    <hr>
     <h2 id="configuring-aggridreact-component">Configuring the ag-Grid React Component</h2>
-    <p>After importing <code>AgGridReact</code>  you can then reference the component inside your JSX definitions.
+    <p>After importing <code>AgGridReact</code> you can then reference the component inside your JSX definitions.
     An example of the Grid Component can be seen below:</p>
 <snippet language="jsx">
 // Grid Definition
@@ -204,11 +219,10 @@ somePointLater() {
 <h2 id="cell-rendering-cell-editing-and-filtering-using-react">Cell Rendering, Cell Editing and Filtering using
 React</h2>
 <p>
-    It is possible to build <a href="../javascript-grid-cell-rendering-components/#reactCellRendering">cell renderers</a>,
-    <a href="../javascript-grid-cell-editing/#reactCellEditing">cell editors</a> and
-    <a href="../javascript-grid-filtering/#reactFiltering">filters</a> using React. Doing each of these
-    is explained in the section on each.
-</p>
+    It is possible to build <a href="../javascript-grid-cell-rendering-components/#react-cell-rendering">cell renderers</a>,
+    <a href="../javascript-grid-cell-editor/#react-cell-editing">cell editors</a> and
+    <a href="../javascript-grid-filter-component/#react-filtering">filters</a> (for the full list of available grid components
+    please refer to the <a href="../javascript-grid-components/">components</a> documentation) using React.</p>
 <h2>Override React Components Container Style</h2>
 <p>When you provide a React Component to ag-Grid for use within the grid it will create a <code>div</code> for the component
     to live in. If you wish to override the style of this div you can do so via the <code>reactContainer</code> property
