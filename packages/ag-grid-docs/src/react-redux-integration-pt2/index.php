@@ -183,7 +183,12 @@ const mapStateToProps = (state) => ({files: state.files});
 const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators(actions, dispatch)});
 
 // connect our component to the redux store
-export default connect(mapStateToProps, mapDispatchToProps)(FileBrowser);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+    null,
+    { forwardRef: true } // must be supplied for react/redux when using GridOptions.reactNext
+)(FileBrowser);
 </snippet>
     <p>
         In the code above we pass two functions to <code>connect</code> to map the required state (mapStateToProps) and

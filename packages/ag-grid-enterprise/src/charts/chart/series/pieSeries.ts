@@ -68,8 +68,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set angleField(value: Extract<keyof D, string> | null) {
         if (this._angleField !== value) {
             this._angleField = value;
-            this.processData();
-            this.update();
+            if (this.processData()) {
+                this.update();
+            }
         }
     }
     get angleField(): Extract<keyof D, string> | null {
@@ -110,8 +111,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
-            this.processData();
-            this.update();
+            if (this.processData()) {
+                this.update();
+            }
         }
     }
     get rotation(): number {
@@ -129,8 +131,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set radiusField(value: string) {
         if (this._radiusField !== value) {
             this._radiusField = value;
-            this.processData();
-            this.update();
+            if (this.processData()) {
+                this.update();
+            }
         }
     }
     get radiusField(): string {
@@ -158,13 +161,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
-        this.processData();
-
-        if (this.chart && this.chart.isLayoutPending) {
-            return;
+        if (this.processData()) {
+            this.update();
         }
-
-        this.update();
     }
     get data(): any[] {
         return this._data;
@@ -178,7 +177,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this.radiusScale.domain as [number, number];
     }
 
-    processData(): void {
+    processData(): boolean {
         const data = this.data;
         const centerX = this.centerX + this.offsetX;
         const centerY = this.centerY + this.offsetY;
@@ -267,6 +266,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
             return end;
         }, 0);
+
+        return true;
     }
 
     update(): void {

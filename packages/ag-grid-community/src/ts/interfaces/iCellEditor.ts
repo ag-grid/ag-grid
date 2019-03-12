@@ -19,6 +19,10 @@ export interface ICellEditor extends IPopupComponent {
      *  editing will have no impact on the record. Use this if you do not want a new value from your gui, i.e. you
      *  want to cancel the editing. */
     isCancelAfterEnd?(): boolean;
+
+    /** If using a framework this returns the underlying component instance, so you can call methods
+     * on it if you want. */
+    getFrameworkComponentInstance?(): any;
 }
 
 export interface ICellEditorParams {
@@ -57,5 +61,4 @@ export interface ICellEditorParams {
 }
 
 export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
-
 }
