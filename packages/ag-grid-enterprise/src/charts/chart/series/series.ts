@@ -126,6 +126,6 @@ export abstract class Series<D, X, Y> {
     abstract getDomainX(): any[];
     abstract getDomainY(): any[];
 
-    abstract processData(): void;
+    abstract processData(): boolean;
     abstract update(): void;
 }

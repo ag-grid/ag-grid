@@ -5,13 +5,13 @@ export abstract class CartesianSeries<D, X, Y> extends Series<D, X, Y> {
     protected fieldPropertiesX: (keyof this)[] = ['xField'];
     protected fieldPropertiesY: (keyof this)[] = ['yField'];
 
-    protected _xField: string = '';
-    abstract set xField(value: string);
-    abstract get xField(): string;
+    protected _xField: Extract<keyof D, string> | null = null;
+    abstract set xField(value: Extract<keyof D, string> | null);
+    abstract get xField(): Extract<keyof D, string> | null;
 
-    protected _yField: string = '';
-    abstract set yField(value: string);
-    abstract get yField(): string;
+    protected _yField: Extract<keyof D, string> | null = null;
+    abstract set yField(value: Extract<keyof D, string> | null);
+    abstract get yField(): Extract<keyof D, string> | null;
 
     // protected _xAxis: CartesianAxis | null = null;
     // protected _yAxis: CartesianAxis | null = null;

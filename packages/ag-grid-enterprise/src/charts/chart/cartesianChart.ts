@@ -1,5 +1,8 @@
 import {Chart} from "./chart";
 import {Axis} from "../axis";
+import {PolarSeries} from "./series/polarSeries";
+import {CartesianSeries} from "./series/cartesianSeries";
+import {Series} from "./series/series";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
@@ -9,10 +12,56 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         this.yAxis = yAxis;
     }
 
-    xAxis: Axis<X>;
-    yAxis: Axis<Y>;
+    private _xAxis: Axis<X> | null = null;
+    set xAxis(value: Axis<X> | null) {
+        if (this._xAxis !== value) {
+            const root = this.scene.root;
+            if (root) {
+                if (value) {
+                    root.append(value.group);
+                } else if (this._xAxis) {
+                    root.removeChild(this._xAxis.group);
+                }
+            }
+            this._xAxis = value;
+        }
+    }
+    get xAxis(): Axis<X> | null {
+        return this._xAxis;
+    }
+
+    private _yAxis: Axis<Y> | null = null;
+    set yAxis(value: Axis<Y> | null) {
+        if (this._yAxis !== value) {
+            const root = this.scene.root;
+            if (root) {
+                if (value) {
+                    root.append(value.group);
+                } else if (this._yAxis) {
+                    root.removeChild(this._yAxis.group);
+                }
+            }
+            this._yAxis = value;
+        }
+    }
+    get yAxis(): Axis<Y> | null {
+        return this._yAxis;
+    }
+
+    addSeries(series: Series<D, X, Y>): void {
+        if (this.scene.root) {
+            this.scene.root.append(series.group);
+        }
+        this._series.push(series);
+        series.chart = this;
+        this.isLayoutPending = true;
+    }
 
     performLayout(): void {
+        if (!(this.xAxis && this.yAxis)) {
+            return;
+        }
+
         const shrinkRect = {
             x: 0,
             y: 0,
@@ -44,8 +93,22 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
             series.group.translationX = shrinkRect.x;
             series.group.translationY = shrinkRect.y;
             series.processData();
+        });
+
+        // this.updateAxes();
+
+        this._series.forEach(series => {
             series.update();
         });
+    }
+
+    updateAxes() {
+        const xAxis = this.xAxis;
+        const yAxis = this.yAxis;
+
+        if (!(xAxis && yAxis)) {
+            return;
+        }
 
         if (this._series.length) {
             const series = this.series[0];

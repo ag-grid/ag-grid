@@ -14,7 +14,7 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
             this.scene.root.append(series.group);
         }
         this._series.push(series);
-        series.chart = this as PolarChart<D, X, Y>;
+        series.chart = this;
         this.isLayoutPending = true;
     }
 
