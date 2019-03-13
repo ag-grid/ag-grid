@@ -5,7 +5,18 @@ import {CartesianChart} from "../cartesianChart";
 import {Rect} from "../../scene/shape/rect";
 import {Text} from "../../scene/shape/text";
 import {BandScale} from "../../scale/bandScale";
-import {DropShadow, Offset} from "../../scene/dropShadow";
+import {DropShadow} from "../../scene/dropShadow";
+
+type BarDatum = {
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    fillStyle: string,
+    strokeStyle: string,
+    lineWidth: number,
+    label: string
+};
 
 enum BarSeriesNodeTag {
     Bar,
@@ -68,6 +79,35 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._yFields;
     }
 
+    /**
+     * If the type of series datum is declared as `any`, one can change the values of the
+     * {@link data}, {@link xField} and {@link yFields} configs on the fly, where the type
+     * of data and the fields names are completely different from ones currently in use by
+     * the series. This can lead to a situation where one sets the new {@link data},
+     * which triggers the series to fetch the fields from the datums, but the
+     * datums have no such fields. Conversely, one can set the new {@link xField} or {@link yFields}
+     * that are not present in the current {@link data}.
+     * In such cases, the {@link data}, {@link xField} and {@link yFields} configs have to be set
+     * simultaneously, as an atomic operation.
+     * @param data
+     * @param xField
+     * @param yFields
+     */
+    setDataAndFields(data: any[], xField: Extract<keyof D, string>, yFields: Extract<keyof D, string>[]) {
+        this._xField = xField;
+        this._yFields = yFields;
+        this._data = data;
+
+        const groupScale = this.groupScale;
+        groupScale.domain = yFields;
+        groupScale.padding = 0.1;
+        groupScale.round = true;
+
+        if (this.processData()) {
+            this.update();
+        }
+    }
+
     set yFieldNames(values: string[]) {
         this._yFieldNames = values;
         this.update();
@@ -87,6 +127,39 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
     get isGrouped(): boolean {
         return this._isGrouped;
+    }
+
+    private _strokeStyle: string = 'black';
+    set strokeStyle(value: string) {
+        if (this._strokeStyle !== value) {
+            this._strokeStyle = value;
+            this.update();
+        }
+    }
+    get strokeStyle(): string {
+        return this._strokeStyle;
+    }
+
+    private _lineWidth: number = 1;
+    set lineWidth(value: number) {
+        if (this._lineWidth !== value) {
+            this._lineWidth = value;
+            this.update();
+        }
+    }
+    get lineWidth(): number {
+        return this._lineWidth;
+    }
+
+    private _shadow: DropShadow | null = null;
+    set shadow(value: DropShadow | null) {
+        if (this._shadow !== value) {
+            this._shadow = value;
+            this.update();
+        }
+    }
+    get shadow(): DropShadow | null {
+        return this._shadow;
     }
 
     private domainX: X[] = [];
@@ -123,10 +196,24 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         //   yField3: 20
         // }]
         //
-        const xData: X[] = this.domainX = data.map(datum => datum[xField]);
+        const xData: X[] = this.domainX = data.map(datum => {
+            const value = datum[xField];
+            if (typeof value !== 'string') {
+                throw new Error(`The ${xField} value is not a string. `
+                    + `This error might be solved by using the 'setDataAndFields' method.`);
+            }
+            return value as unknown as X;
+        });
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
-            yFields.forEach(field => values.push(datum[field]));
+            yFields.forEach(field => {
+                const value = datum[field];
+                if (isNaN(value)) {
+                    throw new Error(`The ${field} value is not a number. `
+                        + `This error might be solved by using the 'setDataAndFields' method.`);
+                }
+                values.push(value);
+            });
             return values;
         });
 
@@ -137,55 +224,15 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         //   [10, -15, 20]
         // ]
 
-        // Each field corresponds to a subseries.
-        // const yData: number[][] = this.yData = yFields.map(field => data.map(datum => datum[field]));
-
-        // xData: ['Jan', 'Feb']
-        //
-        // yData: [
-        //   [5, 10],  // yField1
-        //   [7, -15], // yField2
-        //   [-9, 20]  // yField3
-        // ]
-
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
-
-        // if (this.isGrouped) {
-        //     // Find the largest positive/negative value (tallest bar) in each subseries,
-        //     // then find the tallest positive/negative bar overall.
-        //     // The minimum value for positive bars is always zero, otherwise the lowest
-        //     // positive bar will have zero height.
-        //     yMin = Math.min(...yData.map(values => Math.min(0, ...values)));
-        //     yMax = Math.max(...yData.map(values => Math.max(...values)));
-        // } else {
-        //     // Find the height of each stack in the positive and negative directions,
-        //     // and the tallest stacks overall in both directions.
-        //     for (let j = 0; j < n; j++) {
-        //         let lo = 0;
-        //         let hi = 0;
-        //         for (let i = 0; i < yFieldCount; i++) {
-        //             const datum = yData[i][j];
-        //             if (datum >= 0) {
-        //                 hi += datum;
-        //             } else {
-        //                 lo += datum;
-        //             }
-        //         }
-        //         if (lo < yMin) {
-        //             yMin = lo;
-        //         }
-        //         if (hi > yMax) {
-        //             yMax = hi;
-        //         }
-        //     }
-        // }
-
-        // debugger;
 
         if (this.isGrouped) {
             // Find the tallest positive/negative bar in each group,
             // then find the tallest positive/negative bar overall.
+            // The `yMin` should always be <= 0,
+            // otherwise with the `yData` like [300, 200, 100] the last bar
+            // will have zero height, because the y-axis range is [100, 300].
             yMin = Math.min(...yData.map(groupValues => Math.min(0, ...groupValues)));
             yMax = Math.max(...yData.map(groupValues => Math.max(...groupValues)));
         } else { // stacked or regular
@@ -230,6 +277,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this.domainY;
     }
 
+    /**
+     * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
+     */
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
     colors: string[] = [
@@ -240,8 +290,6 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         '#FA7921',
         '#fa3081'
     ];
-
-    private shadow = new DropShadow('rgba(0,0,0,0.2)', new Offset(0, 0), 15);
 
     update(): void {
         const chart = this.chart;
@@ -258,20 +306,14 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const groupScale = this.groupScale;
         const yFields = this.yFields;
         const colors = this.colors;
-        const seriesHeight = Math.abs(yScale.range[1] - yScale.range[0]);
         const isGrouped = this.isGrouped;
+        const strokeStyle = this.strokeStyle;
+        const lineWidth = this.lineWidth;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = isGrouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
-        const barData: {
-            x: number,
-            y: number,
-            width: number,
-            height: number,
-            fillStyle: string,
-            label: string
-        }[] = [];
+        const barData: BarDatum[] = [];
 
         for (let i = 0; i < n; i++) {
             const category = this.domainX[i];
@@ -281,13 +323,15 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             values.reduce((prev, curr) => {
                 const y0 = yScale.convert((isGrouped ? 0 : prev) as unknown as Y);
                 const y1 = yScale.convert((isGrouped ? curr : prev + curr) as unknown as Y);
-                const color = this.colors[yFieldIndex % this.colors.length];
+                const color = colors[yFieldIndex % colors.length];
                 barData.push({
                     x: x + (isGrouped ? groupScale.convert(yFields[yFieldIndex]) : 0),
                     y: y1,
                     width: barWidth,
                     height: y0 - y1,
                     fillStyle: color,
+                    strokeStyle,
+                    lineWidth,
                     label: this.yFieldNames[yFieldIndex]
                 });
 
@@ -300,8 +344,11 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Rect).each(node => node.tag = BarSeriesNodeTag.Bar);
-        enterGroups.append(Text).each(node => node.tag = BarSeriesNodeTag.Label);
+        enterGroups.append(Rect).each(rect => {
+            rect.tag = BarSeriesNodeTag.Bar;
+            rect.isCrisp = true;
+        });
+        enterGroups.append(Text).each(text => text.tag = BarSeriesNodeTag.Label);
 
         const groupSelection = updateGroups.merge(enterGroups);
 
@@ -312,62 +359,26 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                 rect.width = datum.width;
                 rect.height = datum.height;
                 rect.fillStyle = datum.fillStyle;
-                rect.strokeStyle = 'black';
+                rect.strokeStyle = datum.strokeStyle;
+                rect.lineWidth = datum.lineWidth;
                 rect.shadow = this.shadow;
             });
 
         groupSelection.selectByTag<Text>(BarSeriesNodeTag.Label)
             .each((text, datum) => {
-                text.text = datum.label;
-                text.textAlign = 'center';
-                text.x = datum.x + datum.width / 2;
-                text.y = datum.y + 20;
-                text.fillStyle = 'black';
-                text.font = '14px Verdana';
+                if (datum.label) {
+                    text.text = datum.label;
+                    text.textAlign = 'center';
+                    text.x = datum.x + datum.width / 2;
+                    text.y = datum.y + 20;
+                    text.fillStyle = 'black';
+                    text.font = '14px Verdana';
+                    text.isVisible = true;
+                } else {
+                    text.isVisible = false;
+                }
             });
 
         this.groupSelection = groupSelection;
-
-        // -----------------------------------------------
-
-        // const updateSubseriesGroups = this.groupSelection.setData(this.yFields);
-        // updateSubseriesGroups.exit.remove(); // Remove subseries.
-        //
-        // // Create a Group for each subseries.
-        // const enterSubseriesGroups = updateSubseriesGroups.enter.append(Group);
-        // // Each bar group contains a bar and its label.
-        // const barGroups = enterSubseriesGroups.selectAll().setData((parent, datum, i) => {
-        //     debugger;
-        //     return this.yData[i];
-        // }).enter.append(Group)
-        //     .call(enter => enter.append(Rect))
-        //     .call(enter => enter.append(Text));
-        //
-        // barGroups.each(node => console.log(node.datum));
-
-        // const groupSelection = updateSubseriesGroups.merge(enterSubseriesGroups);
-        //
-        // debugger;
-        // barGroups.selectByClass(Rect).each((rect, datum, i) => {
-        //     debugger;
-        //     rect.x = groupScale.convert(yFields[i]);
-        //     rect.y = yScale.convert(datum as unknown as Y);
-        //     rect.width = barWidth;
-        //     rect.height = seriesHeight - rect.y;
-        //     rect.fillStyle = colors[i % colors.length];
-        //     rect.strokeStyle = 'black';
-        //     rect.shadow = this.shadow;
-        // });
-        //
-        // barGroups.selectByClass(Text).each((label, datum, i) => {
-        //     label.text = this.yFieldNames[i];
-        //     label.textAlign = 'center';
-        //     label.x = groupScale.convert(yFields[i]) + barWidth / 2;
-        //     label.y = yScale.convert(datum as unknown as Y) + 20;
-        //     label.fillStyle = 'black';
-        //     label.font = '14px Verdana';
-        // });
-
-        // this.groupSelection = groupSelection;
     }
 }
