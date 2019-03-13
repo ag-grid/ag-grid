@@ -64,6 +64,7 @@ export interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
+    hideFilterInput?: boolean;
 }
 
 export interface IFilterParams {
