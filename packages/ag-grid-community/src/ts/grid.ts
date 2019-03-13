@@ -191,6 +191,7 @@ export class Grid {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
+                // this should only contain SERVICES, it should NEVER contain COMPONENTS
                 rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
                 ComponentMetadataProvider, ResizeObserverService, UserComponentRegistry, UserComponentFactory,
                 MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
@@ -202,7 +203,7 @@ export class Grid {
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, , AnimationFrameService, TooltipManager, ZipContainer
+                ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer
             ],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,

@@ -1,7 +1,7 @@
-import { Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector } from "ag-grid-community/main";
-import { PrimaryColsListPanel } from "./primaryColsListPanel";
-import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
-import { ToolPanelColumnCompParams } from "../../columnToolPanel";
+import {Autowired, Component, GridOptionsWrapper, Listener, PostConstruct, RefSelector} from "ag-grid-community/main";
+import {PrimaryColsListPanel} from "./primaryColsListPanel";
+import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
+import {ToolPanelColumnCompParams} from "../../columnToolPanel";
 
 export interface BaseColumnItem {
 
