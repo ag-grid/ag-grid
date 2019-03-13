@@ -1,6 +1,7 @@
 import {Shape} from "./shape";
 import {Path2D} from "../path2D";
 import {BBox, isPointInBBox} from "../bbox";
+import {pixelSnap} from "../../canvas/canvas";
 
 export class Rect extends Shape {
 
@@ -86,6 +87,17 @@ export class Rect extends Shape {
         return this._radius;
     }
 
+    private _isCrisp: boolean = false;
+    set isCrisp(value: boolean) {
+        if (this._isCrisp !== value) {
+            this._isCrisp = value;
+            this.isDirtyPath = true;
+        }
+    }
+    get isCrisp(): boolean {
+        return this._isCrisp;
+    }
+
     updatePath() {
         if (!this.isDirtyPath)
             return;
@@ -96,7 +108,16 @@ export class Rect extends Shape {
         path.clear();
 
         if (!radius) {
-            path.rect(this.x, this.y, this.width, this.height);
+            if (this.isCrisp) {
+                path.rect(
+                    Math.round(this.x) + pixelSnap(this.lineWidth),
+                    Math.round(this.y) + pixelSnap(this.lineWidth),
+                    Math.round(this.width),
+                    Math.round(this.height)
+                );
+            } else {
+                path.rect(this.x, this.y, this.width, this.height);
+            }
         } else {
             // TODO: rect radius, this will require implementing
             //       another `arcTo` method in the `Path2D` class.
