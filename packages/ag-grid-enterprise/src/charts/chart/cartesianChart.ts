@@ -1,16 +1,20 @@
 import {Chart} from "./chart";
 import {Axis} from "../axis";
-import {PolarSeries} from "./series/polarSeries";
-import {CartesianSeries} from "./series/cartesianSeries";
 import {Series} from "./series/series";
+import {ClipRect} from "../scene/clipRect";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
     constructor(xAxis: Axis<X>, yAxis: Axis<Y>) {
         super();
+        if (this.scene.root) {
+            this.scene.root.append(this.seriesRect);
+        }
         this.xAxis = xAxis;
         this.yAxis = yAxis;
     }
+
+    private seriesRect = new ClipRect();
 
     private _xAxis: Axis<X> | null = null;
     set xAxis(value: Axis<X> | null) {
@@ -49,9 +53,7 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
     }
 
     addSeries(series: Series<D, X, Y>): void {
-        if (this.scene.root) {
-            this.scene.root.append(series.group);
-        }
+        this.seriesRect.append(series.group);
         this._series.push(series);
         series.chart = this;
         this.isLayoutPending = true;
@@ -75,6 +77,12 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
 
+        const seriesRect = this.seriesRect;
+        seriesRect.x = shrinkRect.x;
+        seriesRect.y = shrinkRect.y;
+        seriesRect.width = shrinkRect.width;
+        seriesRect.height = shrinkRect.height;
+
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
 
@@ -82,7 +90,7 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         xAxis.scale.range = [0, shrinkRect.width];
         xAxis.rotation = -90;
         xAxis.translationX = shrinkRect.x;
-        xAxis.translationY = shrinkRect.y + shrinkRect.height;
+        xAxis.translationY = shrinkRect.y + shrinkRect.height + 1;
         xAxis.isParallelLabels = true;
 
         yAxis.scale.range = [shrinkRect.height, 0];
