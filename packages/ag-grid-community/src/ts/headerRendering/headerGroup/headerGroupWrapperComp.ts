@@ -73,7 +73,6 @@ export class HeaderGroupWrapperComp extends Component {
         this.appendHeaderGroupComp(displayName);
 
         this.setupResize();
-        this.addClasses();
         this.setupWidth();
         this.addAttributes();
         this.setupMovingCss();
@@ -153,17 +152,6 @@ export class HeaderGroupWrapperComp extends Component {
     private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {
         this.appendChild(headerGroupComp);
         this.setupMove(headerGroupComp.getGui(), displayName);
-    }
-
-    private addClasses(): void {
-        // having different classes below allows the style to not have a bottom border
-        // on the group header, if no group is specified
-        // columnGroup.getColGroupDef
-        if (this.columnGroup.isPadding()) {
-            this.addCssClass('ag-header-group-cell-no-group');
-        } else {
-            this.addCssClass('ag-header-group-cell-with-group');
-        }
     }
 
     private setupMove(eHeaderGroup: HTMLElement, displayName: string): void {

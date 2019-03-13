@@ -63,7 +63,6 @@ export class ColumnFactory {
     }
 
     public createForAutoGroups(autoGroupCols: Column[] | null, gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
-
         const autoColBalancedTree: OriginalColumnGroupChild[] = [];
         autoGroupCols.forEach(col => {
             const fakeTreeItem = this.createAutoGroupTreeItem(gridBalancedTree, col);
@@ -75,7 +74,7 @@ export class ColumnFactory {
 
     private createAutoGroupTreeItem(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroupChild {
 
-        const dept = this.findDept(balancedColumnTree);
+        const dept = this.findDepth(balancedColumnTree);
 
         // at the end, this will be the top of the tree item.
         let nextChild: OriginalColumnGroupChild = column;
@@ -96,7 +95,7 @@ export class ColumnFactory {
         return nextChild;
     }
 
-    private findDept(balancedColumnTree: OriginalColumnGroupChild[]): number {
+    private findDepth(balancedColumnTree: OriginalColumnGroupChild[]): number {
         let dept = 0;
         let pointer = balancedColumnTree;
         while (pointer && pointer[0] && pointer[0] instanceof OriginalColumnGroup) {
@@ -113,7 +112,8 @@ export class ColumnFactory {
 
         // go through each child, for groups, recurse a level deeper,
         // for columns we need to pad
-        unbalancedTree.forEach((child: OriginalColumnGroupChild) => {
+        for (let i = 0; i < unbalancedTree.length; i++) {
+            const child = unbalancedTree[i];
             if (child instanceof OriginalColumnGroup) {
                 const originalGroup = child;
                 const newChildren = this.balanceColumnTree(originalGroup.getChildren(),
@@ -121,18 +121,42 @@ export class ColumnFactory {
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             } else {
-                let newChild = child;
-                for (let i = columnDept - 1; i >= currentDept; i--) {
+                let firstPaddedGroup: OriginalColumnGroup | undefined;
+                let currentPaddedGroup: OriginalColumnGroup | undefined;
+
+                for (let j = columnDept - 1; j >= currentDept; j--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
+
                     const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     this.context.wireBean(paddedGroup);
-                    paddedGroup.setChildren([newChild]);
-                    newChild = paddedGroup;
+
+                    if (currentPaddedGroup) {
+                        currentPaddedGroup.setChildren([paddedGroup]);
+                    }
+
+                    currentPaddedGroup = paddedGroup;
+
+                    if (!firstPaddedGroup) {
+                        firstPaddedGroup = currentPaddedGroup;
+                    }
                 }
-                result.push(newChild);
+
+                if (firstPaddedGroup) {
+                    result.push(firstPaddedGroup);
+                    const hasGroups = unbalancedTree.some(child => child instanceof OriginalColumnGroup);
+                    if (hasGroups) {
+                        currentPaddedGroup.setChildren([child]);
+                        continue;
+                    } else {
+                        currentPaddedGroup.setChildren(unbalancedTree);
+                        break;
+                    }
+                }
+
+                result.push(child);
             }
-        });
+        }
 
         return result;
     }

@@ -55,9 +55,9 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         // return true if at least one child is visible
         if (this.children) {
             return this.children.some(child => child.isVisible());
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public isPadding(): boolean {
@@ -175,6 +175,19 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
             };
             this.localEventService.dispatchEvent(event);
         }
+    }
+
+    public findChildren(): OriginalColumnGroupChild[] {
+        let children = this.children;
+        const firstChild = children[0] as any;
+
+        if (firstChild && (!firstChild.isPadding || !firstChild.isPadding())) { return children; }
+
+        while (children.length === 1 && children[0] instanceof OriginalColumnGroup) {
+            children = (children[0] as OriginalColumnGroup).children;
+        }
+
+        return children;
     }
 
     private onColumnVisibilityChanged(): void {

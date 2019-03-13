@@ -60,6 +60,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             if (_.isStopPropagationForAgGrid(event)) {
                 return;
             }
+
             const newExpandedValue = !this.params.columnGroup.isExpanded();
             this.columnController.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
