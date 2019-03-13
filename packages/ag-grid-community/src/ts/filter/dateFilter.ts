@@ -167,10 +167,10 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             _.setVisible(panel, visible);
         }
 
-        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true'
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eDateFromPanel : this.eDateFromConditionPanel;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType);
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }

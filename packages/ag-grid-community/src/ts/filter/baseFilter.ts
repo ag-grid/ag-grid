@@ -22,6 +22,7 @@ export interface CombinedFilter <T> {
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     loadingOoo:'Loading...',
+    empty: 'Choose One',
     equals:'Equals',
     notEqual:'Not equal',
     lessThan:'Less than',
@@ -52,6 +53,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
  * get/setModel context wiring....
  */
 export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Component implements IFilterComp {
+    public static EMPTY = 'empty';
     public static EQUALS = 'equals';
     public static NOT_EQUAL = 'notEqual';
     public static LESS_THAN = 'lessThan';
@@ -486,11 +488,18 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
         // only fire 'onFilterChanged' event if filter is active, as in it contains a filter value, or if the previously
         // selected filter didn't require a value, i.e. if custom filter has 'hideFilterInputField = true'
         if (this.isFilterActive() || prevSelectedFilterHadNoInput) {
+
+            // reset when switching back to the empty filter to remove conditional filter
+            if (this.selectedFilter === BaseFilter.EMPTY) {
+                this.resetState();
+            }
+
             this.onFilterChanged();
         }
     }
 
     public isFilterActive(): boolean {
+
         // the main selected filter is always active when there is no input field
         if (this.doesFilterHaveHiddenInput(this.selectedFilter)) {
             return true;
@@ -556,6 +565,11 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         return (filterValue: T, gridValue: T): number => {
             if (gridValue == null) {
                 const nullValue = this.translateNull (type);
+
+                if (this.selectedFilter === BaseFilter.EMPTY) {
+                    return 0;
+                }
+
                 if (this.selectedFilter === BaseFilter.EQUALS) {
                     return nullValue ? 0 : 1;
                 }
@@ -627,6 +641,10 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
 
         const comparator: Comparator<T> = this.nullComparator (filter as string);
         const compareResult = comparator(filterValue, cellValue);
+
+        if (filter === BaseFilter.EMPTY) {
+            return false;
+        }
 
         if (filter === BaseFilter.EQUALS) {
             return compareResult === 0;

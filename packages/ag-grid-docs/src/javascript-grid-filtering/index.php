@@ -427,6 +427,7 @@ export interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
+    hideFilterInput?: boolean;
 }
 </snippet>
 
@@ -439,6 +440,10 @@ export interface IFilterOptionDef {
 <p>
     The custom filter logic is implemented through the <code>test</code> function, which receives the <code>filterValue</code>
     typed by the user along with the <code>cellValue</code> from the grid, and returns <code>true</code> or <code>false</code>.
+</p>
+
+<p>
+    It is also possible to hide the filter input field by enabling the optional property <code>hideFilterInput</code>.
 </p>
 
 <p>
@@ -477,8 +482,9 @@ export interface IFilterOptionDef {
     The following example demonstrates several custom filter options:
 </p>
 <ul class="content">
-    <li>The 'Age' column contains two custom filter options <code>lessThanWithNulls</code> and
-        <code>greaterThanWithNulls</code> which also return nulls.</li>
+    <li>The 'Age' column contains two custom filter options <code>evenNumbers</code>, <code>oddNumbers</code> and
+        <code>blanks</code>. It also has uses the build in 'empty' filter along with <code>suppressAndOrCondition=true</code>.
+    </li>
     <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
         is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
     <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>

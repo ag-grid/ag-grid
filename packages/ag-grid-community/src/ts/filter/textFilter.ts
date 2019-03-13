@@ -132,10 +132,10 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             this.addFilterChangedListener(FilterConditionType.CONDITION);
         }
 
-        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true'
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType);
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }

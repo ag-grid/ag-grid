@@ -45,8 +45,8 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN, BaseFilter.LESS_THAN_OR_EQUAL,
-            BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
+        return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN,
+            BaseFilter.LESS_THAN_OR_EQUAL, BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
     }
 
     public bodyTemplate(type:FilterConditionType): string {
@@ -217,10 +217,10 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
             _.setVisible(panel, visible);
         }
 
-        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true'
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterTextConditionField;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType);
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }
