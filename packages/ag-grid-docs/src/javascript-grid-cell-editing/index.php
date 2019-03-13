@@ -307,24 +307,18 @@ cellDefs.forEach( function(cellDef) {
 
     <h2>Many Editors One Column</h2>
 
-    <p>It is also possible to use different editors for different rows in the same column.
+    <p>
+        It is also possible to use different editors for different rows in the same column.
         Typically an application might check the rows contents and choose and editor accordingly.
         To configure this set <code>colDef.cellEditorSelector</code>
         to a function that returns the name of the component to be used as an editor
-        and optionally the custom params to be passed into it<p>
+        and optionally the custom params to be passed into it
+    <p>
 
-    <p>The parameters that these functions will receive are:<p>
-    <snippet>
-interface DynamicComponentParams {
-    data: any,
-    node: RowNode,
-    colDef: ColDef,
-    column: Column,
-    rowIndex: number,
-    api: GridApi,
-    columnApi: ColumnApi
-}
-    </snippet>
+    <p>
+        The params that are passed to this function is the same as the params passed to
+        <a href="../javascript-grid-cell-editor/">cell editors.</a>.
+    </p>
 
     <p>The following example illustrates how to use different editors and parameters in the same column. Note that:</p>
 

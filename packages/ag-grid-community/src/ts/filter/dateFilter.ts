@@ -4,7 +4,7 @@ import { IDateComp, IDateParams } from "../rendering/dateComponent";
 import { QuerySelector } from "../widgets/componentAnnotations";
 import { BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter } from "./baseFilter";
 import { Autowired } from "../context/context";
-import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { _ } from "../utils";
 
 export interface IDateFilterParams extends IComparableFilterParams {
@@ -29,8 +29,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateToConditionComponent: IDateComp;
     private dateFromConditionComponent: IDateComp;
 
-    @Autowired('userComponentFactoryHelper')
-    private userComponentFactoryHelper: UserComponentFactoryHelper;
+    @Autowired('userComponentFactory')
+    private userComponentFactory: UserComponentFactory;
 
     @QuerySelector('#filterDateFromPanel')
     private eDateFromPanel: HTMLElement;
@@ -95,7 +95,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             filterParams: this.filterParams
         };
 
-        this.userComponentFactoryHelper.newDateComponent(dateComponentParams).then (dateToComponent => {
+        this.userComponentFactory.newDateComponent(dateComponentParams).then (dateToComponent => {
             if (type === FilterConditionType.MAIN) {
                 this.dateToComponent = dateToComponent;
             } else {
@@ -116,7 +116,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
                 }
             }
         });
-        this.userComponentFactoryHelper.newDateComponent(dateComponentParams).then(dateComponent => {
+        this.userComponentFactory.newDateComponent(dateComponentParams).then(dateComponent => {
             if (type === FilterConditionType.MAIN) {
                 this.dateFromComponent = dateComponent;
             } else {

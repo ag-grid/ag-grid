@@ -5,7 +5,7 @@ import { SerializedNumberFilter } from "./numberFilter";
 import { IComponent } from "../interfaces/iComponent";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { IDateComp, IDateParams } from "../rendering/dateComponent";
-import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { Component } from "../widgets/component";
 import { Constants } from "../constants";
 import { Column } from "../entities/column";
@@ -155,8 +155,9 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
 }
 
 export class DateFloatingFilterComp extends Component implements IFloatingFilter <SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>> {
-    @Autowired('userComponentFactoryHelper')
-    private userComponentFactoryHelper: UserComponentFactoryHelper;
+
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+
     private dateComponentPromise: Promise<IDateComp>;
 
     onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
@@ -172,7 +173,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
             onDateChanged: toDebounce,
             filterParams: params.column.getColDef().filterParams
         };
-        this.dateComponentPromise = this.userComponentFactoryHelper.newDateComponent(dateComponentParams);
+        this.dateComponentPromise = this.userComponentFactory.newDateComponent(dateComponentParams);
 
         const body = _.loadTemplate('<div></div>');
         this.dateComponentPromise.then(dateComponent => {

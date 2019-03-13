@@ -10,7 +10,7 @@ import {
     ISetFilterParams,
     PostConstruct,
     Promise,
-    UserComponentFactoryHelper,
+    UserComponentFactory,
     ValueFormatterService
 } from "ag-grid-community";
 
@@ -23,7 +23,7 @@ export class SetFilterListItem extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private static TEMPLATE =
         `<label class="ag-set-filter-item">
@@ -47,12 +47,12 @@ export class SetFilterListItem extends Component {
         this.column = column;
     }
 
-    public useCellRenderer(
+    private useCellRenderer(
         target: ColDef,
         eTarget: HTMLElement,
         params: any
     ): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactoryHelper.newCellRenderer((target.filterParams as ISetFilterParams), params);
+        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer((target.filterParams as ISetFilterParams), params);
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
         } else {
@@ -112,9 +112,13 @@ export class SetFilterListItem extends Component {
         const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
 
         const colDef = this.column.getColDef();
-        const valueObj = {value: this.value, valueFormatted: valueFormatted};
+        const params = {
+            value: this.value,
+            valueFormatted: valueFormatted,
+            api: this.gridOptionsWrapper.getApi()
+        };
 
-        const componentPromise: Promise<ICellRendererComp> = this.useCellRenderer(colDef, valueElement, valueObj);
+        const componentPromise: Promise<ICellRendererComp> = this.useCellRenderer(colDef, valueElement, params);
 
         if (!componentPromise) { return; }
 

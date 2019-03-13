@@ -813,7 +813,14 @@ export class CellComp extends Component {
 
         // this can return null in the event that the user has switched from a renderer component to nothing, for example
         // when using a cellRendererSelect to return a component or null depending on row data etc
-        const componentPromise = this.beans.userComponentFactory.createUserComponent(this.getComponentHolder(), params, this.cellRendererType, undefined, false);
+
+        let componentPromise: Promise<ICellRendererComp>;
+        if (this.cellRendererType===CellComp.CELL_RENDERER_TYPE_NORMAL) {
+            componentPromise = this.beans.userComponentFactory.newCellRenderer(this.getComponentHolder(), params);
+        } else {
+            componentPromise = this.beans.userComponentFactory.newPinnedRowCellRenderer(this.getComponentHolder(), params);
+        }
+
         if (componentPromise) {
             componentPromise.then(callback);
             return true;
@@ -1066,15 +1073,11 @@ export class CellComp extends Component {
         }
     }
 
-
     private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp> {
 
-        const cellEditorPromise: Promise<ICellEditorComp> = this.beans.userComponentFactory.createUserComponent (
-            this.column.getColDef(),
-            params,
-            'cellEditor',
-            'agCellEditor'
-        );
+        const cellEditorPromise: Promise<ICellEditorComp> = this.beans.userComponentFactory.newCellEditor(
+            this.column.getColDef(), params);
+
         return cellEditorPromise.map(cellEditor => {
 
             const isPopup = cellEditor.isPopup && cellEditor.isPopup();

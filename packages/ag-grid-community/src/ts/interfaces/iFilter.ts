@@ -3,6 +3,7 @@ import { ColDef } from "../entities/colDef";
 import { IRowModel } from "./iRowModel";
 import { RowNode } from "../entities/rowNode";
 import { IComponent } from "./iComponent";
+import {GridApi} from "../gridApi";
 
 export interface IFilter {
     /** This is used to show the filter icon in the header. If true, the filter icon will be shown. */
@@ -71,6 +72,7 @@ export interface IFilterParams {
     clearButton?: boolean;
     applyButton?: boolean;
     newRowsAction?: string;
+    api: GridApi,
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;

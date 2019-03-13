@@ -4,6 +4,9 @@ import {Axis} from "../../axis";
 
 export class CategoryAxis extends Axis<string> {
     constructor() {
-        super(new BandScale<string>());
+        const scale = new BandScale<string>();
+        scale.paddingInner = 0.1;
+        scale.paddingOuter = 0.3;
+        super(scale);
     }
 }

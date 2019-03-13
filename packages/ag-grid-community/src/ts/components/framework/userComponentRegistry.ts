@@ -11,7 +11,6 @@ import {
     SetFloatingFilterComp,
     TextFloatingFilterComp
 } from "../../filter/floatingFilter";
-import { ComponentType } from "./userComponentFactory";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
@@ -38,7 +37,7 @@ export enum RegisteredComponentSource {
  */
 export interface RegisteredComponent<A extends IComponent<any> & B, B> {
     component: RegisteredComponentInput<A, B>;
-    type: ComponentType;
+    componentFromFramework: boolean;
     source: RegisteredComponentSource;
 }
 
@@ -185,7 +184,7 @@ export class UserComponentRegistry {
         }
     }
 
-    public registerDefaultComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>, overridable: boolean = true) {
+    public registerDefaultComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>) {
         const name: string = this.translateIfDeprecated(rawName);
         if (this.agGridDefaults[name]) {
             console.error(`Trying to overwrite a default component. You should call registerComponent`);
@@ -227,14 +226,14 @@ export class UserComponentRegistry {
         const name: string = this.translateIfDeprecated(rawName);
         if (this.frameworkComponents[name]) {
             return {
-                type: ComponentType.FRAMEWORK,
+                componentFromFramework: true,
                 component: this.frameworkComponents[name] as { new(): B },
                 source: RegisteredComponentSource.REGISTERED
             };
         }
         if (this.jsComponents[name]) {
             return {
-                type: ComponentType.PLAIN_JAVASCRIPT,
+                componentFromFramework: false,
                 component: this.jsComponents[name] as { new(): A },
                 source: RegisteredComponentSource.REGISTERED
             };
@@ -242,7 +241,7 @@ export class UserComponentRegistry {
         if (this.agGridDefaults[name]) {
             return this.agGridDefaults[name] ?
                 {
-                    type: ComponentType.PLAIN_JAVASCRIPT,
+                    componentFromFramework: false,
                     component: this.agGridDefaults[name] as { new(): A },
                     source: RegisteredComponentSource.DEFAULT
                 } :

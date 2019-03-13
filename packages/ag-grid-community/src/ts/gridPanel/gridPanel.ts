@@ -27,7 +27,6 @@ import { NavigationService } from "./navigationService";
 import { CellComp } from "../rendering/cellComp";
 import { ValueService } from "../valueService/valueService";
 import { LongTapEvent, TouchListener } from "../widgets/touchListener";
-import { UserComponentFactoryHelper } from "../components/framework/userComponentFactoryHelper";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { RowDragFeature } from "./rowDragFeature";
 import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
@@ -124,7 +123,6 @@ export class GridPanel extends Component {
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('userComponentFactoryHelper') private userComponentFactoryHelper: UserComponentFactoryHelper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
     @Autowired('enterprise') private enterprise: boolean;
