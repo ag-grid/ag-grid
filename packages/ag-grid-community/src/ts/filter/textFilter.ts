@@ -46,12 +46,12 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     private formatter: TextFormatter;
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
-    }
+    };
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    }
+    };
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -73,7 +73,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             console.warn('invalid filter type ' + filter);
             return false;
         }
-    }
+    };
 
     public getDefaultType(): string {
         return BaseFilter.CONTAINS;
@@ -126,8 +126,17 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public refreshFilterBodyUi(type:FilterConditionType) {
+        const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+
         if (this.eFilterConditionTextField) {
             this.addFilterChangedListener(FilterConditionType.CONDITION);
+        }
+
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true'
+        const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
+        if (filterInput) {
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType);
+            _.setVisible(filterInput, showFilterInput);
         }
     }
 
@@ -143,22 +152,26 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         const filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
         const filter:string = type == FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
 
+        const customFilterOption = this.customFilterOptions[filter];
+        if (customFilterOption) {
+            // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
+            if (filterText != null || customFilterOption.hideFilterInput) {
+                const cellValue = this.filterParams.valueGetter(params.node);
+                const formattedCellValue: string = this.formatter(cellValue);
+                return customFilterOption.test(filterText, formattedCellValue);
+            }
+        }
+
         if (!filterText) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         } else {
-            return this.checkIndividualFilter (params, filter, filterText);
+            return this.checkIndividualFilter(params, filter, filterText);
         }
     }
 
     private checkIndividualFilter(params: IDoesFilterPassParams, filterType:string, filterText: string) {
         const cellValue = this.filterParams.valueGetter(params.node);
         const filterTextFormatted = this.formatter(filterText);
-
-        const customFilterOption = this.customFilterOptions[filterType];
-        if (customFilterOption) {
-            const valueFormatted: string = this.formatter(cellValue);
-            return customFilterOption.test(filterTextFormatted, valueFormatted);
-        }
 
         if (cellValue == null || cellValue === undefined) {
             return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;

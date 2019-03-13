@@ -152,19 +152,27 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     public refreshFilterBodyUi(type:FilterConditionType): void {
         let panel: HTMLElement;
-        let filterTypeValue: string;
+        let filterType: string;
         if (type === FilterConditionType.MAIN) {
             panel = this.eDateToPanel;
-            filterTypeValue = this.selectedFilter;
+            filterType = this.selectedFilter;
         } else {
             panel = this.eDateToConditionPanel;
-            filterTypeValue = this.selectedFilterCondition;
+            filterType = this.selectedFilterCondition;
         }
 
-        if (!panel) { return; }
+        // show / hide in-range filter
+        if (panel) {
+            const visible = filterType === BaseFilter.IN_RANGE;
+            _.setVisible(panel, visible);
+        }
 
-        const visible = filterTypeValue === BaseFilter.IN_RANGE;
-        _.setVisible(panel, visible);
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true'
+        const filterInput = type === FilterConditionType.MAIN ? this.eDateFromPanel : this.eDateFromConditionPanel;
+        if (filterInput) {
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType);
+            _.setVisible(filterInput, showFilterInput);
+        }
     }
 
     public comparator(): Comparator<Date> {
