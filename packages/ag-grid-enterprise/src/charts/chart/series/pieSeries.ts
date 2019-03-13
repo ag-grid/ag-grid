@@ -9,7 +9,7 @@ import {DropShadow} from "../../scene/dropShadow";
 import scaleLinear, {LinearScale} from "../../scale/linearScale";
 import {normalizeAngle180, toRadians} from "../../util/angle";
 
-type PieSectorData = {
+type SectorDatum = {
     index: number,
     radius: number,
     startAngle: number,
@@ -151,12 +151,12 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     private radiusScale: LinearScale<number> = scaleLinear();
 
-    private groupSelection: Selection<Group, Group, PieSectorData, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, SectorDatum, any> = Selection.select(this.group).selectAll<Group>();
 
     /**
      * The processed data that gets visualized.
      */
-    private sectorsData: PieSectorData[] = [];
+    private sectorsData: SectorDatum[] = [];
 
     private _data: any[] = [];
     set data(data: any[]) {
