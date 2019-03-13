@@ -251,6 +251,12 @@ Examples of state include column visibility, width, row groups and values.
     keeping it's internal state such as width, position, sort and filter.
 </p>
 
+<note>
+    If you are updating the columns (not replacing the entire set) then you must either
+    provide column ID's or reuse the column definition object instances. Otherwise the grid will
+    not know that the columns are in fact the same columns.
+</note>
+
 <p>
     The example below demonstrates changing columns. Select the checkboxes for
     the columns to display and hit Apply. Note the following:
