@@ -142,15 +142,15 @@ export class HeaderGroupWrapperComp extends Component {
 
         if (!displayName) {
             let columnGroup = this.columnGroup;
+            const leafCols = columnGroup.getLeafColumns();
 
-            while (columnGroup.getParent()) {
+            while (columnGroup.getParent() && columnGroup.getParent().getLeafColumns().length === leafCols.length) {
                 columnGroup = columnGroup.getParent();
             }
 
             displayName = columnGroup.getColGroupDef().headerName;
 
             if (!displayName) {
-                const leafCols = this.columnGroup.getLeafColumns();
                 displayName = leafCols ? leafCols[0].getColDef().headerName : '';
             }
         }
