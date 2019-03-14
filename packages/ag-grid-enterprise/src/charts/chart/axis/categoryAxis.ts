@@ -1,4 +1,3 @@
-import {ChartAxis} from "./chartAxis";
 import {BandScale} from "../../scale/bandScale";
 import {Axis} from "../../axis";
 
