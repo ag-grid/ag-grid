@@ -1,6 +1,6 @@
-import { Column } from "../entities/column";
-import { CellChangedEvent, RowNode } from "../entities/rowNode";
-import { Constants } from "../constants";
+import {Column} from "../entities/column";
+import {CellChangedEvent, RowNode} from "../entities/rowNode";
+import {Constants} from "../constants";
 import {
     CellClickedEvent,
     CellContextMenuEvent,
@@ -8,23 +8,21 @@ import {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEvent,
-    CellKeyDownEvent,
-    CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     Events,
     FlashCellsEvent
 } from "../events";
-import { GridCell, GridCellDef } from "../entities/gridCell";
-import { Component } from "../widgets/component";
-import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
-import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
-import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
-import { ColDef, NewValueParams, SuppressKeyboardEventParams } from "../entities/colDef";
-import { Beans } from "./beans";
-import { RowComp } from "./rowComp";
-import { RowDragComp } from "./rowDragComp";
+import {GridCell, GridCellDef} from "../entities/gridCell";
+import {Component} from "../widgets/component";
+import {ICellEditorComp, ICellEditorParams} from "../interfaces/iCellEditor";
+import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
+import {ColDef, NewValueParams} from "../entities/colDef";
+import {Beans} from "./beans";
+import {RowComp} from "./rowComp";
+import {RowDragComp} from "./rowDragComp";
 import {_, Promise} from "../utils";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 
@@ -420,10 +418,14 @@ export class CellComp extends Component {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean }) {
 
-        if (this.editingCell) { return; }
+        if (this.editingCell) {
+            return;
+        }
 
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell) { return; }
+        if (this.suppressRefreshCell) {
+            return;
+        }
 
         const colDef = this.getComponentHolder();
         const newData = params && params.newData;
@@ -511,7 +513,7 @@ export class CellComp extends Component {
         // populate
         this.putDataIntoCellAfterRefresh();
 
-        this.angular1Compile();
+        this.updateAngular1ScopeAndCompile();
     }
 
     private updateAngular1ScopeAndCompile() {
@@ -525,10 +527,15 @@ export class CellComp extends Component {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             const eGui = this.getGui();
-            const compiledElement = this.beans.$compile(eGui)(this.scope);
-            this.addDestroyFunc(() => {
-                compiledElement.remove();
-            });
+
+            // only compile the node if it hasn't already been done
+            // this prevents "orphaned" node leaks
+            if (!eGui.classList.contains('ng-scope') || eGui.childElementCount === 0) {
+                const compiledElement = this.beans.$compile(eGui)(this.scope);
+                this.addDestroyFunc(() => {
+                    compiledElement.remove();
+                });
+            }
         }
     }
 
@@ -795,7 +802,7 @@ export class CellComp extends Component {
         const pinnedRowCellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params);
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
-            this.cellRendererType =  CellComp.CELL_RENDERER_TYPE_PINNED;
+            this.cellRendererType = CellComp.CELL_RENDERER_TYPE_PINNED;
             this.usingCellRenderer = true;
         } else if (cellRenderer) {
             this.cellRendererType = CellComp.CELL_RENDERER_TYPE_NORMAL;
@@ -815,7 +822,7 @@ export class CellComp extends Component {
         // when using a cellRendererSelect to return a component or null depending on row data etc
 
         let componentPromise: Promise<ICellRendererComp>;
-        if (this.cellRendererType===CellComp.CELL_RENDERER_TYPE_NORMAL) {
+        if (this.cellRendererType === CellComp.CELL_RENDERER_TYPE_NORMAL) {
             componentPromise = this.beans.userComponentFactory.newCellRenderer(this.getComponentHolder(), params);
         } else {
             componentPromise = this.beans.userComponentFactory.newPinnedRowCellRenderer(this.getComponentHolder(), params);
@@ -912,9 +919,6 @@ export class CellComp extends Component {
 
     private getValueAndFormat(): void {
         this.value = this.getValue();
-        if (this.scope) {
-            this.scope.data.value = this.value;
-        }
         this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
     }
 
@@ -1082,7 +1086,9 @@ export class CellComp extends Component {
 
             const isPopup = cellEditor.isPopup && cellEditor.isPopup();
 
-            if (!isPopup) { return cellEditor; }
+            if (!isPopup) {
+                return cellEditor;
+            }
 
             if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
@@ -1464,7 +1470,9 @@ export class CellComp extends Component {
         // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
         // we do range selection, however if user is clicking checking, they are probably only interested
         // in row selection.
-        if (_.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-selection-checkbox', 3)) { return; }
+        if (_.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-selection-checkbox', 3)) {
+            return;
+        }
 
         if (_.isBrowserIE()) {
             const target = mouseEvent.target as HTMLElement;

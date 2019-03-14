@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="example">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+    <script src="../dist/ag-grid-community.js"></script>
+
+    <script>
+        agGrid.initialiseAgGridWithAngular1(angular);
+
+        var module = angular.module('example', ['agGrid']);
+
+        module.controller('exampleCtrl', function ($scope) {
+            var value = 1;
+            var clickValue = 1;
+
+            var rowData = [{id: '1', value, clickValue}];
+
+            var columnDefs = [
+                {
+                    headerName: "Template Value",
+                    field: "value",
+                    template: "{{data.value}}"
+                },
+                {
+                    headerName: "Raw Value",
+                    field: "value"
+                },
+                {
+                    headerName: 'Click',
+                    cellRenderer: function () {
+                        return '<button id="angularClick" ng-click="rowClick(data)">Click Me {{ data.clickValue }}</button>';
+                    },
+                },
+            ];
+
+            $scope.rowClick = function () {
+                console.log("rowClick");
+                clickValue *= 2;
+                let newData = [{id: '1', value, clickValue}];
+                $scope.gridOptions.api.setRowData(newData);
+            };
+
+            $scope.gridOptions = {
+                angularCompileRows: true,
+                columnDefs,
+                deltaRowDataMode: true,
+                getRowNodeId: function (data) {
+                    return data.id;
+                },
+                rowData
+            };
+
+            $scope.doubleValues = function () {
+                console.log("doubleValues");
+                value *= 2;
+                let newData = [{id: '1', value, clickValue}];
+                $scope.gridOptions.api.setRowData(newData);
+            };
+        });
+    </script>
+</head>
+<body>
+
+<div>
+    <div ng-controller="exampleCtrl">
+        <div>
+            <div>
+                <button id="updateRowData" type="button" ng-click="doubleValues()">Double Values</button>
+            </div>
+        </div>
+
+        <div style="height: 500px;">
+            <div ag-grid="gridOptions" style="height: 100%;" class="ag-theme-balham"></div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

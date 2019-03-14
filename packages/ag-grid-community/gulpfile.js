@@ -52,6 +52,11 @@ gulp.task('cleanDist', cleanDist);
 gulp.task('cleanMain', cleanMain);
 
 gulp.task('tsc-watch', ['tsc-no-clean'], tscWatch);
+gulp.task('watch', ['webpack'], watch);
+
+function watch() {
+    gulp.watch('./src/ts/**/*', ['webpack']);
+}
 
 function scssWatch() {
     gulp.watch('./src/styles/!**/!*', ['scss-no-clean']);
