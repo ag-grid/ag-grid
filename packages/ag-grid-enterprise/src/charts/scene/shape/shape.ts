@@ -87,7 +87,7 @@ export abstract class Shape extends Node {
         return this._strokeStyle;
     }
 
-    private _lineWidth: number = Shape.defaultStyles.lineWidth;
+    protected _lineWidth: number = Shape.defaultStyles.lineWidth;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;

@@ -103,6 +103,25 @@ export class Rect extends Shape {
         return this._isCrisp;
     }
 
+    set lineWidth(value: number) {
+        if (this._lineWidth !== value) {
+            this._lineWidth = value;
+            // Normally, when the `lineWidth` changes, we only need to repaint the rect
+            // without updating the path. If the `isCrisp` is set to `true` however,
+            // we need to update the path to make sure the new stroke aligns to
+            // the pixel grid. This is the reason we override the `lineWidth` setter
+            // and getter here.
+            if (this.isCrisp) {
+                this.isDirtyPath = true;
+            } else {
+                this.isDirty = true;
+            }
+        }
+    }
+    get lineWidth(): number {
+        return this._lineWidth;
+    }
+
     updatePath() {
         if (!this.isDirtyPath)
             return;
