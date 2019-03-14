@@ -351,15 +351,13 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             let x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
-                if (isGrouped) {
-                    x += groupScale.convert(yFields[yFieldIndex]);
-                }
+                const barX = isGrouped ? x + groupScale.convert(yFields[yFieldIndex]) : x;
                 const y = yScale.convert(isGrouped ? curr : prev + curr);
                 const bottomY = yScale.convert(isGrouped ? 0 : prev);
                 const labelText = this.yFieldNames[yFieldIndex];
 
                 barData.push({
-                    x,
+                    x: barX,
                     y,
                     width: barWidth,
                     height: bottomY - y,
@@ -370,7 +368,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                         text: labelText,
                         font: labelFont,
                         fillStyle: labelColor,
-                        x: x + barWidth / 2,
+                        x: barX + barWidth / 2,
                         y: y + lineWidth / 2 + 20
                     } : undefined
                 });
