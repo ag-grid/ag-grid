@@ -493,6 +493,18 @@ var desktopDefaultCols = [
     // },
     //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
     {
+        headerName: 'Foo',
+        children: [{
+            headerName: 'Bar',
+            children: [{
+                headerName: 'Baz',
+                children: [{
+                    headerName: 'Boo'
+                }]
+            }]
+        }]
+    },
+    {
         // column group 'Participant
         headerName: 'Participant',
         // marryChildren: true,
