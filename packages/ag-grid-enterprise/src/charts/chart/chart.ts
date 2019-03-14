@@ -1,6 +1,5 @@
 import {Scene} from "../scene/scene";
 import {Group} from "../scene/group";
-import {ChartAxis} from "./axis/chartAxis";
 import {Series} from "./series/series";
 
 type Padding = {

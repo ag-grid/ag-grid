@@ -1,6 +1,11 @@
 import {Node} from "./node";
 import {Path2D} from "./path2D";
 
+/**
+ * Acts as `Group` node but with specified bounds that form a rectangle.
+ * Any parts of the child nodes outside that rectangle will not be visible.
+ * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
+ */
 export class ClipRect extends Node {
 
     protected path = new Path2D();
