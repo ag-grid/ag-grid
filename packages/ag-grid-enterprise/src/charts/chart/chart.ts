@@ -12,8 +12,8 @@ type Padding = {
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
 
-    constructor() {
-        this.scene.parent = document.body;
+    constructor(parent: HTMLElement = document.body) {
+        this.scene.parent = parent;
         this.scene.root = new Group();
     }
 

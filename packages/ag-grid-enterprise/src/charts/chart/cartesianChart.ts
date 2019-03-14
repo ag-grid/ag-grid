@@ -5,8 +5,8 @@ import {ClipRect} from "../scene/clipRect";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
-    constructor(xAxis: Axis<X>, yAxis: Axis<Y>) {
-        super();
+    constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent: HTMLElement = document.body) {
+        super(parent);
         if (this.scene.root) {
             this.scene.root.append(this.seriesRect);
         }
