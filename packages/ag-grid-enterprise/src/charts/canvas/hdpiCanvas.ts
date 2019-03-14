@@ -45,6 +45,48 @@ export class HdpiCanvas {
         Object.freeze(this);
     }
 
+    toImage(): HTMLImageElement {
+        const img = document.createElement('img');
+        img.src = this.canvas.toDataURL();
+        return img;
+    }
+
+    /**
+     * @param fileName The `.png` extension is going to be added automatically.
+     */
+    download(fileName: string) {
+        // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
+        // so we don't support saving to JPEG.
+        const type = 'image/png';
+        // The background of our canvas is transparent, so we create a temporary canvas
+        // with the white background and paint our canvas on top of it.
+        const canvas = document.createElement('canvas');
+        canvas.width = this.canvas.width;
+        canvas.height = this.canvas.height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(this.canvas, 0, 0);
+
+        const dataUrl = canvas.toDataURL(type);
+
+        if (navigator.msSaveOrOpenBlob) { // IE11
+            const binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
+            const array = [];
+            for (let i = 0, n = binary.length; i < n; i++) {
+                array.push(binary.charCodeAt(i));
+            }
+            const blob = new Blob([new Uint8Array(array)], {type});
+
+            navigator.msSaveOrOpenBlob(blob, fileName + '.png');
+        } else {
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = fileName + '.png';
+            a.click();
+        }
+    }
+
     // `NaN` is deliberate here, so that overrides are always applied
     // and the `resetTransform` inside the `resize` method works in IE11.
     _pixelRatio: number = NaN;

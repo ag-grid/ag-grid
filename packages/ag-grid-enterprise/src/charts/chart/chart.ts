@@ -10,7 +10,7 @@ type Padding = {
 };
 
 export abstract class Chart<D, X, Y> {
-    protected scene: Scene = new Scene();
+    readonly scene: Scene = new Scene();
 
     constructor() {
         this.scene.parent = document.body;

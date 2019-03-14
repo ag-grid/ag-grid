@@ -23,7 +23,7 @@ export class Scene {
     };
     readonly id: string = this.createId();
 
-    private readonly hdpiCanvas: HdpiCanvas;
+    readonly hdpiCanvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
 
     private setupListeners(canvas: HTMLCanvasElement) {
