@@ -1,6 +1,6 @@
 import {Shape} from "./shape";
 import {Path2D} from "../path2D";
-import {BBox, isPointInBBox} from "../bbox";
+import {isPointInBBox} from "../bbox";
 import {pixelSnap} from "../../canvas/canvas";
 
 export class Rect extends Shape {
@@ -87,6 +87,11 @@ export class Rect extends Shape {
         return this._radius;
     }
 
+    /**
+     * If `true`, the rect is aligned to the pixel grid for crisp looking lines.
+     * Animated rects may not look nice with this option enabled, for example
+     * when a rect is translated by a sub-pixel value on each frame.
+     */
     private _isCrisp: boolean = false;
     set isCrisp(value: boolean) {
         if (this._isCrisp !== value) {

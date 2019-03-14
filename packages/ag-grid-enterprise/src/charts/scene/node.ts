@@ -24,6 +24,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
         }
         return name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
+
+    /**
+     * Unique node ID in the form `ClassName-NaturalNumber`.
+     */
     readonly id: string = this.createId();
 
     /**

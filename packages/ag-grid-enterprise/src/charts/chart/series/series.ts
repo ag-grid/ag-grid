@@ -1,6 +1,5 @@
 import {Group} from "../../scene/group";
 import {Chart} from "../chart";
-import {ChartAxis, Direction} from "../axis/chartAxis";
 
 export abstract class Series<D, X, Y> {
 
