@@ -83,7 +83,10 @@ export class HdpiCanvas {
             const a = document.createElement('a');
             a.href = dataUrl;
             a.download = fileName + '.png';
+            a.style.display = 'none';
+            document.body.appendChild(a); // required for the `click` to work in Firefox
             a.click();
+            document.body.removeChild(a);
         }
     }
 
