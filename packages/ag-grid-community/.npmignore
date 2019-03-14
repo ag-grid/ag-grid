@@ -16,3 +16,5 @@ tsconfig-main.json
 tslint.json
 tslint-fix.json
 webpack.config.js
+
+e2e
