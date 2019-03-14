@@ -412,7 +412,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                     text.x = label.x;
                     text.y = label.y;
                     text.fillStyle = label.fillStyle;
-                    text.isVisible = true;
+                    text.isVisible = datum.height > text.getBBox().height + 40
                 } else {
                     text.isVisible = false;
                 }
