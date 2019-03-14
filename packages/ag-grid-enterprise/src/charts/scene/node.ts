@@ -8,15 +8,33 @@ import {BBox} from "./bbox";
  */
 export abstract class Node { // Don't confuse with `window.Node`.
 
+    private static fnNameRegex = /function (\w+)\(/;
+    // TODO: what does ag-Grid use for component identification?
     // Uniquely identify nodes (to check for duplicates, for example).
     private createId(): string {
         const constructor = this.constructor as any;
-        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        let name = constructor.name;
+        if (!name) { // IE11
+            const match = constructor.toString().match(Node.fnNameRegex);
+            if (match) {
+                constructor.name = name = match[1];
+            } else {
+                throw new Error(`Couldn't get the constructor's name: ${constructor}`);
+            }
+        }
+        return name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     readonly id: string = this.createId();
 
+    /**
+     * Some arbitrary data bound to the node.
+     */
     datum: any;
 
+    /**
+     * Some number to identify this node, typically within a `Group` node.
+     * Usually this will be some enum value used as a selector.
+     */
     tag: number = NaN;
 
     static isNode(node: any): node is Node {
