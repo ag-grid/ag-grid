@@ -9,7 +9,7 @@ let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((<GridWithNoComponentContainerSpecified/>));
+    component = mount((<GridWithStatefullComponent/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => done());
@@ -21,19 +21,33 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('reactNext with wrapping element set to div renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Blerp</div></div>`);
+it('stateful component renders as expected', () => {
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Age: 24</div></div>`);
+});
+
+it('stateful component returns a valid component instance', () => {
+    const instances = agGridReact.api.getCellRendererInstances({columns: ['age']});
+    expect(instances).toBeTruthy();
+    expect(instances.length).toEqual(1);
+
+    const frameworkInstance = instances[0].getFrameworkComponentInstance();
+    expect(frameworkInstance).toBeTruthy();
+    expect(frameworkInstance.getValue()).toEqual("Test Value");
 });
 
 class CellRenderer extends Component {
     render() {
         return(
-            <div>Blerp</div>
+            <div>Age: {this.props.value}</div>
         )
+    }
+
+    getValue() {
+        return 'Test Value';
     }
 }
 
-class GridWithNoComponentContainerSpecified extends Component {
+class GridWithStatefullComponent extends Component {
     constructor(props) {
         super(props);
 
@@ -59,7 +73,6 @@ class GridWithNoComponentContainerSpecified extends Component {
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     reactNext={true}
-                    componentWrappingElement="div"
                 />
             </div>
         );

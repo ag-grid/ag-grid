@@ -9,7 +9,7 @@ let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((<GridWithNoComponentContainerSpecified/>));
+    component = mount((<GridWithStatelessFunction/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => done());
@@ -21,26 +21,27 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('reactNext with wrapping element set to div renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Blerp</div></div>`);
+it('stateless function renders as expected', () => {
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Age: 24</div></div>`);
 });
 
-class CellRenderer extends Component {
-    render() {
-        return(
-            <div>Blerp</div>
-        )
-    }
-}
+it('stateless function has no component instance', () => {
+    const instances = agGridReact.api.getCellRendererInstances({columns: ['age']});
+    expect(instances).toBeTruthy();
+    expect(instances.length).toEqual(1);
 
-class GridWithNoComponentContainerSpecified extends Component {
+    const frameworkInstance = instances[0].getFrameworkComponentInstance();
+    expect(frameworkInstance).not.toBeTruthy()
+});
+
+class GridWithStatelessFunction extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             columnDefs: [{
                 field: "age",
-                cellRendererFramework: CellRenderer
+                cellRendererFramework: (props) => <div>Age: {props.value}</div>,
             }],
             rowData: [{age: 24}]
         };
@@ -59,7 +60,6 @@ class GridWithNoComponentContainerSpecified extends Component {
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     reactNext={true}
-                    componentWrappingElement="div"
                 />
             </div>
         );

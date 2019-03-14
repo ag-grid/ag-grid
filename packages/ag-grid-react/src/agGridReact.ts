@@ -96,7 +96,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
-        if (reactComponent.getFrameworkComponentInstance()) {
+        if (reactComponent.getFrameworkComponentInstance() || reactComponent.isStatelesComponent()) {
             resolve(null);
         } else {
             if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
