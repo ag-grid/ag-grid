@@ -15,7 +15,13 @@ type BarDatum = {
     fillStyle: string,
     strokeStyle: string,
     lineWidth: number,
-    label: string
+    label?: {
+        text: string,
+        font: string,
+        fillStyle: string,
+        x: number,
+        y: number
+    }
 };
 
 enum BarSeriesNodeTag {
@@ -24,14 +30,14 @@ enum BarSeriesNodeTag {
 }
 
 export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries<D, X, Y> {
-    set chart(chart: CartesianChart<D, X, Y> | null) {
+    set chart(chart: CartesianChart<D, string, number> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.update();
         }
     }
-    get chart(): CartesianChart<D, X, Y> | null {
-        return this._chart as CartesianChart<D, X, Y>;
+    get chart(): CartesianChart<D, string, number> | null {
+        return this._chart as CartesianChart<D, string, number>;
     }
 
     private _data: any[] = [];
@@ -162,8 +168,30 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._shadow;
     }
 
-    private domainX: X[] = [];
-    private domainY: Y[] = [];
+    private _labelFont: string = '14px Verdana';
+    set labelFont(value: string) {
+        if (this._labelFont !== value) {
+            this._labelFont = value;
+            this.update();
+        }
+    }
+    get labelFont(): string {
+        return this._labelFont;
+    }
+
+    private _labelColor: string = 'black';
+    set labelColor(value: string) {
+        if (this._labelColor !== value) {
+            this._labelColor = value;
+            this.update();
+        }
+    }
+    get labelColor(): string {
+        return this._labelColor;
+    }
+
+    private domainX: string[] = [];
+    private domainY: number[] = [];
     private yData: number[][] = [];
 
     /**
@@ -196,13 +224,13 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         //   yField3: 20
         // }]
         //
-        const xData: X[] = this.domainX = data.map(datum => {
+        const xData: string[] = this.domainX = data.map(datum => {
             const value = datum[xField];
             if (typeof value !== 'string') {
                 throw new Error(`The ${xField} value is not a string. `
                     + `This error might be solved by using the 'setDataAndFields' method.`);
             }
-            return value as unknown as X;
+            return value;
         });
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
@@ -259,7 +287,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         }
 
         this.domainX = xData;
-        this.domainY = [yMin, yMax] as unknown as Y[];
+        this.domainY = [yMin, yMax];
 
         const chart = this.chart;
         if (chart) {
@@ -269,11 +297,11 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return true;
     }
 
-    getDomainX(): X[] {
+    getDomainX(): string[] {
         return this.domainX;
     }
 
-    getDomainY(): Y[] {
+    getDomainY(): number[] {
         return this.domainY;
     }
 
@@ -309,6 +337,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const isGrouped = this.isGrouped;
         const strokeStyle = this.strokeStyle;
         const lineWidth = this.lineWidth;
+        const labelFont = this.labelFont;
+        const labelColor = this.labelColor;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = isGrouped ? groupScale.bandwidth! : xScale.bandwidth!;
@@ -318,21 +348,31 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         for (let i = 0; i < n; i++) {
             const category = this.domainX[i];
             const values = this.yData[i];
-            const x = xScale.convert(category);
+            let x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
-                const y0 = yScale.convert((isGrouped ? 0 : prev) as unknown as Y);
-                const y1 = yScale.convert((isGrouped ? curr : prev + curr) as unknown as Y);
-                const color = colors[yFieldIndex % colors.length];
+                if (isGrouped) {
+                    x += groupScale.convert(yFields[yFieldIndex]);
+                }
+                const y = yScale.convert(isGrouped ? curr : prev + curr);
+                const bottomY = yScale.convert(isGrouped ? 0 : prev);
+                const labelText = this.yFieldNames[yFieldIndex];
+
                 barData.push({
-                    x: x + (isGrouped ? groupScale.convert(yFields[yFieldIndex]) : 0),
-                    y: y1,
+                    x,
+                    y,
                     width: barWidth,
-                    height: y0 - y1,
-                    fillStyle: color,
+                    height: bottomY - y,
+                    fillStyle: colors[yFieldIndex % colors.length],
                     strokeStyle,
                     lineWidth,
-                    label: this.yFieldNames[yFieldIndex]
+                    label: labelText ? {
+                        text: labelText,
+                        font: labelFont,
+                        fillStyle: labelColor,
+                        x: x + barWidth / 2,
+                        y: y + lineWidth / 2 + 20
+                    } : undefined
                 });
 
                 yFieldIndex++;
@@ -366,13 +406,14 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
 
         groupSelection.selectByTag<Text>(BarSeriesNodeTag.Label)
             .each((text, datum) => {
-                if (datum.label) {
-                    text.text = datum.label;
+                const label = datum.label;
+                if (label) {
+                    text.font = label.font;
+                    text.text = label.text;
                     text.textAlign = 'center';
-                    text.x = datum.x + datum.width / 2;
-                    text.y = datum.y + 20;
-                    text.fillStyle = 'black';
-                    text.font = '14px Verdana';
+                    text.x = label.x;
+                    text.y = label.y;
+                    text.fillStyle = label.fillStyle;
                     text.isVisible = true;
                 } else {
                     text.isVisible = false;
