@@ -10,7 +10,7 @@
     "build": "gulp release",
     "test": "npm run webdriver-start && npm run ci && npm run webdriver-kill",
     "e2e": "protractor protractor.conf.js",
-    "webdriver-start": "webdriver-manager start --standalone --detach",
+    "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
     "webdriver-stop": "webdriver-manager shutdown",
     "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')",
     "update-webdriver": "webdriver-manager update --gecko false",
