@@ -16,35 +16,35 @@ export class ClipRect extends Node {
             && point.y >= this.y && point.y <= this.y + this.height;
     }
 
-    private _isActive: boolean = true;
-    set isActive(value: boolean) {
-        if (this._isActive !== value) {
-            this._isActive = value;
-            this.isDirty = true;
+    private _active: boolean = true;
+    set active(value: boolean) {
+        if (this._active !== value) {
+            this._active = value;
+            this.dirty = true;
         }
     }
-    get isActive(): boolean {
-        return this._isActive;
+    get active(): boolean {
+        return this._active;
     }
 
-    private _isDirtyPath = true;
-    set isDirtyPath(value: boolean) {
-        if (this._isDirtyPath !== value) {
-            this._isDirtyPath = value;
+    private _dirtyPath = true;
+    set dirtyPath(value: boolean) {
+        if (this._dirtyPath !== value) {
+            this._dirtyPath = value;
             if (value) {
-                this.isDirty = true;
+                this.dirty = true;
             }
         }
     }
-    get isDirtyPath(): boolean {
-        return this._isDirtyPath;
+    get dirtyPath(): boolean {
+        return this._dirtyPath;
     }
 
     private _x: number = 0;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get x(): number {
@@ -55,7 +55,7 @@ export class ClipRect extends Node {
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get y(): number {
@@ -66,7 +66,7 @@ export class ClipRect extends Node {
     set width(value: number) {
         if (this._width !== value) {
             this._width = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get width(): number {
@@ -77,7 +77,7 @@ export class ClipRect extends Node {
     set height(value: number) {
         if (this._height !== value) {
             this._height = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get height(): number {
@@ -85,7 +85,7 @@ export class ClipRect extends Node {
     }
 
     updatePath() {
-        if (!this.isDirtyPath) {
+        if (!this.dirtyPath) {
             return;
         }
 
@@ -94,11 +94,11 @@ export class ClipRect extends Node {
         path.clear();
         path.rect(this.x, this.y, this.width, this.height);
 
-        this.isDirtyPath = false;
+        this.dirtyPath = false;
     }
 
     render(ctx: CanvasRenderingContext2D) {
-        if (this.isActive) {
+        if (this.active) {
             this.updatePath();
             this.scene!.appendPath(this.path);
             ctx.clip();
@@ -110,7 +110,7 @@ export class ClipRect extends Node {
         for (let i = 0; i < n; i++) {
             ctx.save();
             const child = children[i];
-            if (child.isVisible) {
+            if (child.visible) {
                 child.render(ctx);
             }
             ctx.restore();

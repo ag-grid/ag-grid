@@ -244,7 +244,7 @@ export class Chart extends Component {
 
         this.barSeries = new BarSeries<any>();
         this.chart.addSeries(this.barSeries);
-        this.barSeries.isGrouped = false;
+        this.barSeries.grouped = false;
     }
 
     public refresh(): void {

@@ -56,7 +56,7 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         this.seriesRect.append(series.group);
         this._series.push(series);
         series.chart = this;
-        this.isLayoutPending = true;
+        this.layoutPending = true;
     }
 
     performLayout(): void {
@@ -91,7 +91,7 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         xAxis.rotation = -90;
         xAxis.translationX = shrinkRect.x;
         xAxis.translationY = shrinkRect.y + shrinkRect.height + 1;
-        xAxis.isParallelLabels = true;
+        xAxis.parallelLabels = true;
 
         yAxis.scale.range = [shrinkRect.height, 0];
         yAxis.translationX = shrinkRect.x;

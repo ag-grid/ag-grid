@@ -19,15 +19,15 @@ export abstract class Series<D, X, Y> {
 
     readonly group: Group = new Group();
 
-    private _isVisible: boolean = true;
-    set isVisible(value: boolean) {
-        if (this._isVisible !== value) {
-            this._isVisible = value;
+    private _visible: boolean = true;
+    set visible(value: boolean) {
+        if (this._visible !== value) {
+            this._visible = value;
             this.update();
         }
     }
-    get isVisible(): boolean {
-        return this._isVisible;
+    get visible(): boolean {
+        return this._visible;
     }
 
     // private _xAxis: ChartAxis<X>;

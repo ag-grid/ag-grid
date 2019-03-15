@@ -27,7 +27,7 @@ export class Line extends Shape {
     set x1(value: number) {
         if (this._x1 !== value) {
             this._x1 = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get x1(): number {
@@ -51,7 +51,7 @@ export class Line extends Shape {
     set y1(value: number) {
         if (this._y1 !== value) {
             this._y1 = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get y1(): number {
@@ -62,7 +62,7 @@ export class Line extends Shape {
     set x2(value: number) {
         if (this._x2 !== value) {
             this._x2 = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get x2(): number {
@@ -73,7 +73,7 @@ export class Line extends Shape {
     set y2(value: number) {
         if (this._y2 !== value) {
             this._y2 = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get y2(): number {
@@ -86,7 +86,7 @@ export class Line extends Shape {
     set pixelSnapBias(value: PixelSnapBias) {
         if (this._pixelSnapBias !== value) {
             this._pixelSnapBias = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get pixelSnapBias(): PixelSnapBias {
@@ -102,7 +102,7 @@ export class Line extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -134,6 +134,6 @@ export class Line extends Shape {
             ctx.stroke();
         }
 
-        this.isDirty = false;
+        this.dirty = false;
     }
 }

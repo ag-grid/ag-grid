@@ -66,7 +66,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     /**
      * With a single value in the `yFields` array we get the regular bar series.
      * With multiple values, we get the stacked bar series.
-     * If the {@link isGrouped} set to `true`, we get the grouped bar series.
+     * If the {@link grouped} set to `true`, we get the grouped bar series.
      * @param values
      */
     set yFields(values: Extract<keyof D, string>[]) {
@@ -122,17 +122,17 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._yFieldNames;
     }
 
-    private _isGrouped: boolean = false;
-    set isGrouped(value: boolean) {
-        if (this._isGrouped !== value) {
-            this._isGrouped = value;
+    private _grouped: boolean = false;
+    set grouped(value: boolean) {
+        if (this._grouped !== value) {
+            this._grouped = value;
             if (this.processData()) {
                 this.update();
             }
         }
     }
-    get isGrouped(): boolean {
-        return this._isGrouped;
+    get grouped(): boolean {
+        return this._grouped;
     }
 
     private _strokeStyle: string = 'black';
@@ -267,7 +267,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
 
-        if (this.isGrouped) {
+        if (this.grouped) {
             // Find the tallest positive/negative bar in each group,
             // then find the tallest positive/negative bar overall.
             // The `yMin` should always be <= 0,
@@ -340,7 +340,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     update(): void {
         const chart = this.chart;
 
-        if (!chart || chart && chart.isLayoutPending || !(chart.xAxis && chart.yAxis)) {
+        if (!chart || chart && chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
             return;
         }
 
@@ -352,7 +352,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const groupScale = this.groupScale;
         const yFields = this.yFields;
         const colors = this.colors;
-        const isGrouped = this.isGrouped;
+        const grouped = this.grouped;
         const strokeStyle = this.strokeStyle;
         const lineWidth = this.lineWidth;
         const labelFont = this.labelFont;
@@ -360,7 +360,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const labelPadding = this.labelPadding;
 
         groupScale.range = [0, xScale.bandwidth!];
-        const barWidth = isGrouped ? groupScale.bandwidth! : xScale.bandwidth!;
+        const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
         const barData: BarDatum[] = [];
 
@@ -370,9 +370,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             let x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
-                const barX = isGrouped ? x + groupScale.convert(yFields[yFieldIndex]) : x;
-                const y = yScale.convert(isGrouped ? curr : prev + curr);
-                const bottomY = yScale.convert(isGrouped ? 0 : prev);
+                const barX = grouped ? x + groupScale.convert(yFields[yFieldIndex]) : x;
+                const y = yScale.convert(grouped ? curr : prev + curr);
+                const bottomY = yScale.convert(grouped ? 0 : prev);
                 const labelText = this.yFieldNames[yFieldIndex];
 
                 barData.push({
@@ -393,7 +393,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                 });
 
                 yFieldIndex++;
-                return isGrouped ? curr : curr + prev;
+                return grouped ? curr : curr + prev;
             }, 0);
         }
 
@@ -403,7 +403,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
-            rect.isCrisp = true;
+            rect.crisp = true;
         });
         enterGroups.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
@@ -435,10 +435,10 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                     text.y = label.y;
                     text.fillStyle = label.fillStyle;
                     const textBBox = text.getBBox();
-                    text.isVisible = datum.height > (textBBox.height + datum.lineWidth + labelPadding[0] * 2)
+                    text.visible = datum.height > (textBBox.height + datum.lineWidth + labelPadding[0] * 2)
                         && datum.width > (textBBox.width + datum.lineWidth + labelPadding[1] * 2);
                 } else {
-                    text.isVisible = false;
+                    text.visible = false;
                 }
             });
 

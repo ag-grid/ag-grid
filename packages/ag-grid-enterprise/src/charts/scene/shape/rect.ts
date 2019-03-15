@@ -19,24 +19,24 @@ export class Rect extends Shape {
 
     protected path = new Path2D();
 
-    private _isDirtyPath = true;
-    set isDirtyPath(value: boolean) {
-        if (this._isDirtyPath !== value) {
-            this._isDirtyPath = value;
+    private _dirtyPath = true;
+    set dirtyPath(value: boolean) {
+        if (this._dirtyPath !== value) {
+            this._dirtyPath = value;
             if (value) {
-                this.isDirty = true;
+                this.dirty = true;
             }
         }
     }
-    get isDirtyPath(): boolean {
-        return this._isDirtyPath;
+    get dirtyPath(): boolean {
+        return this._dirtyPath;
     }
 
     private _x: number = 0;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get x(): number {
@@ -47,7 +47,7 @@ export class Rect extends Shape {
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get y(): number {
@@ -58,7 +58,7 @@ export class Rect extends Shape {
     set width(value: number) {
         if (this._width !== value) {
             this._width = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get width(): number {
@@ -69,7 +69,7 @@ export class Rect extends Shape {
     set height(value: number) {
         if (this._height !== value) {
             this._height = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get height(): number {
@@ -80,7 +80,7 @@ export class Rect extends Shape {
     set radius(value: number) {
         if (this._radius !== value) {
             this._radius = value;
-            this.isDirtyPath = true;
+            this.dirtyPath = true;
         }
     }
     get radius(): number {
@@ -92,15 +92,15 @@ export class Rect extends Shape {
      * Animated rects may not look nice with this option enabled, for example
      * when a rect is translated by a sub-pixel value on each frame.
      */
-    private _isCrisp: boolean = false;
-    set isCrisp(value: boolean) {
-        if (this._isCrisp !== value) {
-            this._isCrisp = value;
-            this.isDirtyPath = true;
+    private _crisp: boolean = false;
+    set crisp(value: boolean) {
+        if (this._crisp !== value) {
+            this._crisp = value;
+            this.dirtyPath = true;
         }
     }
-    get isCrisp(): boolean {
-        return this._isCrisp;
+    get crisp(): boolean {
+        return this._crisp;
     }
 
     set lineWidth(value: number) {
@@ -111,10 +111,10 @@ export class Rect extends Shape {
             // we need to update the path to make sure the new stroke aligns to
             // the pixel grid. This is the reason we override the `lineWidth` setter
             // and getter here.
-            if (this.isCrisp) {
-                this.isDirtyPath = true;
+            if (this.crisp) {
+                this.dirtyPath = true;
             } else {
-                this.isDirty = true;
+                this.dirty = true;
             }
         }
     }
@@ -123,7 +123,7 @@ export class Rect extends Shape {
     }
 
     updatePath() {
-        if (!this.isDirtyPath)
+        if (!this.dirtyPath)
             return;
 
         const path = this.path;
@@ -132,7 +132,7 @@ export class Rect extends Shape {
         path.clear();
 
         if (!radius) {
-            if (this.isCrisp) {
+            if (this.crisp) {
                 path.rect(
                     Math.round(this.x) + pixelSnap(this.lineWidth),
                     Math.round(this.y) + pixelSnap(this.lineWidth),
@@ -148,7 +148,7 @@ export class Rect extends Shape {
             throw "TODO";
         }
 
-        this.isDirtyPath = false;
+        this.dirtyPath = false;
     }
 
     readonly getBBox = () => {
@@ -172,7 +172,7 @@ export class Rect extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -188,6 +188,6 @@ export class Rect extends Shape {
             ctx.stroke();
         }
 
-        this.isDirty = false;
+        this.dirty = false;
     }
 }

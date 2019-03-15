@@ -230,7 +230,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             const calloutLength = this.calloutLength;
 
             const labelMinAngle = toRadians(this.labelMinAngle);
-            const isLabelVisible = labelField && span > labelMinAngle;
+            const labelVisible = labelField && span > labelMinAngle;
 
             sectorsData.push({
                 index: sectorIndex,
@@ -244,13 +244,13 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 lineWidth: this.lineWidth,
                 shadow: this.shadow,
 
-                label: isLabelVisible ? {
+                label: labelVisible ? {
                     text: labelData[sectorIndex],
                     x: midCos * (radius + calloutLength + this.calloutPadding),
                     y: midSin * (radius + calloutLength + this.calloutPadding)
                 } : undefined,
 
-                callout: isLabelVisible ? {
+                callout: labelVisible ? {
                     start: {
                         x: midCos * radius,
                         y: midSin * radius
@@ -273,7 +273,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     update(): void {
         const chart = this.chart;
 
-        if (!chart || chart && chart.isLayoutPending) {
+        if (!chart || chart && chart.layoutPending) {
             return;
         }
 

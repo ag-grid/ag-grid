@@ -25,7 +25,7 @@ export abstract class Chart<D, X, Y> {
     };
     set padding(value: Padding) {
         this._padding = value;
-        this.isLayoutPending = true;
+        this.layoutPending = true;
     }
     get padding(): Padding {
         return this._padding;
@@ -33,12 +33,12 @@ export abstract class Chart<D, X, Y> {
 
     set size(value: [number, number]) {
         this.scene.size = value;
-        this.isLayoutPending = true;
+        this.layoutPending = true;
     }
 
     set width(value: number) {
         this.scene.width = value;
-        this.isLayoutPending = true;
+        this.layoutPending = true;
     }
     get width(): number {
         return this.scene.width;
@@ -46,14 +46,14 @@ export abstract class Chart<D, X, Y> {
 
     set height(value: number) {
         this.scene.height = value;
-        this.isLayoutPending = true;
+        this.layoutPending = true;
     }
     get height(): number {
         return this.scene.height;
     }
 
     private layoutCallbackId: number = 0;
-    set isLayoutPending(value: boolean) {
+    set layoutPending(value: boolean) {
         if (value) {
             if (!this.layoutCallbackId) {
                 this.layoutCallbackId = requestAnimationFrame(this._performLayout);
@@ -68,7 +68,7 @@ export abstract class Chart<D, X, Y> {
      * Only `true` while we are waiting for the layout to start.
      * This will be `false` if the layout has already started and is ongoing.
      */
-    get isLayoutPending(): boolean {
+    get layoutPending(): boolean {
         return !!this.layoutCallbackId;
     }
 

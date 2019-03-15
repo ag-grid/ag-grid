@@ -123,9 +123,9 @@ export class BandScale<D> implements Scale<D, number> {
             return;
         }
         let [a, b] =  this._range;
-        const isReverse = b < a;
+        const reversed = b < a;
 
-        if (isReverse) {
+        if (reversed) {
             [a, b] = [b, a];
         }
         let step = (b - a) / Math.max(1, n - this._paddingInner + this._paddingOuter * 2);
@@ -144,6 +144,6 @@ export class BandScale<D> implements Scale<D, number> {
             values.push(a + step * i);
         }
 
-        this.ordinalRange = isReverse ? values.reverse() : values;
+        this.ordinalRange = reversed ? values.reverse() : values;
     }
 }

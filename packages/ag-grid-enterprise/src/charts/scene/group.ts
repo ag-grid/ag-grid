@@ -11,7 +11,7 @@ export class Group extends Node {
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
         // so all children can be transformed at once.
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -22,7 +22,7 @@ export class Group extends Node {
         for (let i = 0; i < n; i++) {
             ctx.save();
             const child = children[i];
-            if (child.isVisible) {
+            if (child.visible) {
                 child.render(ctx);
             }
             ctx.restore();

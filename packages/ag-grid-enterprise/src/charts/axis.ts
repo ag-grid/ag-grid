@@ -100,7 +100,7 @@ export class Axis<D> {
 
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
-     * In case {@link isRadialGrid} is `true`, the value is interpreted as an angle
+     * In case {@link radialGrid} is `true`, the value is interpreted as an angle
      * (in degrees).
      */
     private _gridLength: number = 0;
@@ -139,21 +139,21 @@ export class Axis<D> {
      *           on the opposite side of the axis
      * `true` - render grid as concentric circles that go through the ticks
      */
-    _isRadialGrid: boolean = false;
-    set isRadialGrid(value: boolean) {
-        if (this._isRadialGrid !== value) {
-            this._isRadialGrid = value;
+    private _radialGrid: boolean = false;
+    set radialGrid(value: boolean) {
+        if (this._radialGrid !== value) {
+            this._radialGrid = value;
             this.groupSelection = this.groupSelection.remove().setData([]);
         }
     }
-    get isRadialGrid(): boolean {
-        return this._isRadialGrid;
+    get radialGrid(): boolean {
+        return this._radialGrid;
     }
 
     /**
      * Custom label rotation in degrees.
      * Labels are rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line, if the {@link isParallelLabels} is set to `true`.
+     * Or parallel to the axis line, if the {@link parallelLabels} is set to `true`.
      * The value of this config is used as the angular offset/deflection
      * from the default rotation.
      */
@@ -172,14 +172,14 @@ export class Axis<D> {
      * from north-west to south-east, _starting_ at the tick to the right
      * of the axis line.
      */
-    isMirrorLabels: boolean = false;
+    mirrorLabels: boolean = false;
 
     /**
      * Labels are rendered perpendicular to the axis line by default.
      * Setting this config to `true` makes labels render parallel to the axis line
      * and center aligns labels' text at the ticks.
      */
-    isParallelLabels: boolean = false;
+    parallelLabels: boolean = false;
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
@@ -215,7 +215,7 @@ export class Axis<D> {
         // The side of the axis line to position the labels on.
         // -1 = left (default)
         //  1 = right
-        const sideFlag = this.isMirrorLabels ? 1 : -1;
+        const sideFlag = this.mirrorLabels ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -233,7 +233,7 @@ export class Axis<D> {
         const regularFlipFlag = (!labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI) ? -1 : 1;
 
         const alignFlag = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
-        const isParallelLabels = this.isParallelLabels;
+        const parallelLabels = this.parallelLabels;
 
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
@@ -242,7 +242,7 @@ export class Axis<D> {
         // Line auto-snaps to pixel grid if vertical or horizontal.
         enter.append(Line).each(node => node.tag = Tags.Tick);
         if (this.gridLength) {
-            if (this.isRadialGrid) {
+            if (this.radialGrid) {
                 enter.append(Arc).each(node => node.tag = Tags.GridLine);
             } else {
                 enter.append(Line).each(node => node.tag = Tags.GridLine);
@@ -272,7 +272,7 @@ export class Axis<D> {
             const styleCount = styles.length;
             let gridLines: Selection<Shape, Group, D, D>;
 
-            if (this.isRadialGrid) {
+            if (this.radialGrid) {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
                 gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
                     .each((arc, datum) => {
@@ -304,19 +304,19 @@ export class Axis<D> {
             .each((label, datum) => {
                 label.font = this.labelFont;
                 label.fillStyle = this.labelColor;
-                label.textBaseline = isParallelLabels && !labelRotation
+                label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 label.text = decimalDigits && typeof datum === 'number'
                     ? datum.toFixed(decimalDigits)
                     : datum.toString();
-                label.textAlign = isParallelLabels
+                label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
             });
 
         const labelX = sideFlag * (this.tickSize + this.tickPadding);
-        const autoRotation = isParallelLabels
+        const autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 

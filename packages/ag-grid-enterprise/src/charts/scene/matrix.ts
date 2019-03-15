@@ -62,7 +62,7 @@ export class Matrix {
         return this;
     }
 
-    get isIdentity(): boolean {
+    get identity(): boolean {
         const e = this.elements;
         return e[0] === 1 && e[1] === 0 && e[2] === 0 &&
                e[3] === 1 && e[4] === 0 && e[5] === 0;
@@ -248,7 +248,7 @@ export class Matrix {
         // If the matrix is mostly identity (95% of the time),
         // the `if (this.isIdentity)` check can make this call 3-4 times
         // faster on average: https://jsperf.com/matrix-check-first-vs-always-set
-        if (this.isIdentity)
+        if (this.identity)
             return;
 
         const e = this.elements;
