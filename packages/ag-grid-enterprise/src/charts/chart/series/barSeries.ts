@@ -190,6 +190,20 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._labelColor;
     }
 
+    /**
+     * Vertical and horizontal label padding as an array of two numbers.
+     */
+    private _labelPadding: [number, number] = [10, 10];
+    set labelPadding(value: [number, number]) {
+        if (this._labelPadding !== value) {
+            this._labelPadding = value;
+            this.update();
+        }
+    }
+    get labelPadding(): [number, number] {
+        return this._labelPadding;
+    }
+
     private domainX: string[] = [];
     private domainY: number[] = [];
     private yData: number[][] = [];
@@ -201,12 +215,10 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
 
     processData(): boolean {
         const data = this.data;
-        const n = data.length;
         const xField = this.xField;
         const yFields = this.yFields;
-        const yFieldCount = yFields.length;
 
-        if (!(n && xField && yFieldCount)) {
+        if (!(xField && yFields.length)) {
             return false;
         }
 
@@ -286,6 +298,12 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             }));
         }
 
+        if (yMin === yMax || !isFinite(yMin) || !isFinite(yMax)) {
+            yMin = 0;
+            yMax = 1;
+            // console.warn('Zero or infinite y-range.');
+        }
+
         this.domainX = xData;
         this.domainY = [yMin, yMax];
 
@@ -339,6 +357,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const lineWidth = this.lineWidth;
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
+        const labelPadding = this.labelPadding;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = isGrouped ? groupScale.bandwidth! : xScale.bandwidth!;
@@ -369,7 +388,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                         font: labelFont,
                         fillStyle: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + lineWidth / 2 + 20
+                        y: y + lineWidth / 2 + labelPadding[0]
                     } : undefined
                 });
 
@@ -386,7 +405,10 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             rect.tag = BarSeriesNodeTag.Bar;
             rect.isCrisp = true;
         });
-        enterGroups.append(Text).each(text => text.tag = BarSeriesNodeTag.Label);
+        enterGroups.append(Text).each(text => {
+            text.tag = BarSeriesNodeTag.Label;
+            text.textBaseline = 'hanging';
+        });
 
         const groupSelection = updateGroups.merge(enterGroups);
 
@@ -412,7 +434,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                     text.x = label.x;
                     text.y = label.y;
                     text.fillStyle = label.fillStyle;
-                    text.isVisible = datum.height > text.getBBox().height + 40
+                    const textBBox = text.getBBox();
+                    text.isVisible = datum.height > (textBBox.height + datum.lineWidth + labelPadding[0] * 2)
+                        && datum.width > (textBBox.width + datum.lineWidth + labelPadding[1] * 2);
                 } else {
                     text.isVisible = false;
                 }
