@@ -16,8 +16,8 @@ type SectorDatum = {
     endAngle: number,
     midAngle: number,
 
-    fillStyle: string,
-    strokeStyle: string,
+    fillStyle: string | null,
+    strokeStyle: string | null,
     lineWidth: number,
     shadow: DropShadow | null,
 
@@ -89,7 +89,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this._labelField;
     }
 
-    labelFont: string = '14px Verdana';
+    labelFont: string = '12px Tahoma';
     labelColor: string = 'black';
     labelRotation: number = 0;
     labelMinAngle: number = 20; // in degrees

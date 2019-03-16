@@ -65,10 +65,12 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         xAxis.translationX = shrinkRect.x;
         xAxis.translationY = shrinkRect.y + shrinkRect.height + 1;
         xAxis.parallelLabels = true;
+        xAxis.gridLength = shrinkRect.height;
 
         yAxis.scale.range = [shrinkRect.height, 0];
         yAxis.translationX = shrinkRect.x;
         yAxis.translationY = shrinkRect.y;
+        yAxis.gridLength = shrinkRect.width;
 
         this._series.forEach(series => {
             series.group.translationX = shrinkRect.x;

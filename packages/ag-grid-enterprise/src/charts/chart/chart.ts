@@ -79,14 +79,6 @@ export abstract class Chart<D, X, Y> {
 
     abstract performLayout(): void;
 
-    // protected _axes: ChartAxis[] = [];
-    // set axes(values: ChartAxis[]) {
-    //     this._axes = values;
-    // }
-    // get axes(): ChartAxis[] {
-    //     return this._axes;
-    // }
-
     protected _series: Series<D, X, Y>[] = [];
     set series(values: Series<D, X, Y>[]) {
         this._series = values;

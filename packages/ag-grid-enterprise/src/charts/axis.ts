@@ -63,7 +63,7 @@ export class Axis<D> {
      * The color of the axis line.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
      */
-    lineColor: string | null = 'black';
+    lineColor: string | null = 'rgba(195, 195, 195, 1)';
 
     /**
      * The line width to be used by axis ticks.
@@ -84,19 +84,19 @@ export class Axis<D> {
      * The color of the axis ticks.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    tickColor: string | null = 'black';
+    tickColor: string | null = 'rgba(195, 195, 195, 1)';
 
     /**
      * The font to be used by the labels. The given font string should use the
      * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
      */
-    labelFont: string = '14px Verdana';
+    labelFont: string = '12px Tahoma';
 
     /**
      * The color of the labels.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    labelColor: string | null = 'black';
+    labelColor: string | null = 'rgba(87, 87, 87, 1)';
 
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -122,8 +122,8 @@ export class Axis<D> {
      * have the same style.
      */
     private _gridStyle: GridStyle[] = [{
-        strokeStyle: 'lightgray',
-        lineDash: null
+        strokeStyle: 'rgba(219, 219, 219, 1)',
+        lineDash: [4, 2]
     }];
     set gridStyle(value: GridStyle[]) {
         if (value.length) {

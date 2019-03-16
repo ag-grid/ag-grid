@@ -12,13 +12,13 @@ type BarDatum = {
     y: number,
     width: number,
     height: number,
-    fillStyle: string,
-    strokeStyle: string,
+    fillStyle: string | null,
+    strokeStyle: string | null,
     lineWidth: number,
     label?: {
         text: string,
         font: string,
-        fillStyle: string,
+        fillStyle: string | null,
         x: number,
         y: number
     }
@@ -135,14 +135,14 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._grouped;
     }
 
-    private _strokeStyle: string = 'black';
-    set strokeStyle(value: string) {
+    private _strokeStyle: string | null = null;
+    set strokeStyle(value: string | null) {
         if (this._strokeStyle !== value) {
             this._strokeStyle = value;
             this.update();
         }
     }
-    get strokeStyle(): string {
+    get strokeStyle(): string | null {
         return this._strokeStyle;
     }
 
@@ -168,7 +168,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._shadow;
     }
 
-    private _labelFont: string = '14px Verdana';
+    private _labelFont: string = '12px Tahoma';
     set labelFont(value: string) {
         if (this._labelFont !== value) {
             this._labelFont = value;
