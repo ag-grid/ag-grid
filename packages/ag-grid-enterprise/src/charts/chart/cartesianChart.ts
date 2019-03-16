@@ -7,48 +7,21 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
     constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent: HTMLElement = document.body) {
         super(parent);
-        if (this.scene.root) {
-            this.scene.root.append(this.seriesRect);
-        }
-        this.xAxis = xAxis;
-        this.yAxis = yAxis;
+
+        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesRect]);
+        this._xAxis = xAxis;
+        this._yAxis = yAxis;
     }
 
     private seriesRect = new ClipRect();
 
-    private _xAxis: Axis<X> | null = null;
-    set xAxis(value: Axis<X> | null) {
-        if (this._xAxis !== value) {
-            const root = this.scene.root;
-            if (root) {
-                if (value) {
-                    root.append(value.group);
-                } else if (this._xAxis) {
-                    root.removeChild(this._xAxis.group);
-                }
-            }
-            this._xAxis = value;
-        }
-    }
-    get xAxis(): Axis<X> | null {
+    private readonly _xAxis: Axis<X>;
+    get xAxis(): Axis<X> {
         return this._xAxis;
     }
 
-    private _yAxis: Axis<Y> | null = null;
-    set yAxis(value: Axis<Y> | null) {
-        if (this._yAxis !== value) {
-            const root = this.scene.root;
-            if (root) {
-                if (value) {
-                    root.append(value.group);
-                } else if (this._yAxis) {
-                    root.removeChild(this._yAxis.group);
-                }
-            }
-            this._yAxis = value;
-        }
-    }
-    get yAxis(): Axis<Y> | null {
+    private readonly _yAxis: Axis<Y>;
+    get yAxis(): Axis<Y> {
         return this._yAxis;
     }
 
