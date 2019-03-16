@@ -290,6 +290,7 @@ export class Axis<D> {
                         line.x2 = -sideFlag * this.gridLength;
                         line.y1 = 0;
                         line.y2 = 0;
+                        line.visible = line.parent!.translationY !== scale.range[0];
                     });
             }
             gridLines.each((arc, datum, index) => {
