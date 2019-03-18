@@ -140,6 +140,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     public setExpandable() {
+        if (this.isPadding()) { return; }
         // want to make sure the group doesn't disappear when it's open
         let atLeastOneShowingWhenOpen = false;
         // want to make sure the group doesn't disappear when it's closed
@@ -147,8 +148,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         // want to make sure the group has something to show / hide
         let atLeastOneChangeable = false;
 
-        for (let i = 0, j = this.children.length; i < j; i++) {
-            const abstractColumn = this.children[i];
+        const children = this.findChildren();
+
+        for (let i = 0, j = children.length; i < j; i++) {
+            const abstractColumn = children[i];
             if (!abstractColumn.isVisible()) {
                 continue;
             }

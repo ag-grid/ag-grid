@@ -287,8 +287,20 @@ export class ColumnGroup implements ColumnGroupChild {
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];
+        let skip = false;
+        let columnGroup: ColumnGroup = this;
+        let isExpandable = false;
+
+        if (this.originalColumnGroup.isPadding()) {
+            while (columnGroup.getParent() && columnGroup.isPadding()) {
+                columnGroup = columnGroup.getParent();
+            }
+            skip = true;
+        }
+
+        isExpandable = columnGroup.originalColumnGroup.isExpandable();
         // it not expandable, everything is visible
-        if (!this.originalColumnGroup.isExpandable()) {
+        if (!skip && !isExpandable) {
             this.displayedChildren = this.children;
         } else {
             // and calculate again
@@ -297,13 +309,13 @@ export class ColumnGroup implements ColumnGroupChild {
                 switch (headerGroupShow) {
                     case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
                         // when set to open, only show col if group is open
-                        if (this.originalColumnGroup.isExpanded()) {
+                        if (columnGroup.originalColumnGroup.isExpanded()) {
                             this.displayedChildren.push(abstractColumn);
                         }
                         break;
                     case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
                         // when set to open, only show col if group is open
-                        if (!this.originalColumnGroup.isExpanded()) {
+                        if (!columnGroup.originalColumnGroup.isExpanded()) {
                             this.displayedChildren.push(abstractColumn);
                         }
                         break;
