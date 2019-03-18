@@ -1,7 +1,15 @@
 import {Shape} from "./shape";
 import {Path2D} from "../path2D";
 import {isPointInBBox} from "../bbox";
-import {pixelSnap} from "../../canvas/canvas";
+import {pixelSnap as _pixelSnap} from "../../canvas/canvas";
+
+// _pixelSnap(3) compiles to Object(_canvas_canvas__WEBPACK_IMPORTED_MODULE_3__["pixelSnap"])(3)
+// This has some performance hit and is not nice for readability nor debugging.
+// For example, it shows up as `pixelSnap` in the Sources tab, but can't
+// be called from console like that.
+// See https://github.com/webpack/webpack/issues/5600
+// The suggested `concatenateModules: true` config made no difference.
+const pixelSnap = _pixelSnap;
 
 export class Rect extends Shape {
 
@@ -184,7 +192,7 @@ export class Rect extends Shape {
         if (this.fillStyle) {
             ctx.fill();
         }
-        if (this.strokeStyle) {
+        if (this.lineWidth && this.strokeStyle) {
             ctx.stroke();
         }
 

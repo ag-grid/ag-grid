@@ -8,6 +8,7 @@ import {Selection} from "../../scene/selection";
 import {DropShadow} from "../../scene/dropShadow";
 import scaleLinear, {LinearScale} from "../../scale/linearScale";
 import {normalizeAngle180, toRadians} from "../../util/angle";
+import colors from "../colors";
 
 type SectorDatum = {
     index: number,
@@ -23,6 +24,8 @@ type SectorDatum = {
 
     label?: {
         text: string,
+        font: string,
+        fillStyle: string,
         x: number,
         y: number
     },
@@ -99,14 +102,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     calloutLength: number = 10;
     calloutPadding: number = 3;
 
-    colors: string[] = [
-        '#5BC0EB',
-        '#FDE74C',
-        '#9BC53D',
-        '#E55934',
-        '#FA7921',
-        '#fa3081'
-    ];
+    colors: string[] = colors;
 
     set rotation(value: number) {
         if (this._rotation !== value) {
@@ -120,7 +116,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this._rotation;
     }
 
-    strokeStyle: string = 'black';
+    strokeStyle: string | null = 'black';
     lineWidth: number = 2;
     shadow: DropShadow | null = null;
 
@@ -210,6 +206,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         const angleScale = this.angleScale;
 
+        const labelFont = this.labelFont;
+        const labelColor = this.labelColor;
+
         const sectorsData = this.sectorsData;
         sectorsData.length = 0;
 
@@ -246,6 +245,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
                 label: labelVisible ? {
                     text: labelData[sectorIndex],
+                    font: labelFont,
+                    fillStyle: labelColor,
                     x: midCos * (radius + calloutLength + this.calloutPadding),
                     y: midSin * (radius + calloutLength + this.calloutPadding)
                 } : undefined,
@@ -340,12 +341,11 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
                 const label = datum.label;
                 if (label) {
-                    text.fillStyle = 'black';
-                    text.font = this.labelFont;
-                    text.fillStyle = this.labelColor;
+                    text.font = label.font;
                     text.text = label.text;
                     text.x = label.x;
                     text.y = label.y;
+                    text.fillStyle = label.fillStyle;
                 } else {
                     text.fillStyle = null;
                 }

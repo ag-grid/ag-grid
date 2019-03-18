@@ -36,6 +36,9 @@ export abstract class Chart<D, X, Y> {
         this.layoutPending = true;
     }
 
+    /**
+     * The width of the chart in CSS pixels.
+     */
     set width(value: number) {
         this.scene.width = value;
         this.layoutPending = true;
@@ -44,6 +47,9 @@ export abstract class Chart<D, X, Y> {
         return this.scene.width;
     }
 
+    /**
+     * The height of the chart in CSS pixels.
+     */
     set height(value: number) {
         this.scene.height = value;
         this.layoutPending = true;

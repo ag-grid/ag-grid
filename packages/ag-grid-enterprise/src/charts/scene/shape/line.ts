@@ -4,7 +4,7 @@ import {pixelSnap, PixelSnapBias} from "../../canvas/canvas";
 
 export class Line extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
-        strokeStyle: 'black'
+        lineWidth: 1
     });
 
     constructor() {

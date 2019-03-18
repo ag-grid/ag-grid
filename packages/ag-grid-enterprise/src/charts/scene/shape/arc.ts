@@ -16,7 +16,7 @@ export enum ArcType {
 export class Arc extends Shape {
 
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
-        strokeStyle: 'black',
+        lineWidth: 1,
         fillStyle: null
     });
 

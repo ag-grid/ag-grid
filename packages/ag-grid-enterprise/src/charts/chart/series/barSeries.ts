@@ -6,6 +6,7 @@ import {Rect} from "../../scene/shape/rect";
 import {Text} from "../../scene/shape/text";
 import {BandScale} from "../../scale/bandScale";
 import {DropShadow} from "../../scene/dropShadow";
+import colors from "../colors";
 
 type BarDatum = {
     x: number,
@@ -13,12 +14,12 @@ type BarDatum = {
     width: number,
     height: number,
     fillStyle: string | null,
-    strokeStyle: string | null,
+    strokeStyle: string,
     lineWidth: number,
     label?: {
         text: string,
         font: string,
-        fillStyle: string | null,
+        fillStyle: string,
         x: number,
         y: number
     }
@@ -135,18 +136,19 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._grouped;
     }
 
-    private _strokeStyle: string | null = null;
-    set strokeStyle(value: string | null) {
+    private _strokeStyle: string = 'black';
+    // Can't be `null`. See `Shape.strokeStyle` comments.
+    set strokeStyle(value: string) {
         if (this._strokeStyle !== value) {
             this._strokeStyle = value;
             this.update();
         }
     }
-    get strokeStyle(): string | null {
+    get strokeStyle(): string {
         return this._strokeStyle;
     }
 
-    private _lineWidth: number = 1;
+    private _lineWidth: number = 0;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;
@@ -328,14 +330,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
      */
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
-    colors: string[] = [
-        '#5BC0EB',
-        '#FDE74C',
-        '#9BC53D',
-        '#E55934',
-        '#FA7921',
-        '#fa3081'
-    ];
+    colors: string[] = colors;
 
     update(): void {
         const chart = this.chart;
@@ -408,6 +403,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         enterGroups.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.textBaseline = 'hanging';
+            text.textAlign = 'center';
         });
 
         const groupSelection = updateGroups.merge(enterGroups);
@@ -430,7 +426,6 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                 if (label) {
                     text.font = label.font;
                     text.text = label.text;
-                    text.textAlign = 'center';
                     text.x = label.x;
                     text.y = label.y;
                     text.fillStyle = label.fillStyle;
