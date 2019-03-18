@@ -148,7 +148,10 @@ export class HeaderGroupWrapperComp extends Component {
                 columnGroup = columnGroup.getParent();
             }
 
-            displayName = columnGroup.getColGroupDef().headerName;
+            const colGroupDef = columnGroup.getColGroupDef();
+            if (colGroupDef) {
+                displayName = colGroupDef.headerName;
+            }
 
             if (!displayName) {
                 displayName = leafCols ? leafCols[0].getColDef().headerName : '';
