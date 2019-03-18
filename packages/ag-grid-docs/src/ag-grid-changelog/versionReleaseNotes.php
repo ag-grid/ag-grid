@@ -1,5 +1,5 @@
 <div class="note" style="display: none" fixVersionNote id="fix_version_20_1_0">
-    <p>Release 20.1.0 Overview</p>
+    <p>Release 20.1.0 Overview (22nd Feb 2019)</p>
 
     <p>Feature Highlights:</p>
 
@@ -25,7 +25,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_20_0_0">
-    <p>Release 20.0.0 Overview</p>
+    <p>Release 20.0.0 Overview (11th Jan 2019)</p>
 
     <p>Breaking Changes:</p>
 
@@ -76,7 +76,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_19_1_1">
-    <p>Release 19.1.1 Overview</p>
+    <p>Release 19.1.1 Overview (30th Oct 2018)</p>
 
     <p>Feature Highlights:</p>
 
@@ -95,7 +95,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_19_0_0">
-    <p>Release 19.0.0 Overview</p>
+    <p>Release 19.0.0 Overview (7th Sept 2018)</p>
 
     <p>Breaking Changes:</p>
 
@@ -143,13 +143,11 @@
         <li>
             AG-1363 columnApi.resetColumnState() can now optionally raise column based events.
         </li>
-
     </ul>
-
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_18_0_0">
-    <p>Release 18.0.0 Overview</p>
+    <p>Release 18.0.0 Overview (12th Jun 2018)</p>
 
     <ul>
         <li>
@@ -224,7 +222,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_17_1_0">
-    <p>Release 17.1.0 Overview</p>
+    <p>Release 17.1.0 Overview (13th Apr 2018)</p>
 
     <ul>
         <li>
