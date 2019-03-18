@@ -106,6 +106,10 @@ localeText = {
         none: 'laNone',
         count: 'laCount',
         average: 'laAverage',
+        filteredRows: 'laFiltered'
+        selectedRows: 'laSelected'
+        totalRows: 'laTotal Rows'
+        totalAndFilteredRows: 'laRows'
 
         // standard menu
         copy: 'laCopy',
