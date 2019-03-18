@@ -1,9 +1,9 @@
-import {Autowired, Bean, Context, Optional} from "../../context/context";
-import {GridOptions} from "../../entities/gridOptions";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
-import {IComponent} from "../../interfaces/iComponent";
-import {ColDef, ColGroupDef} from "../../entities/colDef";
+import { Autowired, Bean, Context, Optional } from "../../context/context";
+import { GridOptions } from "../../entities/gridOptions";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
+import { IComponent } from "../../interfaces/iComponent";
+import { ColDef, ColGroupDef } from "../../entities/colDef";
 import {
     AgGridComponentFunctionInput,
     AgGridRegisteredComponentInput,
@@ -11,25 +11,25 @@ import {
     RegisteredComponentSource,
     UserComponentRegistry
 } from "./userComponentRegistry";
-import {AgComponentUtils} from "./agComponentUtils";
-import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
-import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
-import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
-import {ToolPanelDef} from "../../entities/sideBar";
-import {_, Promise} from "../../utils";
-import {IDateComp, IDateParams} from "../../rendering/dateComponent";
-import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
-import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
-import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
-import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
-import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
-import {ITooltipComp, ITooltipParams} from "../../rendering/tooltipComponent";
-import {IFilterComp, IFilterParams} from "../../interfaces/iFilter";
-import {IFloatingFilterComp} from "../../filter/floatingFilter";
-import {ICellEditorComp} from "../../interfaces/iCellEditor";
-import {IToolPanelComp} from "../../interfaces/iToolPanel";
-import {StatusPanelDef} from "../../interfaces/iStatusPanel";
+import { AgComponentUtils } from "./agComponentUtils";
+import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+import { ToolPanelDef } from "../../entities/sideBar";
+import { _, Promise } from "../../utils";
+import { IDateComp, IDateParams } from "../../rendering/dateComponent";
+import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
+import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
+import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
+import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
+import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { IFloatingFilterComp } from "../../filter/floatingFilter";
+import { ICellEditorComp } from "../../interfaces/iCellEditor";
+import { IToolPanelComp } from "../../interfaces/iToolPanel";
+import { StatusPanelDef } from "../../interfaces/iStatusPanel";
 
 export type DefinitionObject =
     GridOptions
@@ -165,9 +165,8 @@ export class UserComponentFactory {
     }
 
     public newStatusPanelComponent(def: StatusPanelDef, params: any): Promise<IToolPanelComp> {
-        return this.createAndInitUserComponent(def, params, 'statusPanel')
+        return this.createAndInitUserComponent(def, params, 'statusPanel');
     }
-
 
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated

@@ -2993,7 +2993,6 @@ export class ColumnController {
             && !this.gridOptionsWrapper.isGroupUseEntireRow()
             && !this.gridOptionsWrapper.isGroupSuppressRow();
 
-
         if (needAutoColumns) {
             // this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
 
@@ -3017,7 +3016,7 @@ export class ColumnController {
 
         if (colsA.length !== colsB.length) { return false; }
 
-        for (let i = 0; i<colsA.length; i++) {
+        for (let i = 0; i < colsA.length; i++) {
             const colA = colsA[i];
             const colB = colsB[i];
             if (colA.getColId() !== colB.getColId()) {

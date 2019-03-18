@@ -44,7 +44,6 @@ export class PopupWindow extends Component {
     }
 
     public setBody(eBody: HTMLElement) {
-        console.log('setting body');
         this.eContentWrapper.appendChild(eBody);
     }
 
