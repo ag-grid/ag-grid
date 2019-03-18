@@ -1,10 +1,10 @@
-import {Autowired, Bean} from "../../context/context";
-import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./userComponentRegistry";
-import {IComponent} from "../../interfaces/iComponent";
-import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
-import {ComponentClassDef, ComponentSource} from "./userComponentFactory";
-import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
-import {_} from "../../utils";
+import { Autowired, Bean } from "../../context/context";
+import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./userComponentRegistry";
+import { IComponent } from "../../interfaces/iComponent";
+import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
+import { ComponentClassDef, ComponentSource } from "./userComponentFactory";
+import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { _ } from "../../utils";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils {

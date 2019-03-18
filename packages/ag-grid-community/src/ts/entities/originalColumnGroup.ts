@@ -55,9 +55,9 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         // return true if at least one child is visible
         if (this.children) {
             return this.children.some(child => child.isVisible());
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public isPadding(): boolean {
@@ -140,6 +140,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     public setExpandable() {
+        if (this.isPadding()) { return; }
         // want to make sure the group doesn't disappear when it's open
         let atLeastOneShowingWhenOpen = false;
         // want to make sure the group doesn't disappear when it's closed
@@ -147,8 +148,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         // want to make sure the group has something to show / hide
         let atLeastOneChangeable = false;
 
-        for (let i = 0, j = this.children.length; i < j; i++) {
-            const abstractColumn = this.children[i];
+        const children = this.findChildren();
+
+        for (let i = 0, j = children.length; i < j; i++) {
+            const abstractColumn = children[i];
             if (!abstractColumn.isVisible()) {
                 continue;
             }
@@ -175,6 +178,19 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
             };
             this.localEventService.dispatchEvent(event);
         }
+    }
+
+    public findChildren(): OriginalColumnGroupChild[] {
+        let children = this.children;
+        const firstChild = children[0] as any;
+
+        if (firstChild && (!firstChild.isPadding || !firstChild.isPadding())) { return children; }
+
+        while (children.length === 1 && children[0] instanceof OriginalColumnGroup) {
+            children = (children[0] as OriginalColumnGroup).children;
+        }
+
+        return children;
     }
 
     private onColumnVisibilityChanged(): void {

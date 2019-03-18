@@ -49,13 +49,12 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.setTemplate(
         `<div class="ag-primary-cols-header-panel">
-            <a href="javascript:void(0)" ref="eExpand">
+            <div ref="eExpand">
                 <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
                 <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
                 <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
-            </a>
-            <a href="javascript:void(0)" ref="eSelect">
-            </a>
+            </div>
+            <div ref="eSelect"></div>
             <div class="ag-input-text-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
                 <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}">        
             </div>

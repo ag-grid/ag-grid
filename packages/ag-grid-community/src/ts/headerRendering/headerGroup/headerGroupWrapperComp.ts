@@ -141,8 +141,18 @@ export class HeaderGroupWrapperComp extends Component {
         };
 
         if (!displayName) {
-            const leafCols = this.columnGroup.getLeafColumns();
-            displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+            let columnGroup = this.columnGroup;
+            const leafCols = columnGroup.getLeafColumns();
+
+            while (columnGroup.getParent() && columnGroup.getParent().getLeafColumns().length === leafCols.length) {
+                columnGroup = columnGroup.getParent();
+            }
+
+            displayName = columnGroup.getColGroupDef().headerName;
+
+            if (!displayName) {
+                displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+            }
         }
 
         const callback = this.afterHeaderCompCreated.bind(this, displayName);

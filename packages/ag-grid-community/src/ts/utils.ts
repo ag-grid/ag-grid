@@ -2,7 +2,7 @@ import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants";
-import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;

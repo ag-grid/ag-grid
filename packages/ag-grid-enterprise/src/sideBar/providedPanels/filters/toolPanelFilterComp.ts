@@ -47,10 +47,10 @@ export class ToolPanelFilterComp extends Component {
     private static TEMPLATE =
         `<div class="ag-filter-toolpanel-instance" >
             <div class="ag-filter-toolpanel-header ag-header-cell-label" ref="eFilterToolPanelHeader">
-                <a href="javascript:void(0)" ref="eExpand">
+                <div ref="eExpand">
                     <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
                     <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
-                </a>
+                </div>
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
             </div>

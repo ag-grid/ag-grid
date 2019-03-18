@@ -1,6 +1,6 @@
-import {Column} from "../entities/column";
-import {CellChangedEvent, RowNode} from "../entities/rowNode";
-import {Constants} from "../constants";
+import { Column } from "../entities/column";
+import { CellChangedEvent, RowNode } from "../entities/rowNode";
+import { Constants } from "../constants";
 import {
     CellClickedEvent,
     CellContextMenuEvent,
@@ -14,17 +14,17 @@ import {
     Events,
     FlashCellsEvent
 } from "../events";
-import {GridCell, GridCellDef} from "../entities/gridCell";
-import {Component} from "../widgets/component";
-import {ICellEditorComp, ICellEditorParams} from "../interfaces/iCellEditor";
-import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
-import {ColDef, NewValueParams} from "../entities/colDef";
-import {Beans} from "./beans";
-import {RowComp} from "./rowComp";
-import {RowDragComp} from "./rowDragComp";
-import {_, Promise} from "../utils";
-import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
+import { GridCell, GridCellDef } from "../entities/gridCell";
+import { Component } from "../widgets/component";
+import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
+import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
+import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
+import { ColDef, NewValueParams } from "../entities/colDef";
+import { Beans } from "./beans";
+import { RowComp } from "./rowComp";
+import { RowDragComp } from "./rowDragComp";
+import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
+import { _, Promise } from "../utils";
 
 export class CellComp extends Component {
 

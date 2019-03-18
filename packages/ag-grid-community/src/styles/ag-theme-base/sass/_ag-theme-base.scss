@@ -207,11 +207,7 @@
     }
 
     .ag-header-row {
-        @include row-border($border-color);
-        border-width: 0 0 1px;
-        &:last-of-type {
-            border-bottom-width: 0;
-        }
+        border: none;
     }
 
     .ag-row {
@@ -260,10 +256,6 @@
         display: flex;
         height: 100%;
 
-        span {
-            height: 100%;
-        }
-
         & > span {
             float: left;
         }
@@ -307,11 +299,22 @@
 
     .ag-header-cell,
     .ag-header-group-cell {
+        @include row-border($border-color);
         @include grid-cell($header-height, $cell-horizontal-padding);
         @if $header-cell-moving-background-color {
             &.ag-header-cell-moving {
                 background-color: $header-cell-moving-background-color;
             }
+        }
+        border-width: 0;
+        &:not(.ag-header-group-cell-no-group) {
+            border-top-width: 1px;
+        }
+    }
+
+    .ag-header-row:first-child {
+        .ag-header-cell, .ag-header-group-cell {
+            border-top-width: 0;
         }
     }
 
@@ -689,6 +692,9 @@
 
         .ag-primary-cols-list-panel {
             padding-top: $grid-size;
+            > div {
+                cursor: pointer;
+            }
         }
 
         .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
@@ -709,7 +715,8 @@
         height: $header-height;
         padding-top: $grid-size;
 
-        a {
+        > div {
+            cursor: pointer;
             margin: 0 $grid-size;
             padding-top: $grid-size / 2;
         }
@@ -743,6 +750,9 @@
 
                 .ag-filter-toolpanel-header {
                     padding: 5px 0 5px 5px;
+                    > div {
+                        margin: auto 0;
+                    }
                 }
             }
             .ag-filter-body-wrapper {

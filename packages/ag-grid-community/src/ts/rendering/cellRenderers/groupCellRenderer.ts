@@ -1,24 +1,24 @@
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {ExpressionService} from "../../valueService/expressionService";
-import {EventService} from "../../eventService";
-import {Constants} from "../../constants";
-import {Autowired} from "../../context/context";
-import {Component} from "../../widgets/component";
-import {ICellRenderer, ICellRendererComp, ICellRendererParams} from "./iCellRenderer";
-import {RowNode} from "../../entities/rowNode";
-import {ValueFormatterService} from "../valueFormatterService";
-import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
-import {ColumnController} from "../../columnController/columnController";
-import {Column} from "../../entities/column";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {MouseEventService} from "../../gridPanel/mouseEventService";
-import {_, Promise} from "../../utils";
-import {ColDef} from "../../entities/colDef";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ExpressionService } from "../../valueService/expressionService";
+import { EventService } from "../../eventService";
+import { Constants } from "../../constants";
+import { Autowired } from "../../context/context";
+import { Component } from "../../widgets/component";
+import { ICellRenderer, ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
+import { RowNode } from "../../entities/rowNode";
+import { ValueFormatterService } from "../valueFormatterService";
+import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
+import { ColumnController } from "../../columnController/columnController";
+import { Column } from "../../entities/column";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { MouseEventService } from "../../gridPanel/mouseEventService";
+import { ColDef } from "../../entities/colDef";
 import {
     ComponentClassDef,
     ComponentSource,
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
+import { _, Promise } from "../../utils";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned:string;
