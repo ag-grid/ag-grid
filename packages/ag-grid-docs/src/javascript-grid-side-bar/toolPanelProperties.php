@@ -6,6 +6,9 @@ $toolPanelProperties = [
     ],
     ['defaultToolPanel',
         'The panel (identified by id) to open by default. If none specified, the side bar is initially displayed closed.'
+    ],
+    ['hiddenByDefault',
+        'To hide the side bar by default enable hiddenByDefault, if left blank the side bar will be shown.'
     ]
 ];
 

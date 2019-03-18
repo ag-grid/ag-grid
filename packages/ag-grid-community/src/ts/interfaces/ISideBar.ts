@@ -1,5 +1,4 @@
 import { IComponent } from "./iComponent";
-import { GridPanel } from "../gridPanel/gridPanel";
 
 export interface ISideBar extends IComponent<any> {
     refresh(): void;

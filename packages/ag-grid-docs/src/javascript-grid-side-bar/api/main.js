@@ -56,7 +56,26 @@ var gridOptions = {
         filter: true
     },
     columnDefs: columnDefs,
-    sideBar: true
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+        defaultToolPanel: 'filters',
+        hiddenByDefault: true
+    }
 };
 
 // setup the grid after the page has finished loading

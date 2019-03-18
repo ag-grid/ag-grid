@@ -297,6 +297,7 @@ sideBar = {
 </p>
 
 <ul>
+    <li>Initially the side is not visible as <code>sideBar.hiddenByDefault=true</code>.</li>
     <li>
         <b>Visibility Buttons:</b> These toggle visibility of the tool panel. Note that when you make <code>visible=false</code>,
         the entire tool panel is hidden including the tabs. Make sure the tool panel is left visible before testing
