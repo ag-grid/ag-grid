@@ -3,8 +3,8 @@
  * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
  * So, when animating colors, if the source or target color components are already near
  * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
- * component value to end up outside of that range mid-animation. The range checking/constraining
- * should thus be handled by the code responsible for the animation.
+ * component value to end up outside of that range mid-animation. For this reason the constructor
+ * performs range checking/constraining.
  */
 export class Color {
 
@@ -14,22 +14,11 @@ export class Color {
     readonly a: number;
 
     constructor(r: number, g: number, b: number, a: number = 1) {
-        if (r < 0 || r > 1 || isNaN(r) || !isFinite(r)) {
-            new Error(`The red component (${r}) should be in the [0, 1] range.`);
-        }
-        if (g < 0 || g > 1 || isNaN(g) || !isFinite(g)) {
-            new Error(`The green component (${g}) should be in the [0, 1] range.`);
-        }
-        if (b < 0 || b > 1 || isNaN(b) || !isFinite(b)) {
-            new Error(`The blue component (${b}) should be in the [0, 1] range.`);
-        }
-        if (a < 0 || a > 1 || isNaN(a) || !isFinite(a)) {
-            new Error(`The alpha component (${a}) should be in the [0, 1] range.`);
-        }
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
+        // NaN is treated as 0.
+        this.r = Math.min(1, Math.max(0, r || 0));
+        this.g = Math.min(1, Math.max(0, g || 0));
+        this.b = Math.min(1, Math.max(0, b || 0));
+        this.a = Math.min(1, Math.max(0, a || 0));
     }
 
     /**
@@ -41,38 +30,58 @@ export class Color {
      * - CSS color name such as 'white', 'orange', 'cyan', etc.
      * @param str
      */
-    // static fromString(str: string): Color {
-    //     // const hex = Color.nameToHex[str];
-    //     // if (hex) {
-    //     //     return Color.nameToHex[str]
-    //     // }
-    // }
-
-    // See https://drafts.csswg.org/css-color/#hex-notation
-    static hexRe34 = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*/;
-    static hexRe68 = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*/;
-
-    static fromHexString(str: string): Color {
-        const n = str && str.length;
-
-        if (n && str[0] === '#' && (n === 4 || n === 5 || n === 7 || n === 9)) {
-            if (n === 4 || n === 5) {
-                const values = str.match(Color.hexRe34);
-                console.log(values);
-            } else if (n === 7 || n === 9) {
-                const values = str.match(Color.hexRe68);
-                console.log(values);
-            }
+    static fromString(str: string): Color {
+        // hexadecimal notation
+        if (str[0] === '#') {
+            return Color.fromHexString(str);
         }
-        return new Color(1,1,1); // TODO: remove this
-        throw new Error('Malformed hexadecimal color string.');
+
+        // color name
+        const hex = Color.nameToHex[str];
+        if (hex) {
+            return Color.fromHexString(hex);
+        }
+
+        throw new Error();
     }
 
-    static fromArray(arr: number[]): Color {
-        if (arr.length > 3) {
+    // See https://drafts.csswg.org/css-color/#hex-notation
+    static hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*/;
+    static shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*/;
+    // Using separate RegExp for the short hex notation because strings like `#abcd`
+    // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
+
+    static fromHexString(str: string): Color {
+        const n = str.length - 1;
+        const short = n === 3 || n === 4;
+
+        if (str[0] === '#' && (short || n === 6 || n === 8)) {
+            const values = str.match(short ? Color.shortHexRe : Color.hexRe);
+
+            if (values) {
+                let r = parseInt(values[1], 16);
+                let g = parseInt(values[2], 16);
+                let b = parseInt(values[3], 16);
+                let a = values[4] !== undefined ? parseInt(values[4], 16) : (short ? 15 : 255);
+
+                if (short) {
+                    r += r * 16;
+                    g += g * 16;
+                    b += b * 16;
+                    a += a * 16;
+                }
+
+                return new Color(r / 255, g / 255, b / 255, a / 255);
+            }
+        }
+        throw new Error(`Malformed hexadecimal color string: '${str}'`);
+    }
+
+    static fromArray(arr: [number, number, number] | [number, number, number, number]): Color {
+        if (arr.length === 4) {
             return new Color(arr[0], arr[1], arr[2], arr[3]);
         }
-        if (arr.length > 2) {
+        if (arr.length === 3) {
             return new Color(arr[0], arr[1], arr[2]);
         }
         throw new Error('The given array should contain at least 3 numbers.');
@@ -105,6 +114,126 @@ export class Color {
             return this.toHexString();
         }
         return this.toRgbaString();
+    }
+
+    toHSB(): [number, number, number] {
+        return Color.RGBtoHSB(this.r, this.g, this.b);
+    }
+
+    /**
+     * Converts the given RGB triple to an array of HSB (HSV) components.
+     * The hue component will be `NaN` for achromatic colors.
+     */
+    static RGBtoHSB(r: number, g: number, b: number): [number, number, number] {
+        const min = Math.min(r, g, b);
+        const max = Math.max(r, g, b);
+
+        const S = max !== 0 ? (max - min) / max : 0;
+        let H = NaN;
+
+        // min == max, means all components are the same
+        // and the color is a shade of gray with no hue (H is NaN)
+        if (min !== max) {
+            const delta = max - min;
+            const rc = (max - r) / delta;
+            const gc = (max - g) / delta;
+            const bc = (max - b) / delta;
+            if (r === max) {
+                H = bc - gc;
+            } else if (g === max) {
+                H = 2.0 + rc - bc;
+            } else {
+                H = 4.0 + gc - rc;
+            }
+            H /= 6.0;
+            if (H < 0) {
+                H = H + 1.0;
+            }
+        }
+
+        return [H * 360, S, max];
+    }
+
+    /**
+     * Converts the given HSB (HSV) triple to an array of RGB components.
+     */
+    static HSBtoRGB(H: number, S: number, B: number): [number, number, number] {
+        if (isNaN(H)) {
+            H = 0;
+        }
+        H = (((H % 360) + 360) % 360) / 360; // normalize hue to [0, 360] interval, then scale to [0, 1]
+
+        let r = 0;
+        let g = 0;
+        let b = 0;
+
+        if (S === 0) {
+            r = g = b = B;
+        } else {
+            const h = (H - Math.floor(H)) * 6;
+            const f = h - Math.floor(h);
+            const p = B * (1 - S);
+            const q = B * (1 - S * f);
+            const t = B * (1 - (S * (1 - f)));
+            switch (h >> 0) { // discard the floating point part of the number
+            case 0:
+                r = B;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = B;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = B;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = B;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = B;
+                break;
+            case 5:
+                r = B;
+                g = p;
+                b = q;
+                break;
+            }
+        }
+        return [r, g, b];
+    }
+
+    derive(hueShift: number, saturationFactor: number, brightnessFactor: number, opacityFactor: number): Color {
+        const hsb = Color.RGBtoHSB(this.r, this.g, this.b);
+
+        let b = hsb[2];
+        if (b == 0 && brightnessFactor > 1.0) {
+            b = 0.05;
+        }
+
+        const h = (((hsb[0] + hueShift) % 360) + 360) % 360;
+        const s = Math.max(Math.min(hsb[1] * saturationFactor, 1.0), 0.0);
+        b = Math.max(Math.min(b * brightnessFactor, 1.0), 0.0);
+        const a = Math.max(Math.min(this.a * opacityFactor, 1.0), 0.0);
+        const rgba = Color.HSBtoRGB(h, s, b);
+        rgba.push(a);
+        return Color.fromArray(rgba);
+    }
+
+    brighter(): Color {
+        return this.derive(0, 1.0, 1.0 / 0.7, 1.0);
+    }
+
+    darker(): Color {
+        return this.derive(0, 1.0, 0.7, 1.0);
     }
 
     /**

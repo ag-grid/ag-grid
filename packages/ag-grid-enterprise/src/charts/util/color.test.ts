@@ -1,8 +1,119 @@
-import getTicks from "./ticks";
 import {Color} from "./color";
 
+test('constructor', () => {
+    {
+        const color = new Color(-1, 1, -2, 3);
+        expect(color.r).toBe(0);
+        expect(color.g).toBe(1);
+        expect(color.b).toBe(0);
+        expect(color.a).toBe(1);
+    }
+    {
+        const color = new Color(0.3, 0.4, 0.5);
+        expect(color.r).toBe(0.3);
+        expect(color.g).toBe(0.4);
+        expect(color.b).toBe(0.5);
+        expect(color.a).toBe(1);
+    }
+});
+
 test('fromHexString', () => {
-    Color.fromHexString('#abc');
-    Color.fromHexString('#abcdef');
-    Color.fromHexString('#abcdefcc');
+    {
+        const color = Color.fromHexString('#abc');
+        expect(color.r).toBe(0.6666666666666666);
+        expect(color.g).toBe(0.7333333333333333);
+        expect(color.b).toBe(0.8);
+        expect(color.a).toBe(1);
+    }
+    {
+        const color = Color.fromHexString('#aabbcc');
+        expect(color.r).toBe(0.6666666666666666);
+        expect(color.g).toBe(0.7333333333333333);
+        expect(color.b).toBe(0.8);
+        expect(color.a).toBe(1);
+    }
+    {
+        const color = Color.fromHexString('#abcc');
+        expect(color.r).toBe(0.6666666666666666);
+        expect(color.g).toBe(0.7333333333333333);
+        expect(color.b).toBe(0.8);
+        expect(color.a).toBe(0.8);
+    }
+    {
+        const color = Color.fromHexString('#aabbcccc');
+        expect(color.r).toBe(0.6666666666666666);
+        expect(color.g).toBe(0.7333333333333333);
+        expect(color.b).toBe(0.8);
+        expect(color.a).toBe(0.8);
+    }
+
+    expect(() => { Color.fromHexString('') }).toThrow();
+    expect(() => { Color.fromHexString('#') }).toThrow();
+    expect(() => { Color.fromHexString('#a') }).toThrow();
+    expect(() => { Color.fromHexString('#ab') }).toThrow();
+    expect(() => { Color.fromHexString('#abcde') }).toThrow();
+    expect(() => { Color.fromHexString('#aabbccd') }).toThrow();
+    expect(() => { Color.fromHexString('#aabbccddf') }).toThrow();
+});
+
+test('fromArray', () => {
+    {
+        const color = Color.fromArray([0.1, 0.2, 0.3, 0.4]);
+        expect(color.r).toBe(0.1);
+        expect(color.g).toBe(0.2);
+        expect(color.b).toBe(0.3);
+        expect(color.a).toBe(0.4);
+    }
+    {
+        const color = Color.fromArray([0.1, 0.2, 0.3]);
+        expect(color.r).toBe(0.1);
+        expect(color.g).toBe(0.2);
+        expect(color.b).toBe(0.3);
+        expect(color.a).toBe(1.0);
+    }
+});
+
+test('toHSB', () => {
+    {
+        const color = new Color(0.2, 0.4, 0.6);
+        const hsb = color.toHSB();
+        expect(hsb[0]).toBe(210);
+        expect(hsb[1]).toBe(0.6666666666666666);
+        expect(hsb[2]).toBe(0.6);
+    }
+    {
+        const color = new Color(0.3, 0.8, 0.5);
+        const hsb = color.toHSB();
+        expect(hsb[0]).toBe(144);
+        expect(hsb[1]).toBe(0.625);
+        expect(hsb[2]).toBe(0.8);
+    }
+    {
+        const color = new Color(0.5, 0.5, 0.5);
+        const hsb = color.toHSB();
+        expect(hsb[0]).toBe(NaN);
+        expect(hsb[1]).toBe(0.0);
+        expect(hsb[2]).toBe(0.5);
+    }
+});
+
+test('HSBtoRGB', () => {
+    {
+        const rgb = Color.HSBtoRGB(0.3, 0.8, 0.6);
+        expect(rgb[0]).toBe(0.6);
+        expect(rgb[1]).toBe(0.1224000000000001);
+        expect(rgb[2]).toBe(0.11999999999999997);
+    }
+    {
+        const rgb = Color.HSBtoRGB(0, 0.8, 0.6);
+        expect(rgb[0]).toBe(0.6);
+        expect(rgb[1]).toBe(0.11999999999999997);
+        expect(rgb[2]).toBe(0.11999999999999997);
+    }
+    {
+        const rgb = Color.HSBtoRGB(NaN, 0.8, 0.6);
+        expect(rgb[0]).toBe(0.6);
+        expect(rgb[1]).toBe(0.11999999999999997);
+        expect(rgb[2]).toBe(0.11999999999999997);
+    }
 });
