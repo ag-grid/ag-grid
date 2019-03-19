@@ -137,15 +137,21 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._grouped;
     }
 
-    private _strokeStyle: string = 'black';
-    // Can't be `null`. See `Shape.strokeStyle` comments.
-    set strokeStyle(value: string) {
+    /**
+     * The stroke style to use for all bars.
+     * `null` value here doesn't mean invisible stroke, as it normally would
+     * (see `Shape.strokeStyle` comments), it means derive stroke colors from fill
+     * colors by darkening them. To make the stroke appear invisible use the same
+     * color as the background of the chart (such as 'white').
+     */
+    private _strokeStyle: string | null = null;
+    set strokeStyle(value: string | null) {
         if (this._strokeStyle !== value) {
             this._strokeStyle = value;
             this.update();
         }
     }
-    get strokeStyle(): string {
+    get strokeStyle(): string | null {
         return this._strokeStyle;
     }
 
@@ -349,9 +355,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const groupScale = this.groupScale;
         const yFields = this.yFields;
         const colors = this.colors;
+        const strokeColor = this.strokeStyle;
         const strokeColors = this.strokeColors;
         const grouped = this.grouped;
-        // const strokeStyle = this.strokeStyle;
         const lineWidth = this.lineWidth;
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
@@ -379,7 +385,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                     width: barWidth,
                     height: bottomY - y,
                     fillStyle: colors[yFieldIndex % colors.length],
-                    strokeStyle: strokeColors[yFieldIndex % strokeColors.length],
+                    strokeStyle: strokeColor ? strokeColor : strokeColors[yFieldIndex % strokeColors.length],
                     lineWidth,
                     label: labelText ? {
                         text: labelText,

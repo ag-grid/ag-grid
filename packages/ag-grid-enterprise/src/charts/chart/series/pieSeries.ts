@@ -99,7 +99,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     labelRotation: number = 0;
     labelMinAngle: number = 20; // in degrees
 
-    // calloutColor: string = 'black';
+    /**
+     * `null` means make the callout color the same as {@link strokeStyle}.
+     */
+    calloutColor: string | null = null;
     calloutWidth: number = 2;
     calloutLength: number = 10;
     calloutPadding: number = 3;
@@ -119,7 +122,14 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this._rotation;
     }
 
-    // strokeStyle: string | null = 'black';
+    /**
+     * The stroke style to use for all pie sectors.
+     * `null` value here doesn't mean invisible stroke, as it normally would
+     * (see `Shape.strokeStyle` comments), it means derive stroke colors from fill
+     * colors by darkening them. To make the stroke appear invisible use the same
+     * color as the background of the chart (such as 'white').
+     */
+    strokeStyle: string | null = null;
     lineWidth: number = 2;
     shadow: DropShadow | null = null;
 
@@ -217,7 +227,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         const rotation = toRadians(this.rotation);
         const colors = this.colors;
+        const strokeColor = this.strokeStyle;
         const strokeColors = this.strokeColors;
+        const calloutColor = this.calloutColor;
 
         let sectorIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
@@ -234,7 +246,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
             const labelMinAngle = toRadians(this.labelMinAngle);
             const labelVisible = labelField && span > labelMinAngle;
-            const strokeStyle = strokeColors[sectorIndex % strokeColors.length];
+            const strokeStyle = strokeColor ? strokeColor : strokeColors[sectorIndex % strokeColors.length];
+            const calloutStrokeStyle = calloutColor ? calloutColor : strokeStyle;
 
             sectorsData.push({
                 index: sectorIndex,
@@ -265,7 +278,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                         x: midCos * (radius + calloutLength),
                         y: midSin * (radius + calloutLength)
                     },
-                    strokeStyle
+                    strokeStyle: calloutStrokeStyle
                 } : undefined
             });
 
