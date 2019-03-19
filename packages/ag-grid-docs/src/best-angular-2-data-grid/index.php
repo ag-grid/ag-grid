@@ -377,7 +377,7 @@ You can easily extend the default functionality by creating your custom Angular 
 <div class="row">
 <div class="col">
     <hr>
-    <a href="https://medium.com/ag-grid/learn-to-customize-angular-grid-in-less-than-10-minutes-88005d53808d" target="_blank"><button type="button" class="btn btn-primary">Customize Angular Grid Blog</button></a>
+    <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank"><button type="button" class="btn btn-primary">Customize Angular Grid Blog</button></a>
     <hr>
 </div>
 <div class="col">
@@ -528,12 +528,12 @@ Angular Responsive Grid Layout
             </p>
         </div>
             <div class="col">
-                <a href="https://medium.com/ag-grid/get-started-with-angular-grid-in-5-minutes-83bbb14fac93">
-                    Get Started with Angular Grid[Blog]
+                <a href="https://blog.ag-grid.com/tag/angular/"><p class="lead-description">
+                    ag-Grid Angular[Blog]
                 </p></a>
                 <img class="icons" alt="ag-grid-angular-blog" src="/images/icons/blog.svg">
                 <p class="lead-description">
-                    This article describes the Angular grid example and shows you how easy it is to integrate and configure it. It’s a 5 minute getting started guide with examples that you can copy/paste and hit the ground running.
+                    Browse all our Angular and Angular Grid related blogs, ranging from depthful content to guides and tutorials surrounding ag-Grid Angular and general Angular content.
                 </p>
             </div>
         </div>

@@ -542,9 +542,27 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
-<br><br>
-<div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+<br>
+<br>
+<div class="card" style="background-color: aliceblue">
+  <div class="card-body">
+    <h2 id="angular-grid-resources" style="margin-top: 10px">
+    Angular Grid Resources
+    </h2>
+    <br/>
+    <ul>
+      <li>
+        Learn how to customize our Angular Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
+      </li>
+      <br/>
+      <li>
+        Browse our <strong><a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a></strong> page to discover all major benefits in using ag-Grid Angular.
+      </li>
+      <br>
+      <li>
+        Visit our <strong><a href="https://blog.ag-grid.com/tag/angular/">blog</a></strong> to discover all our Angular content.
+    </ul>
+  </div>
 </div>
 <br>
 <div>

@@ -50,6 +50,11 @@
                     <li>Company Address and VAT Number (EU only for VAT number).</li>
                     <li>Number of Licenses that you require.</li>
 
+                    <label for="WebToContact_message">Data Collection Notice:</label>
+                    <ul>
+                        <li>You agree to the collection of your data which is added to our CRM and used to send the License Key.</li>
+                    </ul>
+
                     <?php if( $formKey == "applicationDeveloper") { ?>
                     <li>Application Name</li>
                     <?php } ?>
