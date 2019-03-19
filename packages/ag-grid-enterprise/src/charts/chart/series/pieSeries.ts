@@ -9,6 +9,7 @@ import {DropShadow} from "../../scene/dropShadow";
 import scaleLinear, {LinearScale} from "../../scale/linearScale";
 import {normalizeAngle180, toRadians} from "../../util/angle";
 import colors from "../colors";
+import {Color} from "../../util/color";
 
 type SectorDatum = {
     index: number,
@@ -38,7 +39,8 @@ type SectorDatum = {
         end: {
             x: number,
             y: number
-        }
+        },
+        strokeStyle: string
     }
 };
 
@@ -97,12 +99,13 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     labelRotation: number = 0;
     labelMinAngle: number = 20; // in degrees
 
-    calloutColor: string = 'black';
+    // calloutColor: string = 'black';
     calloutWidth: number = 2;
     calloutLength: number = 10;
     calloutPadding: number = 3;
 
     colors: string[] = colors;
+    private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
 
     set rotation(value: number) {
         if (this._rotation !== value) {
@@ -116,7 +119,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this._rotation;
     }
 
-    strokeStyle: string | null = 'black';
+    // strokeStyle: string | null = 'black';
     lineWidth: number = 2;
     shadow: DropShadow | null = null;
 
@@ -214,6 +217,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         const rotation = toRadians(this.rotation);
         const colors = this.colors;
+        const strokeColors = this.strokeColors;
 
         let sectorIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
@@ -230,6 +234,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
             const labelMinAngle = toRadians(this.labelMinAngle);
             const labelVisible = labelField && span > labelMinAngle;
+            const strokeStyle = strokeColors[sectorIndex % strokeColors.length];
 
             sectorsData.push({
                 index: sectorIndex,
@@ -239,7 +244,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 midAngle: normalizeAngle180(midAngle),
 
                 fillStyle: colors[sectorIndex % colors.length],
-                strokeStyle: this.strokeStyle,
+                strokeStyle,
                 lineWidth: this.lineWidth,
                 shadow: this.shadow,
 
@@ -259,7 +264,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                     end: {
                         x: midCos * (radius + calloutLength),
                         y: midSin * (radius + calloutLength)
-                    }
+                    },
+                    strokeStyle
                 } : undefined
             });
 
@@ -307,7 +313,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 const callout = datum.callout;
                 if (callout) {
                     line.lineWidth = this.calloutWidth;
-                    line.strokeStyle = this.calloutColor;
+                    line.strokeStyle = callout.strokeStyle;
                     line.x1 = callout.start.x;
                     line.y1 = callout.start.y;
                     line.x2 = callout.end.x;
