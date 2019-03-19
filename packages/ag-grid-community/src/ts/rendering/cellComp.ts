@@ -333,12 +333,9 @@ export class CellComp extends Component {
         }
 
         const doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
-        if (doingFocusCss) {
+        if (doingFocusCss && this.cellFocused) {
             // otherwise the class depends on the focus state
-            cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
-        } else {
-            // if we are not doing cell selection, then ag-cell-no-focus gets put onto every cell
-            cssClasses.push('ag-cell-no-focus');
+            cssClasses.push('ag-cell-focus');
         }
 
         if (this.firstRightPinned) {
@@ -1760,12 +1757,10 @@ export class CellComp extends Component {
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
 
-            // if we are not doing cell selection, then the focus class does not change, all cells will
-            // stay with ag-cell-no-focus class
+            // if we are not doing cell selection, then the focus class does not change
             const doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
             if (doingFocusCss) {
                 _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-                _.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
             }
 
             this.cellFocused = cellFocused;
