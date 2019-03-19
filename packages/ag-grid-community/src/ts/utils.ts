@@ -909,9 +909,9 @@ export class Utils {
             }
         } else {
             // otherwise put at start
-            if (eContainer.firstChild) {
+            if (eContainer.firstChild && eContainer.firstChild !== eChild) {
                 // insert it at the first location
-                eContainer.insertBefore(eChild, eContainer.firstChild);
+                eContainer.insertAdjacentElement('afterbegin', eChild);
             }
         }
     }
