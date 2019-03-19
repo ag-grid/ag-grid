@@ -115,15 +115,18 @@ export class ColumnFactory {
         for (let i = 0; i < unbalancedTree.length; i++) {
             const child = unbalancedTree[i];
             if (child instanceof OriginalColumnGroup) {
+                // child is a group, all we do is go to the next level of recursion
                 const originalGroup = child;
                 const newChildren = this.balanceColumnTree(originalGroup.getChildren(),
                     currentDept + 1, columnDept, columnKeyCreator);
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             } else {
+                // child is a column - so here we add in the padded column groups if needed
                 let firstPaddedGroup: OriginalColumnGroup | undefined;
                 let currentPaddedGroup: OriginalColumnGroup | undefined;
 
+                // this for loop will NOT run any loops if no padded column groups are needed
                 for (let j = columnDept - 1; j >= currentDept; j--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
@@ -142,6 +145,7 @@ export class ColumnFactory {
                     }
                 }
 
+                // likewise this if statement will not run if no padded groups
                 if (firstPaddedGroup) {
                     result.push(firstPaddedGroup);
                     const hasGroups = unbalancedTree.some(child => child instanceof OriginalColumnGroup);

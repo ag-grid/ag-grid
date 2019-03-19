@@ -144,6 +144,11 @@ export class HeaderGroupWrapperComp extends Component {
             let columnGroup = this.columnGroup;
             const leafCols = columnGroup.getLeafColumns();
 
+            // find the top most column group that represents the same columns. so if we are dragging a group, we also
+            // want to visually show the parent groups dragging for the same column set. for example imaging 5 levels
+            // of grouping, with each group only containing the next group, and the last group containing three columns,
+            // then when you move any group (even the lowest level group) you are in-fact moving all the groups, as all
+            // the groups represent the same column set.
             while (columnGroup.getParent() && columnGroup.getParent().getLeafColumns().length === leafCols.length) {
                 columnGroup = columnGroup.getParent();
             }
