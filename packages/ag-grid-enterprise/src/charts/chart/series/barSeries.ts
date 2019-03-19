@@ -7,6 +7,7 @@ import {Text} from "../../scene/shape/text";
 import {BandScale} from "../../scale/bandScale";
 import {DropShadow} from "../../scene/dropShadow";
 import colors from "../colors";
+import {Color} from "../../util/color";
 
 type BarDatum = {
     x: number,
@@ -331,6 +332,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
     colors: string[] = colors;
+    private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
 
     update(): void {
         const chart = this.chart;
@@ -347,8 +349,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const groupScale = this.groupScale;
         const yFields = this.yFields;
         const colors = this.colors;
+        const strokeColors = this.strokeColors;
         const grouped = this.grouped;
-        const strokeStyle = this.strokeStyle;
+        // const strokeStyle = this.strokeStyle;
         const lineWidth = this.lineWidth;
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
@@ -376,7 +379,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                     width: barWidth,
                     height: bottomY - y,
                     fillStyle: colors[yFieldIndex % colors.length],
-                    strokeStyle,
+                    strokeStyle: strokeColors[yFieldIndex % strokeColors.length],
                     lineWidth,
                     label: labelText ? {
                         text: labelText,
@@ -418,6 +421,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                 rect.strokeStyle = datum.strokeStyle;
                 rect.lineWidth = datum.lineWidth;
                 rect.shadow = this.shadow;
+                rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
             });
 
         groupSelection.selectByTag<Text>(BarSeriesNodeTag.Label)
