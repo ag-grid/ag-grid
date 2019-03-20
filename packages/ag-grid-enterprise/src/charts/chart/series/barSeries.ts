@@ -155,7 +155,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._strokeStyle;
     }
 
-    private _lineWidth: number = 0;
+    private _lineWidth: number = 2;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;

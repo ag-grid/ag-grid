@@ -85,6 +85,7 @@ export class TooltipManager {
         if (this.lastHoveredComponent === targetCmp) { return; }
 
         this.lastHoveredComponent = targetCmp;
+        this.lastMouseEvent = e;
         this.showTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay, e);
     }
 
