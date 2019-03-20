@@ -32,7 +32,7 @@ export class Color {
      */
     static fromString(str: string): Color {
         // hexadecimal notation
-        if (str[0] === '#') {
+        if (str.indexOf('#') >= 0) { // there can be some leading whitespace
             return Color.fromHexString(str);
         }
 
@@ -42,12 +42,17 @@ export class Color {
             return Color.fromHexString(hex);
         }
 
-        throw new Error();
+        // rgb(a) notation
+        if (str.indexOf('rgb') >= 0) {
+            return Color.fromRgbaString(str);
+        }
+
+        throw new Error(`Invalid color string: '${str}'`);
     }
 
     // See https://drafts.csswg.org/css-color/#hex-notation
-    static hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*/;
-    static shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*/;
+    private static hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*/;
+    private static shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*/;
     // Using separate RegExp for the short hex notation because strings like `#abcd`
     // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
 
@@ -77,6 +82,23 @@ export class Color {
         throw new Error(`Malformed hexadecimal color string: '${str}'`);
     }
 
+    private static rgbRe = /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)\s*/;
+    private static rgbaRe = /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\)\s*/;
+
+    static fromRgbaString(str: string): Color {
+        let values = str.match(Color.rgbRe);
+        if (values) {
+            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255);
+        }
+
+        values = str.match(Color.rgbaRe);
+        if (values) {
+            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255, +values[4]);
+        }
+
+        throw new Error(`Malformed rgb/rgba color string: '${str}'`);
+    }
+
     static fromArray(arr: [number, number, number] | [number, number, number, number]): Color {
         if (arr.length === 4) {
             return new Color(arr[0], arr[1], arr[2], arr[3]);
@@ -84,7 +106,12 @@ export class Color {
         if (arr.length === 3) {
             return new Color(arr[0], arr[1], arr[2]);
         }
-        throw new Error('The given array should contain at least 3 numbers.');
+        throw new Error('The given array should contain 3 or 4 color components (numbers).');
+    }
+
+    static fromHSB(h: number, s: number, b: number, alpha = 1): Color {
+        const rgb = Color.HSBtoRGB(h, s, b);
+        return new Color(rgb[0], rgb[1], rgb[2], alpha);
     }
 
     toHexString(): string {
@@ -211,7 +238,7 @@ export class Color {
         return [r, g, b];
     }
 
-    derive(hueShift: number, saturationFactor: number, brightnessFactor: number, opacityFactor: number): Color {
+    private derive(hueShift: number, saturationFactor: number, brightnessFactor: number, opacityFactor: number): Color {
         const hsb = Color.RGBtoHSB(this.r, this.g, this.b);
 
         let b = hsb[2];
@@ -240,7 +267,7 @@ export class Color {
      * CSS Color Module Level 4:
      * https://drafts.csswg.org/css-color/#named-colors
      */
-    static nameToHex: { [key: string]: string } = Object.freeze({
+    private static nameToHex: { [key: string]: string } = Object.freeze({
         aliceblue: '#F0F8FF',
         antiquewhite: '#FAEBD7',
         aqua: '#00FFFF',

@@ -117,3 +117,33 @@ test('HSBtoRGB', () => {
         expect(rgb[2]).toBe(0.11999999999999997);
     }
 });
+
+test('fromRgbaString', () => {
+    {
+        const color = Color.fromRgbaString('  rgb(120,240,100) ');
+        expect(color.r).toBe(120 / 255);
+        expect(color.g).toBe(240 / 255);
+        expect(color.b).toBe(100 / 255);
+        expect(color.toRgbaString()).toBe('rgb(120, 240, 100)');
+    }
+    {
+        const color = Color.fromRgbaString('  rgba(120,   240,  100,    0.4) ');
+        expect(color.r).toBe(120 / 255);
+        expect(color.g).toBe(240 / 255);
+        expect(color.b).toBe(100 / 255);
+        expect(color.a).toBe(0.4);
+        expect(color.toRgbaString()).toBe('rgba(120, 240, 100, 0.4)');
+    }
+    {
+        const color = Color.fromRgbaString('  rgba(120,   340,  500,    2.4) ');
+        expect(color.r).toBe(120 / 255);
+        expect(color.g).toBe(1);
+        expect(color.b).toBe(1);
+        expect(color.a).toBe(1);
+        expect(color.toRgbaString()).toBe('rgb(120, 255, 255)');
+    }
+    expect(() => { Color.fromRgbaString('rgb(120.5, 240, 100)') }).toThrow();
+    expect(() => { Color.fromRgbaString('rgb(120, .3, 100)') }).toThrow();
+    expect(() => { Color.fromRgbaString('rgb(120, 240, 100.)') }).toThrow();
+    expect(() => { Color.fromRgbaString('rgb(-120, 240, 100)') }).toThrow();
+});
