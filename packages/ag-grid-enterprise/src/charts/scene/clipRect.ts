@@ -85,10 +85,6 @@ export class ClipRect extends Node {
     }
 
     updatePath() {
-        if (!this.dirtyPath) {
-            return;
-        }
-
         const path = this.path;
 
         path.clear();
@@ -99,7 +95,9 @@ export class ClipRect extends Node {
 
     render(ctx: CanvasRenderingContext2D) {
         if (this.active) {
-            this.updatePath();
+            if (this.dirtyPath) {
+                this.updatePath();
+            }
             this.scene!.appendPath(this.path);
             ctx.clip();
         }

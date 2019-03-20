@@ -8,12 +8,12 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
     constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent: HTMLElement = document.body) {
         super(parent);
 
-        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesRect]);
+        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
         this._xAxis = xAxis;
         this._yAxis = yAxis;
     }
 
-    private seriesRect = new ClipRect();
+    private seriesClipRect = new ClipRect();
 
     private readonly _xAxis: Axis<X>;
     get xAxis(): Axis<X> {
@@ -26,7 +26,7 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
     }
 
     addSeries(series: Series<D, X, Y>): void {
-        this.seriesRect.append(series.group);
+        this.seriesClipRect.append(series.group);
         this._series.push(series);
         series.chart = this;
         this.layoutPending = true;
@@ -50,11 +50,11 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
 
-        const seriesRect = this.seriesRect;
-        seriesRect.x = shrinkRect.x;
-        seriesRect.y = shrinkRect.y;
-        seriesRect.width = shrinkRect.width;
-        seriesRect.height = shrinkRect.height;
+        const seriesClipRect = this.seriesClipRect;
+        seriesClipRect.x = shrinkRect.x;
+        seriesClipRect.y = shrinkRect.y - padding.top;
+        seriesClipRect.width = shrinkRect.width;
+        seriesClipRect.height = shrinkRect.height + padding.top;
 
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
