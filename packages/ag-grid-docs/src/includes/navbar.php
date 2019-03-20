@@ -16,7 +16,7 @@
                     <a href="/documentation-main/documentation.php">Documentation</a>
                 </li>
                 <li>
-                    <a href="http://blog.ag-grid.com/" target="_blank">Blog</a>
+                    <a href="https://blog.ag-grid.com/" target="_blank">Blog</a>
                 </li>
 
 <!--

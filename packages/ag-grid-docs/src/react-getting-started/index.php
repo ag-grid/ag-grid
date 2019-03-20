@@ -329,18 +329,21 @@ $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/ic
 </div>
 <div class="card" style="background-color: aliceblue">
   <div class="card-body">
-    <h2 id="angular-grid-resources" style="margin-top: 10px">
+    <h2 id="react-grid-resources" style="margin-top: 10px">
     React Grid Resources
     </h2>
     <br/>
     <ul>
       <li>
-        Learn how to customize our React Grid in this <a href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb" target="_blank">guide</a>.
+        Learn how to customize our React Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-react-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
       </li>
       <br/>
       <li>
         Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React.
       </li>
+      <br>
+      <li>
+        Visit our <strong><a href="https://blog.ag-grid.com/tag/react/">blog</a></strong> to discover all our React content.
     </ul>
   </div>
 </div>
