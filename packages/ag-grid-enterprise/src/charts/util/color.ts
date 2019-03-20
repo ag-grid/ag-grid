@@ -1,11 +1,3 @@
-/**
- * Every color component should be in the [0, 1] range.
- * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
- * So, when animating colors, if the source or target color components are already near
- * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
- * component value to end up outside of that range mid-animation. For this reason the constructor
- * performs range checking/constraining.
- */
 export class Color {
 
     readonly r: number;
@@ -13,6 +5,18 @@ export class Color {
     readonly b: number;
     readonly a: number;
 
+    /**
+     * Every color component should be in the [0, 1] range.
+     * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
+     * So, when animating colors, if the source or target color components are already near
+     * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
+     * component value to end up outside of that range mid-animation. For this reason the constructor
+     * performs range checking/constraining.
+     * @param r Red component.
+     * @param g Green component.
+     * @param b Blue component.
+     * @param a Alpha (opacity) component.
+     */
     constructor(r: number, g: number, b: number, a: number = 1) {
         // NaN is treated as 0.
         this.r = Math.min(1, Math.max(0, r || 0));
@@ -51,34 +55,37 @@ export class Color {
     }
 
     // See https://drafts.csswg.org/css-color/#hex-notation
-    private static hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*/;
-    private static shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*/;
+    private static hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*$/;
+    private static shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*$/;
     // Using separate RegExp for the short hex notation because strings like `#abcd`
     // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
 
     static fromHexString(str: string): Color {
-        const n = str.length - 1;
-        const short = n === 3 || n === 4;
+        let values = str.match(Color.hexRe);
+        if (values) {
+            let r = parseInt(values[1], 16);
+            let g = parseInt(values[2], 16);
+            let b = parseInt(values[3], 16);
+            let a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
 
-        if (str[0] === '#' && (short || n === 6 || n === 8)) {
-            const values = str.match(short ? Color.shortHexRe : Color.hexRe);
-
-            if (values) {
-                let r = parseInt(values[1], 16);
-                let g = parseInt(values[2], 16);
-                let b = parseInt(values[3], 16);
-                let a = values[4] !== undefined ? parseInt(values[4], 16) : (short ? 15 : 255);
-
-                if (short) {
-                    r += r * 16;
-                    g += g * 16;
-                    b += b * 16;
-                    a += a * 16;
-                }
-
-                return new Color(r / 255, g / 255, b / 255, a / 255);
-            }
+            return new Color(r / 255, g / 255, b / 255, a / 255);
         }
+
+        values = str.match(Color.shortHexRe);
+        if (values) {
+            let r = parseInt(values[1], 16);
+            let g = parseInt(values[2], 16);
+            let b = parseInt(values[3], 16);
+            let a = values[4] !== undefined ? parseInt(values[4], 16) : 15;
+
+            r += r * 16;
+            g += g * 16;
+            b += b * 16;
+            a += a * 16;
+
+            return new Color(r / 255, g / 255, b / 255, a / 255);
+        }
+
         throw new Error(`Malformed hexadecimal color string: '${str}'`);
     }
 
@@ -114,11 +121,16 @@ export class Color {
         return new Color(rgb[0], rgb[1], rgb[2], alpha);
     }
 
+    private static padHex(str: string): string {
+        // Can't use `padStart(2, '0')` here because of IE.
+        return str.length === 1 ? '0' + str : str;
+    }
+
     toHexString(): string {
         return '#'
-            + Math.round(this.r * 255).toString(16)
-            + Math.round(this.g * 255).toString(16)
-            + Math.round(this.b * 255).toString(16);
+            + Color.padHex(Math.round(this.r * 255).toString(16))
+            + Color.padHex(Math.round(this.g * 255).toString(16))
+            + Color.padHex(Math.round(this.b * 255).toString(16));
     }
 
     toRgbaString(): string {
