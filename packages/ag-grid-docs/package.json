@@ -90,6 +90,7 @@
     "cache-loader": "1.2.2",
     "chromeless": "1.5.2",
     "concurrently": "~4.1.0",
+    "core-js": "^2.6.5",
     "css-loader": "1.0.0",
     "express": "4.16.3",
     "fork-ts-checker-webpack-plugin": "0.5.0",
