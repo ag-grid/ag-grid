@@ -39,7 +39,6 @@ import { Beans } from "../rendering/beans";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { ResizeObserverService } from "../misc/resizeObserverService";
-import { SuppressKeyboardEventParams } from "../entities/colDef";
 import { _ } from "../utils";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
@@ -451,7 +450,7 @@ export class GridPanel extends Component {
         eventNames.forEach(eventName => {
             const listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach(container => {
-                this.addDestroyableEventListener(container, eventName, listener);
+                this.addDestroyableEventListener(container, eventName, listener, true);
             });
         });
     }
@@ -498,10 +497,14 @@ export class GridPanel extends Component {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        const cellComp = _.getCellCompForEvent(this.gridOptionsWrapper, keyboardEvent);
+        const rowNode = cellComp.getRenderedRow().getRowNode();
+        const column = cellComp.getColumn();
+        const editing = cellComp.isEditing();
+
         if (!cellComp) { return; }
 
-        const gridProcessingAllowed = !this.isUserSuppressingKeyboardEvent(keyboardEvent, cellComp);
+        const gridProcessingAllowed = !_.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
 
         if (gridProcessingAllowed) {
             switch (eventName) {
@@ -521,6 +524,8 @@ export class GridPanel extends Component {
                     cellComp.onKeyPress(keyboardEvent);
                     break;
             }
+        } else {
+            keyboardEvent.preventDefault();
         }
 
         if (eventName === 'keydown') {
@@ -556,48 +561,6 @@ export class GridPanel extends Component {
                 return this.onCtrlAndV();
             case Constants.KEY_D:
                 return this.onCtrlAndD(keyboardEvent);
-        }
-    }
-
-    // allows use to tell grid to skip specific keyboard events
-    private isUserSuppressingKeyboardEvent(keyboardEvent: KeyboardEvent, cellComp: CellComp): boolean {
-
-        const rowNode = cellComp.getRenderedRow().getRowNode();
-        const column = cellComp.getColumn();
-
-        const gridOptionsFunc = this.gridOptionsWrapper.getSuppressKeyboardEventFunc();
-        const colDefFunc = column.getColDef().suppressKeyboardEvent;
-
-        // if no callbacks provided by user, then do nothing
-        if (!gridOptionsFunc && !colDefFunc) {
-            return false;
-        }
-
-        const params: SuppressKeyboardEventParams = {
-            event: keyboardEvent,
-            editing: cellComp.isEditing(),
-            column: column,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            node: rowNode,
-            data: rowNode.data,
-            colDef: column.getColDef(),
-            context: this.beans.gridOptionsWrapper.getContext(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()
-        };
-
-        // colDef get first preference on suppressing events
-        if (colDefFunc) {
-            const colDefFuncResult = colDefFunc(params);
-            // if colDef func suppressed, then return now, no need to call gridOption func
-            if (colDefFuncResult) { return true; }
-        }
-
-        if (gridOptionsFunc) {
-            // if gridOption func, return the result
-            return gridOptionsFunc(params);
-        } else {
-            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-            return false;
         }
     }
 

@@ -3,6 +3,8 @@ import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
+import { SuppressKeyboardEventParams } from "./entities/colDef";
+import { CellComp } from "./rendering/cellComp";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -553,6 +555,65 @@ export class Utils {
             // accents for non-English, but don't care much, as most users are on modern browsers
             return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
         }
+    }
+
+    // allows user to tell the grid to skip specific keyboard events
+    static isUserSuppressingKeyboardEvent(
+        gridOptionsWrapper: GridOptionsWrapper,
+        keyboardEvent: KeyboardEvent,
+        rowNode: RowNode,
+        column: Column,
+        editing: boolean
+    ): boolean {
+
+        const gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
+        const colDefFunc = column.getColDef().suppressKeyboardEvent;
+
+        // if no callbacks provided by user, then do nothing
+        if (!gridOptionsFunc && !colDefFunc) {
+            return false;
+        }
+
+        const params: SuppressKeyboardEventParams = {
+            event: keyboardEvent,
+            editing,
+            column,
+            api: gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: gridOptionsWrapper.getContext(),
+            columnApi: gridOptionsWrapper.getColumnApi()
+        };
+
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            const colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) { return true; }
+        }
+
+        if (gridOptionsFunc) {
+            // if gridOption func, return the result
+            return gridOptionsFunc(params);
+        } else {
+            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+            return false;
+        }
+    }
+
+    static getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp {
+        let sourceElement = this.getTarget(event);
+
+        while (sourceElement) {
+            const renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
+            if (renderedCell) {
+                return renderedCell as CellComp;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+
+        return null;
     }
 
     //adds all type of change listeners to an element, intended to be a text field
@@ -1785,8 +1846,22 @@ export class Utils {
 
     static passiveEvents: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
-    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
-        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? {passive: true} : undefined) as any);
+    static addSafePassiveEventListener(
+        eElement: HTMLElement,
+        event: string, listener: (event?: any) => void,
+        options?: boolean | AddEventListenerOptions
+    ) {
+
+        if (Utils.passiveEvents.indexOf(event) !== -1) {
+            if (options === undefined) {
+                options = {};
+            } else if (typeof options === 'boolean') {
+                options = { capture: options };
+            }
+
+            options.passive = true;
+        }
+        eElement.addEventListener(event, listener, options);
     }
 
     static camelCaseToHumanText(camelCase: string | undefined): string | null {

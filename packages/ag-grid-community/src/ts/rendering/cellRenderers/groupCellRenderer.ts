@@ -389,7 +389,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
 
         // expand / contract as the user hits enter
-        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
+        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this), { capture: true });
         this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
 
@@ -412,7 +412,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        if (_.isKeyPressed(event, Constants.KEY_ENTER)) {
+        if (!event.defaultPrevented && _.isKeyPressed(event, Constants.KEY_ENTER)) {
             const cellEditable = this.params.column.isCellEditable(this.params.node);
             if (cellEditable) {
                 return;

@@ -74,11 +74,15 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public addDestroyableEventListener(eElement: Window | HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): void {
+    public addDestroyableEventListener(
+        eElement: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
+        event: string, listener: (event?: any) => void,
+        options?: boolean | AddEventListenerOptions
+    ): void {
         if (this.destroyed) { return; }
 
         if (eElement instanceof HTMLElement) {
-            _.addSafePassiveEventListener((eElement as HTMLElement), event, listener);
+            _.addSafePassiveEventListener((eElement as HTMLElement), event, listener, options);
         } else if (eElement instanceof Window) {
             (eElement as Window).addEventListener(event, listener);
         } else if (eElement instanceof GridOptionsWrapper) {
