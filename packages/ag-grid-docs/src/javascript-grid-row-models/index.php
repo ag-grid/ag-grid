@@ -346,13 +346,6 @@ include '../documentation-main/documentation_header.php';
             <td><span class="green-tick">&#10004;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-tree/">Tree Data</a></td>
-            <td><span class="green-tick">&#10004;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-        </tr>
-        <tr class="item-row">
             <td><a href="../javascript-grid-full-width-rows/">Full Width Rows</a></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10004;</span></td>
