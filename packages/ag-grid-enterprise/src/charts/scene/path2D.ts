@@ -5,7 +5,7 @@ export class Path2D {
     // and any allocation can trigger a GC cycle during animation, so we attempt
     // to minimize the number of allocations.
 
-    xy?: [number, number];
+    private xy?: [number, number];
     commands: string[] = [];
     params: number[] = [];
 
@@ -368,10 +368,16 @@ export class Path2D {
         this.xy![1] = y;
     }
 
+    private _closedPath: boolean = false;
+    get closedPath(): boolean {
+        return this._closedPath;
+    }
+
     closePath() {
         if (this.xy) {
             this.xy = undefined;
             this.commands.push('Z');
+            this._closedPath = true;
         }
     }
 
@@ -379,6 +385,7 @@ export class Path2D {
         this.commands.length = 0;
         this.params.length = 0;
         this.xy = undefined;
+        this._closedPath = false;
     }
 
     isPointInPath(x: number, y: number): boolean {
