@@ -694,25 +694,4 @@ cellEditorParams: function(params) {
     <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
             Cell Editor Components</a> for more information.</note>
 
-
-    <h2>Controlling Keyboard While Editing</h2>
-    <p>
-    While editing, the grid will listen to navigation events coming from the keyboard, this includes navigate to next cell,
-    next row etc. If you want to avoid this events from being consumed by the grid you can do so by configuring
-    <code>colDef.suppressKeyboardEvent</code>.
-    </p>
-
-    <p>
-        See <a href="../javascript-grid-keyboard-navigation/#suppressKeyboardEvents">
-        Suppress Grid Keyboard Events</a> for full details of this callback.
-    </p>
-
-    <p>
-        The following example has each cell containing a number. When editing, the arrows are used to manipulate
-        its value instead of navigate cells.
-    </p>
-
-    <?= example('Controlling keyboard while editing', 'controlling-keyboard-while-editing', 'generated', array("processVue" => true)) ?>
-
-
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -4,11 +4,12 @@ function ClickableStatusBarComponent() {
 ClickableStatusBarComponent.prototype.init = function (params) {
     this.params = params;
 
+    this.visible = true;
     this.eGui = document.createElement('div');
     this.eGui.className = 'ag-name-value';
 
     var label = document.createElement('span');
-    label.innerText = 'Status Bar Component ';
+    label.innerText = 'Status Bar Component  ';
     this.eGui.appendChild(label);
 
     this.eButton = document.createElement('button');
@@ -34,8 +35,7 @@ ClickableStatusBarComponent.prototype.onButtonClicked = function () {
 
 ClickableStatusBarComponent.prototype.setVisible = function (visible) {
     this.visible = visible;
-
-    this.eGui.style.display = this.visible ? 'flex' : 'none';
+    this.eGui.style.display = this.visible ? 'block' : 'none';
 };
 
 ClickableStatusBarComponent.prototype.isVisible = function () {

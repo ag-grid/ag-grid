@@ -298,7 +298,7 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
                 <kbd>Enter</kbd> will not start or stop editing.
             </ul>
         </li>
-        <li>On all other columns:
+        <li>On all columns:
             <ul>
                 <li><kbd>Ctrl & A</kbd> will not select all cells into a range.</li>
                 <li><kbd>Ctrl & C</kbd> will not copy to clipboard.</li>

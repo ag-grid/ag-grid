@@ -15553,7 +15553,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.onNavigationKeyPressed = function (event, key) {
         if (this.editingCell) {
-            this.stopRowOrCellEdit();
+            return;
         }
         if (event.shiftKey && this.rangeSelectionEnabled) {
             this.onShiftRangeSelect(key);
