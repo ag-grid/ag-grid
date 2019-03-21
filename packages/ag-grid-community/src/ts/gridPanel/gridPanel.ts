@@ -1247,8 +1247,8 @@ export class GridPanel extends Component {
 
         this.headerRootComp.setHeight(totalHeaderHeight);
 
-        const floatingTopHeight = `${pinnedRowModel.getPinnedTopTotalHeight()}px`;
-        const floatingBottomHeight = `${pinnedRowModel.getPinnedBottomTotalHeight()}px`;
+        const floatingTopHeight = `${pinnedRowModel.getPinnedTopTotalHeight() + 1}px`;
+        const floatingBottomHeight = `${pinnedRowModel.getPinnedBottomTotalHeight() + 1}px`;
 
         eTop.style.minHeight = floatingTopHeight;
         eTop.style.height = floatingTopHeight;
