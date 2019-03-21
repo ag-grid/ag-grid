@@ -32,6 +32,24 @@ enum BarSeriesNodeTag {
 }
 
 export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries<D, X, Y> {
+
+    /**
+     * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
+     */
+    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+
+    colors: string[] = colors;
+    private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
+
+    private domainX: string[] = [];
+    private domainY: number[] = [];
+    private yData: number[][] = [];
+
+    /**
+     * Used to get the position of bars within each group.
+     */
+    private groupScale = new BandScale<string>();
+
     set chart(chart: CartesianChart<D, string, number> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
@@ -213,15 +231,6 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._labelPadding;
     }
 
-    private domainX: string[] = [];
-    private domainY: number[] = [];
-    private yData: number[][] = [];
-
-    /**
-     * Used to get the position of bars within each group.
-     */
-    private groupScale = new BandScale<string>();
-
     processData(): boolean {
         const data = this.data;
         const xField = this.xField;
@@ -331,14 +340,6 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     getDomainY(): number[] {
         return this.domainY;
     }
-
-    /**
-     * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
-     */
-    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
-
-    colors: string[] = colors;
-    private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
 
     update(): void {
         const chart = this.chart;
