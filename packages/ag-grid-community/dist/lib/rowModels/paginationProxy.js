@@ -64,9 +64,6 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
         }
         var rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         var bodyHeight = this.gridPanel.getBodyHeight();
-        if (this.scrollVisibleService.isHorizontalScrollShowing()) {
-            bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
-        }
         if (bodyHeight > 0) {
             var newPageSize = Math.floor(bodyHeight / rowHeight);
             this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);

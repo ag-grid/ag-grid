@@ -1537,13 +1537,13 @@
       margin-left: 4px;
       margin-top: 4px; }
   .ag-theme-dark .ag-floating-top {
-    background-color: #333;
     border-bottom: 1px solid darkgrey; }
-    .ag-theme-dark .ag-floating-top .ag-row {
-      background-color: #333; }
   .ag-theme-dark .ag-floating-bottom {
-    background-color: #333;
     border-top: 1px solid darkgrey; }
+  .ag-theme-dark .ag-floating-top, .ag-theme-dark .ag-floating-bottom {
+    background-color: #333; }
+    .ag-theme-dark .ag-floating-top .ag-row, .ag-theme-dark .ag-floating-bottom .ag-row {
+      background-color: #333; }
   .ag-theme-dark .ag-rtl {
     text-align: right; }
     .ag-theme-dark .ag-rtl .ag-numeric-cell {

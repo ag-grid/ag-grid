@@ -207,7 +207,7 @@ var ClientSideRowModel = /** @class */ (function () {
         // not changed are not impacted.
         var noTransactions = utils_1._.missingOrEmpty(rowNodeTransactions);
         var changedPath = new changedPath_1.ChangedPath(false, this.rootNode);
-        if (noTransactions) {
+        if (noTransactions || this.gridOptionsWrapper.isTreeData()) {
             changedPath.setInactive();
         }
         return changedPath;

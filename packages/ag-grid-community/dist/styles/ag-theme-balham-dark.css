@@ -1638,13 +1638,13 @@
       margin-left: 4px;
       margin-top: 4px; }
   .ag-theme-balham-dark .ag-floating-top {
-    background-color: inherit;
     border-bottom: 1px solid #424242; }
-    .ag-theme-balham-dark .ag-floating-top .ag-row {
-      background-color: inherit; }
   .ag-theme-balham-dark .ag-floating-bottom {
-    background-color: inherit;
     border-top: 1px solid #424242; }
+  .ag-theme-balham-dark .ag-floating-top, .ag-theme-balham-dark .ag-floating-bottom {
+    background-color: inherit; }
+    .ag-theme-balham-dark .ag-floating-top .ag-row, .ag-theme-balham-dark .ag-floating-bottom .ag-row {
+      background-color: inherit; }
   .ag-theme-balham-dark .ag-rtl {
     text-align: right; }
     .ag-theme-balham-dark .ag-rtl .ag-numeric-cell {

@@ -126,7 +126,7 @@ var MenuItemMapper = /** @class */ (function () {
                 }
                 if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
                     exportSubMenuItems.push('excelExport');
-                    exportSubMenuItems.push('excelXMLExport');
+                    exportSubMenuItems.push('excelXmlExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
@@ -142,8 +142,8 @@ var MenuItemMapper = /** @class */ (function () {
                     exportMode: 'xlsx'
                 }); }
             };
-            case 'excelXMLExport': return {
-                name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
+            case 'excelXmlExport': return {
+                name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)'),
                 action: function () { return _this.gridApi.exportDataAsExcel({
                     exportMode: 'xml'
                 }); }

@@ -980,14 +980,24 @@ var GridPanel = /** @class */ (function (_super) {
         totalHeaderHeight += numberOfGroups * groupHeight;
         totalHeaderHeight += headerHeight;
         this.headerRootComp.setHeight(totalHeaderHeight);
-        var floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight() + "px";
-        var floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight() + "px";
-        eTop.style.minHeight = floatingTopHeight;
-        eTop.style.height = floatingTopHeight;
-        eTop.style.display = parseInt(floatingTopHeight, 10) ? 'inherit' : 'none';
-        eBottom.style.minHeight = floatingBottomHeight;
-        eBottom.style.height = floatingBottomHeight;
-        eBottom.style.display = parseInt(floatingBottomHeight, 10) ? 'inherit' : 'none';
+        var floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
+        if (floatingTopHeight) {
+            // adding 1px for cell bottom border
+            floatingTopHeight += 1;
+        }
+        var floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+        if (floatingBottomHeight) {
+            // adding 1px for cell bottom border
+            floatingBottomHeight += 1;
+        }
+        var floatingTopHeightString = floatingTopHeight + "px";
+        var floatingBottomHeightString = floatingBottomHeight + "px";
+        eTop.style.minHeight = floatingTopHeightString;
+        eTop.style.height = floatingTopHeightString;
+        eTop.style.display = floatingTopHeight ? 'inherit' : 'none';
+        eBottom.style.minHeight = floatingBottomHeightString;
+        eBottom.style.height = floatingBottomHeightString;
+        eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
         this.checkBodyHeight();
     };
     GridPanel.prototype.getBodyHeight = function () {

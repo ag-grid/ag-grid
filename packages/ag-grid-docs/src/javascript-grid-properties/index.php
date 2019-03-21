@@ -381,7 +381,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th style="text-decoration: line-through">suppressRowVirtualisation</th>
             <td>There is no property suppressRowVirtualisation - if you want to do this, then set the rowBuffer
-            property to be very large, eg 9999. But be careful, lots of rendered ros will mean a very large amount
+            property to be very large, eg 9999. But be careful, lots of rendered rows will mean a very large amount
             of rendering in the DOM which will slow things down.</td>
         </tr>
         <tr>

@@ -7,6 +7,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IComponent } from "./iComponent";
 import { IPopupComponent } from "./iPopupComponent";
+import { ColDef } from "../entities/colDef";
 export interface ICellEditor extends IPopupComponent {
     /** Return the final value - called by the grid once after editing is complete */
     getValue(): any;
@@ -28,7 +29,9 @@ export interface ICellEditorParams {
     keyPress: number | null;
     charPress: string | null;
     column: Column;
+    colDef: ColDef;
     node: RowNode;
+    data: any;
     rowIndex: number;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;

@@ -15301,8 +15301,10 @@ var CellComp = /** @class */ (function (_super) {
             keyPress: keyPress,
             charPress: charPress,
             column: this.column,
+            colDef: this.column.getColDef(),
             rowIndex: this.gridCell.rowIndex,
             node: this.rowNode,
+            data: this.rowNode.data,
             api: this.beans.gridOptionsWrapper.getApi(),
             cellStartedEdit: cellStartedEdit,
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
@@ -19646,9 +19648,6 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
         }
         var rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         var bodyHeight = this.gridPanel.getBodyHeight();
-        if (this.scrollVisibleService.isHorizontalScrollShowing()) {
-            bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
-        }
         if (bodyHeight > 0) {
             var newPageSize = Math.floor(bodyHeight / rowHeight);
             this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
@@ -21167,7 +21166,7 @@ var ValueFormatterService = /** @class */ (function () {
             result = this.expressionService.evaluate(formatter, params);
         }
         else if (colDef.refData) {
-            return colDef.refData[value];
+            return colDef.refData[value] || '';
         }
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
         if ((result === null || result === undefined) && Array.isArray(value)) {
@@ -30452,7 +30451,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
                 displayName = colGroupDef.headerName;
             }
             if (!displayName) {
-                displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+                displayName = leafCols ? this.columnController.getDisplayNameForColumn(leafCols[0], 'header', true) : '';
             }
         }
         var callback = this.afterHeaderCompCreated.bind(this, displayName);
@@ -32639,14 +32638,24 @@ var GridPanel = /** @class */ (function (_super) {
         totalHeaderHeight += numberOfGroups * groupHeight;
         totalHeaderHeight += headerHeight;
         this.headerRootComp.setHeight(totalHeaderHeight);
-        var floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight() + "px";
-        var floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight() + "px";
-        eTop.style.minHeight = floatingTopHeight;
-        eTop.style.height = floatingTopHeight;
-        eTop.style.display = parseInt(floatingTopHeight, 10) ? 'inherit' : 'none';
-        eBottom.style.minHeight = floatingBottomHeight;
-        eBottom.style.height = floatingBottomHeight;
-        eBottom.style.display = parseInt(floatingBottomHeight, 10) ? 'inherit' : 'none';
+        var floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
+        if (floatingTopHeight) {
+            // adding 1px for cell bottom border
+            floatingTopHeight += 1;
+        }
+        var floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+        if (floatingBottomHeight) {
+            // adding 1px for cell bottom border
+            floatingBottomHeight += 1;
+        }
+        var floatingTopHeightString = floatingTopHeight + "px";
+        var floatingBottomHeightString = floatingBottomHeight + "px";
+        eTop.style.minHeight = floatingTopHeightString;
+        eTop.style.height = floatingTopHeightString;
+        eTop.style.display = floatingTopHeight ? 'inherit' : 'none';
+        eBottom.style.minHeight = floatingBottomHeightString;
+        eBottom.style.height = floatingBottomHeightString;
+        eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
         this.checkBodyHeight();
     };
     GridPanel.prototype.getBodyHeight = function () {
@@ -36643,7 +36652,7 @@ var ClientSideRowModel = /** @class */ (function () {
         // not changed are not impacted.
         var noTransactions = utils_1._.missingOrEmpty(rowNodeTransactions);
         var changedPath = new changedPath_1.ChangedPath(false, this.rootNode);
-        if (noTransactions) {
+        if (noTransactions || this.gridOptionsWrapper.isTreeData()) {
             changedPath.setInactive();
         }
         return changedPath;

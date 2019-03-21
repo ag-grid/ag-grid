@@ -135,7 +135,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
                 displayName = colGroupDef.headerName;
             }
             if (!displayName) {
-                displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+                displayName = leafCols ? this.columnController.getDisplayNameForColumn(leafCols[0], 'header', true) : '';
             }
         }
         var callback = this.afterHeaderCompCreated.bind(this, displayName);
