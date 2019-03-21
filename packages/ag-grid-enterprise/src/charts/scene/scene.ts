@@ -4,6 +4,16 @@ import {Path2D} from "./path2D";
 import {Shape} from "./shape/shape";
 
 export class Scene {
+
+    private static id = 1;
+    readonly id: string = this.createId();
+    private createId(): string {
+        return (this.constructor as any).name + '-' + (Scene.id++);
+    };
+
+    private readonly hdpiCanvas: HdpiCanvas;
+    private readonly ctx: CanvasRenderingContext2D;
+
     constructor(width = 800, height = 600) {
         this.hdpiCanvas = new HdpiCanvas(this._width = width, this._height = height);
         this.ctx = this.hdpiCanvas.context;
@@ -17,14 +27,9 @@ export class Scene {
         return this.hdpiCanvas.parent;
     }
 
-    private static id = 1;
-    private createId(): string {
-        return (this.constructor as any).name + '-' + (Scene.id++);
-    };
-    readonly id: string = this.createId();
-
-    readonly hdpiCanvas: HdpiCanvas;
-    private readonly ctx: CanvasRenderingContext2D;
+    download(fileName: string) {
+        this.hdpiCanvas.download(fileName);
+    }
 
     private setupListeners(canvas: HTMLCanvasElement) {
         canvas.addEventListener('mousemove', this.onMouseMove);
@@ -186,7 +191,7 @@ export class Scene {
     }
 
 
-    render = () => {
+    readonly render = () => {
         const ctx = this.ctx;
 
         // start with a blank canvas, clear previous drawing

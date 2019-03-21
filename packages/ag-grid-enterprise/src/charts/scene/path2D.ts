@@ -6,8 +6,8 @@ export class Path2D {
     // to minimize the number of allocations.
 
     private xy?: [number, number];
-    commands: string[] = [];
-    params: number[] = [];
+    readonly commands: string[] = [];
+    readonly params: number[] = [];
 
     /**
      * The number of parameters for each of the SVG path commands.
