@@ -1339,9 +1339,8 @@ export class CellComp extends Component {
     }
 
     private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
-        if (this.editingCell) {
-            this.stopRowOrCellEdit();
-        }
+        if (this.editingCell) { return; }
+
         if (event.shiftKey && this.rangeSelectionEnabled) {
             this.onShiftRangeSelect(key);
         } else {
