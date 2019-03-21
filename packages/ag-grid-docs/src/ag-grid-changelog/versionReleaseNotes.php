@@ -5,14 +5,14 @@
     <ul>
         <li>
             AG-1707 - Change Tree Data filtering to additionally include child nodes when parent node passes filter
-            (See <a href="/javascript-grid-tree-data/#tree-data-filtering">Tree Data Filtering</a>).
+            (see <a href="/javascript-grid-tree-data/#tree-data-filtering">Tree Data Filtering</a>).
         </li>
     </ul>
 
     <p>Feature Highlights:</p>
 
     <ul>
-        <li>AG-2722 - Add ability to create custom filters without input filter fields, ie isNull (See <a href="/javascript-grid-filtering/#adding-custom-filter-options">Custom Filter Options</a>).
+        <li>AG-2722 - Add ability to create custom filters without input filter fields, ie isNull (see <a href="/javascript-grid-filtering/#adding-custom-filter-options">Custom Filter Options</a>).
         </li>
 
         <li>AG-2121 - Allow column-spanning across row header groups when they belong to the same column group</li>

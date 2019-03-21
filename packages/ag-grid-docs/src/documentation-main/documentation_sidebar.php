@@ -33,24 +33,23 @@
 <p>Latest Release:</p>
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.1.0">Version 20.1.0 Released</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Feb 22</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=20.2.0">Version 20.2.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Mar 22</h6>
         <p class="card-text">
             Minor release with new features and bug fixes:
         </p>
         <ul>
-            <li><a class="learn-more" href="https://www.ag-grid.com/javascript-grid-tooltip-component">
-            Tooltip Components</a></li>
+
             <li><a class="learn-more"
-                href="https://www.ag-grid.com/javascript-grid-filtering/#adding-custom-filter-options">
-            Custom Filters Options</a></li>
-            <li><a class="learn-more" href="https://www.ag-grid.com/javascript-grid-loading-cell-renderer">
-            Loading Components</a></li>
-            <li><a class="learn-more" href="https://www.ag-grid.com/nodejs-server-side-operations">
-            SSRM with Node.js Guide</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-tree-data/#tree-data-filtering">Tree Data Filtering</a></li>
+
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-filtering/#adding-custom-filter-options">Enhanced Custom Filters</a></li>
+
+            <li>Column Group Header Spanning</li>
         </ul>
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=20.1.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=20.2.0">Change Log</a>
         </p>
     </div>
 </div>
