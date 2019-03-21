@@ -1246,16 +1246,28 @@ export class GridPanel extends Component {
         totalHeaderHeight += headerHeight;
 
         this.headerRootComp.setHeight(totalHeaderHeight);
+        let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
 
-        const floatingTopHeight = `${pinnedRowModel.getPinnedTopTotalHeight() + 1}px`;
-        const floatingBottomHeight = `${pinnedRowModel.getPinnedBottomTotalHeight() + 1}px`;
+        if (floatingTopHeight) {
+            // adding 1px for cell bottom border
+            floatingTopHeight += 1;
+        }
 
-        eTop.style.minHeight = floatingTopHeight;
-        eTop.style.height = floatingTopHeight;
-        eTop.style.display = parseInt(floatingTopHeight, 10) ? 'inherit' : 'none';
-        eBottom.style.minHeight = floatingBottomHeight;
-        eBottom.style.height = floatingBottomHeight;
-        eBottom.style.display = parseInt(floatingBottomHeight, 10) ? 'inherit' : 'none';
+        let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+
+        if (floatingBottomHeight) {
+            // adding 1px for cell bottom border
+            floatingBottomHeight += 1;
+        }
+        const floatingTopHeightString = `${floatingTopHeight}px`;
+        const floatingBottomHeightString = `${floatingBottomHeight}px`;
+
+        eTop.style.minHeight = floatingTopHeightString;
+        eTop.style.height = floatingTopHeightString;
+        eTop.style.display = floatingTopHeight ? 'inherit' : 'none';
+        eBottom.style.minHeight = floatingBottomHeightString;
+        eBottom.style.height = floatingBottomHeightString;
+        eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
 
         this.checkBodyHeight();
     }
