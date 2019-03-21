@@ -33,7 +33,6 @@ var gridOptions = {
         filter: true
     },
     columnDefs: columnDefs,
-    groupHeaders: true,
     rowSelection: 'multiple',
     pinnedTopRowData: [
         {

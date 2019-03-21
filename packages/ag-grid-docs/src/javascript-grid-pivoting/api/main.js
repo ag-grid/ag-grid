@@ -17,7 +17,6 @@ var gridOptions = {
         resizable: true,
         filter: true
     },
-    showToolPanel: true,
     columnDefs: columnDefs,
     sideBar: true,
 };

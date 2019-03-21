@@ -26,8 +26,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         headerName: "Organisation Hierarchy",
         cellRendererParams: {
-            suppressCount: true,
-            padding: 20
+            suppressCount: true
         }
     }
 };
