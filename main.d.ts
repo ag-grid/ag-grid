@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./dist/lib/columnController/columnFactory";
@@ -9,8 +9,8 @@ export { DisplayedGroupCreator } from "./dist/lib/columnController/displayedGrou
 export { GroupInstanceIdCreator } from "./dist/lib/columnController/groupInstanceIdCreator";
 export { ComponentUtil } from "./dist/lib/components/componentUtil";
 export { ColDefUtil } from "./dist/lib/components/colDefUtil";
-export { ComponentProvider } from "./dist/lib/components/framework/componentProvider";
-export { ComponentResolver } from "./dist/lib/components/framework/componentResolver";
+export { UserComponentRegistry } from "./dist/lib/components/framework/userComponentRegistry";
+export { UserComponentFactory } from "./dist/lib/components/framework/userComponentFactory";
 export { initialiseAgGridWithAngular1 } from "./dist/lib/components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./dist/lib/components/agGridWebComponent";
 export { BeanStub } from "./dist/lib/context/beanStub";
@@ -66,9 +66,7 @@ export { ILoadingOverlayComp, ILoadingOverlayParams } from "./dist/lib/rendering
 export { INoRowsOverlayComp, INoRowsOverlayParams } from "./dist/lib/rendering/overlays/noRowsOverlayComponent";
 export { SetLeftFeature } from "./dist/lib/rendering/features/setLeftFeature";
 export { AutoWidthCalculator } from "./dist/lib/rendering/autoWidthCalculator";
-export { CellEditorFactory } from "./dist/lib/rendering/cellEditorFactory";
 export { CellRendererFactory } from "./dist/lib/rendering/cellRendererFactory";
-export { CellRendererService } from "./dist/lib/rendering/cellRendererService";
 export { CheckboxSelectionComponent } from "./dist/lib/rendering/checkboxSelectionComponent";
 export { CellComp } from "./dist/lib/rendering/cellComp";
 export { RowComp } from "./dist/lib/rendering/rowComp";
@@ -149,7 +147,6 @@ export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, GetDataPat
 export { OriginalColumnGroupChild } from "./dist/lib/entities/originalColumnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./dist/lib/interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./dist/lib/interfaces/iContextMenuFactory";
-export { ICompFactory } from "./dist/lib/interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./dist/lib/interfaces/iRowNodeStage";
 export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, SerializedFilter } from "./dist/lib/interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./dist/lib/interfaces/iSetFilterParams";

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,9 +45,7 @@ var OriginalColumnGroup = /** @class */ (function () {
         if (this.children) {
             return this.children.some(function (child) { return child.isVisible(); });
         }
-        else {
-            return false;
-        }
+        return false;
     };
     OriginalColumnGroup.prototype.isPadding = function () {
         return this.padding;
@@ -118,14 +116,18 @@ var OriginalColumnGroup = /** @class */ (function () {
         this.getLeafColumns().forEach(function (col) { return col.addEventListener(column_1.Column.EVENT_VISIBLE_CHANGED, _this.onColumnVisibilityChanged.bind(_this)); });
     };
     OriginalColumnGroup.prototype.setExpandable = function () {
+        if (this.isPadding()) {
+            return;
+        }
         // want to make sure the group doesn't disappear when it's open
         var atLeastOneShowingWhenOpen = false;
         // want to make sure the group doesn't disappear when it's closed
         var atLeastOneShowingWhenClosed = false;
         // want to make sure the group has something to show / hide
         var atLeastOneChangeable = false;
-        for (var i = 0, j = this.children.length; i < j; i++) {
-            var abstractColumn = this.children[i];
+        var children = this.findChildren();
+        for (var i = 0, j = children.length; i < j; i++) {
+            var abstractColumn = children[i];
             if (!abstractColumn.isVisible()) {
                 continue;
             }
@@ -152,6 +154,17 @@ var OriginalColumnGroup = /** @class */ (function () {
             };
             this.localEventService.dispatchEvent(event_1);
         }
+    };
+    OriginalColumnGroup.prototype.findChildren = function () {
+        var children = this.children;
+        var firstChild = children[0];
+        if (firstChild && (!firstChild.isPadding || !firstChild.isPadding())) {
+            return children;
+        }
+        while (children.length === 1 && children[0] instanceof OriginalColumnGroup) {
+            children = children[0].children;
+        }
+        return children;
     };
     OriginalColumnGroup.prototype.onColumnVisibilityChanged = function () {
         this.setExpandable();

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,9 +64,6 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
         }
         var rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         var bodyHeight = this.gridPanel.getBodyHeight();
-        if (this.scrollVisibleService.isHorizontalScrollShowing()) {
-            bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
-        }
         if (bodyHeight > 0) {
             var newPageSize = Math.floor(bodyHeight / rowHeight);
             this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);

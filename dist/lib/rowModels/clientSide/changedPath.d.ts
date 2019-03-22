@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -15,6 +15,7 @@ export declare class ChangedPath {
     private depthFirstSearchChangedPath;
     private depthFirstSearchEverything;
     forEachChangedNodeDepthFirst(callback: (rowNode: RowNode) => void, traverseLeafNodes?: boolean): void;
+    executeFromRootNode(callback: (rowNode: RowNode) => void): void;
     private createPathItems;
     private populateColumnsMap;
     private linkPathItems;

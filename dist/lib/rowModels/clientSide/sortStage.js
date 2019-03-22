@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,8 +35,7 @@ var SortStage = /** @class */ (function () {
             // rolling out to everyone.
             && this.gridOptionsWrapper.isDeltaSort();
         // we only need dirty nodes if doing delta sort
-        var dirtyLeafNodes = deltaSort ?
-            this.calculateDirtyNodes(params.rowNodeTransactions) : null;
+        var dirtyLeafNodes = deltaSort ? this.calculateDirtyNodes(params.rowNodeTransactions) : null;
         var valueColumns = this.columnController.getValueColumns();
         var noAggregations = utils_1._.missingOrEmpty(valueColumns);
         this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations);

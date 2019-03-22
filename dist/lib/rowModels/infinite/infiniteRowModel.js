@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -109,9 +109,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     InfiniteRowModel.prototype.isSortModelDifferent = function () {
         return !utils_1._.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     };
-    InfiniteRowModel.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
-    };
     InfiniteRowModel.prototype.getType = function () {
         return constants_1.Constants.ROW_MODEL_TYPE_INFINITE;
     };
@@ -187,7 +184,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         // there is a bi-directional dependency between the loader and the cache,
         // so we create loader here, and then pass dependencies in setDependencies() method later
         this.rowNodeBlockLoader = new rowNodeBlockLoader_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.context.wireBean(this.rowNodeBlockLoader);
+        this.getContext().wireBean(this.rowNodeBlockLoader);
         this.cacheParams = {
             // the user provided datasource
             datasource: this.datasource,
@@ -227,7 +224,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             this.cacheParams.overflowSize = 1;
         }
         this.infiniteCache = new infiniteCache_1.InfiniteCache(this.cacheParams);
-        this.context.wireBean(this.infiniteCache);
+        this.getContext().wireBean(this.infiniteCache);
         this.infiniteCache.addEventListener(rowNodeCache_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     };
     InfiniteRowModel.prototype.destroyCache = function () {
@@ -360,10 +357,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         __metadata("design:type", eventService_1.EventService)
     ], InfiniteRowModel.prototype, "eventService", void 0);
     __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], InfiniteRowModel.prototype, "context", void 0);
-    __decorate([
         context_1.Autowired('gridApi'),
         __metadata("design:type", gridApi_1.GridApi)
     ], InfiniteRowModel.prototype, "gridApi", void 0);
@@ -387,12 +380,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], InfiniteRowModel.prototype, "destroyDatasource", null);
-    __decorate([
-        context_1.PreDestroy,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], InfiniteRowModel.prototype, "destroy", null);
     InfiniteRowModel = __decorate([
         context_1.Bean('rowModel')
     ], InfiniteRowModel);

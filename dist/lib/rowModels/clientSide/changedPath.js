@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -77,6 +77,9 @@ var ChangedPath = /** @class */ (function () {
             // we are not active, so callback for everything, walk the entire path
             this.depthFirstSearchEverything(this.pathRoot.rowNode, callback, traverseLeafNodes);
         }
+    };
+    ChangedPath.prototype.executeFromRootNode = function (callback) {
+        callback(this.pathRoot.rowNode);
     };
     ChangedPath.prototype.createPathItems = function (rowNode) {
         var pointer = rowNode;

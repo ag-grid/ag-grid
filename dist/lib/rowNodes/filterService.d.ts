@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ChangedPath } from "../rowModels/clientSide/changedPath";
@@ -8,8 +8,9 @@ export declare class FilterService {
     private doingTreeData;
     private postConstruct;
     filter(changedPath: ChangedPath): void;
-    private filterNode;
+    private filterNodes;
     private setAllChildrenCountTreeData;
     private setAllChildrenCountGridGrouping;
     private setAllChildrenCount;
+    private doingTreeDataFiltering;
 }

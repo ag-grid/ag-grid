@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ILogger } from "../iLogger";
@@ -16,28 +16,27 @@ export interface ComponentMeta {
     componentName: string;
 }
 export declare class Context {
-    private beans;
+    private beanWrappers;
     private contextParams;
     private logger;
     private componentsMappedByName;
     private destroyed;
     constructor(params: ContextParams, logger: ILogger);
+    private getBeanInstances;
     private setupComponents;
     private addComponent;
-    createComponent(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component;
+    createComponentFromElement(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component;
     wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void;
     private wireBeans;
     private createBeans;
-    private createBeanEntry;
+    private createBeanWrapper;
     private autoWireBeans;
     private methodWireBeans;
-    private autoWireBean;
+    private forEachMetaDataInHierarchy;
     private getBeanName;
-    private methodWireBean;
     private getBeansForParameters;
     private lookupBeanInstance;
-    private postConstruct;
-    private preConstruct;
+    private callLifeCycleMethods;
     getBean(name: string): any;
     getEnterpriseDefaultComponents(): any[];
     destroy(): void;

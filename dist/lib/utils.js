@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -447,6 +447,53 @@ var Utils = /** @class */ (function () {
             return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
         }
     };
+    // allows user to tell the grid to skip specific keyboard events
+    Utils.isUserSuppressingKeyboardEvent = function (gridOptionsWrapper, keyboardEvent, rowNode, column, editing) {
+        var gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
+        var colDefFunc = column.getColDef().suppressKeyboardEvent;
+        // if no callbacks provided by user, then do nothing
+        if (!gridOptionsFunc && !colDefFunc) {
+            return false;
+        }
+        var params = {
+            event: keyboardEvent,
+            editing: editing,
+            column: column,
+            api: gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: gridOptionsWrapper.getContext(),
+            columnApi: gridOptionsWrapper.getColumnApi()
+        };
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            var colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) {
+                return true;
+            }
+        }
+        if (gridOptionsFunc) {
+            // if gridOption func, return the result
+            return gridOptionsFunc(params);
+        }
+        else {
+            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+            return false;
+        }
+    };
+    Utils.getCellCompForEvent = function (gridOptionsWrapper, event) {
+        var sourceElement = this.getTarget(event);
+        while (sourceElement) {
+            var renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
+            if (renderedCell) {
+                return renderedCell;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+        return null;
+    };
     //adds all type of change listeners to an element, intended to be a text field
     Utils.addChangeListener = function (element, listener) {
         element.addEventListener("changed", listener);
@@ -784,9 +831,9 @@ var Utils = /** @class */ (function () {
         }
         else {
             // otherwise put at start
-            if (eContainer.firstChild) {
+            if (eContainer.firstChild && eContainer.firstChild !== eChild) {
                 // insert it at the first location
-                eContainer.insertBefore(eChild, eContainer.firstChild);
+                eContainer.insertAdjacentElement('afterbegin', eChild);
             }
         }
     };
@@ -1120,6 +1167,9 @@ var Utils = /** @class */ (function () {
         }
         var path = exports._.getEventPath(event);
         return path.indexOf(element) >= 0;
+    };
+    Utils.isFunction = function (val) {
+        return !!(val && val.constructor && val.call && val.apply);
     };
     Utils.createEventPath = function (event) {
         var res = [];
@@ -1526,8 +1576,17 @@ var Utils = /** @class */ (function () {
             return nextValue != null ? nextValue : defaultValue;
         }
     };
-    Utils.addSafePassiveEventListener = function (eElement, event, listener) {
-        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : undefined));
+    Utils.addSafePassiveEventListener = function (eElement, event, listener, options) {
+        if (Utils.passiveEvents.indexOf(event) !== -1) {
+            if (options === undefined) {
+                options = {};
+            }
+            else if (typeof options === 'boolean') {
+                options = { capture: options };
+            }
+            options.passive = true;
+        }
+        eElement.addEventListener(event, listener, options);
     };
     Utils.camelCaseToHumanText = function (camelCase) {
         if (!camelCase || camelCase == null) {
@@ -1658,6 +1717,21 @@ var Utils = /** @class */ (function () {
         }
         return false;
     };
+    // cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
+    // can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
+    Utils.bindCellRendererToHtmlElement = function (cellRendererPromise, eTarget) {
+        cellRendererPromise.then(function (cellRenderer) {
+            var gui = cellRenderer.getGui();
+            if (gui != null) {
+                if (typeof gui == 'object') {
+                    eTarget.appendChild(gui);
+                }
+                else {
+                    eTarget.innerHTML = gui;
+                }
+            }
+        });
+    };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
     Utils.NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
     Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
@@ -1705,6 +1779,10 @@ var Utils = /** @class */ (function () {
     //     }
     // }
     Utils.iconNameClassMap = {
+        columnGroupOpened: 'expanded',
+        columnGroupClosed: 'contracted',
+        columnSelectClosed: 'tree-closed',
+        columnSelectOpen: 'tree-open',
         columnMovePin: 'pin',
         columnMoveAdd: 'plus',
         columnMoveHide: 'eye-slash',
@@ -1737,10 +1815,8 @@ var Utils = /** @class */ (function () {
         pivotPanel: 'pivot',
         rowGroupPanel: 'group',
         valuePanel: 'aggregation',
-        columnGroupOpened: 'expanded',
-        columnGroupClosed: 'contracted',
-        columnSelectClosed: 'tree-closed',
-        columnSelectOpen: 'tree-open',
+        columnDrag: 'column-drag',
+        rowDrag: 'row-drag',
         /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -239,24 +239,35 @@ var ColumnGroup = /** @class */ (function () {
         var _this = this;
         // clear out last time we calculated
         this.displayedChildren = [];
+        var topLevelGroup = this;
+        // find the column group that is controlling expandable. this is relevant when we have padding (empty)
+        // groups, where the expandable is actually the first parent that is not a padding group.
+        if (this.isPadding()) {
+            while (topLevelGroup.getParent() && topLevelGroup.isPadding()) {
+                topLevelGroup = topLevelGroup.getParent();
+            }
+        }
+        var isExpandable = topLevelGroup.originalColumnGroup.isExpandable();
         // it not expandable, everything is visible
-        if (!this.originalColumnGroup.isExpandable()) {
+        if (!isExpandable) {
             this.displayedChildren = this.children;
         }
         else {
-            // and calculate again
+            // Add cols based on columnGroupShow
+            // Note - the below also adds padding groups, these are always added because they never have
+            // colDef.columnGroupShow set.
             this.children.forEach(function (abstractColumn) {
                 var headerGroupShow = abstractColumn.getColumnGroupShow();
                 switch (headerGroupShow) {
                     case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
                         // when set to open, only show col if group is open
-                        if (_this.originalColumnGroup.isExpanded()) {
+                        if (topLevelGroup.originalColumnGroup.isExpanded()) {
                             _this.displayedChildren.push(abstractColumn);
                         }
                         break;
                     case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
                         // when set to open, only show col if group is open
-                        if (!_this.originalColumnGroup.isExpanded()) {
+                        if (!topLevelGroup.originalColumnGroup.isExpanded()) {
                             _this.displayedChildren.push(abstractColumn);
                         }
                         break;

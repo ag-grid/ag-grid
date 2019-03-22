@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var dateFilter_1 = require("./dateFilter");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
-var componentRecipes_1 = require("../components/framework/componentRecipes");
+var userComponentFactory_1 = require("../components/framework/userComponentFactory");
 var component_1 = require("../widgets/component");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
@@ -167,7 +167,7 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
             onDateChanged: toDebounce,
             filterParams: params.column.getColDef().filterParams
         };
-        this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
+        this.dateComponentPromise = this.userComponentFactory.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate('<div></div>');
         this.dateComponentPromise.then(function (dateComponent) {
             body.appendChild(dateComponent.getGui());
@@ -247,9 +247,9 @@ var DateFloatingFilterComp = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        context_1.Autowired('componentRecipes'),
-        __metadata("design:type", componentRecipes_1.ComponentRecipes)
-    ], DateFloatingFilterComp.prototype, "componentRecipes", void 0);
+        context_1.Autowired('userComponentFactory'),
+        __metadata("design:type", userComponentFactory_1.UserComponentFactory)
+    ], DateFloatingFilterComp.prototype, "userComponentFactory", void 0);
     return DateFloatingFilterComp;
 }(component_1.Component));
 exports.DateFloatingFilterComp = DateFloatingFilterComp;

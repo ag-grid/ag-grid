@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "20.1.0",
+  "version": "20.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "typings": "./main.d.ts",

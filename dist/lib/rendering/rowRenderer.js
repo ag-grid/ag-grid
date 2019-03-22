@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -496,7 +496,7 @@ var RowRenderer = /** @class */ (function (_super) {
         utils_1._.iterateObject(this.rowCompsByIndex, function (indexStr, rowComp) {
             var index = Number(indexStr);
             if (index < _this.firstRenderedRow || index > _this.lastRenderedRow) {
-                if (_this.keepRowBecauseEditing(rowComp)) {
+                if (_this.keepRowBecauseEditingOrFocused(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -746,7 +746,7 @@ var RowRenderer = /** @class */ (function (_super) {
     // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
-    RowRenderer.prototype.keepRowBecauseEditing = function (rowComp) {
+    RowRenderer.prototype.keepRowBecauseEditingOrFocused = function (rowComp) {
         var REMOVE_ROW = false;
         var KEEP_ROW = true;
         var rowNode = rowComp.getRowNode();
@@ -783,11 +783,23 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    RowRenderer.prototype.navigateToNextCell = function (event, key, previousCell, allowUserOverride) {
-        var nextCell = previousCell;
+    RowRenderer.prototype.navigateToNextCell = function (event, key, currentCell, allowUserOverride) {
+        var nextCell;
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
-            nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
+            var cellComp = this.getComponentForCell(currentCell);
+            var colSpanningList = cellComp.getColSpanningList();
+            // if the current cell is spanning across multiple columns, we need to move
+            // our current position to be the last cell on the right before finding the
+            // the next target.
+            if (key === constants_1.Constants.KEY_RIGHT && colSpanningList.length > 1) {
+                currentCell = new gridCell_1.GridCell({
+                    rowIndex: currentCell.rowIndex,
+                    column: colSpanningList[colSpanningList.length - 1],
+                    floating: currentCell.floating
+                });
+            }
+            nextCell = this.cellNavigationService.getNextCellToFocus(key, currentCell);
             if (utils_1._.missing(nextCell)) {
                 break;
             }
@@ -800,6 +812,10 @@ var RowRenderer = /** @class */ (function (_super) {
                 break;
             }
         }
+        if (nextCell) {
+            var cellComp = this.getComponentForCell(nextCell);
+            nextCell = cellComp.getGridCell();
+        }
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
@@ -807,7 +823,7 @@ var RowRenderer = /** @class */ (function (_super) {
             if (utils_1._.exists(userFunc)) {
                 var params = {
                     key: key,
-                    previousCellDef: previousCell,
+                    previousCellDef: currentCell.getGridCellDef(),
                     nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
                     event: event
                 };
@@ -1089,10 +1105,6 @@ var RowRenderer = /** @class */ (function (_super) {
         __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
     ], RowRenderer.prototype, "pinnedRowModel", void 0);
     __decorate([
-        context_1.Autowired("context"),
-        __metadata("design:type", context_1.Context)
-    ], RowRenderer.prototype, "context", void 0);
-    __decorate([
         context_1.Autowired("loggerFactory"),
         __metadata("design:type", logger_1.LoggerFactory)
     ], RowRenderer.prototype, "loggerFactory", void 0);
@@ -1134,12 +1146,6 @@ var RowRenderer = /** @class */ (function (_super) {
         __metadata("design:paramtypes", [logger_1.LoggerFactory]),
         __metadata("design:returntype", void 0)
     ], RowRenderer.prototype, "agWire", null);
-    __decorate([
-        context_1.PreDestroy,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], RowRenderer.prototype, "destroy", null);
     RowRenderer = __decorate([
         context_1.Bean("rowRenderer")
     ], RowRenderer);

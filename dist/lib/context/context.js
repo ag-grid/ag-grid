@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var Context = /** @class */ (function () {
     function Context(params, logger) {
-        this.beans = {};
+        this.beanWrappers = {};
         this.componentsMappedByName = {};
         this.destroyed = false;
         if (!params || !params.beans) {
@@ -20,10 +20,13 @@ var Context = /** @class */ (function () {
         this.logger.log(">> creating ag-Application Context");
         this.setupComponents();
         this.createBeans();
-        var beans = utils_1._.mapObject(this.beans, function (beanEntry) { return beanEntry.beanInstance; });
-        this.wireBeans(beans);
+        var beanInstances = this.getBeanInstances();
+        this.wireBeans(beanInstances);
         this.logger.log(">> ag-Application Context ready - component is alive");
     }
+    Context.prototype.getBeanInstances = function () {
+        return utils_1._.mapObject(this.beanWrappers, function (beanEntry) { return beanEntry.beanInstance; });
+    };
     Context.prototype.setupComponents = function () {
         var _this = this;
         if (this.contextParams.components) {
@@ -41,7 +44,7 @@ var Context = /** @class */ (function () {
         // finally store
         this.componentsMappedByName[classUpperCase] = componentMeta.theClass;
     };
-    Context.prototype.createComponent = function (element, afterPreCreateCallback) {
+    Context.prototype.createComponentFromElement = function (element, afterPreCreateCallback) {
         var key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             var newComponent = new this.componentsMappedByName[key]();
@@ -52,33 +55,38 @@ var Context = /** @class */ (function () {
             return null;
         }
     };
+    // public createBean(BeanClass: new () => any): Component {
+    //     const beanInstance = new BeanClass();
+    //     this.wireBean(beanInstance);
+    //     return beanInstance;
+    // }
     Context.prototype.wireBean = function (bean, afterPreCreateCallback) {
         if (!bean) {
             throw Error("Can't wire to bean since it is null");
         }
         this.wireBeans([bean], afterPreCreateCallback);
     };
-    Context.prototype.wireBeans = function (beans, afterPreCreateCallback) {
-        this.autoWireBeans(beans);
-        this.methodWireBeans(beans);
-        this.preConstruct(beans);
+    Context.prototype.wireBeans = function (beanInstances, afterPreCreateCallback) {
+        this.autoWireBeans(beanInstances);
+        this.methodWireBeans(beanInstances);
+        this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed
         if (utils_1._.exists(afterPreCreateCallback)) {
-            beans.forEach(afterPreCreateCallback);
+            beanInstances.forEach(afterPreCreateCallback);
         }
-        this.postConstruct(beans);
+        this.callLifeCycleMethods(beanInstances, 'postConstructMethods');
     };
     Context.prototype.createBeans = function () {
         var _this = this;
         // register all normal beans
-        this.contextParams.beans.forEach(this.createBeanEntry.bind(this));
+        this.contextParams.beans.forEach(this.createBeanWrapper.bind(this));
         // register override beans, these will overwrite beans above of same name
         if (this.contextParams.overrideBeans) {
-            this.contextParams.overrideBeans.forEach(this.createBeanEntry.bind(this));
+            this.contextParams.overrideBeans.forEach(this.createBeanWrapper.bind(this));
         }
         // instantiate all beans - overridden beans will be left out
-        utils_1._.iterateObject(this.beans, function (key, beanEntry) {
+        utils_1._.iterateObject(this.beanWrappers, function (key, beanEntry) {
             var constructorParamsMeta;
             if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
@@ -90,7 +98,7 @@ var Context = /** @class */ (function () {
         });
     };
     // tslint:disable-next-line
-    Context.prototype.createBeanEntry = function (Bean) {
+    Context.prototype.createBeanWrapper = function (Bean) {
         var metaData = Bean.__agBeanMetaData;
         if (!metaData) {
             var beanName = void 0;
@@ -108,44 +116,48 @@ var Context = /** @class */ (function () {
             beanInstance: null,
             beanName: metaData.beanName
         };
-        this.beans[metaData.beanName] = beanEntry;
+        this.beanWrappers[metaData.beanName] = beanEntry;
     };
-    Context.prototype.autoWireBeans = function (beans) {
+    Context.prototype.autoWireBeans = function (beanInstances) {
         var _this = this;
-        beans.forEach(function (bean) { return _this.autoWireBean(bean); });
-    };
-    Context.prototype.methodWireBeans = function (beans) {
-        var _this = this;
-        beans.forEach(function (bean) {
-            if (!bean) {
-                throw Error("Can't wire to bean since it is null");
-            }
-            return _this.methodWireBean(bean);
+        beanInstances.forEach(function (beanInstance) {
+            _this.forEachMetaDataInHierarchy(beanInstance, function (metaData, beanName) {
+                var attributes = metaData.agClassAttributes;
+                if (!attributes) {
+                    return;
+                }
+                attributes.forEach(function (attribute) {
+                    var otherBean = _this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
+                    beanInstance[attribute.attributeName] = otherBean;
+                });
+            });
         });
     };
-    Context.prototype.autoWireBean = function (bean) {
+    Context.prototype.methodWireBeans = function (beanInstances) {
         var _this = this;
-        var currentBean = bean;
-        var _loop_1 = function () {
-            var currentConstructor = currentBean.constructor;
-            if (currentConstructor.__agBeanMetaData && currentConstructor.__agBeanMetaData.agClassAttributes) {
-                var attributes = currentConstructor.__agBeanMetaData.agClassAttributes;
-                if (!attributes) {
-                    return { value: void 0 };
-                }
-                var beanName_1 = this_1.getBeanName(currentConstructor);
-                attributes.forEach(function (attribute) {
-                    var otherBean = _this.lookupBeanInstance(beanName_1, attribute.beanName, attribute.optional);
-                    bean[attribute.attributeName] = otherBean;
+        beanInstances.forEach(function (beanInstance) {
+            _this.forEachMetaDataInHierarchy(beanInstance, function (metaData, beanName) {
+                utils_1._.iterateObject(metaData.autowireMethods, function (methodName, wireParams) {
+                    // skip constructor, as this is dealt with elsewhere
+                    if (methodName === "agConstructor") {
+                        return;
+                    }
+                    var initParams = _this.getBeansForParameters(wireParams, beanName);
+                    beanInstance[methodName].apply(beanInstance, initParams);
                 });
+            });
+        });
+    };
+    Context.prototype.forEachMetaDataInHierarchy = function (beanInstance, callback) {
+        var prototype = Object.getPrototypeOf(beanInstance);
+        while (prototype != null) {
+            var constructor = prototype.constructor;
+            if (constructor.hasOwnProperty('__agBeanMetaData')) {
+                var metaData = constructor.__agBeanMetaData;
+                var beanName = this.getBeanName(constructor);
+                callback(metaData, beanName);
             }
-            currentBean = Object.getPrototypeOf(currentBean) ? Object.getPrototypeOf(currentBean) : null;
-        };
-        var this_1 = this;
-        while (currentBean != null) {
-            var state_1 = _loop_1();
-            if (typeof state_1 === "object")
-                return state_1.value;
+            prototype = Object.getPrototypeOf(prototype);
         }
     };
     Context.prototype.getBeanName = function (constructor) {
@@ -155,22 +167,6 @@ var Context = /** @class */ (function () {
         var constructorString = constructor.toString();
         var beanName = constructorString.substring(9, constructorString.indexOf("("));
         return beanName;
-    };
-    Context.prototype.methodWireBean = function (bean) {
-        var _this = this;
-        var autowiredMethods;
-        if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.autowireMethods) {
-            autowiredMethods = bean.constructor.__agBeanMetaData.autowireMethods;
-        }
-        utils_1._.iterateObject(autowiredMethods, function (methodName, wireParams) {
-            // skip constructor, as this is dealt with elsewhere
-            if (methodName === "agConstructor") {
-                return;
-            }
-            var beanName = _this.getBeanName(bean.constructor);
-            var initParams = _this.getBeansForParameters(wireParams, beanName);
-            bean[methodName].apply(bean, initParams);
-        });
     };
     Context.prototype.getBeansForParameters = function (parameters, beanName) {
         var _this = this;
@@ -192,7 +188,7 @@ var Context = /** @class */ (function () {
             return this.contextParams.seed[beanName];
         }
         else {
-            var beanEntry = this.beans[beanName];
+            var beanEntry = this.beanWrappers[beanName];
             if (beanEntry) {
                 return beanEntry.beanInstance;
             }
@@ -202,22 +198,16 @@ var Context = /** @class */ (function () {
             return null;
         }
     };
-    Context.prototype.postConstruct = function (beans) {
-        beans.forEach(function (bean) {
-            // try calling init methods
-            var agBeanMetaData = bean.constructor.__agBeanMetaData;
-            var postConstructMethods = agBeanMetaData && agBeanMetaData.postConstructMethods;
-            if (postConstructMethods) {
-                postConstructMethods.forEach(function (methodName) { return bean[methodName](); });
-            }
-        });
-    };
-    Context.prototype.preConstruct = function (beans) {
-        beans.forEach(function (bean) {
-            // try calling init methods
-            if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.preConstructMethods) {
-                bean.constructor.__agBeanMetaData.preConstructMethods.forEach(function (methodName) { return bean[methodName](); });
-            }
+    Context.prototype.callLifeCycleMethods = function (beanInstances, lifeCycleMethod) {
+        var _this = this;
+        beanInstances.forEach(function (beanInstance) {
+            _this.forEachMetaDataInHierarchy(beanInstance, function (metaData) {
+                var methods = metaData[lifeCycleMethod];
+                if (!methods) {
+                    return;
+                }
+                methods.forEach(function (methodName) { return beanInstance[methodName](); });
+            });
         });
     };
     Context.prototype.getBean = function (name) {
@@ -232,13 +222,8 @@ var Context = /** @class */ (function () {
             return;
         }
         this.logger.log(">> Shutting down ag-Application Context");
-        // try calling destroy methods
-        utils_1._.iterateObject(this.beans, function (key, beanEntry) {
-            var bean = beanEntry.beanInstance;
-            if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.preDestroyMethods) {
-                bean.constructor.__agBeanMetaData.preDestroyMethods.forEach(function (methodName) { return bean[methodName](); });
-            }
-        });
+        var beanInstances = this.getBeanInstances();
+        this.callLifeCycleMethods(beanInstances, 'preDestroyMethods');
         this.contextParams.seed = null;
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");

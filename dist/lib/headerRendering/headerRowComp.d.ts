@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -13,10 +13,8 @@ export declare class HeaderRowComp extends Component {
     private gridOptionsWrapper;
     private gridApi;
     private columnController;
-    private context;
     private eventService;
     private filterManager;
-    private componentRecipes;
     private readonly dept;
     private readonly pinned;
     private readonly dropTarget;
@@ -37,6 +35,4 @@ export declare class HeaderRowComp extends Component {
     private getItemsAtDept;
     private onVirtualColumnsChanged;
     private createHeaderComp;
-    private createFloatingFilterWrapper;
-    private createFloatingFilterParams;
 }

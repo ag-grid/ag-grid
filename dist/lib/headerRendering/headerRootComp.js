@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,27 +48,23 @@ var HeaderRootComp = /** @class */ (function (_super) {
     }
     HeaderRootComp.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
-        this.centerContainer.registerGridComp(gridPanel);
-        this.pinnedLeftContainer.registerGridComp(gridPanel);
-        this.pinnedRightContainer.registerGridComp(gridPanel);
+        this.childContainers.forEach(function (c) { return c.registerGridComp(gridPanel); });
     };
     HeaderRootComp.prototype.postConstruct = function () {
         var _this = this;
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT;
         this.gridApi.registerHeaderRootComp(this);
         this.autoWidthCalculator.registerHeaderRootComp(this);
-        this.centerContainer = new headerContainer_1.HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null);
-        this.childContainers = [this.centerContainer];
-        this.pinnedLeftContainer = new headerContainer_1.HeaderContainer(this.ePinnedLeftHeader, null, column_1.Column.PINNED_LEFT);
-        this.pinnedRightContainer = new headerContainer_1.HeaderContainer(this.ePinnedRightHeader, null, column_1.Column.PINNED_RIGHT);
-        this.childContainers.push(this.pinnedLeftContainer);
-        this.childContainers.push(this.pinnedRightContainer);
-        this.childContainers.forEach(function (container) { return _this.context.wireBean(container); });
+        var centerContainer = new headerContainer_1.HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null);
+        var pinnedLeftContainer = new headerContainer_1.HeaderContainer(this.ePinnedLeftHeader, null, column_1.Column.PINNED_LEFT);
+        var pinnedRightContainer = new headerContainer_1.HeaderContainer(this.ePinnedRightHeader, null, column_1.Column.PINNED_RIGHT);
+        this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
+        this.childContainers.forEach(function (container) { return _this.getContext().wireBean(container); });
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
         this.onPivotModeChanged();
         this.addPreventHeaderScroll();
         if (this.columnController.isReady()) {
@@ -89,6 +85,7 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.childContainers.forEach(function (childContainer) { return childContainer.forEachHeaderElement(callback); });
     };
     HeaderRootComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
         this.childContainers.forEach(function (container) { return container.destroy(); });
     };
     HeaderRootComp.prototype.refreshHeader = function () {
@@ -155,10 +152,6 @@ var HeaderRootComp = /** @class */ (function (_super) {
         __metadata("design:type", columnController_1.ColumnController)
     ], HeaderRootComp.prototype, "columnController", void 0);
     __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], HeaderRootComp.prototype, "context", void 0);
-    __decorate([
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], HeaderRootComp.prototype, "eventService", void 0);
@@ -176,12 +169,6 @@ var HeaderRootComp = /** @class */ (function (_super) {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], HeaderRootComp.prototype, "postConstruct", null);
-    __decorate([
-        context_1.PreDestroy,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], HeaderRootComp.prototype, "destroy", null);
     return HeaderRootComp;
 }(component_1.Component));
 exports.HeaderRootComp = HeaderRootComp;

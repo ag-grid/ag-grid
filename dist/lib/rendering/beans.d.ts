@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -15,17 +15,15 @@ import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { FocusedCellController } from "../focusedCellController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
-import { CellEditorFactory } from "./cellEditorFactory";
 import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
-import { CellRendererService } from "./cellRendererService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
 import { ColumnHoverService } from "./columnHoverService";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { PaginationProxy } from "../rowModels/paginationProxy";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { ComponentResolver } from "../components/framework/componentResolver";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
@@ -53,15 +51,13 @@ export declare class Beans {
     rangeController: IRangeController;
     focusedCellController: FocusedCellController;
     contextMenuFactory: IContextMenuFactory;
-    cellEditorFactory: CellEditorFactory;
     cellRendererFactory: CellRendererFactory;
     popupService: PopupService;
-    cellRendererService: CellRendererService;
     valueFormatterService: ValueFormatterService;
     stylingService: StylingService;
     columnHoverService: ColumnHoverService;
     enterprise: boolean;
-    componentResolver: ComponentResolver;
+    userComponentFactory: UserComponentFactory;
     taskQueue: AnimationFrameService;
     dragAndDropService: DragAndDropService;
     sortController: SortController;

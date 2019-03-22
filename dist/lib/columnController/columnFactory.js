@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,7 +74,7 @@ var ColumnFactory = /** @class */ (function () {
         return autoColBalancedTree;
     };
     ColumnFactory.prototype.createAutoGroupTreeItem = function (balancedColumnTree, column) {
-        var dept = this.findDept(balancedColumnTree);
+        var dept = this.findDepth(balancedColumnTree);
         // at the end, this will be the top of the tree item.
         var nextChild = column;
         for (var i = dept - 1; i >= 0; i--) {
@@ -87,7 +87,7 @@ var ColumnFactory = /** @class */ (function () {
         // at this point, the nextChild is the top most item in the tree
         return nextChild;
     };
-    ColumnFactory.prototype.findDept = function (balancedColumnTree) {
+    ColumnFactory.prototype.findDepth = function (balancedColumnTree) {
         var dept = 0;
         var pointer = balancedColumnTree;
         while (pointer && pointer[0] && pointer[0] instanceof originalColumnGroup_1.OriginalColumnGroup) {
@@ -97,30 +97,52 @@ var ColumnFactory = /** @class */ (function () {
         return dept;
     };
     ColumnFactory.prototype.balanceColumnTree = function (unbalancedTree, currentDept, columnDept, columnKeyCreator) {
-        var _this = this;
         var result = [];
         // go through each child, for groups, recurse a level deeper,
         // for columns we need to pad
-        unbalancedTree.forEach(function (child) {
+        for (var i = 0; i < unbalancedTree.length; i++) {
+            var child = unbalancedTree[i];
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
+                // child is a group, all we do is go to the next level of recursion
                 var originalGroup = child;
-                var newChildren = _this.balanceColumnTree(originalGroup.getChildren(), currentDept + 1, columnDept, columnKeyCreator);
+                var newChildren = this.balanceColumnTree(originalGroup.getChildren(), currentDept + 1, columnDept, columnKeyCreator);
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             }
             else {
-                var newChild = child;
-                for (var i = columnDept - 1; i >= currentDept; i--) {
+                // child is a column - so here we add in the padded column groups if needed
+                var firstPaddedGroup = void 0;
+                var currentPaddedGroup = void 0;
+                // this for loop will NOT run any loops if no padded column groups are needed
+                for (var j = columnDept - 1; j >= currentDept; j--) {
                     var newColId = columnKeyCreator.getUniqueKey(null, null);
-                    var colGroupDefMerged = _this.createMergedColGroupDef(null);
+                    var colGroupDefMerged = this.createMergedColGroupDef(null);
                     var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
-                    _this.context.wireBean(paddedGroup);
-                    paddedGroup.setChildren([newChild]);
-                    newChild = paddedGroup;
+                    this.context.wireBean(paddedGroup);
+                    if (currentPaddedGroup) {
+                        currentPaddedGroup.setChildren([paddedGroup]);
+                    }
+                    currentPaddedGroup = paddedGroup;
+                    if (!firstPaddedGroup) {
+                        firstPaddedGroup = currentPaddedGroup;
+                    }
                 }
-                result.push(newChild);
+                // likewise this if statement will not run if no padded groups
+                if (firstPaddedGroup) {
+                    result.push(firstPaddedGroup);
+                    var hasGroups = unbalancedTree.some(function (child) { return child instanceof originalColumnGroup_1.OriginalColumnGroup; });
+                    if (hasGroups) {
+                        currentPaddedGroup.setChildren([child]);
+                        continue;
+                    }
+                    else {
+                        currentPaddedGroup.setChildren(unbalancedTree);
+                        break;
+                    }
+                }
+                result.push(child);
             }
-        });
+        }
         return result;
     };
     ColumnFactory.prototype.findMaxDept = function (treeChildren, dept) {

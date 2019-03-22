@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -77,8 +77,15 @@ var TextFilter = /** @class */ (function (_super) {
         this.addDestroyableEventListener(eElement, 'input', toDebounce);
     };
     TextFilter.prototype.refreshFilterBodyUi = function (type) {
+        var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         if (this.eFilterConditionTextField) {
             this.addFilterChangedListener(baseFilter_1.FilterConditionType.CONDITION);
+        }
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
+        var filterInput = type === baseFilter_1.FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
+        if (filterInput) {
+            var showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== baseFilter_1.BaseFilter.EMPTY;
+            utils_1._.setVisible(filterInput, showFilterInput);
         }
     };
     TextFilter.prototype.afterGuiAttached = function () {
@@ -90,6 +97,15 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.individualFilterPasses = function (params, type) {
         var filterText = type == baseFilter_1.FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
         var filter = type == baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        var customFilterOption = this.customFilterOptions[filter];
+        if (customFilterOption) {
+            // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
+            if (filterText != null || customFilterOption.hideFilterInput) {
+                var cellValue = this.filterParams.valueGetter(params.node);
+                var formattedCellValue = this.formatter(cellValue);
+                return customFilterOption.test(filterText, formattedCellValue);
+            }
+        }
         if (!filterText) {
             return type === baseFilter_1.FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         }
@@ -100,11 +116,6 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.checkIndividualFilter = function (params, filterType, filterText) {
         var cellValue = this.filterParams.valueGetter(params.node);
         var filterTextFormatted = this.formatter(filterText);
-        var customFilterOption = this.customFilterOptions[filterType];
-        if (customFilterOption) {
-            var valueFormatted_1 = this.formatter(cellValue);
-            return customFilterOption.test(filterTextFormatted, valueFormatted_1);
-        }
         if (cellValue == null || cellValue === undefined) {
             return filterType === baseFilter_1.BaseFilter.NOT_EQUAL || filterType === baseFilter_1.BaseFilter.NOT_CONTAINS;
         }
@@ -172,11 +183,14 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.getFilter = function () {
         return this.filterText;
     };
-    TextFilter.prototype.resetState = function () {
-        this.setFilter(null, baseFilter_1.FilterConditionType.MAIN);
-        this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.MAIN);
-        this.setFilter(null, baseFilter_1.FilterConditionType.CONDITION);
+    TextFilter.prototype.resetState = function (resetConditionFilterOnly) {
+        if (resetConditionFilterOnly === void 0) { resetConditionFilterOnly = false; }
+        if (!resetConditionFilterOnly) {
+            this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.MAIN);
+            this.setFilter(null, baseFilter_1.FilterConditionType.MAIN);
+        }
         this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.CONDITION);
+        this.setFilter(null, baseFilter_1.FilterConditionType.CONDITION);
     };
     TextFilter.prototype.serialize = function (type) {
         var filter = type === baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -76,7 +76,6 @@ export declare class GridApi {
     private menuFactory;
     private contextMenuFactory;
     private cellRendererFactory;
-    private cellEditorFactory;
     private valueCache;
     private sideBarComp;
     private animationFrameService;
@@ -220,7 +219,6 @@ export declare class GridApi {
     setGridAutoHeight(gridAutoHeight: boolean): void;
     setDomLayout(domLayout: string): void;
     setEnableCellTextSelection(selectable: boolean): void;
-    getPreferredWidth(): number;
     setGroupHeaderHeight(headerHeight: number): void;
     setFloatingFiltersHeight(headerHeight: number): void;
     setPivotGroupHeaderHeight(headerHeight: number): void;

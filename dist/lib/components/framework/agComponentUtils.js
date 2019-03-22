@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,22 +21,22 @@ var utils_1 = require("../../utils");
 var AgComponentUtils = /** @class */ (function () {
     function AgComponentUtils() {
     }
-    AgComponentUtils.prototype.adaptFunction = function (propertyName, hardcodedJsFunction, type, source) {
+    AgComponentUtils.prototype.adaptFunction = function (propertyName, hardcodedJsFunction, componentFromFramework, source) {
         if (hardcodedJsFunction == null) {
             return {
                 component: null,
-                type: type,
+                componentFromFramework: componentFromFramework,
                 source: source,
-                dynamicParams: null
+                paramsFromSelector: null
             };
         }
         var metadata = this.componentMetadataProvider.retrieve(propertyName);
         if (metadata && metadata.functionAdapter) {
             return {
-                type: type,
+                componentFromFramework: componentFromFramework,
                 component: metadata.functionAdapter(hardcodedJsFunction),
                 source: source,
-                dynamicParams: null
+                paramsFromSelector: null
             };
         }
         return null;

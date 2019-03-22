@@ -1,9 +1,11 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
+import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
+import { CellComp } from "./rendering/cellComp";
 export declare class Timer {
     private timestamp;
     print(msg: string): void;
@@ -67,6 +69,8 @@ export declare class Utils {
     static isNodeOrElement(o: any): boolean;
     static copyNodeList(nodeList: NodeList): Node[];
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
+    static isUserSuppressingKeyboardEvent(gridOptionsWrapper: GridOptionsWrapper, keyboardEvent: KeyboardEvent, rowNode: RowNode, column: Column, editing: boolean): boolean;
+    static getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp;
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
     static makeNull<T>(value: T): T | null;
     static missing(value: any): boolean;
@@ -141,6 +145,7 @@ export declare class Utils {
     static getTarget(event: Event): Element;
     static isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean;
     static isElementInEventPath(element: HTMLElement, event: Event): boolean;
+    static isFunction(val: any): boolean;
     static createEventPath(event: Event): EventTarget[];
     static addAgGridEventPath(event: Event): void;
     static getEventPath(event: Event): EventTarget[];
@@ -272,7 +277,7 @@ export declare class Utils {
         [p: string]: any;
     }, expression: string, defaultValue: any): any;
     static passiveEvents: string[];
-    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
+    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void, options?: boolean | AddEventListenerOptions): void;
     static camelCaseToHumanText(camelCase: string | undefined): string | null;
     static message(msg: string): void;
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
@@ -285,6 +290,7 @@ export declare class Utils {
     static get_bigrams(from: string): any[];
     static string_similarity: (str1: string, str2: string) => number;
     private static isNumpadDelWithNumlockOnForEdgeOrIe;
+    static bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement): void;
 }
 export declare class NumberSequence {
     private nextValue;

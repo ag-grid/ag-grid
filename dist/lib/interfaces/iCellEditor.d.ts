@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -7,6 +7,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IComponent } from "./iComponent";
 import { IPopupComponent } from "./iPopupComponent";
+import { ColDef } from "../entities/colDef";
 export interface ICellEditor extends IPopupComponent {
     /** Return the final value - called by the grid once after editing is complete */
     getValue(): any;
@@ -19,13 +20,18 @@ export interface ICellEditor extends IPopupComponent {
      *  editing will have no impact on the record. Use this if you do not want a new value from your gui, i.e. you
      *  want to cancel the editing. */
     isCancelAfterEnd?(): boolean;
+    /** If using a framework this returns the underlying component instance, so you can call methods
+     * on it if you want. */
+    getFrameworkComponentInstance?(): any;
 }
 export interface ICellEditorParams {
     value: any;
     keyPress: number | null;
     charPress: string | null;
     column: Column;
+    colDef: ColDef;
     node: RowNode;
+    data: any;
     rowIndex: number;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;

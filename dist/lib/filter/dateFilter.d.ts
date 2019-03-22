@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SerializedFilter } from "../interfaces/iFilter";
@@ -22,7 +22,7 @@ export declare class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams
     private dateFromComponent;
     private dateToConditionComponent;
     private dateFromConditionComponent;
-    private componentRecipes;
+    private userComponentFactory;
     private eDateFromPanel;
     private eDateFromConditionPanel;
     private eDateToPanel;
@@ -49,7 +49,7 @@ export declare class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams
     private setDateFrom_date;
     setDateTo(date: string, type: FilterConditionType): void;
     private setDateTo_date;
-    resetState(): void;
+    resetState(resetConditionFilterOnly?: boolean): void;
     parse(model: SerializedDateFilter, type: FilterConditionType): void;
     setType(filterType: string, type: FilterConditionType): void;
     static removeTimezone(from: Date): Date;

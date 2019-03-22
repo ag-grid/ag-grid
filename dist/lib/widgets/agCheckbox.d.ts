@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
@@ -17,10 +17,10 @@ export declare class AgCheckbox extends Component {
     private selected;
     private readOnly;
     private passive;
-    private props;
     constructor();
     private preConstruct;
     private postConstruct;
+    setLabel(label: string): void;
     private loadIcons;
     private onClick;
     getNextValue(): boolean;

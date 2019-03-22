@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -22,7 +22,6 @@ export declare class RowRenderer extends BeanStub {
     private valueService;
     private eventService;
     private pinnedRowModel;
-    private context;
     private loggerFactory;
     private focusedCellController;
     private cellNavigationService;
@@ -94,10 +93,10 @@ export declare class RowRenderer extends BeanStub {
     private ensureAllRowsInRangeHaveHeightsCalculated;
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
-    private keepRowBecauseEditing;
+    private keepRowBecauseEditingOrFocused;
     private createRowComp;
     getRenderedNodes(): RowNode[];
-    navigateToNextCell(event: KeyboardEvent | null, key: number, previousCell: GridCell, allowUserOverride: boolean): void;
+    navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: GridCell, allowUserOverride: boolean): void;
     ensureCellVisible(gridCell: GridCell): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell;

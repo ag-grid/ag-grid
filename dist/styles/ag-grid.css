@@ -451,7 +451,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -ms-flex-direction: column;
   flex-direction: column;
   -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  overflow: hidden; }
   .ag-root-wrapper *, .ag-root-wrapper *:before, .ag-root-wrapper *:after {
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
@@ -490,9 +491,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   flex-direction: row; }
   .ag-root-wrapper-body.ag-layout-normal {
     -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-    overflow: hidden; }
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    height: 0;
+    min-height: 0; }
 
 .ag-root {
   cursor: default;
@@ -506,10 +508,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   flex-direction: column; }
   .ag-root.ag-layout-normal, .ag-root.ag-layout-auto-height {
     overflow: hidden;
-    min-width: 0px;
     -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1; }
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    width: 0; }
   .ag-root.ag-layout-normal {
     height: 100%; }
 
@@ -921,6 +923,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
  * Floating Filter
  ****************************
 */
+.ag-floating-filter-full-body .ag-react-container, .ag-floating-filter-body .ag-react-container {
+  height: 100%; }
+
 .ag-floating-filter-body input {
   height: 19px;
   margin: 0;
@@ -945,8 +950,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-floating-filter-full-body {
   height: 100%;
   width: 100%; }
-  .ag-floating-filter-full-body .ag-react-container {
-    height: 100%; }
 
 .ag-floating-filter-input {
   width: 100%; }
@@ -1006,15 +1009,31 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   width: 100%; }
 
 .ag-overlay-panel {
-  display: table;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
   height: 100%;
   pointer-events: none;
   width: 100%; }
 
 .ag-overlay-wrapper {
-  display: table-cell;
-  text-align: center;
-  vertical-align: middle; }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 0;
+  -ms-flex: none;
+  flex: none;
+  width: 100%;
+  height: 100%;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center; }
+  .ag-overlay-wrapper.ag-overlay-loading-wrapper {
+    pointer-events: all; }
 
 .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
   padding-top: 30px; }
@@ -1151,6 +1170,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
+
+.ag-tab {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box; }
 
 .ag-menu-column-select-wrapper {
   height: 265px;
@@ -1382,7 +1405,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: flex;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
-  justify-content: space-between; }
+  justify-content: space-between;
+  overflow: hidden; }
   .ag-status-bar .ag-status-panel {
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;

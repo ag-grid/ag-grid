@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,76 +31,88 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
-var componentRecipes_1 = require("../../components/framework/componentRecipes");
-var constants_1 = require("../../constants");
+var userComponentFactory_1 = require("../../components/framework/userComponentFactory");
+var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var utils_1 = require("../../utils");
+var LoadingType;
+(function (LoadingType) {
+    LoadingType[LoadingType["Loading"] = 0] = "Loading";
+    LoadingType[LoadingType["NoRows"] = 1] = "NoRows";
+})(LoadingType || (LoadingType = {}));
 var OverlayWrapperComponent = /** @class */ (function (_super) {
     __extends(OverlayWrapperComponent, _super);
     function OverlayWrapperComponent() {
-        return _super.call(this) || this;
+        return _super.call(this, OverlayWrapperComponent.TEMPLATE) || this;
     }
-    OverlayWrapperComponent.prototype.init = function () { };
-    OverlayWrapperComponent.prototype.showLoadingOverlay = function (eOverlayWrapper) {
+    OverlayWrapperComponent.prototype.postConstruct = function () {
+        this.gridOptionsWrapper.addLayoutElement(this.eOverlayWrapper);
+        this.setVisible(false);
+    };
+    OverlayWrapperComponent.prototype.setWrapperTypeClass = function (loadingType) {
+        utils_1._.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
+        utils_1._.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
+    };
+    OverlayWrapperComponent.prototype.showLoadingOverlay = function () {
         var _this = this;
-        this.setTemplate(OverlayWrapperComponent.LOADING_WRAPPER_OVERLAY_TEMPLATE);
-        this.componentRecipes.newLoadingOverlayComponent().then(function (renderer) {
-            var loadingOverlayWrapper = _this.getRefElement("loadingOverlayWrapper");
-            utils_1._.clearElement(loadingOverlayWrapper);
-            loadingOverlayWrapper.appendChild(renderer.getGui());
+        this.setWrapperTypeClass(LoadingType.Loading);
+        this.destroyActiveOverlay();
+        var params = { api: this.gridOptionsWrapper.getApi() };
+        this.userComponentFactory.newLoadingOverlayComponent(params).then(function (comp) {
+            _this.eOverlayWrapper.appendChild(comp.getGui());
+            _this.activeOverlay = comp;
         });
-        this.showOverlay(eOverlayWrapper, this.getGui());
+        this.setVisible(true);
     };
-    OverlayWrapperComponent.prototype.showNoRowsOverlay = function (eOverlayWrapper) {
+    OverlayWrapperComponent.prototype.showNoRowsOverlay = function () {
         var _this = this;
-        this.setTemplate(OverlayWrapperComponent.NO_ROWS_WRAPPER_OVERLAY_TEMPLATE);
-        // we don't use gridOptionsWrapper.addLayoutElement here because this component
-        // is passive, we don't want to add a new element each time it is created.
-        var eNoRowsOverlayWrapper = this.getRefElement('noRowsOverlayWrapper');
-        var domLayout = this.gridOptionsWrapper.getDomLayout();
-        var domLayoutAutoHeight = domLayout === constants_1.Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        var domLayoutPrint = domLayout === constants_1.Constants.DOM_LAYOUT_PRINT;
-        var domLayoutNormal = domLayout === constants_1.Constants.DOM_LAYOUT_NORMAL;
-        utils_1._.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', domLayoutAutoHeight);
-        utils_1._.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', domLayoutNormal);
-        utils_1._.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-print', domLayoutPrint);
-        this.componentRecipes.newNoRowsOverlayComponent().then(function (renderer) {
-            var noRowsOverlayWrapper = _this.getRefElement("noRowsOverlayWrapper");
-            utils_1._.clearElement(noRowsOverlayWrapper);
-            noRowsOverlayWrapper.appendChild(renderer.getGui());
+        this.setWrapperTypeClass(LoadingType.NoRows);
+        this.destroyActiveOverlay();
+        var params = { api: this.gridOptionsWrapper.getApi() };
+        this.userComponentFactory.newNoRowsOverlayComponent(params).then(function (comp) {
+            _this.eOverlayWrapper.appendChild(comp.getGui());
+            _this.activeOverlay = comp;
         });
-        this.showOverlay(eOverlayWrapper, this.getGui());
+        this.setVisible(true);
     };
-    OverlayWrapperComponent.prototype.hideOverlay = function (eOverlayWrapper) {
-        utils_1._.clearElement(eOverlayWrapper);
-        utils_1._.setVisible(eOverlayWrapper, false);
+    OverlayWrapperComponent.prototype.destroyActiveOverlay = function () {
+        if (!this.activeOverlay) {
+            return;
+        }
+        if (this.activeOverlay.destroy) {
+            this.activeOverlay.destroy();
+        }
+        this.activeOverlay = undefined;
+        utils_1._.clearElement(this.eOverlayWrapper);
     };
-    OverlayWrapperComponent.prototype.showOverlay = function (eOverlayWrapper, overlay) {
-        if (overlay) {
-            utils_1._.clearElement(eOverlayWrapper);
-            utils_1._.setVisible(eOverlayWrapper, true);
-            eOverlayWrapper.appendChild(overlay);
-        }
-        else {
-            console.warn('ag-Grid: unknown overlay');
-            this.hideOverlay(eOverlayWrapper);
-        }
+    OverlayWrapperComponent.prototype.hideOverlay = function () {
+        this.destroyActiveOverlay();
+        this.setVisible(false);
+    };
+    OverlayWrapperComponent.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        this.destroyActiveOverlay();
     };
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-    OverlayWrapperComponent.LOADING_WRAPPER_OVERLAY_TEMPLATE = '<div class="ag-overlay-panel" role="presentation">' +
-        '<div class="ag-overlay-wrapper ag-overlay-loading-wrapper" ref="loadingOverlayWrapper">[OVERLAY_TEMPLATE]</div>' +
-        '</div>';
-    OverlayWrapperComponent.NO_ROWS_WRAPPER_OVERLAY_TEMPLATE = '<div class="ag-overlay-panel" role="presentation">' +
-        '<div class="ag-overlay-wrapper ag-overlay-no-rows-wrapper" ref="noRowsOverlayWrapper">[OVERLAY_TEMPLATE]</div>' +
-        '</div>';
+    OverlayWrapperComponent.TEMPLATE = "<div class=\"ag-overlay\">\n            <div class=\"ag-overlay-panel\" role=\"presentation\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\"></div>\n            </div>\n        </div>";
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], OverlayWrapperComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_1.Autowired('componentRecipes'),
-        __metadata("design:type", componentRecipes_1.ComponentRecipes)
-    ], OverlayWrapperComponent.prototype, "componentRecipes", void 0);
+        context_1.Autowired('userComponentFactory'),
+        __metadata("design:type", userComponentFactory_1.UserComponentFactory)
+    ], OverlayWrapperComponent.prototype, "userComponentFactory", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('eOverlayWrapper'),
+        __metadata("design:type", HTMLElement)
+    ], OverlayWrapperComponent.prototype, "eOverlayWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], OverlayWrapperComponent.prototype, "postConstruct", null);
     return OverlayWrapperComponent;
 }(component_1.Component));
 exports.OverlayWrapperComponent = OverlayWrapperComponent;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -124,7 +124,7 @@ var GridSerializer = /** @class */ (function () {
         var isPivotMode = this.columnController.isPivotMode();
         var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
-        var columnsToExport;
+        var columnsToExport = [];
         if (utils_1._.existsAndNotEmpty(columnKeys)) {
             columnsToExport = this.columnController.getGridColumns(columnKeys);
         }
@@ -137,13 +137,10 @@ var GridSerializer = /** @class */ (function () {
         else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
         }
-        if (!columnsToExport || columnsToExport.length === 0) {
-            return '';
-        }
-        gridSerializingSession.prepare(columnsToExport);
         if (includeCustomHeader) {
             gridSerializingSession.addCustomHeader(includeCustomHeader);
         }
+        gridSerializingSession.prepare(columnsToExport);
         // first pass, put in the header names of the cols
         if (columnGroups) {
             var groupInstanceIdCreator = new groupInstanceIdCreator_1.GroupInstanceIdCreator();

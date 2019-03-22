@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -11,20 +11,19 @@ export declare class HeaderWrapperComp extends Component {
     private dragAndDropService;
     private columnController;
     private horizontalResizeService;
-    private context;
     private menuFactory;
     private gridApi;
     private columnApi;
     private sortController;
     private eventService;
-    private componentRecipes;
+    private userComponentFactory;
     private columnHoverService;
     private beans;
     private eResize;
     private cbSelectAll;
-    private column;
-    private dragSourceDropTarget;
-    private pinned;
+    private readonly column;
+    private readonly dragSourceDropTarget;
+    private readonly pinned;
     private resizeStartWidth;
     private resizeWithShiftKey;
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string);
