@@ -237,7 +237,26 @@ var gridOptions = {
     // suppressCellSelection: true,
     // suppressMultiSort: true,
     // scrollbarWidth: 20,
-    sideBar: true,
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+        defaultToolPanel: 'columns',
+        hiddenByDefault: isSmall
+    },
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
@@ -345,16 +364,10 @@ var gridOptions = {
     },
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
-
-        if (isSmall) {
-            event.api.setSideBarVisible(false);
-        }
-        else if (docEl.clientWidth <= 1024) {
+        
+        if (docEl.clientWidth <= 1024) {
             event.api.closeToolPanel();
         }
-        //event.api.addGlobalListener(function(type, event) {
-        //    console.log('event ' + type);
-        //});
     },
     onRowGroupOpened: function (event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
