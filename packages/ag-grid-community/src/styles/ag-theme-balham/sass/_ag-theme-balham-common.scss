@@ -199,14 +199,11 @@
         border-right: 0;
     }
 
-    // real crude adjustments, due to line of elements with display: inline-block in the group cell
-    .ag-icon-expanded,
-    .ag-icon-contracted {
-        transform: translateY(2px);
-    }
-
-    .ag-rtl .ag-icon-expanded {
-        transform: translateY(2px) rotate(180deg);
+    .ag-rtl {
+        .ag-icon-expanded,
+        .ag-icon-contracted {
+            transform: rotate(180deg);
+        }
     }
 
     // context menu spacing
