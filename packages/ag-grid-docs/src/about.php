@@ -153,7 +153,7 @@ gtm_data_layer('about');
                                 <img src='images/team/robin.jpg' alt=" Robin Denton, Support Engineer"/>
                             </div>
                             <h3>Robin Denton</h3>
-                            <h4>ag-grid Consultant</h4>
+                            <h4>ag-Grid Consultant</h4>
                             <p>
                                 Robin joins the team to work on support for our growing customer base through Zendesk. He is the youngest developer in the company, and has worked in a variety of web & software development roles.
                             </p>
@@ -164,7 +164,7 @@ gtm_data_layer('about');
                                 <img src='images/team/ahmed.jpg' alt=" Ahmed Gadir, Support Engineer"/>
                             </div>
                             <h3>Ahmed Gadir</h3>
-                            <h4>Junior ag-grid Consultant</h4>
+                            <h4>Junior ag-Grid Consultant</h4>
                             <p>
                                 Ahmed joins the team to work on support for our growing customer base through Zendesk. He has a background in React and will be working to improve user issues.
                             </p>
