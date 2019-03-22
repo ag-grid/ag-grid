@@ -33,10 +33,10 @@ gtm_data_layer('about');
                             Our story is proof that necessity is the mother of invention. During his time working in London-based financial institutions, <strong>Niall Crosby</strong> - founder and CEO - struggled to find any datagrid component that could deliver the performance required in tandem with a complete feature list. This struggle ultimately led Niall to pulling out the keyboard one Christmas holiday period and starting <strong>ag-Grid</strong> as a side project. This was then released as open source and quickly developed a following.
                         </p>
                         <p>
-                            Niall found himself having to devote considerable time and effort to maintaining <strong>ag-Grid</strong>, even fielding feature requests from users. It became apparent that this thing had legs - and the idea of <strong>ag-Grid Enterprise</strong> took seed in Niall’s mind. Fast forward to March 2016 and the first commercial version was launched.
+                            Niall found himself having to devote considerable time and effort to maintaining <strong>ag-Grid</strong>, even fielding feature requests from users. It became apparent that this thing had legs - and the idea of <strong>ag-Grid Enterprise</strong> took seed in Niall’s mind. A little over one year after the project started the first commercial version was launched.
                         </p>
                         <p>
-                            Today, <strong>ag-Grid</strong> is a self-funded, bootstrapped company with over 1,500 customers in 65 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are working on the next great features to continue our mission.
+                            Today, <strong>ag-Grid</strong> is a self-funded, bootstrapped company with thousands of customers globally. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are working on the next great features to continue our mission.
                         </p>
                     </article>
                 </section>
