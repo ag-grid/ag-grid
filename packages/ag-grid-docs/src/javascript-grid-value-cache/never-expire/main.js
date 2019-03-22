@@ -93,7 +93,6 @@ var gridOptions = {
     rowData: createRowData(),
     enableRangeSelection: true,
     groupDefaultExpanded: 1,
-    valueCacheStrategy: 'invalidateNever',
     onCellValueChanged: function() {
         console.log('onCellValueChanged');
     }

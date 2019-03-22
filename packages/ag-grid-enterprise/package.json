@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "20.1.0",
+  "version": "20.2.0",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",
@@ -29,7 +29,7 @@
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "@types/jest": "^23.3.10",
-    "ag-grid-community": "^20.1.0",
+    "ag-grid-community": "^20.2.0",
     "css-loader": "^1.0.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
@@ -48,6 +48,6 @@
     "webpack-stream": "^5.1.1"
   },
   "peerDependencies": {
-    "ag-grid-community": "^20.1.0"
+    "ag-grid-community": "^20.2.0"
   }
 }

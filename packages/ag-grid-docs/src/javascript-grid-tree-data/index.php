@@ -18,13 +18,6 @@ include '../documentation-main/documentation_header.php';
         This section introduces simple ways to work with Tree Data before covering more advanced use cases.
     </p>
 
-    <note>
-        How Tree Data is managed in ag-Grid was changed in ag-Grid v14. This page presents the new way of working with Tree Data.
-        The old way was part of ag-Grid free, the new way is part of ag-Grid Enterprise. The old way is deprecated but you
-        can still use it, but we will not be enhancing it. For documentation on the older version of the grid prior to v14
-        see <a href="../javascript-grid-tree">Tree Data (Legacy)</a>.
-    </note>
-
     <h2 id="tree-data-mode">Tree Data Mode</h2>
 
     <p>
