@@ -159,7 +159,7 @@ export class HeaderGroupWrapperComp extends Component {
             }
 
             if (!displayName) {
-                displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+                displayName = leafCols ? this.columnController.getDisplayNameForColumn(leafCols[0], 'header', true) : '';
             }
         }
 

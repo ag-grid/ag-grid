@@ -109,7 +109,8 @@ var gridOptions = {
         toolPanel: 'laTool Panelo',
         export: 'laExporto',
         csvExport: 'la CSV Exportp',
-        excelExport: 'la Excel Exporto',
+        excelExport: 'la Excel Exporto (.xlsx)',
+        excelXmlExport: 'la Excel Exporto (.xml)',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',

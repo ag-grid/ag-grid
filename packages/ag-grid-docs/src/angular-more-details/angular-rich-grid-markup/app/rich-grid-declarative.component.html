@@ -1,4 +1,4 @@
-<div style="width: 760px;">
+<div style="width: 100%;">
     <div style="display: inline-block;width: 100%">
         <div style="float: left">
             <b>Employees Skills and Contact Details</b>
@@ -46,16 +46,13 @@
 
         <ag-grid-angular style="width: 100%; height: 400px;" class="ag-theme-balham"
                          [gridOptions]="gridOptions"
-                         [showToolPanel]="showToolPanel"
+                         [sideBar]="showToolPanel"
                          [rowData]="rowData"
 
                          (gridReady)="onReady($event)"
                          (modelUpdated)="onModelUpdated()"
 
-                         groupHeaders
                          suppressRowClickSelection
-                         toolPanelSuppressGroups
-                         toolPanelSuppressValues
                          rowSelection="multiple">
             <ag-grid-column headerName="Employee" [headerGroupComponentFramework]="components.headerGroupComponent">
                 <ag-grid-column headerName="#" [width]="30" [checkboxSelection]="true"

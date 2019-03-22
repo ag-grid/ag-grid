@@ -308,7 +308,7 @@ export class ClientSideRowModel {
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noTransactions) {
+        if (noTransactions || this.gridOptionsWrapper.isTreeData()) {
             changedPath.setInactive();
         }
 
