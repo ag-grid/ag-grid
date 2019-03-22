@@ -6,7 +6,7 @@ import { ColumnApi } from "./columnController/columnApi";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
 
-export {Events} from './eventKeys';
+export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -32,7 +32,7 @@ export interface AgGridEvent extends AgEvent {
 }
 
 export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
-    source: string;
+    source: string | undefined;
 }
 
 export interface AnimationQueueEmptyEvent extends AgGridEvent {

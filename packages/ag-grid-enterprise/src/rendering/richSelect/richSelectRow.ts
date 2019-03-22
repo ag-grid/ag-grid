@@ -1,11 +1,21 @@
-
-import { Component, Autowired, CellRendererService, ICellRendererComp, IRichCellEditorParams, Promise, _ } from "ag-grid-community";
+import {
+    _,
+    Autowired,
+    Component,
+    ICellRendererComp,
+    ICellRendererParams,
+    IRichCellEditorParams,
+    Promise,
+    UserComponentFactory,
+    GridOptionsWrapper
+} from "ag-grid-community";
 
 export class RichSelectRow extends Component {
 
-    @Autowired('cellRendererService') cellRendererService: CellRendererService;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private params: IRichCellEditorParams;
+    private readonly params: IRichCellEditorParams;
 
     constructor(params: IRichCellEditorParams) {
         super('<div class="ag-rich-select-row"></div>');
@@ -35,11 +45,23 @@ export class RichSelectRow extends Component {
     }
 
     private populateWithRenderer(value: any, valueFormatted: string): boolean {
-        const promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params, this.getGui(), {value: value, valueFormatted: valueFormatted});
 
-        const foundRenderer = _.exists(promise);
-        if (foundRenderer) {
-            promise.then(childComponent => {
+        // bad coder here - we are not populating all values of the cellRendererParams
+        let params = <ICellRendererParams> {
+            value: value,
+            valueFormatted: valueFormatted,
+            api: this.gridOptionsWrapper.getApi()
+        };
+
+        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
+        if (cellRendererPromise != null) {
+            _.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
+        } else {
+            this.getGui().innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+
+        if (cellRendererPromise) {
+            cellRendererPromise.then(childComponent => {
                 if (childComponent && childComponent.destroy) {
                     this.addDestroyFunc(childComponent.destroy.bind(childComponent));
                 }

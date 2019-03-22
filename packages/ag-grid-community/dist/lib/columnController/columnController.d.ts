@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -259,6 +259,7 @@ export declare class ColumnController {
     private updateOpenClosedVisibilityInColumnGroups;
     getGroupAutoColumns(): Column[] | null;
     private createGroupAutoColumnsIfNeeded;
+    private autoColsEqual;
     private getWidthOfColsInList;
     getGridBalancedTree(): OriginalColumnGroupChild[];
 }

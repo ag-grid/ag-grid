@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -34,6 +34,9 @@ var getMergedCells = function (rows, cols) {
                 var end = exports.getExcelColumnName(cellIdx + merges + 1);
                 mergedCells.push("" + start + outputRow + ":" + end + outputRow);
             }
+            if (!cols[min - 1]) {
+                cols[min - 1] = {};
+            }
             updateColMinMax(cols[min - 1], min, merges, lastCol);
             lastCol = cols[min - 1];
             currentCell.ref = "" + start + outputRow;
@@ -62,7 +65,7 @@ var worksheetFactory = {
     getTemplate: function (config) {
         var table = config.table;
         var rows = table.rows, columns = table.columns;
-        var mergedCells = getMergedCells(rows, columns);
+        var mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
         var children = [];
         if (columns.length) {
             children.push({

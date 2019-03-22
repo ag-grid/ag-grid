@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
 export declare class Text extends Shape {

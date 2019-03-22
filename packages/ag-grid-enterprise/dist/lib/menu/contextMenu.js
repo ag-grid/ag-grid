@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -153,7 +153,7 @@ var ContextMenu = /** @class */ (function (_super) {
     }
     ContextMenu.prototype.addMenuItems = function () {
         var menuList = new menuList_1.MenuList();
-        this.context.wireBean(menuList);
+        this.getContext().wireBean(menuList);
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
@@ -164,10 +164,6 @@ var ContextMenu = /** @class */ (function (_super) {
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
-    __decorate([
-        ag_grid_community_1.Autowired('context'),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], ContextMenu.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.Autowired('clipboardService'),
         __metadata("design:type", clipboardService_1.ClipboardService)

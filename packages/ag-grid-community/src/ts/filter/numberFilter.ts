@@ -1,8 +1,8 @@
-import {SerializedFilter} from "../interfaces/iFilter";
-import {QuerySelector} from "../widgets/componentAnnotations";
-import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
-import {INumberFilterParams} from "./textFilter";
-import {_} from "../utils";
+import { SerializedFilter } from "../interfaces/iFilter";
+import { QuerySelector } from "../widgets/componentAnnotations";
+import { BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter } from "./baseFilter";
+import { INumberFilterParams } from "./textFilter";
+import { _ } from "../utils";
 
 export interface SerializedNumberFilter extends SerializedFilter {
     filter: number;
@@ -11,6 +11,19 @@ export interface SerializedNumberFilter extends SerializedFilter {
 }
 
 export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, SerializedNumberFilter> {
+
+    public static LESS_THAN = 'lessThan';
+
+    @QuerySelector('#filterText')
+    private eFilterTextField: HTMLInputElement;
+    @QuerySelector('#filterTextCondition')
+    private eFilterTextConditionField: HTMLInputElement;
+
+    @QuerySelector('#filterToText')
+    private eFilterToTextField: HTMLInputElement;
+    @QuerySelector('#filterToConditionText')
+    private eFilterToConditionText: HTMLInputElement;
+
     @QuerySelector('#filterNumberToPanel')
     private eNumberToPanel: HTMLElement;
     @QuerySelector('#filterNumberToPanelCondition')
@@ -22,15 +35,6 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     filterNumberCondition: any;
     filterNumberConditionTo: any;
 
-    @QuerySelector('#filterToText')
-    private eFilterToTextField: HTMLInputElement;
-    @QuerySelector('#filterToConditionText')
-    private eFilterToConditionText: HTMLInputElement;
-
-    private eFilterTextField: HTMLInputElement;
-    private eFilterTextConditionField: HTMLInputElement;
-    public static LESS_THAN = 'lessThan'; //3;
-
     modelFromFloatingFilter(from: string): SerializedNumberFilter {
         return {
             type: this.selectedFilter,
@@ -41,8 +45,8 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN, BaseFilter.LESS_THAN_OR_EQUAL,
-            BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
+        return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN,
+            BaseFilter.LESS_THAN_OR_EQUAL, BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
     }
 
     public bodyTemplate(type:FilterConditionType): string {
@@ -205,18 +209,28 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
     public refreshFilterBodyUi(type:FilterConditionType): void {
         const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+
+        // show / hide in-range filter
         const panel = type === FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
+        if (panel) {
+            const visible = filterType === NumberFilter.IN_RANGE;
+            _.setVisible(panel, visible);
+        }
 
-        if (!panel) { return; }
-
-        const visible = filterType === NumberFilter.IN_RANGE;
-        _.setVisible(panel, visible);
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
+        const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterTextConditionField;
+        if (filterInput) {
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
+            _.setVisible(filterInput, showFilterInput);
+        }
     }
 
-    public resetState(): void {
-        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
-        this.setFilter(null, FilterConditionType.MAIN);
-        this.setFilterTo(null, FilterConditionType.MAIN);
+    public resetState(resetConditionFilterOnly: boolean = false): void {
+        if (!resetConditionFilterOnly) {
+            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+            this.setFilter(null, FilterConditionType.MAIN);
+            this.setFilterTo(null, FilterConditionType.MAIN);
+        }
 
         this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
         this.setFilter(null, FilterConditionType.CONDITION);

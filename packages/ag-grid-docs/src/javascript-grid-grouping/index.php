@@ -735,9 +735,10 @@ coldefs:[
     // The column we are grouping by, it is also hidden.
     {headerName: "Country", field: "country", width: 120, rowGroup:true, hide:true},
     // We appoint this column as the column to show the country groups.
-    // note that we need to provide an appropiate cell renderer.
+    // note that we need to provide an appropriate cell renderer.
     // in this case we are using the out of the box group cell renderer.
-    {headerName: "Country - group", showRowGroup='country', width: 120, cellRenderer:'agGroupCellRenderer'},
+    {headerName: "Country - group", showRowGroup: 'country', width: 120,
+     cellRenderer:'agGroupCellRenderer'},
 ]</snippet>
 
     <p>The following example shows how to appoint individual columns to show individual groups</p>

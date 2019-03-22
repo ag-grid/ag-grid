@@ -1,20 +1,17 @@
-// ag-grid-enterprise v20.1.0
-import { Component, GridPanel } from "ag-grid-community";
+// ag-grid-enterprise v20.2.0
+import { Component, ToolPanelDef, AgEvent } from "ag-grid-community";
+export interface SideBarButtonClickedEvent extends AgEvent {
+    toolPanelId: string;
+}
 export declare class SideBarButtonsComp extends Component {
-    private panels;
-    defaultPanelKey: string | null;
+    static EVENT_SIDE_BAR_BUTTON_CLICKED: string;
     private gridOptionsWrapper;
-    private eventService;
-    private gridPanel;
     private static readonly TEMPLATE;
+    private buttonComps;
     constructor();
-    registerPanelComp(key: string, panelComponent: Component): void;
-    registerGridComp(gridPanel: GridPanel): void;
-    postConstruct(): void;
-    private createButtonsHtml;
-    private addButtonEvents;
-    private onButtonPressed;
-    private processKeyAfterKeyPressed;
-    setPanelVisibility(key: string, show: boolean): void;
-    clear(): void;
+    setToolPanelDefs(toolPanelDefs: ToolPanelDef[]): void;
+    setActiveButton(id: string | undefined): void;
+    private addButtonComp;
+    clearButtons(): void;
+    destroy(): void;
 }

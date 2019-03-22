@@ -8,13 +8,11 @@ import { EnterpriseBoot } from "./enterpriseBoot";
 import { ContextMenuFactory } from "./menu/contextMenu";
 import { ViewportRowModel } from "./rowModels/viewport/viewportRowModel";
 import { SideBarComp } from "./sideBar/sideBarComp";
-import { RowGroupCompFactory } from "./rowGroupCompFactory";
 import { LicenseManager } from "./licenseManager";
 import { MD5 } from "./license/md5";
 import { PivotStage } from "./rowStages/pivotStage";
 import { PivotColDefService } from "./rowStages/pivotColDefService";
 import { AggFuncService } from "./aggregation/aggFuncService";
-import { PivotCompFactory } from "./pivotCompFactory";
 import { MenuItemMapper } from "./menu/menuItemMapper";
 import { ExcelCreator } from "./exporter/excelCreator";
 import { ExcelXmlFactory } from "./exporter/excelXmlFactory";
@@ -61,8 +59,6 @@ export { MD5 } from "./license/md5";
 export { SetFilterListItem } from "./setFilter/setFilterListItem";
 export { DropZoneColumnComp } from "./sideBar/providedPanels/columns/dropZone/dropZoneColumnComp";
 export { ValuesDropZonePanel } from "./sideBar/providedPanels/columns/panels/valueDropZonePanel";
-export { PivotCompFactory } from "./pivotCompFactory";
-export { RowGroupCompFactory } from "./rowGroupCompFactory";
 export { ExcelCreator } from "./exporter/excelCreator";
 export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
@@ -71,8 +67,8 @@ export { WatermarkComp } from "./license/watermark";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
-Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory, RowGroupCompFactory,
-    PivotCompFactory, RangeController, ClipboardService, PivotStage, PivotColDefService,
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
+    RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
     MenuItemMapper, StatusBarService, ChartingService], rowModelTypes);
 

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31,17 +31,16 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         _this.expanded = false;
         return _this;
     }
-    ToolPanelFilterComp.prototype.init = function (params) {
-        var _this = this;
-        this.params = params;
-        var displayName = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
+    ToolPanelFilterComp.prototype.setColumn = function (column) {
+        this.column = column;
+        var displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
         this.eFilterName.innerText = displayName;
-        this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
-        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_FILTER_OPENED, function (event) { return _this.onFilterOpened(event); });
-        this.addInIcon('filter', this.eFilterIcon, this.params.column);
+        this.addDestroyableEventListener(this.eFilterToolPanelHeader, 'click', this.doExpandOrCollapse.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+        this.addInIcon('filter', this.eFilterIcon, this.column);
         ag_grid_community_1._.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         ag_grid_community_1._.addCssClass(this.eExpandChecked, 'ag-hidden');
-        this.addDestroyableEventListener(this.params.column, ag_grid_community_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.column, ag_grid_community_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     };
     ToolPanelFilterComp.prototype.addInIcon = function (iconName, eParent, column) {
         if (eParent == null) {
@@ -52,14 +51,10 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         eParent.appendChild(eIcon);
     };
     ToolPanelFilterComp.prototype.isFilterActive = function () {
-        return this.filterManager.isFilterActive(this.params.column);
+        return this.filterManager.isFilterActive(this.column);
     };
     ToolPanelFilterComp.prototype.onFilterChanged = function () {
         ag_grid_community_1._.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
-    };
-    ToolPanelFilterComp.prototype.addGuiEventListenerInto = function (into, event, listener) {
-        into.addEventListener(event, listener);
-        this.addDestroyFunc(function () { return into.removeEventListener(event, listener); });
     };
     ToolPanelFilterComp.prototype.doExpandOrCollapse = function () {
         this.expanded ? this.doCollapse() : this.doExpand();
@@ -68,10 +63,9 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         var _this = this;
         this.expanded = true;
         var container = ag_grid_community_1._.loadTemplate("<div class=\"ag-filter-air\" />");
-        this.filterManager.getOrCreateFilterWrapper(this.params.column, 'TOOLBAR').filterPromise.then(function (filter) {
-            _this.filter = filter;
+        this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise.then(function (filter) {
             container.appendChild(filter.getGui());
-            _this.eAgFilterToolpanelBody.appendChild(container);
+            _this.agFilterToolPanelBody.appendChild(container);
             if (filter.afterGuiAttached) {
                 filter.afterGuiAttached();
             }
@@ -81,7 +75,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterComp.prototype.doCollapse = function () {
         this.expanded = false;
-        this.eAgFilterToolpanelBody.removeChild(this.eAgFilterToolpanelBody.children[0]);
+        this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
         ag_grid_community_1._.setVisible(this.eExpandChecked, false);
         ag_grid_community_1._.setVisible(this.eExpandUnchecked, true);
     };
@@ -89,7 +83,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         if (event.source !== 'COLUMN_MENU') {
             return;
         }
-        if (event.column !== this.params.column) {
+        if (event.column !== this.column) {
             return;
         }
         if (!this.expanded) {
@@ -97,7 +91,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         }
         this.doCollapse();
     };
-    ToolPanelFilterComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-instance\" >\n            <div class=\"ag-filter-toolpanel-header ag-header-cell-label\" ref=\"eFilterToolpanelHeader\">\n                <a href=\"javascript:void(0)\" (click)=\"onExpandClicked\" ref=\"eExpand\">\n                    <span class=\"ag-icon ag-icon-tree-open\" ref=\"eExpandChecked\"></span>\n                    <span class=\"ag-icon ag-icon-tree-closed\" ref=\"eExpandUnchecked\"></span>\n                </a>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-body ag-filter\" ref=\"agFilterToolpanelBody\"/>\n        </div>";
+    ToolPanelFilterComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-instance\" >\n            <div class=\"ag-filter-toolpanel-header ag-header-cell-label\" ref=\"eFilterToolPanelHeader\">\n                <div ref=\"eExpand\">\n                    <span class=\"ag-icon ag-icon-tree-open\" ref=\"eExpandChecked\"></span>\n                    <span class=\"ag-icon ag-icon-tree-closed\" ref=\"eExpandUnchecked\"></span>\n                </div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-body ag-filter\" ref=\"agFilterToolPanelBody\"/>\n        </div>";
     __decorate([
         ag_grid_community_1.Autowired('gridApi'),
         __metadata("design:type", ag_grid_community_1.GridApi)
@@ -119,17 +113,17 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         __metadata("design:type", ag_grid_community_1.ColumnController)
     ], ToolPanelFilterComp.prototype, "columnController", void 0);
     __decorate([
-        ag_grid_community_1.RefSelector('eFilterToolpanelHeader'),
+        ag_grid_community_1.RefSelector('eFilterToolPanelHeader'),
         __metadata("design:type", HTMLElement)
-    ], ToolPanelFilterComp.prototype, "eFilterToolpanelHeader", void 0);
+    ], ToolPanelFilterComp.prototype, "eFilterToolPanelHeader", void 0);
     __decorate([
         ag_grid_community_1.RefSelector('eFilterName'),
         __metadata("design:type", HTMLElement)
     ], ToolPanelFilterComp.prototype, "eFilterName", void 0);
     __decorate([
-        ag_grid_community_1.RefSelector('agFilterToolpanelBody'),
+        ag_grid_community_1.RefSelector('agFilterToolPanelBody'),
         __metadata("design:type", HTMLElement)
-    ], ToolPanelFilterComp.prototype, "eAgFilterToolpanelBody", void 0);
+    ], ToolPanelFilterComp.prototype, "agFilterToolPanelBody", void 0);
     __decorate([
         ag_grid_community_1.RefSelector('eFilterIcon'),
         __metadata("design:type", HTMLElement)

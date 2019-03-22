@@ -1,22 +1,27 @@
 import * as React from "react";
+import {ReactPortal} from "react";
+import * as ReactDOM from "react-dom";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid-community";
 import {
     Autowired,
     BaseComponentWrapper,
     Bean,
+    ColumnApi,
     FrameworkComponentWrapper,
+    GridApi,
     GridOptions,
-    IComponent,
-    Promise,
     WrapableInterface
 } from "ag-grid-community";
-
-import { AgGridColumn } from "./agGridColumn";
-import { AgReactComponent } from "./agReactComponent";
+import {AgGridColumn} from "./agGridColumn";
+import {ReactComponent} from "./reactComponent";
+import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
+import {LegacyReactComponent} from "./legacyReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
+    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
+    componentWrappingElement?: string;
 }
 
 export class AgGridReact extends React.Component<AgGridReactProps, {}> {
@@ -24,13 +29,16 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
 
     destroyed: boolean = false;
 
-    gridOptions: AgGrid.GridOptions;
-    api: AgGrid.GridApi;
-    columnApi: AgGrid.ColumnApi;
-    portals = [];
+    gridOptions!: AgGrid.GridOptions;
+
+    changeDetectionService = new ChangeDetectionService();
+
+    api: GridApi | null = null;
+    columnApi!: ColumnApi;
+    portals: ReactPortal[] = [];
     hasPendingPortalUpdate = false;
 
-    protected eGridDiv: HTMLElement;
+    protected eGridDiv!: HTMLElement;
 
     private static MAX_COMPONENT_CREATION_TIME: number = 1000; // a second should be more than enough to instantiate a component
 
@@ -41,7 +49,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     render() {
         return React.createElement<any>("div", {
             style: this.createStyleForDiv(),
-            ref: e => {
+            ref: (e: HTMLElement) => {
                 this.eGridDiv = e;
             }
         }, this.portals);
@@ -76,8 +84,8 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         // don't need the return value
         new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
 
-        this.api = this.gridOptions.api;
-        this.columnApi = this.gridOptions.columnApi;
+        this.api = this.gridOptions.api!;
+        this.columnApi = this.gridOptions.columnApi!;
     }
 
     shouldComponentUpdate() {
@@ -87,11 +95,11 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         return false;
     }
 
-    waitForInstance(reactComponent: AgReactComponent, resolve, runningTime = 0) {
-        if(reactComponent.getFrameworkComponentInstance()) {
+    waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
+        if (reactComponent.getFrameworkComponentInstance() || reactComponent.isStatelesComponent()) {
             resolve(null);
         } else {
-            if(runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
+            if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
                 console.error(`ag-Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME}ms`);
                 return;
             }
@@ -104,12 +112,12 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
      * We do this because we want all portals to be in the same tree - in order to get
      * Context to work properly.
      */
-    mountReactPortal(portal, reactComponent, resolve) {
+    mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
-        this.batchUpdate(this.waitForInstance(reactComponent,  resolve));
+        this.batchUpdate(this.waitForInstance(reactComponent, resolve));
     }
 
-    batchUpdate(callback?) {
+    batchUpdate(callback?: any) {
         if (this.hasPendingPortalUpdate) {
             return callback && callback();
         }
@@ -125,9 +133,25 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
 
-    destroyPortal(portal) {
+    destroyPortal(portal: ReactPortal) {
         this.portals = this.portals.filter(curPortal => curPortal !== portal);
         this.batchUpdate();
+    }
+
+    private getStrategyTypeForProp(propKey: string) {
+        if (propKey === 'rowData') {
+            // for row data we either return the supplied strategy, or:
+            // if deltaRowDataMode we default to IdentityChecks,
+            // if not we default to DeepValueChecks (with the rest of the properties)
+            if (!!this.props.rowDataChangeDetectionStrategy) {
+                return this.props.rowDataChangeDetectionStrategy;
+            } else if (this.props['deltaRowDataMode']) {
+                return ChangeDetectionStrategyType.IdentityCheck;
+            }
+        }
+
+        // all non row data properties will default to DeepValueCheck
+        return ChangeDetectionStrategyType.DeepValueCheck;
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -137,9 +161,8 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
-                if (this.skipPropertyCheck(propKey) ||
-                    !this.areEquivalent(this.props[propKey], nextProps[propKey])) {
-
+                const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
+                if (!changeDetectionStrategy.areEqual(this.props[propKey], nextProps[propKey])) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
                     }
@@ -164,122 +187,13 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         });
 
 
-        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
-    }
-
-    private skipPropertyCheck(propKey) {
-        return this.props['deltaRowDataMode'] && propKey === 'rowData';
+        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
     }
 
     componentWillUnmount() {
         if (this.api) {
             this.api.destroy();
             this.api = null;
-        }
-    }
-
-    /*
-     * deeper object comparison - taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
-     */
-    static unwrapStringOrNumber(obj) {
-        return obj instanceof Number || obj instanceof String ? obj.valueOf() : obj;
-    }
-
-    // sigh, here for ie compatibility
-    copy(value) {
-        if (!value) {
-            return value;
-        }
-
-        if (Array.isArray(value)) {
-            // shallow copy the array - this will typically be either rowData or columnDefs
-            const arrayCopy = [];
-            for (let i = 0; i < value.length; i++) {
-                arrayCopy.push(this.copy(value[i]));
-            }
-            return arrayCopy;
-        }
-
-        // for anything without keys (boolean, string etc).
-        // Object.keys - chrome will swallow them, IE will fail (correctly, imho)
-        if (typeof value !== "object") {
-            return value;
-        }
-
-        return [{}, value].reduce((r, o) => {
-            Object.keys(o).forEach(function(k) {
-                r[k] = o[k];
-            });
-            return r;
-        }, {});
-    }
-
-    areEquivalent(a, b) {
-        return AgGridReact.areEquivalent(this.copy(a), this.copy(b));
-    }
-
-    /*
-     * slightly modified, but taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
-     *
-     * What we're trying to do here is determine if the property being checked has changed in _value_, not just in reference
-     *
-     * For eg, if a user updates the columnDefs via property binding, but the actual columns defs are the same before and
-     * after, then we don't want the grid to re-render
-     */
-    static areEquivalent(a, b) {
-        a = AgGridReact.unwrapStringOrNumber(a);
-        b = AgGridReact.unwrapStringOrNumber(b);
-        if (a === b) return true; //e.g. a and b both null
-        if (a === null || b === null || typeof a !== typeof b) return false;
-        if (a instanceof Date) {
-            return b instanceof Date && a.valueOf() === b.valueOf();
-        }
-        if (typeof a === "function") {
-            return a.toString() === b.toString();
-        }
-        if (typeof a !== "object") {
-            return a == b; //for boolean, number, string, function, xml
-        }
-
-        const newA = a.areEquivPropertyTracking === undefined,
-            newB = b.areEquivPropertyTracking === undefined;
-        try {
-            let prop;
-            if (newA) {
-                a.areEquivPropertyTracking = [];
-            } else if (
-                a.areEquivPropertyTracking.some(function(other) {
-                    return other === b;
-                })
-            )
-                return true;
-            if (newB) {
-                b.areEquivPropertyTracking = [];
-            } else if (b.areEquivPropertyTracking.some(other => other === a)) {
-                return true;
-            }
-            a.areEquivPropertyTracking.push(b);
-            b.areEquivPropertyTracking.push(a);
-
-            const tmp = {};
-            for (prop in a)
-                if (prop != "areEquivPropertyTracking") {
-                    tmp[prop] = null;
-                }
-            for (prop in b)
-                if (prop != "areEquivPropertyTracking") {
-                    tmp[prop] = null;
-                }
-
-            for (prop in tmp) {
-                if (!this.areEquivalent(a[prop], b[prop])) {
-                    return false;
-                }
-            }
-            return true;
-        } finally {
-            if (newA) delete a.areEquivPropertyTracking;
-            if (newB) delete b.areEquivPropertyTracking;
         }
     }
 }
@@ -298,54 +212,28 @@ addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 
 function addProperties(listOfProps: string[], propType: any) {
     listOfProps.forEach((propKey: string) => {
-        AgGridReact[propKey] = propType;
+        (AgGridReact as any)[propKey] = propType;
     });
 }
 
 @Bean("frameworkComponentWrapper")
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
-    @Autowired("agGridReact") private agGridReact: AgGridReact;
+    @Autowired("agGridReact") private agGridReact!: AgGridReact;
 
-    createWrapper(ReactComponent: { new(): any }): WrapableInterface {
-        let _self = this;
+    createWrapper(UserReactComponent: { new(): any }): WrapableInterface {
+        // at some point soon unstable_renderSubtreeIntoContainer is going to be dropped (and in a minor release at that)
+        // this uses the existing mechanism as long as possible, but switches over to using Portals when
+        // unstable_renderSubtreeIntoContainer is no longer an option
+        return this.useLegacyReact() ?
+            new LegacyReactComponent(UserReactComponent, this.agGridReact) :
+            new ReactComponent(UserReactComponent, this.agGridReact);
+    }
 
-        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any>, WrapableInterface {
-            constructor() {
-                super(ReactComponent, _self.agGridReact);
-            }
-
-            public init(params: any): Promise<void> {
-                return super.init(<any>params);
-            }
-
-            hasMethod(name: string): boolean {
-                let frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
-                if (frameworkComponentInstance == null) {
-                    return false;
-                }
-                return frameworkComponentInstance[name] != null;
-            }
-
-            callMethod(name: string, args: IArguments): void {
-                let frameworkComponentInstance = this.getFrameworkComponentInstance();
-
-                // this should never happen now that AgGridReact.waitForInstance is in use
-                if (frameworkComponentInstance == null) {
-                    window.setTimeout(() => this.callMethod(name, args), 100);
-                } else {
-                    let method = wrapper.getFrameworkComponentInstance()[name];
-                    if (method == null) return null;
-                    return method.apply(frameworkComponentInstance, args);
-                }
-            }
-
-            addMethod(name: string, callback: Function): void {
-                wrapper[name] = callback;
-            }
-        }
-
-        const wrapper: DynamicAgReactComponent = new DynamicAgReactComponent();
-        return wrapper;
+    private useLegacyReact() {
+        // force use of react next (ie portals) if unstable_renderSubtreeIntoContainer is no longer present
+        // or if the user elects to try it
+        return (typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function")
+            || (this.agGridReact && this.agGridReact.gridOptions && !this.agGridReact.gridOptions.reactNext);
     }
 }
 

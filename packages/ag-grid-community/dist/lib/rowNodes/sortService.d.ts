@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -29,5 +29,6 @@ export declare class SortService {
     private compareRowNodes;
     private getValue;
     private updateChildIndexes;
-    private pullDownDataForHideOpenParents;
+    private updateGroupDataForHiddenOpenParents;
+    private pullDownGroupDataForHideOpenParents;
 }

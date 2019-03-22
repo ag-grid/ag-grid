@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,12 +39,10 @@ var cellNavigationService_1 = require("./cellNavigationService");
 var filterStage_1 = require("./rowModels/clientSide/filterStage");
 var sortStage_1 = require("./rowModels/clientSide/sortStage");
 var flattenStage_1 = require("./rowModels/clientSide/flattenStage");
-var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var events_1 = require("./events");
 var infiniteRowModel_1 = require("./rowModels/infinite/infiniteRowModel");
 var clientSideRowModel_1 = require("./rowModels/clientSide/clientSideRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
-var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
 var agCheckbox_1 = require("./widgets/agCheckbox");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
@@ -65,9 +63,8 @@ var valueCache_1 = require("./valueService/valueCache");
 var changeDetectionService_1 = require("./valueService/changeDetectionService");
 var alignedGridsService_1 = require("./alignedGridsService");
 var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
-var componentResolver_1 = require("./components/framework/componentResolver");
-var componentRecipes_1 = require("./components/framework/componentRecipes");
-var componentProvider_1 = require("./components/framework/componentProvider");
+var userComponentFactory_1 = require("./components/framework/userComponentFactory");
+var userComponentRegistry_1 = require("./components/framework/userComponentRegistry");
 var agComponentUtils_1 = require("./components/framework/agComponentUtils");
 var componentMetadataProvider_1 = require("./components/framework/componentMetadataProvider");
 var beans_1 = require("./rendering/beans");
@@ -82,6 +79,7 @@ var resizeObserverService_1 = require("./misc/resizeObserverService");
 var zipContainer_1 = require("./exporter/files/zip/zipContainer");
 var utils_1 = require("./utils");
 var tooltipManager_1 = require("./widgets/tooltipManager");
+var overlayWrapperComponent_1 = require("./rendering/overlays/overlayWrapperComponent");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -122,6 +120,7 @@ var Grid = /** @class */ (function () {
             { componentName: 'AgGridComp', theClass: gridPanel_1.GridPanel },
             { componentName: 'AgHeaderRoot', theClass: headerRootComp_1.HeaderRootComp },
             { componentName: 'AgPagination', theClass: paginationComp_1.PaginationComp },
+            { componentName: 'AgOverlayWrapper', theClass: overlayWrapperComponent_1.OverlayWrapperComponent }
         ];
         if (Grid.enterpriseComponents) {
             components = components.concat(Grid.enterpriseComponents);
@@ -131,18 +130,19 @@ var Grid = /** @class */ (function () {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
-                rowModelClass, beans_1.Beans, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, agComponentUtils_1.AgComponentUtils,
-                componentMetadataProvider_1.ComponentMetadataProvider, resizeObserverService_1.ResizeObserverService, componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver,
-                componentRecipes_1.ComponentRecipes, maxDivHeightScaler_1.MaxDivHeightScaler, autoHeightCalculator_1.AutoHeightCalculator, cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService,
+                // this should only contain SERVICES, it should NEVER contain COMPONENTS
+                rowModelClass, beans_1.Beans, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, userComponentRegistry_1.UserComponentRegistry, agComponentUtils_1.AgComponentUtils,
+                componentMetadataProvider_1.ComponentMetadataProvider, resizeObserverService_1.ResizeObserverService, userComponentRegistry_1.UserComponentRegistry, userComponentFactory_1.UserComponentFactory,
+                maxDivHeightScaler_1.MaxDivHeightScaler, autoHeightCalculator_1.AutoHeightCalculator, cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService,
                 pinnedRowModel_1.PinnedRowModel, dragService_1.DragService, displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, popupService_1.PopupService,
                 selectionController_1.SelectionController, filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, expressionService_1.ExpressionService,
                 columnFactory_1.ColumnFactory, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService, alignedGridsService_1.AlignedGridsService,
                 navigationService_1.NavigationService, popupService_1.PopupService, valueCache_1.ValueCache, valueService_1.ValueService, logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator,
                 standardMenu_1.StandardMenuFactory, dragAndDropService_1.DragAndDropService, columnApi_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService, environment_1.Environment,
-                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService, cellEditorFactory_1.CellEditorFactory,
-                cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController,
+                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService,
+                valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController,
                 columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService,
-                immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, , animationFrameService_1.AnimationFrameService, tooltipManager_1.TooltipManager, zipContainer_1.ZipContainer
+                immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService, tooltipManager_1.TooltipManager, zipContainer_1.ZipContainer
             ],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,

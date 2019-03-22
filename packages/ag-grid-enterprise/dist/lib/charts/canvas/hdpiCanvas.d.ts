@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 declare type Size = {
     width: number;
     height: number;
@@ -15,6 +15,11 @@ export declare class HdpiCanvas {
     readonly canvas: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
     destroy(): void;
+    toImage(): HTMLImageElement;
+    /**
+     * @param fileName The `.png` extension is going to be added automatically.
+     */
+    download(fileName: string): void;
     _pixelRatio: number;
     readonly pixelRatio: number;
     private overrides;

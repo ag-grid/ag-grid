@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,7 +38,8 @@ var utils_1 = require("../utils");
 var RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
     function RowDragComp(rowNode, column, cellValue, beans) {
-        var _this = _super.call(this, "<span class=\"ag-row-drag\"></span>") || this;
+        var _this = _super.call(this, "<div class=\"ag-row-drag\"></div>") || this;
+        _this.visibleMode = null;
         _this.rowNode = rowNode;
         _this.column = column;
         _this.cellValue = cellValue;
@@ -46,6 +47,8 @@ var RowDragComp = /** @class */ (function (_super) {
         return _this;
     }
     RowDragComp.prototype.postConstruct = function () {
+        var eGui = this.getGui();
+        eGui.appendChild(utils_1._.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
         this.addDragSource();
         this.checkCompatibility();
         if (this.beans.gridOptionsWrapper.isRowDragManaged()) {
@@ -79,6 +82,12 @@ var RowDragComp = /** @class */ (function (_super) {
         };
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(function () { return _this.beans.dragAndDropService.removeDragSource(dragSource); });
+    };
+    RowDragComp.prototype.getVisibleMode = function () {
+        return this.visibleMode;
+    };
+    RowDragComp.prototype.setVisibleMode = function (type) {
+        this.visibleMode = type;
     };
     __decorate([
         context_1.PostConstruct,
@@ -114,11 +123,16 @@ var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
         // only show the drag if both sort and filter are not present
         var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
         if (suppressRowDrag) {
-            this.parent.setVisible(false, 'visibility');
+            this.parent.setVisibleMode('display');
+            this.parent.setVisible(false, 'display');
         }
         else {
             var visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible, 'visibility');
+            if (!this.parent.getVisibleMode()) {
+                var isRowDragFunc = utils_1._.isFunction(this.column.getColDef().rowDrag);
+                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
+            }
+            this.parent.setVisible(visible, this.parent.getVisibleMode());
         }
     };
     __decorate([
@@ -186,11 +200,16 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
         var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
         var alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
         if (alwaysHide) {
-            this.parent.setVisible(false, 'visibility');
+            this.parent.setVisibleMode('display');
+            this.parent.setVisible(false, 'display');
         }
         else {
             var visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible, 'visibility');
+            if (!this.parent.getVisibleMode()) {
+                var isRowDragFunc = utils_1._.isFunction(this.column.getColDef().rowDrag);
+                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
+            }
+            this.parent.setVisible(visible, this.parent.getVisibleMode());
         }
     };
     __decorate([

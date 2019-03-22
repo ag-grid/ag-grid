@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Shape } from "./shape";
 /**
  * Circular arc node that uses the experimental `Path2D` class to define
@@ -16,8 +16,8 @@ export declare class Arc extends Shape {
     startAngle: number;
     private _endAngle;
     endAngle: number;
-    private _isCounterClockwise;
-    isCounterClockwise: boolean;
+    private _counterClockwise;
+    counterClockwise: boolean;
     updatePath(): void;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;

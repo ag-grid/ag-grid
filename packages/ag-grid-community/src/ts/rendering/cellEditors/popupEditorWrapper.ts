@@ -20,7 +20,9 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        this.params.onKeyDown(event);
+        if (!_.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, this.params.node, this.params.column, true)) {
+            this.params.onKeyDown(event);
+        }
     }
 
     public getGui(): HTMLElement {
@@ -37,7 +39,6 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
 
     public init(params: ICellEditorParams): void {
         this.params = params;
-
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
 
         this.addDestroyFunc(() => {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24,6 +24,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid-community/main");
+var rowGroupDropZonePanel_1 = require("./panels/rowGroupDropZonePanel");
+var pivotDropZonePanel_1 = require("./panels/pivotDropZonePanel");
 var GridHeaderDropZones = /** @class */ (function (_super) {
     __extends(GridHeaderDropZones, _super);
     function GridHeaderDropZones() {
@@ -39,8 +41,12 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
-        this.rowGroupComp = this.rowGroupCompFactory.create();
-        this.pivotComp = this.pivotCompFactory.create();
+        this.rowGroupComp = new rowGroupDropZonePanel_1.RowGroupDropZonePanel(true);
+        this.getContext().wireBean(this.rowGroupComp);
+        this.addDestroyFunc(function () { return _this.rowGroupComp.destroy(); });
+        this.pivotComp = new pivotDropZonePanel_1.PivotDropZonePanel(true);
+        this.getContext().wireBean(this.pivotComp);
+        this.addDestroyFunc(function () { return _this.pivotComp.destroy(); });
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
         this.rowGroupComp.addEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
@@ -85,14 +91,6 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         main_1.Autowired('eventService'),
         __metadata("design:type", main_1.EventService)
     ], GridHeaderDropZones.prototype, "eventService", void 0);
-    __decorate([
-        main_1.Optional('rowGroupCompFactory'),
-        __metadata("design:type", Object)
-    ], GridHeaderDropZones.prototype, "rowGroupCompFactory", void 0);
-    __decorate([
-        main_1.Optional('pivotCompFactory'),
-        __metadata("design:type", Object)
-    ], GridHeaderDropZones.prototype, "pivotCompFactory", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

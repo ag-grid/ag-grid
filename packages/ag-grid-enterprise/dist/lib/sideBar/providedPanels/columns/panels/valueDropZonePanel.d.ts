@@ -1,11 +1,10 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Column } from "ag-grid-community/main";
 import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
 export declare class ValuesDropZonePanel extends BaseDropZonePanel {
     private columnController;
     private eventService;
     private gridOptionsWrapper;
-    private context;
     private loggerFactory;
     private dragAndDropService;
     private columnApi;

@@ -32,8 +32,6 @@ export class AgCheckbox extends Component {
     private readOnly = false;
     private passive = false;
 
-    private props: { label: string };
-
     constructor() {
         super();
     }
@@ -45,13 +43,12 @@ export class AgCheckbox extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-
         this.loadIcons();
         this.updateIcons();
+    }
 
-        if (this.props.label) {
-            this.eLabel.innerText = this.props.label;
-        }
+    public setLabel(label: string): void {
+        this.eLabel.innerText = label;
     }
 
     private loadIcons(): void {

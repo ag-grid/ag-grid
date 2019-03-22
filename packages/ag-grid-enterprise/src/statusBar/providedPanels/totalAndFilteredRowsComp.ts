@@ -6,13 +6,8 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    constructor() {
-        super('rowAndFilteredCount', 'Rows');
-    }
-
     @PostConstruct
     protected postConstruct(): void {
-        super.postConstruct();
 
         // this component is only really useful with client side rowmodel
         if (this.gridApi.getModel().getType() !== 'clientSide') {
@@ -20,13 +15,14 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
             return;
         }
 
+        this.setLabel('totalAndFilteredRows', 'Rows');
+
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-and-filtered-row-count');
 
         this.setVisible(true);
 
-        const listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     }
 
     private onDataChanged() {

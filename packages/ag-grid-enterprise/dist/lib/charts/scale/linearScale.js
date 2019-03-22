@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -17,6 +17,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var continuousScale_1 = require("./continuousScale");
 var compare_1 = require("../util/compare");
 var ticks_1 = require("../util/ticks");
+/**
+ * Maps continuous domain to a continuous range.
+ */
 var LinearScale = /** @class */ (function (_super) {
     __extends(LinearScale, _super);
     function LinearScale() {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -118,7 +118,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             getRow: function (index) { return rows[index]; },
             getRowCount: function () { return rows.length; }
         });
-        this.context.wireBean(virtualList);
+        this.getContext().wireBean(virtualList);
         var ePopup = ag_grid_community_1._.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
@@ -174,10 +174,6 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('columnController'),
         __metadata("design:type", ag_grid_community_1.ColumnController)
     ], DropZoneColumnComp.prototype, "columnController", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('context'),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], DropZoneColumnComp.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.Autowired('popupService'),
         __metadata("design:type", ag_grid_community_1.PopupService)

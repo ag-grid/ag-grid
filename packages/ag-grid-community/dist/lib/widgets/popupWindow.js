@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,10 +38,10 @@ var PopupWindow = /** @class */ (function (_super) {
         return _super.call(this, PopupWindow.TEMPLATE) || this;
     }
     PopupWindow.prototype.postConstruct = function () {
-        this.instantiate(this.context);
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         this.closePopup = this.popupService.addPopup(false, this.getGui(), false, this.destroy.bind(this));
+        this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
     };
     PopupWindow.prototype.setBody = function (eBody) {
         this.eContentWrapper.appendChild(eBody);
@@ -58,12 +58,8 @@ var PopupWindow = /** @class */ (function (_super) {
         this.dispatchEvent({ type: PopupWindow.DESTROY_EVENT });
     };
     // NOTE - in time, the styles here will need to go to CSS files
-    PopupWindow.TEMPLATE = "<div class=\"ag-popup-window\" style=\"top: 40px; left: 40px; border: 1px solid black; position: fixed; background-color: white;\">\n            <div class=\"ag-popup-window-title-bar\" style=\"background: #00e5ff; border-bottom: 1px solid black;\">\n                <span ref=\"eClose\" (click)=\"onBtClose\" class=\"ag-popup-window-close\" style=\"margin: 2px; border: 1px solid grey; border-radius: 2px;\">X</span>\n                <span ref=\"eTitle\" class=\"ag-popup-window-title\" style=\"padding: 2px;\">New Chart</span>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-popup-window-content-wrapper\"></div>\n        </div>";
+    PopupWindow.TEMPLATE = "<div class=\"ag-popup-window\" style=\"top: 40px; left: 40px; border: 1px solid black; position: fixed; background-color: white;\">\n            <div class=\"ag-popup-window-title-bar\" style=\"background: #00e5ff; border-bottom: 1px solid black;\">\n                <span ref=\"eClose\" class=\"ag-popup-window-close\" style=\"margin: 2px; border: 1px solid grey; border-radius: 2px;\">X</span>\n                <span ref=\"eTitle\" class=\"ag-popup-window-title\" style=\"padding: 2px;\">New Chart</span>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-popup-window-content-wrapper\"></div>\n        </div>";
     PopupWindow.DESTROY_EVENT = 'destroy';
-    __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], PopupWindow.prototype, "context", void 0);
     __decorate([
         context_1.Autowired('popupService'),
         __metadata("design:type", popupService_1.PopupService)
@@ -76,6 +72,10 @@ var PopupWindow = /** @class */ (function (_super) {
         componentAnnotations_1.RefSelector('eTitle'),
         __metadata("design:type", HTMLElement)
     ], PopupWindow.prototype, "eTitle", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('eClose'),
+        __metadata("design:type", HTMLElement)
+    ], PopupWindow.prototype, "eClose", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

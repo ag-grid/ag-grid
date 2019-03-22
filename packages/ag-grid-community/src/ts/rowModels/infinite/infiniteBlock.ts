@@ -11,7 +11,6 @@ import { _ } from "../../utils";
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('context') private context: Context;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private cacheParams: InfiniteCacheParams;
@@ -51,7 +50,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     @PostConstruct
     protected init(): void {
         super.init({
-            context: this.context,
+            context: this.getContext(),
             rowRenderer: this.rowRenderer
         });
     }

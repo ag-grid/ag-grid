@@ -15,9 +15,10 @@ export class RowDragComp extends Component {
     private readonly rowNode: RowNode;
     private readonly column: Column;
     private readonly cellValue: string;
+    private visibleMode: 'display' | 'visibility' | null = null;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
-        super(`<span class="ag-row-drag"></span>`);
+        super(`<div class="ag-row-drag"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.cellValue = cellValue;
@@ -26,6 +27,8 @@ export class RowDragComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
+        const eGui = this.getGui();
+        eGui.appendChild(_.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
         this.addDragSource();
 
         this.checkCompatibility();
@@ -68,6 +71,14 @@ export class RowDragComp extends Component {
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.beans.dragAndDropService.removeDragSource(dragSource));
     }
+
+    public getVisibleMode() {
+        return this.visibleMode;
+    }
+
+    public setVisibleMode(type: 'display' | 'visibility') {
+        this.visibleMode = type;
+    }
 }
 
 // when non managed, the visibility depends on suppressRowDrag property only
@@ -107,10 +118,15 @@ class NonManagedVisibilityStrategy extends BeanStub {
         const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
 
         if (suppressRowDrag) {
-            this.parent.setVisible(false, 'visibility');
+            this.parent.setVisibleMode('display');
+            this.parent.setVisible(false, 'display');
         } else {
             const visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible, 'visibility');
+            if (!this.parent.getVisibleMode()) {
+                const isRowDragFunc = _.isFunction(this.column.getColDef().rowDrag);
+                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
+            }
+            this.parent.setVisible(visible, this.parent.getVisibleMode());
         }
     }
 
@@ -198,10 +214,15 @@ class ManagedVisibilityStrategy extends BeanStub {
         const alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
 
         if (alwaysHide) {
-            this.parent.setVisible(false, 'visibility');
+            this.parent.setVisibleMode('display');
+            this.parent.setVisible(false, 'display');
         } else {
             const visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible, 'visibility');
+            if (!this.parent.getVisibleMode()) {
+                const isRowDragFunc = _.isFunction(this.column.getColDef().rowDrag);
+                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
+            }
+            this.parent.setVisible(visible, this.parent.getVisibleMode());
         }
     }
 }

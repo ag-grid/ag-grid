@@ -3,9 +3,10 @@ import { ColDef } from "../entities/colDef";
 import { IRowModel } from "./iRowModel";
 import { RowNode } from "../entities/rowNode";
 import { IComponent } from "./iComponent";
+import { GridApi } from "../gridApi";
 
 export interface IFilter {
-    /** This is used to show the filter icon in the header. If true, the filter icon will be shown. */
+    /** This is used to let the grid know if the filter is active or not */
     isFilterActive(): boolean;
     // mandatory methods
     /** The grid will ask each active filter, in turn, whether each row in the grid passes. If any
@@ -64,12 +65,14 @@ export interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
+    hideFilterInput?: boolean;
 }
 
 export interface IFilterParams {
     clearButton?: boolean;
     applyButton?: boolean;
     newRowsAction?: string;
+    api: GridApi;
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;

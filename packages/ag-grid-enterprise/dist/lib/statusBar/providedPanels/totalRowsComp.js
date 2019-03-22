@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,11 +28,11 @@ var nameValueComp_1 = require("./nameValueComp");
 var TotalRowsComp = /** @class */ (function (_super) {
     __extends(TotalRowsComp, _super);
     function TotalRowsComp() {
-        return _super.call(this, 'rowCount', 'Total Rows') || this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     TotalRowsComp.prototype.postConstruct = function () {
-        _super.prototype.postConstruct.call(this);
-        // this component is only really useful with client side rowmodel
+        this.setLabel('totalRows', 'Total Rows');
+        // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn("ag-Grid: agTotalRowCountComponent should only be used with the client side row model.");
             return;

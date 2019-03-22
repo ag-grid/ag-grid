@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,10 +31,10 @@ var componentUtil_1 = require("./dist/lib/components/componentUtil");
 exports.ComponentUtil = componentUtil_1.ComponentUtil;
 var colDefUtil_1 = require("./dist/lib/components/colDefUtil");
 exports.ColDefUtil = colDefUtil_1.ColDefUtil;
-var componentProvider_1 = require("./dist/lib/components/framework/componentProvider");
-exports.ComponentProvider = componentProvider_1.ComponentProvider;
-var componentResolver_1 = require("./dist/lib/components/framework/componentResolver");
-exports.ComponentResolver = componentResolver_1.ComponentResolver;
+var userComponentRegistry_1 = require("./dist/lib/components/framework/userComponentRegistry");
+exports.UserComponentRegistry = userComponentRegistry_1.UserComponentRegistry;
+var userComponentFactory_1 = require("./dist/lib/components/framework/userComponentFactory");
+exports.UserComponentFactory = userComponentFactory_1.UserComponentFactory;
 var agGridNg1_1 = require("./dist/lib/components/agGridNg1");
 exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
 var agGridWebComponent_1 = require("./dist/lib/components/agGridWebComponent");
@@ -145,12 +145,8 @@ exports.SetLeftFeature = setLeftFeature_1.SetLeftFeature;
 // rendering
 var autoWidthCalculator_1 = require("./dist/lib/rendering/autoWidthCalculator");
 exports.AutoWidthCalculator = autoWidthCalculator_1.AutoWidthCalculator;
-var cellEditorFactory_1 = require("./dist/lib/rendering/cellEditorFactory");
-exports.CellEditorFactory = cellEditorFactory_1.CellEditorFactory;
 var cellRendererFactory_1 = require("./dist/lib/rendering/cellRendererFactory");
 exports.CellRendererFactory = cellRendererFactory_1.CellRendererFactory;
-var cellRendererService_1 = require("./dist/lib/rendering/cellRendererService");
-exports.CellRendererService = cellRendererService_1.CellRendererService;
 var checkboxSelectionComponent_1 = require("./dist/lib/rendering/checkboxSelectionComponent");
 exports.CheckboxSelectionComponent = checkboxSelectionComponent_1.CheckboxSelectionComponent;
 var cellComp_1 = require("./dist/lib/rendering/cellComp");

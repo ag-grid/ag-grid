@@ -1,7 +1,6 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Component, MenuItemDef } from "ag-grid-community";
 export declare class MenuList extends Component {
-    private context;
     private popupService;
     private static TEMPLATE;
     private static SEPARATOR_TEMPLATE;

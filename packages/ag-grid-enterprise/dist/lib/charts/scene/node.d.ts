@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
@@ -7,9 +7,20 @@ import { BBox } from "./bbox";
  * Each node can have zero or one parent and belong to zero or one scene.
  */
 export declare abstract class Node {
+    private static fnNameRegex;
     private createId;
+    /**
+     * Unique node ID in the form `ClassName-NaturalNumber`.
+     */
     readonly id: string;
+    /**
+     * Some arbitrary data bound to the node.
+     */
     datum: any;
+    /**
+     * Some number to identify this node, typically within a `Group` node.
+     * Usually this will be some enum value used as a selector.
+     */
     tag: number;
     static isNode(node: any): node is Node;
     protected _scene: Scene | null;
@@ -56,8 +67,8 @@ export declare abstract class Node {
         x: number;
         y: number;
     };
-    private _isDirtyTransform;
-    isDirtyTransform: boolean;
+    private _dirtyTransform;
+    dirtyTransform: boolean;
     private _scalingX;
     scalingX: number;
     private _scalingY;
@@ -124,18 +135,18 @@ export declare abstract class Node {
     abstract render(ctx: CanvasRenderingContext2D): void;
     /**
      * Each time a property of the node that effects how it renders changes
-     * the `isDirty` property of the node should be set to `true`. The change
-     * to the `isDirty` property of the node will propagate up to its parents
+     * the `dirty` property of the node should be set to `true`. The change
+     * to the `dirty` property of the node will propagate up to its parents
      * and eventually to the scene, at which point an animation frame callback
-     * will be scheduled to rerender the scene and its nodes and reset the `isDirty`
-     * flags of all nodes and the {@link Scene._isDirty | Scene} back to `false`.
+     * will be scheduled to rerender the scene and its nodes and reset the `dirty`
+     * flags of all nodes and the {@link Scene._dirty | Scene} back to `false`.
      * Since changes to node properties are not rendered immediately, it's possible
      * to change as many properties on as many nodes as needed and the rendering
      * will still only happen once in the next animation frame callback.
      * The animation frame callback is only scheduled if it hasn't been already.
      */
-    private _isDirty;
-    isDirty: boolean;
-    private _isVisible;
-    isVisible: boolean;
+    private _dirty;
+    dirty: boolean;
+    private _visible;
+    visible: boolean;
 }

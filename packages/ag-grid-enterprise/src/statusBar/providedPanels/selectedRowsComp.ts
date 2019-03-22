@@ -6,18 +6,15 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    constructor() {
-        super('selectedRowCount', 'Selected');
-    }
-
     @PostConstruct
     protected postConstruct(): void {
-        super.postConstruct();
 
         if (!this.isValidRowModel()) {
             console.warn(`ag-Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`);
             return;
         }
+
+        this.setLabel('selectedRows', 'Selected');
 
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-selected-row-count');

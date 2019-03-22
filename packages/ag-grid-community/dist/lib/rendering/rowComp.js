@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -681,7 +681,7 @@ var RowComp = /** @class */ (function (_super) {
                     }
                 }
             };
-            var res = _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType, params, cellRendererName);
+            var res = _this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
             if (!res) {
                 console.error('ag-Grid: fullWidthCellRenderer not defined');
                 return;
@@ -1176,7 +1176,15 @@ var RowComp = /** @class */ (function (_super) {
         return this.rowNode;
     };
     RowComp.prototype.getRenderedCellForColumn = function (column) {
-        return this.cellComps[column.getColId()];
+        var _this = this;
+        var cellComp = this.cellComps[column.getColId()];
+        if (cellComp) {
+            return cellComp;
+        }
+        var spanList = Object.keys(this.cellComps)
+            .map(function (name) { return _this.cellComps[name]; })
+            .filter(function (cmp) { return cmp.getColSpanningList().indexOf(column) !== -1; });
+        return spanList.length ? spanList[0] : undefined;
     };
     RowComp.prototype.onRowIndexChanged = function () {
         this.onCellFocusChanged();

@@ -9,7 +9,7 @@ export class PopupWindow extends Component {
     private static TEMPLATE =
         `<div class="ag-popup-window" style="top: 40px; left: 40px; border: 1px solid black; position: fixed; background-color: white;">
             <div class="ag-popup-window-title-bar" style="background: #00e5ff; border-bottom: 1px solid black;">
-                <span ref="eClose" (click)="onBtClose" class="ag-popup-window-close" style="margin: 2px; border: 1px solid grey; border-radius: 2px;">X</span>
+                <span ref="eClose" class="ag-popup-window-close" style="margin: 2px; border: 1px solid grey; border-radius: 2px;">X</span>
                 <span ref="eTitle" class="ag-popup-window-title" style="padding: 2px;">New Chart</span>
             </div>
             <div ref="eContentWrapper" class="ag-popup-window-content-wrapper"></div>
@@ -17,11 +17,11 @@ export class PopupWindow extends Component {
 
     public static DESTROY_EVENT = 'destroy';
 
-    @Autowired('context') protected context: Context;
     @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;
     @RefSelector('eTitle') private eTitle: HTMLElement;
+    @RefSelector('eClose') private eClose: HTMLElement;
 
     protected closePopup: () => void;
 
@@ -31,8 +31,6 @@ export class PopupWindow extends Component {
 
     @PostConstruct
     protected postConstruct() {
-        this.instantiate(this.context);
-
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         this.closePopup = this.popupService.addPopup(
@@ -41,6 +39,8 @@ export class PopupWindow extends Component {
             false,
             this.destroy.bind(this)
         );
+
+        this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
     }
 
     public setBody(eBody: HTMLElement) {

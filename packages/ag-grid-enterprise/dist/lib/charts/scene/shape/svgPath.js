@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33,7 +33,7 @@ var SvgPath = /** @class */ (function (_super) {
             if (this._path !== value) {
                 this._path = value;
                 this.path2d.setFromString(value);
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -47,7 +47,7 @@ var SvgPath = /** @class */ (function (_super) {
         return false;
     };
     SvgPath.prototype.render = function (ctx) {
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -59,7 +59,7 @@ var SvgPath = /** @class */ (function (_super) {
         if (this.strokeStyle) {
             ctx.stroke();
         }
-        this.isDirty = false;
+        this.dirty = false;
     };
     return SvgPath;
 }(shape_1.Shape));

@@ -1,26 +1,21 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Component } from "../../widgets/component";
-import { IComponent } from "../../interfaces/iComponent";
-import { ComponentRecipes } from "../../components/framework/componentRecipes";
-export interface IOverlayWrapperParams {
-}
-export interface IOverlayWrapperComp extends IComponent<IOverlayWrapperParams> {
-    showLoadingOverlay(eOverlayWrapper: HTMLElement): void;
-    showNoRowsOverlay(eOverlayWrapper: HTMLElement): void;
-    hideOverlay(eOverlayWrapper: HTMLElement): void;
-}
-export declare class OverlayWrapperComponent extends Component implements IOverlayWrapperComp {
-    private static LOADING_WRAPPER_OVERLAY_TEMPLATE;
-    private static NO_ROWS_WRAPPER_OVERLAY_TEMPLATE;
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
+export declare class OverlayWrapperComponent extends Component {
+    private static TEMPLATE;
     gridOptionsWrapper: GridOptionsWrapper;
-    componentRecipes: ComponentRecipes;
+    userComponentFactory: UserComponentFactory;
+    eOverlayWrapper: HTMLElement;
+    private activeOverlay;
     constructor();
-    init(): void;
-    showLoadingOverlay(eOverlayWrapper: HTMLElement): void;
-    showNoRowsOverlay(eOverlayWrapper: HTMLElement): void;
-    hideOverlay(eOverlayWrapper: HTMLElement): void;
-    private showOverlay;
+    private postConstruct;
+    private setWrapperTypeClass;
+    showLoadingOverlay(): void;
+    showNoRowsOverlay(): void;
+    private destroyActiveOverlay;
+    hideOverlay(): void;
+    destroy(): void;
 }

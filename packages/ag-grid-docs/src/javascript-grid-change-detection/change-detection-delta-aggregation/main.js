@@ -93,7 +93,7 @@ var gridOptions = {
         },
         totalColumn: {cellRenderer:'agAnimateShowChangeCellRenderer', cellClass: 'number-cell'}
     },
-    autoGroupColumnDef: {width: 300},
+    autoGroupColumnDef: {minWidth: 150},
     groupDefaultExpanded: 1,
     rowData: createRowData(),
     suppressAggFuncInHeader: true,

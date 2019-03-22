@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,10 +38,10 @@ var events_1 = require("../events");
 var headerWrapperComp_1 = require("./header/headerWrapperComp");
 var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var filterManager_1 = require("../filter/filterManager");
-var componentRecipes_1 = require("../components/framework/componentRecipes");
 var gridApi_1 = require("../gridApi");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
+var floatingFilterWrapper_1 = require("../filter/floatingFilterWrapper");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -75,9 +75,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
         idsToDestroy.forEach(function (id) {
             var childHeaderComp = _this.headerComps[id];
             _this.getGui().removeChild(childHeaderComp.getGui());
-            if (childHeaderComp.destroy) {
-                childHeaderComp.destroy();
-            }
+            childHeaderComp.destroy();
             delete _this.headerComps[id];
         });
     };
@@ -249,77 +247,11 @@ var HeaderRowComp = /** @class */ (function (_super) {
                 result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
-                var column = columnGroupChild;
-                result = this.createFloatingFilterWrapper(column);
+                result = new floatingFilterWrapper_1.FloatingFilterWrapper(columnGroupChild);
                 break;
         }
-        this.context.wireBean(result);
+        this.getContext().wireBean(result);
         return result;
-    };
-    HeaderRowComp.prototype.createFloatingFilterWrapper = function (column) {
-        var _this = this;
-        var floatingFilterParams = this.createFloatingFilterParams(column);
-        var floatingFilterWrapper = this.componentRecipes.newFloatingFilterWrapperComponent(column, floatingFilterParams);
-        this.addDestroyableEventListener(column, column_1.Column.EVENT_FILTER_CHANGED, function () {
-            var filterComponentPromise = _this.filterManager.getFilterComponent(column, 'NO_UI');
-            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, function (filter) { return filter.getModel(); }));
-        });
-        var cachedFilter = this.filterManager.cachedFilter(column);
-        if (cachedFilter) {
-            var filterComponentPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
-            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, function (filter) { return filter.getModel(); }));
-        }
-        return floatingFilterWrapper;
-    };
-    HeaderRowComp.prototype.createFloatingFilterParams = function (column) {
-        var _this = this;
-        // We always get the freshest reference to the baseFilter because the filters get sometimes created
-        // and destroyed between calls
-        //
-        // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-        //
-        var baseParams = {
-            api: this.gridApi,
-            column: column,
-            currentParentModel: function () {
-                var filterComponentPromise = _this.filterManager.getFilterComponent(column, 'NO_UI');
-                var wholeParentFilter = filterComponentPromise.resolveNow(null, function (filter) {
-                    return (filter.getNullableModel) ?
-                        filter.getNullableModel() :
-                        filter.getModel();
-                });
-                return (wholeParentFilter && wholeParentFilter.operator != null) ? wholeParentFilter.condition1 : wholeParentFilter;
-            },
-            onFloatingFilterChanged: function (change) {
-                var captureModelChangedResolveFunc;
-                var modelChanged = new utils_1.Promise(function (resolve) {
-                    captureModelChangedResolveFunc = resolve;
-                });
-                var filterComponentPromise = _this.filterManager.getFilterComponent(column, 'NO_UI');
-                filterComponentPromise.then(function (filterComponent) {
-                    if (filterComponent.onFloatingFilterChanged) {
-                        //If going through this branch of code the user MUST
-                        //be passing an object of type change that contains
-                        //a model property inside and some other stuff
-                        var result = filterComponent.onFloatingFilterChanged(change);
-                        captureModelChangedResolveFunc(result);
-                    }
-                    else {
-                        //If going through this branch of code the user MUST
-                        //be passing the plain model and delegating to ag-Grid
-                        //the responsibility to set the parent model and refresh
-                        //the filters
-                        filterComponent.setModel(change);
-                        _this.filterManager.onFilterChanged();
-                        captureModelChangedResolveFunc(true);
-                    }
-                });
-                return modelChanged.resolveNow(true, function (changed) { return changed; });
-            },
-            //This one might be overridden from the colDef
-            suppressFilterButton: false
-        };
-        return baseParams;
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
@@ -334,10 +266,6 @@ var HeaderRowComp = /** @class */ (function (_super) {
         __metadata("design:type", columnController_1.ColumnController)
     ], HeaderRowComp.prototype, "columnController", void 0);
     __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], HeaderRowComp.prototype, "context", void 0);
-    __decorate([
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], HeaderRowComp.prototype, "eventService", void 0);
@@ -345,10 +273,6 @@ var HeaderRowComp = /** @class */ (function (_super) {
         context_1.Autowired('filterManager'),
         __metadata("design:type", filterManager_1.FilterManager)
     ], HeaderRowComp.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('componentRecipes'),
-        __metadata("design:type", componentRecipes_1.ComponentRecipes)
-    ], HeaderRowComp.prototype, "componentRecipes", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

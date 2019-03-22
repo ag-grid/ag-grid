@@ -23,7 +23,6 @@ import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 
 export class ServerSideBlock extends RowNodeBlock {
 
-    @Autowired('context') private context: Context;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
@@ -78,7 +77,7 @@ export class ServerSideBlock extends RowNodeBlock {
         this.createNodeIdPrefix();
 
         super.init({
-            context: this.context,
+            context: this.getContext(),
             rowRenderer: this.rowRenderer
         });
     }

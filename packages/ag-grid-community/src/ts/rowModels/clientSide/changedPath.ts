@@ -101,6 +101,10 @@ export class ChangedPath {
         }
     }
 
+    public executeFromRootNode(callback: (rowNode: RowNode) => void) {
+        callback(this.pathRoot.rowNode);
+    }
+
     private createPathItems(rowNode: RowNode): number {
         let pointer = rowNode;
         let newEntryCount = 0;

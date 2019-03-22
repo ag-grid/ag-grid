@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_1 = require("./node");
@@ -129,6 +129,38 @@ var Selection = /** @class */ (function () {
             }
         });
     };
+    Selection.prototype.selectAllByClass = function (Class) {
+        return this.selectAll(function (node) {
+            var nodes = [];
+            if (node_1.Node.isNode(node)) {
+                var children = node.children;
+                var n = children.length;
+                for (var i = 0; i < n; i++) {
+                    var child = children[i];
+                    if (child instanceof Class) {
+                        nodes.push(child);
+                    }
+                }
+            }
+            return nodes;
+        });
+    };
+    Selection.prototype.selectAllByTag = function (tag) {
+        return this.selectAll(function (node) {
+            var nodes = [];
+            if (node_1.Node.isNode(node)) {
+                var children = node.children;
+                var n = children.length;
+                for (var i = 0; i < n; i++) {
+                    var child = children[i];
+                    if (child.tag === tag) {
+                        nodes.push(child);
+                    }
+                }
+            }
+            return nodes;
+        });
+    };
     Selection.prototype.selectNone = function () {
         return [];
     };
@@ -137,6 +169,8 @@ var Selection = /** @class */ (function () {
      * The original nodes are then replaced by the groups of nodes returned by the selector
      * and returned as a new selection. The original nodes become the parent nodes for each
      * group in the new selection. The selected nodes do not inherit the datums of the original nodes.
+     * If called without any parameters, creates a new selection with an empty group for each
+     * node in this selection.
      */
     Selection.prototype.selectAll = function (selectorAll) {
         if (!selectorAll) {
@@ -163,7 +197,7 @@ var Selection = /** @class */ (function () {
         return new Selection(subgroups, parents);
     };
     /**
-     * Runs the given callback for every node in the selection.
+     * Runs the given callback for every node in this selection and returns this selection.
      * @param cb
      */
     Selection.prototype.each = function (cb) {
@@ -214,6 +248,10 @@ var Selection = /** @class */ (function () {
         }
         return new Selection(merges, this.parents);
     };
+    /**
+     * Return the first non-null element in this selection.
+     * If the selection is empty, returns null.
+     */
     Selection.prototype.node = function () {
         var groups = this.groups;
         var numGroups = groups.length;
@@ -241,11 +279,19 @@ var Selection = /** @class */ (function () {
         });
         return this;
     };
+    /**
+     * Invokes the given function once, passing in this selection.
+     * Returns this selection. Facilitates method chaining.
+     * @param cb
+     */
     Selection.prototype.call = function (cb) {
         cb(this);
         return this;
     };
     Object.defineProperty(Selection.prototype, "size", {
+        /**
+         * Returns the total number of nodes in this selection.
+         */
         get: function () {
             var size = 0;
             this.each(function () { return size++; });
@@ -255,6 +301,9 @@ var Selection = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Selection.prototype, "data", {
+        /**
+         * Returns the array of data for the selected elements.
+         */
         get: function () {
             var data = [];
             this.each(function (_, datum) { return data.push(datum); });
@@ -277,17 +326,45 @@ var Selection = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    /**
+     * Binds the given value to each selected node and returns this selection
+     * with its {@link GDatum} type changed to the type of the given value.
+     * This method doesn't compute a join and doesn't affect indexes or the enter and exit selections.
+     * This method can also be used to clear bound data.
+     * @param value
+     */
     Selection.prototype.setDatum = function (value) {
-        var node = this.node();
-        if (node) {
+        return this.each(function (node) {
             node.datum = value;
-        }
-        return this;
+        });
     };
-    Selection.prototype.setData = function (value, key) {
-        if (typeof value !== 'function') {
-            var data_1 = value;
-            value = function () { return data_1; };
+    Object.defineProperty(Selection.prototype, "datum", {
+        /**
+         * Returns the bound datum for the first non-null element in the selection.
+         * This is generally useful only if you know the selection contains exactly one element.
+         */
+        get: function () {
+            var node = this.node();
+            return node ? node.datum : null;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Binds the specified array of values with the selected nodes, returning a new selection
+     * that represents the _update_ selection: the nodes successfully bound to the values.
+     * Also defines the {@link enter} and {@link exit} selections on the returned selection,
+     * which can be used to add or remove the nodes to correspond to the new data.
+     * The `values` is an array of values of a particular type, or a function that returns
+     * an array of values for each group.
+     * When values are assigned to the nodes, they are stored in the {@link Node.datum} property.
+     * @param values
+     * @param key
+     */
+    Selection.prototype.setData = function (values, key) {
+        if (typeof values !== 'function') {
+            var data_1 = values;
+            values = function () { return data_1; };
         }
         var groups = this.groups;
         var parents = this.parents;
@@ -302,7 +379,7 @@ var Selection = /** @class */ (function () {
                 throw new Error("Group #" + j + " has no parent: " + group);
             }
             var groupSize = group.length;
-            var data = value(parent_2, parent_2.datum, j, parents);
+            var data = values(parent_2, parent_2.datum, j, parents);
             var dataSize = data.length;
             var enterGroup = enterGroups[j] = new Array(dataSize);
             var updateGroup = updateGroups[j] = new Array(dataSize);

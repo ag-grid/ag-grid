@@ -6,15 +6,11 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    constructor() {
-        super('rowCount', 'Total Rows');
-    }
-
     @PostConstruct
     protected postConstruct(): void {
-        super.postConstruct();
+        this.setLabel('totalRows', 'Total Rows');
 
-        // this component is only really useful with client side rowmodel
+        // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn(`ag-Grid: agTotalRowCountComponent should only be used with the client side row model.`);
             return;

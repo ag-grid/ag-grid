@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33,6 +33,22 @@ var SetFilterListItem = /** @class */ (function (_super) {
         _this.column = column;
         return _this;
     }
+    SetFilterListItem.prototype.useCellRenderer = function (target, eTarget, params) {
+        var cellRendererPromise = this.userComponentFactory.newCellRenderer(target.filterParams, params);
+        if (cellRendererPromise != null) {
+            ag_grid_community_1._.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
+        }
+        else {
+            if (params.valueFormatted == null && params.value == null) {
+                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
+            }
+            else {
+                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+            }
+        }
+        return cellRendererPromise;
+    };
     SetFilterListItem.prototype.init = function () {
         var _this = this;
         this.eCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
@@ -73,8 +89,12 @@ var SetFilterListItem = /** @class */ (function (_super) {
         var valueElement = this.queryForHtmlElement(".ag-filter-value");
         var valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
         var colDef = this.column.getColDef();
-        var valueObj = { value: this.value, valueFormatted: valueFormatted };
-        var componentPromise = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
+        var params = {
+            value: this.value,
+            valueFormatted: valueFormatted,
+            api: this.gridOptionsWrapper.getApi()
+        };
+        var componentPromise = this.useCellRenderer(colDef, valueElement, params);
         if (!componentPromise) {
             return;
         }
@@ -91,13 +111,13 @@ var SetFilterListItem = /** @class */ (function (_super) {
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        ag_grid_community_1.Autowired('cellRendererService'),
-        __metadata("design:type", ag_grid_community_1.CellRendererService)
-    ], SetFilterListItem.prototype, "cellRendererService", void 0);
-    __decorate([
         ag_grid_community_1.Autowired('valueFormatterService'),
         __metadata("design:type", ag_grid_community_1.ValueFormatterService)
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('userComponentFactory'),
+        __metadata("design:type", ag_grid_community_1.UserComponentFactory)
+    ], SetFilterListItem.prototype, "userComponentFactory", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

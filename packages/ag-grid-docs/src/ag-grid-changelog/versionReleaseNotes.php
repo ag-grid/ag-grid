@@ -1,5 +1,31 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_20_2_0">
+    <p>Release 20.2.0 (22nd Mar 2019)</p>
+
+    <p>Breaking Changes:</p>
+    <ul>
+        <li>
+            AG-1707 - Change Tree Data filtering to additionally include child nodes when parent node passes filter
+            (see <a href="/javascript-grid-tree-data/#tree-data-filtering">Tree Data Filtering</a>).
+        </li>
+    </ul>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>AG-2722 - Add ability to create custom filters without input filter fields, ie isNull (see <a href="/javascript-grid-filtering/#adding-custom-filter-options">Custom Filter Options</a>).
+        </li>
+
+        <li>AG-2121 - Allow column-spanning across row header groups when they belong to the same column group</li>
+
+        <li>AG-1936 - Add the ability to change the header checkbox and the drag handle icons</li>
+
+        <li>AG-2143 - Add new property to load the grid with the sidebar hidden</li>
+    </ul>
+</div>
+
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_20_1_0">
-    <p>Release 20.1.0 Overview</p>
+    <p>Release 20.1.0 (22nd Feb 2019)</p>
 
     <p>Feature Highlights:</p>
 
@@ -25,7 +51,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_20_0_0">
-    <p>Release 20.0.0 Overview</p>
+    <p>Release 20.0.0 (11th Jan 2019)</p>
 
     <p>Breaking Changes:</p>
 
@@ -76,7 +102,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_19_1_1">
-    <p>Release 19.1.1 Overview</p>
+    <p>Release 19.1.1 (30th Oct 2018)</p>
 
     <p>Feature Highlights:</p>
 
@@ -95,7 +121,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_19_0_0">
-    <p>Release 19.0.0 Overview</p>
+    <p>Release 19.0.0 (7th Sept 2018)</p>
 
     <p>Breaking Changes:</p>
 
@@ -143,13 +169,11 @@
         <li>
             AG-1363 columnApi.resetColumnState() can now optionally raise column based events.
         </li>
-
     </ul>
-
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_18_0_0">
-    <p>Release 18.0.0 Overview</p>
+    <p>Release 18.0.0 (12th Jun 2018)</p>
 
     <ul>
         <li>
@@ -224,7 +248,7 @@
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_17_1_0">
-    <p>Release 17.1.0 Overview</p>
+    <p>Release 17.1.0 (13th Apr 2018)</p>
 
     <ul>
         <li>

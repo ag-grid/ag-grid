@@ -5,6 +5,10 @@
     "emitDecoratorMetadata": true,
     "declaration": true,
     "target": "es5",
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ]
   }
 }

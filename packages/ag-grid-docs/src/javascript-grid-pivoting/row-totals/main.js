@@ -1,18 +1,19 @@
 var gridOptions = {
     defaultColDef: {
         resizable: true,
-        filter: true
+        filter: true,
+        width: 100
     },
     columnDefs: [
-        {headerName: "Athlete", field: "athlete",  minWidth: 150, enablePivot:true, enableRowGroup:true},
-        {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup:true},
-        {headerName: "Sport", field: "sport", width: 110, rowGroup: true, enablePivot:true, enableRowGroup:true},
-        {headerName: "Year", field: "year", width: 90, pivot: true, enablePivot:true},
-        {headerName: "Age", field: "age", minWidth: 50, filter: 'agNumberColumnFilter', enablePivot:true, enableRowGroup:true},
-        {headerName: "Date", field: "date", width: 110},
-        {headerName: "Gold", field: "gold", width: 150, aggFunc: 'sum'},
-        {headerName: "Silver", field: "silver", width: 150, aggFunc: 'sum'},
-        {headerName: "Bronze", field: "bronze", width: 150, aggFunc: 'sum'}
+        {headerName: "Athlete", field: "athlete", enablePivot:true, enableRowGroup:true},
+        {headerName: "Country", field: "country", rowGroup: true, enableRowGroup:true},
+        {headerName: "Sport", field: "sport", rowGroup: true, enablePivot:true, enableRowGroup:true},
+        {headerName: "Year", field: "year", pivot: true, enablePivot:true},
+        {headerName: "Age", field: "age", filter: 'agNumberColumnFilter', enablePivot:true, enableRowGroup:true},
+        {headerName: "Date", field: "date"},
+        {headerName: "Gold", field: "gold", aggFunc: 'sum'},
+        {headerName: "Silver", field: "silver", aggFunc: 'sum'},
+        {headerName: "Bronze", field: "bronze", aggFunc: 'sum'}
     ],
     pivotMode: true,
     rowGroupPanelShow: 'always',
@@ -20,10 +21,9 @@ var gridOptions = {
     pivotColumnGroupTotals: 'after',
     pivotRowTotals: 'before',
     onFirstDataRendered(params) {
-        params.api.sizeColumnsToFit();
     },
     autoGroupColumnDef: {
-      maxWidth: 300
+      width: 200
     },
     sideBar: true,
 };

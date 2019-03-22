@@ -32,12 +32,10 @@ import { CellNavigationService } from "./cellNavigationService";
 import { FilterStage } from "./rowModels/clientSide/filterStage";
 import { SortStage } from "./rowModels/clientSide/sortStage";
 import { FlattenStage } from "./rowModels/clientSide/flattenStage";
-import { CellEditorFactory } from "./rendering/cellEditorFactory";
 import { Events, GridReadyEvent } from "./events";
 import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
 import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { CellRendererFactory } from "./rendering/cellRendererFactory";
-import { CellRendererService } from "./rendering/cellRendererService";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
 import { BaseFrameworkFactory } from "./baseFrameworkFactory";
@@ -60,9 +58,8 @@ import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";
 import { PinnedRowModel } from "./rowModels/pinnedRowModel";
-import { ComponentResolver } from "./components/framework/componentResolver";
-import { ComponentRecipes } from "./components/framework/componentRecipes";
-import { ComponentProvider } from "./components/framework/componentProvider";
+import { UserComponentFactory } from "./components/framework/userComponentFactory";
+import { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
 import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
 import { Beans } from "./rendering/beans";
@@ -77,6 +74,7 @@ import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
+import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 
 export interface GridParams {
     // used by Web Components
@@ -181,6 +179,7 @@ export class Grid {
             {componentName: 'AgGridComp', theClass: GridPanel},
             {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
             {componentName: 'AgPagination', theClass: PaginationComp},
+            {componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent}
         ];
 
         if (Grid.enterpriseComponents) {
@@ -192,18 +191,19 @@ export class Grid {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
-                rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils,
-                ComponentMetadataProvider, ResizeObserverService, ComponentProvider, ComponentResolver,
-                ComponentRecipes, MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
+                // this should only contain SERVICES, it should NEVER contain COMPONENTS
+                rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+                ComponentMetadataProvider, ResizeObserverService, UserComponentRegistry, UserComponentFactory,
+                MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
                 PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
                 SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
                 ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
                 NavigationService, PopupService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
                 StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
-                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, CellEditorFactory,
-                CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
+                ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, , AnimationFrameService, TooltipManager, ZipContainer
+                ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer
             ],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,

@@ -76,6 +76,8 @@ export const convertLegacyBorder = (type: string, weight: number): string => {
     // dashDotDot, mediumDashDotDot, slantDashDot
     const namedWeight = getWeightName(weight);
     const mappedName = mappedNames[type];
+
+    if (!type) { return 'thin'; }
     if (type === 'Continuous') { return namedWeight; }
     if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) > 0) { return `medium${mappedName}`; }
 

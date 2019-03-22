@@ -23,6 +23,7 @@ export class RichGridDeclarativeComponent {
     public showGrid: boolean;
     private rowData: any[];
     public rowCount: string;
+    public showToolPanel: true;
     public components = {
         headerGroupComponent: HeaderGroupComponent
     };

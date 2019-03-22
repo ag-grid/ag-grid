@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,16 +27,14 @@ var valueService_1 = require("../valueService/valueService");
 var eventService_1 = require("../eventService");
 var columnAnimationService_1 = require("./columnAnimationService");
 var focusedCellController_1 = require("../focusedCellController");
-var cellEditorFactory_1 = require("./cellEditorFactory");
 var cellRendererFactory_1 = require("./cellRendererFactory");
 var popupService_1 = require("../widgets/popupService");
-var cellRendererService_1 = require("./cellRendererService");
 var valueFormatterService_1 = require("./valueFormatterService");
 var stylingService_1 = require("../styling/stylingService");
 var columnHoverService_1 = require("./columnHoverService");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
 var animationFrameService_1 = require("../misc/animationFrameService");
-var componentResolver_1 = require("../components/framework/componentResolver");
+var userComponentFactory_1 = require("../components/framework/userComponentFactory");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var sortController_1 = require("../sortController");
 var filterManager_1 = require("../filter/filterManager");
@@ -121,10 +119,6 @@ var Beans = /** @class */ (function () {
         __metadata("design:type", Object)
     ], Beans.prototype, "contextMenuFactory", void 0);
     __decorate([
-        context_1.Autowired('cellEditorFactory'),
-        __metadata("design:type", cellEditorFactory_1.CellEditorFactory)
-    ], Beans.prototype, "cellEditorFactory", void 0);
-    __decorate([
         context_1.Autowired('cellRendererFactory'),
         __metadata("design:type", cellRendererFactory_1.CellRendererFactory)
     ], Beans.prototype, "cellRendererFactory", void 0);
@@ -132,10 +126,6 @@ var Beans = /** @class */ (function () {
         context_1.Autowired('popupService'),
         __metadata("design:type", popupService_1.PopupService)
     ], Beans.prototype, "popupService", void 0);
-    __decorate([
-        context_1.Autowired('cellRendererService'),
-        __metadata("design:type", cellRendererService_1.CellRendererService)
-    ], Beans.prototype, "cellRendererService", void 0);
     __decorate([
         context_1.Autowired('valueFormatterService'),
         __metadata("design:type", valueFormatterService_1.ValueFormatterService)
@@ -153,9 +143,9 @@ var Beans = /** @class */ (function () {
         __metadata("design:type", Boolean)
     ], Beans.prototype, "enterprise", void 0);
     __decorate([
-        context_1.Autowired('componentResolver'),
-        __metadata("design:type", componentResolver_1.ComponentResolver)
-    ], Beans.prototype, "componentResolver", void 0);
+        context_1.Autowired('userComponentFactory'),
+        __metadata("design:type", userComponentFactory_1.UserComponentFactory)
+    ], Beans.prototype, "userComponentFactory", void 0);
     __decorate([
         context_1.Autowired('animationFrameService'),
         __metadata("design:type", animationFrameService_1.AnimationFrameService)

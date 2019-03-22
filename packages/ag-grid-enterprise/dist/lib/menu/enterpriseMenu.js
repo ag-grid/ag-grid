@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -308,7 +308,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.createMainPanel = function () {
         this.mainMenuList = new menuList_1.MenuList();
-        this.context.wireBean(this.mainMenuList);
+        this.getContext().wireBean(this.mainMenuList);
         var menuItems = this.getMenuItems();
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
         this.mainMenuList.addMenuItems(menuItemsMapped);
@@ -358,7 +358,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             suppressSideButtons: false,
             api: this.gridApi
         });
-        this.context.wireBean(this.columnSelectPanel);
+        this.getContext().wireBean(this.columnSelectPanel);
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
             title: ag_grid_community_1._.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
@@ -402,10 +402,6 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('filterManager'),
         __metadata("design:type", ag_grid_community_1.FilterManager)
     ], EnterpriseMenu.prototype, "filterManager", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('context'),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], EnterpriseMenu.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.Autowired('gridApi'),
         __metadata("design:type", ag_grid_community_1.GridApi)

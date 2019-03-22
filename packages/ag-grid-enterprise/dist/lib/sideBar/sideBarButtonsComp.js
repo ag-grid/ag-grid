@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,98 +28,92 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
     __extends(SideBarButtonsComp, _super);
     function SideBarButtonsComp() {
         var _this = _super.call(this, SideBarButtonsComp.TEMPLATE) || this;
-        _this.panels = {};
-        _this.defaultPanelKey = null;
+        _this.buttonComps = [];
         return _this;
     }
-    SideBarButtonsComp.prototype.registerPanelComp = function (key, panelComponent) {
-        this.panels[key] = panelComponent;
+    SideBarButtonsComp.prototype.setToolPanelDefs = function (toolPanelDefs) {
+        toolPanelDefs.forEach(this.addButtonComp.bind(this));
     };
-    SideBarButtonsComp.prototype.registerGridComp = function (gridPanel) {
-        this.gridPanel = gridPanel;
-    };
-    SideBarButtonsComp.prototype.postConstruct = function () {
-        var buttons = {};
-        var toolPanels = ag_grid_community_1._.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []);
-        toolPanels.forEach(function (toolPanel) {
-            buttons[toolPanel.id] = toolPanel;
+    SideBarButtonsComp.prototype.setActiveButton = function (id) {
+        this.buttonComps.forEach(function (comp) {
+            comp.setSelected(id === comp.getToolPanelId());
         });
-        this.createButtonsHtml(buttons);
     };
-    SideBarButtonsComp.prototype.createButtonsHtml = function (componentButtons) {
+    SideBarButtonsComp.prototype.addButtonComp = function (def) {
         var _this = this;
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var html = '';
-        var keys = Object.keys(componentButtons);
-        keys.forEach(function (key) {
-            var def = componentButtons[key];
-            html += "<div class=\"ag-side-button\"\"><button type=\"button\" ref=\"toggle-button-" + key + "\"><div><span class=\"ag-icon-" + def.iconKey + "\"></span></div><span>" + translate(def.labelKey, def.labelDefault) + "</span></button></div>";
-        });
-        this.getGui().innerHTML = html;
-        keys.forEach(function (key) {
-            _this.addButtonEvents(key);
-        });
-        this.defaultPanelKey = ag_grid_community_1._.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
-        var defaultButtonElement = this.getRefElement("toggle-button-" + this.defaultPanelKey);
-        if (defaultButtonElement && defaultButtonElement.parentElement) {
-            ag_grid_community_1._.addOrRemoveCssClass(defaultButtonElement.parentElement, 'ag-selected', true);
-        }
-    };
-    SideBarButtonsComp.prototype.addButtonEvents = function (keyToProcess) {
-        var _this = this;
-        var btShow = this.getRefElement("toggle-button-" + keyToProcess);
-        this.addDestroyableEventListener(btShow, 'click', function () { return _this.onButtonPressed(keyToProcess); });
-    };
-    SideBarButtonsComp.prototype.onButtonPressed = function (keyPressed) {
-        var _this = this;
-        Object.keys(this.panels).forEach(function (keyToProcess) {
-            _this.processKeyAfterKeyPressed(keyToProcess, keyPressed);
+        var buttonComp = new SideBarButtonComp(def);
+        this.getContext().wireBean(buttonComp);
+        this.buttonComps.push(buttonComp);
+        this.getGui().appendChild(buttonComp.getGui());
+        buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, function () {
+            _this.dispatchEvent({
+                type: SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
+                toolPanelId: def.id
+            });
         });
     };
-    SideBarButtonsComp.prototype.processKeyAfterKeyPressed = function (keyToProcess, keyPressed) {
-        var panelToProcess = this.panels[keyToProcess];
-        var clickingThisPanel = keyToProcess === keyPressed;
-        var showThisPanel = clickingThisPanel ? !panelToProcess.isVisible() : false;
-        this.setPanelVisibility(keyToProcess, showThisPanel);
-    };
-    SideBarButtonsComp.prototype.setPanelVisibility = function (key, show) {
-        var panelToProcess = this.panels[key];
-        if (!panelToProcess) {
-            console.warn("ag-grid: can't change the visibility for the non existing tool panel item [" + key + "]");
-            return;
+    SideBarButtonsComp.prototype.clearButtons = function () {
+        if (this.buttonComps) {
+            this.buttonComps.forEach(function (comp) { return comp.destroy(); });
         }
-        panelToProcess.setVisible(show);
-        var button = this.getRefElement("toggle-button-" + key);
-        if (button.parentElement) {
-            ag_grid_community_1._.addOrRemoveCssClass(button.parentElement, 'ag-selected', show);
-        }
-        var event = {
-            type: ag_grid_community_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(event);
+        ag_grid_community_1._.clearElement(this.getGui());
+        this.buttonComps.length = 0;
     };
-    SideBarButtonsComp.prototype.clear = function () {
-        this.setTemplate(SideBarButtonsComp.TEMPLATE);
-        this.panels = {};
+    SideBarButtonsComp.prototype.destroy = function () {
+        this.clearButtons();
+        _super.prototype.destroy.call(this);
     };
+    SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     SideBarButtonsComp.TEMPLATE = "<div class=\"ag-side-buttons\"></div>";
     __decorate([
         ag_grid_community_1.Autowired("gridOptionsWrapper"),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], SideBarButtonsComp.prototype, "gridOptionsWrapper", void 0);
+    return SideBarButtonsComp;
+}(ag_grid_community_1.Component));
+exports.SideBarButtonsComp = SideBarButtonsComp;
+var SideBarButtonComp = /** @class */ (function (_super) {
+    __extends(SideBarButtonComp, _super);
+    function SideBarButtonComp(toolPanelDef) {
+        var _this = _super.call(this) || this;
+        _this.toolPanelDef = toolPanelDef;
+        return _this;
+    }
+    SideBarButtonComp.prototype.getToolPanelId = function () {
+        return this.toolPanelDef.id;
+    };
+    SideBarButtonComp.prototype.postConstruct = function () {
+        var template = this.createTemplate();
+        this.setTemplate(template);
+        this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+    };
+    SideBarButtonComp.prototype.createTemplate = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var def = this.toolPanelDef;
+        var label = translate(def.labelKey, def.labelDefault);
+        var res = "<div class=\"ag-side-button\">\n                <button type=\"button\" ref=\"eToggleButton\">\n                    <div>\n                        <span class=\"ag-icon-" + def.iconKey + "\"></span>\n                    </div>\n                    <span>" + label + "</span>\n                </button>\n            </div>";
+        return res;
+    };
+    SideBarButtonComp.prototype.onButtonPressed = function () {
+        this.dispatchEvent({ type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED });
+    };
+    SideBarButtonComp.prototype.setSelected = function (selected) {
+        this.addOrRemoveCssClass('ag-selected', selected);
+    };
+    SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
     __decorate([
-        ag_grid_community_1.Autowired("eventService"),
-        __metadata("design:type", ag_grid_community_1.EventService)
-    ], SideBarButtonsComp.prototype, "eventService", void 0);
+        ag_grid_community_1.Autowired("gridOptionsWrapper"),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
+    ], SideBarButtonComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eToggleButton'),
+        __metadata("design:type", HTMLButtonElement)
+    ], SideBarButtonComp.prototype, "eToggleButton", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
-    ], SideBarButtonsComp.prototype, "postConstruct", null);
-    return SideBarButtonsComp;
+    ], SideBarButtonComp.prototype, "postConstruct", null);
+    return SideBarButtonComp;
 }(ag_grid_community_1.Component));
-exports.SideBarButtonsComp = SideBarButtonsComp;

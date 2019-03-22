@@ -158,7 +158,7 @@ export class PivotColDefService {
 
         // need to recurse children first to obtain colIds used in the aggregation stage
         group.children
-            .forEach((grp: ColGroupDef) => {
+            .forEach((grp: ColDef | ColGroupDef) => {
                 const childColIds = this.recursivelyAddPivotTotal(grp, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter);
                 if (childColIds) {
                     colIds = colIds.concat(childColIds);
@@ -216,7 +216,7 @@ export class PivotColDefService {
 
         let colIds: string[] = [];
         group.children
-            .forEach((grp: ColGroupDef) => {
+            .forEach((grp: ColDef | ColGroupDef) => {
                 this.extractColIdsForValueColumn(grp, valueColumn);
                 const childColIds = this.extractColIdsForValueColumn(grp, valueColumn);
                 colIds = colIds.concat(childColIds);

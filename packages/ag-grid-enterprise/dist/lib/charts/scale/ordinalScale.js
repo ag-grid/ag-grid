@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -63,11 +63,7 @@ var OrdinalScale = /** @class */ (function () {
             }
             this.index[key] = i = this.domain.push(d);
         }
-        var range = this.range;
-        // if (range.length === 0) {
-        //     return this.unknown;
-        // }
-        return range[(i - 1) % range.length];
+        return this.range[(i - 1) % this.range.length];
     };
     return OrdinalScale;
 }());

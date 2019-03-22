@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -53,10 +53,21 @@ var RichSelectRow = /** @class */ (function (_super) {
     };
     RichSelectRow.prototype.populateWithRenderer = function (value, valueFormatted) {
         var _this = this;
-        var promise = this.cellRendererService.useRichSelectCellRenderer(this.params, this.getGui(), { value: value, valueFormatted: valueFormatted });
-        var foundRenderer = ag_grid_community_1._.exists(promise);
-        if (foundRenderer) {
-            promise.then(function (childComponent) {
+        // bad coder here - we are not populating all values of the cellRendererParams
+        var params = {
+            value: value,
+            valueFormatted: valueFormatted,
+            api: this.gridOptionsWrapper.getApi()
+        };
+        var cellRendererPromise = this.userComponentFactory.newCellRenderer(this.params, params);
+        if (cellRendererPromise != null) {
+            ag_grid_community_1._.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
+        }
+        else {
+            this.getGui().innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        if (cellRendererPromise) {
+            cellRendererPromise.then(function (childComponent) {
                 if (childComponent && childComponent.destroy) {
                     _this.addDestroyFunc(childComponent.destroy.bind(childComponent));
                 }
@@ -66,9 +77,13 @@ var RichSelectRow = /** @class */ (function (_super) {
         return false;
     };
     __decorate([
-        ag_grid_community_1.Autowired('cellRendererService'),
-        __metadata("design:type", ag_grid_community_1.CellRendererService)
-    ], RichSelectRow.prototype, "cellRendererService", void 0);
+        ag_grid_community_1.Autowired('userComponentFactory'),
+        __metadata("design:type", ag_grid_community_1.UserComponentFactory)
+    ], RichSelectRow.prototype, "userComponentFactory", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
+    ], RichSelectRow.prototype, "gridOptionsWrapper", void 0);
     return RichSelectRow;
 }(ag_grid_community_1.Component));
 exports.RichSelectRow = RichSelectRow;

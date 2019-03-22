@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -80,7 +80,7 @@ var Text = /** @class */ (function (_super) {
         set: function (value) {
             if (this._x !== value) {
                 this._x = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -93,7 +93,7 @@ var Text = /** @class */ (function (_super) {
         set: function (value) {
             if (this._y !== value) {
                 this._y = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -110,7 +110,7 @@ var Text = /** @class */ (function (_super) {
             if (this._text !== value) {
                 this._text = value;
                 this.splitText();
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -123,7 +123,7 @@ var Text = /** @class */ (function (_super) {
         set: function (value) {
             if (this._font !== value) {
                 this._font = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -136,7 +136,7 @@ var Text = /** @class */ (function (_super) {
         set: function (value) {
             if (this._textAlign !== value) {
                 this._textAlign = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -149,7 +149,7 @@ var Text = /** @class */ (function (_super) {
         set: function (value) {
             if (this._textBaseline !== value) {
                 this._textBaseline = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -176,7 +176,7 @@ var Text = /** @class */ (function (_super) {
         var lineCount = lines.length;
         if (!lineCount)
             return;
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -193,7 +193,7 @@ var Text = /** @class */ (function (_super) {
             }
         }
         // renderBBox(ctx, this.getBBox()); // debug
-        this.isDirty = false;
+        this.dirty = false;
     };
     Text.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
         textAlign: 'start',

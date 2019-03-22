@@ -2,6 +2,9 @@ import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants";
+import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
+import { SuppressKeyboardEventParams } from "./entities/colDef";
+import { CellComp } from "./rendering/cellComp";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -554,6 +557,65 @@ export class Utils {
         }
     }
 
+    // allows user to tell the grid to skip specific keyboard events
+    static isUserSuppressingKeyboardEvent(
+        gridOptionsWrapper: GridOptionsWrapper,
+        keyboardEvent: KeyboardEvent,
+        rowNode: RowNode,
+        column: Column,
+        editing: boolean
+    ): boolean {
+
+        const gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
+        const colDefFunc = column.getColDef().suppressKeyboardEvent;
+
+        // if no callbacks provided by user, then do nothing
+        if (!gridOptionsFunc && !colDefFunc) {
+            return false;
+        }
+
+        const params: SuppressKeyboardEventParams = {
+            event: keyboardEvent,
+            editing,
+            column,
+            api: gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: gridOptionsWrapper.getContext(),
+            columnApi: gridOptionsWrapper.getColumnApi()
+        };
+
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            const colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) { return true; }
+        }
+
+        if (gridOptionsFunc) {
+            // if gridOption func, return the result
+            return gridOptionsFunc(params);
+        } else {
+            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+            return false;
+        }
+    }
+
+    static getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp {
+        let sourceElement = this.getTarget(event);
+
+        while (sourceElement) {
+            const renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
+            if (renderedCell) {
+                return renderedCell as CellComp;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+
+        return null;
+    }
+
     //adds all type of change listeners to an element, intended to be a text field
     static addChangeListener(element: HTMLElement, listener: EventListener) {
         element.addEventListener("changed", listener);
@@ -908,9 +970,9 @@ export class Utils {
             }
         } else {
             // otherwise put at start
-            if (eContainer.firstChild) {
+            if (eContainer.firstChild && eContainer.firstChild !== eChild) {
                 // insert it at the first location
-                eContainer.insertBefore(eChild, eContainer.firstChild);
+                eContainer.insertAdjacentElement('afterbegin', eChild);
             }
         }
     }
@@ -1023,6 +1085,10 @@ export class Utils {
     // }
 
     static iconNameClassMap: { [key: string]: string } = {
+        columnGroupOpened: 'expanded',
+        columnGroupClosed: 'contracted',
+        columnSelectClosed: 'tree-closed',
+        columnSelectOpen: 'tree-open',
         columnMovePin: 'pin',
         columnMoveAdd: 'plus',
         columnMoveHide: 'eye-slash',
@@ -1055,10 +1121,8 @@ export class Utils {
         pivotPanel: 'pivot',
         rowGroupPanel: 'group',
         valuePanel: 'aggregation',
-        columnGroupOpened: 'expanded',
-        columnGroupClosed: 'contracted',
-        columnSelectClosed: 'tree-closed',
-        columnSelectOpen: 'tree-open',
+        columnDrag: 'column-drag',
+        rowDrag: 'row-drag',
         /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',
@@ -1082,6 +1146,7 @@ export class Utils {
 
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
         let userProvidedIcon: Function | string | null = null;
+
         // check col for icon first
         const icons: any = (column && column.getColDef().icons) ? column.getColDef().icons : null;
         if (icons) {
@@ -1330,6 +1395,10 @@ export class Utils {
         }
         const path = _.getEventPath(event);
         return path.indexOf(element) >= 0;
+    }
+
+    static isFunction(val: any): boolean {
+        return !!(val && val.constructor && val.call && val.apply);
     }
 
     static createEventPath(event: Event): EventTarget[] {
@@ -1777,8 +1846,22 @@ export class Utils {
 
     static passiveEvents: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
-    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
-        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? {passive: true} : undefined) as any);
+    static addSafePassiveEventListener(
+        eElement: HTMLElement,
+        event: string, listener: (event?: any) => void,
+        options?: boolean | AddEventListenerOptions
+    ) {
+
+        if (Utils.passiveEvents.indexOf(event) !== -1) {
+            if (options === undefined) {
+                options = {};
+            } else if (typeof options === 'boolean') {
+                options = { capture: options };
+            }
+
+            options.passive = true;
+        }
+        eElement.addEventListener(event, listener, options);
     }
 
     static camelCaseToHumanText(camelCase: string | undefined): string | null {
@@ -1965,6 +2048,22 @@ export class Utils {
         }
 
         return false;
+    }
+
+    // cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
+    // can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
+    public static bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
+        cellRendererPromise.then(cellRenderer => {
+            const gui: HTMLElement | string = cellRenderer.getGui();
+            if (gui != null) {
+                if (typeof gui == 'object') {
+                    eTarget.appendChild(gui);
+                } else {
+                    eTarget.innerHTML = gui;
+                }
+            }
+
+        });
     }
 }
 

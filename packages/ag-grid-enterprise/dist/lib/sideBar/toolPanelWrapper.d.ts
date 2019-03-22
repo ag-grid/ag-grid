@@ -1,14 +1,15 @@
-// ag-grid-enterprise v20.1.0
-import { Component, IComponent } from "ag-grid-community";
-import { IToolPanelChildComp } from "./sideBarComp";
-export interface ToolPanelWrapperParams {
-    innerComp: IToolPanelChildComp & Component;
-}
-export declare class ToolPanelWrapper extends Component implements IComponent<ToolPanelWrapperParams>, IToolPanelChildComp {
-    private params;
-    private componentResolver;
+// ag-grid-enterprise v20.2.0
+import { Component, ToolPanelDef } from "ag-grid-community";
+export declare class ToolPanelWrapper extends Component {
+    private userComponentFactory;
+    private gridOptionsWrapper;
     private static TEMPLATE;
-    private componentToResize;
-    init(params: ToolPanelWrapperParams): void;
+    private toolPanelCompInstance;
+    private toolPanelId;
+    constructor();
+    getToolPanelId(): string;
+    setToolPanelDef(toolPanelDef: ToolPanelDef): void;
+    private setupResize;
+    private setToolPanelComponent;
     refresh(): void;
 }

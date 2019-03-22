@@ -29,14 +29,12 @@ export class SortStage {
             && this.gridOptionsWrapper.isDeltaSort();
 
         // we only need dirty nodes if doing delta sort
-        const dirtyLeafNodes = deltaSort ?
-            this.calculateDirtyNodes(params.rowNodeTransactions) : null;
+        const dirtyLeafNodes = deltaSort ? this.calculateDirtyNodes(params.rowNodeTransactions) : null;
 
         const valueColumns = this.columnController.getValueColumns();
         const noAggregations = _.missingOrEmpty(valueColumns);
 
-        this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes,
-            params.changedPath, noAggregations);
+        this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations);
     }
 
     private calculateDirtyNodes(rowNodeTransactions: RowNodeTransaction[]): {[nodeId: string]: boolean} {

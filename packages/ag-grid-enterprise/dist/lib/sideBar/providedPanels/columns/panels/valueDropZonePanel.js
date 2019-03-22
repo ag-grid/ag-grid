@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -34,7 +34,7 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         _super.prototype.setBeans.call(this, {
             gridOptionsWrapper: this.gridOptionsWrapper,
             eventService: this.eventService,
-            context: this.context,
+            context: this.getContext(),
             loggerFactory: this.loggerFactory,
             dragAndDropService: this.dragAndDropService
         });
@@ -93,10 +93,6 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
     ], ValuesDropZonePanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        main_1.Autowired('context'),
-        __metadata("design:type", main_1.Context)
-    ], ValuesDropZonePanel.prototype, "context", void 0);
     __decorate([
         main_1.Autowired('loggerFactory'),
         __metadata("design:type", main_1.LoggerFactory)

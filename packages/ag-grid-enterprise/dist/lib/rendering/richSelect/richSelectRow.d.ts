@@ -1,8 +1,9 @@
-// ag-grid-enterprise v20.1.0
-import { Component, CellRendererService, IRichCellEditorParams } from "ag-grid-community";
+// ag-grid-enterprise v20.2.0
+import { Component, IRichCellEditorParams } from "ag-grid-community";
 export declare class RichSelectRow extends Component {
-    cellRendererService: CellRendererService;
-    private params;
+    private userComponentFactory;
+    private gridOptionsWrapper;
+    private readonly params;
     constructor(params: IRichCellEditorParams);
     setState(value: any, valueFormatted: string, selected: boolean): void;
     private populateWithoutRenderer;

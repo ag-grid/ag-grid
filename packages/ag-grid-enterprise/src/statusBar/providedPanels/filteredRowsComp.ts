@@ -13,15 +13,11 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    constructor() {
-        super('filteredRowCount', 'Filtered');
-    }
-
     @PostConstruct
     protected postConstruct(): void {
-        super.postConstruct();
+        this.setLabel('filteredRows', 'Filtered');
 
-        // this component is only really useful with client side rowmodel
+        // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn(`ag-Grid: agFilteredRowCountComponent should only be used with the client side row model.`);
             return;

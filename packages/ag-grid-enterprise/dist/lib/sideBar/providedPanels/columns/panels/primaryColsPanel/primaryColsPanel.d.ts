@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Component } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export interface BaseColumnItem {
@@ -11,12 +11,11 @@ export interface BaseColumnItem {
 }
 export declare class PrimaryColsPanel extends Component {
     private static TEMPLATE;
-    private context;
     private gridOptionsWrapper;
-    private columnSelectHeaderComp;
-    private columnContainerComp;
-    private allowDragging;
-    private params;
+    private primaryColsHeaderPanel;
+    private primaryColsListPanel;
+    private readonly allowDragging;
+    private readonly params;
     constructor(allowDragging: boolean, params: ToolPanelColumnCompParams);
     init(): void;
     private onFilterChanged;

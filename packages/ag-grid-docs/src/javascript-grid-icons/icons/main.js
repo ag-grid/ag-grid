@@ -13,8 +13,8 @@ var columnDefs = [
     {
         headerName: "Country", field: "country", width: 120, rowGroupIndex: 0,
         icons: {
-            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+            sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-down"/>'
         }
     },
     {
@@ -50,38 +50,40 @@ var gridOptions = {
     floatingFilter: true,
     autoGroupColumnDef: {
         headerName: "Athlete", field: "athlete", width: 180,
+        rowDrag: true,
         // use font awesome for first col, with numbers for sort
         icons: {
             menu: '<i class="fa fa-shower"/>',
-            filter: '<i class="fa fa-long-arrow-up"/>',
-            columns: '<i class="fa fa-snowflake-o"/>',
-            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+            filter: '<i class="fa fa-long-arrow-alt-up"/>',
+            columns: '<i class="fa fa-snowflake"/>',
+            sortAscending: '<i class="fa fa-sort-alpha-up"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-down"/>'
         },
         cellRendererParams: {
             checkbox: true
         },
-        headerCheckboxSelection: true
+        headerCheckboxSelection: true,
+        width: 250
     },
     // override all the defaults with font awesome
     icons: {
         // use font awesome for menu icons
         menu: '<i class="fa fa-bath" style="width: 10px"/>',
-        filter: '<i class="fa fa-long-arrow-down"/>',
-        columns: '<i class="fa fa-handshake-o"/>',
-        sortAscending: '<i class="fa fa-long-arrow-down"/>',
-        sortDescending: '<i class="fa fa-long-arrow-up"/>',
+        filter: '<i class="fa fa-long-arrow-alt-down"/>',
+        columns: '<i class="fa fa-handshake"/>',
+        sortAscending: '<i class="fa fa-long-arrow-alt-down"/>',
+        sortDescending: '<i class="fa fa-long-arrow-alt-up"/>',
         // use some strings from group
         groupExpanded: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/minus.png" style="width: 12px;padding-right: 2px"/>',
         groupContracted: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="width: 12px;padding-right: 2px"/>',
-        columnMovePin: '<i class="fa fa-hand-grab-o"/>',
-        columnMoveAdd: '<i class="fa fa-plus-square-o"/>',
-        columnMoveHide: '<i class="fa fa-remove"/>',
-        columnMoveMove: '<i class="fa fa-chain"/>',
+        columnMovePin: '<i class="far fa-hand-rock"/>',
+        columnMoveAdd: '<i class="fa fa-plus-square"/>',
+        columnMoveHide: '<i class="fa fa-times"/>',
+        columnMoveMove: '<i class="fa fa-link"/>',
         columnMoveLeft: '<i class="fa fa-arrow-left"/>',
         columnMoveRight: '<i class="fa fa-arrow-right"/>',
-        columnMoveGroup: '<i class="fa fa-group"/>',
-        rowGroupPanel: '<i class="fa fa-bank"/>',
+        columnMoveGroup: '<i class="fa fa-users"/>',
+        rowGroupPanel: '<i class="fa fa-university"/>',
         pivotPanel: '<i class="fa fa-magic"/>',
         valuePanel: '<i class="fa fa-magnet"/>',
         menuPin: 'P', // just showing letters, no graphic
@@ -90,9 +92,13 @@ var gridOptions = {
         menuRemoveRowGroup: 'R',
         clipboardCopy: '>>',
         clipboardPaste: '>>',
-        checkboxChecked: '<i class="fa fa-check-square-o"/>',
-        checkboxUnchecked: '<i class="fa fa-square-o"/>',
-        checkboxIndeterminate: '<i class="fa fa-circle-o"/>'
+        checkboxChecked: '<i class="far fa-check-square"/>',
+        checkboxUnchecked: '<i class="far fa-square"/>',
+        checkboxIndeterminate: '<i class="far fa-circle"/>',
+        checkboxCheckedReadOnly: '<i class="far fa-check-square" style="color: lightgray"/>',
+        checkboxUncheckedReadOnly: '<i class="far fa-square" style="color: lightgray" />',
+        checkboxIndeterminateReadOnly: '<i class="far fa-circle" style="color: lightgray"/>',
+        rowDrag: '<i class="fa fa-circle"/>'
     },
     rowSelection: 'multiple'
 };

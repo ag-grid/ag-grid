@@ -3,21 +3,20 @@ import {
     GridOptionsWrapper,
     Constants,
     ColumnController,
-    ICompFactory,
     Component,
     EventService,
     Autowired,
-    Optional, 
-    PostConstruct
+    PostConstruct,
+    Context
 } from "ag-grid-community/main";
+import {RowGroupDropZonePanel} from "./panels/rowGroupDropZonePanel";
+import {PivotDropZonePanel} from "./panels/pivotDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
-    @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
-    @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
 
     private rowGroupComp: Component;
     private pivotComp: Component;
@@ -42,8 +41,13 @@ export class GridHeaderDropZones extends Component {
 
         const dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
 
-        this.rowGroupComp = this.rowGroupCompFactory.create();
-        this.pivotComp = this.pivotCompFactory.create();
+        this.rowGroupComp = new RowGroupDropZonePanel(true);
+        this.getContext().wireBean(this.rowGroupComp);
+        this.addDestroyFunc( () => this.rowGroupComp.destroy() );
+
+        this.pivotComp = new PivotDropZonePanel(true);
+        this.getContext().wireBean(this.pivotComp);
+        this.addDestroyFunc( () => this.pivotComp.destroy() );
 
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());

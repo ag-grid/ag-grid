@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -57,7 +57,7 @@ var Matrix = /** @class */ (function () {
         e[5] = 0;
         return this;
     };
-    Object.defineProperty(Matrix.prototype, "isIdentity", {
+    Object.defineProperty(Matrix.prototype, "identity", {
         get: function () {
             var e = this.elements;
             return e[0] === 1 && e[1] === 0 && e[2] === 0 &&
@@ -235,7 +235,7 @@ var Matrix = /** @class */ (function () {
         // If the matrix is mostly identity (95% of the time),
         // the `if (this.isIdentity)` check can make this call 3-4 times
         // faster on average: https://jsperf.com/matrix-check-first-vs-always-set
-        if (this.isIdentity)
+        if (this.identity)
             return;
         var e = this.elements;
         ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);

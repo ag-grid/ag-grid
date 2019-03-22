@@ -11,15 +11,11 @@ import { Events } from "../events";
 import { HeaderWrapperComp } from "./header/headerWrapperComp";
 import { HeaderGroupWrapperComp } from "./headerGroup/headerGroupWrapperComp";
 import { FilterManager } from "../filter/filterManager";
-import { IFloatingFilterWrapperComp } from "../filter/floatingFilterWrapper";
 import { IComponent } from "../interfaces/iComponent";
-import { FloatingFilterChange, IFloatingFilterParams } from "../filter/floatingFilter";
-import { ComponentRecipes } from "../components/framework/componentRecipes";
-import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";
-import { CombinedFilter } from "../filter/baseFilter";
 import { Constants } from "../constants";
-import { Promise, _ } from "../utils";
+import { _ } from "../utils";
+import { FloatingFilterWrapper } from "../filter/floatingFilterWrapper";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -30,10 +26,8 @@ export class HeaderRowComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
 
     private readonly dept: number;
     private readonly pinned: string;
@@ -67,9 +61,7 @@ export class HeaderRowComp extends Component {
         idsToDestroy.forEach(id => {
             const childHeaderComp: IComponent<any> = this.headerComps[id];
             this.getGui().removeChild(childHeaderComp.getGui());
-            if (childHeaderComp.destroy) {
-                childHeaderComp.destroy();
-            }
+            childHeaderComp.destroy();
             delete this.headerComps[id];
         });
     }
@@ -262,84 +254,13 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
-                const column = columnGroupChild as Column;
-                result = this.createFloatingFilterWrapper(column);
+                result = new FloatingFilterWrapper(columnGroupChild as Column);
                 break;
         }
 
-        this.context.wireBean(result);
+        this.getContext().wireBean(result);
 
         return result;
-    }
-
-    private createFloatingFilterWrapper(column: Column): IFloatingFilterWrapperComp<any, any, any, any> {
-        const floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
-
-        const floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentRecipes.newFloatingFilterWrapperComponent(
-            column,
-            floatingFilterParams as null
-        );
-
-        this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
-            const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
-            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
-        });
-        const cachedFilter = this.filterManager.cachedFilter(column) as any;
-        if (cachedFilter) {
-            const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
-            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
-        }
-
-        return floatingFilterWrapper;
-    }
-
-    private createFloatingFilterParams<M, F extends FloatingFilterChange>(column: Column): IFloatingFilterParams<M, F> {
-        // We always get the freshest reference to the baseFilter because the filters get sometimes created
-        // and destroyed between calls
-        //
-        // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-        //
-        const baseParams: IFloatingFilterParams<M, F> = {
-            api: this.gridApi,
-            column: column,
-            currentParentModel: (): M => {
-                const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI') as any;
-                const wholeParentFilter: CombinedFilter<M> | M = filterComponentPromise.resolveNow(null, (filter: any) =>
-                    (filter.getNullableModel) ?
-                        filter.getNullableModel() :
-                        filter.getModel()
-                );
-                return (wholeParentFilter && (wholeParentFilter as CombinedFilter<M>).operator != null) ? (wholeParentFilter as CombinedFilter<M>).condition1 : wholeParentFilter as M;
-            },
-            onFloatingFilterChanged: (change: F | M): boolean => {
-                let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
-                const modelChanged: Promise<boolean> = new Promise((resolve) => {
-                    captureModelChangedResolveFunc = resolve;
-                });
-                const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI') as any;
-                filterComponentPromise.then(filterComponent => {
-                    if (filterComponent.onFloatingFilterChanged) {
-                        //If going through this branch of code the user MUST
-                        //be passing an object of type change that contains
-                        //a model property inside and some other stuff
-                        const result: boolean = filterComponent.onFloatingFilterChanged(change as F);
-                        captureModelChangedResolveFunc(result);
-                    } else {
-                        //If going through this branch of code the user MUST
-                        //be passing the plain model and delegating to ag-Grid
-                        //the responsibility to set the parent model and refresh
-                        //the filters
-                        filterComponent.setModel(change as M);
-                        this.filterManager.onFilterChanged();
-                        captureModelChangedResolveFunc(true);
-                    }
-                });
-                return modelChanged.resolveNow(true, changed => changed);
-            },
-            //This one might be overridden from the colDef
-            suppressFilterButton: false
-        };
-        return baseParams;
     }
 
 }

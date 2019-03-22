@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26,34 +26,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
 var NameValueComp = /** @class */ (function (_super) {
     __extends(NameValueComp, _super);
-    function NameValueComp(key, defaultValue) {
-        var _this = _super.call(this, NameValueComp.TEMPLATE) || this;
-        _this.key = key;
-        _this.defaultValue = defaultValue;
-        return _this;
+    function NameValueComp() {
+        return _super.call(this, NameValueComp.TEMPLATE) || this;
     }
-    NameValueComp.prototype.postConstruct = function () {
-        if (this.props) {
-            this.key = this.props.key;
-            this.defaultValue = this.props.defaultValue;
-        }
+    NameValueComp.prototype.setLabel = function (key, defaultValue) {
         // we want to hide until the first value comes in
         this.setVisible(false);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eLabel.innerHTML = localeTextFunc(this.key, this.defaultValue);
+        this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     };
     NameValueComp.prototype.setValue = function (value) {
         this.eValue.innerHTML = value;
     };
-    NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;<span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
+    NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('context'),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], NameValueComp.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.RefSelector('eLabel'),
         __metadata("design:type", HTMLElement)
@@ -62,12 +51,6 @@ var NameValueComp = /** @class */ (function (_super) {
         ag_grid_community_1.RefSelector('eValue'),
         __metadata("design:type", HTMLElement)
     ], NameValueComp.prototype, "eValue", void 0);
-    __decorate([
-        ag_grid_community_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], NameValueComp.prototype, "postConstruct", null);
     return NameValueComp;
 }(ag_grid_community_1.Component));
 exports.NameValueComp = NameValueComp;

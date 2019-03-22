@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Node } from "../node";
 import { DropShadow } from "../dropShadow";
 export declare type ShapeLineCap = null | 'round' | 'square';
@@ -34,9 +34,19 @@ export declare abstract class Shape extends Node {
     protected restoreOverriddenStyles(): void;
     private _fillStyle;
     fillStyle: string | null;
+    /**
+     * Note that `strokeStyle = null` means invisible stroke,
+     * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.
+     * For example, a rect shape with an invisible stroke may not align to the pixel grid
+     * properly because the stroke affects the rules of alignment, and arc shapes forming
+     * a pie chart will have a gap between them if they have an invisible stroke, whereas
+     * there would be not gap if there was no stroke at all.
+     * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
+     * unless specific looks that is achieved by having an invisible stroke is desired.
+     */
     private _strokeStyle;
     strokeStyle: string | null;
-    private _lineWidth;
+    protected _lineWidth: number;
     lineWidth: number;
     private _lineDash;
     lineDash: number[] | null;

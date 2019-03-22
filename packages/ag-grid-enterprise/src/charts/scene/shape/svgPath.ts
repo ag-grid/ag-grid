@@ -11,7 +11,7 @@ export class SvgPath extends Shape {
         if (this._path !== value) {
             this._path = value;
             this.path2d.setFromString(value);
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get path(): string {
@@ -29,7 +29,7 @@ export class SvgPath extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -44,6 +44,6 @@ export class SvgPath extends Shape {
             ctx.stroke();
         }
 
-        this.isDirty = false;
+        this.dirty = false;
     }
 }

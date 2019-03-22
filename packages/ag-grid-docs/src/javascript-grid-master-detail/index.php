@@ -234,7 +234,7 @@ detailCellRendererParams: {
 <?= example('Customising via Template Callback', 'template-callback-customisation', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
 
-<h2>Providing a custom Detail Cell Renderer</h2>
+<h2>Providing a Custom Detail Cell Renderer</h2>
 
 <p>
     The previous section described how to override the detail template used in the default Cell Renderer, however it is also

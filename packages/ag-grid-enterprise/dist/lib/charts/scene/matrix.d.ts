@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
  * `getTransform(): DOMMatrix;`
@@ -17,7 +17,7 @@ export declare class Matrix {
     constructor(elements?: number[]);
     setElements(elements: number[]): Matrix;
     setIdentityElements(): this;
-    readonly isIdentity: boolean;
+    readonly identity: boolean;
     private _a;
     a: number;
     private _b;

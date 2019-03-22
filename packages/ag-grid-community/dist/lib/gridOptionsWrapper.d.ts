@@ -1,10 +1,10 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
 import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
-import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnApi";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IDatasource } from "./rowModels/iDatasource";
@@ -97,6 +97,7 @@ export declare class GridOptionsWrapper {
     getDomLayout(): string;
     isSuppressHorizontalScroll(): boolean;
     isSuppressMaxRenderedRowRestriction(): boolean;
+    isExcludeChildrenWhenTreeDataFiltering(): boolean;
     isAlwaysShowVerticalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
@@ -130,7 +131,7 @@ export declare class GridOptionsWrapper {
     getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined;
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
-    getSuppressKeyboardEventFunc(): (params: import("./entities/colDef").SuppressKeyboardEventParams) => boolean;
+    getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getApi(): GridApi | undefined | null;
     getColumnApi(): ColumnApi | undefined | null;

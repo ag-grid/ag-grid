@@ -1,30 +1,25 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Column, Component } from "ag-grid-community";
-export interface ToolPanelFilterCompParams {
-    column: Column;
-}
 export declare class ToolPanelFilterComp extends Component {
     private gridApi;
     private filterManager;
     private eventService;
     private gridOptionsWrapper;
     private columnController;
-    private params;
+    private column;
     private expanded;
-    private filter;
-    private eFilterToolpanelHeader;
+    private eFilterToolPanelHeader;
     private eFilterName;
-    private eAgFilterToolpanelBody;
+    private agFilterToolPanelBody;
     private eFilterIcon;
     private eExpandChecked;
     private eExpandUnchecked;
     private static TEMPLATE;
     constructor();
-    init(params: ToolPanelFilterCompParams): void;
+    setColumn(column: Column): void;
     private addInIcon;
     private isFilterActive;
     private onFilterChanged;
-    addGuiEventListenerInto(into: HTMLElement, event: string, listener: (event: any) => void): void;
     private doExpandOrCollapse;
     private doExpand;
     private doCollapse;

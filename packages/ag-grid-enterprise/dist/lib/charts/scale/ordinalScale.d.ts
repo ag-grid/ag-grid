@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import Scale from "./scale";
 /**
  * Maps a discrete domain to a discrete range.
@@ -15,9 +15,9 @@ export declare class OrdinalScale<D, R> implements Scale<D, R> {
      * Use `Map` when IE11 is irrelevant.
      */
     private index;
-    _domain: D[];
+    private _domain;
     domain: D[];
-    _range: R[];
+    private _range;
     range: R[];
     convert(d: D): R;
 }

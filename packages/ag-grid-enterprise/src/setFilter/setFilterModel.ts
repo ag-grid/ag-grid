@@ -60,7 +60,7 @@ export class SetFilterModel {
                 valueGetter: any,
                 doesRowPassOtherFilters: any,
                 suppressSorting: boolean,
-                modelUpdatedFunc: (values: string[], selected?: string[]) => void,
+                modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void,
                 isLoadingFunc: (loading: boolean) => void,
                 valueFormatterService: ValueFormatterService,
                 column: Column) {
@@ -216,7 +216,7 @@ export class SetFilterModel {
         if (this.filterParams && this.filterParams.comparator) {
             values.sort(this.filterParams.comparator);
         } else if (this.colDef.comparator) {
-            values.sort(this.colDef.comparator);
+            values.sort(this.colDef.comparator as (a: any, b: any) => number);
         } else {
             values.sort(_.defaultComparator);
         }

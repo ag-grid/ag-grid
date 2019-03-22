@@ -124,7 +124,7 @@
         .ag-row-group-leaf-indent {
             margin-left: $icon-size + $grid-size * 3;
         }
-        .ag-cell-no-focus {
+        .ag-cell {
             border-right: $cell-horizontal-border;
         }
         .ag-row, .ag-cell:not(.ag-cell-focus) {
@@ -141,7 +141,7 @@
         .ag-row-group-leaf-indent {
             margin-right: $icon-size + $grid-size * 3;
         }
-        .ag-cell-no-focus {
+        .ag-cell {
             border-left: $cell-horizontal-border;
         }
         .ag-row, .ag-cell:not(.ag-cell-focus) {
@@ -207,11 +207,7 @@
     }
 
     .ag-header-row {
-        @include row-border($border-color);
-        border-width: 0 0 1px;
-        &:last-of-type {
-            border-bottom-width: 0;
-        }
+        border: none;
     }
 
     .ag-row {
@@ -258,13 +254,7 @@
 
     .ag-header-cell-label {
         display: flex;
-        float: left;
         height: 100%;
-        width: calc(100% - #{$icon-size});
-
-        span {
-            height: 100%;
-        }
 
         & > span {
             float: left;
@@ -309,11 +299,22 @@
 
     .ag-header-cell,
     .ag-header-group-cell {
+        @include row-border($border-color);
         @include grid-cell($header-height, $cell-horizontal-padding);
         @if $header-cell-moving-background-color {
             &.ag-header-cell-moving {
                 background-color: $header-cell-moving-background-color;
             }
+        }
+        border-width: 0;
+        &:not(.ag-header-group-cell-no-group) {
+            border-top-width: 1px;
+        }
+    }
+
+    .ag-header-row:first-child {
+        .ag-header-cell, .ag-header-group-cell {
+            border-top-width: 0;
         }
     }
 
@@ -338,13 +339,18 @@
     }
 
     .ag-row-drag {
-        @include icon-background($params, "grip");
         float: left;
-        background-position-x: left;
-        background-position-y: $grid-size / 2 + 2px;
         height: 100%;
         width: $icon-size + $grid-size * 3;
         cursor: grab;
+        .ag-icon-row-drag {
+            display: block;
+            width: 100%;
+            height: 100%;
+            @include icon-background($params, "grip");
+            background-position-x: left;
+            background-position-y: $grid-size / 2 + 2px;
+        }
     }
 
     .ag-row-dragging, .ag-row-dragging .ag-row-drag {
@@ -353,7 +359,9 @@
 
     .ag-rtl .ag-row-drag {
         float: right;
-        background-position-x: right;
+        .ag-icon-row-drag {
+            background-position-x: right;
+        }
     }
 
     .ag-column-drag {
@@ -379,20 +387,11 @@
     // Navigation
     ////////////////////////////////////////
 
-    // we do this twice, .ag-ltr and .ag-rtl,
-    // so that it gets preference over the pinned
-    // section borders (which would otherwise have
-    // more granular css selectors which would get
-    // precedence over these). this way, this gets
-    // precedence as it's further down the file
-    // and equal weighted selectors.
-    .ag-ltr .ag-cell-focus {
-        border: 1px solid $primary-color;
-        outline: initial;
-    }
-    .ag-rtl .ag-cell-focus {
-        border: 1px solid $primary-color;
-        outline: initial;
+    .ag-ltr, .ag-rtl {
+        .ag-has-focus .ag-cell-focus {
+            border: 1px solid $primary-color;
+            outline: initial;
+        }
     }
 
     ////////////////////////////////////////
@@ -693,6 +692,9 @@
 
         .ag-primary-cols-list-panel {
             padding-top: $grid-size;
+            > div {
+                cursor: pointer;
+            }
         }
 
         .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
@@ -713,7 +715,8 @@
         height: $header-height;
         padding-top: $grid-size;
 
-        a {
+        > div {
+            cursor: pointer;
             margin: 0 $grid-size;
             padding-top: $grid-size / 2;
         }
@@ -747,6 +750,9 @@
 
                 .ag-filter-toolpanel-header {
                     padding: 5px 0 5px 5px;
+                    > div {
+                        margin: auto 0;
+                    }
                 }
             }
             .ag-filter-body-wrapper {
@@ -961,7 +967,7 @@
 
     .ag-popup-editor {
         z-index: 1;
-
+        padding: 0;
         .ag-large-textarea textarea {
             @include textbox($params);
 
@@ -1103,6 +1109,7 @@
     .ag-group-contracted:not(.ag-hidden) {
         ~ .ag-cell-value, + .ag-group-value {
             &:not(:empty) {
+                display: inline-block;
                 margin-left: $cell-horizontal-padding;
             }
         }
@@ -1271,17 +1278,18 @@
     }
 
     .ag-floating-top {
-        background-color: $row-floating-background-color;
         border-bottom: 1px solid $border-color;
+    }
+    .ag-floating-bottom {
+        border-top: 1px solid $border-color;
+    }
+
+    .ag-floating-top, .ag-floating-bottom {
+        background-color: $row-floating-background-color;
 
         .ag-row {
             background-color: $row-floating-background-color;
         }
-    }
-
-    .ag-floating-bottom {
-        background-color: $row-floating-background-color;
-        border-top: 1px solid $border-color;
     }
 
     ////////////////////////////////////////
@@ -1299,9 +1307,6 @@
         }
 
         .ag-header-cell-label {
-            float: right;
-            width: calc(100% - #{$icon-size});
-
             & > span {
                 float: right;
             }
@@ -1410,6 +1415,7 @@
         .ag-group-contracted {
             + .ag-cell-value, + .ag-group-value {
                 &:not(:empty) {
+                    display: inline-block;
                     margin-right: $cell-horizontal-padding;
                     margin-left: initial;
                 }

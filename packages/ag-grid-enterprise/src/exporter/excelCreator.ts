@@ -88,9 +88,15 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
         const {columnController, valueService, gridOptionsWrapper} = this;
-        const {processCellCallback, processHeaderCallback, sheetName, suppressTextAsCDATA, rowHeight, headerRowHeight} = params;
+        const {processCellCallback, processHeaderCallback, suppressTextAsCDATA, rowHeight, headerRowHeight} = params;
         const isXlsx = this.getExportMode() === 'xlsx';
         const excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
+
+        let sheetName = 'ag-grid';
+
+        if (_.exists(params.sheetName)) {
+            sheetName = _.utf8_encode(params.sheetName!.toString().substr(0, 31));
+        }
 
         const config = {
             columnController,
@@ -100,7 +106,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             processHeaderCallback,
             rowHeight,
             headerRowHeight: headerRowHeight || rowHeight,
-            sheetName: _.exists(sheetName) ? (sheetName as String).toString().substr(0, 31) : 'ag-grid',
+            sheetName,
             excelFactory,
             baseExcelStyles: this.gridOptions.excelStyles || undefined,
             styleLinker: this.styleLinker.bind(this),

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -305,6 +305,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isSuppressMaxRenderedRowRestriction = function () {
         return isTrue(this.gridOptions.suppressMaxRenderedRowRestriction);
+    };
+    GridOptionsWrapper.prototype.isExcludeChildrenWhenTreeDataFiltering = function () {
+        return isTrue(this.gridOptions.excludeChildrenWhenTreeDataFiltering);
     };
     GridOptionsWrapper.prototype.isAlwaysShowVerticalScroll = function () {
         return isTrue(this.gridOptions.alwaysShowVerticalScroll);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // This is the property we set on an HTMLCanvasElement to let us know we've applied
@@ -97,6 +97,7 @@ exports.resizeCanvas = resizeCanvas;
  */
 function pixelSnap(value, bias) {
     if (bias === void 0) { bias = PixelSnapBias.Positive; }
+    // If not a fractional value ...
     return value % 1 === 0 ? bias * value % 2 / 2 : value;
 }
 exports.pixelSnap = pixelSnap;

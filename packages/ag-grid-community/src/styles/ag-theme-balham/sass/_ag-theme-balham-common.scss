@@ -54,9 +54,22 @@
         height: $header-height - $grid-size * 4;
         margin-top: $grid-size * 2;
         position: absolute;
-        right: 0;
         text-indent: -2000px;
         top: 0;
+    }
+
+    .ag-ltr {
+        .ag-header-cell::after,
+        .ag-header-group-cell::after {
+            right: 0;
+        }
+    }
+
+    .ag-rtl {
+        .ag-header-cell::after,
+        .ag-header-group-cell::after {
+            left: 0;
+        }
     }
 
     .ag-column-drop-horizontal.ag-column-drop {
@@ -64,8 +77,16 @@
         border-bottom: 0;
     }
 
-    .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
-        border-right: 0;
+    .ag-ltr {
+        .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
+            border-right: 0;
+        }
+    }
+
+    .ag-rtl {
+        .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
+            border-left: 0;
+        }
     }
 
     .ag-row {
@@ -76,7 +97,7 @@
         border-color: $selected-color;
     }
 
-    .ag-row-drag {
+    .ag-icon-row-drag {
         background-position-y: center;
     }
 
@@ -129,11 +150,6 @@
 
     .ag-root {
         border: 1px solid $border-color;
-    }
-
-    // bootstrap overrides
-    .ag-tab {
-        box-sizing: initial;
     }
 
     .ag-filter .ag-filter-value {

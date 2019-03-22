@@ -146,7 +146,6 @@ export class EnterpriseMenu extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
@@ -375,7 +374,7 @@ export class EnterpriseMenu extends BeanStub {
     private createMainPanel(): TabbedItem {
 
         this.mainMenuList = new MenuList();
-        this.context.wireBean(this.mainMenuList);
+        this.getContext().wireBean(this.mainMenuList);
 
         const menuItems = this.getMenuItems();
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
@@ -438,7 +437,7 @@ export class EnterpriseMenu extends BeanStub {
             suppressSideButtons: false,
             api: this.gridApi
         });
-        this.context.wireBean(this.columnSelectPanel);
+        this.getContext().wireBean(this.columnSelectPanel);
 
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 

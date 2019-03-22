@@ -1,49 +1,42 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
-import { IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange } from "./floatingFilter";
 import { Component } from "../widgets/component";
-import { IComponent } from "../interfaces/iComponent";
-import { CombinedFilter } from "./baseFilter";
-import { Promise } from "../utils";
-export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
-    column: Column;
-    floatingFilterComp: Promise<IFloatingFilterComp<M, F, P>>;
-    suppressFilterButton: boolean;
-}
-export interface IFloatingFilterWrapper<M> {
-    onParentModelChanged(parentModel: M): void;
-}
-export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> {
-}
-export declare abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
-    private context;
+export declare class FloatingFilterWrapper extends Component {
+    private static filterToFloatingFilterNames;
+    private static TEMPLATE;
     private columnHoverService;
     private eventService;
     private beans;
-    column: Column;
-    init(params: P): void | Promise<void>;
-    private addColumnHoverListener;
+    private gridOptionsWrapper;
+    private userComponentFactory;
+    private gridApi;
+    private columnApi;
+    private filterManager;
+    private menuFactory;
+    private eFloatingFilterBody;
+    private eButtonWrapper;
+    private eButtonShowMainFilter;
+    private readonly column;
+    private suppressFilterButton;
+    private floatingFilterCompPromise;
+    constructor(column: Column);
+    private postConstruct;
+    private setupFloatingFilter;
+    private setupLeftPositioning;
+    private setupSyncWithFilter;
+    private showParentFilter;
+    private setupColumnHover;
     private onColumnHover;
-    abstract onParentModelChanged(parentModel: M): void;
-    abstract enrichBody(body: HTMLElement): void;
     private setupWidth;
     private onColumnWidthChanged;
-}
-export declare class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
-    eButtonShowMainFilter: HTMLInputElement;
-    private menuFactory;
-    private gridOptionsWrapper;
-    floatingFilterCompPromise: Promise<IFloatingFilterComp<M, F, PC>>;
-    suppressFilterButton: boolean;
-    init(params: P): void;
-    private addEventListeners;
-    enrichBody(body: HTMLElement): void;
-    onParentModelChanged(parentModel: M | CombinedFilter<M>): void;
-    private showParentFilter;
-}
-export declare class EmptyFloatingFilterWrapperComp extends BaseFilterWrapperComp<any, any, any, any> {
-    enrichBody(body: HTMLElement): void;
-    onParentModelChanged(parentModel: any): void;
+    private setupWithFloatingFilter;
+    private getFloatingFilterInstance;
+    private createDynamicParams;
+    private getFilterComponentPrototype;
+    private setupEmpty;
+    private currentParentModel;
+    private onFloatingFilterChanged;
+    private onParentModelChanged;
 }

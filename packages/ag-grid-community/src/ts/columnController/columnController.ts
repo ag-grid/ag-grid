@@ -2994,10 +2994,37 @@ export class ColumnController {
             && !this.gridOptionsWrapper.isGroupSuppressRow();
 
         if (needAutoColumns) {
-            this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
+            // this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
+
+            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
+            const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
+            if (autoColsDifferent) {
+                this.groupAutoColumns = newAutoGroupCols;
+            }
+
         } else {
             this.groupAutoColumns = null;
         }
+    }
+
+    private autoColsEqual(colsA: Column[], colsB: Column[]): boolean {
+        const bothMissing = !colsA && !colsB;
+        if (bothMissing) { return true; }
+
+        const atLeastOneListMissing = !colsA || !colsB;
+        if (atLeastOneListMissing) { return false; }
+
+        if (colsA.length !== colsB.length) { return false; }
+
+        for (let i = 0; i < colsA.length; i++) {
+            const colA = colsA[i];
+            const colB = colsB[i];
+            if (colA.getColId() !== colB.getColId()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private getWidthOfColsInList(columnList: Column[]) {

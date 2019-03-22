@@ -8,15 +8,37 @@ import {BBox} from "./bbox";
  */
 export abstract class Node { // Don't confuse with `window.Node`.
 
+    private static fnNameRegex = /function (\w+)\(/;
+    // TODO: what does ag-Grid use for component identification?
     // Uniquely identify nodes (to check for duplicates, for example).
     private createId(): string {
         const constructor = this.constructor as any;
-        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        let name = constructor.name;
+        if (!name) { // IE11
+            const match = constructor.toString().match(Node.fnNameRegex);
+            if (match) {
+                constructor.name = name = match[1];
+            } else {
+                throw new Error(`Couldn't get the constructor's name: ${constructor}`);
+            }
+        }
+        return name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
+
+    /**
+     * Unique node ID in the form `ClassName-NaturalNumber`.
+     */
     readonly id: string = this.createId();
 
+    /**
+     * Some arbitrary data bound to the node.
+     */
     datum: any;
 
+    /**
+     * Some number to identify this node, typically within a `Group` node.
+     * Usually this will be some enum value used as a selector.
+     */
     tag: number = NaN;
 
     static isNode(node: any): node is Node {
@@ -116,7 +138,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             node._setScene(this.scene);
         }
 
-        this.isDirty = true;
+        this.dirty = true;
     }
 
     appendChild<T extends Node>(node: T): T {
@@ -137,7 +159,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         node._setParent(this);
         node._setScene(this.scene);
 
-        this.isDirty = true;
+        this.dirty = true;
 
         return node;
     }
@@ -151,7 +173,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                 delete this.childSet[node.id];
                 node._setParent(null);
                 node._setScene(null);
-                this.isDirty = true;
+                this.dirty = true;
 
                 return node;
             }
@@ -187,7 +209,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                     + `but is not in its list of children.`);
             }
 
-            this.isDirty = true;
+            this.dirty = true;
         } else {
             this.append(node);
         }
@@ -220,24 +242,24 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     // TODO: should this be `true` by default as well?
-    private _isDirtyTransform = false;
-    set isDirtyTransform(value: boolean) {
-        this._isDirtyTransform = value;
+    private _dirtyTransform = false;
+    set dirtyTransform(value: boolean) {
+        this._dirtyTransform = value;
         // TODO: replace this with simply `this.dirty = true`,
         //       see `set dirty` method.
         if (value) {
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
-    get isDirtyTransform(): boolean {
-        return this._isDirtyTransform;
+    get dirtyTransform(): boolean {
+        return this._dirtyTransform;
     }
 
     private _scalingX: number = 1;
     set scalingX(value: number) {
         if (this._scalingX !== value) {
             this._scalingX = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get scalingX(): number {
@@ -248,7 +270,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set scalingY(value: number) {
         if (this._scalingY !== value) {
             this._scalingY = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get scalingY(): number {
@@ -265,7 +287,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set scalingCenterX(value: number | null) {
         if (this._scalingCenterX !== value) {
             this._scalingCenterX = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get scalingCenterX(): number | null {
@@ -276,7 +298,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set scalingCenterY(value: number | null) {
         if (this._scalingCenterY !== value) {
             this._scalingCenterY = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get scalingCenterY(): number | null {
@@ -287,7 +309,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set rotationCenterX(value: number | null) {
         if (this._rotationCenterX !== value) {
             this._rotationCenterX = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get rotationCenterX(): number | null {
@@ -298,7 +320,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set rotationCenterY(value: number | null) {
         if (this._rotationCenterY !== value) {
             this._rotationCenterY = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get rotationCenterY(): number | null {
@@ -314,7 +336,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get rotation(): number {
@@ -344,7 +366,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set translationX(value: number) {
         if (this._translationX !== value) {
             this._translationX = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get translationX(): number {
@@ -355,7 +377,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     set translationY(value: number) {
         if (this._translationY !== value) {
             this._translationY = value;
-            this.isDirtyTransform = true;
+            this.dirtyTransform = true;
         }
     }
     get translationY(): number {
@@ -437,7 +459,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         const tx4 = scx * (1 - sx) - rcx;
         const ty4 = scy * (1 - sy) - rcy;
 
-        this.isDirtyTransform = false;
+        this.dirtyTransform = false;
 
         this.matrix.setElements([
             cos * sx, sin * sx,
@@ -468,43 +490,43 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     /**
      * Each time a property of the node that effects how it renders changes
-     * the `isDirty` property of the node should be set to `true`. The change
-     * to the `isDirty` property of the node will propagate up to its parents
+     * the `dirty` property of the node should be set to `true`. The change
+     * to the `dirty` property of the node will propagate up to its parents
      * and eventually to the scene, at which point an animation frame callback
-     * will be scheduled to rerender the scene and its nodes and reset the `isDirty`
-     * flags of all nodes and the {@link Scene._isDirty | Scene} back to `false`.
+     * will be scheduled to rerender the scene and its nodes and reset the `dirty`
+     * flags of all nodes and the {@link Scene._dirty | Scene} back to `false`.
      * Since changes to node properties are not rendered immediately, it's possible
      * to change as many properties on as many nodes as needed and the rendering
      * will still only happen once in the next animation frame callback.
      * The animation frame callback is only scheduled if it hasn't been already.
      */
-    private _isDirty = true;
-    set isDirty(value: boolean) {
-        // TODO: check if we are already dirty (e.g. if (this._isDirty !== value))
+    private _dirty = true;
+    set dirty(value: boolean) {
+        // TODO: check if we are already dirty (e.g. if (this._dirty !== value))
         //       if we are, then all parents and the scene have been
         //       notified already, and we are doing redundant work
         //       (but test if this is indeed the case)
-        this._isDirty = value;
+        this._dirty = value;
         if (value) {
             if (this.parent) {
-                this.parent.isDirty = true;
+                this.parent.dirty = true;
             } else if (this.scene) {
-                this.scene.isDirty = true;
+                this.scene.dirty = true;
             }
         }
     }
-    get isDirty(): boolean {
-        return this._isDirty;
+    get dirty(): boolean {
+        return this._dirty;
     }
 
-    private _isVisible: boolean = true;
-    set isVisible(value: boolean) {
-        if (this._isVisible !== value) {
-            this._isVisible = value;
-            this.isDirty = true;
+    private _visible: boolean = true;
+    set visible(value: boolean) {
+        if (this._visible !== value) {
+            this._visible = value;
+            this.dirty = true;
         }
     }
-    get isVisible(): boolean {
-        return this._isVisible;
+    get visible(): boolean {
+        return this._visible;
     }
 }

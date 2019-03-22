@@ -1,28 +1,38 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var twoPi = Math.PI * 2;
 /**
  * Normalize the given angle to be in the [0, 2π) interval.
  * @param radians Angle in radians.
  */
 function normalizeAngle360(radians) {
-    radians %= Math.PI * 2;
-    radians += Math.PI * 2;
-    radians %= Math.PI * 2;
+    radians %= twoPi;
+    radians += twoPi;
+    radians %= twoPi;
     return radians;
 }
 exports.normalizeAngle360 = normalizeAngle360;
+function normalizeAngle360Inclusive(radians) {
+    radians %= twoPi;
+    radians += twoPi;
+    if (radians !== twoPi) {
+        radians %= twoPi;
+    }
+    return radians;
+}
+exports.normalizeAngle360Inclusive = normalizeAngle360Inclusive;
 /**
  * Normalize the given angle to be in the [-π, π) interval.
  * @param radians Angle in radians.
  */
 function normalizeAngle180(radians) {
-    radians %= Math.PI * 2;
+    radians %= twoPi;
     if (radians < -Math.PI) {
-        radians += Math.PI * 2;
+        radians += twoPi;
     }
     else if (radians >= Math.PI) {
-        radians -= Math.PI * 2;
+        radians -= twoPi;
     }
     return radians;
 }

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./columnController/columnFactory";
@@ -9,8 +9,8 @@ export { DisplayedGroupCreator } from "./columnController/displayedGroupCreator"
 export { GroupInstanceIdCreator } from "./columnController/groupInstanceIdCreator";
 export { ComponentUtil } from "./components/componentUtil";
 export { ColDefUtil } from "./components/colDefUtil";
-export { ComponentProvider } from "./components/framework/componentProvider";
-export { ComponentResolver } from "./components/framework/componentResolver";
+export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
+export { UserComponentFactory } from "./components/framework/userComponentFactory";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./components/agGridWebComponent";
 export { BeanStub } from "./context/beanStub";
@@ -66,9 +66,7 @@ export { ILoadingOverlayComp, ILoadingOverlayParams } from "./rendering/overlays
 export { INoRowsOverlayComp, INoRowsOverlayParams } from "./rendering/overlays/noRowsOverlayComponent";
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
-export { CellEditorFactory } from "./rendering/cellEditorFactory";
 export { CellRendererFactory } from "./rendering/cellRendererFactory";
-export { CellRendererService } from "./rendering/cellRendererService";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
 export { RowComp } from "./rendering/rowComp";
@@ -149,7 +147,6 @@ export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, GetDataPat
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
-export { ICompFactory } from "./interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
 export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, SerializedFilter } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";

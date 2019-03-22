@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -64,9 +64,13 @@ var ExcelCreator = /** @class */ (function (_super) {
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
         var _a = this, columnController = _a.columnController, valueService = _a.valueService, gridOptionsWrapper = _a.gridOptionsWrapper;
-        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, sheetName = params.sheetName, suppressTextAsCDATA = params.suppressTextAsCDATA, rowHeight = params.rowHeight, headerRowHeight = params.headerRowHeight;
+        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, suppressTextAsCDATA = params.suppressTextAsCDATA, rowHeight = params.rowHeight, headerRowHeight = params.headerRowHeight;
         var isXlsx = this.getExportMode() === 'xlsx';
         var excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
+        var sheetName = 'ag-grid';
+        if (ag_grid_community_1._.exists(params.sheetName)) {
+            sheetName = ag_grid_community_1._.utf8_encode(params.sheetName.toString().substr(0, 31));
+        }
         var config = {
             columnController: columnController,
             valueService: valueService,
@@ -75,7 +79,7 @@ var ExcelCreator = /** @class */ (function (_super) {
             processHeaderCallback: processHeaderCallback,
             rowHeight: rowHeight,
             headerRowHeight: headerRowHeight || rowHeight,
-            sheetName: ag_grid_community_1._.exists(sheetName) ? sheetName.toString().substr(0, 31) : 'ag-grid',
+            sheetName: sheetName,
             excelFactory: excelFactory,
             baseExcelStyles: this.gridOptions.excelStyles || undefined,
             styleLinker: this.styleLinker.bind(this),

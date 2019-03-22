@@ -1,10 +1,14 @@
-// ag-grid-react v20.1.0
+// ag-grid-react v20.2.0
 import * as React from "react";
+import { ReactPortal } from "react";
 import * as AgGrid from "ag-grid-community";
-import { GridOptions } from "ag-grid-community";
-import { AgReactComponent } from "./agReactComponent";
+import { ColumnApi, GridApi, GridOptions } from "ag-grid-community";
+import { ReactComponent } from "./reactComponent";
+import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
+    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
+    componentWrappingElement?: string;
 }
 export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     props: any;
@@ -12,9 +16,10 @@ export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     static propTypes: any;
     destroyed: boolean;
     gridOptions: AgGrid.GridOptions;
-    api: AgGrid.GridApi;
-    columnApi: AgGrid.ColumnApi;
-    portals: any[];
+    changeDetectionService: ChangeDetectionService;
+    api: GridApi | null;
+    columnApi: ColumnApi;
+    portals: ReactPortal[];
     hasPendingPortalUpdate: boolean;
     protected eGridDiv: HTMLElement;
     private static MAX_COMPONENT_CREATION_TIME;
@@ -23,20 +28,16 @@ export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     createStyleForDiv(): any;
     componentDidMount(): void;
     shouldComponentUpdate(): boolean;
-    waitForInstance(reactComponent: AgReactComponent, resolve: any, runningTime?: number): void;
+    waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime?: number): void;
     /**
      * Mounts a react portal for components registered under the componentFramework.
      * We do this because we want all portals to be in the same tree - in order to get
      * Context to work properly.
      */
-    mountReactPortal(portal: any, reactComponent: any, resolve: any): void;
+    mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void): void;
     batchUpdate(callback?: any): any;
-    destroyPortal(portal: any): void;
+    destroyPortal(portal: ReactPortal): void;
+    private getStrategyTypeForProp;
     componentWillReceiveProps(nextProps: any): void;
-    private skipPropertyCheck;
     componentWillUnmount(): void;
-    static unwrapStringOrNumber(obj: any): any;
-    copy(value: any): any;
-    areEquivalent(a: any, b: any): boolean;
-    static areEquivalent(a: any, b: any): boolean;
 }

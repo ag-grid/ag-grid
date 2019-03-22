@@ -1,7 +1,7 @@
-import { Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector } from "ag-grid-community/main";
-import { PrimaryColsListPanel } from "./primaryColsListPanel";
-import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
-import { ToolPanelColumnCompParams } from "../../columnToolPanel";
+import {Autowired, Component, GridOptionsWrapper, Listener, PostConstruct, RefSelector} from "ag-grid-community/main";
+import {PrimaryColsListPanel} from "./primaryColsListPanel";
+import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
+import {ToolPanelColumnCompParams} from "../../columnToolPanel";
 
 export interface BaseColumnItem {
 
@@ -23,34 +23,20 @@ export class PrimaryColsPanel extends Component {
 
     private static TEMPLATE =
         `<div class="ag-column-select-panel">
-            <ag-primary-cols-header
-                [params]="params"
-                (expand-all)="onExpandAll"
-                (collapse-all)="onCollapseAll"
-                (select-all)="onSelectAll"
-                (unselect-all)="onUnselectAll"
-                (filter-changed)="onFilterChanged"
-                ref="eColumnSelectHeader">
-            </ag-primary-cols-header>
-            <ag-primary-cols-list
-                [allow-dragging]="allowDragging"
-                [params]="params"
-                (group-expanded)="onGroupExpanded"
-                ref="eToolPanelColumnsContainerComp">
-            </ag-primary-cols-list>
+            <ag-primary-cols-header ref="primaryColsHeaderPanel"></ag-primary-cols-header>
+            <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('eColumnSelectHeader')
-    private columnSelectHeaderComp: PrimaryColsHeaderPanel;
+    @RefSelector('primaryColsHeaderPanel')
+    private primaryColsHeaderPanel: PrimaryColsHeaderPanel;
 
-    @RefSelector('eToolPanelColumnsContainerComp')
-    private columnContainerComp: PrimaryColsListPanel;
+    @RefSelector('primaryColsListPanel')
+    private primaryColsListPanel: PrimaryColsListPanel;
 
-    private allowDragging: boolean;
-    private params: ToolPanelColumnCompParams;
+    private readonly allowDragging: boolean;
+    private readonly params: ToolPanelColumnCompParams;
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean, params: ToolPanelColumnCompParams) {
@@ -61,39 +47,49 @@ export class PrimaryColsPanel extends Component {
 
     @PostConstruct
     public init(): void {
-        this.instantiate(this.context);
+
+        this.primaryColsHeaderPanel.init(this.params);
+        this.primaryColsListPanel.init(this.params, this.allowDragging);
 
         const hideFilter = this.params.suppressColumnFilter;
         const hideSelect = this.params.suppressColumnSelectAll;
         const hideExpand = this.params.suppressColumnExpandAll;
 
         if (hideExpand && hideFilter && hideSelect) {
-            this.columnSelectHeaderComp.setVisible(false);
+            this.primaryColsHeaderPanel.setVisible(false);
         }
+
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+
+        this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
     }
 
     private onFilterChanged(event: any) {
-        this.columnContainerComp.setFilterText(event.filterText);
+        this.primaryColsListPanel.setFilterText(event.filterText);
     }
 
     private onSelectAll() {
-        this.columnContainerComp.doSetSelectedAll(true);
+        this.primaryColsListPanel.doSetSelectedAll(true);
     }
 
     private onUnselectAll() {
-        this.columnContainerComp.doSetSelectedAll(false);
+        this.primaryColsListPanel.doSetSelectedAll(false);
     }
 
     private onExpandAll() {
-        this.columnContainerComp.doSetExpandedAll(true);
+        this.primaryColsListPanel.doSetExpandedAll(true);
     }
 
     private onCollapseAll() {
-        this.columnContainerComp.doSetExpandedAll(false);
+        this.primaryColsListPanel.doSetExpandedAll(false);
     }
 
     private onGroupExpanded(event: any) {
-        this.columnSelectHeaderComp.setExpandState(event.state);
+        this.primaryColsHeaderPanel.setExpandState(event.state);
     }
 
 }

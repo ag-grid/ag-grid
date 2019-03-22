@@ -418,6 +418,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableCellTextSelection : any = undefined;
     @Input() public suppressBrowserResizeObserver : any = undefined;
     @Input() public suppressMaxRenderedRowRestriction : any = undefined;
+    @Input() public excludeChildrenWhenTreeDataFiltering : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();

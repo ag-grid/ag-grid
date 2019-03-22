@@ -329,20 +329,27 @@ it('grid API is available after `detectChanges`', () =&gt; {
 </div>
 <div class="card" style="background-color: aliceblue">
   <div class="card-body">
-<h2 id="angular-grid-resources">
+    <h2 id="angular-grid-resources" style="margin-top: 10px">
     Angular Grid Resources
-</h2>
-<br/>
-<ul>
-    <li>
-        Get started with Angular Grid in 5 minutes in our <strong><a href="../angular-getting-started/" target="_blank">guide</a></strong>.
-    </li>
+    </h2>
     <br/>
-    <li>
-        Browse our <strong><a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a></strong> page to discover all major benefits in using ag-Grid Angular. 
-    </li>
-</ul>
+    <ul>
+      <li>
+        Learn how to customize our Angular Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
+      </li>
+      <br/>
+      <li>
+        Browse our <strong><a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a></strong> page to discover all major benefits in using ag-Grid Angular.
+      </li>
+      <br>
+      <li>
+        Visit our <strong><a href="https://blog.ag-grid.com/tag/angular/">blog</a></strong> to discover all our Angular content.
+    </ul>
+  </div>
 </div>
+<br>
+<div>
+  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

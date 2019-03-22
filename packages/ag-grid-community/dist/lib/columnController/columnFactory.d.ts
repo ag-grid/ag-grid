@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -16,7 +16,7 @@ export declare class ColumnFactory {
     };
     createForAutoGroups(autoGroupCols: Column[] | null, gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[];
     private createAutoGroupTreeItem;
-    private findDept;
+    private findDepth;
     private balanceColumnTree;
     private findMaxDept;
     private recursivelyCreateColumns;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColGroupDef } from "../../entities/colDef";
@@ -11,8 +11,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private columnController;
     private horizontalResizeService;
     private dragAndDropService;
-    private context;
-    private componentRecipes;
+    private userComponentFactory;
     private gridApi;
     private columnApi;
     private beans;

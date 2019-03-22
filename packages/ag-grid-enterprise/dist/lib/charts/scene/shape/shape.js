@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -21,6 +21,16 @@ var Shape = /** @class */ (function (_super) {
     function Shape() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._fillStyle = Shape.defaultStyles.fillStyle; //| CanvasGradient | CanvasPattern;
+        /**
+         * Note that `strokeStyle = null` means invisible stroke,
+         * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.
+         * For example, a rect shape with an invisible stroke may not align to the pixel grid
+         * properly because the stroke affects the rules of alignment, and arc shapes forming
+         * a pie chart will have a gap between them if they have an invisible stroke, whereas
+         * there would be not gap if there was no stroke at all.
+         * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
+         * unless specific looks that is achieved by having an invisible stroke is desired.
+         */
         _this._strokeStyle = Shape.defaultStyles.strokeStyle;
         _this._lineWidth = Shape.defaultStyles.lineWidth;
         _this._lineDash = Shape.defaultStyles.lineDash;
@@ -43,7 +53,7 @@ var Shape = /** @class */ (function (_super) {
         // more then an order of magnitude faster.
         for (var i = 0, n = keys.length; i < n; i++) {
             var key = keys[i];
-            this[key] += styles[key];
+            this[key] = styles[key];
         }
     };
     Shape.prototype.restoreAllStyles = function () {
@@ -71,7 +81,7 @@ var Shape = /** @class */ (function (_super) {
         set: function (value) {
             if (this._fillStyle !== value) {
                 this._fillStyle = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -84,7 +94,7 @@ var Shape = /** @class */ (function (_super) {
         set: function (value) {
             if (this._strokeStyle !== value) {
                 this._strokeStyle = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -97,7 +107,7 @@ var Shape = /** @class */ (function (_super) {
         set: function (value) {
             if (this._lineWidth !== value) {
                 this._lineWidth = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -124,7 +134,7 @@ var Shape = /** @class */ (function (_super) {
                     }
                 }
                 this._lineDash = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -137,7 +147,7 @@ var Shape = /** @class */ (function (_super) {
         set: function (value) {
             if (this._lineDashOffset !== value) {
                 this._lineDashOffset = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -150,7 +160,7 @@ var Shape = /** @class */ (function (_super) {
         set: function (value) {
             if (this._lineCap !== value) {
                 this._lineCap = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -163,7 +173,7 @@ var Shape = /** @class */ (function (_super) {
         set: function (value) {
             if (this._lineJoin !== value) {
                 this._lineJoin = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -177,7 +187,7 @@ var Shape = /** @class */ (function (_super) {
             value = Math.min(1, Math.max(0, value));
             if (this._opacity !== value) {
                 this._opacity = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -190,7 +200,7 @@ var Shape = /** @class */ (function (_super) {
         set: function (value) {
             if (this._shadow !== value) {
                 this._shadow = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -241,7 +251,7 @@ var Shape = /** @class */ (function (_super) {
     Shape.defaultStyles = object_1.chainObjects({}, {
         fillStyle: 'black',
         strokeStyle: null,
-        lineWidth: 1,
+        lineWidth: 0,
         lineDash: null,
         lineDashOffset: 0,
         lineCap: null,

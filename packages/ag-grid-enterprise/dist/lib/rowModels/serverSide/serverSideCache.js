@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -257,7 +257,7 @@ var ServerSideCache = /** @class */ (function (_super) {
     };
     ServerSideCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
         var newBlock = new serverSideBlock_1.ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
-        this.context.wireBean(newBlock);
+        this.getContext().wireBean(newBlock);
         var displayIndexSequence = new ag_grid_community_1.NumberSequence(displayIndex);
         newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop);
         this.postCreateBlock(newBlock);
@@ -337,10 +337,6 @@ var ServerSideCache = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('eventService'),
         __metadata("design:type", ag_grid_community_1.EventService)
     ], ServerSideCache.prototype, "eventService", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('context'),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], ServerSideCache.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)

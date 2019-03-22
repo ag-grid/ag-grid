@@ -9,7 +9,6 @@ import {
     GridOptionsWrapper,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
-    PostConstruct,
     _
 } from "ag-grid-community/main";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -25,12 +24,9 @@ export class PrimaryColsListPanel extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
-    @Autowired('context') private context: Context;
 
-    private props: {
-        allowDragging: boolean;
-        params: ToolPanelColumnCompParams;
-    };
+    private allowDragging: boolean;
+    private params: ToolPanelColumnCompParams;
 
     private columnTree: OriginalColumnGroupChild[];
     private columnComps: { [key: string]: ColumnItem };
@@ -45,10 +41,12 @@ export class PrimaryColsListPanel extends Component {
         super(PrimaryColsListPanel.TEMPLATE);
     }
 
-    @PostConstruct
-    public init(): void {
+    public init(params: ToolPanelColumnCompParams, allowDragging: boolean): void {
+        this.params = params;
+        this.allowDragging = allowDragging;
+
         this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.expandGroupsByDefault = !this.props.params.contractColumnSelection;
+        this.expandGroupsByDefault = !this.params.contractColumnSelection;
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -80,8 +78,8 @@ export class PrimaryColsListPanel extends Component {
 
         if (!columnGroup.isPadding()) {
             const renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this),
-                this.props.allowDragging, this.expandGroupsByDefault);
-            this.context.wireBean(renderedGroup);
+                this.allowDragging, this.expandGroupsByDefault);
+            this.getContext().wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
             newDept = dept + 1;
@@ -147,11 +145,11 @@ export class PrimaryColsListPanel extends Component {
             return;
         }
 
-        const renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
-        this.context.wireBean(renderedColumn);
-        this.getGui().appendChild(renderedColumn.getGui());
+        const columnComp = new ToolPanelColumnComp(column, dept, this.allowDragging, groupsExist);
+        this.getContext().wireBean(columnComp);
+        this.getGui().appendChild(columnComp.getGui());
 
-        this.columnComps[column.getId()] = renderedColumn;
+        this.columnComps[column.getId()] = columnComp;
     }
 
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number, groupsExist: boolean): void {

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -134,7 +134,7 @@ var InfiniteCache = /** @class */ (function (_super) {
     };
     InfiniteCache.prototype.createBlock = function (blockNumber) {
         var newBlock = new infiniteBlock_1.InfiniteBlock(blockNumber, this.cacheParams);
-        this.context.wireBean(newBlock);
+        this.getContext().wireBean(newBlock);
         this.postCreateBlock(newBlock);
         return newBlock;
     };
@@ -150,10 +150,6 @@ var InfiniteCache = /** @class */ (function (_super) {
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], InfiniteCache.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], InfiniteCache.prototype, "context", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
         __metadata("design:type", columnApi_1.ColumnApi)

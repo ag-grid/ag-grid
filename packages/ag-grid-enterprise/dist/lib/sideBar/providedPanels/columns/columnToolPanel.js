@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -59,7 +59,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         };
         main_1._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
-        this.instantiate(this.context);
         if (!this.params.suppressPivotMode) {
             this.addComponent(new pivotModePanel_1.PivotModePanel());
         }
@@ -76,7 +75,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         this.initialised = true;
     };
     ColumnToolPanel.prototype.addComponent = function (component) {
-        this.context.wireBean(component);
+        this.getContext().wireBean(component);
         this.getGui().appendChild(component.getGui());
         this.childDestroyFuncs.push(component.destroy.bind(component));
     };
@@ -94,10 +93,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ColumnToolPanel.TEMPLATE = "<div class=\"ag-column-panel\"></div>";
-    __decorate([
-        main_1.Autowired("context"),
-        __metadata("design:type", main_1.Context)
-    ], ColumnToolPanel.prototype, "context", void 0);
     __decorate([
         main_1.Autowired("gridOptionsWrapper"),
         __metadata("design:type", main_1.GridOptionsWrapper)

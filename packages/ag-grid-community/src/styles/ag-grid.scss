@@ -101,6 +101,8 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    overflow: hidden;
+
     *, *:before, *:after {
         box-sizing: border-box;
     }
@@ -138,8 +140,9 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     flex-direction: row;
 
     &.ag-layout-normal {
-        flex: 1;
-        overflow: hidden;
+        flex: 1 1 auto;
+        height: 0;
+        min-height: 0;
     }
 }
 
@@ -152,8 +155,8 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     &.ag-layout-normal,
     &.ag-layout-auto-height {
         overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
-        min-width: 0px;
-        flex: 1;
+        flex: 1 1 auto;
+        width: 0;
     }
 
     &.ag-layout-normal {
@@ -627,6 +630,13 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Floating Filter
  ****************************
 */
+
+.ag-floating-filter-full-body, .ag-floating-filter-body {
+    .ag-react-container {
+        height: 100%;
+    }
+}
+
 .ag-floating-filter-body {
     input {
         height: 19px;
@@ -659,9 +669,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-floating-filter-full-body {
     height: 100%;
     width: 100%;
-    .ag-react-container {
-        height: 100%;
-    }
 }
 
 .ag-floating-filter-input {
@@ -723,16 +730,23 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-overlay-panel {
-    display: table;
+    display: flex;
     height: 100%;
     pointer-events: none;
     width: 100%;
 }
 
 .ag-overlay-wrapper {
-    display: table-cell;
+    display: flex;
+    flex: none;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    vertical-align: middle;
+    &.ag-overlay-loading-wrapper {
+        pointer-events: all;
+    }
 }
 
 // for when auto height is used but there is no row data
@@ -873,6 +887,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     overflow-y: auto;
     position: absolute;
     user-select: none;
+}
+
+.ag-tab {
+    box-sizing: content-box;
 }
 
 .ag-menu-column-select-wrapper {
@@ -1111,6 +1129,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-status-bar {
     display: flex;
     justify-content: space-between;
+    overflow: hidden;
 
     .ag-status-panel {
         display: inline-flex;

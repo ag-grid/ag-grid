@@ -38,6 +38,10 @@ const getMergedCells = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
                 mergedCells.push(`${start}${outputRow}:${end}${outputRow}`);
             }
 
+            if (!cols[min - 1]) {
+                cols[min - 1] = {} as ExcelColumn;
+            }
+
             updateColMinMax(cols[min - 1], min, merges, lastCol);
             lastCol = cols[min - 1];
             currentCell.ref = `${start}${outputRow}`;
@@ -67,7 +71,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const {table} = config;
         const {rows, columns} = table;
 
-        const mergedCells = getMergedCells(rows, columns);
+        const mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
 
         const children = [];
         if (columns.length) {

@@ -31,14 +31,13 @@ export class HeaderRootComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
 
-    private pinnedLeftContainer: HeaderContainer;
-    private pinnedRightContainer: HeaderContainer;
-    private centerContainer: HeaderContainer;
+    // private pinnedLeftContainer: HeaderContainer;
+    // private pinnedRightContainer: HeaderContainer;
+    // private centerContainer: HeaderContainer;
 
     private childContainers: HeaderContainer[];
 
@@ -52,9 +51,7 @@ export class HeaderRootComp extends Component {
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
-        this.centerContainer.registerGridComp(gridPanel);
-        this.pinnedLeftContainer.registerGridComp(gridPanel);
-        this.pinnedRightContainer.registerGridComp(gridPanel);
+        this.childContainers.forEach(c => c.registerGridComp(gridPanel));
     }
 
     @PostConstruct
@@ -65,23 +62,21 @@ export class HeaderRootComp extends Component {
         this.gridApi.registerHeaderRootComp(this);
         this.autoWidthCalculator.registerHeaderRootComp(this);
 
-        this.centerContainer = new HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null);
-        this.childContainers = [this.centerContainer];
+        const centerContainer = new HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null);
+        const pinnedLeftContainer = new HeaderContainer(this.ePinnedLeftHeader, null, Column.PINNED_LEFT);
+        const pinnedRightContainer = new HeaderContainer(this.ePinnedRightHeader, null, Column.PINNED_RIGHT);
 
-        this.pinnedLeftContainer = new HeaderContainer(this.ePinnedLeftHeader, null, Column.PINNED_LEFT);
-        this.pinnedRightContainer = new HeaderContainer(this.ePinnedRightHeader, null, Column.PINNED_RIGHT);
-        this.childContainers.push(this.pinnedLeftContainer);
-        this.childContainers.push(this.pinnedRightContainer);
+        this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
 
-        this.childContainers.forEach(container => this.context.wireBean(container));
+        this.childContainers.forEach(container => this.getContext().wireBean(container));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
 
         this.onPivotModeChanged();
         this.addPreventHeaderScroll();
@@ -107,8 +102,8 @@ export class HeaderRootComp extends Component {
         this.childContainers.forEach(childContainer => childContainer.forEachHeaderElement(callback));
     }
 
-    @PreDestroy
     public destroy(): void {
+        super.destroy();
         this.childContainers.forEach(container => container.destroy());
     }
 

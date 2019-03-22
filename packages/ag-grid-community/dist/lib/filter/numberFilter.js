@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,8 +45,8 @@ var NumberFilter = /** @class */ (function (_super) {
         };
     };
     NumberFilter.prototype.getApplicableFilterTypes = function () {
-        return [baseFilter_1.BaseFilter.EQUALS, baseFilter_1.BaseFilter.NOT_EQUAL, baseFilter_1.BaseFilter.LESS_THAN, baseFilter_1.BaseFilter.LESS_THAN_OR_EQUAL,
-            baseFilter_1.BaseFilter.GREATER_THAN, baseFilter_1.BaseFilter.GREATER_THAN_OR_EQUAL, baseFilter_1.BaseFilter.IN_RANGE];
+        return [baseFilter_1.BaseFilter.EQUALS, baseFilter_1.BaseFilter.NOT_EQUAL, baseFilter_1.BaseFilter.LESS_THAN,
+            baseFilter_1.BaseFilter.LESS_THAN_OR_EQUAL, baseFilter_1.BaseFilter.GREATER_THAN, baseFilter_1.BaseFilter.GREATER_THAN_OR_EQUAL, baseFilter_1.BaseFilter.IN_RANGE];
     };
     NumberFilter.prototype.bodyTemplate = function (type) {
         var translate = this.translate.bind(this);
@@ -198,17 +198,26 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.refreshFilterBodyUi = function (type) {
         var filterType = type === baseFilter_1.FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        // show / hide in-range filter
         var panel = type === baseFilter_1.FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
-        if (!panel) {
-            return;
+        if (panel) {
+            var visible = filterType === NumberFilter.IN_RANGE;
+            utils_1._.setVisible(panel, visible);
         }
-        var visible = filterType === NumberFilter.IN_RANGE;
-        utils_1._.setVisible(panel, visible);
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
+        var filterInput = type === baseFilter_1.FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterTextConditionField;
+        if (filterInput) {
+            var showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== baseFilter_1.BaseFilter.EMPTY;
+            utils_1._.setVisible(filterInput, showFilterInput);
+        }
     };
-    NumberFilter.prototype.resetState = function () {
-        this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.MAIN);
-        this.setFilter(null, baseFilter_1.FilterConditionType.MAIN);
-        this.setFilterTo(null, baseFilter_1.FilterConditionType.MAIN);
+    NumberFilter.prototype.resetState = function (resetConditionFilterOnly) {
+        if (resetConditionFilterOnly === void 0) { resetConditionFilterOnly = false; }
+        if (!resetConditionFilterOnly) {
+            this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.MAIN);
+            this.setFilter(null, baseFilter_1.FilterConditionType.MAIN);
+            this.setFilterTo(null, baseFilter_1.FilterConditionType.MAIN);
+        }
         this.setFilterType(this.defaultFilter, baseFilter_1.FilterConditionType.CONDITION);
         this.setFilter(null, baseFilter_1.FilterConditionType.CONDITION);
         this.setFilterTo(null, baseFilter_1.FilterConditionType.CONDITION);
@@ -216,15 +225,15 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.setType = function (filterType, type) {
         this.setFilterType(filterType, type);
     };
-    NumberFilter.LESS_THAN = 'lessThan'; //3;
+    NumberFilter.LESS_THAN = 'lessThan';
     __decorate([
-        componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
-        __metadata("design:type", HTMLElement)
-    ], NumberFilter.prototype, "eNumberToPanel", void 0);
+        componentAnnotations_1.QuerySelector('#filterText'),
+        __metadata("design:type", HTMLInputElement)
+    ], NumberFilter.prototype, "eFilterTextField", void 0);
     __decorate([
-        componentAnnotations_1.QuerySelector('#filterNumberToPanelCondition'),
-        __metadata("design:type", HTMLElement)
-    ], NumberFilter.prototype, "eNumberToConditionPanel", void 0);
+        componentAnnotations_1.QuerySelector('#filterTextCondition'),
+        __metadata("design:type", HTMLInputElement)
+    ], NumberFilter.prototype, "eFilterTextConditionField", void 0);
     __decorate([
         componentAnnotations_1.QuerySelector('#filterToText'),
         __metadata("design:type", HTMLInputElement)
@@ -233,6 +242,14 @@ var NumberFilter = /** @class */ (function (_super) {
         componentAnnotations_1.QuerySelector('#filterToConditionText'),
         __metadata("design:type", HTMLInputElement)
     ], NumberFilter.prototype, "eFilterToConditionText", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
+        __metadata("design:type", HTMLElement)
+    ], NumberFilter.prototype, "eNumberToPanel", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterNumberToPanelCondition'),
+        __metadata("design:type", HTMLElement)
+    ], NumberFilter.prototype, "eNumberToConditionPanel", void 0);
     return NumberFilter;
 }(baseFilter_1.ScalarBaseFilter));
 exports.NumberFilter = NumberFilter;

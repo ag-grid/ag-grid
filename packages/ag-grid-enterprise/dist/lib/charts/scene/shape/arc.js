@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -17,13 +17,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var shape_1 = require("./shape");
 var path2D_1 = require("../path2D");
 var bbox_1 = require("../bbox");
+var angle_1 = require("../../util/angle");
+var object_1 = require("../../util/object");
+var ArcType;
+(function (ArcType) {
+    ArcType[ArcType["Open"] = 0] = "Open";
+    ArcType[ArcType["Chord"] = 1] = "Chord";
+    ArcType[ArcType["Round"] = 2] = "Round";
+})(ArcType = exports.ArcType || (exports.ArcType = {}));
 /**
  * Elliptical arc node.
  */
 var Arc = /** @class */ (function (_super) {
     __extends(Arc, _super);
     function Arc() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this) || this;
         // Declare a path to retain for later rendering and hit testing
         // using custom Path2D class. It's pure TypeScript and works in all browsers.
         _this.path = new path2D_1.Path2D();
@@ -33,14 +41,27 @@ var Arc = /** @class */ (function (_super) {
          * are changed, we don't have to update the path. The `dirtyFlag`
          * is how we keep track if the path has to be updated or not.
          */
-        _this._isDirtyPath = true;
+        _this._dirtyPath = true;
         _this._centerX = 0;
         _this._centerY = 0;
         _this._radiusX = 10;
         _this._radiusY = 10;
         _this._startAngle = 0;
         _this._endAngle = Math.PI * 2;
-        _this._isCounterClockwise = false;
+        _this._counterClockwise = false;
+        /**
+         * The type of arc to render:
+         * - {@link ArcType.Open} - end points of the arc segment are not connected (default)
+         * - {@link ArcType.Chord} - end points of the arc segment are connected by a line segment
+         * - {@link ArcType.Round} - each of the end points of the arc segment are connected
+         *                           to the center of the arc
+         * Arcs with {@link ArcType.Open} do not support hit testing, even if they have their
+         * {@link Shape.fillStyle} set, because they are not closed paths. Hit testing support
+         * would require using two paths - one for rendering, another for hit testing - and there
+         * doesn't seem to be a compelling reason to do that, when one can just use {@link ArcType.Chord}
+         * to create a closed path.
+         */
+        _this._type = ArcType.Open;
         _this.getBBox = function () {
             return {
                 x: _this.centerX - _this.radiusX,
@@ -49,10 +70,14 @@ var Arc = /** @class */ (function (_super) {
                 height: _this.radiusY * 2
             };
         };
+        _this.restoreOwnStyles();
         return _this;
     }
-    Arc.create = function (centerX, centerY, radiusX, radiusY, startAngle, endAngle, isCounterClockwise) {
-        if (isCounterClockwise === void 0) { isCounterClockwise = false; }
+    Arc.create = function (centerX, centerY, radiusX, radiusY, startAngle, endAngle, counterClockwise) {
+        if (radiusY === void 0) { radiusY = radiusX; }
+        if (startAngle === void 0) { startAngle = 0; }
+        if (endAngle === void 0) { endAngle = Math.PI * 2; }
+        if (counterClockwise === void 0) { counterClockwise = false; }
         var arc = new Arc();
         arc.centerX = centerX;
         arc.centerY = centerY;
@@ -60,18 +85,18 @@ var Arc = /** @class */ (function (_super) {
         arc.radiusY = radiusY;
         arc.startAngle = startAngle;
         arc.endAngle = endAngle;
-        arc.isCounterClockwise = isCounterClockwise;
+        arc.counterClockwise = counterClockwise;
         return arc;
     };
-    Object.defineProperty(Arc.prototype, "isDirtyPath", {
+    Object.defineProperty(Arc.prototype, "dirtyPath", {
         get: function () {
-            return this._isDirtyPath;
+            return this._dirtyPath;
         },
         set: function (value) {
-            if (this._isDirtyPath !== value) {
-                this._isDirtyPath = value;
+            if (this._dirtyPath !== value) {
+                this._dirtyPath = value;
                 if (value) {
-                    this.isDirty = true;
+                    this.dirty = true;
                 }
             }
         },
@@ -85,7 +110,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._centerX !== value) {
                 this._centerX = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -98,7 +123,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._centerY !== value) {
                 this._centerY = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -111,7 +136,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._radiusX !== value) {
                 this._radiusX = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -124,7 +149,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._radiusY !== value) {
                 this._radiusY = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -137,7 +162,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._startAngle !== value) {
                 this._startAngle = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -150,47 +175,47 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._endAngle !== value) {
                 this._endAngle = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Arc.prototype, "isCounterClockwise", {
+    Object.defineProperty(Arc.prototype, "fullPie", {
         get: function () {
-            return this._isCounterClockwise;
+            return angle_1.normalizeAngle360(this.startAngle) === angle_1.normalizeAngle360(this.endAngle);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Arc.prototype, "counterClockwise", {
+        get: function () {
+            return this._counterClockwise;
         },
         set: function (value) {
-            if (this._isCounterClockwise !== value) {
-                this._isCounterClockwise = value;
-                this.isDirtyPath = true;
+            if (this._counterClockwise !== value) {
+                this._counterClockwise = value;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Arc.prototype, "startAngleDeg", {
+    Object.defineProperty(Arc.prototype, "type", {
         get: function () {
-            return this.startAngle / Math.PI * 180;
+            return this._type;
         },
         set: function (value) {
-            this.startAngle = value / 180 * Math.PI;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Arc.prototype, "endAngleDeg", {
-        get: function () {
-            return this.endAngle / Math.PI * 180;
-        },
-        set: function (value) {
-            this.endAngle = value / 180 * Math.PI;
+            if (this._type !== value) {
+                this._type = value;
+                this.dirtyPath = true;
+            }
         },
         enumerable: true,
         configurable: true
     });
     Arc.prototype.updatePath = function () {
-        if (!this.isDirtyPath)
+        if (!this.dirtyPath)
             return;
         var path = this.path;
         path.clear(); // No need to recreate the Path, can simply clear the existing one.
@@ -199,21 +224,28 @@ var Arc = /** @class */ (function (_super) {
         // where you can specify two radii and rotation, while Path2D's `arc` method simply produces
         // a circular arc. Maybe it's due to the experimental nature of the Path2D class,
         // maybe it's because we have to create a new instance of it on each render, who knows...
-        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.isCounterClockwise ? 1 : 0);
-        path.closePath();
-        this.isDirtyPath = false;
+        path.cubicArc(this.centerX, this.centerY, this.radiusX, this.radiusY, 0, this.startAngle, this.endAngle, this.counterClockwise ? 1 : 0);
+        if (this.type === ArcType.Chord) {
+            path.closePath();
+        }
+        else if (this.type === ArcType.Round && !this.fullPie) {
+            path.lineTo(this.centerX, this.centerY);
+            path.closePath();
+        }
+        this.dirtyPath = false;
     };
     Arc.prototype.isPointInPath = function (x, y) {
         var point = this.transformPoint(x, y);
         var bbox = this.getBBox();
-        return bbox_1.isPointInBBox(bbox, point.x, point.y)
+        return this.type !== ArcType.Open
+            && bbox_1.isPointInBBox(bbox, point.x, point.y)
             && this.path.isPointInPath(point.x, point.y);
     };
     Arc.prototype.isPointInStroke = function (x, y) {
         return false;
     };
     Arc.prototype.render = function (ctx) {
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -226,8 +258,12 @@ var Arc = /** @class */ (function (_super) {
         if (this.strokeStyle) {
             ctx.stroke();
         }
-        this.isDirty = false;
+        this.dirty = false;
     };
+    Arc.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
+        lineWidth: 1,
+        fillStyle: null
+    });
     return Arc;
 }(shape_1.Shape));
 exports.Arc = Arc;

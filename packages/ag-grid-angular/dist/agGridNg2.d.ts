@@ -280,6 +280,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     enableCellTextSelection: any;
     suppressBrowserResizeObserver: any;
     suppressMaxRenderedRowRestriction: any;
+    excludeChildrenWhenTreeDataFiltering: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;

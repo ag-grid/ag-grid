@@ -4,7 +4,7 @@ import { IDateComp, IDateParams } from "../rendering/dateComponent";
 import { QuerySelector } from "../widgets/componentAnnotations";
 import { BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter } from "./baseFilter";
 import { Autowired } from "../context/context";
-import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { _ } from "../utils";
 
 export interface IDateFilterParams extends IComparableFilterParams {
@@ -29,8 +29,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateToConditionComponent: IDateComp;
     private dateFromConditionComponent: IDateComp;
 
-    @Autowired('componentRecipes')
-    private componentRecipes: ComponentRecipes;
+    @Autowired('userComponentFactory')
+    private userComponentFactory: UserComponentFactory;
 
     @QuerySelector('#filterDateFromPanel')
     private eDateFromPanel: HTMLElement;
@@ -95,7 +95,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             filterParams: this.filterParams
         };
 
-        this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent => {
+        this.userComponentFactory.newDateComponent(dateComponentParams).then (dateToComponent => {
             if (type === FilterConditionType.MAIN) {
                 this.dateToComponent = dateToComponent;
             } else {
@@ -116,7 +116,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
                 }
             }
         });
-        this.componentRecipes.newDateComponent(dateComponentParams).then(dateComponent => {
+        this.userComponentFactory.newDateComponent(dateComponentParams).then(dateComponent => {
             if (type === FilterConditionType.MAIN) {
                 this.dateFromComponent = dateComponent;
             } else {
@@ -152,19 +152,27 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     public refreshFilterBodyUi(type:FilterConditionType): void {
         let panel: HTMLElement;
-        let filterTypeValue: string;
+        let filterType: string;
         if (type === FilterConditionType.MAIN) {
             panel = this.eDateToPanel;
-            filterTypeValue = this.selectedFilter;
+            filterType = this.selectedFilter;
         } else {
             panel = this.eDateToConditionPanel;
-            filterTypeValue = this.selectedFilterCondition;
+            filterType = this.selectedFilterCondition;
         }
 
-        if (!panel) { return; }
+        // show / hide in-range filter
+        if (panel) {
+            const visible = filterType === BaseFilter.IN_RANGE;
+            _.setVisible(panel, visible);
+        }
 
-        const visible = filterTypeValue === BaseFilter.IN_RANGE;
-        _.setVisible(panel, visible);
+        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
+        const filterInput = type === FilterConditionType.MAIN ? this.eDateFromPanel : this.eDateFromConditionPanel;
+        if (filterInput) {
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
+            _.setVisible(filterInput, showFilterInput);
+        }
     }
 
     public comparator(): Comparator<Date> {
@@ -260,14 +268,16 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         }
     }
 
-    public resetState(): void {
-        this.setDateFrom(null, FilterConditionType.MAIN);
-        this.setDateTo(null, FilterConditionType.MAIN);
-        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+    public resetState(resetConditionFilterOnly: boolean = false): void {
+        if (!resetConditionFilterOnly) {
+            this.setDateFrom(null, FilterConditionType.MAIN);
+            this.setDateTo(null, FilterConditionType.MAIN);
+            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+        }
 
+        this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
         this.setDateFrom(null, FilterConditionType.CONDITION);
         this.setDateTo(null, FilterConditionType.CONDITION);
-        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
     }
 
     public parse(model: SerializedDateFilter, type:FilterConditionType): void {

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -61,7 +61,7 @@ export declare class CellComp extends Component {
     private getCellWidth;
     private onFlashCells;
     private setupColSpan;
-    private getColSpanningList;
+    getColSpanningList(): Column[];
     private onDisplayColumnsChanged;
     private getInitialCssClasses;
     getInitialValueToRender(): string;
@@ -113,6 +113,7 @@ export declare class CellComp extends Component {
     startRowOrCellEdit(keyPress?: number | null, charPress?: string): void;
     isCellEditable(): boolean;
     startEditingIfEnabled(keyPress?: number | null, charPress?: string | null, cellStartedEdit?: boolean): void;
+    private createCellEditor;
     private afterCellEditorCreated;
     private addInCellEditor;
     private addPopupCellEditor;

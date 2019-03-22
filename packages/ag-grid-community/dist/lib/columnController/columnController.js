@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2485,11 +2485,37 @@ var ColumnController = /** @class */ (function () {
             && !this.gridOptionsWrapper.isGroupUseEntireRow()
             && !this.gridOptionsWrapper.isGroupSuppressRow();
         if (needAutoColumns) {
-            this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
+            // this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
+            var newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
+            var autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
+            if (autoColsDifferent) {
+                this.groupAutoColumns = newAutoGroupCols;
+            }
         }
         else {
             this.groupAutoColumns = null;
         }
+    };
+    ColumnController.prototype.autoColsEqual = function (colsA, colsB) {
+        var bothMissing = !colsA && !colsB;
+        if (bothMissing) {
+            return true;
+        }
+        var atLeastOneListMissing = !colsA || !colsB;
+        if (atLeastOneListMissing) {
+            return false;
+        }
+        if (colsA.length !== colsB.length) {
+            return false;
+        }
+        for (var i = 0; i < colsA.length; i++) {
+            var colA = colsA[i];
+            var colB = colsB[i];
+            if (colA.getColId() !== colB.getColId()) {
+                return false;
+            }
+        }
+        return true;
     };
     ColumnController.prototype.getWidthOfColsInList = function (columnList) {
         var result = 0;

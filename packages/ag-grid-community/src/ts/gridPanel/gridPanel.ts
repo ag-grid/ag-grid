@@ -2,9 +2,9 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnController } from "../columnController/columnController";
 import { ColumnApi } from "../columnController/columnApi";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "../context/context";
+import { Autowired, Optional, PostConstruct } from "../context/context";
 import { EventService } from "../eventService";
-import {BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events} from "../events";
+import { BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events } from "../events";
 import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { Constants } from "../constants";
@@ -27,11 +27,10 @@ import { NavigationService } from "./navigationService";
 import { CellComp } from "../rendering/cellComp";
 import { ValueService } from "../valueService/valueService";
 import { LongTapEvent, TouchListener } from "../widgets/touchListener";
-import { ComponentRecipes } from "../components/framework/componentRecipes";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { RowDragFeature } from "./rowDragFeature";
 import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
-import { IOverlayWrapperComp } from "../rendering/overlays/overlayWrapperComponent";
+import { OverlayWrapperComponent } from "../rendering/overlays/overlayWrapperComponent";
 import { Component } from "../widgets/component";
 import { AutoHeightCalculator } from "../rendering/autoHeightCalculator";
 import { ColumnAnimationService } from "../rendering/columnAnimationService";
@@ -41,7 +40,6 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { _ } from "../utils";
-import {SuppressKeyboardEventParams} from "../entities/colDef";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -81,7 +79,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             </div>
             <div class="ag-horizontal-right-spacer" ref="eHorizontalRightSpacer"></div>
         </div>
-        <div class="ag-overlay" ref="eOverlay"></div>
+        <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
     </div>`;
 
 export type RowContainerComponentNames =
@@ -108,7 +106,6 @@ export class GridPanel extends Component {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
@@ -125,7 +122,6 @@ export class GridPanel extends Component {
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
     @Autowired('enterprise') private enterprise: boolean;
@@ -167,11 +163,10 @@ export class GridPanel extends Component {
     @RefSelector('eBottomFullWidthContainer') private eBottomFullWidthContainer: HTMLElement;
 
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
+    @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
 
     private rowContainerComponents: RowContainerComponents;
     private eAllCellContainers: HTMLElement[];
-
-    private eOverlay: HTMLElement;
 
     private scrollLeft = -1;
     private scrollTop = -1;
@@ -188,8 +183,6 @@ export class GridPanel extends Component {
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
     private pinningLeft: boolean;
-
-    private overlayWrapper: IOverlayWrapperComp;
 
     private printLayout: boolean;
 
@@ -212,12 +205,6 @@ export class GridPanel extends Component {
             right: this.eCenterViewport.scrollLeft + this.eCenterViewport.offsetWidth
         };
         return result;
-    }
-
-    // we override this, as the base class is missing the annotation
-    @PreDestroy
-    public destroy() {
-        super.destroy();
     }
 
     private onRowDataChanged(): void {
@@ -244,7 +231,6 @@ export class GridPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.instantiate(this.context);
 
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -262,8 +248,6 @@ export class GridPanel extends Component {
         this.addDragListeners();
 
         this.addScrollListener();
-
-        this.setupOverlay();
 
         if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
             this.showLoadingOverlay();
@@ -334,16 +318,10 @@ export class GridPanel extends Component {
             .forEach(ct => _.addOrRemoveCssClass(ct, 'ag-selectable', selectable));
     }
 
-    private setupOverlay(): void {
-        this.overlayWrapper = this.componentRecipes.newOverlayWrapperComponent();
-        this.eOverlay = this.queryForHtmlElement('[ref="eOverlay"]');
-        this.overlayWrapper.hideOverlay(this.eOverlay);
-    }
-
     private addRowDragListener(): void {
         const rowDragFeature = new RowDragFeature(this.eBodyViewport, this);
 
-        this.context.wireBean(rowDragFeature);
+        this.getContext().wireBean(rowDragFeature);
         this.dragAndDropService.addDropTarget(rowDragFeature);
     }
 
@@ -472,7 +450,7 @@ export class GridPanel extends Component {
         eventNames.forEach(eventName => {
             const listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach(container => {
-                this.addDestroyableEventListener(container, eventName, listener);
+                this.addDestroyableEventListener(container, eventName, listener, true);
             });
         });
     }
@@ -519,10 +497,14 @@ export class GridPanel extends Component {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        const cellComp = _.getCellCompForEvent(this.gridOptionsWrapper, keyboardEvent);
+        const rowNode = cellComp.getRenderedRow().getRowNode();
+        const column = cellComp.getColumn();
+        const editing = cellComp.isEditing();
+
         if (!cellComp) { return; }
 
-        const gridProcessingAllowed = !this.isUserSuppressingKeyboardEvent(keyboardEvent, cellComp);
+        const gridProcessingAllowed = !_.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
 
         if (gridProcessingAllowed) {
             switch (eventName) {
@@ -542,15 +524,17 @@ export class GridPanel extends Component {
                     cellComp.onKeyPress(keyboardEvent);
                     break;
             }
+        } else {
+            keyboardEvent.preventDefault();
         }
 
-        if (eventName==='keydown') {
-            const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(event, Events.EVENT_CELL_KEY_DOWN);
+        if (eventName === 'keydown') {
+            const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
             this.beans.eventService.dispatchEvent(cellKeyDownEvent);
         }
 
-        if (eventName==='keypress') {
-            const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(event, Events.EVENT_CELL_KEY_PRESS);
+        if (eventName === 'keypress') {
+            const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
             this.beans.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
@@ -577,48 +561,6 @@ export class GridPanel extends Component {
                 return this.onCtrlAndV();
             case Constants.KEY_D:
                 return this.onCtrlAndD(keyboardEvent);
-        }
-    }
-
-    // allows use to tell grid to skip specific keyboard events
-    private isUserSuppressingKeyboardEvent(keyboardEvent: KeyboardEvent, cellComp: CellComp): boolean {
-
-        const rowNode = cellComp.getRenderedRow().getRowNode();
-        const column = cellComp.getColumn();
-
-        const gridOptionsFunc = this.gridOptionsWrapper.getSuppressKeyboardEventFunc();
-        const colDefFunc = column.getColDef().suppressKeyboardEvent;
-
-        // if no callbacks provided by user, then do nothing
-        if (!gridOptionsFunc && !colDefFunc) {
-            return false;
-        }
-
-        const params: SuppressKeyboardEventParams = {
-            event: keyboardEvent,
-            editing: cellComp.isEditing(),
-            column: column,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            node: rowNode,
-            data: rowNode.data,
-            colDef: column.getColDef(),
-            context: this.beans.gridOptionsWrapper.getContext(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()
-        };
-
-        // colDef get first preference on suppressing events
-        if (colDefFunc) {
-            const colDefFuncResult = colDefFunc(params);
-            // if colDef func suppressed, then return now, no need to call gridOption func
-            if (colDefFuncResult) { return true; }
-        }
-
-        if (gridOptionsFunc) {
-            // if gridOption func, return the result
-            return gridOptionsFunc(params);
-        } else {
-            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-            return false;
         }
     }
 
@@ -1013,18 +955,18 @@ export class GridPanel extends Component {
 
     public showLoadingOverlay() {
         if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
-            this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+            this.overlayWrapper.showLoadingOverlay();
         }
     }
 
     public showNoRowsOverlay() {
         if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
-            this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+            this.overlayWrapper.showNoRowsOverlay();
         }
     }
 
     public hideOverlay() {
-        this.overlayWrapper.hideOverlay(this.eOverlay);
+        this.overlayWrapper.hideOverlay();
     }
 
     // method will call itself if no available width. this covers if the grid
@@ -1108,7 +1050,7 @@ export class GridPanel extends Component {
 
         _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent) => {
             if (container) {
-                this.context.wireBean(container);
+                this.getContext().wireBean(container);
             }
         });
     }
@@ -1304,16 +1246,28 @@ export class GridPanel extends Component {
         totalHeaderHeight += headerHeight;
 
         this.headerRootComp.setHeight(totalHeaderHeight);
+        let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
 
-        const floatingTopHeight = `${pinnedRowModel.getPinnedTopTotalHeight()}px`;
-        const floatingBottomHeight = `${pinnedRowModel.getPinnedBottomTotalHeight()}px`;
+        if (floatingTopHeight) {
+            // adding 1px for cell bottom border
+            floatingTopHeight += 1;
+        }
 
-        eTop.style.minHeight = floatingTopHeight;
-        eTop.style.height = floatingTopHeight;
-        eTop.style.display = parseInt(floatingTopHeight, 10) ? 'inherit' : 'none';
-        eBottom.style.minHeight = floatingBottomHeight;
-        eBottom.style.height = floatingBottomHeight;
-        eBottom.style.display = parseInt(floatingBottomHeight, 10) ? 'inherit' : 'none';
+        let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+
+        if (floatingBottomHeight) {
+            // adding 1px for cell bottom border
+            floatingBottomHeight += 1;
+        }
+        const floatingTopHeightString = `${floatingTopHeight}px`;
+        const floatingBottomHeightString = `${floatingBottomHeight}px`;
+
+        eTop.style.minHeight = floatingTopHeightString;
+        eTop.style.height = floatingTopHeightString;
+        eTop.style.display = floatingTopHeight ? 'inherit' : 'none';
+        eBottom.style.minHeight = floatingBottomHeightString;
+        eBottom.style.height = floatingBottomHeightString;
+        eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
 
         this.checkBodyHeight();
     }

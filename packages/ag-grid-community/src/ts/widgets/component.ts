@@ -1,4 +1,4 @@
-import { Context } from "../context/context";
+import { Autowired, Context, PreConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";
@@ -8,17 +8,6 @@ const compIdSequence = new NumberSequence();
 
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
-}
-
-interface AttrLists {
-    normal: NameValue [];
-    events: NameValue [];
-    bindings: NameValue [];
-}
-
-interface NameValue {
-    name: string;
-    value: string;
 }
 
 export class Component extends BeanStub implements IComponent<any> {
@@ -49,124 +38,34 @@ export class Component extends BeanStub implements IComponent<any> {
         return this.compId;
     }
 
-    public instantiate(context: Context): void {
-        this.instantiateRecurse(this.getGui(), context);
-    }
-
-    private instantiateRecurse(parentNode: Element, context: Context): void {
+    // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
+    private createChildComponentsFromTags(parentNode: Element): void {
 
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
         childNodeList.forEach(childNode => {
-            const childComp = context.createComponent(childNode as Element, (childComp) => {
-                const attrList = this.getAttrLists(childNode as Element);
-                this.copyAttributesFromNode(attrList, childComp.getGui());
-                this.createChildAttributes(attrList, childComp);
-                this.addEventListenersToComponent(attrList, childComp);
+            const childComp = this.getContext().createComponentFromElement(childNode as Element, (childComp) => {
+                // copy over all attributes, including css classes, so any attributes user put on the tag
+                // wll be carried across
+                this.copyAttributesFromNode(childNode as Element, childComp.getGui());
             });
             if (childComp) {
+                // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
-            } else {
-                if (childNode.childNodes) {
-                    this.instantiateRecurse(childNode as Element, context);
-                }
-                if (childNode instanceof HTMLElement) {
-                    const attrList = this.getAttrLists(childNode as Element);
-                    this.addEventListenersToElement(attrList, childNode);
-                }
+            } else if (childNode.childNodes) {
+                this.createChildComponentsFromTags(childNode as Element);
             }
         });
     }
 
-    private getAttrLists(child: Element): AttrLists {
-        const res: AttrLists = {
-            bindings: [],
-            events: [],
-            normal: []
-        };
-        _.iterateNamedNodeMap(child.attributes,
+    private copyAttributesFromNode(source: Element, dest: Element): void {
+        _.iterateNamedNodeMap(source.attributes,
             (name: string, value: string) => {
-                const firstCharacter = name.substr(0, 1);
-                if (firstCharacter === '(') {
-                    const eventName = name.replace('(', '').replace(')', '');
-                    res.events.push({
-                        name: eventName,
-                        value: value
-                    });
-                } else if (firstCharacter === '[') {
-                    const bindingName = name.replace('[', '').replace(']', '');
-                    res.bindings.push({
-                        name: bindingName,
-                        value: value
-                    });
-                } else {
-                    res.normal.push({
-                        name: name,
-                        value: value
-                    });
-                }
+                dest.setAttribute(name, value);
             }
         );
-        return res;
-    }
-
-    private addEventListenersToElement(attrLists: AttrLists, element: HTMLElement): void {
-        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any) => void) => {
-            this.addDestroyableEventListener(element, eventName, listener);
-        });
-    }
-
-    private addEventListenersToComponent(attrLists: AttrLists, component: Component): void {
-        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any) => void) => {
-            this.addDestroyableEventListener(component, eventName, listener);
-        });
-    }
-
-    private addEventListenerCommon(attrLists: AttrLists,
-                                   callback: (eventName: string, listener: (event?: any) => void) => void): void {
-        const methodAliases = this.getAgComponentMetaData('methods');
-
-        attrLists.events.forEach(nameValue => {
-            const methodName = nameValue.value;
-            const methodAlias = _.find(methodAliases, 'alias', methodName);
-
-            const methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
-
-            const listener = (this as any)[methodNameToUse];
-            if (typeof listener !== 'function') {
-                console.warn('ag-Grid: count not find callback ' + methodName);
-                return;
-            }
-
-            const eventCamelCase = _.hyphenToCamelCase(nameValue.name);
-
-            callback(eventCamelCase!, listener.bind(this));
-        });
-    }
-
-    private createChildAttributes(attrLists: AttrLists, child: any): void {
-
-        const childAttributes: any = {};
-
-        attrLists.normal.forEach(nameValue => {
-            const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase!] = nameValue.value;
-        });
-
-        attrLists.bindings.forEach(nameValue => {
-            const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase!] = (this as any)[nameValue.value];
-        });
-
-        child.props = childAttributes;
-    }
-
-    private copyAttributesFromNode(attrLists: AttrLists, childNode: Element): void {
-        attrLists.normal.forEach(nameValue => {
-            childNode.setAttribute(nameValue.name, nameValue.value);
-        });
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
@@ -208,6 +107,22 @@ export class Component extends BeanStub implements IComponent<any> {
         (this.eGui as any).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
+
+        // context will not be available when user sets template in constructor
+        const contextIsAvailable = !!this.getContext();
+        if (contextIsAvailable) {
+            this.createChildComponentsFromTags(this.getGui());
+        }
+    }
+
+    @PreConstruct
+    private createChildComponentsPreConstruct(): void {
+        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
+        // to be autoWired first before we can create child components.
+        const uiExists = !!this.getGui();
+        if (uiExists) {
+            this.createChildComponentsFromTags(this.getGui());
+        }
     }
 
     protected wireQuerySelectors(): void {
@@ -354,7 +269,7 @@ export class Component extends BeanStub implements IComponent<any> {
     public destroy(): void {
         super.destroy();
         this.childComponents.forEach(childComponent => {
-            if (childComponent) {
+            if (childComponent && childComponent.destroy) {
                 (childComponent as any).destroy();
             }
         });

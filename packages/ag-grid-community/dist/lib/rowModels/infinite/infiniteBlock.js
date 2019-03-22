@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,7 +64,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
     };
     InfiniteBlock.prototype.init = function () {
         _super.prototype.init.call(this, {
-            context: this.context,
+            context: this.getContext(),
             rowRenderer: this.rowRenderer
         });
     };
@@ -112,10 +112,6 @@ var InfiniteBlock = /** @class */ (function (_super) {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], InfiniteBlock.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], InfiniteBlock.prototype, "context", void 0);
     __decorate([
         context_1.Autowired('rowRenderer'),
         __metadata("design:type", rowRenderer_1.RowRenderer)

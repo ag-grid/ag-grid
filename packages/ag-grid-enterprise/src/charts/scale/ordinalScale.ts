@@ -17,7 +17,7 @@ export class OrdinalScale<D, R> implements Scale<D, R> {
      */
     private index: { [key: string]: number } = {}; // new Map<D, number>();
 
-    _domain: D[] = [];
+    private _domain: D[] = [];
     set domain(values: D[]) {
         const domain = this._domain;
         const index = this.index = {} as { [key: string]: number };
@@ -34,7 +34,7 @@ export class OrdinalScale<D, R> implements Scale<D, R> {
         return this._domain;
     }
 
-    _range: R[] = [];
+    private _range: R[] = [];
     set range(values: R[]) {
         const n = values.length;
         const range = this._range;
@@ -58,11 +58,6 @@ export class OrdinalScale<D, R> implements Scale<D, R> {
             }
             this.index[key] = i = this.domain.push(d);
         }
-
-        const range = this.range;
-        // if (range.length === 0) {
-        //     return this.unknown;
-        // }
-        return range[(i - 1) % range.length];
+        return this.range[(i - 1) % this.range.length];
     }
 }

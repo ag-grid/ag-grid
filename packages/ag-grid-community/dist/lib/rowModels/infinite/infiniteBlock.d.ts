@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -7,7 +7,6 @@ import { InfiniteCacheParams } from "./infiniteCache";
 import { RowNodeBlock } from "../cache/rowNodeBlock";
 export declare class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     private gridOptionsWrapper;
-    private context;
     private rowRenderer;
     private cacheParams;
     constructor(pageNumber: number, params: InfiniteCacheParams);

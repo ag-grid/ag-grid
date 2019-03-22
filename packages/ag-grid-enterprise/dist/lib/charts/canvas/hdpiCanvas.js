@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -46,6 +46,47 @@ var HdpiCanvas = /** @class */ (function () {
         this.canvas.remove();
         this._canvas = undefined;
         Object.freeze(this);
+    };
+    HdpiCanvas.prototype.toImage = function () {
+        var img = document.createElement('img');
+        img.src = this.canvas.toDataURL();
+        return img;
+    };
+    /**
+     * @param fileName The `.png` extension is going to be added automatically.
+     */
+    HdpiCanvas.prototype.download = function (fileName) {
+        // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
+        // so we don't support saving to JPEG.
+        var type = 'image/png';
+        // The background of our canvas is transparent, so we create a temporary canvas
+        // with the white background and paint our canvas on top of it.
+        var canvas = document.createElement('canvas');
+        canvas.width = this.canvas.width;
+        canvas.height = this.canvas.height;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(this.canvas, 0, 0);
+        var dataUrl = canvas.toDataURL(type);
+        if (navigator.msSaveOrOpenBlob) { // IE11
+            var binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
+            var array = [];
+            for (var i = 0, n = binary.length; i < n; i++) {
+                array.push(binary.charCodeAt(i));
+            }
+            var blob = new Blob([new Uint8Array(array)], { type: type });
+            navigator.msSaveOrOpenBlob(blob, fileName + '.png');
+        }
+        else {
+            var a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = fileName + '.png';
+            a.style.display = 'none';
+            document.body.appendChild(a); // required for the `click` to work in Firefox
+            a.click();
+            document.body.removeChild(a);
+        }
     };
     Object.defineProperty(HdpiCanvas.prototype, "pixelRatio", {
         get: function () {

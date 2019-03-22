@@ -1,10 +1,7 @@
 import {
     Autowired,
     Component,
-    ComponentProvider,
-    ComponentResolver,
-    Context,
-    GridApi,
+    UserComponentFactory,
     GridOptions,
     GridOptionsWrapper,
     PostConstruct,
@@ -22,12 +19,9 @@ export class StatusBar extends Component {
         <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
     </div>`;
 
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
-    @Autowired('componentProvider') private componentProvider: ComponentProvider;
-    @Autowired('componentResolver') private componentResolver: ComponentResolver;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
 
     @RefSelector('eStatusBarLeft') private eStatusBarLeft: HTMLElement;
@@ -65,10 +59,7 @@ export class StatusBar extends Component {
                     context: this.gridOptionsWrapper.getContext()
                 };
 
-                const promise = this.componentResolver.createAgGridComponent(componentConfig,
-                    params,
-                    'statusPanel',
-                    componentConfig.statusPanelParams);
+                const promise = this.userComponentFactory.newStatusPanelComponent(componentConfig, params);
 
                 componentDetails.push({
                     // default to the component name if no key supplied
@@ -79,11 +70,22 @@ export class StatusBar extends Component {
         );
 
         Promise.all(componentDetails.map((details) => details.promise))
-            .then((ignored: any) => {
+            .then(() => {
                 _.forEach(componentDetails, (componentDetail) => {
                     componentDetail.promise.then((component: Component) => {
-                        this.statusBarService.registerStatusPanel(componentDetail.key, component);
-                        ePanelComponent.appendChild(component.getGui());
+                        const destroyFunc = () => {
+                            if (component.destroy) {
+                                component.destroy();
+                            }
+                        };
+
+                        if (this.isAlive()) {
+                            this.statusBarService.registerStatusPanel(componentDetail.key, component);
+                            ePanelComponent.appendChild(component.getGui());
+                            this.addDestroyFunc(destroyFunc);
+                        } else {
+                            destroyFunc();
+                        }
                     })
                 });
             });

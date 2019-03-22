@@ -362,20 +362,23 @@ The Simple Redux Example makes use of <code>reactNext</code> together with <code
                 href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
 <div class="card" style="background-color: aliceblue">
   <div class="card-body">
-<h2 id="angular-grid-resources" style="margin-top: 10px"> 
+    <h2 id="react-grid-resources" style="margin-top: 10px">
     React Grid Resources
-</h2>
-<br/>
-<ul>
-    <li>
-        Get started with React Grid in 5 minutes in our <strong><a href="../react-getting-started/" target="_blank">guide</a></strong>.
-    </li>
+    </h2>
     <br/>
-    <li>
-        Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React. 
-    </li>
-</ul>
-</div>
+    <ul>
+      <li>
+        Learn how to customize our React Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-react-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
+      </li>
+      <br/>
+      <li>
+        Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React.
+      </li>
+      <br>
+      <li>
+        Visit our <strong><a href="https://blog.ag-grid.com/tag/react/">blog</a></strong> to discover all our React content.
+    </ul>
+  </div>
 </div>
 <h2 id="next-steps">Next Steps</h2>
 <p>

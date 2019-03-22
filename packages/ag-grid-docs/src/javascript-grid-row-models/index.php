@@ -96,7 +96,7 @@ include '../documentation-main/documentation_header.php';
 </p>
         <ul class="content">
             <li>
-                If using <b>ag-Grid Free</b>, use <b>Client-side Row Model</b> if you want to load all
+                If using <b>ag-Grid Community</b>, use <b>Client-side Row Model</b> if you want to load all
                 your data into the browser, or <b>Infinite Row Model</b> if you want to load it in blocks.
             </li>
             <li>
@@ -344,13 +344,6 @@ include '../documentation-main/documentation_header.php';
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10004;</span></td>
-        </tr>
-        <tr class="item-row">
-            <td><a href="../javascript-grid-tree/">Tree Data</a></td>
-            <td><span class="green-tick">&#10004;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
         </tr>
         <tr class="item-row">
             <td><a href="../javascript-grid-full-width-rows/">Full Width Rows</a></td>

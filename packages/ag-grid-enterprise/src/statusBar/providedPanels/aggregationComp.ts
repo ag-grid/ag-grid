@@ -25,12 +25,13 @@ import { NameValueComp } from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {
 
-    private static TEMPLATE = `<div class="ag-status-panel ag-status-panel-aggregations">
-                <ag-name-value key="average" default-value="Average" ref="avgAggregationComp"></ag-name-value>
-                <ag-name-value key="count" default-value="Count" ref="countAggregationComp"></ag-name-value>
-                <ag-name-value key="min" default-value="Min" ref="minAggregationComp"></ag-name-value>
-                <ag-name-value key="max" default-value="Max" ref="maxAggregationComp"></ag-name-value>
-                <ag-name-value key="sum" default-value="Sum" ref="sumAggregationComp"></ag-name-value>
+    private static TEMPLATE =
+            `<div class="ag-status-panel ag-status-panel-aggregations">
+                <ag-name-value ref="avgAggregationComp"></ag-name-value>
+                <ag-name-value ref="countAggregationComp"></ag-name-value>
+                <ag-name-value ref="minAggregationComp"></ag-name-value>
+                <ag-name-value ref="maxAggregationComp"></ag-name-value>
+                <ag-name-value ref="sumAggregationComp"></ag-name-value>
             </div>`;
 
     @Autowired('eventService') private eventService: EventService;
@@ -39,7 +40,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -54,11 +54,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super(AggregationComp.TEMPLATE);
     }
 
-    @PreConstruct
-    private preConstruct(): void {
-        this.instantiate(this.context);
-    }
-
     @PostConstruct
     private postConstruct(): void {
         if (!this.isValidRowModel()) {
@@ -66,8 +61,14 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             return;
         }
 
-        this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
+        this.avgAggregationComp.setLabel('average','Average');
+        this.countAggregationComp.setLabel('count','Count');
+        this.minAggregationComp.setLabel('min','Min');
+        this.maxAggregationComp.setLabel('max','Max');
+        this.sumAggregationComp.setLabel('sum','Sum');
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
     private isValidRowModel() {

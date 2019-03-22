@@ -4,7 +4,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
-import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./colDef";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
@@ -69,7 +69,7 @@ import {
     VirtualRowRemovedEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
-import { AgGridRegisteredComponentInput } from "../components/framework/componentProvider";
+import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
@@ -213,6 +213,7 @@ export interface GridOptions {
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
+    excludeChildrenWhenTreeDataFiltering?: boolean;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;
@@ -670,7 +671,7 @@ export interface PostProcessPopupParams {
     // if popup is for a row, this gives the RowNode
     rowNode?: RowNode;
     // the popup we are showing
-    ePopup: HTMLElement | null;
+    ePopup: HTMLElement;
     // The different types are: 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor'
     type: string;
     // if the popup is as a result of a button click (eg menu button), this is the component that the user clicked

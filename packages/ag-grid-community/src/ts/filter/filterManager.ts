@@ -13,7 +13,7 @@ import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, Filte
 import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
 import { ColDef, GetQuickFilterTextParams } from "../entities/colDef";
 import { GridApi } from "../gridApi";
-import { ComponentResolver } from "../components/framework/componentResolver";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { GridCore } from "../gridCore";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
@@ -33,7 +33,7 @@ export class FilterManager {
     @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('componentResolver') private componentResolver: ComponentResolver;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -213,8 +213,8 @@ export class FilterManager {
             return null;
         }
 
-        if (this.gridOptionsWrapper.isRowModelInfinite()) {
-            console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
+        if (!this.gridOptionsWrapper.isRowModelDefault()) {
+            console.warn('ag-grid: quick filtering only works with the Client-side Row Model');
             return null;
         }
 
@@ -442,6 +442,7 @@ export class FilterManager {
         const filterModifiedCallback = () => this.eventService.dispatchEvent(event);
 
         const params: IFilterParams = {
+            api: this.gridOptionsWrapper.getApi(),
             column: column,
             colDef: sanitisedColDef,
             rowModel: this.rowModel,
@@ -453,22 +454,13 @@ export class FilterManager {
             $scope: $scope
         };
 
-        return this.componentResolver.createAgGridComponent<IFilterComp>(
-            sanitisedColDef,
-            params,
-            'filter',
-            {
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                column: column,
-                colDef: sanitisedColDef
-            },
-            defaultFilter,
-            true,
-            (params, filter) => _.assign(params, {
-                doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
-            })
-        );
+        // we modify params in a callback as we need the filter instance, and this isn't available
+        // when creating the params above
+        const modifyParamsCallback = (params: any, filter: IFilterComp) => _.assign(params, {
+            doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
+        });
+
+        return this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
     }
 
     private createFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {

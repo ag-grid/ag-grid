@@ -499,7 +499,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
-        let keys = null;
+        let keys: (string | null)[] = [];
         if (this.getDataPath) {
             let path = this.getDataPath(rowNode.data);
             if (path) {
@@ -514,7 +514,7 @@ export class GroupStage implements IRowNodeStage {
                 'groupStage.getGroupInfoFromCallback'
             );
         }
-        const groupInfoMapper = (key: string) => ({key: key, field: null, rowGroupColumn: null}) as GroupInfo;
+        const groupInfoMapper = (key: string | null) => ({key, field: null, rowGroupColumn: null}) as GroupInfo;
         return keys ? keys.map(groupInfoMapper) : [];
     }
 

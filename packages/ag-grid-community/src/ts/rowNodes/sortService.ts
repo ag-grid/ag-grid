@@ -44,15 +44,11 @@ export class SortService {
         const callback = (rowNode: RowNode) => {
 
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
-            this.pullDownDataForHideOpenParents(rowNode.childrenAfterFilter, true);
+            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterFilter, true);
 
-            // RE https://ag-grid.atlassian.net/browse/AG-444
-            // Javascript sort is non deterministic when all the array items are equals
-            // ie Comparator always returns 0, so if you want to ensure the array keeps its
-            // order, then you need to add an additional sorting condition manually, in this
-            // case we are going to inspect the original array position. This is what SortedRowNode
-            // object is for
-
+            // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
+            // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
+            // are going to inspect the original array position. This is what sortedRowNodes is for.
             if (sortActive) {
                 const sortedRowNodes: SortedRowNode[] = deltaSort ?
                     this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
@@ -63,7 +59,6 @@ export class SortService {
             }
 
             this.updateChildIndexes(rowNode);
-            this.pullDownDataForHideOpenParents(rowNode.childrenAfterSort, false);
 
             if (this.postSortFunc) {
                 this.postSortFunc(rowNode.childrenAfterSort);
@@ -71,6 +66,8 @@ export class SortService {
         };
 
         changedPath.forEachChangedNodeDepthFirst(callback);
+
+        this.updateGroupDataForHiddenOpenParents(changedPath);
     }
 
     private doFullSort(rowNode: RowNode, sortOptions: SortOption[]): SortedRowNode[] {
@@ -117,7 +114,7 @@ export class SortService {
 
         // these are all nodes that need to be placed
         const changedNodes: SortedRowNode[] = rowNode.childrenAfterFilter
-            // ignore nodes in the clean list
+        // ignore nodes in the clean list
             .filter(rowNode => !cleanNodesMapped[rowNode.id])
             .map(this.mapNodeToSortedNode.bind(this));
 
@@ -219,7 +216,23 @@ export class SortService {
         }
     }
 
-    private pullDownDataForHideOpenParents(rowNodes: RowNode[], clearOperation: boolean) {
+    private updateGroupDataForHiddenOpenParents(changedPath: ChangedPath) {
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
+
+        // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
+        const callback = (rowNode: RowNode) => {
+            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterSort, false);
+            rowNode.childrenAfterSort.forEach(child => {
+                if (child.hasChildren()) {
+                    callback(child);
+                }
+            });
+        };
+
+        changedPath.executeFromRootNode(rowNode => callback(rowNode));
+    }
+
+    private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[], clearOperation: boolean) {
         if (_.missing(rowNodes)) {
             return;
         }
@@ -260,5 +273,4 @@ export class SortService {
             });
         });
     }
-
 }

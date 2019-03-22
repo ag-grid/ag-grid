@@ -1,36 +1,67 @@
-import { Autowired, Component, ComponentResolver, IComponent } from "ag-grid-community";
-import { IToolPanelChildComp } from "./sideBarComp";
-import { HorizontalResizeComp } from "./horizontalResizeComp";
+import {
+    Autowired,
+    Component,
+    UserComponentFactory,
+    IToolPanelComp,
+    Promise,
+    ToolPanelDef,
+    PostConstruct,
+    GridOptionsWrapper
+} from "ag-grid-community";
+import {HorizontalResizeComp} from "./horizontalResizeComp";
 
-export interface ToolPanelWrapperParams {
-    innerComp: IToolPanelChildComp & Component;
-}
+export class ToolPanelWrapper extends Component {
 
-export class ToolPanelWrapper extends Component implements IComponent<ToolPanelWrapperParams>, IToolPanelChildComp{
-    private params: ToolPanelWrapperParams;
-
-    @Autowired("componentResolver") private componentResolver: ComponentResolver;
+    @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE =
         `<div class="ag-tool-panel-wrapper"/>`;
 
-    private componentToResize: Component;
+    private toolPanelCompInstance: IToolPanelComp;
 
-    init(params: ToolPanelWrapperParams): void {
-        this.params = params;
-        this.componentToResize = params.innerComp;
-        this.setTemplate(ToolPanelWrapper.TEMPLATE);
+    private toolPanelId: string;
 
-        const resizeBar = this.componentResolver.createInternalAgGridComponent(HorizontalResizeComp, {});
-        resizeBar.props = {
-            componentToResize: this
+    constructor() {
+        super(ToolPanelWrapper.TEMPLATE);
+    }
+
+    public getToolPanelId(): string {
+        return this.toolPanelId;
+    }
+
+    public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
+        this.toolPanelId = toolPanelDef.id;
+
+        const params: any = {
+            api: this.gridOptionsWrapper.getApi()
         };
-        resizeBar.addCssClass('ag-tool-panel-horizontal-resize');
-        this.getGui().appendChild(resizeBar.getGui());
-        this.getGui().appendChild(params.innerComp.getGui());
+
+        const componentPromise: Promise<IToolPanelComp> = this.userComponentFactory.newToolPanelComponent(
+            toolPanelDef, params);
+
+        if (componentPromise == null) {
+            console.warn(`ag-grid: error processing tool panel component ${toolPanelDef.id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
+            return;
+        }
+        componentPromise.then(this.setToolPanelComponent.bind(this));
     }
 
-    refresh(): void {
-        this.params.innerComp.refresh();
+    @PostConstruct
+    private setupResize(): void {
+        const resizeBar = new HorizontalResizeComp();
+        this.getContext().wireBean(resizeBar);
+        resizeBar.setElementToResize(this.getGui());
+        this.appendChild(resizeBar);
     }
+
+    private setToolPanelComponent(compInstance: IToolPanelComp): void {
+        this.toolPanelCompInstance = compInstance;
+        this.appendChild(compInstance);
+    }
+
+    public refresh(): void {
+        this.toolPanelCompInstance.refresh();
+    }
+
 }

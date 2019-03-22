@@ -3,7 +3,7 @@ $pageTitle = "React Data Grid Component | Packed with features and performance
 .";
 $pageDescription = "Fastest, most feature-rich React Data Grid component from ag-Grid. Integrate seamlessly with React to deliver 63+ core and enterprise features including filtering, grouping and pagination. React Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.
 ";
-$pageGroup = "basics";
+
 include '../landing-pages/convert-header.php';
 ?>
 <style><?php include './styles.css'; ?></style>
@@ -371,7 +371,7 @@ You can easily extend the default functionality by creating your custom React co
 <div class="row">
 <div class="col">
     <hr>
-    <a href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb" target="_blank"><button type="button" class="btn btn-primary">Customize React Grid Blog</button></a>
+    <a href="https://blog.ag-grid.com/learn-to-customize-react-grid-in-less-than-10-minutes/" target="_blank"><button type="button" class="btn btn-primary">Customize React Grid Blog</button></a>
     <hr>
 </div>
 <div class="col">
@@ -522,12 +522,12 @@ React Responsive Grid Layout
             </p>
         </div>
             <div class="col">
-                <a href="https://medium.com/ag-grid/get-started-with-react-grid-in-5-minutes-f6e5fb16afa"><p class="lead-description">
-                    Get Started with React Grid[Blog]
+                <a href="https://blog.ag-grid.com/tag/react/"><p class="lead-description">
+                    ag-Grid React[Blog]
                 </p></a>
                 <img class="icons" alt="ag-grid-react-blog" src="/images/icons/blog.svg">
                 <p class="lead-description">
-                    This article describes the React grid example and shows you how easy it is to integrate and configure it. It’s a 5 minute getting started guide with examples that you can copy/paste and hit the ground running.
+                    Browse all our React and React Grid related blogs, ranging from depthful content to guides and tutorials surrounding ag-Grid React and general React content.
                 </p>
             </div>
         </div>

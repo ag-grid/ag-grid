@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -141,7 +141,7 @@ export declare class RowComp extends Component {
     private setRowTop;
     getAndClearNextVMTurnFunctions(): Function[];
     getRowNode(): RowNode;
-    getRenderedCellForColumn(column: Column): CellComp;
+    getRenderedCellForColumn(column: Column): CellComp | undefined;
     private onRowIndexChanged;
     private updateRowIndexes;
     ensureDomOrder(): void;

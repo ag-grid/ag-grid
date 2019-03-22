@@ -1,8 +1,9 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Maps a discrete domain to a continuous numeric range.
+ * See https://github.com/d3/d3-scale#band-scales for more info.
  */
 var BandScale = /** @class */ (function () {
     function BandScale() {
@@ -145,8 +146,8 @@ var BandScale = /** @class */ (function () {
             return;
         }
         var _b = this._range, a = _b[0], b = _b[1];
-        var isReverse = b < a;
-        if (isReverse) {
+        var reversed = b < a;
+        if (reversed) {
             _a = [b, a], a = _a[0], b = _a[1];
         }
         var step = (b - a) / Math.max(1, n - this._paddingInner + this._paddingOuter * 2);
@@ -163,7 +164,7 @@ var BandScale = /** @class */ (function () {
         for (var i = 0; i < n; i++) {
             values.push(a + step * i);
         }
-        this.ordinalRange = isReverse ? values.reverse() : values;
+        this.ordinalRange = reversed ? values.reverse() : values;
     };
     return BandScale;
 }());

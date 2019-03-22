@@ -1,4 +1,4 @@
-import { Autowired, Bean, CellEditorFactory, ComponentProvider, FilterManager, PostConstruct } from "ag-grid-community";
+import { Autowired, Bean, UserComponentRegistry, FilterManager, PostConstruct } from "ag-grid-community";
 import { SetFilter } from "./setFilter/setFilter";
 import { RichSelectCellEditor } from "./rendering/richSelect/richSelectCellEditor";
 import { LicenseManager } from "./licenseManager";
@@ -15,23 +15,22 @@ import {FiltersToolPanel} from "./sideBar/providedPanels/filters/filtersToolPane
 export class EnterpriseBoot {
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('licenseManager') private licenseManager: LicenseManager;
-    @Autowired('componentProvider') private componentProvider: ComponentProvider;
+    @Autowired('userComponentRegistry') private userComponentRegistry: UserComponentRegistry;
 
     @PostConstruct
     private init(): void {
-        this.componentProvider.registerDefaultComponent('agRichSelect', RichSelectCellEditor);
-        this.componentProvider.registerDefaultComponent('agRichSelectCellEditor', RichSelectCellEditor);
-        this.componentProvider.registerDefaultComponent('agSetColumnFilter', SetFilter);
-        this.componentProvider.registerDefaultComponent('agDetailCellRenderer', DetailCellRenderer);
-        this.componentProvider.registerDefaultComponent('agAggregationComponent', AggregationComp);
-        this.componentProvider.registerDefaultComponent('agColumnsToolPanel', ColumnToolPanel);
-        this.componentProvider.registerDefaultComponent('agFiltersToolPanel', FiltersToolPanel);
-        this.componentProvider.registerDefaultComponent('agSelectedRowCountComponent', SelectedRowsComp);
-        this.componentProvider.registerDefaultComponent('agTotalRowCountComponent', TotalRowsComp);
-        this.componentProvider.registerDefaultComponent('agFilteredRowCountComponent', FilteredRowsComp);
-        this.componentProvider.registerDefaultComponent('agTotalAndFilteredRowCountComponent', TotalAndFilteredRowsComp);
+        this.userComponentRegistry.registerDefaultComponent('agRichSelect', RichSelectCellEditor);
+        this.userComponentRegistry.registerDefaultComponent('agRichSelectCellEditor', RichSelectCellEditor);
+        this.userComponentRegistry.registerDefaultComponent('agSetColumnFilter', SetFilter);
+        this.userComponentRegistry.registerDefaultComponent('agDetailCellRenderer', DetailCellRenderer);
+        this.userComponentRegistry.registerDefaultComponent('agAggregationComponent', AggregationComp);
+        this.userComponentRegistry.registerDefaultComponent('agColumnsToolPanel', ColumnToolPanel);
+        this.userComponentRegistry.registerDefaultComponent('agFiltersToolPanel', FiltersToolPanel);
+        this.userComponentRegistry.registerDefaultComponent('agSelectedRowCountComponent', SelectedRowsComp);
+        this.userComponentRegistry.registerDefaultComponent('agTotalRowCountComponent', TotalRowsComp);
+        this.userComponentRegistry.registerDefaultComponent('agFilteredRowCountComponent', FilteredRowsComp);
+        this.userComponentRegistry.registerDefaultComponent('agTotalAndFilteredRowCountComponent', TotalAndFilteredRowsComp);
     }
 
 }

@@ -1,15 +1,17 @@
 import {
+    _,
     AgEvent,
     Autowired,
-    CellRendererService,
+    ColDef,
     Column,
     Component,
     GridOptionsWrapper,
     ICellRendererComp,
+    ISetFilterParams,
     PostConstruct,
     Promise,
-    ValueFormatterService,
-    _
+    UserComponentFactory,
+    ValueFormatterService
 } from "ag-grid-community";
 
 export interface SelectedEvent extends AgEvent {
@@ -20,8 +22,8 @@ export class SetFilterListItem extends Component {
     public static EVENT_SELECTED = 'selected';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private static TEMPLATE =
         `<label class="ag-set-filter-item">
@@ -43,7 +45,25 @@ export class SetFilterListItem extends Component {
         super(SetFilterListItem.TEMPLATE);
         this.value = value;
         this.column = column;
+    }
 
+    private useCellRenderer(
+        target: ColDef,
+        eTarget: HTMLElement,
+        params: any
+    ): Promise<ICellRendererComp> {
+        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer((target.filterParams as ISetFilterParams), params);
+        if (cellRendererPromise != null) {
+            _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
+        } else {
+            if (params.valueFormatted == null && params.value == null) {
+                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
+            } else {
+                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+            }
+        }
+        return cellRendererPromise;
     }
 
     @PostConstruct
@@ -92,9 +112,13 @@ export class SetFilterListItem extends Component {
         const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
 
         const colDef = this.column.getColDef();
-        const valueObj = {value: this.value, valueFormatted: valueFormatted};
+        const params = {
+            value: this.value,
+            valueFormatted: valueFormatted,
+            api: this.gridOptionsWrapper.getApi()
+        };
 
-        const componentPromise: Promise<ICellRendererComp> = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
+        const componentPromise: Promise<ICellRendererComp> = this.useCellRenderer(colDef, valueElement, params);
 
         if (!componentPromise) { return; }
 

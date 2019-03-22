@@ -12,7 +12,6 @@ import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "./conte
 import { IRowModel } from "./interfaces/iRowModel";
 import { FocusedCellController } from "./focusedCellController";
 import { Component } from "./widgets/component";
-import { ICompFactory } from "./interfaces/iCompFactory";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { GridApi } from "./gridApi";
@@ -62,14 +61,11 @@ export class GridCore extends Component {
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Autowired('context') private context: Context;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
-    @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
@@ -87,7 +83,6 @@ export class GridCore extends Component {
 
         const template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
-        this.instantiate(this.context);
 
         // register with services that need grid core
         [
@@ -99,7 +94,6 @@ export class GridCore extends Component {
 
         if (this.enterprise) {
             this.clipboardService.registerGridCore(this);
-            this.sideBarComp.registerGridComp(this.gridPanel);
         }
 
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
@@ -125,6 +119,17 @@ export class GridCore extends Component {
         this.logger.log('ready');
 
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
+        const gridPanelEl = this.gridPanel.getGui();
+
+        this.addDestroyableEventListener(gridPanelEl, 'focusin', () => {
+            _.addCssClass(gridPanelEl, 'ag-has-focus');
+        });
+
+        this.addDestroyableEventListener(gridPanelEl, 'focusout', (e: FocusEvent) => {
+            if (!gridPanelEl.contains(e.relatedTarget as HTMLElement)) {
+                _.removeCssClass(gridPanelEl, 'ag-has-focus');
+            }
+        });
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
@@ -140,15 +145,6 @@ export class GridCore extends Component {
             clientHeight: this.eGridDiv.clientHeight
         };
         this.eventService.dispatchEvent(event);
-    }
-
-    /** @deprecated since v19, we can drop in v20 */
-    public getPreferredWidth(): number {
-        const widthForCols = this.columnController.getBodyContainerWidth()
-            + this.columnController.getPinnedLeftContainerWidth()
-            + this.columnController.getPinnedRightContainerWidth();
-        const widthForToolpanel = this.sideBarComp ? this.sideBarComp.getPreferredWidth() : 0;
-        return widthForCols + widthForToolpanel;
     }
 
     private addRtlSupport(): void {
@@ -226,8 +222,6 @@ export class GridCore extends Component {
         return this.sideBarComp.isToolPanelShowing();
     }
 
-    // need to override, as parent class isn't marked with PreDestroy
-    @PreDestroy
     public destroy() {
         super.destroy();
         this.logger.log('Grid DOM removed');

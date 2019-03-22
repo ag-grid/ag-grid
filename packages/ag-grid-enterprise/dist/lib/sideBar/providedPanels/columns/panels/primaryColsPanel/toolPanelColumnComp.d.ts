@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Column, Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnComp extends Component implements BaseColumnItem {
@@ -7,7 +7,6 @@ export declare class ToolPanelColumnComp extends Component implements BaseColumn
     private columnController;
     private eventService;
     private dragAndDropService;
-    private context;
     private columnApi;
     private gridApi;
     private eLabel;

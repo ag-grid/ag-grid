@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -49,7 +49,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
         }
         this.createNodeIdPrefix();
         _super.prototype.init.call(this, {
-            context: this.context,
+            context: this.getContext(),
             rowRenderer: this.rowRenderer
         });
     };
@@ -413,10 +413,6 @@ var ServerSideBlock = /** @class */ (function (_super) {
         return this.groupField;
     };
     ServerSideBlock.DefaultBlockSize = 100;
-    __decorate([
-        ag_grid_community_1.Autowired('context'),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], ServerSideBlock.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.Autowired('rowRenderer'),
         __metadata("design:type", ag_grid_community_1.RowRenderer)

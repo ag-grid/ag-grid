@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,17 +45,11 @@ var PopupMessageBox = /** @class */ (function (_super) {
         _super.prototype.postConstruct.call(this);
         this.setTitle(this.title);
         var messageBodyComp = new MessageBody();
-        this.addFeature(this.context, messageBodyComp);
+        this.addFeature(this.getContext(), messageBodyComp);
         messageBodyComp.setMessage(this.message);
         this.setBody(messageBodyComp.getGui());
         this.addDestroyableEventListener(messageBodyComp, 'onBtOk', function () { return _this.closePopup(); });
     };
-    __decorate([
-        context_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], PopupMessageBox.prototype, "postConstruct", null);
     return PopupMessageBox;
 }(popupWindow_1.PopupWindow));
 exports.PopupMessageBox = PopupMessageBox;
@@ -68,20 +62,20 @@ var MessageBody = /** @class */ (function (_super) {
         this.eCenter.innerText = message;
     };
     MessageBody.prototype.postConstruct = function () {
-        this.instantiate(this.context);
+        this.addDestroyableEventListener(this.eOk, 'click', this.onBtOk.bind(this));
     };
     MessageBody.prototype.onBtOk = function () {
         this.dispatchEvent({ type: 'onBtOk' });
     };
-    MessageBody.TEMPLATE = "<div>\n            <div ref=\"eCenter\"></div>\n            <div ref=\"eButtons\">\n                <button (click)=\"onBtOk\">OK</button>\n            </div>\n        </div>";
-    __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], MessageBody.prototype, "context", void 0);
+    MessageBody.TEMPLATE = "<div>\n            <div ref=\"eCenter\"></div>\n            <div ref=\"eButtons\">\n                <button ref=\"eOk\">OK</button>\n            </div>\n        </div>";
     __decorate([
         componentAnnotations_1.RefSelector('eCenter'),
         __metadata("design:type", HTMLElement)
     ], MessageBody.prototype, "eCenter", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('eOk'),
+        __metadata("design:type", HTMLElement)
+    ], MessageBody.prototype, "eOk", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

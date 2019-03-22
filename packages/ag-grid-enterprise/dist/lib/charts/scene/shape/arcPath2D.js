@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31,7 +31,7 @@ var Arc = /** @class */ (function (_super) {
         _this._radius = 10;
         _this._startAngle = 0;
         _this._endAngle = Math.PI * 2;
-        _this._isCounterClockwise = false;
+        _this._counterClockwise = false;
         return _this;
     }
     Object.defineProperty(Arc.prototype, "x", {
@@ -41,7 +41,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._x !== value) {
                 this._x = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -54,7 +54,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._y !== value) {
                 this._y = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -67,7 +67,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._radius !== value) {
                 this._radius = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -80,7 +80,7 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._startAngle !== value) {
                 this._startAngle = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -93,20 +93,20 @@ var Arc = /** @class */ (function (_super) {
         set: function (value) {
             if (this._endAngle !== value) {
                 this._endAngle = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Arc.prototype, "isCounterClockwise", {
+    Object.defineProperty(Arc.prototype, "counterClockwise", {
         get: function () {
-            return this._isCounterClockwise;
+            return this._counterClockwise;
         },
         set: function (value) {
-            if (this._isCounterClockwise !== value) {
-                this._isCounterClockwise = value;
-                this.isDirty = true;
+            if (this._counterClockwise !== value) {
+                this._counterClockwise = value;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -115,7 +115,7 @@ var Arc = /** @class */ (function (_super) {
     Arc.prototype.updatePath = function () {
         this.path = new Path2D();
         // No way to clear existing Path2D, have to create a new one each time.
-        this.path.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.isCounterClockwise);
+        this.path.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.counterClockwise);
         this.path.closePath();
     };
     // Native Path2D's isPointInPath/isPointInStroke require multiplying by the pixelRatio:
@@ -141,7 +141,7 @@ var Arc = /** @class */ (function (_super) {
         // ctx.stroke();
         // About 15% performance loss for re-creating and retaining a Path2D
         // object for hit testing.
-        this.isDirty = false;
+        this.dirty = false;
     };
     return Arc;
 }(shape_1.Shape));

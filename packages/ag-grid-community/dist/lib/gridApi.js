@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,6 @@ var sortController_1 = require("./sortController");
 var focusedCellController_1 = require("./focusedCellController");
 var gridCell_1 = require("./entities/gridCell");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
-var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var paginationProxy_1 = require("./rowModels/paginationProxy");
 var immutableService_1 = require("./rowModels/clientSide/immutableService");
 var valueCache_1 = require("./valueService/valueCache");
@@ -40,16 +39,6 @@ var utils_1 = require("./utils");
 var GridApi = /** @class */ (function () {
     function GridApi() {
         this.detailGridInfoMap = {};
-        /*
-        Taking these out, as we want to reconsider how we register components
-    
-        public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
-            this.cellRendererFactory.addCellRenderer(key, cellRenderer);
-        }
-    
-        public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
-            this.cellEditorFactory.addCellEditor(key, cellEditor);
-        }*/
     }
     GridApi.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
@@ -618,10 +607,6 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.setEnableCellTextSelection = function (selectable) {
         this.gridPanel.setCellTextSelection(selectable);
     };
-    GridApi.prototype.getPreferredWidth = function () {
-        console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()');
-        return this.gridCore.getPreferredWidth();
-    };
     GridApi.prototype.setGroupHeaderHeight = function (headerHeight) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
         this.doLayout();
@@ -1130,10 +1115,6 @@ var GridApi = /** @class */ (function () {
         context_1.Autowired('cellRendererFactory'),
         __metadata("design:type", cellRendererFactory_1.CellRendererFactory)
     ], GridApi.prototype, "cellRendererFactory", void 0);
-    __decorate([
-        context_1.Autowired('cellEditorFactory'),
-        __metadata("design:type", cellEditorFactory_1.CellEditorFactory)
-    ], GridApi.prototype, "cellEditorFactory", void 0);
     __decorate([
         context_1.Autowired('valueCache'),
         __metadata("design:type", valueCache_1.ValueCache)

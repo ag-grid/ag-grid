@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,7 +28,7 @@ var Group = /** @class */ (function (_super) {
         // A group can have `scaling`, `rotation`, `translation` properties
         // that are applied to the canvas context before children are rendered,
         // so all children can be transformed at once.
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -37,7 +37,7 @@ var Group = /** @class */ (function (_super) {
         for (var i = 0; i < n; i++) {
             ctx.save();
             var child = children[i];
-            if (child.isVisible) {
+            if (child.visible) {
                 child.render(ctx);
             }
             ctx.restore();

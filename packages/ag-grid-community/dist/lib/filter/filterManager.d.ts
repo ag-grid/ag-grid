@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
@@ -20,7 +20,7 @@ export declare class FilterManager {
     private context;
     private columnApi;
     private gridApi;
-    private componentResolver;
+    private userComponentFactory;
     static QUICK_FILTER_SEPARATOR: string;
     private allFilters;
     private quickFilter;

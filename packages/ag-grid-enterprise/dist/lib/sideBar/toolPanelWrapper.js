@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,28 +28,51 @@ var horizontalResizeComp_1 = require("./horizontalResizeComp");
 var ToolPanelWrapper = /** @class */ (function (_super) {
     __extends(ToolPanelWrapper, _super);
     function ToolPanelWrapper() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return _super.call(this, ToolPanelWrapper.TEMPLATE) || this;
     }
-    ToolPanelWrapper.prototype.init = function (params) {
-        this.params = params;
-        this.componentToResize = params.innerComp;
-        this.setTemplate(ToolPanelWrapper.TEMPLATE);
-        var resizeBar = this.componentResolver.createInternalAgGridComponent(horizontalResizeComp_1.HorizontalResizeComp, {});
-        resizeBar.props = {
-            componentToResize: this
+    ToolPanelWrapper.prototype.getToolPanelId = function () {
+        return this.toolPanelId;
+    };
+    ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef) {
+        this.toolPanelId = toolPanelDef.id;
+        var params = {
+            api: this.gridOptionsWrapper.getApi()
         };
-        resizeBar.addCssClass('ag-tool-panel-horizontal-resize');
-        this.getGui().appendChild(resizeBar.getGui());
-        this.getGui().appendChild(params.innerComp.getGui());
+        var componentPromise = this.userComponentFactory.newToolPanelComponent(toolPanelDef, params);
+        if (componentPromise == null) {
+            console.warn("ag-grid: error processing tool panel component " + toolPanelDef.id + ". You need to specify either 'toolPanel' or 'toolPanelFramework'");
+            return;
+        }
+        componentPromise.then(this.setToolPanelComponent.bind(this));
+    };
+    ToolPanelWrapper.prototype.setupResize = function () {
+        var resizeBar = new horizontalResizeComp_1.HorizontalResizeComp();
+        this.getContext().wireBean(resizeBar);
+        resizeBar.setElementToResize(this.getGui());
+        this.appendChild(resizeBar);
+    };
+    ToolPanelWrapper.prototype.setToolPanelComponent = function (compInstance) {
+        this.toolPanelCompInstance = compInstance;
+        this.appendChild(compInstance);
     };
     ToolPanelWrapper.prototype.refresh = function () {
-        this.params.innerComp.refresh();
+        this.toolPanelCompInstance.refresh();
     };
     ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\"/>";
     __decorate([
-        ag_grid_community_1.Autowired("componentResolver"),
-        __metadata("design:type", ag_grid_community_1.ComponentResolver)
-    ], ToolPanelWrapper.prototype, "componentResolver", void 0);
+        ag_grid_community_1.Autowired("userComponentFactory"),
+        __metadata("design:type", ag_grid_community_1.UserComponentFactory)
+    ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired("gridOptionsWrapper"),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
+    ], ToolPanelWrapper.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_community_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ToolPanelWrapper.prototype, "setupResize", null);
     return ToolPanelWrapper;
 }(ag_grid_community_1.Component));
 exports.ToolPanelWrapper = ToolPanelWrapper;

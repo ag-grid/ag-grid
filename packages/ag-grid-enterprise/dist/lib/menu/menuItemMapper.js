@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -126,7 +126,7 @@ var MenuItemMapper = /** @class */ (function () {
                 }
                 if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
                     exportSubMenuItems.push('excelExport');
-                    exportSubMenuItems.push('excelXMLExport');
+                    exportSubMenuItems.push('excelXmlExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
@@ -142,8 +142,8 @@ var MenuItemMapper = /** @class */ (function () {
                     exportMode: 'xlsx'
                 }); }
             };
-            case 'excelXMLExport': return {
-                name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
+            case 'excelXmlExport': return {
+                name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)'),
                 action: function () { return _this.gridApi.exportDataAsExcel({
                     exportMode: 'xml'
                 }); }

@@ -4,6 +4,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IComponent } from "./iComponent";
 import { IPopupComponent } from "./iPopupComponent";
+import {ColDef} from "../entities/colDef";
 
 export interface ICellEditor extends IPopupComponent {
     /** Return the final value - called by the grid once after editing is complete */
@@ -19,6 +20,10 @@ export interface ICellEditor extends IPopupComponent {
      *  editing will have no impact on the record. Use this if you do not want a new value from your gui, i.e. you
      *  want to cancel the editing. */
     isCancelAfterEnd?(): boolean;
+
+    /** If using a framework this returns the underlying component instance, so you can call methods
+     * on it if you want. */
+    getFrameworkComponentInstance?(): any;
 }
 
 export interface ICellEditorParams {
@@ -30,8 +35,12 @@ export interface ICellEditorParams {
     charPress: string | null;
     // grid column
     column: Column;
+    // column definition
+    colDef: ColDef;
     // grid row node
     node: RowNode;
+    // row data
+    data: any;
     // editing row index
     rowIndex: number;
     // grid API
@@ -57,5 +66,4 @@ export interface ICellEditorParams {
 }
 
 export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
-
 }

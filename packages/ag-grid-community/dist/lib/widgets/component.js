@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
 var utils_1 = require("../utils");
 var compIdSequence = new utils_1.NumberSequence();
@@ -41,110 +51,30 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.getCompId = function () {
         return this.compId;
     };
-    Component.prototype.instantiate = function (context) {
-        this.instantiateRecurse(this.getGui(), context);
-    };
-    Component.prototype.instantiateRecurse = function (parentNode, context) {
+    // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
+    Component.prototype.createChildComponentsFromTags = function (parentNode) {
         var _this = this;
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         var childNodeList = utils_1._.copyNodeList(parentNode.childNodes);
         childNodeList.forEach(function (childNode) {
-            var childComp = context.createComponent(childNode, function (childComp) {
-                var attrList = _this.getAttrLists(childNode);
-                _this.copyAttributesFromNode(attrList, childComp.getGui());
-                _this.createChildAttributes(attrList, childComp);
-                _this.addEventListenersToComponent(attrList, childComp);
+            var childComp = _this.getContext().createComponentFromElement(childNode, function (childComp) {
+                // copy over all attributes, including css classes, so any attributes user put on the tag
+                // wll be carried across
+                _this.copyAttributesFromNode(childNode, childComp.getGui());
             });
             if (childComp) {
+                // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 _this.swapComponentForNode(childComp, parentNode, childNode);
             }
-            else {
-                if (childNode.childNodes) {
-                    _this.instantiateRecurse(childNode, context);
-                }
-                if (childNode instanceof HTMLElement) {
-                    var attrList = _this.getAttrLists(childNode);
-                    _this.addEventListenersToElement(attrList, childNode);
-                }
+            else if (childNode.childNodes) {
+                _this.createChildComponentsFromTags(childNode);
             }
         });
     };
-    Component.prototype.getAttrLists = function (child) {
-        var res = {
-            bindings: [],
-            events: [],
-            normal: []
-        };
-        utils_1._.iterateNamedNodeMap(child.attributes, function (name, value) {
-            var firstCharacter = name.substr(0, 1);
-            if (firstCharacter === '(') {
-                var eventName = name.replace('(', '').replace(')', '');
-                res.events.push({
-                    name: eventName,
-                    value: value
-                });
-            }
-            else if (firstCharacter === '[') {
-                var bindingName = name.replace('[', '').replace(']', '');
-                res.bindings.push({
-                    name: bindingName,
-                    value: value
-                });
-            }
-            else {
-                res.normal.push({
-                    name: name,
-                    value: value
-                });
-            }
-        });
-        return res;
-    };
-    Component.prototype.addEventListenersToElement = function (attrLists, element) {
-        var _this = this;
-        this.addEventListenerCommon(attrLists, function (eventName, listener) {
-            _this.addDestroyableEventListener(element, eventName, listener);
-        });
-    };
-    Component.prototype.addEventListenersToComponent = function (attrLists, component) {
-        var _this = this;
-        this.addEventListenerCommon(attrLists, function (eventName, listener) {
-            _this.addDestroyableEventListener(component, eventName, listener);
-        });
-    };
-    Component.prototype.addEventListenerCommon = function (attrLists, callback) {
-        var _this = this;
-        var methodAliases = this.getAgComponentMetaData('methods');
-        attrLists.events.forEach(function (nameValue) {
-            var methodName = nameValue.value;
-            var methodAlias = utils_1._.find(methodAliases, 'alias', methodName);
-            var methodNameToUse = utils_1._.exists(methodAlias) ? methodAlias.methodName : methodName;
-            var listener = _this[methodNameToUse];
-            if (typeof listener !== 'function') {
-                console.warn('ag-Grid: count not find callback ' + methodName);
-                return;
-            }
-            var eventCamelCase = utils_1._.hyphenToCamelCase(nameValue.name);
-            callback(eventCamelCase, listener.bind(_this));
-        });
-    };
-    Component.prototype.createChildAttributes = function (attrLists, child) {
-        var _this = this;
-        var childAttributes = {};
-        attrLists.normal.forEach(function (nameValue) {
-            var nameCamelCase = utils_1._.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase] = nameValue.value;
-        });
-        attrLists.bindings.forEach(function (nameValue) {
-            var nameCamelCase = utils_1._.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase] = _this[nameValue.value];
-        });
-        child.props = childAttributes;
-    };
-    Component.prototype.copyAttributesFromNode = function (attrLists, childNode) {
-        attrLists.normal.forEach(function (nameValue) {
-            childNode.setAttribute(nameValue.name, nameValue.value);
+    Component.prototype.copyAttributesFromNode = function (source, dest) {
+        utils_1._.iterateNamedNodeMap(source.attributes, function (name, value) {
+            dest.setAttribute(name, value);
         });
     };
     Component.prototype.swapComponentForNode = function (newComponent, parentNode, childNode) {
@@ -179,6 +109,19 @@ var Component = /** @class */ (function (_super) {
         this.eGui.__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
+        // context will not be available when user sets template in constructor
+        var contextIsAvailable = !!this.getContext();
+        if (contextIsAvailable) {
+            this.createChildComponentsFromTags(this.getGui());
+        }
+    };
+    Component.prototype.createChildComponentsPreConstruct = function () {
+        // ui exists if user sets template in constructor. when this happens, we have to wait for the context
+        // to be autoWired first before we can create child components.
+        var uiExists = !!this.getGui();
+        if (uiExists) {
+            this.createChildComponentsFromTags(this.getGui());
+        }
     };
     Component.prototype.wireQuerySelectors = function () {
         var _this = this;
@@ -307,7 +250,7 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         this.childComponents.forEach(function (childComponent) {
-            if (childComponent) {
+            if (childComponent && childComponent.destroy) {
                 childComponent.destroy();
             }
         });
@@ -333,6 +276,12 @@ var Component = /** @class */ (function (_super) {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
     };
     Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    __decorate([
+        context_1.PreConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], Component.prototype, "createChildComponentsPreConstruct", null);
     return Component;
 }(beanStub_1.BeanStub));
 exports.Component = Component;

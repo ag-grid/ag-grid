@@ -17,7 +17,7 @@ import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
 import { SortController } from "../../sortController";
 import { EventService } from "../../eventService";
-import { ComponentRecipes } from "../../components/framework/componentRecipes";
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AgCheckbox } from "../../widgets/agCheckbox";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { SelectAllFeature } from "./selectAllFeature";
@@ -41,22 +41,21 @@ export class HeaderWrapperComp extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('context') private context: Context;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('beans') private beans: Beans;
 
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
-    private column: Column;
-    private dragSourceDropTarget: DropTarget;
-    private pinned: string;
+    private readonly column: Column;
+    private readonly dragSourceDropTarget: DropTarget;
+    private readonly pinned: string;
 
     private resizeStartWidth: number;
     private resizeWithShiftKey:  boolean;
@@ -78,7 +77,6 @@ export class HeaderWrapperComp extends Component {
 
     @PostConstruct
     public init(): void {
-        this.instantiate(this.context);
 
         const colDef = this.getComponentHolder();
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
@@ -95,12 +93,12 @@ export class HeaderWrapperComp extends Component {
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
 
-        this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
+        this.addFeature(this.getContext(), new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        this.addFeature(this.context, new SelectAllFeature(this.cbSelectAll, this.column));
+        this.addFeature(this.getContext(), new SelectAllFeature(this.cbSelectAll, this.column));
 
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
@@ -154,16 +152,12 @@ export class HeaderWrapperComp extends Component {
 
         const callback = this.afterHeaderCompCreated.bind(this, displayName);
 
-        this.componentRecipes.newHeaderComponent(params).then(callback);
+        this.userComponentFactory.newHeaderComponent(params).then(callback);
     }
 
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
         this.appendChild(headerComp);
         this.setupMove(headerComp.getGui(), displayName);
-
-        if (headerComp.destroy) {
-            this.addDestroyFunc(headerComp.destroy.bind(headerComp));
-        }
     }
 
     private onColumnMovingChanged(): void {

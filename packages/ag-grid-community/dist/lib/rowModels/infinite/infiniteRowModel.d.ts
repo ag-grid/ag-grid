@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -12,7 +12,6 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private sortController;
     private selectionController;
     private eventService;
-    private context;
     private gridApi;
     private columnApi;
     private rowRenderer;
@@ -31,7 +30,6 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private onSortChanged;
     private onColumnEverything;
     private isSortModelDifferent;
-    destroy(): void;
     getType(): string;
     setDatasource(datasource: IDatasource | undefined): void;
     private checkForDeprecated;

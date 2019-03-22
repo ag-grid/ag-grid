@@ -1,6 +1,6 @@
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { IComponent } from "../../interfaces/iComponent";
-import { AgGridComponentFunctionInput } from "./componentProvider";
+import { AgGridComponentFunctionInput } from "./userComponentRegistry";
 import { AgComponentUtils } from "./agComponentUtils";
 
 export interface ComponentMetadata {

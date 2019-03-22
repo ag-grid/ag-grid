@@ -44,7 +44,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("valueService") private valueService: ValueService;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
-    @Autowired("context") private context: Context;
     @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
     @Autowired("focusedCellController") private focusedCellController: FocusedCellController;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
@@ -550,7 +549,6 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    @PreDestroy
     public destroy() {
         super.destroy();
 
@@ -622,7 +620,7 @@ export class RowRenderer extends BeanStub {
         _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
             const index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
-                if (this.keepRowBecauseEditing(rowComp)) {
+                if (this.keepRowBecauseEditingOrFocused(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -917,7 +915,7 @@ export class RowRenderer extends BeanStub {
     // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
-    private keepRowBecauseEditing(rowComp: RowComp): boolean {
+    private keepRowBecauseEditingOrFocused(rowComp: RowComp): boolean {
         const REMOVE_ROW: boolean = false;
         const KEEP_ROW: boolean = true;
         const rowNode = rowComp.getRowNode();
@@ -980,12 +978,27 @@ export class RowRenderer extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent | null, key: number, previousCell: GridCell, allowUserOverride: boolean) {
-        let nextCell = previousCell;
+    public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: GridCell, allowUserOverride: boolean) {
+        let nextCell: GridCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
-            nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
+
+            const cellComp = this.getComponentForCell(currentCell);
+            const colSpanningList = cellComp.getColSpanningList();
+
+            // if the current cell is spanning across multiple columns, we need to move
+            // our current position to be the last cell on the right before finding the
+            // the next target.
+            if (key === Constants.KEY_RIGHT && colSpanningList.length > 1) {
+                currentCell = new GridCell({
+                    rowIndex: currentCell.rowIndex,
+                    column: colSpanningList[colSpanningList.length - 1],
+                    floating: currentCell.floating
+                });
+            }
+
+            nextCell = this.cellNavigationService.getNextCellToFocus(key, currentCell);
 
             if (_.missing(nextCell)) { break; }
 
@@ -996,6 +1009,11 @@ export class RowRenderer extends BeanStub {
             if (!rowNode.group) { break; }
         }
 
+        if (nextCell) {
+            const cellComp = this.getComponentForCell(nextCell);
+            nextCell = cellComp.getGridCell();
+        }
+
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
@@ -1003,7 +1021,7 @@ export class RowRenderer extends BeanStub {
             if (_.exists(userFunc)) {
                 const params = {
                     key: key,
-                    previousCellDef: previousCell,
+                    previousCellDef: currentCell.getGridCellDef(),
                     nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
                     event: event
                 } as NavigateToNextCellParams;

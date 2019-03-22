@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
@@ -38,6 +38,7 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     getColumnGroupShow(): string | undefined;
     setupExpandable(): void;
     setExpandable(): void;
+    findChildren(): OriginalColumnGroupChild[];
     private onColumnVisibilityChanged;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

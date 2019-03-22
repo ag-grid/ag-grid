@@ -47,11 +47,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
         }
 
         const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        let bodyHeight = this.gridPanel.getBodyHeight();
-
-        if (this.scrollVisibleService.isHorizontalScrollShowing()) {
-            bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
-        }
+        const bodyHeight = this.gridPanel.getBodyHeight();
 
         if (bodyHeight > 0) {
             const newPageSize = Math.floor(bodyHeight / rowHeight);

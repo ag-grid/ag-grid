@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var stylesheet_1 = require("./stylesheet");
@@ -76,6 +76,9 @@ exports.convertLegacyBorder = function (type, weight) {
     // dashDotDot, mediumDashDotDot, slantDashDot
     var namedWeight = getWeightName(weight);
     var mappedName = mappedNames[type];
+    if (!type) {
+        return 'thin';
+    }
     if (type === 'Continuous') {
         return namedWeight;
     }

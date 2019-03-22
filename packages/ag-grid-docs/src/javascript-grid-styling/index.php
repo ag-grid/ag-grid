@@ -1129,8 +1129,8 @@ window.addEventListener("load", function() {
                         <td><code>border-radius</code></td>
                     </tr>
                     <tr>
-                        <td>tooltio-border-color</td>
-                        <td><code>darken($border-color, 10%)</code></td>
+                        <td>tooltip-border-color</td>
+                        <td><code>tooltip-foreground-color</code></td>
                     </tr>
                 </tbody>
             </table>
@@ -1369,10 +1369,6 @@ window.addEventListener("load", function() {
         </div>
     </div>
 </div>
-
-<p>
-    You can examine the full, up-to-date list of the Sass variables and their usage in <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">the source code of the themes</a>.
-</p>
 
 
 

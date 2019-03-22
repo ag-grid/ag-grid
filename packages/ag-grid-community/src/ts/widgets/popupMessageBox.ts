@@ -14,14 +14,13 @@ export class PopupMessageBox extends PopupWindow {
         this.message = message;
     }
 
-    @PostConstruct
     protected postConstruct() {
         super.postConstruct();
 
         this.setTitle(this.title);
 
         const messageBodyComp = new MessageBody();
-        this.addFeature(this.context, messageBodyComp);
+        this.addFeature(this.getContext(), messageBodyComp);
 
         messageBodyComp.setMessage(this.message);
         this.setBody(messageBodyComp.getGui());
@@ -36,13 +35,12 @@ class MessageBody extends Component {
         `<div>
             <div ref="eCenter"></div>
             <div ref="eButtons">
-                <button (click)="onBtOk">OK</button>
+                <button ref="eOk">OK</button>
             </div>
         </div>`;
 
-    @Autowired('context') private context: Context;
-
     @RefSelector('eCenter') private eCenter: HTMLElement;
+    @RefSelector('eOk') private eOk: HTMLElement;
 
     constructor() {
         super(MessageBody.TEMPLATE);
@@ -54,7 +52,7 @@ class MessageBody extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.instantiate(this.context);
+        this.addDestroyableEventListener(this.eOk, 'click', this.onBtOk.bind(this));
     }
 
     private onBtOk() {

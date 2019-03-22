@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,7 +17,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var popupService_1 = require("./popupService");
-var componentRecipes_1 = require("../components/framework/componentRecipes");
+var userComponentFactory_1 = require("../components/framework/userComponentFactory");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var utils_1 = require("../utils");
@@ -71,6 +72,7 @@ var TooltipManager = /** @class */ (function () {
             return;
         }
         this.lastHoveredComponent = targetCmp;
+        this.lastMouseEvent = e;
         this.showTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay, e);
     };
     TooltipManager.prototype.processMouseOut = function (e) {
@@ -115,20 +117,24 @@ var TooltipManager = /** @class */ (function () {
         var registeredComponent = this.registeredComponents[targetCmp.getCompId()];
         this.hideTooltip();
         var params = {
-            colDef: targetCmp.getComponentHolder(),
-            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
-            column: cell.getColumn && cell.getColumn(),
             api: this.gridApi,
             columnApi: this.columnApi,
+            colDef: targetCmp.getComponentHolder(),
+            column: cell.getColumn && cell.getColumn(),
+            context: this.gridOptionsWrapper.getContext(),
+            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
             value: targetCmp.getTooltipText()
         };
         this.createTooltipComponent(params, registeredComponent, e);
-        this.activeComponent = this.lastHoveredComponent;
-        this.hideTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
     };
     TooltipManager.prototype.createTooltipComponent = function (params, cmp, e) {
         var _this = this;
-        this.componentRecipes.newTooltipComponent(params).then(function (tooltipComp) {
+        this.userComponentFactory.newTooltipComponent(params).then(function (tooltipComp) {
+            // if the component was unregistered while creating
+            // the tooltip (async) we should return undefined here.
+            if (!cmp) {
+                return;
+            }
             cmp.tooltipComp = tooltipComp;
             var eGui = tooltipComp.getGui();
             var closeFnc = _this.popupService.addPopup(false, eGui, false);
@@ -144,6 +150,8 @@ var TooltipManager = /** @class */ (function () {
                 ePopup: eGui,
                 nudgeY: 18
             });
+            _this.activeComponent = _this.lastHoveredComponent;
+            _this.hideTimeoutId = window.setTimeout(_this.hideTooltip.bind(_this), _this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
         });
     };
     TooltipManager.prototype.hideTooltip = function () {
@@ -183,9 +191,9 @@ var TooltipManager = /** @class */ (function () {
         __metadata("design:type", popupService_1.PopupService)
     ], TooltipManager.prototype, "popupService", void 0);
     __decorate([
-        context_1.Autowired('componentRecipes'),
-        __metadata("design:type", componentRecipes_1.ComponentRecipes)
-    ], TooltipManager.prototype, "componentRecipes", void 0);
+        context_1.Autowired('userComponentFactory'),
+        __metadata("design:type", userComponentFactory_1.UserComponentFactory)
+    ], TooltipManager.prototype, "userComponentFactory", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
         __metadata("design:type", columnApi_1.ColumnApi)
@@ -194,6 +202,10 @@ var TooltipManager = /** @class */ (function () {
         context_1.Autowired('gridApi'),
         __metadata("design:type", gridApi_1.GridApi)
     ], TooltipManager.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], TooltipManager.prototype, "gridOptionsWrapper", void 0);
     TooltipManager = __decorate([
         context_1.Bean('tooltipManager')
     ], TooltipManager);

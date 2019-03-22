@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -30,134 +30,118 @@ var SideBarComp = /** @class */ (function (_super) {
     __extends(SideBarComp, _super);
     function SideBarComp() {
         var _this = _super.call(this, SideBarComp.TEMPLATE) || this;
-        _this.panelComps = {};
+        _this.toolPanelWrappers = [];
         return _this;
     }
-    /** @deprecated in v19, we can drop in v20 */
-    SideBarComp.prototype.getPreferredWidth = function () {
-        return this.getGui().clientWidth;
-    };
-    SideBarComp.prototype.registerGridComp = function (gridPanel) {
-        this.sideBarButtonsComp.registerGridComp(gridPanel);
-    };
     SideBarComp.prototype.postConstruct = function () {
+        this.sideBarButtonsComp.addEventListener(sideBarButtonsComp_1.SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
+        this.setSideBarDef();
+    };
+    SideBarComp.prototype.onToolPanelButtonClicked = function (event) {
+        var id = event.toolPanelId;
+        var openedItem = this.openedItem();
+        // if item was already open, we close it
+        if (openedItem === id) {
+            this.openToolPanel(undefined); // passing undefined closes
+        }
+        else {
+            this.openToolPanel(id);
+        }
+    };
+    SideBarComp.prototype.clearDownUi = function () {
+        this.sideBarButtonsComp.clearButtons();
+        this.destroyToolPanelWrappers();
+    };
+    SideBarComp.prototype.setSideBarDef = function () {
         var _this = this;
-        this.instantiate(this.context);
         var sideBar = this.gridOptionsWrapper.getSideBar();
-        if (sideBar == null) {
-            this.getGui().removeChild(this.sideBarButtonsComp.getGui());
-            return;
-        }
-        var allPromises = [];
-        if (sideBar.toolPanels) {
-            sideBar.toolPanels.forEach(function (toolPanel) {
-                if (toolPanel.id == null) {
-                    console.warn("ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id");
-                    return;
-                }
-                var componentPromise = _this.componentResolver.createAgGridComponent(toolPanel, toolPanel.toolPanelParams, 'toolPanel', null);
-                if (componentPromise == null) {
-                    console.warn("ag-grid: error processing tool panel component " + toolPanel.id + ". You need to specify either 'toolPanel' or 'toolPanelFramework'");
-                    return;
-                }
-                allPromises.push(componentPromise);
-                componentPromise.then(function (component) {
-                    var wrapper = _this.componentResolver.createInternalAgGridComponent(toolPanelWrapper_1.ToolPanelWrapper, {
-                        innerComp: component
-                    });
-                    _this.panelComps[toolPanel.id] = wrapper;
-                });
-            });
-        }
-        ag_grid_community_1.Promise.all(allPromises).then(function (done) {
-            Object.keys(_this.panelComps).forEach(function (key) {
-                var currentComp = _this.panelComps[key];
-                _this.getGui().appendChild(currentComp.getGui());
-                _this.sideBarButtonsComp.registerPanelComp(key, currentComp);
-                currentComp.setVisible(false);
-            });
-            if (ag_grid_community_1._.exists(_this.sideBarButtonsComp.defaultPanelKey) && _this.sideBarButtonsComp.defaultPanelKey) {
-                _this.sideBarButtonsComp.setPanelVisibility(_this.sideBarButtonsComp.defaultPanelKey, true);
+        var sideBarExists = !!sideBar && !!sideBar.toolPanels;
+        if (sideBarExists) {
+            var toolPanelDefs = sideBar.toolPanels;
+            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
+            this.setupToolPanels(toolPanelDefs);
+            if (!sideBar.hiddenByDefault) {
+                this.openToolPanel(sideBar.defaultToolPanel);
             }
+        }
+        var sideBarVisible = sideBarExists && !sideBar.hiddenByDefault;
+        setTimeout(function () { return _this.setVisible(sideBarVisible); }, 0);
+    };
+    SideBarComp.prototype.setupToolPanels = function (defs) {
+        var _this = this;
+        defs.forEach(function (def) {
+            if (def.id == null) {
+                console.warn("ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id");
+                return;
+            }
+            var wrapper = new toolPanelWrapper_1.ToolPanelWrapper();
+            _this.getContext().wireBean(wrapper);
+            wrapper.setToolPanelDef(def);
+            wrapper.setVisible(false);
+            _this.getGui().appendChild(wrapper.getGui());
+            _this.toolPanelWrappers.push(wrapper);
         });
     };
     SideBarComp.prototype.refresh = function () {
-        var _this = this;
-        Object.keys(this.panelComps).forEach(function (key) {
-            var currentComp = _this.panelComps[key];
-            currentComp.refresh();
-        });
-    };
-    SideBarComp.prototype.setVisible = function (show) {
-        if (ag_grid_community_1._.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []).length === 0) {
-            return;
-        }
-        _super.prototype.setVisible.call(this, show);
-        if (show) {
-            var keyOfTabToShow = this.getActiveToolPanelItem();
-            if (!keyOfTabToShow) {
-                return;
-            }
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : ag_grid_community_1._.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getSideBar().defaultToolPanel;
-            var tabToShow = keyOfTabToShow ? this.panelComps[keyOfTabToShow] : null;
-            if (!tabToShow) {
-                console.warn("ag-grid: can't set the visibility of the tool panel item [" + keyOfTabToShow + "] since it can't be found");
-                return;
-            }
-            tabToShow.setVisible(true);
-        }
+        this.toolPanelWrappers.forEach(function (wrapper) { return wrapper.refresh(); });
     };
     SideBarComp.prototype.openToolPanel = function (key) {
-        var currentlyOpenedKey = this.getActiveToolPanelItem();
+        var currentlyOpenedKey = this.openedItem();
         if (currentlyOpenedKey === key) {
             return;
         }
-        var tabToShow = this.panelComps[key];
-        if (!tabToShow) {
-            console.warn("ag-grid: invalid tab key [" + key + "] to open for the tool panel");
-            return;
+        this.toolPanelWrappers.forEach(function (wrapper) {
+            var show = key === wrapper.getToolPanelId();
+            wrapper.setVisible(show);
+        });
+        var newlyOpenedKey = this.openedItem();
+        var openToolPanelChanged = currentlyOpenedKey !== newlyOpenedKey;
+        if (openToolPanelChanged) {
+            this.sideBarButtonsComp.setActiveButton(key);
+            this.raiseToolPanelVisibleEvent(key);
         }
-        if (currentlyOpenedKey != null) {
-            this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
-        }
-        this.sideBarButtonsComp.setPanelVisibility(key, true);
+    };
+    SideBarComp.prototype.raiseToolPanelVisibleEvent = function (key) {
+        var event = {
+            type: ag_grid_community_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            source: key,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
     };
     SideBarComp.prototype.close = function () {
-        var currentlyOpenedKey = this.getActiveToolPanelItem();
-        if (!currentlyOpenedKey) {
-            return;
-        }
-        this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
+        this.openToolPanel(undefined);
     };
     SideBarComp.prototype.isToolPanelShowing = function () {
-        return this.getActiveToolPanelItem() != null;
+        return !!this.openedItem();
     };
-    SideBarComp.prototype.getActiveToolPanelItem = function () {
-        var _this = this;
+    SideBarComp.prototype.openedItem = function () {
         var activeToolPanel = null;
-        Object.keys(this.panelComps).forEach(function (key) {
-            var currentComp = _this.panelComps[key];
-            if (currentComp.isVisible()) {
-                activeToolPanel = key;
+        this.toolPanelWrappers.forEach(function (wrapper) {
+            if (wrapper.isVisible()) {
+                activeToolPanel = wrapper.getToolPanelId();
             }
         });
         return activeToolPanel;
     };
-    SideBarComp.prototype.openedItem = function () {
-        return this.getActiveToolPanelItem();
-    };
+    // get called after user sets new sideBarDef via the API
     SideBarComp.prototype.reset = function () {
-        this.sideBarButtonsComp.clear();
-        this.panelComps = {};
-        this.setTemplate(SideBarComp.TEMPLATE);
-        this.postConstruct();
+        this.clearDownUi();
+        this.setSideBarDef();
+    };
+    SideBarComp.prototype.destroyToolPanelWrappers = function () {
+        this.toolPanelWrappers.forEach(function (wrapper) {
+            ag_grid_community_1._.removeFromParent(wrapper.getGui());
+            wrapper.destroy();
+        });
+        this.toolPanelWrappers.length = 0;
+    };
+    SideBarComp.prototype.destroy = function () {
+        this.destroyToolPanelWrappers();
+        _super.prototype.destroy.call(this);
     };
     SideBarComp.TEMPLATE = "<div class=\"ag-side-bar\">\n              <ag-side-bar-buttons ref=\"sideBarButtons\">\n          </div>";
-    __decorate([
-        ag_grid_community_1.Autowired("context"),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], SideBarComp.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.Autowired("eventService"),
         __metadata("design:type", ag_grid_community_1.EventService)
@@ -166,10 +150,6 @@ var SideBarComp = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired("gridOptionsWrapper"),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], SideBarComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired("componentResolver"),
-        __metadata("design:type", ag_grid_community_1.ComponentResolver)
-    ], SideBarComp.prototype, "componentResolver", void 0);
     __decorate([
         ag_grid_community_1.RefSelector('sideBarButtons'),
         __metadata("design:type", sideBarButtonsComp_1.SideBarButtonsComp)

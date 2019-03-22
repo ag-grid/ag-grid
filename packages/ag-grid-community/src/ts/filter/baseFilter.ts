@@ -1,7 +1,7 @@
 import { Component } from "../widgets/component";
 import { IFilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
 import { QuerySelector } from "../widgets/componentAnnotations";
-import { Autowired, Context } from "../context/context";
+import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BaseFloatingFilterChange, FloatingFilterChange } from "./floatingFilter";
 import { INumberFilterParams, ITextFilterParams } from "./textFilter";
@@ -22,6 +22,7 @@ export interface CombinedFilter <T> {
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     loadingOoo:'Loading...',
+    empty: 'Choose One',
     equals:'Equals',
     notEqual:'Not equal',
     lessThan:'Less than',
@@ -37,7 +38,9 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     searchOoo: 'Search...',
     selectAll: 'Select All',
     applyFilter: 'Apply Filter',
-    clearFilter: 'Clear Filter'
+    clearFilter: 'Clear Filter',
+    andCondition: 'AND',
+    orCondition: 'OR'
 };
 
 /**
@@ -50,6 +53,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
  * get/setModel context wiring....
  */
 export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Component implements IFilterComp {
+    public static EMPTY = 'empty';
     public static EQUALS = 'equals';
     public static NOT_EQUAL = 'notEqual';
     public static LESS_THAN = 'lessThan';
@@ -86,9 +90,6 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     @QuerySelector('#clearButton')
     private eClearButton: HTMLElement;
 
-    @Autowired('context')
-    public context: Context;
-
     private eConditionWrapper: HTMLElement;
     conditionValue: string;
 
@@ -122,15 +123,13 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
         }
 
         if (this.filterParams.filterOptions && !this.defaultFilter) {
-            if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0) {
-                const firstFilterOption = this.filterParams.filterOptions[0];
-                if (typeof firstFilterOption === 'string') {
-                    this.defaultFilter = firstFilterOption;
-                } else if (firstFilterOption.displayKey) {
-                    this.defaultFilter = firstFilterOption.displayKey;
-                } else {
-                    console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
-                }
+            const firstFilterOption = this.filterParams.filterOptions[0];
+            if (typeof firstFilterOption === 'string') {
+                this.defaultFilter = firstFilterOption;
+            } else if (firstFilterOption.displayKey) {
+                this.defaultFilter = firstFilterOption.displayKey;
+            } else {
+                console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
             }
         }
 
@@ -157,8 +156,6 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
         const anyButtonVisible: boolean = this.applyActive || this.clearActive;
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
 
-        this.instantiate(this.context);
-
         this.initialiseFilterBodyUi(FilterConditionType.MAIN);
         this.refreshFilterBodyUi(FilterConditionType.MAIN);
     }
@@ -172,13 +169,13 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     public abstract isFilterActive(): boolean;
     public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
-    public abstract bodyTemplate(type:FilterConditionType): string;
-    public abstract resetState(): void;
-    public abstract serialize(type:FilterConditionType): M;
-    public abstract parse(toParse: M, type:FilterConditionType): void;
-    public abstract refreshFilterBodyUi(type:FilterConditionType): void;
-    public abstract initialiseFilterBodyUi(type:FilterConditionType): void;
-    public abstract isFilterConditionActive(type:FilterConditionType): boolean;
+    public abstract bodyTemplate(type: FilterConditionType): string;
+    public abstract resetState(resetConditionFilterOnly?: boolean): void;
+    public abstract serialize(type: FilterConditionType): M;
+    public abstract parse(toParse: M, type: FilterConditionType): void;
+    public abstract refreshFilterBodyUi(type: FilterConditionType): void;
+    public abstract initialiseFilterBodyUi(type: FilterConditionType): void;
+    public abstract isFilterConditionActive(type: FilterConditionType): boolean;
 
     public floatingFilter(from: string): void {
         if (from !== '') {
@@ -192,7 +189,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     public onNewRowsLoaded() {
         if (!this.newRowsActionKeep) {
-            this.resetState ();
+            this.resetState();
         }
     }
 
@@ -283,6 +280,11 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             });
             this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
         } else if (filterCondition && !this.isFilterActive()) {
+
+            // reset condition filter state
+            this.conditionValue = 'AND';
+            this.resetState(true);
+
             this.eFilterBodyWrapper.removeChild(this.eConditionWrapper);
             this.eConditionWrapper = null;
         } else {
@@ -353,8 +355,10 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     private createConditionTemplate(type:FilterConditionType): string {
         return `<div class="ag-filter-condition">
-            <input id="andId" type="radio" class="and" name="booleanLogic" value="AND" checked="checked" /><label style="display: inline" for="andId">AND</label>
-            <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline" for="orId">OR</label>
+            <input id="andId" type="radio" class="and" name="booleanLogic" value=${this.translate('AND')}
+                   checked="checked" /><label style="display: inline" for="andId">${this.translate('andCondition')}</label>
+            <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline"
+                   for="orId">${this.translate('orCondition')}</label>
             <div>${this.createConditionBody(type)}</div>
         </div>`;
     }
@@ -377,11 +381,18 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     }
 
     public getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number {
-        if (filterParams.applyButton && filterParams.debounceMs) {
-            console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+        if (this.applyActive) {
+            if (filterParams.debounceMs != null) {
+                console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+            }
             return 0;
         }
         return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
+    }
+
+    public doesFilterHaveHiddenInput(filterType: string) {
+        const customFilterOption = this.customFilterOptions[filterType];
+        return customFilterOption && customFilterOption.hideFilterInput;
     }
 }
 
@@ -463,6 +474,8 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
     public abstract getDefaultType(): string;
 
     private onFilterTypeChanged(type:FilterConditionType): void {
+        const prevSelectedFilter = this.selectedFilter;
+
         if (type === FilterConditionType.MAIN) {
             this.selectedFilter = this.eTypeSelector.value;
         } else {
@@ -470,15 +483,28 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
         }
         this.refreshFilterBodyUi(type);
 
-        // we check if filter is active, so that if user changes the type (eg from 'less than' to 'equals'),
-        // well this doesn't matter if the user has no value in the text field, so don't fire 'onFilterChanged'.
-        // this means we don't refresh the grid when the type changes if no value is present.
-        if (this.isFilterActive()) {
+        const prevSelectedFilterHadNoInput = this.doesFilterHaveHiddenInput(prevSelectedFilter);
+
+        // only fire 'onFilterChanged' event if filter is active, as in it contains a filter value, or if the previously
+        // selected filter didn't require a value, i.e. if custom filter has 'hideFilterInputField = true'
+        if (this.isFilterActive() || prevSelectedFilterHadNoInput) {
+
+            // reset when switching back to the empty filter to remove conditional filter
+            if (this.selectedFilter === BaseFilter.EMPTY) {
+                this.resetState();
+            }
+
             this.onFilterChanged();
         }
     }
 
     public isFilterActive(): boolean {
+
+        // the main selected filter is always active when there is no input field
+        if (this.doesFilterHaveHiddenInput(this.selectedFilter)) {
+            return true;
+        }
+
         const rawFilterValues = this.filterValues(FilterConditionType.MAIN);
         if (rawFilterValues && this.selectedFilter === BaseFilter.IN_RANGE) {
             const filterValueArray = (rawFilterValues as T[]);
@@ -539,6 +565,11 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         return (filterValue: T, gridValue: T): number => {
             if (gridValue == null) {
                 const nullValue = this.translateNull (type);
+
+                if (this.selectedFilter === BaseFilter.EMPTY) {
+                    return 0;
+                }
+
                 if (this.selectedFilter === BaseFilter.EQUALS) {
                     return nullValue ? 0 : 1;
                 }
@@ -596,17 +627,24 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         const rawFilterValues: T[] | T = this.filterValues(type);
         const filterValue: T = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
 
+        const customFilterOption = this.customFilterOptions[filter];
+        if (customFilterOption) {
+            // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
+            if (filterValue != null || customFilterOption.hideFilterInput) {
+                return customFilterOption.test(filterValue, cellValue);
+            }
+        }
+
         if (filterValue == null) {
             return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         }
 
-        const customFilterOption = this.customFilterOptions[filter];
-        if (customFilterOption) {
-            return customFilterOption.test(filterValue, cellValue);
-        }
-
         const comparator: Comparator<T> = this.nullComparator (filter as string);
         const compareResult = comparator(filterValue, cellValue);
+
+        if (filter === BaseFilter.EMPTY) {
+            return false;
+        }
 
         if (filter === BaseFilter.EQUALS) {
             return compareResult === 0;

@@ -1,14 +1,22 @@
 {
   "name": "ag-grid-community",
-  "version": "20.1.0",
+  "version": "20.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
-    "test": "exit 0",
     "lint": "tslint -p tsconfig.json src/ts/**/*.ts",
     "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "watchWebpack": "webpack --watch",
-    "build": "gulp release"
+    "build": "gulp release",
+    "test": "exit 0",
+    "test:ci": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
+    "e2e": "protractor protractor.conf.js",
+    "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
+    "webdriver-stop": "webdriver-manager shutdown",
+    "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')",
+    "update-webdriver": "webdriver-manager update --gecko false",
+    "start-server": "http-server .",
+    "ci": "start-server-and-test start-server http://localhost:8080 e2e"
   },
   "typings": "./main.d.ts",
   "repository": {
@@ -57,6 +65,7 @@
     "gulp-tsd": "^0.1.1",
     "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-uglify": "^3.0.1",
+    "http-server": "^0.11.1",
     "image-webpack-loader": "^4.5.0",
     "jasmine-core": "^3.3.0",
     "json-stable-stringify": "^1.0.1",
@@ -67,7 +76,9 @@
     "postcss-loader": "^3.0.0",
     "postcss-scss": "^2.0.0",
     "postcss-svgo": "^4.0.1",
+    "protractor": "^5.4.2",
     "sass-loader": "^7.1.0",
+    "start-server-and-test": "^1.7.11",
     "style-loader": "^0.23.1",
     "stylus": "^0.54.5",
     "svg-colorize-loader": "^0.1.2",

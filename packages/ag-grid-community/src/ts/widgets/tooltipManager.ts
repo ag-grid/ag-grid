@@ -1,7 +1,8 @@
 import { Autowired, Bean } from "../context/context";
 import { Component } from "./component";
 import { PopupService } from "./popupService";
-import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { CellComp } from "../rendering/cellComp";
@@ -24,9 +25,10 @@ interface RegisteredComponent {
 export class TooltipManager {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
     private readonly MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
@@ -83,6 +85,7 @@ export class TooltipManager {
         if (this.lastHoveredComponent === targetCmp) { return; }
 
         this.lastHoveredComponent = targetCmp;
+        this.lastMouseEvent = e;
         this.showTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay, e);
     }
 
@@ -134,21 +137,25 @@ export class TooltipManager {
         this.hideTooltip();
 
         const params: ITooltipParams = {
-            colDef: targetCmp.getComponentHolder(),
-            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
-            column: cell.getColumn && cell.getColumn(),
             api: this.gridApi,
             columnApi: this.columnApi,
+            colDef: targetCmp.getComponentHolder(),
+            column: cell.getColumn && cell.getColumn(),
+            context: this.gridOptionsWrapper.getContext(),
+            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
             value: targetCmp.getTooltipText()
         };
 
         this.createTooltipComponent(params, registeredComponent, e);
-        this.activeComponent = this.lastHoveredComponent;
-        this.hideTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
     }
 
     private createTooltipComponent(params: ITooltipParams, cmp: RegisteredComponent, e: MouseEvent): void {
-        this.componentRecipes.newTooltipComponent(params).then(tooltipComp => {
+        this.userComponentFactory.newTooltipComponent(params).then(tooltipComp => {
+            // if the component was unregistered while creating
+            // the tooltip (async) we should return undefined here.
+            if (!cmp) {
+                return;
+            }
             cmp.tooltipComp = tooltipComp;
             const eGui = tooltipComp.getGui();
 
@@ -166,6 +173,9 @@ export class TooltipManager {
                 ePopup: eGui,
                 nudgeY: 18
             });
+
+            this.activeComponent = this.lastHoveredComponent;
+            this.hideTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
         });
     }
 

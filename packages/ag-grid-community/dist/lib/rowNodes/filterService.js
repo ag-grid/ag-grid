@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,15 +26,15 @@ var FilterService = /** @class */ (function () {
     };
     FilterService.prototype.filter = function (changedPath) {
         var filterActive = this.filterManager.isAnyFilterPresent();
-        this.filterNode(filterActive, changedPath);
+        this.filterNodes(filterActive, changedPath);
     };
-    FilterService.prototype.filterNode = function (filterActive, changedPath) {
+    FilterService.prototype.filterNodes = function (filterActive, changedPath) {
         var _this = this;
-        var callback = function (rowNode) {
+        var filterCallback = function (rowNode, includeChildNodes) {
             // recursively get all children that are groups to also filter
             if (rowNode.hasChildren()) {
-                // result of filter for this node
-                if (filterActive) {
+                // result of filter for this node. when filtering tree data, includeChildNodes = true when parent passes
+                if (filterActive && !includeChildNodes) {
                     rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(function (childNode) {
                         // a group is included in the result if it has any children of it's own.
                         // by this stage, the child groups are already filtered
@@ -57,40 +57,32 @@ var FilterService = /** @class */ (function () {
                 rowNode.setAllChildrenCount(null);
             }
         };
-        changedPath.forEachChangedNodeDepthFirst(callback, true);
-        /*
-                // recursively get all children that are groups to also filter
-                if (rowNode.hasChildren()) {
-        
-                    rowNode.childrenAfterGroup.forEach(node => this.filterNode(node, filterActive));
-        
-                    // result of filter for this node
-                    if (filterActive) {
-                        rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(childNode => {
-                            // a group is included in the result if it has any children of it's own.
-                            // by this stage, the child groups are already filtered
-                            const passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
-        
-                            // both leaf level nodes and tree data nodes have data. these get added if
-                            // the data passes the filter
-                            const passBecauseDataPasses = childNode.data && this.filterManager.doesRowPassFilter(childNode);
-        
-                            // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
-        
-                            return passBecauseChildren || passBecauseDataPasses;
-                        });
-                    } else {
-                        // if not filtering, the result is the original list
-                        rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+        if (this.doingTreeDataFiltering()) {
+            var treeDataDepthFirstFilter_1 = function (rowNode, alreadyFoundInParent) {
+                // tree data filter traverses the hierarchy depth first and includes child nodes if parent passes
+                // filter, and parent nodes will be include if any children exist.
+                if (rowNode.childrenAfterGroup) {
+                    for (var i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+                        var childNode = rowNode.childrenAfterGroup[i];
+                        // first check if current node passes filter before invoking child nodes
+                        var foundInParent = alreadyFoundInParent || _this.filterManager.doesRowPassFilter(childNode);
+                        if (childNode.childrenAfterGroup) {
+                            treeDataDepthFirstFilter_1(rowNode.childrenAfterGroup[i], foundInParent);
+                        }
+                        else {
+                            filterCallback(childNode, foundInParent);
+                        }
                     }
-        
-                    this.setAllChildrenCount(rowNode);
-        
-                } else {
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-                    rowNode.setAllChildrenCount(null);
                 }
-        */
+                filterCallback(rowNode, alreadyFoundInParent);
+            };
+            var treeDataFilterCallback = function (rowNode) { return treeDataDepthFirstFilter_1(rowNode, false); };
+            changedPath.executeFromRootNode(treeDataFilterCallback);
+        }
+        else {
+            var defaultFilterCallback = function (rowNode) { return filterCallback(rowNode, false); };
+            changedPath.forEachChangedNodeDepthFirst(defaultFilterCallback, true);
+        }
     };
     FilterService.prototype.setAllChildrenCountTreeData = function (rowNode) {
         // for tree data, we include all children, groups and leafs
@@ -123,6 +115,9 @@ var FilterService = /** @class */ (function () {
         else {
             this.setAllChildrenCountGridGrouping(rowNode);
         }
+    };
+    FilterService.prototype.doingTreeDataFiltering = function () {
+        return this.gridOptionsWrapper.isTreeData() && !this.gridOptionsWrapper.isExcludeChildrenWhenTreeDataFiltering();
     };
     __decorate([
         context_1.Autowired('filterManager'),

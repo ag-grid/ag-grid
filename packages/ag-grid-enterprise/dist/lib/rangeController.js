@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -44,8 +44,9 @@ var RangeController = /** @class */ (function () {
             end: new ag_grid_community_1.GridCell(gridCellDef),
             columns: columns
         };
+        var suppressMultiRangeSelections = this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         // if not appending, then clear previous range selections
-        if (!appendRange || ag_grid_community_1._.missing(this.cellRanges)) {
+        if (suppressMultiRangeSelections || !appendRange || ag_grid_community_1._.missing(this.cellRanges)) {
             this.cellRanges = [];
         }
         if (this.cellRanges) {

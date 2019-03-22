@@ -1,37 +1,38 @@
 import { Autowired, Bean } from "../../context/context";
-import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./componentProvider";
+import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./userComponentRegistry";
 import { IComponent } from "../../interfaces/iComponent";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ComponentSource, ComponentType, ResolvedComponent } from "./componentResolver";
+import { ComponentClassDef, ComponentSource } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { _ } from "../../utils";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils {
+
     @Autowired("componentMetadataProvider")
     private componentMetadataProvider: ComponentMetadataProvider;
 
     public adaptFunction<A extends IComponent<any> & B, B>(
         propertyName: string,
         hardcodedJsFunction: AgGridComponentFunctionInput,
-        type: ComponentType,
+        componentFromFramework: boolean,
         source: ComponentSource
-    ): ResolvedComponent<A, B> {
+    ): ComponentClassDef<A, B> {
         if (hardcodedJsFunction == null) { return {
             component: null,
-            type: type,
+            componentFromFramework: componentFromFramework,
             source: source,
-            dynamicParams: null
+            paramsFromSelector: null
         };
         }
 
         const metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
         if (metadata && metadata.functionAdapter) {
             return {
-                type: type,
+                componentFromFramework: componentFromFramework,
                 component: metadata.functionAdapter(hardcodedJsFunction) as { new(): A },
                 source: source,
-                dynamicParams: null
+                paramsFromSelector: null
             };
         }
         return null;

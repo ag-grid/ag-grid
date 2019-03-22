@@ -9,6 +9,12 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">Column Menu</h1>
 
+    <p class="lead">
+        The column menu appears when you click on the menu icon in the column header. For ag-Grid Community,
+        only the filter is shown. For ag-Grid Enterprise, a tabbed component containing a 1) Menu, 2) Filter
+        and 3) Column Management panel is shown.
+    </p>
+
     <h2>Showing the Column Menu</h2>
 
     <p>
@@ -48,7 +54,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <code>getContextMenuItems()</code> takes the following object as parameters:
+        <code>getMainMenuItems()</code> takes the following object as parameters:
         <snippet>
 GetMainMenuItemsParams {
     column: Column, // the column that was clicked
@@ -60,7 +66,7 @@ GetMainMenuItemsParams {
     </p>
 
     <p>
-        The result of <code>getContextMenuItems()</code> should be a list with each item either a) a string
+        The result of <code>getMainMenuItems()</code> should be a list with each item either a) a string
         or b) a MenuItem description. Use 'string' to pick from built in menu items (listed below)
         and use MenuItem descriptions for your own menu items.
     </p>
@@ -96,13 +102,13 @@ MenuItem {
 
     <p>
         Reading the list above it can be understood that the list <code>defaultItems</code> changes on
-        different calls to the <code>getContextMenuItems()</code> callback, depending on, for example,
+        different calls to the <code>getMainMenuItems()</code> callback, depending on, for example,
         what columns are current used for grouping.
     </p>
 
     <p>
-        If you do not provide a <code>getContextMenuItems()</code> callback, then the rules alone decides what gets shown.
-        If you do provide a <code>getContextMenuItems()</code>, then the <code>defaultItems</code> will be filled using the
+        If you do not provide a <code>getMainMenuItems()</code> callback, then the rules alone decides what gets shown.
+        If you do provide a <code>getMainMenuItems()</code>, then the <code>defaultItems</code> will be filled using the
         rules above and you return from the callback whatever you want, using the <code>defaultItems</code> only
         if you want to.
     </p>

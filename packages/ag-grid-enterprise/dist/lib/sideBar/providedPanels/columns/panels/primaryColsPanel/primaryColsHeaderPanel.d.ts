@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Component } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export declare enum SELECTED_STATE {
@@ -7,7 +7,6 @@ export declare enum SELECTED_STATE {
     INDETERMINIATE = 2
 }
 export declare class PrimaryColsHeaderPanel extends Component {
-    private context;
     private gridOptionsWrapper;
     private columnController;
     private eventService;
@@ -24,9 +23,11 @@ export declare class PrimaryColsHeaderPanel extends Component {
     private onFilterTextChangedDebounced;
     private expandState;
     private selectState;
-    private props;
+    private params;
     private preConstruct;
+    postConstruct(): void;
     init(params: ToolPanelColumnCompParams): void;
+    private createCheckIcons;
     private showOrHideOptions;
     private addEventListeners;
     private onFilterTextChanged;

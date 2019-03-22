@@ -34,7 +34,6 @@ var gridOptions = {
     pinnedTopRowData: [],
     pinnedBottomRowData: [],
     enableCellChangeFlash: true,
-    refreshCells: true,
     onGridReady: function (params) {
         // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
         // the row animation look nice when you see all the rows

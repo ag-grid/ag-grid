@@ -66,7 +66,7 @@ columnDefinition = {
         <li><code>textFormatter:</code> If specified, formats the text before applying the mini filter compare logic, useful for
             instance if substituting accentuated characters or if you want to do case sensitive mini filtering. This
             matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a></li>
-        <li><code>debounceMs:</code> If specified, the filter will wait this amount of ms after the user stops selecting optoins in the
+        <li><code>debounceMs:</code> If specified, the filter will wait this amount of ms after the user stops selecting options in the
             mini filter before is triggered. If not specified there won't be any debounce.</li>
     </ul>
 

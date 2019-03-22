@@ -139,6 +139,13 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-data-update/#big-data-small-transactions">Big Data Small Transactions</a>
             </td>
         </tr>
+        <tr>
+            <th>excludeChildrenWhenTreeDataFiltering</th>
+            <td>
+                Set to true to override the default tree data filtering behaviour to instead exclude child nodes from
+                filter results. See <a href="../javascript-grid-tree-data/#tree-data-filtering">Tree Data Filtering</a>.
+            </td>
+        </tr>
         </table>
     <h2>Selection</h2>
 
@@ -374,7 +381,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th style="text-decoration: line-through">suppressRowVirtualisation</th>
             <td>There is no property suppressRowVirtualisation - if you want to do this, then set the rowBuffer
-            property to be very large, eg 9999. But be careful, lots of rendered ros will mean a very large amount
+            property to be very large, eg 9999. But be careful, lots of rendered rows will mean a very large amount
             of rendering in the DOM which will slow things down.</td>
         </tr>
         <tr>
@@ -492,6 +499,18 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>animateRows</th>
             <td>Set to true to enable <a href="../javascript-grid-animation/#row-animations">Row Animation</a>.</td>
+        </tr>
+        <tr>
+            <th>cellStyle</th>
+            <td>The style to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-style">Cell Style</a>.</td>
+        </tr>
+        <tr>
+            <th>cellClass</th>
+            <td>The class to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-class">Cell Class</a>.</td>
+        </tr>
+        <tr>
+            <th>cellClassRules</th>
+            <td>Rules which can be applied to include certain CSS classes. See <a href="../javascript-grid-cell-styles/#cell-class-rules">Cell Class Rules</a>.</td>
         </tr>
         <tr>
             <th>rowStyle</th>

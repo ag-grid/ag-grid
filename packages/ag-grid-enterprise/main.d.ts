@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 export { AggregationStage } from "./dist/lib/rowStages/aggregationStage";
 export { GroupStage } from "./dist/lib/rowStages/groupStage";
 export { SetFilter } from "./dist/lib/setFilter/setFilter";
@@ -29,8 +29,6 @@ export { MD5 } from "./dist/lib/license/md5";
 export { SetFilterListItem } from "./dist/lib/setFilter/setFilterListItem";
 export { DropZoneColumnComp } from "./dist/lib/sideBar/providedPanels/columns/dropZone/dropZoneColumnComp";
 export { ValuesDropZonePanel } from "./dist/lib/sideBar/providedPanels/columns/panels/valueDropZonePanel";
-export { PivotCompFactory } from "./dist/lib/pivotCompFactory";
-export { RowGroupCompFactory } from "./dist/lib/rowGroupCompFactory";
 export { ExcelCreator } from "./dist/lib/exporter/excelCreator";
 export { ExcelXmlFactory } from "./dist/lib/exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./dist/lib/exporter/excelXlsxFactory";

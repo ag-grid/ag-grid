@@ -34,7 +34,6 @@ var gridOptions = {
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
     suppressKeyboardEvent: function(params) {
-
         let KEY_A = 65;
         let KEY_C = 67;
         let KEY_V = 86;
@@ -58,14 +57,19 @@ var gridOptions = {
         var event = params.event;
         var key = event.which;
 
-        var keysToSuppress = [KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_TAB, KEY_LEFT, KEY_UP, KEY_RIGHT,
-            KEY_DOWN, KEY_F2, KEY_BACKSPACE, KEY_ESCAPE, KEY_SPACE, KEY_DELETE, KEY_PAGE_HOME, KEY_PAGE_END];
+        var keysToSuppress = [KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_TAB, KEY_F2, KEY_ESCAPE, KEY_PAGE_HOME, KEY_PAGE_END];
+
+        var editingKeys = [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_BACKSPACE, KEY_DELETE, KEY_SPACE];
 
         if (event.ctrlKey || event.metaKey) {
             keysToSuppress.push(KEY_A);
             keysToSuppress.push(KEY_V);
             keysToSuppress.push(KEY_C);
             keysToSuppress.push(KEY_D);
+        }
+
+        if (!params.editing) {
+            keysToSuppress = keysToSuppress.concat(editingKeys);
         }
 
         var suppress = keysToSuppress.indexOf(key) >= 0;

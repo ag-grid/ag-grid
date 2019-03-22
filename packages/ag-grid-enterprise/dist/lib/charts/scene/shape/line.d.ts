@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Shape } from "./shape";
 import { PixelSnapBias } from "../../canvas/canvas";
 export declare class Line extends Shape {
@@ -13,7 +13,7 @@ export declare class Line extends Shape {
         opacity: number;
         shadow: import("../dropShadow").DropShadow | null;
     } & {
-        strokeStyle: string;
+        lineWidth: number;
     };
     constructor();
     static create(x1: number, y1: number, x2: number, y2: number): Line;

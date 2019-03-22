@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -20,11 +20,10 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private gridOptionsWrapper;
     private expressionService;
     private eventService;
-    private cellRendererService;
     private valueFormatterService;
-    private context;
     private columnController;
     private mouseEventService;
+    private userComponentFactory;
     private eExpanded;
     private eContracted;
     private eCheckbox;
@@ -46,6 +45,8 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private addValueElement;
     private createFooterCell;
     private createGroupCell;
+    private useInnerRenderer;
+    private useFullWidth;
     private addChildCount;
     private updateChildCount;
     private createLeafCell;

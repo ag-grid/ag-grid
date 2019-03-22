@@ -1,3 +1,3 @@
-// ag-grid-react v20.1.0
+// ag-grid-react v20.2.0
 export { AgGridReact } from './agGridReact';
 export { AgGridColumn } from './agGridColumn';

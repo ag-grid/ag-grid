@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var hdpiCanvas_1 = require("../canvas/hdpiCanvas");
@@ -32,28 +32,28 @@ var Scene = /** @class */ (function () {
                 }
             }
         };
-        this._isDirty = false;
+        this._dirty = false;
         this._root = null;
         this._frameIndex = 0;
-        this._isRenderFrameIndex = false;
+        this._renderFrameIndex = false;
         this.render = function () {
             var ctx = _this.ctx;
             ctx.clearRect(0, 0, _this.width, _this.height);
             if (_this.root) {
                 ctx.save();
-                if (_this.root.isVisible) {
+                if (_this.root.visible) {
                     _this.root.render(ctx);
                 }
                 ctx.restore();
             }
             _this._frameIndex++;
-            if (_this.isRenderFrameIndex) {
+            if (_this.renderFrameIndex) {
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, 40, 15);
                 ctx.fillStyle = 'black';
                 ctx.fillText(_this.frameIndex.toString(), 0, 10);
             }
-            _this.isDirty = false;
+            _this.dirty = false;
         };
         this.hdpiCanvas = new hdpiCanvas_1.HdpiCanvas(this._width = width, this._height = height);
         this.ctx = this.hdpiCanvas.context;
@@ -77,7 +77,7 @@ var Scene = /** @class */ (function () {
         canvas.addEventListener('mousemove', this.onMouseMove);
     };
     Scene.prototype.pickNode = function (node, x, y) {
-        if (!node.isVisible || !node.isPointInNode(x, y)) {
+        if (!node.visible || !node.isPointInNode(x, y)) {
             return;
         }
         var children = node.children;
@@ -120,21 +120,21 @@ var Scene = /** @class */ (function () {
             if (this._width !== value[0] || this._height !== value[1]) {
                 this.hdpiCanvas.resize(value[0], value[1]);
                 this._width = value[0], this._height = value[1];
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Scene.prototype, "isDirty", {
+    Object.defineProperty(Scene.prototype, "dirty", {
         get: function () {
-            return this._isDirty;
+            return this._dirty;
         },
         set: function (dirty) {
-            if (dirty && !this._isDirty) {
+            if (dirty && !this._dirty) {
                 requestAnimationFrame(this.render);
             }
-            this._isDirty = dirty;
+            this._dirty = dirty;
         },
         enumerable: true,
         configurable: true
@@ -144,8 +144,9 @@ var Scene = /** @class */ (function () {
             return this._root;
         },
         set: function (node) {
-            if (node === this._root)
+            if (node === this._root) {
                 return;
+            }
             if (this._root) {
                 this._root._setScene(null);
             }
@@ -157,7 +158,7 @@ var Scene = /** @class */ (function () {
                 }
                 node._setScene(this);
             }
-            this.isDirty = true;
+            this.dirty = true;
         },
         enumerable: true,
         configurable: true
@@ -193,14 +194,14 @@ var Scene = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Scene.prototype, "isRenderFrameIndex", {
+    Object.defineProperty(Scene.prototype, "renderFrameIndex", {
         get: function () {
-            return this._isRenderFrameIndex;
+            return this._renderFrameIndex;
         },
         set: function (value) {
-            if (this._isRenderFrameIndex !== value) {
-                this._isRenderFrameIndex = value;
-                this.isDirty = true;
+            if (this._renderFrameIndex !== value) {
+                this._renderFrameIndex = value;
+                this.dirty = true;
             }
         },
         enumerable: true,

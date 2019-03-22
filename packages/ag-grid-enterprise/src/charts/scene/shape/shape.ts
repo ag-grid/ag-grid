@@ -17,7 +17,7 @@ export abstract class Shape extends Node {
     protected static defaultStyles = chainObjects({}, {
         fillStyle: 'black' as string | null,
         strokeStyle: null as string | null,
-        lineWidth: 1,
+        lineWidth: 0,
         lineDash: null as number[] | null,
         lineDashOffset: 0,
         lineCap: null as ShapeLineCap,
@@ -39,7 +39,7 @@ export abstract class Shape extends Node {
         // more then an order of magnitude faster.
         for (let i = 0, n = keys.length; i < n; i++) {
             const key = keys[i];
-            (this as any)[key] += styles[key];
+            (this as any)[key] = styles[key];
         }
     }
 
@@ -69,29 +69,39 @@ export abstract class Shape extends Node {
     set fillStyle(value: string | null) {
         if (this._fillStyle !== value) {
             this._fillStyle = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get fillStyle(): string | null {
         return this._fillStyle;
     }
 
+    /**
+     * Note that `strokeStyle = null` means invisible stroke,
+     * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.
+     * For example, a rect shape with an invisible stroke may not align to the pixel grid
+     * properly because the stroke affects the rules of alignment, and arc shapes forming
+     * a pie chart will have a gap between them if they have an invisible stroke, whereas
+     * there would be not gap if there was no stroke at all.
+     * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
+     * unless specific looks that is achieved by having an invisible stroke is desired.
+     */
     private _strokeStyle: string | null = Shape.defaultStyles.strokeStyle;
     set strokeStyle(value: string | null) {
         if (this._strokeStyle !== value) {
             this._strokeStyle = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get strokeStyle(): string | null {
         return this._strokeStyle;
     }
 
-    private _lineWidth: number = Shape.defaultStyles.lineWidth;
+    protected _lineWidth: number = Shape.defaultStyles.lineWidth;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get lineWidth(): number {
@@ -117,7 +127,7 @@ export abstract class Shape extends Node {
                 }
             }
             this._lineDash = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get lineDash(): number[] | null {
@@ -128,7 +138,7 @@ export abstract class Shape extends Node {
     set lineDashOffset(value: number) {
         if (this._lineDashOffset !== value) {
             this._lineDashOffset = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get lineDashOffset(): number {
@@ -139,7 +149,7 @@ export abstract class Shape extends Node {
     set lineCap(value: ShapeLineCap) {
         if (this._lineCap !== value) {
             this._lineCap = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get lineCap(): ShapeLineCap {
@@ -150,7 +160,7 @@ export abstract class Shape extends Node {
     set lineJoin(value: ShapeLineJoin) {
         if (this._lineJoin !== value) {
             this._lineJoin = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get lineJoin(): ShapeLineJoin {
@@ -162,7 +172,7 @@ export abstract class Shape extends Node {
         value = Math.min(1, Math.max(0, value));
         if (this._opacity !== value) {
             this._opacity = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get opacity(): number {
@@ -173,7 +183,7 @@ export abstract class Shape extends Node {
     set shadow(value: DropShadow | null) {
         if (this._shadow !== value) {
             this._shadow = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get shadow(): DropShadow | null {

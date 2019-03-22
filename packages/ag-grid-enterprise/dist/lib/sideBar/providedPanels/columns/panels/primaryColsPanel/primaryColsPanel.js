@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -36,49 +36,52 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
         return _this;
     }
     PrimaryColsPanel.prototype.init = function () {
-        this.instantiate(this.context);
+        this.primaryColsHeaderPanel.init(this.params);
+        this.primaryColsListPanel.init(this.params, this.allowDragging);
         var hideFilter = this.params.suppressColumnFilter;
         var hideSelect = this.params.suppressColumnSelectAll;
         var hideExpand = this.params.suppressColumnExpandAll;
         if (hideExpand && hideFilter && hideSelect) {
-            this.columnSelectHeaderComp.setVisible(false);
+            this.primaryColsHeaderPanel.setVisible(false);
         }
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
+        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
     };
     PrimaryColsPanel.prototype.onFilterChanged = function (event) {
-        this.columnContainerComp.setFilterText(event.filterText);
+        this.primaryColsListPanel.setFilterText(event.filterText);
     };
     PrimaryColsPanel.prototype.onSelectAll = function () {
-        this.columnContainerComp.doSetSelectedAll(true);
+        this.primaryColsListPanel.doSetSelectedAll(true);
     };
     PrimaryColsPanel.prototype.onUnselectAll = function () {
-        this.columnContainerComp.doSetSelectedAll(false);
+        this.primaryColsListPanel.doSetSelectedAll(false);
     };
     PrimaryColsPanel.prototype.onExpandAll = function () {
-        this.columnContainerComp.doSetExpandedAll(true);
+        this.primaryColsListPanel.doSetExpandedAll(true);
     };
     PrimaryColsPanel.prototype.onCollapseAll = function () {
-        this.columnContainerComp.doSetExpandedAll(false);
+        this.primaryColsListPanel.doSetExpandedAll(false);
     };
     PrimaryColsPanel.prototype.onGroupExpanded = function (event) {
-        this.columnSelectHeaderComp.setExpandState(event.state);
+        this.primaryColsHeaderPanel.setExpandState(event.state);
     };
-    PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select-panel\">\n            <ag-primary-cols-header\n                [params]=\"params\"\n                (expand-all)=\"onExpandAll\"\n                (collapse-all)=\"onCollapseAll\"\n                (select-all)=\"onSelectAll\"\n                (unselect-all)=\"onUnselectAll\"\n                (filter-changed)=\"onFilterChanged\"\n                ref=\"eColumnSelectHeader\">\n            </ag-primary-cols-header>\n            <ag-primary-cols-list\n                [allow-dragging]=\"allowDragging\"\n                [params]=\"params\"\n                (group-expanded)=\"onGroupExpanded\"\n                ref=\"eToolPanelColumnsContainerComp\">\n            </ag-primary-cols-list>\n        </div>";
-    __decorate([
-        main_1.Autowired('context'),
-        __metadata("design:type", main_1.Context)
-    ], PrimaryColsPanel.prototype, "context", void 0);
+    PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select-panel\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
     ], PrimaryColsPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.RefSelector('eColumnSelectHeader'),
+        main_1.RefSelector('primaryColsHeaderPanel'),
         __metadata("design:type", primaryColsHeaderPanel_1.PrimaryColsHeaderPanel)
-    ], PrimaryColsPanel.prototype, "columnSelectHeaderComp", void 0);
+    ], PrimaryColsPanel.prototype, "primaryColsHeaderPanel", void 0);
     __decorate([
-        main_1.RefSelector('eToolPanelColumnsContainerComp'),
+        main_1.RefSelector('primaryColsListPanel'),
         __metadata("design:type", primaryColsListPanel_1.PrimaryColsListPanel)
-    ], PrimaryColsPanel.prototype, "columnContainerComp", void 0);
+    ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,8 +27,11 @@ var ag_grid_community_1 = require("ag-grid-community");
 var HorizontalResizeComp = /** @class */ (function (_super) {
     __extends(HorizontalResizeComp, _super);
     function HorizontalResizeComp() {
-        return _super.call(this, "<div></div>") || this;
+        return _super.call(this, "<div class=\"ag-tool-panel-horizontal-resize\"></div>") || this;
     }
+    HorizontalResizeComp.prototype.setElementToResize = function (elementToResize) {
+        this.elementToResize = elementToResize;
+    };
     HorizontalResizeComp.prototype.postConstruct = function () {
         var finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
@@ -40,14 +43,12 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         this.addDestroyFunc(finishedWithResizeFunc);
     };
     HorizontalResizeComp.prototype.onResizeStart = function () {
-        this.startingWidth = this.props.componentToResize.getGui().offsetWidth;
+        this.startingWidth = this.elementToResize.offsetWidth;
     };
     HorizontalResizeComp.prototype.onResizing = function (delta) {
         var direction = this.gridOptionsWrapper.isEnableRtl() ? -1 : 1;
         var newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
-        // tslint:disable-next-line
-        this.gridOptionsWrapper.isEnableRtl;
-        this.props.componentToResize.getGui().style.width = newWidth + "px";
+        this.elementToResize.style.width = newWidth + "px";
     };
     __decorate([
         ag_grid_community_1.Autowired('horizontalResizeService'),

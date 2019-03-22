@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52,7 +52,7 @@ var StatusBar = /** @class */ (function (_super) {
                 columnApi: _this.gridOptionsWrapper.getColumnApi(),
                 context: _this.gridOptionsWrapper.getContext()
             };
-            var promise = _this.componentResolver.createAgGridComponent(componentConfig, params, 'statusPanel', componentConfig.statusPanelParams);
+            var promise = _this.userComponentFactory.newStatusPanelComponent(componentConfig, params);
             componentDetails.push({
                 // default to the component name if no key supplied
                 key: componentConfig.key || componentConfig.statusPanel,
@@ -60,20 +60,27 @@ var StatusBar = /** @class */ (function (_super) {
             });
         });
         ag_grid_community_1.Promise.all(componentDetails.map(function (details) { return details.promise; }))
-            .then(function (ignored) {
+            .then(function () {
             ag_grid_community_1._.forEach(componentDetails, function (componentDetail) {
                 componentDetail.promise.then(function (component) {
-                    _this.statusBarService.registerStatusPanel(componentDetail.key, component);
-                    ePanelComponent.appendChild(component.getGui());
+                    var destroyFunc = function () {
+                        if (component.destroy) {
+                            component.destroy();
+                        }
+                    };
+                    if (_this.isAlive()) {
+                        _this.statusBarService.registerStatusPanel(componentDetail.key, component);
+                        ePanelComponent.appendChild(component.getGui());
+                        _this.addDestroyFunc(destroyFunc);
+                    }
+                    else {
+                        destroyFunc();
+                    }
                 });
             });
         });
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n        <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n        <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n        <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n    </div>";
-    __decorate([
-        ag_grid_community_1.Autowired('context'),
-        __metadata("design:type", ag_grid_community_1.Context)
-    ], StatusBar.prototype, "context", void 0);
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
@@ -83,17 +90,9 @@ var StatusBar = /** @class */ (function (_super) {
         __metadata("design:type", Object)
     ], StatusBar.prototype, "gridOptions", void 0);
     __decorate([
-        ag_grid_community_1.Autowired('componentProvider'),
-        __metadata("design:type", ag_grid_community_1.ComponentProvider)
-    ], StatusBar.prototype, "componentProvider", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('componentResolver'),
-        __metadata("design:type", ag_grid_community_1.ComponentResolver)
-    ], StatusBar.prototype, "componentResolver", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('gridApi'),
-        __metadata("design:type", ag_grid_community_1.GridApi)
-    ], StatusBar.prototype, "gridApi", void 0);
+        ag_grid_community_1.Autowired('userComponentFactory'),
+        __metadata("design:type", ag_grid_community_1.UserComponentFactory)
+    ], StatusBar.prototype, "userComponentFactory", void 0);
     __decorate([
         ag_grid_community_1.Autowired('statusBarService'),
         __metadata("design:type", statusBarService_1.StatusBarService)

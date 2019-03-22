@@ -1,20 +1,21 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
+import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export declare type ColumnItem = BaseColumnItem & Component;
 export declare class PrimaryColsListPanel extends Component {
     private gridOptionsWrapper;
     private columnController;
     private globalEventService;
-    private context;
-    private props;
+    private allowDragging;
+    private params;
     private columnTree;
     private columnComps;
     private filterText;
     private expandGroupsByDefault;
     static TEMPLATE: string;
     constructor();
-    init(): void;
+    init(params: ToolPanelColumnCompParams, allowDragging: boolean): void;
     onColumnsChanged(): void;
     private destroyColumnComps;
     private recursivelyAddGroupComps;

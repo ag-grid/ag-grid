@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -32,9 +32,11 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     function PrimaryColsListPanel() {
         return _super.call(this, PrimaryColsListPanel.TEMPLATE) || this;
     }
-    PrimaryColsListPanel.prototype.init = function () {
+    PrimaryColsListPanel.prototype.init = function (params, allowDragging) {
+        this.params = params;
+        this.allowDragging = allowDragging;
         this.addDestroyableEventListener(this.globalEventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.expandGroupsByDefault = !this.props.params.contractColumnSelection;
+        this.expandGroupsByDefault = !this.params.contractColumnSelection;
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -60,8 +62,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             return;
         }
         if (!columnGroup.isPadding()) {
-            var renderedGroup = new toolPanelColumnGroupComp_1.ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.props.allowDragging, this.expandGroupsByDefault);
-            this.context.wireBean(renderedGroup);
+            var renderedGroup = new toolPanelColumnGroupComp_1.ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging, this.expandGroupsByDefault);
+            this.getContext().wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
             newDept = dept + 1;
@@ -117,10 +119,10 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (column.getColDef() && column.getColDef().suppressToolPanel) {
             return;
         }
-        var renderedColumn = new toolPanelColumnComp_1.ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
-        this.context.wireBean(renderedColumn);
-        this.getGui().appendChild(renderedColumn.getGui());
-        this.columnComps[column.getId()] = renderedColumn;
+        var columnComp = new toolPanelColumnComp_1.ToolPanelColumnComp(column, dept, this.allowDragging, groupsExist);
+        this.getContext().wireBean(columnComp);
+        this.getGui().appendChild(columnComp.getGui());
+        this.columnComps[column.getId()] = columnComp;
     };
     PrimaryColsListPanel.prototype.recursivelyAddComps = function (tree, dept, groupsExist) {
         var _this = this;
@@ -234,16 +236,6 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         main_1.Autowired('eventService'),
         __metadata("design:type", main_1.EventService)
     ], PrimaryColsListPanel.prototype, "globalEventService", void 0);
-    __decorate([
-        main_1.Autowired('context'),
-        __metadata("design:type", main_1.Context)
-    ], PrimaryColsListPanel.prototype, "context", void 0);
-    __decorate([
-        main_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], PrimaryColsListPanel.prototype, "init", null);
     return PrimaryColsListPanel;
 }(main_1.Component));
 exports.PrimaryColsListPanel = PrimaryColsListPanel;

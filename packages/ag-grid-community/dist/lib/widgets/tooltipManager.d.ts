@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
@@ -9,9 +9,10 @@ interface TooltipTarget extends Component {
 }
 export declare class TooltipManager {
     private popupService;
-    private componentRecipes;
+    private userComponentFactory;
     private columnApi;
     private gridApi;
+    private gridOptionsWrapper;
     private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT;
     private readonly MOUSEOUT_HIDE_TOOLTIP_TIMEOUT;
     private readonly MOUSEOVER_SHOW_TOOLTIP_TIMEOUT;

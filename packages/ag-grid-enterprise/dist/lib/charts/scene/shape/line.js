@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -58,7 +58,7 @@ var Line = /** @class */ (function (_super) {
         set: function (value) {
             if (this._x1 !== value) {
                 this._x1 = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -71,7 +71,7 @@ var Line = /** @class */ (function (_super) {
         set: function (value) {
             if (this._y1 !== value) {
                 this._y1 = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -84,7 +84,7 @@ var Line = /** @class */ (function (_super) {
         set: function (value) {
             if (this._x2 !== value) {
                 this._x2 = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -97,7 +97,7 @@ var Line = /** @class */ (function (_super) {
         set: function (value) {
             if (this._y2 !== value) {
                 this._y2 = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -110,7 +110,7 @@ var Line = /** @class */ (function (_super) {
         set: function (value) {
             if (this._pixelSnapBias !== value) {
                 this._pixelSnapBias = value;
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -123,7 +123,7 @@ var Line = /** @class */ (function (_super) {
         return false;
     };
     Line.prototype.render = function (ctx) {
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -150,10 +150,10 @@ var Line = /** @class */ (function (_super) {
         if (this.strokeStyle) {
             ctx.stroke();
         }
-        this.isDirty = false;
+        this.dirty = false;
     };
     Line.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
-        strokeStyle: 'black'
+        lineWidth: 1
     });
     return Line;
 }(shape_1.Shape));

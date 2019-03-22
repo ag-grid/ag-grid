@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.1.0
+// Type definitions for ag-grid-community v20.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SerializedFilter } from "../interfaces/iFilter";
@@ -10,17 +10,17 @@ export interface SerializedNumberFilter extends SerializedFilter {
     type: string;
 }
 export declare class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, SerializedNumberFilter> {
+    static LESS_THAN: string;
+    private eFilterTextField;
+    private eFilterTextConditionField;
+    private eFilterToTextField;
+    private eFilterToConditionText;
     private eNumberToPanel;
     private eNumberToConditionPanel;
     filterNumber: any;
     filterNumberTo: any;
     filterNumberCondition: any;
     filterNumberConditionTo: any;
-    private eFilterToTextField;
-    private eFilterToConditionText;
-    private eFilterTextField;
-    private eFilterTextConditionField;
-    static LESS_THAN: string;
     modelFromFloatingFilter(from: string): SerializedNumberFilter;
     getApplicableFilterTypes(): string[];
     bodyTemplate(type: FilterConditionType): string;
@@ -38,6 +38,6 @@ export declare class NumberFilter extends ScalarBaseFilter<number, INumberFilter
     serialize(type: FilterConditionType): SerializedNumberFilter;
     parse(model: SerializedNumberFilter, type: FilterConditionType): void;
     refreshFilterBodyUi(type: FilterConditionType): void;
-    resetState(): void;
+    resetState(resetConditionFilterOnly?: boolean): void;
     setType(filterType: string, type: FilterConditionType): void;
 }

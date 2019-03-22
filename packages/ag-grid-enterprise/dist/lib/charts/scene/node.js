@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var matrix_1 = require("./matrix");
@@ -8,7 +8,14 @@ var matrix_1 = require("./matrix");
  */
 var Node = /** @class */ (function () {
     function Node() {
+        /**
+         * Unique node ID in the form `ClassName-NaturalNumber`.
+         */
         this.id = this.createId();
+        /**
+         * Some number to identify this node, typically within a `Group` node.
+         * Usually this will be some enum value used as a selector.
+         */
         this.tag = NaN;
         this._scene = null;
         this._parent = null;
@@ -20,7 +27,7 @@ var Node = /** @class */ (function () {
         this.matrix = new matrix_1.Matrix();
         this.inverseMatrix = new matrix_1.Matrix();
         // TODO: should this be `true` by default as well?
-        this._isDirtyTransform = false;
+        this._dirtyTransform = false;
         this._scalingX = 1;
         this._scalingY = 1;
         /**
@@ -43,23 +50,34 @@ var Node = /** @class */ (function () {
         this._translationY = 0;
         /**
          * Each time a property of the node that effects how it renders changes
-         * the `isDirty` property of the node should be set to `true`. The change
-         * to the `isDirty` property of the node will propagate up to its parents
+         * the `dirty` property of the node should be set to `true`. The change
+         * to the `dirty` property of the node will propagate up to its parents
          * and eventually to the scene, at which point an animation frame callback
-         * will be scheduled to rerender the scene and its nodes and reset the `isDirty`
-         * flags of all nodes and the {@link Scene._isDirty | Scene} back to `false`.
+         * will be scheduled to rerender the scene and its nodes and reset the `dirty`
+         * flags of all nodes and the {@link Scene._dirty | Scene} back to `false`.
          * Since changes to node properties are not rendered immediately, it's possible
          * to change as many properties on as many nodes as needed and the rendering
          * will still only happen once in the next animation frame callback.
          * The animation frame callback is only scheduled if it hasn't been already.
          */
-        this._isDirty = true;
-        this._isVisible = true;
+        this._dirty = true;
+        this._visible = true;
     }
+    // TODO: what does ag-Grid use for component identification?
     // Uniquely identify nodes (to check for duplicates, for example).
     Node.prototype.createId = function () {
         var constructor = this.constructor;
-        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        var name = constructor.name;
+        if (!name) { // IE11
+            var match = constructor.toString().match(Node.fnNameRegex);
+            if (match) {
+                constructor.name = name = match[1];
+            }
+            else {
+                throw new Error("Couldn't get the constructor's name: " + constructor);
+            }
+        }
+        return name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     ;
     Node.isNode = function (node) {
@@ -149,7 +167,7 @@ var Node = /** @class */ (function () {
             node._setParent(this);
             node._setScene(this.scene);
         }
-        this.isDirty = true;
+        this.dirty = true;
     };
     Node.prototype.appendChild = function (node) {
         if (node.parent) {
@@ -166,7 +184,7 @@ var Node = /** @class */ (function () {
         this.childSet[node.id] = true;
         node._setParent(this);
         node._setScene(this.scene);
-        this.isDirty = true;
+        this.dirty = true;
         return node;
     };
     Node.prototype.removeChild = function (node) {
@@ -177,7 +195,7 @@ var Node = /** @class */ (function () {
                 delete this.childSet[node.id];
                 node._setParent(null);
                 node._setScene(null);
-                this.isDirty = true;
+                this.dirty = true;
                 return node;
             }
         }
@@ -208,7 +226,7 @@ var Node = /** @class */ (function () {
                 throw new Error(nextNode + " has " + parent + " as the parent, "
                     + "but is not in its list of children.");
             }
-            this.isDirty = true;
+            this.dirty = true;
         }
         else {
             this.append(node);
@@ -231,16 +249,16 @@ var Node = /** @class */ (function () {
         }
         return matrix.invertSelf().transformPoint(x, y);
     };
-    Object.defineProperty(Node.prototype, "isDirtyTransform", {
+    Object.defineProperty(Node.prototype, "dirtyTransform", {
         get: function () {
-            return this._isDirtyTransform;
+            return this._dirtyTransform;
         },
         set: function (value) {
-            this._isDirtyTransform = value;
+            this._dirtyTransform = value;
             // TODO: replace this with simply `this.dirty = true`,
             //       see `set dirty` method.
             if (value) {
-                this.isDirty = true;
+                this.dirty = true;
             }
         },
         enumerable: true,
@@ -253,7 +271,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._scalingX !== value) {
                 this._scalingX = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -266,7 +284,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._scalingY !== value) {
                 this._scalingY = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -279,7 +297,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._scalingCenterX !== value) {
                 this._scalingCenterX = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -292,7 +310,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._scalingCenterY !== value) {
                 this._scalingCenterY = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -305,7 +323,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._rotationCenterX !== value) {
                 this._rotationCenterX = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -318,7 +336,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._rotationCenterY !== value) {
                 this._rotationCenterY = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -331,7 +349,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._rotation !== value) {
                 this._rotation = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -366,7 +384,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._translationX !== value) {
                 this._translationX = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -379,7 +397,7 @@ var Node = /** @class */ (function () {
         set: function (value) {
             if (this._translationY !== value) {
                 this._translationY = value;
-                this.isDirtyTransform = true;
+                this.dirtyTransform = true;
             }
         },
         enumerable: true,
@@ -450,7 +468,7 @@ var Node = /** @class */ (function () {
         // Translation after steps 1-4 above:
         var tx4 = scx * (1 - sx) - rcx;
         var ty4 = scy * (1 - sy) - rcy;
-        this.isDirtyTransform = false;
+        this.dirtyTransform = false;
         this.matrix.setElements([
             cos * sx, sin * sx,
             -sin * sy, cos * sy,
@@ -458,41 +476,42 @@ var Node = /** @class */ (function () {
             sin * tx4 + cos * ty4 + rcy + ty
         ]).inverseTo(this.inverseMatrix);
     };
-    Object.defineProperty(Node.prototype, "isDirty", {
+    Object.defineProperty(Node.prototype, "dirty", {
         get: function () {
-            return this._isDirty;
+            return this._dirty;
         },
         set: function (value) {
-            // TODO: check if we are already dirty (e.g. if (this._isDirty !== value))
+            // TODO: check if we are already dirty (e.g. if (this._dirty !== value))
             //       if we are, then all parents and the scene have been
             //       notified already, and we are doing redundant work
             //       (but test if this is indeed the case)
-            this._isDirty = value;
+            this._dirty = value;
             if (value) {
                 if (this.parent) {
-                    this.parent.isDirty = true;
+                    this.parent.dirty = true;
                 }
                 else if (this.scene) {
-                    this.scene.isDirty = true;
+                    this.scene.dirty = true;
                 }
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Node.prototype, "isVisible", {
+    Object.defineProperty(Node.prototype, "visible", {
         get: function () {
-            return this._isVisible;
+            return this._visible;
         },
         set: function (value) {
-            if (this._isVisible !== value) {
-                this._isVisible = value;
-                this.isDirty = true;
+            if (this._visible !== value) {
+                this._visible = value;
+                this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
+    Node.fnNameRegex = /function (\w+)\(/;
     Node.MAX_SAFE_INTEGER = Math.pow(2, 53) - 1; // Number.MAX_SAFE_INTEGER
     return Node;
 }());

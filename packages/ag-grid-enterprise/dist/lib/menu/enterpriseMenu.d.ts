@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { AgEvent, BeanStub, Column, IMenuFactory } from "ag-grid-community";
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -24,7 +24,6 @@ export declare class EnterpriseMenu extends BeanStub {
     static MENU_ITEM_SEPARATOR: string;
     private columnController;
     private filterManager;
-    private context;
     private gridApi;
     private gridOptionsWrapper;
     private eventService;

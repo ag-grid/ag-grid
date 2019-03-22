@@ -124,7 +124,7 @@ export class MenuItemMapper {
                 }
                 if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
                     exportSubMenuItems.push('excelExport');
-                    exportSubMenuItems.push('excelXMLExport');
+                    exportSubMenuItems.push('excelXmlExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
@@ -140,8 +140,8 @@ export class MenuItemMapper {
                     exportMode: 'xlsx'
                 })
             };
-            case 'excelXMLExport': return {
-                name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
+            case 'excelXmlExport': return {
+                name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)'),
                 action: () => this.gridApi.exportDataAsExcel({
                     exportMode: 'xml'
                 })

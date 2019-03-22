@@ -18,7 +18,7 @@ import {
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { GridApi } from "../../gridApi";
-import { ComponentRecipes } from "../../components/framework/componentRecipes";
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { _ } from "../../utils";
@@ -34,8 +34,7 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('context') private context: Context;
-    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('beans') private beans: Beans;
@@ -80,7 +79,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
 
-        this.addFeature(this.context, new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.addFeature(this.getContext(), new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
 
         const setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
@@ -142,22 +141,36 @@ export class HeaderGroupWrapperComp extends Component {
         };
 
         if (!displayName) {
-            const leafCols = this.columnGroup.getLeafColumns();
-            displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+            let columnGroup = this.columnGroup;
+            const leafCols = columnGroup.getLeafColumns();
+
+            // find the top most column group that represents the same columns. so if we are dragging a group, we also
+            // want to visually show the parent groups dragging for the same column set. for example imaging 5 levels
+            // of grouping, with each group only containing the next group, and the last group containing three columns,
+            // then when you move any group (even the lowest level group) you are in-fact moving all the groups, as all
+            // the groups represent the same column set.
+            while (columnGroup.getParent() && columnGroup.getParent().getLeafColumns().length === leafCols.length) {
+                columnGroup = columnGroup.getParent();
+            }
+
+            const colGroupDef = columnGroup.getColGroupDef();
+            if (colGroupDef) {
+                displayName = colGroupDef.headerName;
+            }
+
+            if (!displayName) {
+                displayName = leafCols ? this.columnController.getDisplayNameForColumn(leafCols[0], 'header', true) : '';
+            }
         }
 
         const callback = this.afterHeaderCompCreated.bind(this, displayName);
 
-        this.componentRecipes.newHeaderGroupComponent(params).then(callback);
+        this.userComponentFactory.newHeaderGroupComponent(params).then(callback);
     }
 
     private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {
         this.appendChild(headerGroupComp);
         this.setupMove(headerGroupComp.getGui(), displayName);
-
-        if (headerGroupComp.destroy) {
-            this.addDestroyFunc(headerGroupComp.destroy.bind(headerGroupComp));
-        }
     }
 
     private addClasses(): void {

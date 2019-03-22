@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 import { Component, IToolPanelComp, IToolPanelParams } from "ag-grid-community/main";
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
@@ -13,7 +13,6 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
 }
 export declare class ColumnToolPanel extends Component implements IToolPanelComp {
     private static TEMPLATE;
-    private context;
     private gridOptionsWrapper;
     private gridApi;
     private eventService;

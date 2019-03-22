@@ -47,10 +47,10 @@ gridOptions.rowHeight = 50;</snippet>
 
     <snippet>
 gridOptions.getRowHeight = function(params) {
-    if (params.node.floating) {
-        return 25;
-    } else {
+    if (params.node.group) {
         return 50;
+    } else {
+        return 20;
     }
 }</snippet>
 

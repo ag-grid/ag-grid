@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,9 +48,9 @@ var AgCheckbox = /** @class */ (function (_super) {
     AgCheckbox.prototype.postConstruct = function () {
         this.loadIcons();
         this.updateIcons();
-        if (this.props.label) {
-            this.eLabel.innerText = this.props.label;
-        }
+    };
+    AgCheckbox.prototype.setLabel = function (label) {
+        this.eLabel.innerText = label;
     };
     AgCheckbox.prototype.loadIcons = function () {
         utils_1._.clearElement(this.eChecked);

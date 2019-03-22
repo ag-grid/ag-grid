@@ -25,7 +25,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
     excelFactory: ExcelXmlFactory | ExcelXlsxFactory;
     baseExcelStyles: ExcelStyle[];
-    styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[];
+    styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
     suppressTextAsCDATA: boolean;
     rowHeight?: number;
     headerRowHeight?: number;
@@ -118,7 +118,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
     }
 
-    onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node?: RowNode) => void, height?: number): RowAccumulator {
+    onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node: RowNode) => void, height?: number): RowAccumulator {
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
@@ -129,9 +129,9 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         };
     }
 
-    onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
+    onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         const that = this;
-        return (column: Column, index: number, node?: RowNode) => {
+        return (column: Column, index: number, node: RowNode) => {
             const nameForCol = this.extractHeaderValue(column);
             const styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
             currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 'String', nameForCol));

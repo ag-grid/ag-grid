@@ -412,9 +412,9 @@ on the combination of filter type and your <code>columnDef.filterParams.nullComp
 <h2>Adding Custom Filter Options</h2>
 
 <p>
-    For applications that have bespoke filtering requirements, it is also possible to can add new custom filtering
-    options to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be
-    included alongside the built in 'Not Equal' option.
+    For applications that have bespoke filtering requirements, it is also possible to add new custom filtering options
+    to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be included
+    alongside the built in 'Not Equal' option.
 </p>
 
 <p>
@@ -427,6 +427,7 @@ export interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
+    hideFilterInput?: boolean;
 }
 </snippet>
 
@@ -442,7 +443,11 @@ export interface IFilterOptionDef {
 </p>
 
 <p>
-    Custom <code>FilterOptionDef's</code> can be supplied alongside built-in filter option <code>string</code> keys
+    It is also possible to hide the filter input field by enabling the optional property <code>hideFilterInput</code>.
+</p>
+
+<p>
+    Custom <code>FilterOptionDef's</code> can be supplied alongside the built-in filter option <code>string</code> keys
     as shown below:
 </p>
 
@@ -457,7 +462,7 @@ export interface IFilterOptionDef {
                 displayKey: 'lessThanWithNulls',
                 displayName: 'Less Than with Nulls',
                 test: function(filterValue, cellValue) {
-                    return dataValue == null || dataValue < filterValue;
+                    return cellValue == null || cellValue < filterValue;
                 }
             },
             'greaterThan',
@@ -465,7 +470,7 @@ export interface IFilterOptionDef {
                 displayKey: 'greaterThanWithNulls',
                 displayName: 'Greater Than with Nulls',
                 test: function(filterValue, cellValue) {
-                    return dataValue == null || dataValue > filterValue;
+                    return cellValue == null || cellValue > filterValue;
                 }
             }
         ]
@@ -474,11 +479,12 @@ export interface IFilterOptionDef {
 </snippet>
 
 <p>
-    The example demonstrates several custom filter options:
+    The following example demonstrates several custom filter options:
 </p>
 <ul class="content">
-    <li>The 'Age' column contains two custom filter options <code>lessThanWithNulls</code> and
-        <code>greaterThanWithNulls</code> which also return nulls.</li>
+    <li>The 'Age' column contains two custom filter options <code>evenNumbers</code>, <code>oddNumbers</code> and
+        <code>blanks</code>. It also has uses the build in 'empty' filter along with <code>suppressAndOrCondition=true</code>.
+    </li>
     <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
         is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
     <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>

@@ -20,8 +20,8 @@ export { GroupInstanceIdCreator } from "./columnController/groupInstanceIdCreato
 export { ComponentUtil } from "./components/componentUtil";
 
 export { ColDefUtil } from "./components/colDefUtil";
-export { ComponentProvider } from "./components/framework/componentProvider";
-export { ComponentResolver } from "./components/framework/componentResolver";
+export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
+export { UserComponentFactory } from "./components/framework/userComponentFactory";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./components/agGridWebComponent";
 
@@ -37,7 +37,7 @@ export {
     Qualifier,
     PreDestroy
 } from "./context/context";
-export {QuerySelector, Listener, RefSelector} from "./widgets/componentAnnotations";
+export { QuerySelector, Listener, RefSelector } from "./widgets/componentAnnotations";
 
 // excel
 export {
@@ -148,9 +148,7 @@ export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
-export { CellEditorFactory } from "./rendering/cellEditorFactory";
 export { CellRendererFactory } from "./rendering/cellRendererFactory";
-export { CellRendererService } from "./rendering/cellRendererService";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
 export { RowComp } from "./rendering/rowComp";
@@ -166,7 +164,7 @@ export { SortStage } from "./rowModels/clientSide/sortStage";
 
 // row models
 export { PinnedRowModel } from "./rowModels/pinnedRowModel";
-export { ClientSideRowModel , RowNodeTransaction} from "./rowModels/clientSide/clientSideRowModel";
+export { ClientSideRowModel , RowNodeTransaction } from "./rowModels/clientSide/clientSideRowModel";
 export { ChangedPath } from "./rowModels/clientSide/changedPath";
 export { ClientSideNodeManager } from "./rowModels/clientSide/clientSideNodeManager";
 export { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
@@ -205,7 +203,7 @@ export { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeCont
 export { IRangeController } from "./interfaces/iRangeController";
 
 // exporter
-export {CsvCreator, BaseCreator} from "./exporter/csvCreator";
+export { CsvCreator, BaseCreator } from "./exporter/csvCreator";
 export { Downloader } from "./exporter/downloader";
 export { XmlFactory } from "./exporter/xmlFactory";
 export { BaseGridSerializingSession, GridSerializer, GridSerializingSession, GridSerializingParams } from "./exporter/gridSerializer";
@@ -219,7 +217,7 @@ export { BaseFrameworkFactory } from "./baseFrameworkFactory";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants";
-export { Grid , GridParams} from "./grid";
+export { Grid , GridParams } from "./grid";
 export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusedCellController } from "./focusedCellController";
@@ -238,14 +236,14 @@ export { ExpressionService } from "./valueService/expressionService";
 export { LoggerFactory } from "./logger";
 
 // uncatalogued
-export { IRowModel, RowBounds} from "./interfaces/iRowModel";
-export { IAggFuncService} from "./interfaces/iAggFuncService";
-export { IClipboardService} from "./interfaces/iClipboardService";
-export { IExcelCreator} from "./interfaces/iExcelCreator";
-export { IMenuFactory} from "./interfaces/iMenuFactory";
-export { IAggFunc, ColGroupDef} from "./entities/colDef";
-export { GridCellDef} from "./entities/gridCell";
-export { ColDef} from "./entities/colDef";
+export { IRowModel, RowBounds } from "./interfaces/iRowModel";
+export { IAggFuncService } from "./interfaces/iAggFuncService";
+export { IClipboardService } from "./interfaces/iClipboardService";
+export { IExcelCreator } from "./interfaces/iExcelCreator";
+export { IMenuFactory } from "./interfaces/iMenuFactory";
+export { IAggFunc, ColGroupDef } from "./entities/colDef";
+export { GridCellDef } from "./entities/gridCell";
+export { ColDef } from "./entities/colDef";
 export {
     ValueSetterParams,
     ValueParserParams,
@@ -276,9 +274,8 @@ export {
     PostProcessPopupParams
 } from "./entities/gridOptions";
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
-export { IViewportDatasource , IViewportDatasourceParams} from "./interfaces/iViewportDatasource";
+export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
-export { ICompFactory } from "./interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
 export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, SerializedFilter } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";

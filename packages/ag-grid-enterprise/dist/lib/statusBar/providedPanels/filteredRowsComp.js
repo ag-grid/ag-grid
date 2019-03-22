@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,11 +28,11 @@ var nameValueComp_1 = require("./nameValueComp");
 var FilteredRowsComp = /** @class */ (function (_super) {
     __extends(FilteredRowsComp, _super);
     function FilteredRowsComp() {
-        return _super.call(this, 'filteredRowCount', 'Filtered') || this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     FilteredRowsComp.prototype.postConstruct = function () {
-        _super.prototype.postConstruct.call(this);
-        // this component is only really useful with client side rowmodel
+        this.setLabel('filteredRows', 'Filtered');
+        // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn("ag-Grid: agFilteredRowCountComponent should only be used with the client side row model.");
             return;

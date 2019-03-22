@@ -46,7 +46,7 @@ export class ValueFormatterService {
 
             result = this.expressionService.evaluate(formatter, params);
         } else if (colDef.refData) {
-            return colDef.refData[value];
+            return colDef.refData[value] || '';
         }
 
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)

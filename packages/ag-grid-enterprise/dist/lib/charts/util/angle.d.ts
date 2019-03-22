@@ -1,9 +1,10 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 /**
  * Normalize the given angle to be in the [0, 2π) interval.
  * @param radians Angle in radians.
  */
 export declare function normalizeAngle360(radians: number): number;
+export declare function normalizeAngle360Inclusive(radians: number): number;
 /**
  * Normalize the given angle to be in the [-π, π) interval.
  * @param radians Angle in radians.

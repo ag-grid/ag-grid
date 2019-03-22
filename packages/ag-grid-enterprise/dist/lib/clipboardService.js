@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64,7 +64,7 @@ var ClipboardService = /** @class */ (function () {
         // true if clipboard data can be evenly pasted into range, otherwise false
         var abortRepeatingPasteIntoRows = this.rangeSize() % clipboardData.length != 0;
         var indexOffset = 0, dataRowIndex = 0;
-        var rowCallback = function (currentRow, rowNode, columns, index) {
+        var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
             var atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {
                 if (abortRepeatingPasteIntoRows) {
@@ -147,7 +147,7 @@ var ClipboardService = /** @class */ (function () {
         var firstRowValues = [];
         var updatedRowNodes = [];
         var updatedColumnIds = [];
-        var rowCallback = function (currentRow, rowNode, columns) {
+        var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues.length) {
                 // two reasons for looping through columns
@@ -242,7 +242,7 @@ var ClipboardService = /** @class */ (function () {
     ClipboardService.prototype.singleCellRange = function (parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds) {
         var _this = this;
         var value = parsedData[0][0];
-        var rowCallback = function (gridRow, rowNode, columns) {
+        var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
             updatedRowNodes.push(rowNode);
             columns.forEach(function (column) {
                 if (column.isCellEditable(rowNode)) {
@@ -363,7 +363,7 @@ var ClipboardService = /** @class */ (function () {
             data += '\r\n';
         };
         // adds cell values to the data
-        var rowCallback = function (currentRow, rowNode, columns, rowIndex, isLastRow) {
+        var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
             columns.forEach(function (column, index) {
                 var value = _this.valueService.getValue(column, rowNode);
                 var processedValue = _this.userProcessCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellForClipboardFunc(), ag_grid_community_1.Constants.EXPORT_TYPE_CLIPBOARD);

@@ -1,30 +1,41 @@
 var columnDefs = [
     {
         field: "athlete",
-        width: 150},
+        width: 150
+    },
     {
         field: "age",
         width: 90,
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: [
-                'lessThan',
+                'empty',
                 {
-                    displayKey: 'lessThanWithNulls',
-                    displayName: 'Less Than with Nulls',
+                    displayKey: 'evenNumbers',
+                    displayName: 'Even Numbers',
                     test: function(filterValue, cellValue) {
-                        return cellValue == null || cellValue < filterValue;
-                    }
+                        return cellValue != null && cellValue % 2 === 0;
+                    },
+                    hideFilterInput: true
                 },
-                'greaterThan',
                 {
-                    displayKey: 'greaterThanWithNulls',
-                    displayName: 'Greater Than with Nulls',
+                    displayKey: 'oddNumbers',
+                    displayName: 'Odd Numbers',
                     test: function(filterValue, cellValue) {
-                        return cellValue == null || cellValue > filterValue;
-                    }
-                }
-            ]
+                        return cellValue != null && cellValue % 2 !== 0;
+                    },
+                    hideFilterInput: true
+                },
+                {
+                    displayKey: 'blanks',
+                    displayName: 'Blanks',
+                    test: function(filterValue, cellValue) {
+                        return cellValue == null;
+                    },
+                    hideFilterInput: true
+                },
+            ],
+            suppressAndOrCondition: true
         }
     },
     {

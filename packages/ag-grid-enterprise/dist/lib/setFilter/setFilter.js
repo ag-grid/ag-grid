@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -75,7 +75,7 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.initialiseFilterBodyUi = function () {
         var _this = this;
         this.virtualList = new virtualList_1.VirtualList();
-        this.context.wireBean(this.virtualList);
+        this.getContext().wireBean(this.virtualList);
         var richList = this.getGui().querySelector('#richList');
         if (richList) {
             richList.appendChild(this.virtualList.getGui());
@@ -110,7 +110,7 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.createSetListItem = function (value) {
         var _this = this;
         var listItem = new setFilterListItem_1.SetFilterListItem(value, this.filterParams.column);
-        this.context.wireBean(listItem);
+        this.getContext().wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
         listItem.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTED, function () {
             _this.onItemSelected(value, listItem.isSelected());

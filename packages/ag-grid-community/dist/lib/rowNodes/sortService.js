@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,13 +31,10 @@ var SortService = /** @class */ (function () {
         var _this = this;
         var callback = function (rowNode) {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
-            _this.pullDownDataForHideOpenParents(rowNode.childrenAfterFilter, true);
-            // RE https://ag-grid.atlassian.net/browse/AG-444
-            // Javascript sort is non deterministic when all the array items are equals
-            // ie Comparator always returns 0, so if you want to ensure the array keeps its
-            // order, then you need to add an additional sorting condition manually, in this
-            // case we are going to inspect the original array position. This is what SortedRowNode
-            // object is for
+            _this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterFilter, true);
+            // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
+            // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
+            // are going to inspect the original array position. This is what sortedRowNodes is for.
             if (sortActive) {
                 var sortedRowNodes = deltaSort ?
                     _this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
@@ -48,12 +45,12 @@ var SortService = /** @class */ (function () {
                 rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
             }
             _this.updateChildIndexes(rowNode);
-            _this.pullDownDataForHideOpenParents(rowNode.childrenAfterSort, false);
             if (_this.postSortFunc) {
                 _this.postSortFunc(rowNode.childrenAfterSort);
             }
         };
         changedPath.forEachChangedNodeDepthFirst(callback);
+        this.updateGroupDataForHiddenOpenParents(changedPath);
     };
     SortService.prototype.doFullSort = function (rowNode, sortOptions) {
         var sortedRowNodes = rowNode.childrenAfterFilter
@@ -179,7 +176,23 @@ var SortService = /** @class */ (function () {
             child.setChildIndex(i);
         }
     };
-    SortService.prototype.pullDownDataForHideOpenParents = function (rowNodes, clearOperation) {
+    SortService.prototype.updateGroupDataForHiddenOpenParents = function (changedPath) {
+        var _this = this;
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            return;
+        }
+        // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
+        var callback = function (rowNode) {
+            _this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterSort, false);
+            rowNode.childrenAfterSort.forEach(function (child) {
+                if (child.hasChildren()) {
+                    callback(child);
+                }
+            });
+        };
+        changedPath.executeFromRootNode(function (rowNode) { return callback(rowNode); });
+    };
+    SortService.prototype.pullDownGroupDataForHideOpenParents = function (rowNodes, clearOperation) {
         var _this = this;
         if (utils_1._.missing(rowNodes)) {
             return;

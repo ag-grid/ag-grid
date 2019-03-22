@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -16,13 +16,18 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_1 = require("./node");
 var path2D_1 = require("./path2D");
+/**
+ * Acts as `Group` node but with specified bounds that form a rectangle.
+ * Any parts of the child nodes outside that rectangle will not be visible.
+ * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
+ */
 var ClipRect = /** @class */ (function (_super) {
     __extends(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.path = new path2D_1.Path2D();
-        _this._isActive = true;
-        _this._isDirtyPath = true;
+        _this._active = true;
+        _this._dirtyPath = true;
         _this._x = 0;
         _this._y = 0;
         _this._width = 10;
@@ -34,28 +39,28 @@ var ClipRect = /** @class */ (function (_super) {
         return point.x >= this.x && point.x <= this.x + this.width
             && point.y >= this.y && point.y <= this.y + this.height;
     };
-    Object.defineProperty(ClipRect.prototype, "isActive", {
+    Object.defineProperty(ClipRect.prototype, "active", {
         get: function () {
-            return this._isActive;
+            return this._active;
         },
         set: function (value) {
-            if (this._isActive !== value) {
-                this._isActive = value;
-                this.isDirty = true;
+            if (this._active !== value) {
+                this._active = value;
+                this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ClipRect.prototype, "isDirtyPath", {
+    Object.defineProperty(ClipRect.prototype, "dirtyPath", {
         get: function () {
-            return this._isDirtyPath;
+            return this._dirtyPath;
         },
         set: function (value) {
-            if (this._isDirtyPath !== value) {
-                this._isDirtyPath = value;
+            if (this._dirtyPath !== value) {
+                this._dirtyPath = value;
                 if (value) {
-                    this.isDirty = true;
+                    this.dirty = true;
                 }
             }
         },
@@ -69,7 +74,7 @@ var ClipRect = /** @class */ (function (_super) {
         set: function (value) {
             if (this._x !== value) {
                 this._x = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -82,7 +87,7 @@ var ClipRect = /** @class */ (function (_super) {
         set: function (value) {
             if (this._y !== value) {
                 this._y = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -95,7 +100,7 @@ var ClipRect = /** @class */ (function (_super) {
         set: function (value) {
             if (this._width !== value) {
                 this._width = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
@@ -108,24 +113,23 @@ var ClipRect = /** @class */ (function (_super) {
         set: function (value) {
             if (this._height !== value) {
                 this._height = value;
-                this.isDirtyPath = true;
+                this.dirtyPath = true;
             }
         },
         enumerable: true,
         configurable: true
     });
     ClipRect.prototype.updatePath = function () {
-        if (!this.isDirtyPath) {
-            return;
-        }
         var path = this.path;
         path.clear();
         path.rect(this.x, this.y, this.width, this.height);
-        this.isDirtyPath = false;
+        this.dirtyPath = false;
     };
     ClipRect.prototype.render = function (ctx) {
-        if (this.isActive) {
-            this.updatePath();
+        if (this.active) {
+            if (this.dirtyPath) {
+                this.updatePath();
+            }
             this.scene.appendPath(this.path);
             ctx.clip();
         }
@@ -134,7 +138,7 @@ var ClipRect = /** @class */ (function (_super) {
         for (var i = 0; i < n; i++) {
             ctx.save();
             var child = children[i];
-            if (child.isVisible) {
+            if (child.visible) {
                 child.render(ctx);
             }
             ctx.restore();

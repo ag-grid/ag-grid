@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.1.0
+ * @version v20.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var popupComponent_1 = require("../../widgets/popupComponent");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
+var utils_1 = require("../../utils");
 var PopupEditorWrapper = /** @class */ (function (_super) {
     __extends(PopupEditorWrapper, _super);
     function PopupEditorWrapper(cellEditor) {
@@ -40,7 +41,9 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
         return _this;
     }
     PopupEditorWrapper.prototype.onKeyDown = function (event) {
-        this.params.onKeyDown(event);
+        if (!utils_1._.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, this.params.node, this.params.column, true)) {
+            this.params.onKeyDown(event);
+        }
     };
     PopupEditorWrapper.prototype.getGui = function () {
         // we call getGui() on child here (rather than in the constructor)

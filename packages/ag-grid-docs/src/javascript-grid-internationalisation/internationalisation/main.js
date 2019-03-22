@@ -72,6 +72,10 @@ var gridOptions = {
         startsWith: 'daStarts dawith',
         endsWith: 'daEnds dawith',
 
+        // filter conditions
+        andCondition: 'daAND',
+        orCondition: 'daOR',
+
         // the header of the default group column
         group: 'laGroup',
 
@@ -105,7 +109,8 @@ var gridOptions = {
         toolPanel: 'laTool Panelo',
         export: 'laExporto',
         csvExport: 'la CSV Exportp',
-        excelExport: 'la Excel Exporto',
+        excelExport: 'la Excel Exporto (.xlsx)',
+        excelXmlExport: 'la Excel Exporto (.xml)',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',

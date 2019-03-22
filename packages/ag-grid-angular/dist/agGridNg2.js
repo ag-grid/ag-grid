@@ -275,6 +275,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.enableCellTextSelection = undefined;
         this.suppressBrowserResizeObserver = undefined;
         this.suppressMaxRenderedRowRestriction = undefined;
+        this.excludeChildrenWhenTreeDataFiltering = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -708,6 +709,7 @@ var AgGridNg2 = /** @class */ (function () {
         'enableCellTextSelection': [{ type: core_1.Input },],
         'suppressBrowserResizeObserver': [{ type: core_1.Input },],
         'suppressMaxRenderedRowRestriction': [{ type: core_1.Input },],
+        'excludeChildrenWhenTreeDataFiltering': [{ type: core_1.Input },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
         'columnPivotModeChanged': [{ type: core_1.Output },],

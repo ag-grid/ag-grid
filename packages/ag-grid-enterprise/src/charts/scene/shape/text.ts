@@ -14,7 +14,7 @@ export class Text extends Shape {
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get x(): number {
@@ -25,7 +25,7 @@ export class Text extends Shape {
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get y(): number {
@@ -44,7 +44,7 @@ export class Text extends Shape {
         if (this._text !== value) {
             this._text = value;
             this.splitText();
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get text(): string {
@@ -55,7 +55,7 @@ export class Text extends Shape {
     set font(value: string) {
         if (this._font !== value) {
             this._font = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get font(): string {
@@ -66,7 +66,7 @@ export class Text extends Shape {
     set textAlign(value: CanvasTextAlign) {
         if (this._textAlign !== value) {
             this._textAlign = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get textAlign(): CanvasTextAlign {
@@ -77,7 +77,7 @@ export class Text extends Shape {
     set textBaseline(value: CanvasTextBaseline) {
         if (this._textBaseline !== value) {
             this._textBaseline = value;
-            this.isDirty = true;
+            this.dirty = true;
         }
     }
     get textBaseline(): CanvasTextBaseline {
@@ -159,7 +159,7 @@ export class Text extends Shape {
         if (!lineCount)
             return;
 
-        if (this.isDirtyTransform) {
+        if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
@@ -179,6 +179,6 @@ export class Text extends Shape {
 
         // renderBBox(ctx, this.getBBox()); // debug
 
-        this.isDirty = false;
+        this.dirty = false;
     }
 }

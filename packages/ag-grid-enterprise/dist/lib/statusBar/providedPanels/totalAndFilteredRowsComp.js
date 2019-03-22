@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.1.0
+// ag-grid-enterprise v20.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,20 +28,19 @@ var nameValueComp_1 = require("./nameValueComp");
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     __extends(TotalAndFilteredRowsComp, _super);
     function TotalAndFilteredRowsComp() {
-        return _super.call(this, 'rowAndFilteredCount', 'Rows') || this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     TotalAndFilteredRowsComp.prototype.postConstruct = function () {
-        _super.prototype.postConstruct.call(this);
         // this component is only really useful with client side rowmodel
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn("ag-Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.");
             return;
         }
+        this.setLabel('totalAndFilteredRows', 'Rows');
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-and-filtered-row-count');
         this.setVisible(true);
-        var listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_MODEL_UPDATED, listener);
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     };
     TotalAndFilteredRowsComp.prototype.onDataChanged = function () {
         var filteredRowCount = this.getFilteredRowCountValue();
