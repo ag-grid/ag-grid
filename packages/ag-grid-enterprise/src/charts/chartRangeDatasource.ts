@@ -1,4 +1,4 @@
-import {ChartDatasource} from "./chart";
+import {ChartDatasource} from "./chartComp";
 import {
     Autowired,
     BeanStub,

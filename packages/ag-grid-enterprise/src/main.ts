@@ -28,6 +28,7 @@ import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/pr
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
 import { ChartingService } from "./charts/chartingService";
 import { WatermarkComp } from "./license/watermark";
+import {ChartControlComp} from "./charts/chartControlComp";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -81,5 +82,6 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgNameValue', theClass: NameValueComp},
     {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
-    {componentName: 'AgWatermark', theClass: WatermarkComp}
+    {componentName: 'AgWatermark', theClass: WatermarkComp},
+    {componentName: 'AgChartControl', theClass: ChartControlComp}
 ]);

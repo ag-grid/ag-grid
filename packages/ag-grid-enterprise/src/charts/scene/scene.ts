@@ -189,6 +189,7 @@ export class Scene {
     render = () => {
         const ctx = this.ctx;
 
+        // start with a blank canvas, clear previous drawing
         ctx.clearRect(0, 0, this.width, this.height);
 
         if (this.root) {

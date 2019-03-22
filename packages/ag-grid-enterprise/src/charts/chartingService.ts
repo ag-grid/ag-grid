@@ -1,6 +1,6 @@
 import {Autowired, Bean, Context, IRowModel, PopupMessageBox, PopupService, PopupWindow} from "ag-grid-community";
 import {RangeController} from "../rangeController";
-import {Chart} from "./chart";
+import {ChartComp} from "./chartComp";
 import {ChartEverythingDatasource} from "./chartEverythingDatasource";
 import {ChartRangeDatasource} from "./chartRangeDatasource";
 
@@ -22,11 +22,12 @@ export class ChartingService {
             return;
         }
 
-        const chart = new Chart({
+        const chart = new ChartComp({
             height: 400,
             width: 800,
             datasource: ds
         });
+        this.context.wireBean(chart);
 
         const popupWindow = new PopupWindow();
         this.context.wireBean(popupWindow);
