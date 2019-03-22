@@ -385,6 +385,14 @@ include '../documentation-main/documentation_header.php';
             of rendering in the DOM which will slow things down.</td>
         </tr>
         <tr>
+            <th>suppressMaxRenderedRowRestriction</th>
+            <td>By default the grid has limit of rendering a maximum of 500 rows at once (remember the grid only 
+            renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling 
+            this will never be an issue).<br>
+            <strong>This is only relevant if you are manually setting rowBuffer to a high value (rendering more rows 
+            than can be seen) or if your grid height is able to display more than 500 rows at once</strong></td>
+        </tr>
+        <tr>
             <th>suppressScrollOnNewData</th>
             <td>When true, the grid will not scroll to the top when new row data is provided. Use this
             if you don't want the default behaviour of scrolling to the top every time you load new data.</td>

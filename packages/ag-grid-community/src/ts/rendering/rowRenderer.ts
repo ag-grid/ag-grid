@@ -851,9 +851,11 @@ export class RowRenderer extends BeanStub {
         // of, we also have a property to not do this operation.
         const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         const suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
+        const rowBufferMaxSize = Math.max(this.gridOptionsWrapper.getRowBuffer(), 500);
+
         if (rowLayoutNormal && !suppressRowCountRestriction) {
-            if (newLast - newFirst > 500) {
-                newLast = newFirst + 500;
+            if (newLast - newFirst > rowBufferMaxSize) {
+                newLast = newFirst + rowBufferMaxSize;
             }
         }
 
