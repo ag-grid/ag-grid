@@ -68,7 +68,7 @@ export class ChartComp extends Component {
 
         this.barSeries.grouped = true;
 
-        this.chartControlComp.init(this.barSeries);
+        this.chartControlComp.init(this.barSeries, this.chart);
 
         this.refresh();
     }

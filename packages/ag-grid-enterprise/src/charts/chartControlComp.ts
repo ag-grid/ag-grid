@@ -1,5 +1,6 @@
 import {Component, RefSelector} from "ag-grid-community";
 import {BarSeries} from "./chart/series/barSeries";
+import {CartesianChart} from "./chart/cartesianChart";
 
 export class ChartControlComp extends Component {
 
@@ -17,6 +18,12 @@ export class ChartControlComp extends Component {
                 Line Width
                 <input type="text" ref="eLineWidth" style="width: 40px;"/>
             </span>
+            <span style="margin-right: 10px;">
+                Width
+                <input type="text" ref="eWidth" style="width: 40px;"/>
+                Height
+                <input type="text" ref="eHeight" style="width: 40px;"/>
+            </span>
         </div>`;
 
     @RefSelector('eGrouped') private eGrouped: HTMLInputElement;
@@ -24,16 +31,44 @@ export class ChartControlComp extends Component {
 
     @RefSelector('eLineWidth') private eLineWidth: HTMLInputElement;
 
+    @RefSelector('eWidth') private eWidth: HTMLInputElement;
+    @RefSelector('eHeight') private eHeight: HTMLInputElement;
+
     private barSeries: BarSeries<any>;
+    private chart: CartesianChart<any, string, number>;
 
     constructor() {
         super(ChartControlComp.TEMPLATE);
     }
 
-    public init(barSeries: BarSeries<any>): void {
+    public init(barSeries: BarSeries<any>, chart: CartesianChart<any, string, number>): void {
         this.barSeries = barSeries;
+        this.chart = chart;
         this.setupGroupedOrStacked();
         this.setupLineWidth();
+        this.setupWidthAndHeight();
+    }
+
+    private setupWidthAndHeight(): void {
+        this.eWidth.value = `${this.chart.width}`;
+        this.eHeight.value = `${this.chart.height}`;
+
+        this.addDestroyableEventListener(this.eWidth, 'input', this.onWidthChanged.bind(this));
+        this.addDestroyableEventListener(this.eHeight, 'input', this.onHeightChanged.bind(this));
+    }
+
+    private onWidthChanged(): void {
+        const width = this.getNumberValue(this.eWidth, null);
+        if (width) {
+            this.chart.width = width;
+        }
+    }
+
+    private onHeightChanged(): void {
+        const height = this.getNumberValue(this.eHeight, null);
+        if (height) {
+            this.chart.height = height;
+        }
     }
 
     private setupLineWidth(): void {
@@ -46,17 +81,23 @@ export class ChartControlComp extends Component {
     }
 
     private onLineWidth(): void {
-        const valueStr = this.eLineWidth.value;
+        const width = this.getNumberValue(this.eLineWidth, 1);
+        this.barSeries.lineWidth = width!;
+    }
+
+    private getNumberValue(textInput: HTMLInputElement, defaultValue: number | null): number | null {
+        const valueStr = textInput.value;
         let value: number;
         if (valueStr && valueStr.length > 0) {
             value = parseFloat(valueStr);
             if (isNaN(value)) {
-                value = 1;
+                return defaultValue;
+            } else {
+                return value;
             }
         } else {
-            value = 1;
+            return defaultValue;
         }
-        this.barSeries.lineWidth = value;
     }
 
     private setupGroupedOrStacked(): void {
