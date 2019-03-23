@@ -6,6 +6,8 @@ export interface IRangeController {
     clearSelection(): void;
     getCellRangeCount(cell: GridCell): number;
     isCellInAnyRange(cell: GridCell): boolean;
+    isCellInSpecificRange(cell: GridCell, range: RangeSelection): boolean;
+    isMoreThanOneCell(): boolean;
     onDragStart(mouseEvent: MouseEvent): void;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;

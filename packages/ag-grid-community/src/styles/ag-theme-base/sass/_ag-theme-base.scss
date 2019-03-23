@@ -387,10 +387,12 @@
     // Navigation
     ////////////////////////////////////////
 
-    .ag-ltr, .ag-rtl {
+    .ag-rtl, .ag-ltr {
         .ag-has-focus .ag-cell-focus {
-            border: 1px solid $primary-color;
-            outline: initial;
+            &:not(.ag-cell-range-selected), &.ag-cell-range-single-cell {
+                border: 1px solid $primary-color;
+                outline: initial;
+            }
         }
     }
 
@@ -916,6 +918,26 @@
     ////////////////////////////////////////
     .ag-row-selected {
         background-color: $selected-color;
+    }
+
+    .ag-ltr, .ag-rtl {
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
+            border-width: 0;
+            border-color: $primary-color;
+            border-style: solid;
+            &.ag-cell-range-top {
+                border-top-width: 1px;
+            }
+            &.ag-cell-range-right {
+                border-right-width: 1px;
+            }
+            &.ag-cell-range-bottom {
+                border-bottom-width: 1px;
+            }
+            &.ag-cell-range-left {
+                border-left-width: 1px;
+            }
+        }
     }
 
     // we do not want to color the range color when the cell is also focused

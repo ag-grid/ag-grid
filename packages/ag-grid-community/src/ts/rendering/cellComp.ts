@@ -14,13 +14,14 @@ import {
     Events,
     FlashCellsEvent
 } from "../events";
-import { GridCell, GridCellDef } from "../entities/gridCell";
+import { Beans } from "./beans";
 import { Component } from "../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
-import { Beans } from "./beans";
+import { GridCell, GridCellDef } from "../entities/gridCell";
+import { RangeSelection } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
@@ -1621,26 +1622,74 @@ export class CellComp extends Component {
         this.getGui().style.width = width + 'px';
     }
 
+    private getRangeBorders(): {
+        top: boolean,
+        right: boolean,
+        bottom: boolean,
+        left: boolean
+    } {
+        let top = false;
+        let right = false;
+        let bottom = false;
+        let left = false;
+
+        const { beans, gridCell } = this;
+        const { rangeController } = beans;
+
+        const ranges: RangeSelection[] = rangeController.getCellRanges().filter(
+            range => rangeController.isCellInSpecificRange(
+                gridCell,
+                range
+        ));
+
+        ranges.forEach(range => {
+            const start = Math.min(range.start.rowIndex, range.end.rowIndex);
+            const end = Math.max(range.start.rowIndex, range.end.rowIndex);
+
+            if (start === gridCell.rowIndex && !top) {
+                top = true;
+            }
+            if (range.columns[range.columns.length - 1] === gridCell.column && !right) {
+                right = true;
+            }
+            if (end === gridCell.rowIndex && !bottom) {
+                bottom = true;
+            }
+            if (range.columns[0] === gridCell.column && !left) {
+                left = true;
+            }
+        });
+
+        return { top, right, bottom, left };
+    }
+
     private getRangeClasses(): string[] {
         const res: string[] = [];
-        if (!this.rangeSelectionEnabled) {
+
+        if (!this.rangeSelectionEnabled || !this.rangeCount) {
             return res;
         }
-        if (this.rangeCount !== 0) {
-            res.push('ag-cell-range-selected');
+
+        const { beans } = this;
+        const { rangeController } = beans;
+
+        res.push('ag-cell-range-selected');
+
+        const count = Math.min(this.rangeCount, 4);
+
+        res.push(`ag-cell-range-selected-${count}`);
+
+        if (this.rangeCount === 1 && !rangeController.isMoreThanOneCell()) {
+            res.push('ag-cell-range-single-cell');
         }
-        if (this.rangeCount === 1) {
-            res.push('ag-cell-range-selected-1');
-        }
-        if (this.rangeCount === 2) {
-            res.push('ag-cell-range-selected-2');
-        }
-        if (this.rangeCount === 3) {
-            res.push('ag-cell-range-selected-3');
-        }
-        if (this.rangeCount >= 4) {
-            res.push('ag-cell-range-selected-4');
-        }
+
+        const borders = this.getRangeBorders();
+
+        if (borders.top) { res.push('ag-cell-range-top'); }
+        if (borders.right) { res.push('ag-cell-range-right'); }
+        if (borders.bottom) { res.push('ag-cell-range-bottom'); }
+        if (borders.left) { res.push('ag-cell-range-left'); }
+
         return res;
     }
 
@@ -1658,9 +1707,14 @@ export class CellComp extends Component {
         if (!this.beans.enterprise) {
             return;
         }
-        const newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
+
+        const { beans, gridCell, rangeCount } = this;
+        const { rangeController } = beans;
+
+        const newRangeCount = rangeController.getCellRangeCount(gridCell);
         const element = this.getGui();
-        if (this.rangeCount !== newRangeCount) {
+
+        if (rangeCount !== newRangeCount) {
             _.addOrRemoveCssClass(element, 'ag-cell-range-selected', newRangeCount !== 0);
             _.addOrRemoveCssClass(element, 'ag-cell-range-selected-1', newRangeCount === 1);
             _.addOrRemoveCssClass(element, 'ag-cell-range-selected-2', newRangeCount === 2);
@@ -1668,6 +1722,20 @@ export class CellComp extends Component {
             _.addOrRemoveCssClass(element, 'ag-cell-range-selected-4', newRangeCount >= 4);
             this.rangeCount = newRangeCount;
         }
+
+        const rangeBorders = this.getRangeBorders();
+        const isSingleCell = this.rangeCount === 1 && !rangeController.isMoreThanOneCell();
+
+        const isTop = !isSingleCell && rangeBorders.top;
+        const isRight = !isSingleCell && rangeBorders.right;
+        const isBottom = !isSingleCell && rangeBorders.bottom;
+        const isLeft = !isSingleCell && rangeBorders.left;
+
+        _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', isSingleCell);
+        _.addOrRemoveCssClass(element, 'ag-cell-range-top', isTop);
+        _.addOrRemoveCssClass(element, 'ag-cell-range-right', isRight);
+        _.addOrRemoveCssClass(element, 'ag-cell-range-bottom', isBottom);
+        _.addOrRemoveCssClass(element, 'ag-cell-range-left', isLeft);
     }
 
     private onFirstRightPinnedChanged(): void {

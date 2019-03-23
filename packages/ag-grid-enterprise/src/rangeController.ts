@@ -86,6 +86,7 @@ export class RangeController implements IRangeController {
         }
 
         const gridCellDef = {rowIndex: cell.rowIndex, floating: cell.floating, column: cell.column} as GridCellDef;
+
         const newRange = {
             start: new GridCell(gridCellDef),
             end: new GridCell(gridCellDef),
@@ -239,7 +240,7 @@ export class RangeController implements IRangeController {
         return this.getCellRangeCount(cell) > 0;
     }
 
-    private isCellInSpecificRange(cell: GridCell, range: RangeSelection): boolean {
+    public isCellInSpecificRange(cell: GridCell, range: RangeSelection): boolean {
         const columnInRange: boolean = range.columns !== null && range.columns.indexOf(cell.column) >= 0;
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.floating, range);
         return columnInRange && rowInRange;

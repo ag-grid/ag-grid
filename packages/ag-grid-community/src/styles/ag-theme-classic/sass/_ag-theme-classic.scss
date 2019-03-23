@@ -98,7 +98,7 @@
         justify-content: flex-start;
     }
 
-    .ag-cell-focus {
+    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected) {
         border: 1px solid $focused-cell-border-color;
     }
 
