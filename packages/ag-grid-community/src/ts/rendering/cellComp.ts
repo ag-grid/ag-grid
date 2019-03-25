@@ -1636,7 +1636,7 @@ export class CellComp extends Component {
         const { beans, gridCell } = this;
         const { rangeController } = beans;
 
-        const ranges: RangeSelection[] = rangeController.getCellRanges().filter(
+        const ranges: RangeSelection[] = (rangeController.getCellRanges() || []).filter(
             range => rangeController.isCellInSpecificRange(
                 gridCell,
                 range
