@@ -9,16 +9,31 @@ include '../documentation-main/documentation_header.php';
     <h1>
     Ag-Grid React Overview
     </h1>
-    <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating
-    (amongst others) Rich Grids, Filtering with React Components Grid and so on.</note>
     <h2 id="ag-Grid-react-features">ag-Grid React Features</h2>
     <p>
         Every feature of ag-Grid is available when using the ag-Grid React Component. The React Component wraps the
-        functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
-        React ag-Grid when it comes to features.
+        functionality of ag-Grid so you gain all the features of ag-Grid along with all good stuff that React provides.
     </p>
+    <h2>
+        Table of Contents
+    </h2>
+    <div class="row">
+        <div class="col">
+            <ol style="columns: 2">
+                <li><a href="#configuring-aggridreact-component">Configuring the ag-Grid React Component</li></a>
+                <li><a href="#grid-api">Access the Grid & Column API</li></a>
+                <li><a href="#loading-css">Loading CSS & Applying a Theme</li></a>
+                <li><a href="#react-redux-hoc">Redux / Higher Order Components</a>
+                <li><a href="#context-api">React Context API</li></a>
+                <li><a href="#react-hooks">React Hooks</li></a>
+                <li><a href="#react-row-data-control">Row Data Control</li></a>
+                <li><a href="#react-grid-resources">Resources</li></a>
+            </ol>
+        </div>
+    </div>
+    <hr>
     <h2 id="configuring-aggridreact-component">Configuring the ag-Grid React Component</h2>
-    <p>After importing <code>AgGridReact</code>  you can then reference the component inside your JSX definitions.
+    <p>After importing <code>AgGridReact</code> you can then reference the component inside your JSX definitions.
     An example of the Grid Component can be seen below:</p>
 <snippet language="jsx">
 // Grid Definition
@@ -92,8 +107,7 @@ this.state = {
 // in the render method
 &lt;AgGridReact columnDefs={this.state.columnDefs}>&lt;/AgGridReact>
 </snippet>
-<p>Column definitions via markup or on <code>GridOptions</code> are one-off definitions. Subsequent updates will not be
-reflected on the Grid. Updates using property binding will be reflected on the Grid.</p>
+
 <p>A full working Grid definition is shown below, illustrating various Grid & Column property definitions:</p>
     <snippet language="jsx">
 &lt;AgGridReact
@@ -131,42 +145,8 @@ reflected on the Grid. Updates using property binding will be reflected on the G
     &lt;/AgGridColumn&gt;
 &lt;/AgGridReact&gt;
 </snippet>
-<h2 id="loading-css">Loading CSS</h2>
-<p>You need 1) the core ag-Grid css and 2) a theme. These are stored in css files packaged
-    in the core ag-Grid. To access them, first up we need to define an alias to use inside
-    webpack.config.js:
-<snippet>
-resolve: {
-    alias: {
-        "ag-grid-community": path.resolve('./node_modules/ag-grid-community')
-</snippet>
-    Once this is done, we can then access the two css files that we need as follows:
-<snippet>
-    import 'ag-grid-community/dist/styles/ag-grid.css';
-    import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-</snippet>
-    You will also need to configure CSS loaders for Webpack - you can find a full working example of this in our <a
-    href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
-</p>
-<h2 id="applying-theme">Applying a Theme</h2>
-<p>
-    You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-    of <code>ag-theme-balham</code>, <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
-    for this to work.
-</p>
-<snippet language="jsx">
-// a parent container of the grid, you could put this on your body tag
-// if you only every wanted to use one style of grid
-// HTML
-&lt;div class="ag-theme-balham"&gt;
-...
-// OR JSX
-&lt;div className="ag-theme-balham"&gt;
-...
-// then later, use the grid
-&lt;AgGridReact
-...</snippet>
-<h2 id="grid-api">Grid API</h2>
+
+<h2 id="grid-api">Access the Grid & Column API</h2>
 <p>
     When the grid is initialised, it will fire the <code>gridReady</code> event. If you want to
     use the API of the grid, you should put an <code>onGridReady(params)</code> callback onto
@@ -195,118 +175,144 @@ somePointLater() {
     of the grid. So you can also look up the backing object via React and access the
     <code>api</code> and <code>columnApi</code> that way.
 </p>
-<p>
-    Now would
-    be a good time to try it in a simple app and get some data displaying and practice with
-    some of the grid settings before moving onto the advanced features of cellRendering
-    and custom filtering.
-</p>
-<h2 id="cell-rendering-cell-editing-and-filtering-using-react">Cell Rendering, Cell Editing and Filtering using
-React</h2>
-<p>
-    It is possible to build <a href="../javascript-grid-cell-rendering-components/#reactCellRendering">cell renderers</a>,
-    <a href="../javascript-grid-cell-editing/#reactCellEditing">cell editors</a> and
-    <a href="../javascript-grid-filtering/#reactFiltering">filters</a> using React. Doing each of these
-    is explained in the section on each.
-</p>
-<h2>Override React Components Container Style</h2>
-<p>When you provide a React Component to ag-Grid for use within the grid it will create a <code>div</code> for the component
-    to live in. If you wish to override the style of this div you can do so via the <code>reactContainer</code> property
-made available via <code>props</code>:</p>
+
+    <h2 id="loading-css">Loading CSS</h2>
+    <p>ag-Grid requires the core ag-Grid CSS as well as a theme.</p>
 <snippet>
-constructor(props) {
-    super(props);
-    // change the containing div to be inline-block (instead of the default block for a div)
-    this.props.reactContainer.style.display = "inline-block";
-    // change the background color of the containing div to be red
-    this.props.reactContainer.style.backgroundColor = "red";
-}</snippet>
-<p>You can see an example of this in the
-    <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
-where we change the display of the <code>groupRowInnerRendererFramework</code> to <code>inline-block</code> so that the +/- and label are inline.</p>
-<h2>Performance Pitfalls</h2>
-<p>If you find that ag-Grid is re-rendering everything and you're not expecting this, then you're probably changing a
-    property
-unexpectedly - below we document some common pitfalls that are easily avoided:</p>
-<ul class="content">
-    <li>Binding to methods in the React binding</li>
-    <li>Changing references to colDefs (even if the contents are the same)</li>
-    <li>Changing references to rowData (even if the contents are the same)</li>
-    <li>Processing data before passing it down to ag-Grid</li>
-</ul>
-<h3>Binding to methods in the React binding</h3>
-<p>If you have something like:</p>
-    <snippet language="jsx">
-&lt;AgGridReact
-    // events
-    onGridReady={this.onGridReady.bind(this)}&gt;
-    //... rest of the configuration</snippet>
-    <p>Then everytime the component renders, a new instance of <code>onGridReady</code> will be passed to ag-Grid and it will believe
-        that it's a different function. To avoid this, do the binding separately (in the constructor for example):</p>
-
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+</snippet>
+    <p>If you're using webpack you can configure an alias to allow for absolute imports (this isn't necessary when using <code>create-react-app</code>:</p>
     <snippet>
-class TopMoversGrid extends Component {
-    constructor(props) {
-        super(props);
+resolve: {
+    alias: {
+        "ag-grid-community": path.resolve('./node_modules/ag-grid-community')
+</snippet>
 
-        // grid events
-        this.onGridReady = this.onGridReady.bind(this);
-    }
+    <h2 id="applying-theme">Applying a Theme</h2>
+    <p>
+        You need to set a theme for the grid. You do this by giving the grid a CSS class, one
+        of <code>ag-theme-balham</code>, <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
+        for this to work.
+    </p>
+    <snippet language="jsx">
+// a parent container of the grid, you could put this on your body tag
+// if you only every wanted to use one style of grid
+// HTML
+&lt;div class="ag-theme-balham"&gt;
+...
+// OR JSX
+&lt;div className="ag-theme-balham"&gt;
+...
+// then later, use the grid
+&lt;AgGridReact
+...</snippet>
 
+    <p>Putting the CSS and theme all together you'll end up with something like this:</p>
+
+<snippet language="jsx">
+// a react component
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+
+class GridComponent extends Component {
     render() {
         return (
             &lt;div className="ag-theme-balham"&gt;
                 &lt;AgGridReact
-                    // events
-                    onGridReady={this.onGridReady}&gt;
-                //... rest of the component</snippet>
-<p>Now ag-Grid will get the same function everytime the component renders.</p>
-<h3>Changing references to colDefs (even if the contents are the same)</h3>
-<p>This happens most commonly when using redux - even if the actual colDefs aren't changing, ag-Grid gets a new reference
-to each time there are changes, which causes a change cycle to occur.</p>
-<p>To alleviate this extract the colDefs from the changing state (i.e. if the columns aren't likely to change extract them
-into a component variable, and pass this to ag-Grid).</p>
-<h3>Changing references to rowData (even if the contents are the same)</h3>
-<p>As above, you can either extract this rowData into a separate variable if the data isn't actually changing, or make use of the
-    <a href="#react-delta-changes">enableImmutableMode</a> above.</p>
-    <h3>Processing data before passing it down to ag-Grid</h3>
-    <p>Similar to the items above, processing data and then passing this to ag-Grid, even if the resulting data hasn't changes, can
-    result is ag-Grid changing state.</p>
-    <p>A common scenario might be where you pre-process your row data before passing it to ag-Grid - for example:</p>
-    <snippet>
-class TopMoversGrid extends Component {
-    constructor(props) {
-        super(props);
+                    onGridReady={this.onGridReady}
+                    rowData={this.state.rowData}
+                    ...other bindings/properties
+                &gt;
+                    &lt;AgGridColumn field="athlete" width={30}&gt;&lt;/AgGridColumn&gt;
+                    ...other column definitions
+                &lt;/AgGridReact&gt;
+        )
     }
+}
+</snippet>
 
-    cleanData = () =>  {
-        return this.props.rowData.filter(data =&gt; data.isClean)
-    }
+    <h2 id="cell-components">Customising the Grid with React Components</h2>
+<p>
+    It is possible to customise the grid with React components (for example, <a href="../javascript-grid-cell-rendering-components/#react-cell-rendering">cell renderers</a>,
+    <a href="../javascript-grid-cell-editor/#react-cell-editing">cell editors</a> and
+    <a href="../javascript-grid-filter-component/#react-filtering">filters</a> and so on using React. For the full list of available grid components and how to configure them
+    please refer to the <a href="../javascript-grid-components/">components</a> documentation</p>
 
-    render() {
-        return (
-            &lt;AgGridReact
-                rowData={this.cleanData()}
-                // ...rest of the component</snippet>
-
-    <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
-    operation will return a new array each time. Again to alleviate this behaviour extract data that isn't likely to change and pre-process it only once.</p>
-    <h2 id="react-portals">React Portals</h2>
-    <p>Within ag-Grid we make use of <code>ReactDOM.unstable_renderSubtreeIntoContainer</code> to dynamically generate React components within the grid.</p>
-    <p>This has worked well and been reliable since ag-Grid was created, but it is marked as <code>unstable</code> and so could be removed by the React team at any time.</p>
-    <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the preferred way to create React components dynamically.</p>
-    <p>If you wish to try use this feature you'll need to enable it as follows:</p>
+    <h2 id="react-16">ag-Grid with React 16+</h2>
+    <note>All of the documentation in this section apply to React 16+. For documentation for React 15+ please see <a
+                href="#react-15">here.</a></note>
+    <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the official way to create React components dynamically within React so
+        this is what we use internally for component creation within the grid.</p>
+    <p>If you use React 16+ you'll need to enable <code>reatNext </code> as follows:</p>
 <snippet>
 // Grid Definition
 &lt;AgGridReact
     reactNext={true}
     ...other bindings
 </snippet>
-    <h3 id="react-portal-redux">React Portals with Redux</h3>
-    <p>One of the downsides of using the React Portal functionality is that there are a few more steps required for the newly
-    created React components to be Redux aware.</p>
-    <h3 id="higher-order-components">Higher Order Components</h3>
-    <p>If you use <code>connect</code> to use Redux, or if you're using a Higher Order Component to wrap the React component at all,
+
+    <p>In a future release we'll switch to make <code>reactNext</code> the default, but for now this needs to be made explicit.</p>
+
+    <h3>Control React Components Container</h3>
+    <p>By default user supplied React components will render exactly as provided, but it is possible to have your component
+    wrapped in a container (i.e. a <code>div</code>, <code>span</code> etc), perhaps to override/control a third party component.</p>
+
+    <p>For example, assuming a user component as follows:</p>
+
+<snippet>
+class CellRenderer extends Component {
+    render() {
+        return(
+            <span>Age: {props.value}</span>
+        )
+    }
+}
+</snippet>
+
+    <p>The default behaviour will render the following within the grid:</p>
+
+<snippet language="html">
+&lt;span&gt;Age: 24&lt;/span&gt;
+</snippet>
+
+    <p>In order to override this default behaviour and can specify a <code>componentWrappingElement</code>:</p>
+
+<snippet>
+&lt;AgGridReact
+    onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+    rowData=<span ng-non-bindable>{</span>this.state.rowData}
+    componentWrappingElement='div'
+    ...other properties
+</snippet>
+
+    <p>Doing this would result in the following being rendered:</p>
+<snippet language="html">
+&lt;div class="ag-react-container"&gt;&lt;span&gt;Hello World&lt;/span&gt;&lt;/div&gt;
+</snippet>
+
+    <p>If you wish to override the style of this div you can either provide an implementation of the <code>ag-react-container</code> class, or
+        via the <code>reactContainer</code> property that will be made available via <code>props</code>:</p>
+    <snippet>
+constructor(props) {
+        super(props);
+        // change the containing div to be inline-block (instead of the default block for a div)
+        this.props.reactContainer.style.display = "inline-block";
+        // change the background color of the containing div to be red
+        this.props.reactContainer.style.backgroundColor = "red";
+}</snippet>
+    <p>You can see an example of this in the
+        <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
+        where we change the display of the <code>groupRowInnerRendererFramework</code> to <code>inline-block</code> so that the +/- and label are inline.</p>
+
+
+    <note>Functional/Stateless Components will have a wrapping container (a <code>div</code> by default) provided due to technical constraints.</note>
+
+    <h3 id="react-redux-hoc">Redux / Higher Order Components (HOC)</h3>
+
+    <note>We provide a guide on how to use ag-Grid with Redux in our <a
+                href="../react-redux-integration-pt1/">React/Redux Integration Guide </a></note>
+    <p>If you use <code>connect</code> to use Redux, or if you're using a Higher Order Component (HOC) to wrap the grid React component at all,
         you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>forwardRef</code>
     is set:</p>
     <snippet>
@@ -322,13 +328,12 @@ export default connect(
     { forwardRef: true } // must be supplied for react/redux when using GridOptions.reactNext
 )(PriceRenderer);
     </snippet>
+
     <h3 id="context-api">React Context API</h3>
     <p>If you're using the new React Context API then you can access the context in the components used within the grid.</p>
 
-    <p>Note: You'll need to be using <a href="#react-portals">React Portals</a> and <code>reactNext</code> if you wish to you the new React Context API.</p>
-
     <p>First, let's create a context we can use in our components:</p>
-    
+
     <snippet>
     import React from "react";
     export default React.createContext('normal');
@@ -339,7 +344,7 @@ export default connect(
     &lt;GridComponent/&gt;
 &lt;/FontContext.Provider&gt;
 </snippet>
-    
+
     <p>Finally, we need to consume the context within our component:</p>
 
     <snippet>
@@ -353,34 +358,164 @@ class StyledRenderer extends Component {
     }
 }
 </snippet>
-    <h3>Working Example</h3>
-    <p>You can find a fully working example at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
-The Simple Redux Example makes use of <code>reactNext</code> together with <code>Redux</code>.</p>
 
-    <h2 id="react-hooks">React Hooks</h2>
+    <h3 id="react-hooks">React Hooks</h3>
     <p>React Hooks are fully supported - please refer to our working example in <a
                 href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
-<div class="card" style="background-color: aliceblue">
-  <div class="card-body">
-    <h2 id="react-grid-resources" style="margin-top: 10px">
-    React Grid Resources
-    </h2>
-    <br/>
-    <ul>
-      <li>
-        Learn how to customize our React Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-react-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
-      </li>
-      <br/>
-      <li>
-        Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React.
-      </li>
-      <br>
-      <li>
-        Visit our <strong><a href="https://blog.ag-grid.com/tag/react/">blog</a></strong> to discover all our React content.
-    </ul>
-  </div>
-</div>
-<h2 id="next-steps">Next Steps</h2>
+
+    <h2 id="react-row-data-control">Row Data Control</h2>
+    <p>By default the ag-Grid React component will check props passed in to deteremine if data has changed and will only re-render based on actual changes.</p>
+
+    <p>For <code>rowData</code> we provide an option for you to override this behaviour by the <code>rowDataChangeDetectionStrategy</code> property:</p>
+
+<snippet>
+&lt;AgGridReact
+    onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+    rowData=<span ng-non-bindable>{</span>this.state.rowData}
+    rowDataChangeDetectionStrategy='IdentityCheck'
+    ...other properties
+</snippet>
+
+    <p>The following table illustrates the different possible combinations:</p>
+
+    <table class="theme-table reference ng-scope">
+        <tbody>
+        <tr>
+            <th>Strategy</th>
+            <th>Behaviour</th>
+            <th>Notes</th>
+        </tr>
+        <tr>
+            <td><code>IdentityCheck</code></td>
+            <td>Checks if the new prop is exactly the same as the old prop (i.e. <code>===</code>)</td>
+            <td>Quick, but can result in re-renders if no actual data has changed</td>
+        </tr>
+        <tr>
+            <td><code>DeepValueCheck</code></td>
+            <td>Performs a deep value check of the old and new data</td>
+            <td>Can have performance implication for larger data sets</td>
+        </tr>
+        <tr>
+            <td><code>NoCheck</code></td>
+            <td>Does no checking - passes the new value as is down to the grid</td>
+            <td>Quick, but can result in re-renders if no actual data has changed</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>The default value for this setting is:</p>
+    <table class="theme-table reference ng-scope">
+        <tbody>
+        <tr>
+            <th>DeltaRowDataMode</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>true</code></td>
+            <td><code>IdentityCheck</code></td>
+        </tr>
+        <tr>
+            <td><code>false</code></td>
+            <td><code>DeepValueCheck</code></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>If you're using Redux or larger data sets thena default of <code>IdentityCheck</code> is a good idea <span>provided</span> you
+    ensure you make a copy of thew new row data and do not mutate the <code>rowData</code> passed in.</p>
+
+    <div class="accordion" id="react-15" style="padding-top: 20px">
+        <div class="card" style="border-radius: 0.25rem">
+            <div class="card-header" id="react15Heading" style="padding-left: 5px">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#react-15-content" aria-expanded="true" aria-controls="react-15-content" style="padding-left: 0">
+                        <span style="font-weight:400; font-size: 1.7rem">ag-Grid with React 15+</span>
+                    </button>
+                </h5>
+            </div>
+
+            <div id="react-15-content" class="collapse hide" aria-labelledby="react15Heading" data-parent="#react-15" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                <div class="card-body" style="padding: 5px;">
+                    <h3>Control React Components Container</h3>
+                    <p>By default user supplied React components will be rendered with a <code>div</code> container but it is possible to have your specify
+                        a container (i.e. a <code>div</code>, <code>span</code> etc), perhaps to override/control a third party component.</p>
+
+                    <p>For example, assuming a user component as follows:</p>
+
+<snippet>
+class CellRenderer extends Component {
+    render() {
+        return(
+            <div>Age: {props.value}</div>
+        )
+    }
+}
+</snippet>
+
+                    <p>The default behaviour will render the following within the grid:</p>
+
+<snippet language="html">
+&lt;div class="ag-react-container"&gt;&lt;span&gt;Age: 24&lt;/span&gt;&lt;/div&gt;
+</snippet>
+
+                    <p>In order to override this default behaviour and can specify a <code>componentWrappingElement</code>:</p>
+
+                    <snippet>
+&lt;AgGridReact
+    onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+    rowData=<span ng-non-bindable>{</span>this.state.rowData}
+    componentWrappingElement='span'
+    ...other properties
+</snippet>
+
+                    <p>Doing this would result in the following being rendered:</p>
+<snippet language="html">
+&lt;span class="ag-react-container"&gt;&lt;span&gt;Age: 24&lt;/span&gt;&lt;/span    &gt;
+</snippet>
+
+                    <p>If you wish to override the style of this div you can either provide an implementation of the <code>ag-react-container</code> class, or
+                        via the <code>reactContainer</code> property that will be made available via <code>props</code>:</p>
+<snippet>
+constructor(props) {
+    super(props);
+    // change the containing div to be inline-block (instead of the default block for a div)
+    this.props.reactContainer.style.display = "inline-block";
+    // change the background color of the containing div to be red
+    this.props.reactContainer.style.backgroundColor = "red";
+}</snippet>
+                    <p>You can see an example of this in the
+                        <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
+                        where we change the display of the <code>groupRowInnerRendererFramework</code> to <code>inline-block</code> so that the +/- and label are inline.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Working Examples</h3>
+    <p>You can find fully working examples at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
+        The example demonstrates a legacy setup (without <code>reactNext</code>, as well as a simple Redux and Hooks examples.</p>
+
+    <div class="card" style="background-color: aliceblue">
+        <div class="card-body">
+            <h2 id="react-grid-resources" style="margin-top: 10px">
+                React Grid Resources
+            </h2>
+            <br/>
+            <ul>
+                <li>
+                    Learn how to customize our React Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-react-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
+                </li>
+                <br/>
+                <li>
+                    Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React.
+                </li>
+                <br>
+                <li>
+                    Visit our <strong><a href="https://blog.ag-grid.com/tag/react/">blog</a></strong> to discover all our React content.
+            </ul>
+        </div>
+    </div>
+    <h2 id="next-steps">Next Steps</h2>
 <p>
     Now you can go to our react grid <a href="../javascript-grid-reference-overview/">reference</a>
     to learn about accessing all the features of the grid.

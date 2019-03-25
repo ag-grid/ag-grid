@@ -22,7 +22,7 @@ afterEach(() => {
 });
 
 it('stateful component renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Age: 24</div></div>`);
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Age: 24</div>`);
 });
 
 it('stateful component returns a valid component instance', () => {
