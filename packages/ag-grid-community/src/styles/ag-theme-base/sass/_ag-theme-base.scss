@@ -387,7 +387,7 @@
     // Navigation
     ////////////////////////////////////////
 
-    .ag-rtl, .ag-ltr {
+    .ag-ltr, .ag-rtl {
         .ag-has-focus .ag-cell-focus {
             &:not(.ag-cell-range-selected), &.ag-cell-range-single-cell {
                 border: 1px solid $primary-color;
@@ -614,38 +614,32 @@
         input[type="text"],
         input[type="date"] {
             @include textbox($params);
-
             padding-left: $grid-size;
         }
 
         label {
-            display: block;
-            padding-left: $grid-size;
+            margin: 0;
         }
 
+        
         .ag-set-filter-list {
-            height: $virtual-item-height * 6.5;
-            padding-top: $grid-size;
+            height: $virtual-item-height * 6;
         }
 
-        .ag-filter-header-container {
+        .ag-set-filter-item {
             height: $virtual-item-height;
+            display: flex;
+            align-items: center;
+            > {
+                div, span {
+                    margin-left: 5px;
+                    display: flex;
+                }
+            }
         }
-
+ 
         .ag-filter-header-container:nth-child(2) {
             border-bottom: 1px solid $border-color;
-        }
-
-        .ag-filter-checkbox {
-            float: left;
-            height: $virtual-item-height;
-            margin-right: $grid-size;
-            padding-top: $grid-size / 2;
-        }
-
-        .ag-filter-value {
-            height: $virtual-item-height;
-            line-height: $grid-size * 3.5; // hate this
         }
 
         .ag-filter-apply-panel {
@@ -1314,189 +1308,6 @@
         }
     }
 
-    ////////////////////////////////////////
-    // Right-To-Left
-    ////////////////////////////////////////
-    .ag-rtl {
-        text-align: right;
-
-        .ag-numeric-cell {
-            text-align: left;
-        }
-
-        .ag-header-cell-menu-button {
-            float: left;
-        }
-
-        .ag-header-cell-label {
-            & > span {
-                float: right;
-            }
-
-            .ag-header-icon {
-                margin-top: 2px;
-            }
-        }
-
-        .ag-numeric-header {
-            .ag-header-cell-menu-button {
-                float: right;
-            }
-
-            .ag-header-cell-label {
-                float: left;
-
-                & > span {
-                    float: left;
-                }
-            }
-        }
-
-        .ag-tool-panel-wrapper {
-            .ag-pivot-mode-panel {
-                span {
-                    float: right;
-                }
-
-                .ag-pivot-mode-select {
-                    margin-right: $grid-size;
-
-                    .ag-checkbox-label {
-                        margin-right: $grid-size;
-                    }
-                }
-            }
-
-            .ag-column-drop {
-                .ag-icon {
-                    float: right;
-                }
-
-                .ag-column-drop-title {
-                    clear: left;
-                    float: right;
-                }
-
-                .ag-column-drop-empty-message {
-                    padding-left: $grid-size;
-                    padding-right: $grid-size * 4;
-                }
-            }
-        }
-
-        .ag-filter-checkbox {
-            float: right;
-            margin-left: $grid-size;
-        }
-
-        .ag-column-select-panel {
-            .ag-column-tool-panel-column-group,
-            .ag-column-tool-panel-column {
-                span {
-                    float: right;
-                }
-
-                .ag-column-select-checkbox,
-                .ag-column-group-icons {
-                    margin-left: $grid-size;
-                    margin-right: $grid-size;
-                }
-            }
-
-            .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
-                margin-left: 0;
-                margin-right: $icon-size + $grid-size * 2;
-            }
-        }
-
-        .ag-icon-tree-closed {
-            @include icon-background($params, "contracted");
-        }
-
-        .ag-header-group-cell-label {
-            height: 100%;
-
-            span {
-                float: right;
-                height: 100%;
-            }
-        }
-
-        .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
-            float: right;
-        }
-
-        .ag-header-select-all {
-            margin-left: $cell-horizontal-padding;
-            margin-right: 0;
-        }
-
-        .ag-selection-checkbox,
-        .ag-group-checkbox,
-        .ag-group-expanded,
-        .ag-group-contracted {
-            + .ag-cell-value, + .ag-group-value {
-                &:not(:empty) {
-                    display: inline-block;
-                    margin-right: $cell-horizontal-padding;
-                    margin-left: initial;
-                }
-            }
-            + .ag-group-checkbox {
-                margin-right: $cell-horizontal-padding;
-                margin-left: initial;
-            }
-        }
-
-        .ag-column-drop-horizontal {
-            padding-right: $cell-horizontal-padding;
-
-            span {
-                float: right;
-            }
-
-            & > div:first-child {
-                float: right;
-            }
-
-            .ag-icon-group,
-            .ag-icon-pivot {
-                margin-left: $cell-horizontal-padding;
-                margin-right: 0;
-            }
-
-            .ag-right-arrow {
-                @include icon-background($params, "right");
-
-                height: 100%;
-            }
-
-            .ag-left-arrow {
-                @include icon-background($params, "left");
-
-                height: 100%;
-            }
-        }
-
-        .ag-floating-filter-body {
-            float: right;
-            margin-left: 0;
-        }
-
-        .ag-floating-filter-button {
-            float: left;
-        }
-
-        .ag-header .ag-header-cell-resize::after {
-            border-left: 1px solid $border-color;
-            border-right: 0;
-        }
-
-        .ag-column-drag {
-            background-position-x: right;
-        }
-    }
-
     .ag-status-bar {
         background: $background-color;
         border: 1px solid $border-color;
@@ -1592,17 +1403,6 @@
         }
     }
 
-    .ag-rtl .ag-side-bar {
-        .ag-panel-container {
-            border-left: 1px solid $border-color;
-            border-right: 0;
-        }
-
-        &.full-width .ag-panel-container {
-            border-left: 0;
-        }
-    }
-
     .ag-primary-cols-filter {
         @include textbox($params);
         width: 100%;
@@ -1611,6 +1411,204 @@
     .ag-primary-cols-filter-wrapper {
         margin-left: $grid-size;
         margin-right: $grid-size;
+    }
+
+    ////////////////////////////////////////
+    // Right-To-Left
+    ////////////////////////////////////////
+    .ag-rtl {
+        text-align: right;
+
+        .ag-numeric-cell {
+            text-align: left;
+        }
+
+        .ag-header-cell-menu-button {
+            float: left;
+        }
+
+        .ag-header-cell-label {
+            & > span {
+                float: right;
+            }
+
+            .ag-header-icon {
+                margin-top: 2px;
+            }
+        }
+
+        .ag-numeric-header {
+            .ag-header-cell-menu-button {
+                float: right;
+            }
+
+            .ag-header-cell-label {
+                float: left;
+
+                & > span {
+                    float: left;
+                }
+            }
+        }
+
+        .ag-tool-panel-wrapper {
+            .ag-pivot-mode-panel {
+                span {
+                    float: right;
+                }
+
+                .ag-pivot-mode-select {
+                    margin-right: $grid-size;
+
+                    .ag-checkbox-label {
+                        margin-right: $grid-size;
+                    }
+                }
+            }
+
+            .ag-column-drop {
+                .ag-icon {
+                    float: right;
+                }
+
+                .ag-column-drop-title {
+                    clear: left;
+                    float: right;
+                }
+
+                .ag-column-drop-empty-message {
+                    padding-left: $grid-size;
+                    padding-right: $grid-size * 4;
+                }
+            }
+        }
+
+        .ag-column-select-panel {
+            .ag-column-tool-panel-column-group,
+            .ag-column-tool-panel-column {
+                span {
+                    float: right;
+                }
+
+                .ag-column-select-checkbox,
+                .ag-column-group-icons {
+                    margin-left: $grid-size;
+                    margin-right: $grid-size;
+                }
+            }
+
+            .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
+                margin-left: 0;
+                margin-right: $icon-size + $grid-size * 2;
+            }
+        }
+
+        .ag-icon-tree-closed {
+            @include icon-background($params, "contracted");
+        }
+
+        .ag-header-group-cell-label {
+            height: 100%;
+
+            span {
+                float: right;
+                height: 100%;
+            }
+        }
+
+        .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
+            float: right;
+        }
+
+        .ag-header-select-all {
+            margin-left: $cell-horizontal-padding;
+            margin-right: 0;
+        }
+
+        .ag-selection-checkbox,
+        .ag-group-checkbox,
+        .ag-group-expanded,
+        .ag-group-contracted {
+            + .ag-cell-value, + .ag-group-value {
+                &:not(:empty) {
+                    display: inline-block;
+                    margin-right: $cell-horizontal-padding;
+                    margin-left: initial;
+                }
+            }
+            + .ag-group-checkbox {
+                margin-right: $cell-horizontal-padding;
+                margin-left: initial;
+            }
+        }
+
+        .ag-column-drop-horizontal {
+            padding-right: $cell-horizontal-padding;
+
+            span {
+                float: right;
+            }
+
+            & > div:first-child {
+                float: right;
+            }
+
+            .ag-icon-group,
+            .ag-icon-pivot {
+                margin-left: $cell-horizontal-padding;
+                margin-right: 0;
+            }
+
+            .ag-right-arrow {
+                @include icon-background($params, "right");
+
+                height: 100%;
+            }
+
+            .ag-left-arrow {
+                @include icon-background($params, "left");
+
+                height: 100%;
+            }
+        }
+
+        .ag-set-filter-item {
+            > {
+                div, span {
+                    margin-left: 0;
+                    margin-right: 5px;
+                }
+            }
+        }
+
+        .ag-floating-filter-body {
+            float: right;
+            margin-left: 0;
+        }
+
+        .ag-floating-filter-button {
+            float: left;
+        }
+
+        .ag-header .ag-header-cell-resize::after {
+            border-left: 1px solid $border-color;
+            border-right: 0;
+        }
+
+        .ag-column-drag {
+            background-position-x: right;
+        }
+
+        .ag-side-bar {
+            .ag-panel-container {
+                border-left: 1px solid $border-color;
+                border-right: 0;
+            }
+    
+            &.full-width .ag-panel-container {
+                border-left: 0;
+            }
+        }
     }
 
     $exported: (

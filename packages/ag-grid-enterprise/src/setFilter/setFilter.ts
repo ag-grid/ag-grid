@@ -248,7 +248,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo')}"/>
                     </div>
                     <div class="ag-filter-header-container">
-                        <label id="selectAllContainer">
+                        <label id="selectAllContainer" class="ag-set-filter-item">
                             <div id="selectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll')})</span>
                         </label>
                     </div>
