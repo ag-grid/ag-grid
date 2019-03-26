@@ -103,6 +103,9 @@ export class GridOptionsWrapper {
 
     private layoutElements: HTMLElement[] = [];
 
+    // we store this locally, so we are not calling _.getScrollWidth() multiple times as it's an expensive operation
+    private scrollWidth: number;
+
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
@@ -1211,11 +1214,13 @@ export class GridOptionsWrapper {
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
-        let scrollbarWidth = this.gridOptions.scrollbarWidth;
-        if (typeof scrollbarWidth !== 'number' || scrollbarWidth < 0) {
-            scrollbarWidth = _.getScrollbarWidth();
+        if (this.scrollWidth==null) {
+            const useGridOptions =
+                typeof this.gridOptions.scrollbarWidth === 'number'
+                && this.gridOptions.scrollbarWidth >= 0;
+            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _.getScrollbarWidth();
         }
-        return scrollbarWidth;
+        return this.scrollWidth;
     }
 
     private checkForDeprecated() {
