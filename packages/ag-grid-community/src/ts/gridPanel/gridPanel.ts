@@ -498,11 +498,12 @@ export class GridPanel extends Component {
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         const cellComp = _.getCellCompForEvent(this.gridOptionsWrapper, keyboardEvent);
+
+        if (!cellComp) { return; }
+
         const rowNode = cellComp.getRenderedRow().getRowNode();
         const column = cellComp.getColumn();
         const editing = cellComp.isEditing();
-
-        if (!cellComp) { return; }
 
         const gridProcessingAllowed = !_.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
 
