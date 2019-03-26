@@ -37,6 +37,7 @@ $card-shadow: none !default;
 $card-radius: 0 !default;
 $row-border-width: 0 !default;
 $transition-speed: 120ms !default;
+$cell-horizontal-border: 1px solid transparent;
 
 $toolpanel-indent-size: $grid-size + $icon-size !default;
 $row-group-indent-size: $grid-size * 3 + $icon-size !default;

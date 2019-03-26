@@ -921,20 +921,18 @@
 
     .ag-ltr, .ag-rtl {
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
-            border-width: 0;
-            border-color: $primary-color;
-            border-style: solid;
+            border: 1px solid transparent;
             &.ag-cell-range-top {
-                border-top-width: 1px;
+                border-top-color: $primary-color;
             }
             &.ag-cell-range-right {
-                border-right-width: 1px;
+                border-right-color: $primary-color;
             }
             &.ag-cell-range-bottom {
-                border-bottom-width: 1px;
+                border-bottom-color: $primary-color;
             }
             &.ag-cell-range-left {
-                border-left-width: 1px;
+                border-left-color: $primary-color;
             }
         }
     }
