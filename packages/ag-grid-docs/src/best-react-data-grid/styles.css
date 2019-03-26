@@ -95,6 +95,11 @@ display: block;
 margin: 0 auto;
 }
 
+h2.overview {
+  background: none;
+  padding: 0px 0;
+}
+
 ul.contents {
   list-style: none;
   text-align: center;
