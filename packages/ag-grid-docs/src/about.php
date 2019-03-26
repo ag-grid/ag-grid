@@ -84,7 +84,7 @@ gtm_data_layer('about');
                                     <img src='images/team/sean.jpg' alt="Sean Landsman, Lead Developer"/>
                                 </div>
                                 <h3>Sean Landsman</h3>
-                                <h4>Lead Developer, <br> Frameworks</h4>
+                                <h4>Lead Developer, Frameworks</h4>
                                 <p>
                                     Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many of customers will be familiar with Sean as he is very active in our user forums supporting the needs of our customers. He has also recently given a number of talks at conferences where his calm manner belies his years of experience.
                                 </p>

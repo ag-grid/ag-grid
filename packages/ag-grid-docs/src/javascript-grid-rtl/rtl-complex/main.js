@@ -254,7 +254,6 @@ var defaultCols = [
                 floatCell: true,
                 filterParams: {
                     cellRenderer: CountryCellRenderer,
-                    cellHeight: 20,
                     newRowsAction: 'keep'
                 }
             }

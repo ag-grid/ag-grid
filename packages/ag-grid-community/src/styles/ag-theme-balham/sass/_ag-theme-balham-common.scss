@@ -144,16 +144,8 @@
         }
     }
 
-    .ag-filter .ag-filter-header-container {
-        height: $grid-size * 6;
-    }
-
     .ag-root {
         border: 1px solid $border-color;
-    }
-
-    .ag-filter .ag-filter-value {
-        line-height: $icon-size + $grid-size;
     }
 
     // tool panel

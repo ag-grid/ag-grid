@@ -36,7 +36,6 @@ export class VirtualList extends Component {
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
-
         this.rowHeight = this.gridOptionsWrapper.getVirtualItemHeight();
     }
 
@@ -147,7 +146,6 @@ export class VirtualList extends Component {
         const eDiv = document.createElement('div');
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
-        eDiv.style.lineHeight = this.rowHeight + "px";
 
         const rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
