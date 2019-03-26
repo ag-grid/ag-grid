@@ -559,12 +559,18 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-cell {
     display: inline-block;
     overflow: hidden;
-    // this float was needed for layout in safari, without it, when images were used (eg country flags),
-    // then the layout was broken
-    //float: left
     position: absolute;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.ag-cell-wrapper {
+    display: flex;
+    align-items: center;
+    .ag-cell-value, .ag-group-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 .ag-cell-with-height {

@@ -255,10 +255,7 @@
     .ag-header-cell-label {
         display: flex;
         height: 100%;
-
-        & > span {
-            float: left;
-        }
+        flex: 1 1 auto;
 
         .ag-header-icon {
             background-position-y: $grid-size * 2.5;
@@ -279,15 +276,6 @@
     .ag-numeric-header {
         .ag-header-cell-label {
             flex-direction: row-reverse;
-            float: right;
-
-            & > span {
-                float: right;
-            }
-        }
-
-        .ag-header-cell-menu-button {
-            float: left;
         }
     }
 
@@ -329,6 +317,33 @@
         }
     }
 
+    .ag-header-group-cell-label {
+        height: 100%;
+
+        span {
+            height: 100%;
+        }
+    }
+
+    .ag-header-select-all {
+        height: 100%;
+        margin-right: $cell-horizontal-padding;
+
+        span {
+            height: 100%;
+        }
+    }
+
+    .ag-cell-label-container {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+    }
+
+    .ag-numeric-header .ag-cell-label-container {
+        flex-direction: row;
+    }
+
     .ag-cell {
         @include grid-cell($row-height - 2, $cell-horizontal-padding);
 
@@ -339,17 +354,12 @@
     }
 
     .ag-row-drag {
-        float: left;
-        height: 100%;
-        width: $icon-size + $grid-size * 3;
         cursor: grab;
+        min-width: $icon-size + $grid-size * 3;
         .ag-icon-row-drag {
             display: block;
-            width: 100%;
-            height: 100%;
             @include icon-background($params, "grip");
             background-position-x: left;
-            background-position-y: $grid-size / 2 + 2px;
         }
     }
 
@@ -358,7 +368,6 @@
     }
 
     .ag-rtl .ag-row-drag {
-        float: right;
         .ag-icon-row-drag {
             background-position-x: right;
         }
@@ -723,10 +732,6 @@
         }
     }
 
-    .ag-group-child-count::before {
-        content: " ";
-    }
-
     .ag-tool-panel-wrapper {
         border-right: 0;
 
@@ -1066,56 +1071,6 @@
         }
     }
 
-    .ag-cell-label-container {
-        height: 100%;
-    }
-
-    ////////////////////////////////////////
-    // Tooltip
-    ////////////////////////////////////////
-    .ag-tooltip {
-        background-color: $tooltip-background-color;
-        color: $tooltip-foreground-color;
-        border-radius: $tooltip-border-radius;
-        padding: $tooltip-padding;
-        border-width: $tooltip-border-width;
-        border-style: $tooltip-border-style; 
-        border-color: $tooltip-border-color;
-        transition: opacity 1s;
-
-        &.ag-tooltip-hiding {
-            opacity: 0;
-        }
-    }
-    ////////////////////////////////////////
-    // Expanding headers
-    ////////////////////////////////////////
-    .ag-header-group-cell-label {
-        height: 100%;
-
-        span {
-            float: left;
-            height: 100%;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Header checkbox selection
-    ////////////////////////////////////////
-    .ag-header-select-all {
-        height: 100%;
-        margin-right: $cell-horizontal-padding;
-
-        span {
-            height: 100%;
-        }
-    }
-
-    .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
-        float: left;
-        width: calc(100% - #{$icon-size} - #{$cell-horizontal-padding});
-    }
-
     ////////////////////////////////////////
     // Selection checkbox
     ////////////////////////////////////////
@@ -1123,20 +1078,23 @@
     .ag-group-checkbox:not(.ag-invisible),
     .ag-group-expanded:not(.ag-hidden),
     .ag-group-contracted:not(.ag-hidden) {
+        display: inline-flex;
         ~ .ag-cell-value, + .ag-group-value {
             &:not(:empty) {
-                display: inline-block;
                 margin-left: $cell-horizontal-padding;
             }
         }
         ~ .ag-group-checkbox {
             margin-left: $cell-horizontal-padding;
         }
-    }   
+    }
+
+    .ag-group-child-count {
+        margin-left: 2px;
+    }
 
     .ag-selection-checkbox span {
         position: relative;
-        top: $grid-size / 2;
     }
 
     .ag-group-expanded {
@@ -1414,6 +1372,24 @@
     }
 
     ////////////////////////////////////////
+    // Tooltip
+    ////////////////////////////////////////
+    .ag-tooltip {
+        background-color: $tooltip-background-color;
+        color: $tooltip-foreground-color;
+        border-radius: $tooltip-border-radius;
+        padding: $tooltip-padding;
+        border-width: $tooltip-border-width;
+        border-style: $tooltip-border-style; 
+        border-color: $tooltip-border-color;
+        transition: opacity 1s;
+
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
+    }
+
+    ////////////////////////////////////////
     // Right-To-Left
     ////////////////////////////////////////
     .ag-rtl {
@@ -1428,26 +1404,8 @@
         }
 
         .ag-header-cell-label {
-            & > span {
-                float: right;
-            }
-
             .ag-header-icon {
                 margin-top: 2px;
-            }
-        }
-
-        .ag-numeric-header {
-            .ag-header-cell-menu-button {
-                float: right;
-            }
-
-            .ag-header-cell-label {
-                float: left;
-
-                & > span {
-                    float: left;
-                }
             }
         }
 
@@ -1511,13 +1469,8 @@
             height: 100%;
 
             span {
-                float: right;
                 height: 100%;
             }
-        }
-
-        .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
-            float: right;
         }
 
         .ag-header-select-all {
@@ -1529,9 +1482,9 @@
         .ag-group-checkbox,
         .ag-group-expanded,
         .ag-group-contracted {
+            display: inline-flex;
             + .ag-cell-value, + .ag-group-value {
                 &:not(:empty) {
-                    display: inline-block;
                     margin-right: $cell-horizontal-padding;
                     margin-left: initial;
                 }
@@ -1540,6 +1493,11 @@
                 margin-right: $cell-horizontal-padding;
                 margin-left: initial;
             }
+        }
+
+        .ag-group-child-count {
+            margin-left: unset;
+            margin-right: 2px;
         }
 
         .ag-column-drop-horizontal {

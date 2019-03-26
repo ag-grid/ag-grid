@@ -135,13 +135,13 @@ export class MenuItemMapper {
                 action: () => this.gridApi.exportDataAsCsv({})
             };
             case 'excelExport': return {
-                name: localeTextFunc('excelExport', 'Excel Export (.xlsx)'),
+                name: localeTextFunc('excelExport', 'Excel Export (.xlsx)&lrm;'),
                 action: () => this.gridApi.exportDataAsExcel({
                     exportMode: 'xlsx'
                 })
             };
             case 'excelXmlExport': return {
-                name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)'),
+                name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)&lrm;'),
                 action: () => this.gridApi.exportDataAsExcel({
                     exportMode: 'xml'
                 })

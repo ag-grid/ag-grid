@@ -36,7 +36,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private static TEMPLATE =
-        '<span>' +
+        '<span class="ag-cell-wrapper">' +
          '<span class="ag-group-expanded" ref="eExpanded"></span>' +
          '<span class="ag-group-contracted" ref="eContracted"></span>' +
          '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +

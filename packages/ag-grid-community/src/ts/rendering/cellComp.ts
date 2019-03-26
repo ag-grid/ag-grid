@@ -150,8 +150,8 @@ export class CellComp extends Component {
         const stylesForRowSpanning = this.getStylesForRowSpanning();
 
         if (this.usingWrapper) {
-            wrapperStartTemplate = `<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value" ${unselectable}>`;
-            wrapperEndTemplate = '</span></span>';
+            wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value" ${unselectable}>`;
+            wrapperEndTemplate = '</span></div>';
         }
 
         templateParts.push(`<div`);
