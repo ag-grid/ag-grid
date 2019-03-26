@@ -301,13 +301,13 @@ export class RangeController implements IRangeController {
             return;
         }
 
-        const len = missingRanges || !this.cellRanges ? 0 : this.cellRanges.length;
+        const len = missingRanges ? 0 : this.cellRanges!.length;
 
 
         if (missingRanges || !multiSelectKeyPressed) {
             this.cellRanges = [];
-        } else if (!this.activeRange && len && this.cellRanges && this.isCellInSpecificRange(cell, this.cellRanges[len - 1])) {
-            this.activeRange = this.activeRange = this.cellRanges[len - 1];
+        } else if (!this.activeRange && len && this.isCellInSpecificRange(cell, this.cellRanges![len - 1])) {
+            this.activeRange = this.cellRanges![len - 1];
         }
 
         if (!this.activeRange) {
