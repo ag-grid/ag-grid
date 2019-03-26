@@ -1232,30 +1232,24 @@ export class Utils {
     }
 
     static getScrollbarWidth() {
-        const outer = document.createElement("div");
-        outer.style.visibility = "hidden";
-        outer.style.width = "100px";
-        outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+        const body = document.body;
+        const div = document.createElement("div");
 
-        document.body.appendChild(outer);
+        div.style.width = "100px";
+        div.style.overflow = "scroll";
+        div.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+        div.style.position = "absolute";
 
-        const widthNoScroll = outer.offsetWidth;
-        // force scrollbars
-        outer.style.overflow = "scroll";
+        body.appendChild(div);
 
-        // add inner div
-        const inner = document.createElement("div");
-        inner.style.width = "100%";
-        outer.appendChild(inner);
-
-        const widthWithScroll = inner.offsetWidth;
+        const width = div.offsetWidth - div.clientWidth;
 
         // remove divs
-        if (outer.parentNode) {
-            outer.parentNode.removeChild(outer);
+        if (div.parentNode) {
+            div.parentNode.removeChild(div);
         }
 
-        return widthNoScroll - widthWithScroll;
+        return width;
     }
 
     static hasOverflowScrolling(): boolean {

@@ -2,6 +2,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { EventService } from "../eventService";
 import { Events } from "../eventKeys";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { _ } from "../utils";
 
@@ -14,6 +15,7 @@ import { _ } from "../utils";
 export class MaxDivHeightScaler extends BeanStub {
 
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
 
@@ -45,7 +47,7 @@ export class MaxDivHeightScaler extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.scrollBarWidth = _.getScrollbarWidth();
+        this.scrollBarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.maxDivHeight = _.getMaxDivHeight();
     }
 

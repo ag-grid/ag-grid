@@ -1214,10 +1214,10 @@ export class GridOptionsWrapper {
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
-        if (this.scrollWidth==null) {
+        if (this.scrollWidth == null) {
             const useGridOptions =
-                typeof this.gridOptions.scrollbarWidth === 'number'
-                && this.gridOptions.scrollbarWidth >= 0;
+                typeof this.gridOptions.scrollbarWidth === 'number' &&
+                this.gridOptions.scrollbarWidth >= 0;
             this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _.getScrollbarWidth();
         }
         return this.scrollWidth;
