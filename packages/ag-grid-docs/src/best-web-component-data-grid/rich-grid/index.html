@@ -19,7 +19,7 @@
 
     <!-- before the ag-grid web component -->
     <!-- either ag-grid or ag-grid-enterprise, depending on which you're using -->
-    <script src="https://unpkg.com/ag-grid-enterprise/master/dist/ag-grid-enterprise.js"></script>
+    <script src="https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.js"></script>
 
     <!-- the ag-grid-webcomponent-->
     <link rel="import" href="../../best-web-component-data-grid/ag-grid-webcomponent/ag-grid.html">
@@ -28,7 +28,7 @@
     <script src="../../best-web-component-data-grid/rich-grid/rich-grid-example.js"></script>
 </head>
 <body>
-<div style="width: 800px;">
+<div style="width: 100%;">
     <div style="padding: 4px">
         <div style="float: right;">
             <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
@@ -49,9 +49,6 @@
                 <button onclick="document.querySelector('#myGrid').columnApi.setColumnVisible('country', true)">Show Country Column</button>
             </span>
         </div>
-        <div style="float: right;" class="toolbar">
-            <button id="btDestroyGrid">Destroy Grid</button>
-        </div>
         <div style="padding: 4px;" class="toolbar">
             <label>
                 <input type="checkbox" onchange="document.querySelector('#myGrid').showToolPanel=this.checked"/>
@@ -63,7 +60,7 @@
         <div style="clear: both;"/>
 
         <ag-grid id="myGrid"
-                 style="height: 350px; width: 800px;"
+                 style="height: 350px; width: 100%;"
                  class="ag-theme-balham ag-basic"
                  enable-col-resize
                  enable-sorting

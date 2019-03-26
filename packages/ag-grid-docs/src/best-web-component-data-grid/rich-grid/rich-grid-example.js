@@ -158,14 +158,6 @@ const gridOptions = {
     onModelUpdated: modelUpdated
 };
 
-function addDestroyListener() {
-    const btDestroyGrid = document.querySelector('#btDestroyGrid');
-    btDestroyGrid.addEventListener('click', function () {
-        gridOptions.api.destroy();
-        btDestroyGrid.disabled = true;
-    });
-}
-
 function addQuickFilterListener() {
     const eInput = document.querySelector('#quickFilterInput');
     eInput.addEventListener("input", function () {
@@ -473,5 +465,4 @@ document.addEventListener("DOMContentLoaded", function () {
     addQuickFilterListener();
     addRefreshDataViaApi();
     addRefreshDataViaElement();
-    addDestroyListener();
 });
