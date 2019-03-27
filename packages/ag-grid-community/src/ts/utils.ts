@@ -1235,7 +1235,8 @@ export class Utils {
         const body = document.body;
         const div = document.createElement("div");
 
-        div.style.width = "100px";
+        div.style.width = div.style.height = "100px";
+        div.style.opacity = "0";
         div.style.overflow = "scroll";
         div.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
         div.style.position = "absolute";
