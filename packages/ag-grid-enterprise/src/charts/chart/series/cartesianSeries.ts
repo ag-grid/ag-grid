@@ -12,7 +12,4 @@ export abstract class CartesianSeries<D, X, Y> extends Series<D, X, Y> {
     protected _yField: Extract<keyof D, string> | null = null;
     abstract set yField(value: Extract<keyof D, string> | null);
     abstract get yField(): Extract<keyof D, string> | null;
-
-    // protected _xAxis: CartesianAxis | null = null;
-    // protected _yAxis: CartesianAxis | null = null;
 }

@@ -90,19 +90,22 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         this.xData = data.map(datum => datum[xField]);
         this.yData = data.map(datum => datum[yField]);
 
-        const domainX = chart.xAxis.scale instanceof ContinuousScale ? extent(this.xData) : this.xData;
+        const continuousX = chart.xAxis.scale instanceof ContinuousScale;
+        const domainX = continuousX ? extent(this.xData) : this.xData;
         const domainY = extent(this.yData);
 
-        if (domainX[0] === domainX[1]) {
-            if (typeof domainX[0] === 'number' && isFinite(domainX[0])) {
-                (domainX[0] as number) -= 1;
-            } else {
-                (domainX[0] as any) = 0;
-            }
-            if (typeof domainX[1] === 'number' && isFinite(domainX[1])) {
-                (domainX[1] as number) += 1;
-            } else {
-                (domainX[1] as any) = 1;
+        if (continuousX) {
+            if (domainX[0] === domainX[1]) {
+                if (typeof domainX[0] === 'number' && isFinite(domainX[0])) {
+                    (domainX[0] as number) -= 1;
+                } else {
+                    (domainX[0] as any) = 0;
+                }
+                if (typeof domainX[1] === 'number' && isFinite(domainX[1])) {
+                    (domainX[1] as number) += 1;
+                } else {
+                    (domainX[1] as any) = 1;
+                }
             }
         }
 

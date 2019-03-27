@@ -78,8 +78,6 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
             series.processData();
         });
 
-        // this.updateAxes();
-
         this._series.forEach(series => {
             series.update();
         });
