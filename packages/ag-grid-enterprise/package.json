@@ -9,7 +9,16 @@
     "testWithCoverage": "jest --coverage",
     "watchWebpack": "webpack --watch",
     "build": "npm run lint && gulp release",
-    "lint": "tsc -p tsconfig-lint.json && tslint --project tsconfig.json"
+    "lint": "tsc -p tsconfig-lint.json && tslint --project tsconfig.json",
+    "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
+    "e2e": "protractor protractor.conf.js",
+    "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
+    "webdriver-stop": "webdriver-manager shutdown",
+    "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')",
+    "update-webdriver": "webdriver-manager update --gecko false",
+    "start-server": "http-server .",
+    "ci": "start-server-and-test start-server http://localhost:8080 e2e"
+
   },
   "repository": {
     "type": "git",
@@ -45,7 +54,10 @@
     "tslint": "^5.11.0",
     "typescript": "~3.3.1",
     "webpack": "^4.26.1",
-    "webpack-stream": "^5.1.1"
+    "webpack-stream": "^5.1.1",
+    "http-server": "^0.11.1",
+    "protractor": "^5.4.2",
+    "start-server-and-test": "^1.7.11"
   },
   "peerDependencies": {
     "ag-grid-community": "^20.2.0"

@@ -33,6 +33,7 @@ gulp.task('cleanDist', cleanDist);
 gulp.task('cleanMain', cleanMain);
 
 gulp.task('watch', ['tsc'], tscWatch);
+gulp.task('webpack-watch', ['webpack-noStyle'], webpackWatch);
 
 gulp.task("tslint", () =>
     gulp.src("src/**/*.ts")
@@ -48,6 +49,14 @@ function tscWatch() {
         './src/**/*'
     ],
     ['tsc']);
+}
+
+function webpackWatch() {
+    gulp.watch([
+        './node_modules/ag-grid-community/dist/lib/**/*',
+        './src/**/*'
+    ],
+    ['webpack-noStyle']);
 }
 
 function cleanDist() {

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style> html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    } </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+    <!--<script src="ag-grid-enterprise.js"></script>-->
+    <script src="../dist/ag-grid-enterprise.js"></script>
+</head>
+<body>
+
+<div ng-app="example" ng-controller="exampleCtrl" style="height: 100%">
+    <div ag-grid="gridOptions" style="height: 100%;" class="ag-theme-balham"></div>
+</div>
+
+<script>
+    agGrid.initialiseAgGridWithAngular1(angular);
+
+    var module = angular.module("example", ["agGrid"]);
+
+    module.controller("exampleCtrl", function ($scope, $http) {
+
+        var columnDefs = [
+            {
+                field: "value",
+                cellRenderer: "agGroupCellRenderer"
+            }
+        ];
+
+        var childValue = 10;
+
+        var detailCellRendererParams = {
+            detailGridOptions: {
+                columnDefs: [
+                    {field: "value"}
+                ],
+                onFirstDataRendered(params) {
+                    params.api.sizeColumnsToFit();
+                }
+            },
+            getDetailRowData: function (params) {
+                params.successCallback(params.data.childRecords);
+            },
+            template:
+                `<div style="height: 100%; background-color: #edf6ff; padding: 20px; box-sizing: border-box;">
+                    <button id="ngButton" ng-click="doubleChildValue()">Double Values</button>
+                    <div style="height: 10%;">Call Details</div>
+                    <div ref="eDetailGrid" style="height: 90%;"></div>
+                </div>`
+        };
+
+        $scope.gridOptions = {
+            columnDefs: columnDefs,
+            masterDetail: true,
+            detailCellRendererParams: detailCellRendererParams,
+            rowData: [{
+                "value": 10,
+                "childRecords": [{
+                    "value": childValue
+                }]
+            }],
+            angularCompileRows: true,
+            onFirstDataRendered(params) {
+                params.api.forEachNode(function (node) {
+                    node.setExpanded(true);
+                });
+            }
+        };
+
+        $scope.doubleChildValue = function () {
+            $scope.gridOptions.api.forEachDetailGridInfo(function (detailGridInfo) {
+                childValue *= 2;
+                let newData = [{value: childValue}];
+                detailGridInfo.api.setRowData(newData);
+
+            });
+        };
+
+    });
+</script>
+</body>
+</html>

@@ -8,7 +8,11 @@
     "noImplicitAny": true,
     "outDir": "dist/lib",
     "strictNullChecks": true,
-    "strictFunctionTypes": true
+    "strictFunctionTypes": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ]
   },
   "include": [
     "src/**/*"

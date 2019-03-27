@@ -290,7 +290,8 @@ export class RowComp extends Component {
 
         const newChildScope = this.parentScope.$new();
         newChildScope.data = {...data };
-        newChildScope.rowNode = this.rowNode;
+        console.log(newChildScope.data, newChildScope.data === data, this.beans.doingMasterDetail && this.rowNode.detail);
+        // newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
 
         this.addDestroyFunc(() => {
@@ -832,10 +833,7 @@ export class RowComp extends Component {
             this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
 
-            const isDetailRow = this.beans.doingMasterDetail && this.rowNode.detail;
-            if (!isDetailRow) {
-                this.angular1Compile(eRow);
-            }
+            this.angular1Compile(eRow);
         });
     }
 

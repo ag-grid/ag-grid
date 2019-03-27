@@ -9,7 +9,7 @@
     "watchWebpack": "webpack --watch",
     "build": "gulp release",
     "test": "exit 0",
-    "test:ci": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
+    "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
     "e2e": "protractor protractor.conf.js",
     "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
     "webdriver-stop": "webdriver-manager shutdown",
