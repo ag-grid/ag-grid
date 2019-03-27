@@ -131,14 +131,16 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         const domainY = extent(this.yData);
 
         if (continuousX) {
-            if (domainX[0] === domainX[1]) {
-                if (typeof domainX[0] === 'number' && isFinite(domainX[0])) {
-                    (domainX[0] as number) -= 1;
+            const min = domainX[0];
+            const max = domainX[1];
+            if (min === max) {
+                if (typeof min === 'number' && isFinite(min)) {
+                    (domainX[0] as any) -= 1;
                 } else {
                     (domainX[0] as any) = 0;
                 }
-                if (typeof domainX[1] === 'number' && isFinite(domainX[1])) {
-                    (domainX[1] as number) += 1;
+                if (typeof max === 'number' && isFinite(max)) {
+                    (domainX[1] as any) += 1;
                 } else {
                     (domainX[1] as any) = 1;
                 }
@@ -146,13 +148,15 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         }
 
         if (domainY[0] === domainY[1]) {
-            if (typeof domainY[0] === 'number' && isFinite(domainY[0])) {
-                (domainY[0] as number) -= 1;
+            const min = domainY[0];
+            const max = domainY[1];
+            if (typeof min === 'number' && isFinite(min)) {
+                (domainY[0] as any) -= 1;
             } else {
                 (domainY[0] as any) = 0;
             }
-            if (typeof domainY[1] === 'number' && isFinite(domainY[1])) {
-                (domainY[1] as number) += 1;
+            if (typeof max === 'number' && isFinite(max)) {
+                (domainY[1] as any) += 1;
             } else {
                 (domainY[1] as any) = 1;
             }
