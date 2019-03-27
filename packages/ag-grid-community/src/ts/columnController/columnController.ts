@@ -233,11 +233,11 @@ export class ColumnController {
     }
 
     public isAutoRowHeightActive(): boolean {
-        return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
+        return this.getAllVisibleAutoRowHeightCols().length > 0;
     }
 
-    public getAllAutoRowHeightCols(): Column[] {
-        return this.autoRowHeightColumns;
+    public getAllVisibleAutoRowHeightCols(): Column[] {
+        return this.autoRowHeightColumns ? this.autoRowHeightColumns.filter(col => col.isVisible()) : [];
     }
 
     private setVirtualViewportLeftAndRight(): void {

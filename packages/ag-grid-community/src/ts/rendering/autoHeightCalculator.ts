@@ -37,10 +37,8 @@ export class AutoHeightCalculator {
         eBodyContainer.appendChild(this.eDummyContainer);
 
         const cellComps: CellComp[] = [];
-        const autoRowHeightCols = this.columnController.getAllAutoRowHeightCols();
-        const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => col.isVisible());
-
-        visibleAutoRowHeightCols.forEach(col => {
+        const cols = this.columnController.getAllVisibleAutoRowHeightCols();
+        cols.forEach(col => {
             const cellComp = new CellComp(
                 this.$scope,
                 this.beans,
