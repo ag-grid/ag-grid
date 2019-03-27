@@ -16,7 +16,6 @@ export class LineChartComp extends Component {
     private readonly chartOptions: ChartOptions;
     private readonly datasource: ChartDatasource;
 
-    private chart: CartesianChart<any, string, number>;
     private lineSeries: LineSeries<any, string, number>;
 
     @RefSelector('eChart') private eChart: HTMLElement;
@@ -34,20 +33,22 @@ export class LineChartComp extends Component {
 
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
 
-        this.chart = new CartesianChart<any, string, number>(
+        const chart = new CartesianChart<any, string, number>(
             new CategoryAxis(),
             new NumberAxis(),
             this.eChart
         );
 
-        this.chart.width = this.chartOptions.width;
-        this.chart.height = this.chartOptions.height;
-        this.chart.padding = {top: 25, right: 50, bottom: 100, left: 50};
+        chart.width = this.chartOptions.width;
+        chart.height = this.chartOptions.height;
+        chart.padding = {top: 25, right: 50, bottom: 105, left: 50};
+
+        chart.xAxis.labelRotation = 90;
 
         this.lineSeries = new LineSeries<any, string, number>();
-        this.lineSeries.lineWidth = 4;
-        this.chart.xAxis.labelRotation = 90;
-        this.chart.addSeries(this.lineSeries);
+        this.lineSeries.lineWidth = 2;
+        this.lineSeries.markerRadius = 3;
+        chart.addSeries(this.lineSeries);
 
         this.refresh();
     }

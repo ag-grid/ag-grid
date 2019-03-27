@@ -42,15 +42,14 @@ export class BarChartComp extends Component {
 
         this.chart.width = this.chartOptions.width;
         this.chart.height = this.chartOptions.height;
-
         this.chart.padding = {top: 50, right: 50, bottom: 50, left: 50};
 
         this.barSeries = new BarSeries<any>();
-        this.chart.addSeries(this.barSeries);
+        this.barSeries.grouped = true;
 
+        this.chart.addSeries(this.barSeries);
         this.chart.xAxis.labelRotation = 90;
 
-        this.barSeries.grouped = true;
         this.refresh();
     }
 
@@ -95,8 +94,6 @@ export class BarChartComp extends Component {
             fields.forEach( field => item[field] = ds.getValue(i, field) );
             data.push(item);
         }
-
-        console.log('data: ', data);
 
         this.barSeries.setDataAndFields(data, 'category', fields);
     }

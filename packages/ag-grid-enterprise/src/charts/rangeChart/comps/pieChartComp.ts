@@ -15,7 +15,6 @@ export class PieChartComp extends Component {
     private readonly chartOptions: ChartOptions;
     private readonly datasource: ChartDatasource;
 
-    private chart: PolarChart<any, string, number>;
     private pieSeries: PieSeries<any>;
 
     @RefSelector('eChart') private eChart: HTMLElement;
@@ -33,13 +32,13 @@ export class PieChartComp extends Component {
 
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
 
-        this.chart = new PolarChart<any, string, number>(
+        const chart = new PolarChart<any, string, number>(
             this.eChart
         );
 
-        this.chart.width = this.chartOptions.width;
-        this.chart.height = this.chartOptions.height;
-        this.chart.padding = {top: 50, right: 50, bottom: 50, left: 50};
+        chart.width = this.chartOptions.width;
+        chart.height = this.chartOptions.height;
+        chart.padding = {top: 50, right: 50, bottom: 50, left: 50};
 
         this.pieSeries = new PieSeries<any>();
 
@@ -48,7 +47,7 @@ export class PieChartComp extends Component {
         this.pieSeries.lineWidth = 1;
         this.pieSeries.calloutWidth = 1;
 
-        this.chart.addSeries(this.pieSeries);
+        chart.addSeries(this.pieSeries);
 
         this.refresh();
     }
