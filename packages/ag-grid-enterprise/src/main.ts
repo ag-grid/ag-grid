@@ -27,8 +27,9 @@ import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
 import { ChartingService } from "./charts/chartingService";
+import { RangeChartService } from "./charts/rangeChart/rangeChartService";
 import { WatermarkComp } from "./license/watermark";
-import {ChartControlComp} from "./charts/chartControlComp";
+import { ChartControlComp } from "./charts/chartControlComp";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -64,6 +65,7 @@ export { ExcelCreator } from "./exporter/excelCreator";
 export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 export { ChartingService } from "./charts/chartingService";
+export { RangeChartService } from "./charts/rangeChart/rangeChartService";
 export { WatermarkComp } from "./license/watermark";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
@@ -71,7 +73,7 @@ const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowMode
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
     RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
-    MenuItemMapper, StatusBarService, ChartingService], rowModelTypes);
+    MenuItemMapper, StatusBarService, ChartingService, RangeChartService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgPrimaryColsHeader', theClass: PrimaryColsHeaderPanel},

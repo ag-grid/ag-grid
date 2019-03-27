@@ -1,7 +1,8 @@
 import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _ } from 'ag-grid-community';
 import { ClipboardService } from "../clipboardService";
 import { AggFuncService } from "../aggregation/aggFuncService";
-import {ChartingService} from "../charts/chartingService";
+import { ChartingService } from "../charts/chartingService";
+import { RangeChartService, ChartType } from "../charts/rangeChart/rangeChartService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -12,6 +13,7 @@ export class MenuItemMapper {
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
     @Autowired('chartingService') private chartingService: ChartingService;
+    @Autowired('rangeChartService') private rangeChartService: RangeChartService;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) { return []; }
@@ -147,18 +149,37 @@ export class MenuItemMapper {
                 })
             };
             case 'separator': return 'separator';
-            case 'chartRange': return {
-                name: 'Chart Range',
+            case 'chartRange':
+                const chartRangeSubMenuItems: string[] = [];
+                chartRangeSubMenuItems.push('barRangeChart');
+                chartRangeSubMenuItems.push('lineRangeChart');
+                chartRangeSubMenuItems.push('pieRangeChart');
+                return {
+                    name: 'Chart Range',
+                    subMenu: chartRangeSubMenuItems
+                };
+            case 'barRangeChart': return {
+                name: localeTextFunc('barRangeChart', 'Bar'),
                 action: () => {
-                    this.chartingService.chartRange();
-
+                    this.rangeChartService.chartRange(ChartType.Bar);
+                }
+            };
+            case 'lineRangeChart': return {
+                name: localeTextFunc('lineRangeChart', 'Line'),
+                action: () => {
+                    this.rangeChartService.chartRange(ChartType.Line);
+                }
+            };
+            case 'pieRangeChart': return {
+                name: localeTextFunc('pieRangeChart', 'Pie'),
+                action: () => {
+                    this.rangeChartService.chartRange(ChartType.Pie);
                 }
             };
             case 'chartEverything': return {
                 name: 'Chart Everything',
                 action: () => {
                     this.chartingService.chartEverything();
-
                 }
             };
             default:
