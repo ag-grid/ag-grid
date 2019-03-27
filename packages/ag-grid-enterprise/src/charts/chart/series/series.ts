@@ -3,12 +3,18 @@ import {Chart} from "../chart";
 
 export abstract class Series<D, X, Y> {
 
+    readonly id: string = this.createId();
+
+    /**
+     * The group node that contains all the nodes used to render this series.
+     */
+    readonly group: Group = new Group();
+
     // Uniquely identify series.
     private createId(): string {
         const constructor = this.constructor as any;
         return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
-    readonly id: string = this.createId();
 
     abstract set data(data: D[]);
     abstract get data(): D[];
@@ -16,8 +22,6 @@ export abstract class Series<D, X, Y> {
     protected _chart: Chart<D, X, Y> | null = null;
     abstract set chart(chart: Chart<D, X, Y> | null);
     abstract get chart(): Chart<D, X, Y> | null;
-
-    readonly group: Group = new Group();
 
     private _visible: boolean = true;
     set visible(value: boolean) {
