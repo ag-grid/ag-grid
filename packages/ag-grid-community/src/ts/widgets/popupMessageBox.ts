@@ -1,9 +1,9 @@
-import { PopupWindow } from "./popupWindow";
-import { Autowired, Context, PostConstruct } from "../context/context";
+import { Dialog } from "./dialog";
+import { PostConstruct } from "../context/context";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 
-export class PopupMessageBox extends PopupWindow {
+export class PopupMessageBox extends Dialog {
 
     private readonly title: string;
     private readonly message: string;
@@ -25,7 +25,7 @@ export class PopupMessageBox extends PopupWindow {
         messageBodyComp.setMessage(this.message);
         this.setBody(messageBodyComp.getGui());
 
-        this.addDestroyableEventListener(messageBodyComp, 'onBtOk', () => this.closePopup());
+        this.addDestroyableEventListener(messageBodyComp, 'onBtOk', () => this.close());
     }
 }
 

@@ -9,7 +9,7 @@ import {
     Context,
     PopupMessageBox,
     PopupService,
-    PopupWindow,
+    Dialog,
     IEventEmitter,
     RangeSelection,
     Component
@@ -93,17 +93,21 @@ export class RangeChartService {
         }
 
         this.context.wireBean(chart);
-        this.addChartToPopupWindow(chart);
+        this.createChartPanel(chart);
     }
 
-    private addChartToPopupWindow(chart: Component): void {
-        const popupWindow = new PopupWindow();
-        this.context.wireBean(popupWindow);
+    private createChartPanel(chart: Component): void {
+        const chartPanel = new Dialog({
+            resizable: true,
+            movable: true,
+            title: 'Chart'
+        });
 
-        popupWindow.setBody(chart.getGui());
-        popupWindow.setTitle('Chart');
+        this.context.wireBean(chartPanel);
 
-        popupWindow.addEventListener(PopupWindow.EVENT_DESTROYED, () => {
+        chartPanel.setBody(chart.getGui());
+
+        chartPanel.addEventListener(Dialog.EVENT_DESTROYED, () => {
             chart.destroy();
         });
     }

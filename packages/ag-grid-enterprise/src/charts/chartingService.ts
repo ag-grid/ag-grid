@@ -1,4 +1,4 @@
-import {Autowired, Bean, Context, IRowModel, PopupMessageBox, PopupService, PopupWindow} from "ag-grid-community";
+import {Autowired, Bean, Context, IRowModel, PopupMessageBox, PopupService, Dialog} from "ag-grid-community";
 import {RangeController} from "../rangeController";
 import {ChartComp} from "./chartComp";
 import {ChartEverythingDatasource} from "./chartEverythingDatasource";
@@ -29,12 +29,16 @@ export class ChartingService {
         });
         this.context.wireBean(chart);
 
-        const popupWindow = new PopupWindow();
-        this.context.wireBean(popupWindow);
-        popupWindow.setBody(chart.getGui());
-        popupWindow.setTitle('Chart');
+        const chartPanel = new Dialog({
+            resizable: true,
+            movable: true,
+            title: 'Chart'
+        });
 
-        popupWindow.addEventListener(PopupWindow.EVENT_DESTROYED, ()=> {
+        this.context.wireBean(chartPanel);
+        chartPanel.setBody(chart.getGui());
+
+        chartPanel.addEventListener(Dialog.EVENT_DESTROYED, () => {
             chart.destroy();
         });
     }

@@ -851,6 +851,81 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 /**
  ****************************
+ * Dialog
+ ****************************
+*/
+
+.ag-dialog {
+    position: absolute;
+    $handleSize: 5px;
+    .ag-resizer {
+        position: absolute;
+        &.ag-resizer-topLeft {
+            top: 0;
+            left: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nwse-resize;
+        }
+        &.ag-resizer-top {
+            top: 0;
+            left: $handleSize;
+            right: $handleSize;
+            height: $handleSize;
+            cursor: ns-resize;
+        }
+        &.ag-resizer-topRight {
+            top: 0;
+            right: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nesw-resize;
+        }
+        &.ag-resizer-right {
+            top: $handleSize;
+            right: 0;
+            bottom: $handleSize;
+            width: $handleSize;
+            cursor: ew-resize;
+        }
+        &.ag-resizer-bottomRight {
+            bottom: 0;
+            right: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nwse-resize;
+        }
+        &.ag-resizer-bottom {
+            bottom: 0;
+            left: $handleSize;
+            right: $handleSize;
+            height: $handleSize;
+            cursor: ns-resize;
+        }
+        &.ag-resizer-bottomLeft {
+            bottom: 0;
+            left: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nesw-resize;
+        }
+        &.ag-resizer-left {
+            left: 0;
+            top: $handleSize;
+            bottom: $handleSize;
+            width: $handleSize;
+            cursor: ew-resize;
+        }
+    }
+
+    .ag-dialog-title-bar {
+        display: flex;
+        align-items: center;
+    }
+}
+
+/**
+ ****************************
  * Tooltip
  ****************************
 */
