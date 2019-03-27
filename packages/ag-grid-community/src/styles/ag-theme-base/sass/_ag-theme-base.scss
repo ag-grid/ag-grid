@@ -978,10 +978,6 @@
         input[type="datetime-local"] {
             @include textbox($params);
         }
-
-        select {
-            height: auto;
-        }
     }
 
     .ag-popup-editor {
