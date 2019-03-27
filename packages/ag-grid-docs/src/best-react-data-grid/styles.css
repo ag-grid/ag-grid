@@ -98,6 +98,7 @@ margin: 0 auto;
 h2.overview {
   background: none;
   padding: 0px 0;
+  font-weight: 200;
 }
 
 ul.contents {

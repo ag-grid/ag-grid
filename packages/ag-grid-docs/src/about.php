@@ -179,6 +179,16 @@ gtm_data_layer('about');
                                 Davis joins the team to work on support for our growing customer base through Zendesk. He has background in JavaScript and will be working to support users with solutions.
                             </p>
                         </div>
+                            <div class="col-md-4">
+                            <div>
+                                <img src='images/team/bamdad.png' alt=" Bamdad Fard, Support Engineer"/>
+                            </div>
+                            <h3>Bamdad Fard</h3>
+                            <h4>Junior ag-Grid Consultant</h4>
+                            <p>
+                                Bamdad joins the team to work on support for our growing customer base through Zendesk. He has a background in Python and will be working to support users with solutions.
+                            </p>
+                        </div>
                     </div>
                 </article>
                 </section>
@@ -259,7 +269,7 @@ gtm_data_layer('about');
                                 <h4>Digital Marketing Executive</h4>
                                 <p>
                                     Fahad joins the company as the first employee with a primary focus on Digital
-                                    Marketing. He comes with a background in SEO, PPC, Social Media Marketing and
+                                    Marketing. He comes with a background in SEO, PPC, and
                                     Content Marketing. He is charged with the task of improving ag-Grid’s digital
                                     footprint
                                     using his expertise in SEO and PPC.
