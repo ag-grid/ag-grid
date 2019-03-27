@@ -2,10 +2,22 @@ import {CartesianSeries} from "./cartesianSeries";
 import {CartesianChart} from "../cartesianChart";
 import {Path} from "../../scene/shape/path";
 import {Path2D} from "../../scene/path2D";
-import colors from "../colors";
 import {Color} from "../../util/color";
-import {extent} from "../../util/array";
 import ContinuousScale from "../../scale/continuousScale";
+import {Selection} from "../../scene/selection";
+import {Group} from "../../scene/group";
+import {Arc, ArcType} from "../../scene/shape/arc";
+import {extent} from "../../util/array";
+import colors from "../colors";
+
+type MarkerDatum = {
+    x: number,
+    y: number,
+    fillStyle: string | null,
+    strokeStyle: string | null,
+    lineWidth: number,
+    radius: number
+};
 
 export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
 
@@ -15,6 +27,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     private yData: Y[] = [];
 
     private linePath = new Path();
+
+    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
     constructor() {
         super();
@@ -77,6 +91,28 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         }
     }
 
+    private _markerRadius: number = 5;
+    set markerRadius(value: number) {
+        if (this._markerRadius !== value) {
+            this._markerRadius = Math.abs(value);
+            this.update();
+        }
+    }
+    get markerRadius(): number {
+        return this._markerRadius;
+    }
+
+    private _markerLineWidth: number = 2;
+    set markerLineWidth(value: number) {
+        if (this._markerLineWidth !== value) {
+            this._markerLineWidth = value;
+            this.update();
+        }
+    }
+    get markerLineWidth(): number {
+        return this._markerLineWidth;
+    }
+
     processData(): boolean {
         const data = this.data;
         const xField = this.xField;
@@ -129,7 +165,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         return true;
     }
 
-    private color = Color.fromHexString(colors[0]).darker().toHexString();
+    private color = colors[0];
+    private strokeColor = Color.fromHexString(this.color).darker().toHexString();
 
     private _lineWidth: number = 2;
     set lineWidth(value: number) {
@@ -162,6 +199,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         const linePath: Path = this.linePath;
         const path: Path2D = linePath.path;
 
+        const markerData: MarkerDatum[] = [];
+
         path.clear();
         for (let i = 0; i < n; i++) {
             const xDatum = xData[i];
@@ -174,10 +213,43 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
             } else {
                 path.lineTo(x, y);
             }
+
+            markerData.push({
+                x,
+                y,
+                fillStyle: this.color,
+                strokeStyle: this.strokeColor,
+                lineWidth: this.markerLineWidth,
+                radius: this.markerRadius
+            });
         }
 
-        linePath.strokeStyle = this.color;
+        linePath.strokeStyle = this.strokeColor;
         linePath.lineWidth = this.lineWidth;
+
+        // ------------------------------------------
+
+        const updateGroups = this.groupSelection.setData(markerData);
+        updateGroups.exit.remove();
+
+        const enterGroups = updateGroups.enter.append(Group);
+        enterGroups.append(Arc).each(arc => arc.type = ArcType.Chord);
+
+        const groupSelection = updateGroups.merge(enterGroups);
+
+        groupSelection.selectByClass(Arc)
+            .each((arc, datum) => {
+                arc.centerX = datum.x;
+                arc.centerY = datum.y;
+                arc.radiusX = datum.radius;
+                arc.radiusY = datum.radius;
+                arc.fillStyle = datum.fillStyle;
+                arc.strokeStyle = datum.strokeStyle;
+                arc.lineWidth = datum.lineWidth;
+                arc.visible = datum.radius > 0;
+            });
+
+        this.groupSelection = groupSelection;
     }
 
     getDomainX(): X[] {
