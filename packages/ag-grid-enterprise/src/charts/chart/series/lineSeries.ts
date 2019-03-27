@@ -1,14 +1,18 @@
 import {CartesianSeries} from "./cartesianSeries";
 import {CartesianChart} from "../cartesianChart";
 import {Path} from "../../scene/shape/path";
+import {Path2D} from "../../scene/path2D";
 import colors from "../colors";
 import {Color} from "../../util/color";
+import {extent} from "../../util/array";
+import ContinuousScale from "../../scale/continuousScale";
 
-export class LineSeries<D, X = string, Y = number> extends CartesianSeries<D, X, Y> {
+export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
 
-    private domainX: string[] = [];
-    private domainY: number[] = [];
-    private yData: number[] = [];
+    private domainX: X[] = [];
+    private domainY: Y[] = [];
+    private xData: X[] = [];
+    private yData: Y[] = [];
 
     private linePath = new Path();
 
@@ -18,14 +22,14 @@ export class LineSeries<D, X = string, Y = number> extends CartesianSeries<D, X,
         this.group.append(this.linePath);
     }
 
-    set chart(chart: CartesianChart<D, string, number> | null) {
+    set chart(chart: CartesianChart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.update();
         }
     }
-    get chart(): CartesianChart<D, string, number> | null {
-        return this._chart as CartesianChart<D, string, number>;
+    get chart(): CartesianChart<D, X, Y> | null {
+        return this._chart as CartesianChart<D, X, Y>;
     }
 
     private _data: any[] = [];
@@ -63,7 +67,7 @@ export class LineSeries<D, X = string, Y = number> extends CartesianSeries<D, X,
         return this._yField;
     }
 
-    setDataAndFields(data: any[], xField: Extract<keyof D, string>, yField: Extract<keyof D, string>) {
+    setDataAndFields(data: D[], xField: Extract<keyof D, string>, yField: Extract<keyof D, string>) {
         this._xField = xField;
         this._yField = yField;
         this._data = data;
@@ -77,45 +81,47 @@ export class LineSeries<D, X = string, Y = number> extends CartesianSeries<D, X,
         const data = this.data;
         const xField = this.xField;
         const yField = this.yField;
+        const chart = this.chart;
 
-        if (!(xField && yField)) {
+        if (!(xField && yField && chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
-        const xData: string[] = this.domainX = data.map(datum => {
-            const value = datum[xField];
-            if (typeof value !== 'string') {
-                throw new Error(`The ${xField} value is not a string. `
-                    + `This error might be solved by using the 'setDataAndFields' method.`);
+        this.xData = data.map(datum => datum[xField]);
+        this.yData = data.map(datum => datum[yField]);
+
+        const domainX = chart.xAxis.scale instanceof ContinuousScale ? extent(this.xData) : this.xData;
+        const domainY = extent(this.yData);
+
+        if (domainX[0] === domainX[1]) {
+            if (typeof domainX[0] === 'number' && isFinite(domainX[0])) {
+                (domainX[0] as number) -= 1;
+            } else {
+                (domainX[0] as any) = 0;
             }
-            return value;
-        });
-        const yData: number[] = this.yData = data.map(datum => {
-            const value = datum[yField];
-            if (typeof value !== 'number') {
-                throw new Error(`The ${yField} value is not a number. `
-                    + `This error might be solved by using the 'setDataAndFields' method.`);
+            if (typeof domainX[1] === 'number' && isFinite(domainX[1])) {
+                (domainX[1] as number) += 1;
+            } else {
+                (domainX[1] as any) = 1;
             }
-            return value;
-        });
-
-        let yMin: number = Math.min(...yData);
-        let yMax: number = Math.max(...yData);
-
-
-        if (yMin === yMax || !isFinite(yMin) || !isFinite(yMax)) {
-            yMin = 0;
-            yMax = 1;
-            // console.warn('Zero or infinite y-range.');
         }
 
-        this.domainX = xData;
-        this.domainY = [yMin, yMax];
-
-        const chart = this.chart;
-        if (chart) {
-            chart.updateAxes();
+        if (domainY[0] === domainY[1]) {
+            if (typeof domainY[0] === 'number' && isFinite(domainY[0])) {
+                (domainY[0] as number) -= 1;
+            } else {
+                (domainY[0] as any) = 0;
+            }
+            if (typeof domainY[1] === 'number' && isFinite(domainY[1])) {
+                (domainY[1] as number) += 1;
+            } else {
+                (domainY[1] as any) = 1;
+            }
         }
+        this.domainX = domainX as [X, X];
+        this.domainY = domainY as [Y, Y];
+
+        chart.updateAxes();
 
         return true;
     }
@@ -144,19 +150,21 @@ export class LineSeries<D, X = string, Y = number> extends CartesianSeries<D, X,
         const yAxis = chart.yAxis;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
-        const halfBandwidth = xScale.bandwidth! / 2;
-        const xData = this.domainX;
+        const xOffset = (xScale.bandwidth || 0) / 2;
+        const yOffset = (yScale.bandwidth || 0) / 2;
+        const xData = this.xData;
         const yData = this.yData;
         const n = xData.length;
-        const linePath = this.linePath;
-        const path = linePath.path;
+
+        const linePath: Path = this.linePath;
+        const path: Path2D = linePath.path;
 
         path.clear();
         for (let i = 0; i < n; i++) {
             const xDatum = xData[i];
             const yDatum = yData[i];
-            const x = xScale.convert(xDatum) + halfBandwidth;
-            const y = yScale.convert(yDatum);
+            const x = xScale.convert(xDatum) + xOffset;
+            const y = yScale.convert(yDatum) + yOffset;
 
             if (!i) {
                 path.moveTo(x, y);
@@ -169,11 +177,11 @@ export class LineSeries<D, X = string, Y = number> extends CartesianSeries<D, X,
         linePath.lineWidth = this.lineWidth;
     }
 
-    getDomainX(): string[] {
+    getDomainX(): X[] {
         return this.domainX;
     }
 
-    getDomainY(): number[] {
+    getDomainY(): Y[] {
         return this.domainY;
     }
 }
