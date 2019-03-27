@@ -66,9 +66,6 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.calculateFields();
         this.calculateRowRange();
         this.calculateCategoryCols();
-
-        console.log(`colIds`, this.colIds);
-        console.log(`categoryCols`, this.categoryCols);
     }
 
     private calculateCategoryCols(): void {

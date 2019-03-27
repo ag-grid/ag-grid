@@ -1,26 +1,23 @@
 import {RangeController} from "../../rangeController";
 import {RangeChartDatasource} from "./rangeChartDatasource";
-import {BarChartComp} from "./comps/barChartComp";
-import {LineChartComp} from "./comps/lineChartComp";
-import {PieChartComp} from "./comps/pieChartComp";
 import {
     Autowired,
     Bean,
+    CellRange,
+    Component,
     Context,
-    PopupMessageBox,
-    PopupService,
     Dialog,
     IEventEmitter,
-    CellRange,
-    Component
+    PopupMessageBox,
+    PopupService
 } from "ag-grid-community";
+import {GridChartComp} from "./gridChartComp";
 
 export enum ChartType {Bar, Line, Pie}
 
 export interface ChartOptions {
     height: number,
-    width: number,
-    datasource: ChartDatasource
+    width: number
 }
 
 export interface ChartDatasource extends IEventEmitter {
@@ -46,7 +43,10 @@ export class RangeChartService {
         const ds = this.createDatasource(selectedRange);
 
         if (ds) {
-            this.createChart(chartType, ds);
+            const chart = new GridChartComp(chartType, ds);
+
+            this.context.wireBean(chart);
+            this.createChartPanel(chart);
         } else {
             // TODO: replace with error dialog
             console.warn('ag-Grid: unable to perform charting due to invalid range selection');
@@ -71,29 +71,6 @@ export class RangeChartService {
         }
 
         return ds;
-    }
-
-    private createChart(type: ChartType, ds: ChartDatasource): void {
-        let chart: any = null;
-
-        const options: ChartOptions = {
-            height: 400,
-            width: 800,
-            datasource: ds
-        };
-
-        if (type === ChartType.Line) {
-            chart = new LineChartComp(options);
-
-        } else if (type === ChartType.Pie) {
-            chart = new PieChartComp(options);
-
-        } else {
-            chart = new BarChartComp(options);
-        }
-
-        this.context.wireBean(chart);
-        this.createChartPanel(chart);
     }
 
     private createChartPanel(chart: Component): void {
