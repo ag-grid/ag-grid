@@ -1,5 +1,7 @@
 import {RangeController} from "../../rangeController";
 import {RangeChartDatasource} from "./rangeChartDatasource";
+import {GridChartComp} from "./gridChartComp";
+import {ChartType} from "./gridChartFactory";
 import {
     Autowired,
     Bean,
@@ -11,14 +13,6 @@ import {
     PopupMessageBox,
     PopupService
 } from "ag-grid-community";
-import {GridChartComp} from "./gridChartComp";
-
-export enum ChartType {Bar, Line, Pie}
-
-export interface ChartOptions {
-    height: number,
-    width: number
-}
 
 export interface ChartDatasource extends IEventEmitter {
     getCategory(i: number): string;

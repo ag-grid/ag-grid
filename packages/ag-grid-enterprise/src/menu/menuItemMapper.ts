@@ -2,7 +2,8 @@ import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapp
 import { ClipboardService } from "../clipboardService";
 import { AggFuncService } from "../aggregation/aggFuncService";
 import { ChartingService } from "../charts/chartingService";
-import { RangeChartService, ChartType } from "../charts/rangeChart/rangeChartService";
+import { RangeChartService } from "../charts/rangeChart/rangeChartService";
+import { ChartType } from "../charts/rangeChart/gridChartFactory";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
