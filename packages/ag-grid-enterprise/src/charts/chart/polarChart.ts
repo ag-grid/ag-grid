@@ -40,8 +40,9 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
             series.centerX = centerX;
             series.centerY = centerY;
             series.radius = radius;
-            series.processData();
-            series.update();
+            if (series.processData()) {
+                series.update();
+            }
         });
     }
 }

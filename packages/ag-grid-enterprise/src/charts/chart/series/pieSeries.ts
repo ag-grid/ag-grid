@@ -86,8 +86,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set labelField(value: Extract<keyof D, string> | null) {
         if (this._labelField !== value) {
             this._labelField = value;
-            this.processData();
-            this.update();
+            if (this.processData()) {
+                this.update();
+            }
         }
     }
     get labelField(): Extract<keyof D, string> | null {
@@ -136,8 +137,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     /**
      * The name of the numeric field to use to determine the radii of pie slices.
      */
-    private _radiusField: string = '';
-    set radiusField(value: string) {
+    private _radiusField: Extract<keyof D, string> | null = null;
+    set radiusField(value: Extract<keyof D, string> | null) {
         if (this._radiusField !== value) {
             this._radiusField = value;
             if (this.processData()) {
@@ -145,8 +146,23 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             }
         }
     }
-    get radiusField(): string {
+    get radiusField(): Extract<keyof D, string> | null {
         return this._radiusField;
+    }
+
+    setDataAndFields(data: D[],
+                     angleField: Extract<keyof D, string> | null,
+                     labelField: Extract<keyof D, string> | null = null,
+                     radiusField: Extract<keyof D, string> | null = null) {
+
+        this._angleField = angleField;
+        this._labelField = labelField;
+        this._radiusField = radiusField;
+        this._data = data;
+
+        if (this.processData()) {
+            this.update();
+        }
     }
 
     private angleScale: LinearScale<number> = (() => {
@@ -194,7 +210,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         this.group.translationX = centerX;
         this.group.translationY = centerY;
 
-        const angleData: number[] = data.map(datum => datum[this.angleField]);
+        const angleData: number[] = data.map(datum => +datum[this.angleField] || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
         // Each slice starts where the previous one ends, so we only keep the ratios for end angles.
