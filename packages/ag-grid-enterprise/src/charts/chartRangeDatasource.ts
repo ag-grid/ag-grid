@@ -9,7 +9,7 @@ import {
     IRowModel,
     PaginationProxy,
     PostConstruct,
-    RangeSelection,
+    CellRange,
     ValueService
 } from "ag-grid-community";
 
@@ -21,7 +21,7 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
     @Autowired('paginationProxy') paginationProxy: PaginationProxy;
     @Autowired('eventService') eventService: EventService;
 
-    private rangeSelection: RangeSelection;
+    private rangeSelection: CellRange;
 
     private colIds: string[];
     private colDisplayNames: string[];
@@ -35,7 +35,7 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
 
     private errors: string[] = [];
 
-    constructor(rangeSelection: RangeSelection) {
+    constructor(rangeSelection: CellRange) {
         super();
         this.rangeSelection = rangeSelection;
     }
@@ -108,8 +108,8 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
 
     private calculateRowRange(): void {
         const paginationOffset = this.paginationProxy.getPageFirstRow();
-        this.startRow = this.rangeSelection.start.rowIndex + paginationOffset;
-        this.endRow = this.rangeSelection.end.rowIndex + paginationOffset;
+        this.startRow = this.rangeSelection.startRow.index + paginationOffset;
+        this.endRow = this.rangeSelection.endRow.index + paginationOffset;
 
         // make sure enough rows in range to chart. if user filters and less rows, then
         // end row will be the last displayed row, not where the range ends.

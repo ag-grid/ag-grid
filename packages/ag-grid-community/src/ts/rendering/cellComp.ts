@@ -21,7 +21,7 @@ import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRen
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
 import { GridCell, GridCellDef } from "../entities/gridCell";
-import { RangeSelection } from "../interfaces/iRangeController";
+import { CellRange } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
@@ -1354,22 +1354,11 @@ export class CellComp extends Component {
     }
 
     private onShiftRangeSelect(key: number): void {
-        const success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        const endCell = this.beans.rangeController.extendLatestRangeInDirection(key);
 
-        if (!success) {
-            return;
+        if (endCell) {
+            this.beans.rowRenderer.ensureCellVisible(endCell);
         }
-
-        const ranges = this.beans.rangeController.getCellRanges();
-
-        // this should never happen, as extendRangeFromCell should always have one range after getting called
-        if (_.missing(ranges) || !ranges || ranges.length !== 1) {
-            return;
-        }
-
-        const endCell = ranges[0].end;
-
-        this.beans.rowRenderer.ensureCellVisible(endCell);
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
@@ -1488,7 +1477,7 @@ export class CellComp extends Component {
         if (leftMouseButtonClick && this.beans.rangeController) {
             const thisCell = this.gridCell;
             if (mouseEvent.shiftKey) {
-                this.beans.rangeController.extendRangeToCell(thisCell);
+                this.beans.rangeController.extendLatestRangeToCell(thisCell);
             } else {
                 const ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
                 this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
@@ -1636,15 +1625,13 @@ export class CellComp extends Component {
         const { beans, gridCell } = this;
         const { rangeController } = beans;
 
-        const ranges: RangeSelection[] = (rangeController.getCellRanges() || []).filter(
-            range => rangeController.isCellInSpecificRange(
-                gridCell,
-                range
-        ));
+        const ranges: CellRange[] = rangeController.getCellRanges().filter(
+            range => rangeController.isCellInSpecificRange(gridCell, range)
+        );
 
         ranges.forEach(range => {
-            const start = Math.min(range.start.rowIndex, range.end.rowIndex);
-            const end = Math.max(range.start.rowIndex, range.end.rowIndex);
+            const start = Math.min(range.startRow.index, range.endRow.index);
+            const end = Math.max(range.startRow.index, range.endRow.index);
 
             if (start === gridCell.rowIndex && !top) {
                 top = true;

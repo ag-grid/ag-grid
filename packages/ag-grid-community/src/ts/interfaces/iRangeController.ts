@@ -6,20 +6,32 @@ export interface IRangeController {
     clearSelection(): void;
     getCellRangeCount(cell: GridCell): number;
     isCellInAnyRange(cell: GridCell): boolean;
-    isCellInSpecificRange(cell: GridCell, range: RangeSelection): boolean;
+    isCellInSpecificRange(cell: GridCell, range: CellRange): boolean;
     isMoreThanOneCell(): boolean;
     onDragStart(mouseEvent: MouseEvent): void;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
-    getCellRanges(): RangeSelection[] | null;
+    getCellRanges(): CellRange[] | null;
     setRangeToCell(cell: GridCell, appendRange?: boolean): void;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
-    extendRangeInDirection(cell: GridCell, key: number): boolean;
-    extendRangeToCell(cell: GridCell): void;
+    extendLatestRangeInDirection(key: number): GridCell | undefined;
+    extendLatestRangeToCell(cell: GridCell): void;
     registerGridComp(gridPanel: GridPanel): void;
 }
 
+export interface Row {
+    index: number,
+    floating: string
+}
+
+export interface CellRange {
+    startRow: Row;
+    endRow: Row;
+    columns: Column[]
+}
+
+// DEPRECATED
 export interface RangeSelection {
     start: GridCell;
     end: GridCell;

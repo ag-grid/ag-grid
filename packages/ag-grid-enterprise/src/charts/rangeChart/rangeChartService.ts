@@ -11,7 +11,7 @@ import {
     PopupService,
     Dialog,
     IEventEmitter,
-    RangeSelection,
+    CellRange,
     Component
 } from "ag-grid-community";
 
@@ -53,12 +53,12 @@ export class RangeChartService {
         }
     }
 
-    private getSelectedRange(): RangeSelection {
+    private getSelectedRange(): CellRange {
         const ranges = this.rangeController.getCellRanges();
-        return (ranges && ranges.length > 0) ? ranges[0] : {} as RangeSelection;
+        return ranges.length > 0 ? ranges[0] : {} as CellRange;
     }
 
-    private createDatasource(range: RangeSelection): ChartDatasource | null {
+    private createDatasource(range: CellRange): ChartDatasource | null {
         if (!range.columns) return null;
 
         const ds = new RangeChartDatasource(range);

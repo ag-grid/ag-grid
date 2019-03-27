@@ -9,7 +9,7 @@ import {
     IRowModel,
     PaginationProxy,
     PostConstruct,
-    RangeSelection,
+    CellRange,
     ValueService
 } from "ag-grid-community";
 
@@ -21,7 +21,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     @Autowired('paginationProxy') paginationProxy: PaginationProxy;
     @Autowired('eventService') eventService: EventService;
 
-    private rangeSelection: RangeSelection;
+    private rangeSelection: CellRange;
 
     private colIds: string[];
     private colDisplayNames: string[];
@@ -35,7 +35,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     private errors: string[] = [];
 
-    constructor(rangeSelection: RangeSelection) {
+    constructor(rangeSelection: CellRange) {
         super();
         this.rangeSelection = rangeSelection;
     }
@@ -108,8 +108,8 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     private calculateRowRange(): void {
         const paginationOffset = this.paginationProxy.getPageFirstRow();
-        this.startRow = this.rangeSelection.start.rowIndex + paginationOffset;
-        this.endRow = this.rangeSelection.end.rowIndex + paginationOffset;
+        this.startRow = this.rangeSelection.startRow.index + paginationOffset;
+        this.endRow = this.rangeSelection.endRow.index + paginationOffset;
 
         // make sure enough rows in range to chart. if user filters and less rows, then
         // end row will be the last displayed row, not where the range ends.
@@ -165,7 +165,8 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
             const partStr = (part && part.toString) ? part.toString() : '';
             resParts.push(partStr);
         });
-        return resParts.join(', ');
+        const res = resParts.join(', ');
+        return res;
     }
 
     public getFields(): string[] {
@@ -179,10 +180,12 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     public getValue(i: number, field: string): number {
         const rowNode = this.rowModel.getRow(this.startRow + i);
         const col = this.colsMapped[field];
-        return this.valueService.getValue(col, rowNode);
+        const res = this.valueService.getValue(col, rowNode);
+        return res;
     }
 
     public getRowCount(): number {
         return this.rowCount;
     }
+
 }

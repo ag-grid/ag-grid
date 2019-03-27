@@ -28,7 +28,7 @@ import {
     PostConstruct,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
-    RangeSelection,
+    CellRange,
     RowNode,
     RowRenderer,
     RowValueChangedEvent,
@@ -408,20 +408,20 @@ export class ClipboardService implements IClipboardService {
             return;
         }
 
-        const rangeSelections: any = this.rangeController.getCellRanges();
+        const cellRanges: any = this.rangeController.getCellRanges();
 
         if (onlyFirst) {
-            const range = rangeSelections[0];
+            const range = cellRanges[0];
             this.iterateActiveRange(range, rowCallback, columnCallback, true);
         } else {
-            (rangeSelections as RangeSelection[]).forEach((range, idx) => this.iterateActiveRange(range, rowCallback, columnCallback, idx === rangeSelections.length - 1));
+            cellRanges.forEach((range: CellRange, idx: number) => this.iterateActiveRange(range, rowCallback, columnCallback, idx === cellRanges.length - 1));
         }
     }
 
-    private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
-        // get starting and ending row, remember rowEnd could be before rowStart
-        const startRow = range.start.getGridRow();
-        const endRow = range.end.getGridRow();
+    private iterateActiveRange(range: CellRange, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
+
+        const startRow = new GridRow(range.startRow.index, range.startRow.floating);
+        const endRow = new GridRow(range.endRow.index, range.endRow.floating);
 
         const startRowIsFirst = startRow.before(endRow);
 
@@ -747,7 +747,7 @@ export class ClipboardService implements IClipboardService {
 
     private rangeSize() {
         const ranges = this.rangeController.getCellRanges();
-        const [startRange, endRange] = ranges ? [ranges[0].start.rowIndex, ranges[0].end.rowIndex] : [0, 0];
+        const [startRange, endRange] = ranges ? [ranges[0].startRow.index, ranges[0].endRow.index] : [0, 0];
         return (startRange > endRange ? startRange - endRange : endRange - startRange) + 1;
     }
 }

@@ -915,12 +915,15 @@ export class GridApi {
     }
 
     public getRangeSelections(): RangeSelection[] {
+        return null;
+/*
         if (this.rangeController) {
             return this.rangeController.getCellRanges();
         } else {
             console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
             return null;
         }
+*/
     }
 
     public camelCaseToHumanReadable(camelCase:string):string {

@@ -40,8 +40,8 @@ export class GridRow {
     }
 
     // tests if this row selection is before the other row selection
-    public before(otherSelection: GridRow): boolean {
-        const otherFloating = otherSelection.floating;
+    public before(otherRow: GridRow): boolean {
+        const otherFloating = otherRow.floating;
         switch (this.floating) {
             case Constants.PINNED_TOP:
                 // we we are floating top, and other isn't, then we are always before
@@ -64,6 +64,6 @@ export class GridRow {
                 }
                 break;
         }
-        return this.rowIndex < otherSelection.rowIndex;
+        return this.rowIndex < otherRow.rowIndex;
     }
 }
