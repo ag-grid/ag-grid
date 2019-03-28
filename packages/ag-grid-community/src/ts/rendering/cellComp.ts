@@ -20,7 +20,7 @@ import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
-import { GridCell, GridCellDef } from "../entities/gridCell";
+import { GridCell, CellPosition } from "../entities/gridCell";
 import { CellRange } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
@@ -1535,7 +1535,7 @@ export class CellComp extends Component {
             rowIndex: this.rowNode.rowIndex,
             floating: this.rowNode.rowPinned,
             column: this.column
-        } as GridCellDef;
+        } as CellPosition;
         this.gridCell = new GridCell(gridCellDef);
     }
 

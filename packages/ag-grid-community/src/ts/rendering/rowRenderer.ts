@@ -18,7 +18,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { FocusedCellController } from "../focusedCellController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
-import { GridCell, GridCellDef } from "../entities/gridCell";
+import { GridCell, CellPosition } from "../entities/gridCell";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
@@ -459,11 +459,11 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    public getEditingCells(): GridCellDef[] {
-        const res: GridCellDef[] = [];
+    public getEditingCells(): CellPosition[] {
+        const res: CellPosition[] = [];
         this.forEachCellComp(cellComp => {
             if (cellComp.isEditing()) {
-                const gridCellDef: GridCellDef = cellComp.getGridCell().getGridCellDef();
+                const gridCellDef: CellPosition = cellComp.getGridCell().getGridCellDef();
                 res.push(gridCellDef);
             }
         });

@@ -6,7 +6,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
-import { GridCellDef } from "./gridCell";
+import { CellPosition } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../exporter/exportParams";
@@ -374,8 +374,8 @@ export interface GridOptions {
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
-    navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;
-    tabToNextCell?: (params: TabToNextCellParams) => GridCellDef;
+    navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
+    tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
@@ -653,16 +653,16 @@ export interface ProcessRowParams {
 
 export interface NavigateToNextCellParams {
     key: number;
-    previousCellDef: GridCellDef;
-    nextCellDef: GridCellDef;
+    previousCellDef: CellPosition;
+    nextCellDef: CellPosition;
     event: KeyboardEvent;
 }
 
 export interface TabToNextCellParams {
     backwards: boolean;
     editing: boolean;
-    previousCellDef: GridCellDef;
-    nextCellDef: GridCellDef;
+    previousCellDef: CellPosition;
+    nextCellDef: CellPosition;
 }
 
 export interface PostProcessPopupParams {

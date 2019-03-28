@@ -3,7 +3,7 @@ import { Constants } from "./constants";
 import { ColumnController } from "./columnController/columnController";
 import { IRowModel } from "./interfaces/iRowModel";
 import { GridRow } from "./entities/gridRow";
-import { GridCell, GridCellDef } from "./entities/gridCell";
+import { GridCell, CellPosition } from "./entities/gridCell";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { PinnedRowModel } from "./rowModels/pinnedRowModel";
 import { RowNode } from "./entities/rowNode";
@@ -101,7 +101,7 @@ export class CellNavigationService {
                 rowIndex: lastCell.rowIndex,
                 column: colToLeft,
                 floating: lastCell.floating
-            } as GridCellDef;
+            } as CellPosition;
             return new GridCell(gridCellDef);
         }
     }
@@ -120,7 +120,7 @@ export class CellNavigationService {
                 rowIndex: lastCell.rowIndex,
                 column: colToRight,
                 floating: lastCell.floating
-            } as GridCellDef;
+            } as CellPosition;
             return new GridCell(gridCellDef);
         }
     }
@@ -164,7 +164,7 @@ export class CellNavigationService {
                 rowIndex: rowBelow.rowIndex,
                 column: lastCell.column,
                 floating: rowBelow.floating
-            } as GridCellDef;
+            } as CellPosition;
             return new GridCell(gridCellDef);
         } else {
             return null;
@@ -223,7 +223,7 @@ export class CellNavigationService {
                 rowIndex: rowAbove.rowIndex,
                 column: lastCell.column,
                 floating: rowAbove.floating
-            } as GridCellDef;
+            } as CellPosition;
             return new GridCell(gridCellDef);
         } else {
             return null;
@@ -270,7 +270,7 @@ export class CellNavigationService {
             newFloating = rowBelow ? rowBelow.floating : null;
         }
 
-        const gridCellDef = {rowIndex: newRowIndex, column: newColumn, floating: newFloating} as GridCellDef;
+        const gridCellDef = {rowIndex: newRowIndex, column: newColumn, floating: newFloating} as CellPosition;
         return new GridCell(gridCellDef);
     }
 
@@ -296,7 +296,7 @@ export class CellNavigationService {
             newFloating = rowAbove ? rowAbove.floating : null;
         }
 
-        const gridCellDef = {rowIndex: newRowIndex, column: newColumn, floating: newFloating} as GridCellDef;
+        const gridCellDef = {rowIndex: newRowIndex, column: newColumn, floating: newFloating} as CellPosition;
         return new GridCell(gridCellDef);
     }
 

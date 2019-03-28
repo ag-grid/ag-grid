@@ -1,5 +1,5 @@
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { GridCell, GridCellDef } from "../entities/gridCell";
+import { GridCell, CellPosition } from "../entities/gridCell";
 import { Constants } from "../constants";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../rowModels/paginationProxy";
@@ -43,7 +43,7 @@ export class NavigationService {
         const alt = event.altKey;
         const ctrl = event.ctrlKey;
 
-        const currentCell: GridCellDef = this.mouseEventService.getGridCellForEvent(event).getGridCellDef();
+        const currentCell: CellPosition = this.mouseEventService.getGridCellForEvent(event).getGridCellDef();
         if (!currentCell) { return false; }
 
         let processed = false;
@@ -113,7 +113,7 @@ export class NavigationService {
         this.timeLastPageEventProcessed = new Date().getTime();
     }
 
-    private onPageDown(gridCell: GridCellDef): void {
+    private onPageDown(gridCell: CellPosition): void {
 
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
@@ -144,7 +144,7 @@ export class NavigationService {
         this.setTimeLastPageEventProcessed();
     }
 
-    private onPageUp(gridCell: GridCellDef): void {
+    private onPageUp(gridCell: CellPosition): void {
 
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
@@ -203,7 +203,7 @@ export class NavigationService {
     }
 
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
-    private onCtrlUpOrDown(key: number, gridCell: GridCellDef): void {
+    private onCtrlUpOrDown(key: number, gridCell: CellPosition): void {
 
         const upKey = key === Constants.KEY_UP;
         const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
@@ -212,7 +212,7 @@ export class NavigationService {
     }
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
-    private onCtrlLeftOrRight(key: number, gridCell: GridCellDef): void {
+    private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
 
         const leftKey = key === Constants.KEY_LEFT;
 

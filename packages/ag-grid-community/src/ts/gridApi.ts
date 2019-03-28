@@ -18,7 +18,7 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusedCellController } from "./focusedCellController";
 import { AddRangeSelectionParams, IRangeController, RangeSelection } from "./interfaces/iRangeController";
-import { GridCell, GridCellDef } from "./entities/gridCell";
+import { GridCell, CellPosition } from "./entities/gridCell";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
@@ -994,7 +994,7 @@ export class GridApi {
         return this.rowRenderer.getCellEditorInstances(params);
     }
 
-    public getEditingCells(): GridCellDef[] {
+    public getEditingCells(): CellPosition[] {
         return this.rowRenderer.getEditingCells();
     }
 
@@ -1012,7 +1012,7 @@ export class GridApi {
             rowIndex: params.rowIndex,
             floating: params.rowPinned,
             column: column
-        } as GridCellDef;
+        } as CellPosition;
         const gridCell = new GridCell(gridCellDef);
         const notPinned = _.missing(params.rowPinned);
         if (notPinned) {

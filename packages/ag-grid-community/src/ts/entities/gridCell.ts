@@ -3,7 +3,7 @@ import { GridRow } from "./gridRow";
 import { _ } from "../utils";
 
 // this is what gets pass into and out of the api, as JavaScript users
-export interface GridCellDef {
+export interface CellPosition {
     floating: string;
     rowIndex: number;
     column: Column;
@@ -14,13 +14,13 @@ export class GridCell {
     rowIndex: number;
     column: Column;
 
-    constructor(gridCellDef: GridCellDef) {
+    constructor(gridCellDef: CellPosition) {
         this.rowIndex = gridCellDef.rowIndex;
         this.column = gridCellDef.column;
         this.floating = _.makeNull(gridCellDef.floating);
     }
 
-    public getGridCellDef(): GridCellDef {
+    public getGridCellDef(): CellPosition {
         return {
             rowIndex: this.rowIndex,
             column: this.column,

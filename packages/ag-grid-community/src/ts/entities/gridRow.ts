@@ -1,5 +1,5 @@
 import { Constants } from "../constants";
-import { GridCell, GridCellDef } from "./gridCell";
+import { GridCell, CellPosition } from "./gridCell";
 import { Column } from "./column";
 import { _ } from '../utils';
 
@@ -35,7 +35,7 @@ export class GridRow {
     }
 
     public getGridCell(column: Column): GridCell {
-        const gridCellDef = {rowIndex: this.rowIndex, floating: this.floating, column: column} as GridCellDef;
+        const gridCellDef = {rowIndex: this.rowIndex, floating: this.floating, column: column} as CellPosition;
         return new GridCell(gridCellDef);
     }
 

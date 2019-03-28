@@ -24,7 +24,7 @@ import { ColumnController } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { IDatasource } from "./rowModels/iDatasource";
-import { GridCellDef } from "./entities/gridCell";
+import { CellPosition } from "./entities/gridCell";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
 import { AgEvent } from "./events";
@@ -951,11 +951,11 @@ export class GridOptionsWrapper {
         return this.gridOptions.getRowNodeId;
     }
 
-    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => GridCellDef) | undefined {
+    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {
         return this.gridOptions.navigateToNextCell;
     }
 
-    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => GridCellDef) | undefined {
+    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => CellPosition) | undefined {
         return this.gridOptions.tabToNextCell;
     }
 
