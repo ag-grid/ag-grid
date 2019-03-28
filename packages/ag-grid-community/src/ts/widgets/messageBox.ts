@@ -1,29 +1,29 @@
-import { Dialog } from "./dialog";
+import { Dialog, DialogOptions } from "./dialog";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 
-export class PopupMessageBox extends Dialog {
+interface MessageBoxConfig extends DialogOptions {
+    message?: string;
+}
 
-    private readonly title: string;
-    private readonly message: string;
+export class MessageBox extends Dialog {
 
-    constructor(title: string, message: string) {
-        super();
-        this.title = title;
-        this.message = message;
+    private message: string;
+
+    constructor(config: MessageBoxConfig) {
+        super(config);
+        this.message = config.message;
     }
 
     protected postConstruct() {
-        super.postConstruct();
-
-        this.setTitle(this.title);
-
         const messageBodyComp = new MessageBody();
         this.addFeature(this.getContext(), messageBodyComp);
 
         messageBodyComp.setMessage(this.message);
         this.setBodyComponent(messageBodyComp);
+
+        super.postConstruct();
 
         this.addDestroyableEventListener(messageBodyComp, 'onBtOk', () => this.close());
     }
@@ -32,9 +32,9 @@ export class PopupMessageBox extends Dialog {
 class MessageBody extends Component {
 
     private static TEMPLATE =
-        `<div>
-            <div ref="eCenter"></div>
-            <div ref="eButtons">
+        `<div class="ag-message-box">
+            <div ref="eCenter" class="ag-message-box-content"></div>
+            <div ref="eButtons" class="ag-message-box-button-bar">
                 <button ref="eOk">OK</button>
             </div>
         </div>`;

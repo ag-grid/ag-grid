@@ -190,7 +190,7 @@ export { StylingService } from "./styling/stylingService";
 // widgets
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { Dialog } from "./widgets/dialog";
-export { PopupMessageBox } from "./widgets/popupMessageBox";
+export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";

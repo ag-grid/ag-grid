@@ -8,7 +8,7 @@ import {
     Context,
     Dialog,
     IEventEmitter,
-    PopupMessageBox
+    MessageBox
 } from "ag-grid-community";
 import {ChartType} from "../gridChartFactory";
 import {GridChartComp} from "../gridChartComp";
@@ -58,7 +58,7 @@ export class RangeChartService {
 
         const errors = ds.getErrors();
         if (errors && errors.length > 0) {
-            this.addErrorPopupMessageBox(errors);
+            this.addErrorMessageBox(errors);
             return null;
         }
 
@@ -80,9 +80,19 @@ export class RangeChartService {
         });
     }
 
-    private addErrorPopupMessageBox(errors: string[]) {
+    private addErrorMessageBox(errors: string[]) {
         const errorMessage = errors.join(' ');
-        const popupMessageBox = new PopupMessageBox('Can Not Chart', errorMessage);
-        this.context.wireBean(popupMessageBox);
+
+        const messageBox = new MessageBox({ 
+            title: 'Can Not Chart', 
+            message: errorMessage,
+            centered: true,
+            resizable: false,
+            movable: true,
+            width: 400,
+            height: 150
+        });
+
+        this.context.wireBean(messageBox);
     }
 }

@@ -1394,6 +1394,17 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        .ag-message-box {
+            .ag-message-box-button-bar {
+                height: 30px;
+                background-color: $header-background-color;
+                padding: 2px;
+                button {
+                    border-radius: $card-radius;
+                }
+            }
+        }
     }
     ////////////////////////////////////////
     // Tooltip

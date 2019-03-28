@@ -22,8 +22,8 @@ type ResizableStructure = {
     [key in ResizableSides]?: boolean;
 };
 
-interface DialogOptions {
-    component: Component;
+export interface DialogOptions {
+    component?: Component;
     movable?: boolean;
     resizable?: boolean | ResizableStructure;
     closable?: boolean;
@@ -120,9 +120,7 @@ export class Dialog extends PopupComponent {
         const eGui = this.getGui();
 
         if (component) { this.setBodyComponent(component); }
-
         if (resizable) { this.setResizable(resizable); }
-
         if (title) { this.setTitle(title); }
 
         this.setMovable(!!movable);
