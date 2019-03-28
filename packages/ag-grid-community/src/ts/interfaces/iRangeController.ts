@@ -20,14 +20,14 @@ export interface IRangeController {
     registerGridComp(gridPanel: GridPanel): void;
 }
 
-export interface Row {
+export interface RowPosition {
     index: number,
     floating: string
 }
 
 export interface CellRange {
-    startRow: Row;
-    endRow: Row;
+    startRow: RowPosition;
+    endRow: RowPosition;
     columns: Column[]
 }
 
