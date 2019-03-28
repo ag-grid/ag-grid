@@ -32,8 +32,8 @@ export class ChartControlComp extends Component {
 
     @RefSelector('eLineWidth') private eLineWidth: HTMLInputElement;
 
-    @RefSelector('eWidth') private eWidth: HTMLInputElement;
-    @RefSelector('eHeight') private eHeight: HTMLInputElement;
+    @RefSelector('eWidth') public eWidth: HTMLInputElement;
+    @RefSelector('eHeight') public eHeight: HTMLInputElement;
 
     private chart: Chart<any, string, number>;
 

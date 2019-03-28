@@ -856,6 +856,8 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 */
 
 .ag-dialog {
+    display: flex;
+    flex-direction: column;
     position: absolute;
     overflow: hidden;
     $handleSize: 5px;
@@ -922,6 +924,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     .ag-dialog-title-bar {
         display: flex;
         align-items: center;
+    }
+
+    .ag-dialog-content-wrapper {
+        flex: 1 1 auto;
     }
 }
 

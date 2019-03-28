@@ -54,8 +54,13 @@ export class GridChartComp extends Component {
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
         this.addDestroyableEventListener(this.eventService, Dialog.RESIZE_EVENT, (event: DialogEvent) => {
-            this.chart.height = event.height as number;
-            this.chart.width = event.width as number;
+            const chartHeight = event.dialog.getBodyHeight() - this.chartControlComp.getGui().offsetHeight - 7;
+            const chartWidth = event.width as number - 2;
+            this.chart.height = chartHeight;
+            this.chart.width = chartWidth;
+            this.chartControlComp.eHeight.value = chartHeight.toString();
+            this.chartControlComp.eWidth.value = chartWidth.toString();
+
         });
 
         this.chartControlComp.init(this.chartType, this.chart);

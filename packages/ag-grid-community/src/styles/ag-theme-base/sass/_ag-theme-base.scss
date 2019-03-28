@@ -1371,6 +1371,7 @@
     .ag-dialog {
         background-color: $background-color;
         border: 1px solid $border-color;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
         .ag-dialog-title-bar {
             background-color: $header-background-color;
             color: $header-foreground-color;

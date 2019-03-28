@@ -55,7 +55,7 @@ export class Dialog extends PopupComponent {
                     <span ref="eClose" class="ag-dialog-button-close"></span>
                 </div>
             </div>
-            <div ref="eContentWrapper" class="ag-popup-window-content-wrapper"></div>
+            <div ref="eContentWrapper" class="ag-dialog-content-wrapper"></div>
         </div>`;
 
     private config: DialogOptions | undefined;
@@ -193,7 +193,7 @@ export class Dialog extends PopupComponent {
 
     private onDialogResizeStart() {
         this.isResizing = true;
-        this.refreshSize();
+        _.addCssClass((this.getGui().offsetParent as HTMLElement), 'ag-unselectable');
     }
 
     private onDialogResize(e: MouseEvent, side: ResizableSides) {
@@ -212,26 +212,24 @@ export class Dialog extends PopupComponent {
 
         if (isHorizontal) {
             const direction = isLeft ? -1 : 1;
-            const newWidth = Math.max(0, Math.min(this.size.width + (e.movementX * direction), (eGui.offsetParent as HTMLElement).offsetWidth));
-            _.setFixedWidth(eGui, newWidth);
+            const oldWidth = this.getWidth();
+
+            this.setWidth(oldWidth + (e.movementX * direction), true);
 
             if (isLeft) {
-                offsetLeft = this.size.width - newWidth;
+                offsetLeft = oldWidth - this.getWidth();
             }
-
-            this.size.width = newWidth;
         }
 
         if (isVertical) {
             const direction = isTop ? -1 : 1;
-            const newHeight = Math.max(0, Math.min(this.size.height + (e.movementY * direction), (eGui.offsetParent as HTMLElement).offsetHeight));
-            _.setFixedHeight(eGui, newHeight);
+            const oldHeight = this.getHeight();
+
+            this.setHeight(oldHeight + (e.movementY * direction), true);
 
             if (isTop) {
-                offsetTop = this.size.height - newHeight;
+                offsetTop = oldHeight - this.getHeight();
             }
-
-            this.size.height = newHeight;
         }
 
         if (offsetLeft || offsetTop) {
@@ -246,17 +244,18 @@ export class Dialog extends PopupComponent {
 
     private onDialogResizeEnd() {
         this.isResizing = false;
+        _.removeCssClass((this.getGui().offsetParent as HTMLElement), 'ag-unselectable');
     }
 
     private refreshSize() {
         const { width, height } = this.size;
 
         if (!width) {
-            this.size.width = this.getGui().offsetWidth;
+            this.setWidth(this.getGui().offsetWidth, true);
         }
 
         if (!height) {
-            this.size.height = this.getGui().offsetHeight;
+            this.setHeight(this.getGui().offsetHeight, true);
         }
     }
 
@@ -265,7 +264,7 @@ export class Dialog extends PopupComponent {
             this.movable = movable;
 
             const params: DragListenerParams = {
-                eElement: this.getGui(),
+                eElement: this.eTitleBar,
                 onDragStart: this.onDialogMoveStart.bind(this),
                 onDragging: this.onDialogMove.bind(this),
                 onDragStop: this.onDialogMoveEnd.bind(this)
@@ -319,7 +318,7 @@ export class Dialog extends PopupComponent {
     private buildParamsAndDispatchEvent(type: string) {
         const event: DialogEvent = {
             type,
-            dialog: this.getGui(),
+            dialog: this,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
         };
@@ -327,8 +326,8 @@ export class Dialog extends PopupComponent {
         if (type !== Dialog.EVENT_DESTROYED) {
             event.x = this.position.x;
             event.y = this.position.y;
-            event.width = this.size.width;
-            event.height = this.size.height;
+            event.width = this.getWidth();
+            event.height = this.getHeight();
         }
 
         this.eventService.dispatchEvent(event);
@@ -338,8 +337,65 @@ export class Dialog extends PopupComponent {
         this.eContentWrapper.appendChild(eBody);
     }
 
+    public getBodyHeight(): number {
+        return this.eContentWrapper.clientHeight;
+    }
+
+    public getBodyWidth(): number {
+        return this.eContentWrapper.clientWidth;
+    }
+
     public setTitle(title: string) {
         this.eTitle.innerText = title;
+    }
+
+    public getHeight(): number {
+        this.refreshSize();
+
+        return this.size.height;
+    }
+
+    public setHeight(height: number, silent?: boolean) {
+        let newHeight = Math.max(10, height);
+        const eGui = this.getGui();
+
+        if (newHeight + this.position.y > eGui.offsetParent.clientHeight) {
+            newHeight = eGui.offsetParent.clientHeight - this.position.y;
+        }
+
+        if (this.size.width === newHeight) { return; }
+
+        this.size.height = newHeight;
+        _.setFixedHeight(eGui, newHeight);
+        _.setFixedHeight(this.eContentWrapper, newHeight - this.eTitleBar.offsetHeight);
+
+        if (!silent) {
+            this.buildParamsAndDispatchEvent(Dialog.RESIZE_EVENT);
+        }
+    }
+
+    public getWidth(): number {
+        this.refreshSize();
+
+        return this.size.width;
+    }
+
+    public setWidth(width: number, silent?: boolean) {
+        let newWidth = Math.max(10, width);
+        const eGui = this.getGui();
+
+        if (newWidth + this.position.x > eGui.offsetParent.clientWidth) {
+            newWidth = eGui.offsetParent.clientWidth - this.position.x;
+        }
+
+        if (this.size.width === newWidth) { return; }
+
+        this.size.width = newWidth;
+        _.setFixedWidth(eGui, newWidth);
+
+        if (!silent) {
+            this.buildParamsAndDispatchEvent(Dialog.RESIZE_EVENT);
+        }
     }
 
     // called when user hits the 'x' in the top right
