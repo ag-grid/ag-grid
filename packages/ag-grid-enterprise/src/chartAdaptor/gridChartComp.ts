@@ -1,7 +1,7 @@
 import {_, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartOptions, ChartType, GridChart, GridChartFactory} from "./gridChartFactory";
-import {ChartDatasource} from "./rangeChartService";
 import {ChartControlComp} from "./chartControlComp";
+import {ChartDatasource} from "./rangeChart/rangeChartService";
 
 export class GridChartComp extends Component {
 

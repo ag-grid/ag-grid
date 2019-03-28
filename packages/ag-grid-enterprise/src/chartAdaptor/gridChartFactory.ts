@@ -1,12 +1,12 @@
-import {ChartDatasource} from "./rangeChartService";
-import {CartesianChart} from "../../charts/chart/cartesianChart";
-import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
-import {NumberAxis} from "../../charts/chart/axis/numberAxis";
-import {LineSeries} from "../../charts/chart/series/lineSeries";
-import {BarSeries} from "../../charts/chart/series/barSeries";
-import {PolarChart} from "../../charts/chart/polarChart";
-import {PieSeries} from "../../charts/chart/series/pieSeries";
-import {DropShadow, Offset} from "../../charts/scene/dropShadow";
+import {CartesianChart} from "../charts/chart/cartesianChart";
+import {CategoryAxis} from "../charts/chart/axis/categoryAxis";
+import {NumberAxis} from "../charts/chart/axis/numberAxis";
+import {LineSeries} from "../charts/chart/series/lineSeries";
+import {BarSeries} from "../charts/chart/series/barSeries";
+import {PolarChart} from "../charts/chart/polarChart";
+import {PieSeries} from "../charts/chart/series/pieSeries";
+import {DropShadow, Offset} from "../charts/scene/dropShadow";
+import {ChartDatasource} from "./rangeChart/rangeChartService";
 
 export interface GridChart {
     updateSeries(datasource: ChartDatasource): void;

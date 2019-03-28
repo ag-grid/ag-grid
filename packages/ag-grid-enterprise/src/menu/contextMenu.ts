@@ -18,8 +18,7 @@ import {
     MenuItemDef,
     PopupService,
     PostConstruct,
-    RowNode,
-    Constants
+    RowNode
 } from "ag-grid-community";
 import { ClipboardService } from "../clipboardService";
 import { MenuItemComponent } from "./menuItemComponent";
