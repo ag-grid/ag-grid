@@ -748,7 +748,7 @@ export class GridApi {
         return this.filterManager.getFilterModel();
     }
 
-    public getFocusedCell(): GridCell {
+    public getFocusedCell(): CellPosition {
         return this.focusedCellController.getFocusedCell();
     }
 

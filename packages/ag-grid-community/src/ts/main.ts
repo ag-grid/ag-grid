@@ -242,7 +242,7 @@ export { IClipboardService } from "./interfaces/iClipboardService";
 export { IExcelCreator } from "./interfaces/iExcelCreator";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { IAggFunc, ColGroupDef } from "./entities/colDef";
-export { CellPosition } from "./entities/gridCell";
+export { CellPosition, CellPositionUtils } from "./entities/gridCell";
 export { ColDef } from "./entities/colDef";
 export {
     ValueSetterParams,

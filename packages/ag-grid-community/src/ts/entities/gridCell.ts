@@ -9,7 +9,16 @@ export interface CellPosition {
     column: Column;
 }
 
+export class CellPositionUtils {
+
+    public static createId(cellPosition: CellPosition): string {
+        return `${cellPosition.rowIndex}.${cellPosition.floating}.${cellPosition.column.getId()}`;
+    }
+
+}
+
 export class GridCell {
+
     floating: string;
     rowIndex: number;
     column: Column;
@@ -46,4 +55,5 @@ export class GridCell {
         const indexMatch = this.rowIndex === other.rowIndex;
         return colsMatch && floatingMatch && indexMatch;
     }
+
 }

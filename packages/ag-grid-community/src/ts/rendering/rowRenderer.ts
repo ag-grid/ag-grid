@@ -279,7 +279,7 @@ export class RowRenderer extends BeanStub {
         });
     }
 
-    private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): GridCell {
+    private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): CellPosition {
         const focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (_.missing(focusedCell)) {
@@ -306,7 +306,7 @@ export class RowRenderer extends BeanStub {
     public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
-        const focusedCell: GridCell = this.getCellToRestoreFocusToAfterRefresh(params);
+        const focusedCell: CellPosition = this.getCellToRestoreFocusToAfterRefresh(params);
 
         this.sizeContainerToPageHeight();
 
@@ -390,9 +390,9 @@ export class RowRenderer extends BeanStub {
     // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
     // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
     // edited cell).
-    private restoreFocusedCell(gridCell: GridCell): void {
-        if (gridCell) {
-            this.focusedCellController.setFocusedCell(gridCell.rowIndex, gridCell.column, gridCell.floating, true);
+    private restoreFocusedCell(cellPosition: CellPosition): void {
+        if (cellPosition) {
+            this.focusedCellController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.floating, true);
         }
     }
 
@@ -1076,17 +1076,17 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private getComponentForCell(gridCell: GridCell): CellComp {
+    private getComponentForCell(cellPosition: CellPosition): CellComp {
         let rowComponent: RowComp;
-        switch (gridCell.floating) {
+        switch (cellPosition.floating) {
             case Constants.PINNED_TOP:
-                rowComponent = this.floatingTopRowComps[gridCell.rowIndex];
+                rowComponent = this.floatingTopRowComps[cellPosition.rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.floatingBottomRowComps[gridCell.rowIndex];
+                rowComponent = this.floatingBottomRowComps[cellPosition.rowIndex];
                 break;
             default:
-                rowComponent = this.rowCompsByIndex[gridCell.rowIndex];
+                rowComponent = this.rowCompsByIndex[cellPosition.rowIndex];
                 break;
         }
 
@@ -1094,7 +1094,7 @@ export class RowRenderer extends BeanStub {
             return null;
         }
 
-        const cellComponent: CellComp = rowComponent.getRenderedCellForColumn(gridCell.column);
+        const cellComponent: CellComp = rowComponent.getRenderedCellForColumn(cellPosition.column);
         return cellComponent;
     }
 

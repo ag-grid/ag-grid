@@ -14,7 +14,6 @@ import {
     FocusedCellController,
     GridApi,
     GridCell,
-    GridCellDef,
     GridCore,
     GridOptionsWrapper,
     GridRow,
@@ -34,6 +33,8 @@ import {
     RowValueChangedEvent,
     SelectionController,
     ValueService,
+    CellPosition,
+    CellPositionUtils,
     _
 } from "ag-grid-community";
 import { RangeController } from "./rangeController";
@@ -155,11 +156,11 @@ export class ClipboardService implements IClipboardService {
                 firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
                 this.valueService.setValue(rowNode!, column, firstRowValue);
 
-                const gridCellDef = {
+                const gridCellDef: CellPosition = {
                     rowIndex: currentRow.rowIndex,
                     floating: currentRow.floating,
                     column: column
-                } as GridCellDef;
+                };
                 const cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
@@ -256,11 +257,11 @@ export class ClipboardService implements IClipboardService {
                     firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
                     this.valueService.setValue(rowNode!, column, firstRowValue);
 
-                    const gridCellDef = {
+                    const gridCellDef: CellPosition = {
                         rowIndex: currentRow.rowIndex,
                         floating: currentRow.floating,
                         column: column
-                    } as GridCellDef;
+                    };
                     const cellId = new GridCell(gridCellDef).createId();
                     cellsToFlash[cellId] = true;
                 });
@@ -360,11 +361,11 @@ export class ClipboardService implements IClipboardService {
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
         this.valueService.setValue(rowNode, column, processedValue);
 
-        const gridCellDef = {
+        const gridCellDef: CellPosition = {
             rowIndex: currentRow.rowIndex,
             floating: currentRow.floating,
             column: column
-        } as GridCellDef;
+        };
         const cellId = new GridCell(gridCellDef).createId();
         cellsToFlash[cellId] = true;
 
@@ -490,11 +491,11 @@ export class ClipboardService implements IClipboardService {
                 if (_.exists(processedValue)) {
                     data += processedValue;
                 }
-                const gridCellDef = {
+                const gridCellDef: CellPosition = {
                     rowIndex: currentRow.rowIndex,
                     floating: currentRow.floating,
                     column: column
-                } as GridCellDef;
+                };
                 const cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
@@ -510,10 +511,11 @@ export class ClipboardService implements IClipboardService {
     }
 
     private copyFocusedCellToClipboard(includeHeaders = false): void {
-        const focusedCell = this.focusedCellController.getFocusedCell();
+        const focusedCell: CellPosition = this.focusedCellController.getFocusedCell();
         if (_.missing(focusedCell)) { return; }
 
-        const currentRow = focusedCell.getGridRow();
+        const currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
+
         const rowNode = this.getRowNode(currentRow);
         const column = focusedCell.column;
         const value = this.valueService.getValue(column, rowNode);
@@ -534,7 +536,7 @@ export class ClipboardService implements IClipboardService {
 
         this.copyDataToClipboard(data);
 
-        const cellId = focusedCell.createId();
+        const cellId = CellPositionUtils.createId(focusedCell);
         const cellsToFlash = {};
         (cellsToFlash as any)[cellId] = true;
         this.dispatchFlashCells(cellsToFlash);
