@@ -7,7 +7,6 @@
     "target": "es5",
     "noImplicitAny": true,
     "outDir": "dist/lib",
-    "noEmitOnError": true,
     "lib": [
       "es2015",
       "dom"
