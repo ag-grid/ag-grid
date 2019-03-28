@@ -350,6 +350,7 @@ export class PopupService {
             _.addCssClass(eWrapper, theme);
         }
 
+        _.addCssClass(eWrapper, 'ag-popup');
         eWrapper.appendChild(eChild);
 
         ePopupParent.appendChild(eWrapper);
@@ -476,5 +477,22 @@ export class PopupService {
         }
 
         return false;
+    }
+
+    public bringPopupToFront(ePopup: HTMLElement) {
+        const parent = this.getPopupParent();
+        const popupList = parent.querySelectorAll('.ag-popup');
+
+        while (!_.containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
+            ePopup = ePopup.parentElement;
+        }
+
+        if (
+            popupList.length <= 1 ||
+            popupList[popupList.length - 1] === ePopup ||
+            !parent.contains(ePopup)
+        ) { return; }
+
+        popupList[popupList.length - 1].insertAdjacentElement('afterend', ePopup);
     }
 }

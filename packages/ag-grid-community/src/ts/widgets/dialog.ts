@@ -23,6 +23,7 @@ type ResizableStructure = {
 };
 
 interface DialogOptions {
+    component: Component;
     movable?: boolean;
     resizable?: boolean | ResizableStructure;
     closable?: boolean;
@@ -36,8 +37,8 @@ interface DialogOptions {
 
 export class Dialog extends PopupComponent {
 
-    public static MOVE_EVENT = 'dialogMoved';
-    public static RESIZE_EVENT = 'dialogResized';
+    public static EVENT_MOVE = 'dialogMoved';
+    public static EVENT_RESIZE = 'dialogResized';
 
     private static TEMPLATE =
         `<div class="ag-dialog">
@@ -103,16 +104,26 @@ export class Dialog extends PopupComponent {
 
     @PostConstruct
     protected postConstruct() {
-        const { resizable, movable, closable, title, width, height } = this.config;
+        const {
+            component,
+            centered,
+            resizable,
+            movable,
+            closable,
+            title,
+            width,
+            height
+        } = this.config;
+
+        let { x, y } = this.config;
+
         const eGui = this.getGui();
 
-        if (resizable) {
-            this.setResizable(resizable);
-        }
+        if (component) { this.setBodyComponent(component); }
 
-        if (title) {
-            this.setTitle(title);
-        }
+        if (resizable) { this.setResizable(resizable); }
+
+        if (title) { this.setTitle(title); }
 
         this.setMovable(!!movable);
         this.setClosable(!!closable);
@@ -129,11 +140,30 @@ export class Dialog extends PopupComponent {
 
         this.close = this.popupService.addPopup(
             false,
-            this.getGui(),
+            eGui,
             false,
             this.destroy.bind(this)
         );
 
+        this.refreshSize();
+
+        if (centered) {
+            x = (eGui.offsetParent.clientWidth / 2) - (this.getWidth() / 2);
+            y = (eGui.offsetParent.clientHeight / 2) - (this.getHeight() / 2);
+        }
+
+        if (x || y) {
+            this.offsetDialog(x, y);
+        }
+
+        this.addDestroyableEventListener(eGui, 'mousedown', () => {
+            _.addCssClass(eGui.offsetParent as HTMLElement, 'ag-unselectable');
+            this.popupService.bringPopupToFront(eGui);
+        });
+        this.addDestroyableEventListener(eGui, 'mouseup', () => {
+            _.removeCssClass(eGui.offsetParent as HTMLElement, 'ag-unselectable');
+            this.popupService.bringPopupToFront(eGui);
+        });
         this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
     }
 
@@ -193,13 +223,11 @@ export class Dialog extends PopupComponent {
 
     private onDialogResizeStart() {
         this.isResizing = true;
-        _.addCssClass((this.getGui().offsetParent as HTMLElement), 'ag-unselectable');
     }
 
     private onDialogResize(e: MouseEvent, side: ResizableSides) {
         if (!this.isResizing) { return; }
 
-        const eGui = this.getGui();
         const isLeft = !!side.match(/left/i);
         const isRight = !!side.match(/right/i);
         const isTop = !!side.match(/top/i);
@@ -239,12 +267,11 @@ export class Dialog extends PopupComponent {
             );
         }
 
-        this.buildParamsAndDispatchEvent(Dialog.RESIZE_EVENT);
+        this.buildParamsAndDispatchEvent(Dialog.EVENT_RESIZE);
     }
 
     private onDialogResizeEnd() {
         this.isResizing = false;
-        _.removeCssClass((this.getGui().offsetParent as HTMLElement), 'ag-unselectable');
     }
 
     private refreshSize() {
@@ -284,10 +311,10 @@ export class Dialog extends PopupComponent {
 
         this.offsetDialog(x + e.movementX, y + e.movementY);
 
-        this.buildParamsAndDispatchEvent(Dialog.MOVE_EVENT);
+        this.buildParamsAndDispatchEvent(Dialog.EVENT_MOVE);
     }
 
-    private offsetDialog(x: number, y: number) {
+    private offsetDialog(x = 0, y = 0) {
         const ePopup = this.getGui();
 
         this.popupService.positionPopup({
@@ -351,8 +378,6 @@ export class Dialog extends PopupComponent {
     }
 
     public getHeight(): number {
-        this.refreshSize();
-
         return this.size.height;
     }
 
@@ -371,13 +396,11 @@ export class Dialog extends PopupComponent {
         _.setFixedHeight(this.eContentWrapper, newHeight - this.eTitleBar.offsetHeight);
 
         if (!silent) {
-            this.buildParamsAndDispatchEvent(Dialog.RESIZE_EVENT);
+            this.buildParamsAndDispatchEvent(Dialog.EVENT_RESIZE);
         }
     }
 
     public getWidth(): number {
-        this.refreshSize();
-
         return this.size.width;
     }
 
@@ -395,7 +418,7 @@ export class Dialog extends PopupComponent {
         _.setFixedWidth(eGui, newWidth);
 
         if (!silent) {
-            this.buildParamsAndDispatchEvent(Dialog.RESIZE_EVENT);
+            this.buildParamsAndDispatchEvent(Dialog.EVENT_RESIZE);
         }
     }
 

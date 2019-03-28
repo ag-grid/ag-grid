@@ -8,8 +8,7 @@ import {
     Context,
     Dialog,
     IEventEmitter,
-    PopupMessageBox,
-    PopupService
+    PopupMessageBox
 } from "ag-grid-community";
 import {ChartType} from "../gridChartFactory";
 import {GridChartComp} from "../gridChartComp";
@@ -28,7 +27,6 @@ export interface ChartDatasource extends IEventEmitter {
 export class RangeChartService {
 
     @Autowired('rangeController') private rangeController: RangeController;
-    @Autowired('popupService') private popupService: PopupService;
     @Autowired('context') private context: Context;
 
     public chartRange(chartType: ChartType = ChartType.Bar): void {
@@ -71,11 +69,12 @@ export class RangeChartService {
         const chartDialog = new Dialog({
             resizable: true,
             movable: true,
-            title: 'Chart'
+            title: 'Chart',
+            component: chart,
+            centered: true
         });
 
         this.context.wireBean(chartDialog);
-        chartDialog.setBodyComponent(chart);
         chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => {
             chart.destroy();
         });
