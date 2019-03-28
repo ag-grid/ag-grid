@@ -17,7 +17,7 @@ export class Scene {
     constructor(width = 800, height = 600) {
         this.hdpiCanvas = new HdpiCanvas(this._width = width, this._height = height);
         this.ctx = this.hdpiCanvas.context;
-        this.setupListeners(this.hdpiCanvas.canvas); // debug
+        // this.setupListeners(this.hdpiCanvas.canvas); // debug
     }
 
     set parent(value: HTMLElement | null) {
