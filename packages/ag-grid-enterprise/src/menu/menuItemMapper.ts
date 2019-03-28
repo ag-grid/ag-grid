@@ -1,8 +1,8 @@
 import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _ } from 'ag-grid-community';
 import { ClipboardService } from "../clipboardService";
 import { AggFuncService } from "../aggregation/aggFuncService";
-import { RangeChartService } from "../charts/rangeChart/rangeChartService";
-import { ChartType } from "../charts/rangeChart/gridChartFactory";
+import {RangeChartService} from "../chartAdaptor/rangeChart/rangeChartService";
+import {ChartType} from "../chartAdaptor/rangeChart/gridChartFactory";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {

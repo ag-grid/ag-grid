@@ -26,9 +26,9 @@ import { NameValueComp } from "./statusBar/providedPanels/nameValueComp";
 import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
-import { RangeChartService } from "./charts/rangeChart/rangeChartService";
 import { WatermarkComp } from "./license/watermark";
-import { ChartControlComp } from "./charts/rangeChart/chartControlComp";
+import {RangeChartService} from "./chartAdaptor/rangeChart/rangeChartService";
+import {ChartControlComp} from "./chartAdaptor/rangeChart/chartControlComp";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -63,7 +63,6 @@ export { ValuesDropZonePanel } from "./sideBar/providedPanels/columns/panels/val
 export { ExcelCreator } from "./exporter/excelCreator";
 export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
-export { RangeChartService } from "./charts/rangeChart/rangeChartService";
 export { WatermarkComp } from "./license/watermark";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};

@@ -1,12 +1,12 @@
-import {CartesianChart} from "../chart/cartesianChart";
-import {CategoryAxis} from "../chart/axis/categoryAxis";
-import {NumberAxis} from "../chart/axis/numberAxis";
-import {BarSeries} from "../chart/series/barSeries";
-import {LineSeries} from "../chart/series/lineSeries";
-import {PolarChart} from "../chart/polarChart";
-import {PieSeries} from "../chart/series/pieSeries";
-import {DropShadow, Offset} from "../scene/dropShadow";
 import {ChartDatasource} from "./rangeChartService";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
+import {NumberAxis} from "../../charts/chart/axis/numberAxis";
+import {LineSeries} from "../../charts/chart/series/lineSeries";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {PolarChart} from "../../charts/chart/polarChart";
+import {PieSeries} from "../../charts/chart/series/pieSeries";
+import {DropShadow, Offset} from "../../charts/scene/dropShadow";
 
 export interface GridChart {
     updateSeries(datasource: ChartDatasource): void;
@@ -37,7 +37,7 @@ export class GridChartFactory {
 
         barChart.width = chartOptions.width;
         barChart.height = chartOptions.height;
-        barChart.padding = {top: 50, right: 50, bottom: 50, left: 50};
+        barChart.padding = {top: 10, right: 50, bottom: 100, left: 50};
         barChart.xAxis.labelRotation = 90;
 
         const barSeries = new BarSeries<any>();
@@ -59,7 +59,7 @@ export class GridChartFactory {
 
         lineChart.width = chartOptions.width;
         lineChart.height = chartOptions.height;
-        lineChart.padding = {top: 25, right: 50, bottom: 105, left: 50};
+        lineChart.padding = {top: 10, right: 50, bottom: 100, left: 50};
         lineChart.xAxis.labelRotation = 90;
 
         const lineSeries = new LineSeries<any, string, number>();

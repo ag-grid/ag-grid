@@ -1,11 +1,13 @@
 import {_, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartOptions, ChartType, GridChart, GridChartFactory} from "./gridChartFactory";
 import {ChartDatasource} from "./rangeChartService";
+import {ChartControlComp} from "./chartControlComp";
 
 export class GridChartComp extends Component {
 
     private static TEMPLATE =
         `<div>
+            <ag-chart-control ref="chartControlComp"></ag-chart-control>
             <div ref="eChart"></div>
             <div ref="eErrors"></div>
         </div>`;
@@ -13,6 +15,7 @@ export class GridChartComp extends Component {
     private readonly datasource: ChartDatasource;
     private readonly gridChart: GridChart;
 
+    @RefSelector('chartControlComp') private chartControlComp: ChartControlComp;
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
 
@@ -31,6 +34,9 @@ export class GridChartComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
+
+        this.chartControlComp.init(this.gridChart);
+
         this.refresh();
     }
 
