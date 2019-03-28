@@ -40,7 +40,7 @@ export class RangeChartService {
             const chart = new GridChartComp(chartType, ds);
 
             this.context.wireBean(chart);
-            this.createChartPanel(chart);
+            this.createChartDialog(chart);
         } else {
             // TODO: replace with error dialog
             console.warn('ag-Grid: unable to perform charting due to invalid range selection');
@@ -67,18 +67,18 @@ export class RangeChartService {
         return ds;
     }
 
-    private createChartPanel(chart: Component): void {
-        const chartPanel = new Dialog({
+    private createChartDialog(chart: Component): void {
+        const chartDialog = new Dialog({
             resizable: true,
             movable: true,
             title: 'Chart'
         });
 
-        this.context.wireBean(chartPanel);
+        this.context.wireBean(chartDialog);
 
-        chartPanel.setBody(chart.getGui());
+        chartDialog.setBody(chart.getGui());
 
-        chartPanel.addEventListener(Dialog.EVENT_DESTROYED, () => {
+        chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => {
             chart.destroy();
         });
     }
