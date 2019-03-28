@@ -1,5 +1,7 @@
 import {Component, RefSelector} from "ag-grid-community";
-import {GridChart} from "./gridChartFactory";
+import {Chart} from "../charts/chart/chart";
+import {BarSeries} from "../charts/chart/series/barSeries";
+import {ChartType} from "./gridChartFactory";
 
 export class ChartControlComp extends Component {
 
@@ -33,25 +35,23 @@ export class ChartControlComp extends Component {
     @RefSelector('eWidth') private eWidth: HTMLInputElement;
     @RefSelector('eHeight') private eHeight: HTMLInputElement;
 
-    private gridChart: GridChart;
+    private chart: Chart<any, string, number>;
 
     constructor() {
         super(ChartControlComp.TEMPLATE);
     }
 
-    public init(gridChart: GridChart): void {
-        this.gridChart = gridChart;
+    public init(chartType: ChartType, gridChart: Chart<any, string, number>): void {
+        this.chart = gridChart;
+
         this.setupGroupedOrStacked();
         this.setupLineWidth();
         this.setupWidthAndHeight();
     }
 
     private setupWidthAndHeight(): void {
-        // this.eWidth.value = `${this.chart.width}`;
-        // this.eHeight.value = `${this.chart.height}`;
-
-        this.eWidth.value = '800';
-        this.eHeight.value = '400';
+        this.eWidth.value = `${this.chart.width}`;
+        this.eHeight.value = `${this.chart.height}`;
 
         this.addDestroyableEventListener(this.eWidth, 'input', this.onWidthChanged.bind(this));
         this.addDestroyableEventListener(this.eHeight, 'input', this.onHeightChanged.bind(this));
@@ -60,29 +60,31 @@ export class ChartControlComp extends Component {
     private onWidthChanged(): void {
         const width = this.getNumberValue(this.eWidth, null);
         if (width) {
-            // this.chart.width = width;
+            this.chart.width = width;
         }
     }
 
     private onHeightChanged(): void {
         const height = this.getNumberValue(this.eHeight, null);
         if (height) {
-            // this.chart.height = height;
+            this.chart.height = height;
         }
     }
 
     private setupLineWidth(): void {
-        // if (this.barSeries.lineWidth>=0) {
-        //     this.eLineWidth.value = `${this.barSeries.lineWidth}`;
-        // } else {
-        //     this.eLineWidth.value = '';
-        // }
-        // this.addDestroyableEventListener(this.eLineWidth, 'input', this.onLineWidth.bind(this));
+        const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
+        if (barSeries.lineWidth>=0) {
+            this.eLineWidth.value = `${barSeries.lineWidth}`;
+        } else {
+            this.eLineWidth.value = '';
+        }
+        this.addDestroyableEventListener(this.eLineWidth, 'input', this.onLineWidth.bind(this));
     }
 
     private onLineWidth(): void {
+        const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
         const width = this.getNumberValue(this.eLineWidth, 1);
-        // this.barSeries.lineWidth = width!;
+        barSeries.lineWidth = width!;
     }
 
     private getNumberValue(textInput: HTMLInputElement, defaultValue: number | null): number | null {
@@ -107,14 +109,17 @@ export class ChartControlComp extends Component {
             this.addDestroyableEventListener(e, 'change', this.onStackedOrGroupedChanged.bind(this));
         });
 
-        // if (this.barSeries.grouped) {
-        //     this.eGrouped.checked = true;
-        // } else {
-        //     this.eStacked.checked = true;
-        // }
+        const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
+
+        if (barSeries.grouped) {
+            this.eGrouped.checked = true;
+        } else {
+            this.eStacked.checked = true;
+        }
     }
 
     private onStackedOrGroupedChanged(): void {
-        // this.barSeries.grouped = this.eGrouped.checked;
+        const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
+        barSeries.grouped = this.eGrouped.checked;
     }
 }

@@ -6,11 +6,7 @@ import {BarSeries} from "../charts/chart/series/barSeries";
 import {PolarChart} from "../charts/chart/polarChart";
 import {PieSeries} from "../charts/chart/series/pieSeries";
 import {DropShadow, Offset} from "../charts/scene/dropShadow";
-import {ChartDatasource} from "./rangeChart/rangeChartService";
-
-export interface GridChart {
-    updateSeries(datasource: ChartDatasource): void;
-}
+import {Chart} from "../charts/chart/chart";
 
 export interface ChartOptions {
     height: number,
@@ -21,7 +17,7 @@ export enum ChartType {Bar, Line, Pie}
 
 export class GridChartFactory {
 
-    static createChart(chartType: ChartType, chartOptions: ChartOptions, parentElement: HTMLElement): GridChart {
+    static createChart(chartType: ChartType, chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
         switch (chartType) {
             case ChartType.Bar:
                 return GridChartFactory.createBarChart(parentElement, chartOptions);
@@ -32,7 +28,7 @@ export class GridChartFactory {
         }
     }
 
-    private static createBarChart(parentElement: HTMLElement, chartOptions: ChartOptions): GridChart {
+    private static createBarChart(parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
         const barChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), parentElement);
 
         barChart.width = chartOptions.width;
@@ -45,16 +41,10 @@ export class GridChartFactory {
 
         barChart.addSeries(barSeries);
 
-        return {
-            updateSeries: (ds: ChartDatasource) => {
-                const {data, fields} = this.extractFromDatasource(ds);
-                barSeries.yFieldNames = ds.getFieldNames();
-                barSeries.setDataAndFields(data, 'category', fields);
-            }
-        };
+        return barChart;
     }
 
-    private static createLineChart(parentElement: HTMLElement, chartOptions: ChartOptions): GridChart {
+    private static createLineChart(parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
         const lineChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), parentElement);
 
         lineChart.width = chartOptions.width;
@@ -68,15 +58,10 @@ export class GridChartFactory {
 
         lineChart.addSeries(lineSeries);
 
-        return {
-            updateSeries: (ds: ChartDatasource) => {
-                const {data, fields} = this.extractFromDatasource(ds);
-                lineSeries.setDataAndFields(data, 'category', fields[0]);
-            }
-        };
+        return lineChart;
     }
 
-    private static createPieChart(parentElement: HTMLElement, chartOptions: ChartOptions): GridChart {
+    private static createPieChart(parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
         const pieChart = new PolarChart<any, string, number>(parentElement);
 
         pieChart.width = chartOptions.width;
@@ -90,24 +75,6 @@ export class GridChartFactory {
 
         pieChart.addSeries(pieSeries);
 
-        return {
-            updateSeries: (ds: ChartDatasource) => {
-                const {data, fields} = this.extractFromDatasource(ds);
-                pieSeries.setDataAndFields(data, fields[0], 'category');
-            }
-        };
-    }
-
-    private static extractFromDatasource(ds: ChartDatasource) {
-        const data: any[] = [];
-        const fields = ds.getFields();
-        for (let i = 0; i < ds.getRowCount(); i++) {
-            let item: any = {
-                category: ds.getCategory(i)
-            };
-            fields.forEach(field => item[field] = ds.getValue(i, field));
-            data.push(item);
-        }
-        return {data, fields};
+        return pieChart;
     }
 }

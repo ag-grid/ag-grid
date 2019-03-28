@@ -1,7 +1,11 @@
 import {_, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {ChartOptions, ChartType, GridChart, GridChartFactory} from "./gridChartFactory";
+import {ChartOptions, ChartType, GridChartFactory} from "./gridChartFactory";
 import {ChartControlComp} from "./chartControlComp";
 import {ChartDatasource} from "./rangeChart/rangeChartService";
+import {Chart} from "../charts/chart/chart";
+import {BarSeries} from "../charts/chart/series/barSeries";
+import {LineSeries} from "../charts/chart/series/lineSeries";
+import {PieSeries} from "../charts/chart/series/pieSeries";
 
 export class GridChartComp extends Component {
 
@@ -13,7 +17,9 @@ export class GridChartComp extends Component {
         </div>`;
 
     private readonly datasource: ChartDatasource;
-    private readonly gridChart: GridChart;
+
+    private readonly chartType: ChartType;
+    private readonly gridChart: Chart<any, string, number>;
 
     @RefSelector('chartControlComp') private chartControlComp: ChartControlComp;
     @RefSelector('eChart') private eChart: HTMLElement;
@@ -21,6 +27,8 @@ export class GridChartComp extends Component {
 
     constructor(chartType: ChartType, chartDatasource: ChartDatasource) {
         super(GridChartComp.TEMPLATE);
+
+        this.chartType = chartType;
 
         const chartOptions: ChartOptions = {
             height: 400,
@@ -35,7 +43,7 @@ export class GridChartComp extends Component {
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
 
-        this.chartControlComp.init(this.gridChart);
+        this.chartControlComp.init(this.chartType, this.gridChart);
 
         this.refresh();
     }
@@ -59,7 +67,22 @@ export class GridChartComp extends Component {
 
             eGui.innerHTML = html.join('');
         } else {
-            this.gridChart.updateSeries(this.datasource);
+
+            const {data, fields} = this.extractFromDatasource(this.datasource);
+
+            if (this.chartType === ChartType.Bar) {
+                const barSeries = this.gridChart.series[0] as BarSeries<any, string, number>;
+                barSeries.yFieldNames = this.datasource.getFieldNames();
+                barSeries.setDataAndFields(data, 'category', fields);
+
+            } else if (this.chartType === ChartType.Line) {
+                const lineSeries = this.gridChart.series[0] as LineSeries<any, string, number>;
+                lineSeries.setDataAndFields(data, 'category', fields[0]);
+
+            } else if (this.chartType === ChartType.Pie) {
+                const pieSeries = this.gridChart.series[0] as PieSeries<any, string, number>;
+                pieSeries.setDataAndFields(data, fields[0], 'category');
+            }
         }
     }
 
@@ -67,5 +90,18 @@ export class GridChartComp extends Component {
         if (this.datasource) {
             this.datasource.destroy();
         }
+    }
+
+    private extractFromDatasource(ds: ChartDatasource) {
+        const data: any[] = [];
+        const fields = ds.getFields();
+        for (let i = 0; i < ds.getRowCount(); i++) {
+            let item: any = {
+                category: ds.getCategory(i)
+            };
+            fields.forEach(field => item[field] = ds.getValue(i, field));
+            data.push(item);
+        }
+        return {data, fields};
     }
 }
