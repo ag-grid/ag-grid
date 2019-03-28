@@ -1,12 +1,12 @@
 import {CartesianChart} from "../charts/chart/cartesianChart";
 import {CategoryAxis} from "../charts/chart/axis/categoryAxis";
 import {NumberAxis} from "../charts/chart/axis/numberAxis";
-import {LineSeries} from "../charts/chart/series/lineSeries";
 import {BarSeries} from "../charts/chart/series/barSeries";
 import {PolarChart} from "../charts/chart/polarChart";
 import {PieSeries} from "../charts/chart/series/pieSeries";
 import {DropShadow, Offset} from "../charts/scene/dropShadow";
 import {Chart} from "../charts/chart/chart";
+import {LineSeries} from "../charts/chart/series/lineSeries";
 
 export interface ChartOptions {
     height: number,
@@ -52,6 +52,7 @@ export class GridChartFactory {
         lineChart.padding = {top: 10, right: 25, bottom: 100, left: 75};
         lineChart.xAxis.labelRotation = 90;
 
+        // need to a default line series???
         const lineSeries = new LineSeries<any, string, number>();
         lineSeries.lineWidth = 2;
         lineSeries.markerRadius = 3;
