@@ -363,3 +363,11 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 // not documented, for internal use only
 export interface ScrollVisibilityChangedEvent extends AgGridEvent {
 }
+
+export interface DialogEvent extends AgGridEvent {
+    dialog: HTMLElement;
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+}

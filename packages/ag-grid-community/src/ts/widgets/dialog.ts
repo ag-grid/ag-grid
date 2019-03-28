@@ -3,6 +3,9 @@ import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { DialogEvent } from "../events";
+import { EventService } from "../eventService";
 import { _ } from "../utils";
 
 type ResizableSides = 'topLeft' |
@@ -31,6 +34,9 @@ interface DialogOptions {
 }
 
 export class Dialog extends PopupComponent {
+
+    public static EVENT_DIALOG_MOVE = 'dialogMoved';
+    public static EVENT_DIALOG_RESIZE = 'dialogResized';
 
     private static TEMPLATE =
         `<div class="ag-dialog">
@@ -70,8 +76,10 @@ export class Dialog extends PopupComponent {
 
     public static DESTROY_EVENT = 'destroy';
 
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
@@ -233,6 +241,8 @@ export class Dialog extends PopupComponent {
                 this.position.y + offsetTop
             );
         }
+
+        this.dispatchEvent(Dialog.EVENT_DIALOG_RESIZE);
     }
 
     private onDialogResizeEnd() {
@@ -275,6 +285,8 @@ export class Dialog extends PopupComponent {
         const { x, y } = this.position;
 
         this.offsetDialog(x + e.movementX, y + e.movementY);
+
+        this.dispatchEvent(Dialog.EVENT_DIALOG_MOVE);
     }
 
     private offsetDialog(x: number, y: number) {
@@ -303,6 +315,21 @@ export class Dialog extends PopupComponent {
         const eGui = this.getGui();
 
         _.addOrRemoveCssClass(eGui, 'ag-dialog-closable', closable);
+    }
+
+    private dispatchEvent(type: string) {
+        const event: DialogEvent = {
+            type,
+            dialog: this.getGui(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            x: this.position.x,
+            y: this.position.y,
+            width: this.size.width,
+            height: this.size.height
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     public setBody(eBody: HTMLElement) {
