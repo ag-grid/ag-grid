@@ -1,5 +1,6 @@
 import { Promise } from "../utils";
 import { IAfterGuiAttachedParams } from "./iAfterGuiAttachedParams";
+import { Component } from "../widgets/component";
 
 export interface IComponent<T> {
 
@@ -21,4 +22,8 @@ export interface IComponent<T> {
 
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
     init?(params: T): Promise<void> | void;
+
+    /** If this Component is contained within another component, we add a reference to that component */
+    setContainer?(container: Component): void;
+    getContainer?(): Component | undefined;
 }

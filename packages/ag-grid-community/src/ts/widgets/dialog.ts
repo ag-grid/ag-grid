@@ -7,6 +7,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DialogEvent } from "../events";
 import { EventService } from "../eventService";
 import { _ } from "../utils";
+import { Component } from "./component";
 
 type ResizableSides = 'topLeft' |
                       'top' |
@@ -330,11 +331,12 @@ export class Dialog extends PopupComponent {
             event.height = this.getHeight();
         }
 
-        this.eventService.dispatchEvent(event);
+        this.dispatchEvent(event);
     }
 
-    public setBody(eBody: HTMLElement) {
-        this.eContentWrapper.appendChild(eBody);
+    public setBodyComponent(bodyComponent: Component) {
+        bodyComponent.setContainer(this);
+        this.eContentWrapper.appendChild(bodyComponent.getGui());
     }
 
     public getBodyHeight(): number {

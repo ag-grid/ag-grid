@@ -36,6 +36,7 @@ export class ChartControlComp extends Component {
     @RefSelector('eHeight') public eHeight: HTMLInputElement;
 
     private chart: Chart<any, string, number>;
+    private chartComp: Component;
 
     constructor() {
         super(ChartControlComp.TEMPLATE);

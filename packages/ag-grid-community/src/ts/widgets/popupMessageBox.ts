@@ -23,7 +23,7 @@ export class PopupMessageBox extends Dialog {
         this.addFeature(this.getContext(), messageBodyComp);
 
         messageBodyComp.setMessage(this.message);
-        this.setBody(messageBodyComp.getGui());
+        this.setBodyComponent(messageBodyComp);
 
         this.addDestroyableEventListener(messageBodyComp, 'onBtOk', () => this.close());
     }

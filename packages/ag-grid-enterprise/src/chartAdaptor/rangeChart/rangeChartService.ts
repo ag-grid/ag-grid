@@ -75,9 +75,7 @@ export class RangeChartService {
         });
 
         this.context.wireBean(chartDialog);
-
-        chartDialog.setBody(chart.getGui());
-
+        chartDialog.setBodyComponent(chart);
         chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => {
             chart.destroy();
         });

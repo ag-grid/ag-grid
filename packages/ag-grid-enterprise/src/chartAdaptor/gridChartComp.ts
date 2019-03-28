@@ -10,8 +10,6 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    Autowired,
-    EventService,
     Dialog,
     DialogEvent
 } from "ag-grid-community";
@@ -29,8 +27,6 @@ export class GridChartComp extends Component {
 
     private readonly chartType: ChartType;
     private readonly chart: Chart<any, string, number>;
-
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('chartControlComp') private chartControlComp: ChartControlComp;
     @RefSelector('eChart') private eChart: HTMLElement;
@@ -53,20 +49,30 @@ export class GridChartComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
-        this.addDestroyableEventListener(this.eventService, Dialog.RESIZE_EVENT, (event: DialogEvent) => {
-            if (!event.dialog.getGui().contains(this.getGui())) { return ; }
+        this.chartControlComp.init(this.chartType, this.chart);
+
+        this.refresh();
+    }
+
+    public setContainer(container: Dialog) {
+        this.container = container;
+
+        this.addDestroyableEventListener(container, Dialog.RESIZE_EVENT, (event: DialogEvent) => {
             const chartHeight = event.dialog.getBodyHeight() - this.chartControlComp.getGui().offsetHeight - 7;
             const chartWidth = event.width as number - 2;
             this.chart.height = chartHeight;
             this.chart.width = chartWidth;
             this.chartControlComp.eHeight.value = chartHeight.toString();
             this.chartControlComp.eWidth.value = chartWidth.toString();
-
         });
 
-        this.chartControlComp.init(this.chartType, this.chart);
-
-        this.refresh();
+        this.addDestroyableEventListener(this.chartControlComp.eWidth, 'blur', (e) => {
+            container.setWidth(parseInt(e.target.value) + 2);
+        });
+        this.addDestroyableEventListener(this.chartControlComp.eHeight, 'blur', (e) => {
+            const baseHeight = (container.getHeight() - container.getBodyHeight()) + this.chartControlComp.getGui().offsetHeight + 7;
+            container.setHeight(baseHeight + parseInt(e.target.value));
+        });
     }
 
     public refresh(): void {
