@@ -1,5 +1,6 @@
+import { DragService } from "../dragAndDrop/dragService";
 import { RefSelector } from "./componentAnnotations";
-import { Autowired, Context, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
 import { _ } from "../utils";
@@ -26,18 +27,17 @@ interface DialogOptions {
 
 export class Dialog extends PopupComponent {
 
-    // NOTE - in time, the styles here will need to go to CSS files
     private static TEMPLATE =
         `<div class="ag-dialog">
-            <div eRef="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
-            <div eRef="eTopResizer" class="ag-resizer ag-resizer-top"></div>
-            <div eRef="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
-            <div eRef="eRightResizer" class="ag-resizer ag-resizer-right"></div>
-            <div eRef="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
-            <div eRef="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
-            <div eRef="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
-            <div eRef="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
-            <div class="ag-dialog-title-bar">
+            <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
+            <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
+            <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
+            <div ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
+            <div ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
+            <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
+            <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
+            <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
+            <div ref="eTitleBar" class="ag-dialog-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-dialog-title-bar-title"></span>
                 <div ref="eTitleBarButtons">
                     <span ref="eClose" class="ag-dialog-button-close"></span>
@@ -46,15 +46,23 @@ export class Dialog extends PopupComponent {
             <div ref="eContentWrapper" class="ag-popup-window-content-wrapper"></div>
         </div>`;
 
+    private config: DialogOptions | undefined;
     private resizable: ResizableStructure = {};
     private movable = false;
     private closable = true;
+    private isMoving = false;
+    private position = {
+        x: 0,
+        y: 0
+    };
 
     public static DESTROY_EVENT = 'destroy';
 
+    @Autowired('dragService') private dragService: DragService;
     @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;
+    @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
     @RefSelector('eTitle') private eTitle: HTMLElement;
     @RefSelector('eClose') private eClose: HTMLElement;
 
@@ -71,10 +79,12 @@ export class Dialog extends PopupComponent {
 
     constructor(config?: DialogOptions) {
         super(Dialog.TEMPLATE);
+        this.config = config;
+    }
 
-        if (!config) { return; }
-
-        const { resizable, movable, closable, title } = config;
+    @PostConstruct
+    protected postConstruct() {
+        const { resizable, movable, closable, title } = this.config;
 
         if (resizable) {
             this.setResizable(resizable);
@@ -86,12 +96,7 @@ export class Dialog extends PopupComponent {
 
         this.setMovable(!!movable);
         this.setClosable(!!closable);
-    }
 
-    @PostConstruct
-    protected postConstruct() {
-        // need to show filter before positioning, as only after filter
-        // is visible can we find out what the width of it is
         this.close = this.popupService.addPopup(
             false,
             this.getGui(),
@@ -152,11 +157,44 @@ export class Dialog extends PopupComponent {
     public setMovable(movable: boolean) {
         if (movable !== this.movable) {
             this.movable = movable;
+
+            if (movable) {
+                this.dragService.addDragSource({
+                    eElement: this.eTitleBar,
+                    onDragStart: this.onDialogMoveStart.bind(this),
+                    onDragging: this.onDialogMove.bind(this),
+                    onDragStop: this.onDialogMoveEnd.bind(this)
+                });
+            }
         }
 
         const eGui = this.getGui();
 
         _.addOrRemoveCssClass(eGui, 'ag-dialog-movable', movable);
+    }
+
+    onDialogMoveStart() {
+        this.isMoving = true;
+    }
+
+    onDialogMove(e: MouseEvent) {
+        if (!this.isMoving) { return; }
+        const { x, y } = this.position;
+        const eGui = this.getGui();
+
+        this.popupService.positionPopup({
+            ePopup: this.getGui(),
+            x: x + e.movementX,
+            y: y + e.movementY,
+            keepWithinBounds: true
+        });
+
+        this.position.x = parseInt(eGui.style.left, 10);
+        this.position.y = parseInt(eGui.style.top, 10);
+    }
+
+    onDialogMoveEnd() {
+        this.isMoving = false;
     }
 
     public setClosable(closable: boolean) {

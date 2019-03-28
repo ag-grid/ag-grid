@@ -226,7 +226,7 @@ export class PopupService {
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     }
 
-    private positionPopup(params: {
+    public positionPopup(params: {
         ePopup: HTMLElement | null,
         minWidth?: number,
         minHeight?: number,
