@@ -2,13 +2,13 @@ import { Autowired, Bean } from "./context/context";
 import { Constants } from "./constants";
 import { ColumnController } from "./columnController/columnController";
 import { IRowModel } from "./interfaces/iRowModel";
-import { CellPosition } from "./entities/gridCell";
+import { CellPosition } from "./entities/cellPosition";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { PinnedRowModel } from "./rowModels/pinnedRowModel";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { _ } from "./utils";
-import {RowPosition} from "./interfaces/iRangeController";
+import {RowPosition} from "./entities/rowPosition";
 
 @Bean('cellNavigationService')
 export class CellNavigationService {

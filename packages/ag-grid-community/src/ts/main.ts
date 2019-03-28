@@ -197,7 +197,7 @@ export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 
 // range
-export { RowPosition, RowPositionUtils, CellRange, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
+export { CellRange, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 export { IRangeController } from "./interfaces/iRangeController";
 
 // exporter
@@ -240,7 +240,8 @@ export { IClipboardService } from "./interfaces/iClipboardService";
 export { IExcelCreator } from "./interfaces/iExcelCreator";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { IAggFunc, ColGroupDef } from "./entities/colDef";
-export { CellPosition, CellPositionUtils } from "./entities/gridCell";
+export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
+export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
 export { ColDef } from "./entities/colDef";
 export {
     ValueSetterParams,

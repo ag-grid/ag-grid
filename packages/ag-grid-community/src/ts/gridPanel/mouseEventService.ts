@@ -1,6 +1,6 @@
 import { Bean, PostConstruct } from "../context/context";
 import { Autowired } from "../context/context";
-import { CellPosition } from "../entities/gridCell";
+import { CellPosition } from "../entities/cellPosition";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CellComp } from "../rendering/cellComp";
 import { NumberSequence, _ } from '../utils';
