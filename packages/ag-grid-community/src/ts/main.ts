@@ -79,8 +79,6 @@ export { DragService } from "./dragAndDrop/dragService";
 // entities
 export { Column } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
-export { GridCell } from "./entities/gridCell";
-export { GridRow } from "./entities/gridRow";
 export { OriginalColumnGroup } from "./entities/originalColumnGroup";
 export { RowNode } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
@@ -199,7 +197,7 @@ export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 
 // range
-export { RowPosition, CellRange, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
+export { RowPosition, RowPositionUtils, CellRange, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 export { IRangeController } from "./interfaces/iRangeController";
 
 // exporter

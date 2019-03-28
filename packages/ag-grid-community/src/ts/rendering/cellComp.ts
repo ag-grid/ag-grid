@@ -20,7 +20,7 @@ import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
-import { GridCell, CellPosition } from "../entities/gridCell";
+import { CellPosition, CellPositionUtils } from "../entities/gridCell";
 import { CellRange } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
@@ -41,7 +41,7 @@ export class CellComp extends Component {
     private column: Column;
     private rowNode: RowNode;
     private eParentRow: HTMLElement;
-    private gridCell: GridCell;
+    private cellPosition: CellPosition;
     private rangeCount: number;
 
     private usingWrapper: boolean;
@@ -112,12 +112,12 @@ export class CellComp extends Component {
         this.createGridCellVo();
 
         this.rangeSelectionEnabled = beans.enterprise && beans.gridOptionsWrapper.isEnableRangeSelection();
-        this.cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
+        this.cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
         this.firstRightPinned = this.column.isFirstRightPinned();
         this.lastLeftPinned = this.column.isLastLeftPinned();
 
         if (this.rangeSelectionEnabled) {
-            this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
+            this.rangeCount = this.beans.rangeController.getCellRangeCount(this.cellPosition);
         }
 
         this.getValueAndFormat();
@@ -265,7 +265,7 @@ export class CellComp extends Component {
     }
 
     private onFlashCells(event: FlashCellsEvent): void {
-        const cellId = this.gridCell.createId();
+        const cellId = CellPositionUtils.createId(this.cellPosition);
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
             this.animateCell('highlight');
@@ -705,7 +705,7 @@ export class CellComp extends Component {
                 context: this.beans.gridOptionsWrapper.getContext(),
                 value: this.value,
                 valueFormatted: this.valueFormatted,
-                rowIndex: this.gridCell.rowIndex,
+                rowIndex: this.cellPosition.rowIndex,
                 node: this.rowNode,
                 data: this.rowNode.data,
                 $scope: this.scope,
@@ -729,7 +729,7 @@ export class CellComp extends Component {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 colDef: colDef,
-                rowIndex: this.gridCell.rowIndex,
+                rowIndex: this.cellPosition.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext()
@@ -878,7 +878,7 @@ export class CellComp extends Component {
             colDef: this.getComponentHolder(),
             column: this.column,
             $scope: this.scope,
-            rowIndex: this.gridCell.rowIndex,
+            rowIndex: this.cellPosition.rowIndex,
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
@@ -1204,7 +1204,7 @@ export class CellComp extends Component {
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
             // cell outside of this one
-            if (this.beans.focusedCellController.isCellFocused(this.gridCell)) {
+            if (this.beans.focusedCellController.isCellFocused(this.cellPosition)) {
                 this.focusCell(true);
             }
         }
@@ -1238,7 +1238,7 @@ export class CellComp extends Component {
             charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
-            rowIndex: this.gridCell.rowIndex,
+            rowIndex: this.cellPosition.rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
             api: this.beans.gridOptionsWrapper.getApi(),
@@ -1285,7 +1285,7 @@ export class CellComp extends Component {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.beans.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+        this.beans.focusedCellController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
     }
 
     public setFocusInOnEditor(): void {
@@ -1347,7 +1347,7 @@ export class CellComp extends Component {
         if (event.shiftKey && this.rangeSelectionEnabled) {
             this.onShiftRangeSelect(key);
         } else {
-            this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
+            this.beans.rowRenderer.navigateToNextCell(event, key, this.cellPosition, true);
         }
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
@@ -1376,7 +1376,7 @@ export class CellComp extends Component {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
-                this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.gridCell, false);
+                this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.cellPosition, false);
             } else {
                 this.startRowOrCellEdit(Constants.KEY_ENTER);
             }
@@ -1392,7 +1392,7 @@ export class CellComp extends Component {
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
         if (enterMovesDownAfterEdit) {
-            this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.gridCell, false);
+            this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.cellPosition, false);
         }
     }
 
@@ -1475,7 +1475,7 @@ export class CellComp extends Component {
         // we set a new range
         const leftMouseButtonClick = _.isLeftClick(mouseEvent);
         if (leftMouseButtonClick && this.beans.rangeController) {
-            const thisCell = this.gridCell;
+            const thisCell = this.cellPosition;
             if (mouseEvent.shiftKey) {
                 this.beans.rangeController.extendLatestRangeToCell(thisCell);
             } else {
@@ -1531,16 +1531,15 @@ export class CellComp extends Component {
     }
 
     private createGridCellVo(): void {
-        const gridCellDef = {
+        this.cellPosition = {
             rowIndex: this.rowNode.rowIndex,
             floating: this.rowNode.rowPinned,
             column: this.column
-        } as CellPosition;
-        this.gridCell = new GridCell(gridCellDef);
+        };
     }
 
-    public getGridCell(): GridCell {
-        return this.gridCell;
+    public getCellPosition(): CellPosition {
+        return this.cellPosition;
     }
 
     public getParentRow(): HTMLElement {
@@ -1622,27 +1621,29 @@ export class CellComp extends Component {
         let bottom = false;
         let left = false;
 
-        const { beans, gridCell } = this;
+        const { beans, cellPosition } = this;
         const { rangeController } = beans;
 
         const ranges: CellRange[] = rangeController.getCellRanges().filter(
-            range => rangeController.isCellInSpecificRange(gridCell, range)
+            range => rangeController.isCellInSpecificRange(cellPosition, range)
         );
 
         ranges.forEach(range => {
-            const start = Math.min(range.startRow.index, range.endRow.index);
-            const end = Math.max(range.startRow.index, range.endRow.index);
+            const startRowIndex = range.startRow.rowIndex;
+            const endRowIndex = range.endRow.rowIndex;
+            const start = Math.min(startRowIndex, endRowIndex);
+            const end = Math.max(startRowIndex, endRowIndex);
 
-            if (start === gridCell.rowIndex && !top) {
+            if (start === cellPosition.rowIndex && !top) {
                 top = true;
             }
-            if (range.columns[range.columns.length - 1] === gridCell.column && !right) {
+            if (range.columns[range.columns.length - 1] === cellPosition.column && !right) {
                 right = true;
             }
-            if (end === gridCell.rowIndex && !bottom) {
+            if (end === cellPosition.rowIndex && !bottom) {
                 bottom = true;
             }
-            if (range.columns[0] === gridCell.column && !left) {
+            if (range.columns[0] === cellPosition.column && !left) {
                 left = true;
             }
         });
@@ -1695,10 +1696,10 @@ export class CellComp extends Component {
             return;
         }
 
-        const { beans, gridCell, rangeCount } = this;
+        const { beans, cellPosition, rangeCount } = this;
         const { rangeController } = beans;
 
-        const newRangeCount = rangeController.getCellRangeCount(gridCell);
+        const newRangeCount = rangeController.getCellRangeCount(cellPosition);
         const element = this.getGui();
 
         if (rangeCount !== newRangeCount) {
@@ -1808,7 +1809,7 @@ export class CellComp extends Component {
     }
 
     private onCellFocused(event?: any): void {
-        const cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
+        const cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
 
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {

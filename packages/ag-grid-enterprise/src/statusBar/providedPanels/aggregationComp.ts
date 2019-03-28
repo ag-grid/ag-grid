@@ -9,7 +9,7 @@ import {
     GridApi,
     GridOptions,
     GridOptionsWrapper,
-    GridRow,
+    RowPosition,
     IRowModel,
     IStatusPanelComp,
     PinnedRowModel,
@@ -18,7 +18,8 @@ import {
     RefSelector,
     RowNode,
     ValueService,
-    _
+    _, CellPositionUtils,
+    RowPositionUtils
 } from 'ag-grid-community';
 import { RangeController } from "../../rangeController";
 import { NameValueComp } from "./nameValueComp";
@@ -131,28 +132,32 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             cellRanges.forEach((cellRange) => {
 
                 // get starting and ending row, remember rowEnd could be before rowStart
-                const startRow = new GridRow(cellRange.startRow.index, cellRange.startRow.floating);
-                const endRow = new GridRow(cellRange.endRow.index, cellRange.endRow.floating);
+                const startRow: RowPosition = cellRange.startRow;
+                const endRow: RowPosition = cellRange.endRow;
 
-                const startRowIsFirst = startRow.before(endRow);
+                const startRowIsFirst = RowPositionUtils.before(startRow, endRow);
 
-                let currentRow: GridRow | null = startRowIsFirst ? startRow : endRow;
+                let currentRow: RowPosition | null = startRowIsFirst ? startRow : endRow;
                 const lastRow = startRowIsFirst ? endRow : startRow;
 
                 while (true) {
 
-                    const finishedAllRows = _.missing(currentRow) || !currentRow || lastRow.before(currentRow);
+                    const finishedAllRows = _.missing(currentRow) || !currentRow || RowPositionUtils.before(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
 
-                    cellRange.columns.forEach((column) => {
+                    cellRange.columns.forEach( col => {
                         if (currentRow === null) {
                             return;
                         }
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        const cellId = currentRow.getGridCell(column).createId();
+                        const cellId = CellPositionUtils.createId({
+                            floating: currentRow.floating,
+                            column: col,
+                            rowIndex: currentRow.rowIndex
+                        });
                         if (cellsSoFar[cellId]) {
                             return;
                         }
@@ -163,7 +168,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             return;
                         }
 
-                        let value = this.valueService.getValue(column, rowNode);
+                        let value = this.valueService.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_.missing(value) || value === '') {
@@ -214,7 +219,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     }
 
-    private getRowNode(gridRow: GridRow): RowNode | null {
+    private getRowNode(gridRow: RowPosition): RowNode | null {
         switch (gridRow.floating) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];

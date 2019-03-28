@@ -622,7 +622,7 @@ export class RowComp extends Component {
 
         // we want to try and keep editing and focused cells
         const editing = renderedCell.isEditing();
-        const focused = this.beans.focusedCellController.isCellFocused(renderedCell.getGridCell());
+        const focused = this.beans.focusedCellController.isCellFocused(renderedCell.getCellPosition());
 
         const mightWantToKeepCell = editing || focused;
 

@@ -1,5 +1,5 @@
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { GridCell, CellPosition } from "../entities/gridCell";
+import { CellPosition } from "../entities/gridCell";
 import { Constants } from "../constants";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../rowModels/paginationProxy";
@@ -43,7 +43,7 @@ export class NavigationService {
         const alt = event.altKey;
         const ctrl = event.ctrlKey;
 
-        const currentCell: CellPosition = this.mouseEventService.getGridCellForEvent(event).getGridCellDef();
+        const currentCell: CellPosition = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) { return false; }
 
         let processed = false;
@@ -197,8 +197,8 @@ export class NavigationService {
         // highlighted.
         this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
-            const gridCell = new GridCell({rowIndex: focusIndex, floating: null, column: focusColumn});
-            this.rangeController.setRangeToCell(gridCell);
+            const cellPosition: CellPosition = {rowIndex: focusIndex, floating: null, column: focusColumn};
+            this.rangeController.setRangeToCell(cellPosition);
         }
     }
 

@@ -132,7 +132,7 @@ export class TooltipManager {
 
     private showTooltip(e: MouseEvent): void {
         const targetCmp = this.lastHoveredComponent;
-        const cell = targetCmp as CellComp;
+        const cellComp = targetCmp as CellComp;
         const registeredComponent = this.registeredComponents[targetCmp.getCompId()];
         this.hideTooltip();
 
@@ -140,9 +140,9 @@ export class TooltipManager {
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: targetCmp.getComponentHolder(),
-            column: cell.getColumn && cell.getColumn(),
+            column: cellComp.getColumn && cellComp.getColumn(),
             context: this.gridOptionsWrapper.getContext(),
-            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
+            rowIndex: cellComp.getCellPosition && cellComp.getCellPosition().rowIndex,
             value: targetCmp.getTooltipText()
         };
 

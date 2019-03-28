@@ -653,16 +653,16 @@ export interface ProcessRowParams {
 
 export interface NavigateToNextCellParams {
     key: number;
-    previousCellDef: CellPosition;
-    nextCellDef: CellPosition;
+    previousCellPosition: CellPosition;
+    nextCellPosition: CellPosition;
     event: KeyboardEvent;
 }
 
 export interface TabToNextCellParams {
     backwards: boolean;
     editing: boolean;
-    previousCellDef: CellPosition;
-    nextCellDef: CellPosition;
+    previousCellPosition: CellPosition;
+    nextCellPosition: CellPosition;
 }
 
 export interface PostProcessPopupParams {

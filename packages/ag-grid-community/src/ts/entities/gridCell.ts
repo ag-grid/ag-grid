@@ -1,11 +1,8 @@
 import { Column } from "./column";
-import { GridRow } from "./gridRow";
-import { _ } from "../utils";
+import { RowPosition } from "../interfaces/iRangeController";
 
 // this is what gets pass into and out of the api, as JavaScript users
-export interface CellPosition {
-    floating: string;
-    rowIndex: number;
+export interface CellPosition extends RowPosition {
     column: Column;
 }
 
@@ -15,44 +12,10 @@ export class CellPositionUtils {
         return `${cellPosition.rowIndex}.${cellPosition.floating}.${cellPosition.column.getId()}`;
     }
 
-}
-
-export class GridCell {
-
-    floating: string;
-    rowIndex: number;
-    column: Column;
-
-    constructor(gridCellDef: CellPosition) {
-        this.rowIndex = gridCellDef.rowIndex;
-        this.column = gridCellDef.column;
-        this.floating = _.makeNull(gridCellDef.floating);
-    }
-
-    public getGridCellDef(): CellPosition {
-        return {
-            rowIndex: this.rowIndex,
-            column: this.column,
-            floating: this.floating
-        };
-    }
-
-    public getGridRow(): GridRow {
-        return new GridRow(this.rowIndex, this.floating);
-    }
-
-    public toString(): string {
-        return `rowIndex = ${this.rowIndex}, floating = ${this.floating}, column = ${this.column ? this.column.getId() : null}`;
-    }
-
-    public createId(): string {
-        return `${this.rowIndex}.${this.floating}.${this.column.getId()}`;
-    }
-
-    public equals(other: GridCell | null): boolean {
-        const colsMatch = this.column === other.column;
-        const floatingMatch = this.floating === other.floating;
-        const indexMatch = this.rowIndex === other.rowIndex;
+    public static equals(cellA: CellPosition, cellB: CellPosition): boolean {
+        const colsMatch = cellA.column === cellB.column;
+        const floatingMatch = cellA.floating === cellB.floating;
+        const indexMatch = cellA.rowIndex === cellB.rowIndex;
         return colsMatch && floatingMatch && indexMatch;
     }
 

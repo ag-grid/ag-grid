@@ -18,7 +18,7 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusedCellController } from "./focusedCellController";
 import { AddRangeSelectionParams, IRangeController, RangeSelection } from "./interfaces/iRangeController";
-import { GridCell, CellPosition } from "./entities/gridCell";
+import { CellPosition } from "./entities/gridCell";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";

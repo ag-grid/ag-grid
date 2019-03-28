@@ -74,7 +74,7 @@ export class FocusedCellController {
         while (ePointer) {
             const cellComp = this.gridOptionsWrapper.getDomData(ePointer, CellComp.DOM_DATA_KEY_CELL_COMP) as CellComp;
             if (cellComp) {
-                return cellComp.getGridCell();
+                return cellComp.getCellPosition();
             }
             ePointer = ePointer.parentNode;
         }

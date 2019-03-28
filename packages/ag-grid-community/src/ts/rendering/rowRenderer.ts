@@ -18,7 +18,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { FocusedCellController } from "../focusedCellController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
-import { GridCell, CellPosition } from "../entities/gridCell";
+import { CellPosition } from "../entities/gridCell";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
@@ -463,8 +463,8 @@ export class RowRenderer extends BeanStub {
         const res: CellPosition[] = [];
         this.forEachCellComp(cellComp => {
             if (cellComp.isEditing()) {
-                const gridCellDef: CellPosition = cellComp.getGridCell().getGridCellDef();
-                res.push(gridCellDef);
+                const cellPosition = cellComp.getCellPosition();
+                res.push(cellPosition);
             }
         });
         return res;
@@ -980,8 +980,8 @@ export class RowRenderer extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: GridCell, allowUserOverride: boolean) {
-        let nextCell: GridCell;
+    public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean) {
+        let nextCell: CellPosition;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
@@ -993,11 +993,11 @@ export class RowRenderer extends BeanStub {
             // our current position to be the last cell on the right before finding the
             // the next target.
             if (key === Constants.KEY_RIGHT && colSpanningList.length > 1) {
-                currentCell = new GridCell({
+                currentCell = {
                     rowIndex: currentCell.rowIndex,
                     column: colSpanningList[colSpanningList.length - 1],
                     floating: currentCell.floating
-                });
+                };
             }
 
             nextCell = this.cellNavigationService.getNextCellToFocus(key, currentCell);
@@ -1013,7 +1013,7 @@ export class RowRenderer extends BeanStub {
 
         if (nextCell) {
             const cellComp = this.getComponentForCell(nextCell);
-            nextCell = cellComp.getGridCell();
+            nextCell = cellComp.getCellPosition();
         }
 
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
@@ -1021,15 +1021,19 @@ export class RowRenderer extends BeanStub {
         if (allowUserOverride) {
             const userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
             if (_.exists(userFunc)) {
-                const params = {
+                const params: NavigateToNextCellParams = {
                     key: key,
-                    previousCellDef: currentCell.getGridCellDef(),
-                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
+                    previousCellPosition: currentCell,
+                    nextCellPosition: nextCell ? nextCell : null,
                     event: event
-                } as NavigateToNextCellParams;
-                const nextCellDef = userFunc(params);
-                if (_.exists(nextCellDef)) {
-                    nextCell = new GridCell(nextCellDef);
+                };
+                const userResult = userFunc(params);
+                if (_.exists(userResult)) {
+                    nextCell = {
+                        floating: userResult.floating,
+                        rowIndex: userResult.rowIndex,
+                        column: userResult.column
+                    } as CellPosition;
                 } else {
                     nextCell = null;
                 }
@@ -1046,12 +1050,11 @@ export class RowRenderer extends BeanStub {
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
 
         if (this.rangeController) {
-            const gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
-            this.rangeController.setRangeToCell(gridCell);
+            this.rangeController.setRangeToCell(nextCell);
         }
     }
 
-    public ensureCellVisible(gridCell: GridCell): void {
+    public ensureCellVisible(gridCell: CellPosition): void {
         // this scrolls the row into view
         if (_.missing(gridCell.floating)) {
             this.gridPanel.ensureIndexVisible(gridCell.rowIndex);
@@ -1138,7 +1141,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextEditingCell(previousRenderedCell: CellComp, backwards: boolean): boolean {
-        const gridCell = previousRenderedCell.getGridCell();
+        const gridCell = previousRenderedCell.getCellPosition();
 
         // need to do this before getting next cell to edit, in case the next cell
         // has editable function (eg colDef.editable=func() ) and it depends on the
@@ -1162,7 +1165,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextEditingRow(previousRenderedCell: CellComp, backwards: boolean): boolean {
-        const gridCell = previousRenderedCell.getGridCell();
+        const gridCell = previousRenderedCell.getCellPosition();
 
         // find the next cell to start editing
         const nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true);
@@ -1179,7 +1182,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextCellNotEditing(previousRenderedCell: CellComp, backwards: boolean): boolean {
-        const gridCell = previousRenderedCell.getGridCell();
+        const gridCell = previousRenderedCell.getCellPosition();
 
         // find the next cell to start editing
         const nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, false);
@@ -1196,8 +1199,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveEditToNextCellOrRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
-        const pGridCell = previousRenderedCell.getGridCell();
-        const nGridCell = nextRenderedCell.getGridCell();
+        const pGridCell = previousRenderedCell.getCellPosition();
+        const nGridCell = nextRenderedCell.getCellPosition();
 
         const rowsMatch = pGridCell.rowIndex === nGridCell.rowIndex && pGridCell.floating === nGridCell.floating;
 
@@ -1221,8 +1224,8 @@ export class RowRenderer extends BeanStub {
 
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
-    private findNextCellToFocusOn(gridCell: GridCell, backwards: boolean, startEditing: boolean): CellComp {
-        let nextCell: GridCell = gridCell;
+    private findNextCellToFocusOn(gridCell: CellPosition, backwards: boolean, startEditing: boolean): CellComp {
+        let nextCell: CellPosition = gridCell;
 
         while (true) {
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
@@ -1233,12 +1236,16 @@ export class RowRenderer extends BeanStub {
                 const params = {
                     backwards: backwards,
                     editing: startEditing,
-                    previousCellDef: gridCell.getGridCellDef(),
-                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+                    previousCellPosition: gridCell,
+                    nextCellPosition: nextCell ? nextCell : null
                 } as TabToNextCellParams;
-                const nextCellDef = userFunc(params);
-                if (_.exists(nextCellDef)) {
-                    nextCell = new GridCell(nextCellDef);
+                const userCell = userFunc(params);
+                if (_.exists(userCell)) {
+                    nextCell = {
+                        rowIndex: userCell.rowIndex,
+                        column: userCell.column,
+                        floating: userCell.floating
+                    } as CellPosition;
                 } else {
                     nextCell = null;
                 }
@@ -1296,8 +1303,7 @@ export class RowRenderer extends BeanStub {
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
-                gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
-                this.rangeController.setRangeToCell(gridCell);
+                this.rangeController.setRangeToCell(nextCell);
             }
 
             // we successfully tabbed onto a grid cell, so return true
@@ -1305,7 +1311,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private lookupRowNodeForCell(cell: GridCell) {
+    private lookupRowNodeForCell(cell: CellPosition) {
         if (cell.floating === Constants.PINNED_TOP) {
             return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
         }
