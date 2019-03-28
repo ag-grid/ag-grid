@@ -50,8 +50,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
-        if (this.processData()) {
-            this.update();
+        if (this.chart) {
+            this.chart.layoutPending = true;
         }
     }
     get data(): any[] {
@@ -61,8 +61,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     set xField(value: Extract<keyof D, string> | null) {
         if (this._xField !== value) {
             this._xField = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
@@ -73,8 +73,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     set yField(value: Extract<keyof D, string> | null) {
         if (this._yField !== value) {
             this._yField = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
@@ -87,8 +87,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         this._yField = yField;
         this._data = data;
 
-        if (this.processData()) {
-            this.update();
+        if (this.chart) {
+            this.chart.layoutPending = true;
         }
     }
 
@@ -165,13 +165,31 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         this.domainX = domainX as [X, X];
         this.domainY = domainY as [Y, Y];
 
-        chart.updateAxes();
-
         return true;
     }
 
-    private color = colors[0];
-    private strokeColor = Color.fromHexString(this.color).darker().toHexString();
+    private _color: string = colors[0];
+    set color(value: string) {
+        if (this._color !== value) {
+            this._color = value;
+            this.strokeColor = Color.fromString(value).darker().toHexString();
+            this.update();
+        }
+    }
+    get color(): string {
+        return this._color;
+    }
+
+    private _strokeColor: string = Color.fromHexString(this.color).darker().toHexString();
+    set strokeColor(value: string) {
+        if (this._strokeColor !== value) {
+            this._strokeColor = value;
+            this.update();
+        }
+    }
+    get strokeColor(): string {
+        return this._strokeColor;
+    }
 
     private _lineWidth: number = 2;
     set lineWidth(value: number) {

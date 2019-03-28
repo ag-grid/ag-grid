@@ -188,6 +188,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
         return (x) => td(rt(x));
     }
 
+    // TODO: not used right now, but not to be removed
     // private polymap(domain: number[], range: R[],
     //                 deinterpolatorOf: DeinterpolatorFactory<number>,
     //                 reinterpolatorOf: ReinterpolatorFactory<R>): Reinterpolator<R> {
