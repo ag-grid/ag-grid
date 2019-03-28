@@ -38,7 +38,6 @@ export class Dialog extends PopupComponent {
 
     public static MOVE_EVENT = 'dialogMoved';
     public static RESIZE_EVENT = 'dialogResized';
-    public static DESTROY_EVENT = 'destroy';
 
     private static TEMPLATE =
         `<div class="ag-dialog">
@@ -407,6 +406,6 @@ export class Dialog extends PopupComponent {
 
     public destroy(): void {
         super.destroy();
-        this.buildParamsAndDispatchEvent(Dialog.DESTROY_EVENT);
+        this.buildParamsAndDispatchEvent(Dialog.EVENT_DESTROYED);
     }
 }
