@@ -1,7 +1,7 @@
-import {RangeController} from "../../rangeController";
 import {RangeChartDatasource} from "./rangeChartDatasource";
 import {GridChartComp} from "./gridChartComp";
 import {ChartType} from "./gridChartFactory";
+import {RangeController} from "../../rangeController";
 import {
     Autowired,
     Bean,

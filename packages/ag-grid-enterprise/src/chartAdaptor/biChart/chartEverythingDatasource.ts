@@ -1,4 +1,3 @@
-import {ChartDatasource} from "./chartComp";
 import {
     Autowired,
     BeanStub,
@@ -14,6 +13,7 @@ import {
     ValueService,
     ColumnGroup
 } from "ag-grid-community";
+import {ChartDatasource} from "../rangeChart/rangeChartService";
 
 export class ChartEverythingDatasource extends BeanStub implements ChartDatasource {
 

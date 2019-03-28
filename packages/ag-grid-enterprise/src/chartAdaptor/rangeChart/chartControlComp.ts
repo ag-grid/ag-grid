@@ -1,12 +1,11 @@
 import {Component, RefSelector} from "ag-grid-community";
-import {BarSeries} from "./chart/series/barSeries";
-import {CartesianChart} from "./chart/cartesianChart";
+import {GridChart} from "./gridChartFactory";
 
 export class ChartControlComp extends Component {
 
     private static TEMPLATE =
         `<div class="ag-chart-control">
-            <label style="margin-right: 10px;">
+            <label style="margin-left: 150px; margin-top: 10px">
                 <input type="radio" ref="eStacked"/>
                 Stacked
             </label>                
@@ -34,24 +33,25 @@ export class ChartControlComp extends Component {
     @RefSelector('eWidth') private eWidth: HTMLInputElement;
     @RefSelector('eHeight') private eHeight: HTMLInputElement;
 
-    private barSeries: BarSeries<any>;
-    private chart: CartesianChart<any, string, number>;
+    private gridChart: GridChart;
 
     constructor() {
         super(ChartControlComp.TEMPLATE);
     }
 
-    public init(barSeries: BarSeries<any>, chart: CartesianChart<any, string, number>): void {
-        this.barSeries = barSeries;
-        this.chart = chart;
+    public init(gridChart: GridChart): void {
+        this.gridChart = gridChart;
         this.setupGroupedOrStacked();
         this.setupLineWidth();
         this.setupWidthAndHeight();
     }
 
     private setupWidthAndHeight(): void {
-        this.eWidth.value = `${this.chart.width}`;
-        this.eHeight.value = `${this.chart.height}`;
+        // this.eWidth.value = `${this.chart.width}`;
+        // this.eHeight.value = `${this.chart.height}`;
+
+        this.eWidth.value = '800';
+        this.eHeight.value = '400';
 
         this.addDestroyableEventListener(this.eWidth, 'input', this.onWidthChanged.bind(this));
         this.addDestroyableEventListener(this.eHeight, 'input', this.onHeightChanged.bind(this));
@@ -60,29 +60,29 @@ export class ChartControlComp extends Component {
     private onWidthChanged(): void {
         const width = this.getNumberValue(this.eWidth, null);
         if (width) {
-            this.chart.width = width;
+            // this.chart.width = width;
         }
     }
 
     private onHeightChanged(): void {
         const height = this.getNumberValue(this.eHeight, null);
         if (height) {
-            this.chart.height = height;
+            // this.chart.height = height;
         }
     }
 
     private setupLineWidth(): void {
-        if (this.barSeries.lineWidth>=0) {
-            this.eLineWidth.value = `${this.barSeries.lineWidth}`;
-        } else {
-            this.eLineWidth.value = '';
-        }
-        this.addDestroyableEventListener(this.eLineWidth, 'input', this.onLineWidth.bind(this));
+        // if (this.barSeries.lineWidth>=0) {
+        //     this.eLineWidth.value = `${this.barSeries.lineWidth}`;
+        // } else {
+        //     this.eLineWidth.value = '';
+        // }
+        // this.addDestroyableEventListener(this.eLineWidth, 'input', this.onLineWidth.bind(this));
     }
 
     private onLineWidth(): void {
         const width = this.getNumberValue(this.eLineWidth, 1);
-        this.barSeries.lineWidth = width!;
+        // this.barSeries.lineWidth = width!;
     }
 
     private getNumberValue(textInput: HTMLInputElement, defaultValue: number | null): number | null {
@@ -107,14 +107,14 @@ export class ChartControlComp extends Component {
             this.addDestroyableEventListener(e, 'change', this.onStackedOrGroupedChanged.bind(this));
         });
 
-        if (this.barSeries.grouped) {
-            this.eGrouped.checked = true;
-        } else {
-            this.eStacked.checked = true;
-        }
+        // if (this.barSeries.grouped) {
+        //     this.eGrouped.checked = true;
+        // } else {
+        //     this.eStacked.checked = true;
+        // }
     }
 
     private onStackedOrGroupedChanged(): void {
-        this.barSeries.grouped = this.eGrouped.checked;
+        // this.barSeries.grouped = this.eGrouped.checked;
     }
 }
