@@ -1,9 +1,8 @@
 import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _ } from 'ag-grid-community';
 import { ClipboardService } from "../clipboardService";
 import { AggFuncService } from "../aggregation/aggFuncService";
-import { ChartingService } from "../charts/chartingService";
-import { RangeChartService } from "../charts/rangeChart/rangeChartService";
-import { ChartType } from "../charts/rangeChart/gridChartFactory";
+import {RangeChartService} from "../chartAdaptor/rangeChart/rangeChartService";
+import {ChartType} from "../chartAdaptor/gridChartFactory";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -13,7 +12,6 @@ export class MenuItemMapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
-    @Autowired('chartingService') private chartingService: ChartingService;
     @Autowired('rangeChartService') private rangeChartService: RangeChartService;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
@@ -175,12 +173,6 @@ export class MenuItemMapper {
                 name: localeTextFunc('pieRangeChart', 'Pie'),
                 action: () => {
                     this.rangeChartService.chartRange(ChartType.Pie);
-                }
-            };
-            case 'chartEverything': return {
-                name: 'Chart Everything',
-                action: () => {
-                    this.chartingService.chartEverything();
                 }
             };
             default:

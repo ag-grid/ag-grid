@@ -39,6 +39,13 @@ export class Axis<D> {
     private groupSelection: Selection<Group, Group, D, D>;
     private line = new Line();
 
+    set domain(value: D[]) {
+        this.scale.domain = value;
+    }
+    get domain(): D[] {
+        return this.scale.domain;
+    }
+
     /**
      * The horizontal translation of the axis group.
      */

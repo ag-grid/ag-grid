@@ -18,8 +18,7 @@ import {
     MenuItemDef,
     PopupService,
     PostConstruct,
-    RowNode,
-    Constants
+    RowNode
 } from "ag-grid-community";
 import { ClipboardService } from "../clipboardService";
 import { MenuItemComponent } from "./menuItemComponent";
@@ -76,9 +75,6 @@ export class ContextMenuFactory implements IContextMenuFactory {
             if (!this.rangeController.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }
-            // if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            //     defaultMenuOptions.push('chartEverything');
-            // }
         }
 
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {

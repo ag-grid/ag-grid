@@ -857,6 +857,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 .ag-dialog {
     position: absolute;
+    overflow: hidden;
     $handleSize: 5px;
     .ag-resizer {
         position: absolute;

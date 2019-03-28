@@ -93,8 +93,8 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
         if (this._series.length) {
             const series = this.series[0];
-            xAxis.scale.domain = series.getDomainX();
-            yAxis.scale.domain = series.getDomainY();
+            xAxis.domain = series.getDomainX();
+            yAxis.domain = series.getDomainY();
         }
 
         xAxis.update();

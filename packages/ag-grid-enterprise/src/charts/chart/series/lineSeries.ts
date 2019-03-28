@@ -33,6 +33,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     constructor() {
         super();
         this.linePath.fillStyle = null;
+        this.linePath.lineJoin = 'round';
         this.group.append(this.linePath);
     }
 

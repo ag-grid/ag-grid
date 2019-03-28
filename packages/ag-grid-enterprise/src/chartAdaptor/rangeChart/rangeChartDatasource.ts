@@ -1,4 +1,3 @@
-import {ChartDatasource} from "./chartComp";
 import {
     Autowired,
     BeanStub,
@@ -12,8 +11,9 @@ import {
     CellRange,
     ValueService
 } from "ag-grid-community";
+import {ChartDatasource} from "./rangeChartService";
 
-export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
+export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('valueService') valueService: ValueService;
@@ -66,9 +66,6 @@ export class ChartRangeDatasource extends BeanStub implements ChartDatasource {
         this.calculateFields();
         this.calculateRowRange();
         this.calculateCategoryCols();
-
-        console.log(`colIds`, this.colIds);
-        console.log(`categoryCols`, this.categoryCols);
     }
 
     private calculateCategoryCols(): void {

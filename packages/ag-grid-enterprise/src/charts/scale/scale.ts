@@ -4,6 +4,7 @@ export default interface Scale<D, R> {
     convert(value: D): R;
     invert?(value: R): D;
     ticks?(count: number): D[];
+    nice?(count: number): void;
     bandwidth?: number;
 }
 
