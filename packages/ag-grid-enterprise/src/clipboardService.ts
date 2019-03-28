@@ -420,13 +420,8 @@ export class ClipboardService implements IClipboardService {
 
     private iterateActiveRange(range: CellRange, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
 
-        const startRow = range.startRow;
-        const endRow = range.endRow;
-
-        const startRowIsFirst = RowPositionUtils.before(startRow, endRow);
-
-        let currentRow : RowPosition | null = startRowIsFirst ? startRow : endRow;
-        const lastRow = startRowIsFirst ? endRow : startRow;
+        let currentRow : RowPosition | null = this.rangeController.getRangeStartRow(range);
+        const lastRow = this.rangeController.getRangeEndRow(range);
 
         if (columnCallback && _.exists(columnCallback) && range.columns) {
             columnCallback(range.columns);
@@ -746,9 +741,18 @@ export class ClipboardService implements IClipboardService {
         return arrData;
     }
 
-    private rangeSize() {
+    private rangeSize(): number {
         const ranges = this.rangeController.getCellRanges();
-        const [startRange, endRange] = ranges ? [ranges[0].startRow.rowIndex, ranges[0].endRow.rowIndex] : [0, 0];
-        return (startRange > endRange ? startRange - endRange : endRange - startRange) + 1;
+        let startRangeIndex: number;
+        let endRangeIndex: number;
+        if (ranges.length>0) {
+            startRangeIndex = 0;
+            endRangeIndex = 0;
+        } else {
+            startRangeIndex = this.rangeController.getRangeStartRow(ranges[0]).rowIndex;
+            endRangeIndex = this.rangeController.getRangeEndRow(ranges[0]).rowIndex;
+        }
+        return startRangeIndex - endRangeIndex + 1;
     }
+
 }

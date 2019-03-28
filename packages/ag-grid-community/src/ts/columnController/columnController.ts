@@ -1967,7 +1967,7 @@ export class ColumnController {
         if (key==null) { return null; }
         const column = this.getPrimaryColumn(key);
         if (!column) {
-            console.warn('ag-Grid: could not find column ' + column);
+            console.warn('ag-Grid: could not find column ' + key);
         }
         return column;
     }

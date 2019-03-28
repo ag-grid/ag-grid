@@ -82,7 +82,7 @@ export class FocusedCellController {
         return null;
     }
 
-    public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string, forceBrowserFocus = false): void {
+    public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus = false): void {
         const column = _.makeNull(this.columnController.getGridColumn(colKey));
         this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: _.makeNull(floating), column: column};
         this.onCellFocused(forceBrowserFocus);

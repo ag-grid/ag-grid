@@ -26,6 +26,7 @@ import {
     RowRenderer,
     RowPosition,
     RowPositionUtils,
+    PinnedRowModel,
     _
 } from "ag-grid-community";
 
@@ -43,6 +44,7 @@ export class RangeController implements IRangeController {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
+    @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
 
     private logger: Logger;
 
@@ -80,6 +82,37 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
+    }
+
+    public getRangeStartRow(cellRange: CellRange): RowPosition {
+        if (cellRange.startRow && cellRange.endRow) {
+            const startRowIsFirst = RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
+            return startRowIsFirst ? cellRange.startRow : cellRange.endRow;
+        } else {
+            const pinned = (this.pinnedRowModel.getPinnedTopRowCount() > 0) ? Constants.PINNED_TOP : undefined;
+            return {rowIndex: 0, rowPinned: pinned} as RowPosition;
+        }
+    }
+
+    public getRangeEndRow(cellRange: CellRange): RowPosition {
+        if (cellRange.startRow && cellRange.endRow) {
+            const startRowIsFirst = RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
+            return startRowIsFirst ? cellRange.endRow : cellRange.startRow;
+        } else {
+            const pinnedBottomRowCount = this.pinnedRowModel.getPinnedBottomRowCount();
+            const pinnedBottom = pinnedBottomRowCount > 0;
+            if (pinnedBottom) {
+                return {
+                    rowIndex: pinnedBottomRowCount - 1,
+                    rowPinned: Constants.PINNED_BOTTOM
+                } as RowPosition;
+            } else {
+                return {
+                    rowIndex: this.rowModel.getRowCount() - 1,
+                    rowPinned: undefined
+                } as RowPosition;
+            }
+        }
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
@@ -147,8 +180,8 @@ export class RangeController implements IRangeController {
         const lastCol = lastRange.columns[lastRange.columns.length - 1];
 
         // find the cell that is at the furthest away corner from the starting cell
-        const endCellIndex = lastRange.endRow.rowIndex;
-        const endCellFloating = lastRange.endRow.rowPinned;
+        const endCellIndex = lastRange.endRow!.rowIndex;
+        const endCellFloating = lastRange.endRow!.rowPinned;
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
         const endCell: CellPosition = {column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating};
@@ -186,26 +219,49 @@ export class RangeController implements IRangeController {
             return;
         }
 
-        const columnStart = this.columnController.getColumnWithValidation(params.columnStart);
-        const columnEnd = this.columnController.getColumnWithValidation(params.columnEnd);
-        if (!columnStart || !columnEnd) {
-            return;
+        let columns: Column[] | undefined;
+
+        if (params.columns) {
+            columns = [];
+            params.columns!.forEach( key => {
+                const col = this.columnController.getColumnWithValidation(key);
+                if (col) {
+                    columns!.push(col);
+                }
+            });
+        } else {
+            const columnStart = this.columnController.getColumnWithValidation(params.columnStart);
+            const columnEnd = this.columnController.getColumnWithValidation(params.columnEnd);
+            if (!columnStart || !columnEnd) {
+                return;
+            }
+            columns = this.calculateColumnsBetween(columnStart, columnEnd);
         }
 
-        const columns = this.calculateColumnsBetween(columnStart, columnEnd);
+
         if (!columns) {
             return;
         }
 
+        let startRow: RowPosition | undefined = undefined;
+        if (params.rowStartIndex!=null) {
+            startRow = {
+                rowIndex: params.rowStartIndex,
+                rowPinned: params.rowStartPinned
+            };
+        }
+
+        let endRow: RowPosition | undefined = undefined;
+        if (params.rowEndIndex!=null) {
+            endRow = {
+                rowIndex: params.rowEndIndex,
+                rowPinned: params.rowEndPinned
+            };
+        }
+
         const newRange: CellRange = {
-            startRow: {
-                rowIndex: <number> params.rowStartIndex,
-                rowPinned: <string> params.rowStartPinned
-            },
-            endRow: {
-                rowIndex: <number> params.rowEndIndex,
-                rowPinned: <string> params.rowEndPinned
-            },
+            startRow: startRow,
+            endRow: endRow,
             columns: columns
         };
 
@@ -231,9 +287,11 @@ export class RangeController implements IRangeController {
         } else {
             // only one range, return true if range has more than one
             const range = this.cellRanges[0];
+            const startRow = this.getRangeStartRow(range);
+            const endRow = this.getRangeEndRow(range);
             const moreThanOneCell =
-                range.startRow.rowPinned !== range.endRow.rowPinned
-                || range.startRow.rowIndex !== range.endRow.rowIndex
+                startRow.rowPinned !== endRow.rowPinned
+                || startRow.rowIndex !== endRow.rowIndex
                 || range.columns.length !== 1;
             return moreThanOneCell;
         }
@@ -281,12 +339,10 @@ export class RangeController implements IRangeController {
         return matchingCount;
     }
 
-    private isRowInRange(rowIndex: number, floating: string, cellRange: CellRange): boolean {
+    private isRowInRange(rowIndex: number, floating: string | undefined, cellRange: CellRange): boolean {
 
-        const startBeforeEnd = RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
-
-        const firstRow = startBeforeEnd ? cellRange.startRow : cellRange.endRow;
-        const lastRow = startBeforeEnd ? cellRange.endRow : cellRange.startRow;
+        const firstRow = this.getRangeStartRow(cellRange);
+        const lastRow = this.getRangeEndRow(cellRange);
 
         const thisRow: RowPosition = {rowIndex: rowIndex, rowPinned: floating};
 

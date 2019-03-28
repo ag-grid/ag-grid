@@ -3,7 +3,7 @@ import {_} from "../utils";
 
 export interface RowPosition {
     rowIndex: number,
-    rowPinned: string
+    rowPinned: string | undefined
 }
 
 export class RowPositionUtils {

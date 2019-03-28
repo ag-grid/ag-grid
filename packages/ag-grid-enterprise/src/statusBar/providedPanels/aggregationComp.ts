@@ -131,14 +131,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
             cellRanges.forEach((cellRange) => {
 
-                // get starting and ending row, remember rowEnd could be before rowStart
-                const startRow: RowPosition = cellRange.startRow;
-                const endRow: RowPosition = cellRange.endRow;
-
-                const startRowIsFirst = RowPositionUtils.before(startRow, endRow);
-
-                let currentRow: RowPosition | null = startRowIsFirst ? startRow : endRow;
-                const lastRow = startRowIsFirst ? endRow : startRow;
+                let currentRow: RowPosition | null = this.rangeController.getRangeStartRow(cellRange);
+                const lastRow = this.rangeController.getRangeEndRow(cellRange);
 
                 while (true) {
 

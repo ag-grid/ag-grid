@@ -1629,8 +1629,8 @@ export class CellComp extends Component {
         );
 
         ranges.forEach(range => {
-            const startRowIndex = range.startRow.rowIndex;
-            const endRowIndex = range.endRow.rowIndex;
+            const startRowIndex = this.beans.rangeController.getRangeStartRow(range).rowIndex;
+            const endRowIndex = this.beans.rangeController.getRangeEndRow(range).rowIndex;
             const start = Math.min(startRowIndex, endRowIndex);
             const end = Math.max(startRowIndex, endRowIndex);
 

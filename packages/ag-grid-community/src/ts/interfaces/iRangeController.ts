@@ -19,11 +19,13 @@ export interface IRangeController {
     extendLatestRangeInDirection(key: number): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     registerGridComp(gridPanel: GridPanel): void;
+    getRangeStartRow(cellRange: CellRange): RowPosition;
+    getRangeEndRow(cellRange: CellRange): RowPosition;
 }
 
 export interface CellRange {
-    startRow: RowPosition;
-    endRow: RowPosition;
+    startRow?: RowPosition;
+    endRow?: RowPosition;
     columns: Column[]
 }
 
@@ -34,7 +36,7 @@ export interface AddCellRangeParams {
     rowEndPinned?: string;
     columnStart?: string | Column;
     columnEnd?: string | Column;
-    columns?: string | Column;
+    columns?: (string | Column)[];
 }
 
 /** @deprecated */
