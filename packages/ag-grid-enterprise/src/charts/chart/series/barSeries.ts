@@ -38,7 +38,17 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
      */
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
-    colors: string[] = colors;
+    private _colors: string[] = colors;
+    set colors(values: string[]) {
+        if (this._colors !== values) {
+            this._colors = values;
+            this.strokeColors = values.map(color => Color.fromString(color).darker().toHexString());
+            this.update();
+        }
+    }
+    get colors(): string[] {
+        return this._colors;
+    }
     private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
 
     private domainX: string[] = [];
@@ -63,8 +73,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
-        if (this.processData()) {
-            this.update();
+        if (this.chart) {
+            this.chart.layoutPending = true;
         }
     }
     get data(): any[] {
@@ -74,8 +84,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set xField(value: Extract<keyof D, string> | null) {
         if (this._xField !== value) {
             this._xField = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
@@ -97,8 +107,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         groupScale.padding = 0.1;
         groupScale.round = true;
 
-        if (this.processData()) {
-            this.update();
+        if (this.chart) {
+            this.chart.layoutPending = true;
         }
     }
     get yFields(): Extract<keyof D, string>[] {
@@ -129,8 +139,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         groupScale.padding = 0.1;
         groupScale.round = true;
 
-        if (this.processData()) {
-            this.update();
+        if (this.chart) {
+            this.chart.layoutPending = true;
         }
     }
 
@@ -146,8 +156,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set grouped(value: boolean) {
         if (this._grouped !== value) {
             this._grouped = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
@@ -382,9 +392,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
 
                 barData.push({
                     x: barX,
-                    y,
+                    y: Math.min(y, bottomY),
                     width: barWidth,
-                    height: bottomY - y,
+                    height: Math.abs(bottomY - y),
                     fillStyle: colors[yFieldIndex % colors.length],
                     strokeStyle: strokeColor ? strokeColor : strokeColors[yFieldIndex % strokeColors.length],
                     lineWidth,

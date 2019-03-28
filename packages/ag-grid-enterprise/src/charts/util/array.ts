@@ -3,7 +3,7 @@
  * If the iterable contains no comparable values, returns `[undefined, undefined]`.
  * @param values
  */
-export function extent<T>(values: T[]): [T?, T?] {
+export function extent<T>(values: T[]): [T | undefined, T | undefined] {
     const n = values.length;
     let i = -1;
     let value;
@@ -27,4 +27,11 @@ export function extent<T>(values: T[]): [T?, T?] {
     }
 
     return [min, max];
+}
+
+export function checkExtent<T>(values: [T | undefined, T | undefined]): [T, T] {
+    if (values[0] !== undefined && values[1] !== undefined) {
+        return values as [T, T];
+    }
+    throw new Error(`Invalid extent: ${values}`);
 }

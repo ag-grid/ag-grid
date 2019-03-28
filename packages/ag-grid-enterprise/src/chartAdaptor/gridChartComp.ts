@@ -1,4 +1,3 @@
-import {_, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartOptions, ChartType, GridChartFactory} from "./gridChartFactory";
 import {ChartControlComp} from "./chartControlComp";
 import {ChartDatasource} from "./rangeChart/rangeChartService";
@@ -6,6 +5,16 @@ import {Chart} from "../charts/chart/chart";
 import {BarSeries} from "../charts/chart/series/barSeries";
 import {LineSeries} from "../charts/chart/series/lineSeries";
 import {PieSeries} from "../charts/chart/series/pieSeries";
+import {
+    _,
+    Component,
+    PostConstruct,
+    RefSelector,
+    Autowired,
+    EventService,
+    Dialog,
+    DialogEvent
+} from "ag-grid-community";
 
 export class GridChartComp extends Component {
 
@@ -19,7 +28,9 @@ export class GridChartComp extends Component {
     private readonly datasource: ChartDatasource;
 
     private readonly chartType: ChartType;
-    private readonly gridChart: Chart<any, string, number>;
+    private readonly chart: Chart<any, string, number>;
+
+    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('chartControlComp') private chartControlComp: ChartControlComp;
     @RefSelector('eChart') private eChart: HTMLElement;
@@ -34,7 +45,7 @@ export class GridChartComp extends Component {
             height: 400,
             width: 800
         };
-        this.gridChart = GridChartFactory.createChart(chartType, chartOptions, this.eChart);
+        this.chart = GridChartFactory.createChart(chartType, chartOptions, this.eChart);
 
         this.datasource = chartDatasource;
     }
@@ -42,8 +53,12 @@ export class GridChartComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, Dialog.RESIZE_EVENT, (event: DialogEvent) => {
+            this.chart.height = event.height as number;
+            this.chart.width = event.width as number;
+        });
 
-        this.chartControlComp.init(this.chartType, this.gridChart);
+        this.chartControlComp.init(this.chartType, this.chart);
 
         this.refresh();
     }
@@ -71,16 +86,16 @@ export class GridChartComp extends Component {
             const {data, fields} = this.extractFromDatasource(this.datasource);
 
             if (this.chartType === ChartType.Bar) {
-                const barSeries = this.gridChart.series[0] as BarSeries<any, string, number>;
+                const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
                 barSeries.yFieldNames = this.datasource.getFieldNames();
                 barSeries.setDataAndFields(data, 'category', fields);
 
             } else if (this.chartType === ChartType.Line) {
-                const lineSeries = this.gridChart.series[0] as LineSeries<any, string, number>;
+                const lineSeries = this.chart.series[0] as LineSeries<any, string, number>;
                 lineSeries.setDataAndFields(data, 'category', fields[0]);
 
             } else if (this.chartType === ChartType.Pie) {
-                const pieSeries = this.gridChart.series[0] as PieSeries<any, string, number>;
+                const pieSeries = this.chart.series[0] as PieSeries<any, string, number>;
                 pieSeries.setDataAndFields(data, fields[0], 'category');
             }
         }

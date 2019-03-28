@@ -2,6 +2,7 @@ import {Chart} from "./chart";
 import {Axis} from "../axis";
 import {Series} from "./series/series";
 import {ClipRect} from "../scene/clipRect";
+import {extent, checkExtent} from "../util/array";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
@@ -72,13 +73,15 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         yAxis.translationY = shrinkRect.y;
         yAxis.gridLength = shrinkRect.width;
 
-        this._series.forEach(series => {
+        this.series.forEach(series => {
             series.group.translationX = shrinkRect.x;
             series.group.translationY = shrinkRect.y;
             series.processData();
         });
 
-        this._series.forEach(series => {
+        this.updateAxes();
+
+        this.series.forEach(series => {
             series.update();
         });
     }
@@ -91,10 +94,30 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
             return;
         }
 
-        if (this._series.length) {
-            const series = this.series[0];
-            xAxis.domain = series.getDomainX();
-            yAxis.domain = series.getDomainY();
+        const xDomains: X[][] = [];
+        const yDomains: Y[][] = [];
+
+        this.series.forEach(series => {
+            const xDomain = series.getDomainX();
+            const yDomain = series.getDomainY();
+
+            xDomains.push(xDomain);
+            yDomains.push(yDomain);
+        });
+
+        const xDomain: X[] = new Array<X>().concat(...xDomains);
+        const yDomain: Y[] = new Array<Y>().concat(...yDomains);
+
+        if (typeof xDomain[0] === 'number') {
+            xAxis.domain = checkExtent(extent(xDomain));
+        } else {
+            xAxis.domain = xDomain; // categories (strings), duplicates will be removed by the axis' scale
+        }
+
+        if (typeof yDomain[0] === 'number') {
+            yAxis.domain = checkExtent(extent(yDomain));
+        } else {
+            yAxis.domain = yDomain;
         }
 
         xAxis.update();
