@@ -1069,7 +1069,7 @@ export class RowRenderer extends BeanStub {
         this.animationFrameService.flushAllFrames();
     }
 
-    public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
+    public startEditingCell(gridCell: CellPosition, keyPress: number, charPress: string): void {
         const cell = this.getComponentForCell(gridCell);
         if (cell) {
             cell.startRowOrCellEdit(keyPress, charPress);

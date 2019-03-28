@@ -1008,17 +1008,16 @@ export class GridApi {
             console.warn(`ag-Grid: no column found for ${params.colKey}`);
             return;
         }
-        const gridCellDef = {
+        const cellPosition: CellPosition = {
             rowIndex: params.rowIndex,
             floating: params.rowPinned,
             column: column
-        } as CellPosition;
-        const gridCell = new GridCell(gridCellDef);
+        };
         const notPinned = _.missing(params.rowPinned);
         if (notPinned) {
             this.gridPanel.ensureIndexVisible(params.rowIndex);
         }
-        this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
+        this.rowRenderer.startEditingCell(cellPosition, params.keyPress, params.charPress);
     }
 
     public addAggFunc(key: string, aggFunc: IAggFunc): void {
