@@ -366,8 +366,8 @@ export interface ScrollVisibilityChangedEvent extends AgGridEvent {
 
 export interface DialogEvent extends AgGridEvent {
     dialog: HTMLElement;
-    width: number;
-    height: number;
-    x: number;
-    y: number;
+    width?: number;
+    height?: number;
+    x?: number;
+    y?: number;
 }

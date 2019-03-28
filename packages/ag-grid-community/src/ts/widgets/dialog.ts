@@ -35,8 +35,9 @@ interface DialogOptions {
 
 export class Dialog extends PopupComponent {
 
-    public static EVENT_DIALOG_MOVE = 'dialogMoved';
-    public static EVENT_DIALOG_RESIZE = 'dialogResized';
+    public static MOVE_EVENT = 'dialogMoved';
+    public static RESIZE_EVENT = 'dialogResized';
+    public static DESTROY_EVENT = 'destroy';
 
     private static TEMPLATE =
         `<div class="ag-dialog">
@@ -73,8 +74,6 @@ export class Dialog extends PopupComponent {
         width: 0,
         height: 0
     };
-
-    public static DESTROY_EVENT = 'destroy';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
@@ -242,7 +241,7 @@ export class Dialog extends PopupComponent {
             );
         }
 
-        this.dispatchEvent(Dialog.EVENT_DIALOG_RESIZE);
+        this.buildParamsAndDispatchEvent(Dialog.RESIZE_EVENT);
     }
 
     private onDialogResizeEnd() {
@@ -286,7 +285,7 @@ export class Dialog extends PopupComponent {
 
         this.offsetDialog(x + e.movementX, y + e.movementY);
 
-        this.dispatchEvent(Dialog.EVENT_DIALOG_MOVE);
+        this.buildParamsAndDispatchEvent(Dialog.MOVE_EVENT);
     }
 
     private offsetDialog(x: number, y: number) {
@@ -317,17 +316,20 @@ export class Dialog extends PopupComponent {
         _.addOrRemoveCssClass(eGui, 'ag-dialog-closable', closable);
     }
 
-    private dispatchEvent(type: string) {
+    private buildParamsAndDispatchEvent(type: string) {
         const event: DialogEvent = {
             type,
             dialog: this.getGui(),
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
-            x: this.position.x,
-            y: this.position.y,
-            width: this.size.width,
-            height: this.size.height
         };
+
+        if (type !== Dialog.EVENT_DESTROYED) {
+            event.x = this.position.x;
+            event.y = this.position.y;
+            event.width = this.size.width;
+            event.height = this.size.height;
+        }
 
         this.eventService.dispatchEvent(event);
     }
@@ -347,6 +349,6 @@ export class Dialog extends PopupComponent {
 
     public destroy(): void {
         super.destroy();
-        this.dispatchEvent({type: Dialog.DESTROY_EVENT});
+        this.buildParamsAndDispatchEvent(Dialog.DESTROY_EVENT);
     }
 }
