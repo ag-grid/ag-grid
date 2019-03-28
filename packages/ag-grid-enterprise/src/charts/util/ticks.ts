@@ -6,26 +6,33 @@ export default function (a: number, b: number, count: number): NumericTicks {
     return range(a, b, step);
 }
 
-const E10 = Math.sqrt(50);
-const E5 = Math.sqrt(10);
-const E2 = Math.sqrt(2);
+const e10 = Math.sqrt(50);
+const e5 = Math.sqrt(10);
+const e2 = Math.sqrt(2);
 
 function tickStep(a: number, b: number, count: number): number {
-    if (count <= 0) {
-        throw new Error('Count should be greater than zero.');
-    }
-    const rawStep = Math.abs(b - a) / count;
+    const rawStep = Math.abs(b - a) / Math.max(0, count);
     let step = Math.pow(10, Math.floor( Math.log(rawStep) / Math.LN10) ); // = Math.log10(rawStep)
     const error = rawStep / step;
 
-    if (error >= E10) {
+    if (error >= e10) {
         step *= 10;
-    } else if (error >= E5) {
+    } else if (error >= e5) {
         step *= 5;
-    } else if (error >= E2) {
+    } else if (error >= e2) {
         step *= 2
     }
-    return step;
+    return b < a ? -step : step;
+}
+
+export function tickIncrement(a: number, b: number, count: number): number {
+    const rawStep = (b - a) / Math.max(0, count);
+    const power = Math.floor(Math.log(rawStep) / Math.LN10);
+    const error = rawStep / Math.pow(10, power);
+
+    return power >= 0
+        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
 }
 
 export class NumericTicks extends Array<number> {
