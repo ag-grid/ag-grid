@@ -197,7 +197,7 @@ export class NavigationService {
         // highlighted.
         this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
-            const cellPosition: CellPosition = {rowIndex: focusIndex, floating: null, column: focusColumn};
+            const cellPosition: CellPosition = {rowIndex: focusIndex, rowPinned: null, column: focusColumn};
             this.rangeController.setRangeToCell(cellPosition);
         }
     }

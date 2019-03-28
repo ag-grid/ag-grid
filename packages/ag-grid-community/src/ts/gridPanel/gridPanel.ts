@@ -680,11 +680,11 @@ export class GridPanel extends Component {
             const allDisplayedColumns = columnController.getAllDisplayedColumns();
             if (_.missingOrEmpty(allDisplayedColumns)) { return; }
 
-            rangeController.setRange({
-                rowStart: 0,
-                floatingStart: floatingStart,
-                rowEnd: rowEnd,
-                floatingEnd: floatingEnd,
+            rangeController.setCellRange({
+                rowStartIndex: 0,
+                rowStartPinned: floatingStart,
+                rowEndIndex: rowEnd,
+                rowEndPinned: floatingEnd,
                 columnStart: allDisplayedColumns[0],
                 columnEnd: allDisplayedColumns[allDisplayedColumns.length - 1]
             });
@@ -705,7 +705,7 @@ export class GridPanel extends Component {
         // because of the trickery the copy logic uses with a temporary
         // widget. so we set it back again.
         if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
     }
 

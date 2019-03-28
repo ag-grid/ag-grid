@@ -36,9 +36,9 @@ var gridOptions = {
 };
 
 function onAddRange() {
-    gridOptions.api.addRangeSelection({
-        rowStart: 4,
-        rowEnd: 8,
+    gridOptions.api.addCellRange({
+        rowStartIndex: 4,
+        rowEndIndex: 8,
         columnStart: 'age',
         columnEnd: 'date'
     });
@@ -54,10 +54,10 @@ function onRangeSelectionChanged(event) {
     var lbEagerSum = document.querySelector('#lbEagerSum');
     var lbLazySum = document.querySelector('#lbLazySum');
 
-    var rangeSelections = gridOptions.api.getRangeSelections();
+    var cellRanges = gridOptions.api.getCellRanges();
 
     // if no selection, clear all the results and do nothing more
-    if (!rangeSelections || rangeSelections.length===0) {
+    if (!cellRanges || cellRanges.length===0) {
         lbRangeCount.innerHTML = '0';
         lbEagerSum.innerHTML = '-';
         lbLazySum.innerHTML = '-';
@@ -65,16 +65,16 @@ function onRangeSelectionChanged(event) {
     }
 
     // set range count to the number of ranges selected
-    lbRangeCount.innerHTML = rangeSelections.length;
+    lbRangeCount.innerHTML = cellRanges.length;
 
     // consider the first range only. if doing multi select, disregard the others
-    var firstRange = rangeSelections[0];
+    var firstRange = cellRanges[0];
 
     var sum = 0;
 
     // get starting and ending row, remember rowEnd could be before rowStart
-    var startRow = Math.min(firstRange.start.rowIndex, firstRange.end.rowIndex);
-    var endRow = Math.max(firstRange.start.rowIndex, firstRange.end.rowIndex);
+    var startRow = Math.min(firstRange.startRow.rowIndex, firstRange.endRow.rowIndex);
+    var endRow = Math.max(firstRange.startRow.rowIndex, firstRange.endRow.rowIndex);
 
     var api = gridOptions.api;
     for (var rowIndex = startRow; rowIndex<=endRow; rowIndex++) {

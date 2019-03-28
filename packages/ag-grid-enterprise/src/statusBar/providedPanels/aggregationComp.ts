@@ -154,7 +154,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
                         const cellId = CellPositionUtils.createId({
-                            floating: currentRow.floating,
+                            rowPinned: currentRow.rowPinned,
                             column: col,
                             rowIndex: currentRow.rowIndex
                         });
@@ -220,7 +220,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     private getRowNode(gridRow: RowPosition): RowNode | null {
-        switch (gridRow.floating) {
+        switch (gridRow.rowPinned) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
             case Constants.PINNED_BOTTOM:

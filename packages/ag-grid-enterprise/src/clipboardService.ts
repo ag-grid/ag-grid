@@ -157,7 +157,7 @@ export class ClipboardService implements IClipboardService {
 
                 const cellPosition: CellPosition = {
                     rowIndex: currentRow.rowIndex,
-                    floating: currentRow.floating,
+                    rowPinned: currentRow.rowPinned,
                     column: column
                 };
                 const cellId = CellPositionUtils.createId(cellPosition);
@@ -187,7 +187,7 @@ export class ClipboardService implements IClipboardService {
             _.removeFromArray(parsedData, lastLine);
         }
 
-        const currentRow: RowPosition = {rowIndex: focusedCell.rowIndex, floating: focusedCell.floating};
+        const currentRow: RowPosition = {rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned};
         const cellsToFlash = {} as any;
 
         const updatedRowNodes: RowNode[] = [];
@@ -207,7 +207,7 @@ export class ClipboardService implements IClipboardService {
 
         this.dispatchFlashCells(cellsToFlash);
 
-        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
 
         this.fireRowChanged(updatedRowNodes);
     }
@@ -258,7 +258,7 @@ export class ClipboardService implements IClipboardService {
 
                     const cellPosition: CellPosition = {
                         rowIndex: currentRow.rowIndex,
-                        floating: currentRow.floating,
+                        rowPinned: currentRow.rowPinned,
                         column: column
                     };
                     const cellId = CellPositionUtils.createId(cellPosition);
@@ -329,7 +329,7 @@ export class ClipboardService implements IClipboardService {
                     this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type);
                 });
                 // move to next row down for next set of values
-                currentRow = this.cellNavigationService.getRowBelow({floating: currentRow.floating, rowIndex: currentRow.rowIndex});
+                currentRow = this.cellNavigationService.getRowBelow({rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex});
             }
         });
         return currentRow;
@@ -362,7 +362,7 @@ export class ClipboardService implements IClipboardService {
 
         const cellPosition: CellPosition = {
             rowIndex: currentRow.rowIndex,
-            floating: currentRow.floating,
+            rowPinned: currentRow.rowPinned,
             column: column
         };
         const cellId = CellPositionUtils.createId(cellPosition);
@@ -492,7 +492,7 @@ export class ClipboardService implements IClipboardService {
                 }
                 const cellPosition: CellPosition = {
                     rowIndex: currentRow.rowIndex,
-                    floating: currentRow.floating,
+                    rowPinned: currentRow.rowPinned,
                     column: column
                 };
                 const cellId = CellPositionUtils.createId(cellPosition);
@@ -513,7 +513,7 @@ export class ClipboardService implements IClipboardService {
         const focusedCell: CellPosition = this.focusedCellController.getFocusedCell();
         if (_.missing(focusedCell)) { return; }
 
-        const currentRow: RowPosition = {floating: focusedCell.floating, rowIndex: focusedCell.rowIndex};
+        const currentRow: RowPosition = {rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex};
 
         const rowNode = this.getRowNode(currentRow);
         const column = focusedCell.column;
@@ -585,7 +585,7 @@ export class ClipboardService implements IClipboardService {
     }
 
     private getRowNode(gridRow: RowPosition): RowNode | null {
-        switch (gridRow.floating) {
+        switch (gridRow.rowPinned) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
             case Constants.PINNED_BOTTOM:

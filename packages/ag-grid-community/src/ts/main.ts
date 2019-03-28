@@ -197,7 +197,7 @@ export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 
 // range
-export { CellRange, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
+export { CellRange, AddCellRangeParams, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 export { IRangeController } from "./interfaces/iRangeController";
 
 // exporter

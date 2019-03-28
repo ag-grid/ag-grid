@@ -17,7 +17,7 @@ import { GridCore } from "./gridCore";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusedCellController } from "./focusedCellController";
-import { AddRangeSelectionParams, IRangeController, RangeSelection } from "./interfaces/iRangeController";
+import { AddCellRangeParams, CellRange, IRangeController} from "./interfaces/iRangeController";
 import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
@@ -914,25 +914,33 @@ export class GridApi {
         this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
     }
 
-    public getRangeSelections(): RangeSelection[] {
+    public getRangeSelections(): any {
+        console.warn(`ag-Grid: in v20.1.x, api.getRangeSelections() is gone, please use getCellRanges() instead.
+        We had to change how cell selections works a small bit to allow charting to integrate. The return type of 
+        getCellRanges() is a bit different, please check the ag-Grid documentation.`);
         return null;
-/*
+    }
+
+    public getCellRanges(): CellRange[] {
         if (this.rangeController) {
             return this.rangeController.getCellRanges();
         } else {
             console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
             return null;
         }
-*/
     }
 
     public camelCaseToHumanReadable(camelCase:string):string {
         return _.camelCaseToHumanText(camelCase);
     }
 
-    public addRangeSelection(rangeSelection: AddRangeSelectionParams): void {
+    public addRangeSelection(deprecatedNoLongerUsed: any): void {
+        console.warn('ag-Grid: As of version 21.x, range selection changed slightly to allow charting integration. Please call api.addCellRange() instead of api.addRangeSelection()');
+    }
+
+    public addCellRange(params: AddCellRangeParams): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
-        this.rangeController.addRange(rangeSelection);
+        this.rangeController.addCellRange(params);
     }
 
     public clearRangeSelection(): void {
@@ -1010,7 +1018,7 @@ export class GridApi {
         }
         const cellPosition: CellPosition = {
             rowIndex: params.rowIndex,
-            floating: params.rowPinned,
+            rowPinned: params.rowPinned,
             column: column
         };
         const notPinned = _.missing(params.rowPinned);

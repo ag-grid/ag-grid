@@ -1,5 +1,4 @@
 import {
-    AddRangeSelectionParams,
     Autowired,
     Bean,
     CellNavigationService,
@@ -19,6 +18,7 @@ import {
     IRowModel,
     Logger,
     LoggerFactory,
+    AddCellRangeParams,
     MouseEventService,
     PostConstruct,
     CellRange,
@@ -94,11 +94,11 @@ export class RangeController implements IRangeController {
 
         const newRange: CellRange = {
             startRow: {
-                floating: cell.floating,
+                rowPinned: cell.rowPinned,
                 rowIndex: cell.rowIndex
             },
             endRow: {
-                floating: cell.floating,
+                rowPinned: cell.rowPinned,
                 rowIndex: cell.rowIndex
             },
             columns: columns
@@ -124,11 +124,11 @@ export class RangeController implements IRangeController {
 
         const startCell = this.newestRangeStartCell;
 
-        this.setRange({
-            rowStart: startCell.rowIndex,
-            floatingStart: startCell.floating,
-            rowEnd: toCell.rowIndex,
-            floatingEnd: toCell.floating,
+        this.setCellRange({
+            rowStartIndex: startCell.rowIndex,
+            rowStartPinned: startCell.rowPinned,
+            rowEndIndex: toCell.rowIndex,
+            rowEndPinned: toCell.rowPinned,
             columnStart: startCell.column,
             columnEnd: toCell.column
         });
@@ -148,10 +148,10 @@ export class RangeController implements IRangeController {
 
         // find the cell that is at the furthest away corner from the starting cell
         const endCellIndex = lastRange.endRow.rowIndex;
-        const endCellFloating = lastRange.endRow.floating;
+        const endCellFloating = lastRange.endRow.rowPinned;
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
-        const endCell: CellPosition = {column: endCellColumn, rowIndex: endCellIndex, floating: endCellFloating};
+        const endCell: CellPosition = {column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating};
         const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell);
 
         // if user is at end of grid, so no cell to extend to, we return false
@@ -159,11 +159,11 @@ export class RangeController implements IRangeController {
             return;
         }
 
-        this.setRange({
-            rowStart: startCell.rowIndex,
-            floatingStart: startCell.floating,
-            rowEnd: newEndCell.rowIndex,
-            floatingEnd: newEndCell.floating,
+        this.setCellRange({
+            rowStartIndex: startCell.rowIndex,
+            rowStartPinned: startCell.rowPinned,
+            rowEndIndex: newEndCell.rowIndex,
+            rowEndPinned: newEndCell.rowPinned,
             columnStart: startCell.column,
             columnEnd: newEndCell.column
         });
@@ -171,23 +171,23 @@ export class RangeController implements IRangeController {
         return newEndCell;
     }
 
-    public setRange(rangeSelection: AddRangeSelectionParams): void {
+    public setCellRange(params: AddCellRangeParams): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
             return;
         }
 
         this.onDragStop();
         this.cellRanges.length = 0;
-        this.addRange(rangeSelection);
+        this.addCellRange(params);
     }
 
-    public addRange(rangeSelection: AddRangeSelectionParams): void {
+    public addCellRange(params: AddCellRangeParams): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
             return;
         }
 
-        const columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
-        const columnEnd = this.columnController.getColumnWithValidation(rangeSelection.columnEnd);
+        const columnStart = this.columnController.getColumnWithValidation(params.columnStart);
+        const columnEnd = this.columnController.getColumnWithValidation(params.columnEnd);
         if (!columnStart || !columnEnd) {
             return;
         }
@@ -199,12 +199,12 @@ export class RangeController implements IRangeController {
 
         const newRange: CellRange = {
             startRow: {
-                rowIndex: rangeSelection.rowStart,
-                floating: rangeSelection.floatingStart
+                rowIndex: <number> params.rowStartIndex,
+                rowPinned: <string> params.rowStartPinned
             },
             endRow: {
-                rowIndex: rangeSelection.rowEnd,
-                floating: rangeSelection.floatingEnd
+                rowIndex: <number> params.rowEndIndex,
+                rowPinned: <string> params.rowEndPinned
             },
             columns: columns
         };
@@ -232,7 +232,7 @@ export class RangeController implements IRangeController {
             // only one range, return true if range has more than one
             const range = this.cellRanges[0];
             const moreThanOneCell =
-                range.startRow.floating !== range.endRow.floating
+                range.startRow.rowPinned !== range.endRow.rowPinned
                 || range.startRow.rowIndex !== range.endRow.rowIndex
                 || range.columns.length !== 1;
             return moreThanOneCell;
@@ -260,7 +260,7 @@ export class RangeController implements IRangeController {
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
         const columnInRange: boolean = range.columns !== null && range.columns.indexOf(cell.column) >= 0;
-        const rowInRange = this.isRowInRange(cell.rowIndex, cell.floating, range);
+        const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
         return columnInRange && rowInRange;
     }
 
@@ -288,10 +288,10 @@ export class RangeController implements IRangeController {
         const firstRow = startBeforeEnd ? cellRange.startRow : cellRange.endRow;
         const lastRow = startBeforeEnd ? cellRange.endRow : cellRange.startRow;
 
-        const thisRow: RowPosition = {rowIndex: rowIndex, floating: floating};
+        const thisRow: RowPosition = {rowIndex: rowIndex, rowPinned: floating};
 
-        const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.floating === firstRow.floating;
-        const equalsLastRow = thisRow.rowIndex === lastRow.rowIndex && thisRow.floating === lastRow.floating;
+        const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned === firstRow.rowPinned;
+        const equalsLastRow = thisRow.rowIndex === lastRow.rowIndex && thisRow.rowPinned === lastRow.rowPinned;
 
         if (equalsFirstRow || equalsLastRow) {
             return true;
@@ -339,11 +339,11 @@ export class RangeController implements IRangeController {
             this.draggingRange = {
                 startRow: {
                     rowIndex: mouseCell.rowIndex,
-                    floating: mouseCell.floating
+                    rowPinned: mouseCell.rowPinned
                 },
                 endRow: {
                     rowIndex: mouseCell.rowIndex,
-                    floating: mouseCell.floating
+                    rowPinned: mouseCell.rowPinned
                 },
                 columns: [mouseCell.column]
             };
@@ -391,8 +391,8 @@ export class RangeController implements IRangeController {
 
         const cellPosition = this.mouseEventService.getCellPositionForEvent(mouseEvent);
 
-        const mouseAndStartInPinnedTop = cellPosition && cellPosition.floating === 'top' && this.newestRangeStartCell!.floating === 'top';
-        const mouseAndStartInPinnedBottom = cellPosition && cellPosition.floating === 'bottom' && this.newestRangeStartCell!.floating === 'bottom';
+        const mouseAndStartInPinnedTop = cellPosition && cellPosition.rowPinned === 'top' && this.newestRangeStartCell!.rowPinned === 'top';
+        const mouseAndStartInPinnedBottom = cellPosition && cellPosition.rowPinned === 'bottom' && this.newestRangeStartCell!.rowPinned === 'bottom';
         const skipVerticalScroll = mouseAndStartInPinnedTop || mouseAndStartInPinnedBottom;
 
         this.autoScrollService.check(mouseEvent, skipVerticalScroll);
@@ -408,7 +408,7 @@ export class RangeController implements IRangeController {
 
         this.draggingRange!.endRow = {
             rowIndex: cellPosition.rowIndex,
-            floating: cellPosition.floating
+            rowPinned: cellPosition.rowPinned
         };
         this.draggingRange!.columns = columns;
 

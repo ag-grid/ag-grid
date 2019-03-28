@@ -1533,7 +1533,7 @@ export class CellComp extends Component {
     private createGridCellVo(): void {
         this.cellPosition = {
             rowIndex: this.rowNode.rowIndex,
-            floating: this.rowNode.rowPinned,
+            rowPinned: this.rowNode.rowPinned,
             column: this.column
         };
     }

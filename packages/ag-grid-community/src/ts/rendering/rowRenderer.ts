@@ -392,7 +392,7 @@ export class RowRenderer extends BeanStub {
     // edited cell).
     private restoreFocusedCell(cellPosition: CellPosition): void {
         if (cellPosition) {
-            this.focusedCellController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.floating, true);
+            this.focusedCellController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
         }
     }
 
@@ -996,7 +996,7 @@ export class RowRenderer extends BeanStub {
                 currentCell = {
                     rowIndex: currentCell.rowIndex,
                     column: colSpanningList[colSpanningList.length - 1],
-                    floating: currentCell.floating
+                    rowPinned: currentCell.rowPinned
                 };
             }
 
@@ -1027,12 +1027,16 @@ export class RowRenderer extends BeanStub {
                     nextCellPosition: nextCell ? nextCell : null,
                     event: event
                 };
-                const userResult = userFunc(params);
-                if (_.exists(userResult)) {
+                const userCell = userFunc(params);
+                if (_.exists(userCell)) {
+                    if ((<any>userCell).floating) {
+                        _.doOnce( ()=> {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`)}, 'no floating in userCell');
+                        userCell.rowPinned = (<any>userCell).floating;
+                    }
                     nextCell = {
-                        floating: userResult.floating,
-                        rowIndex: userResult.rowIndex,
-                        column: userResult.column
+                        rowPinned: userCell.rowPinned,
+                        rowIndex: userCell.rowIndex,
+                        column: userCell.column
                     } as CellPosition;
                 } else {
                     nextCell = null;
@@ -1047,7 +1051,7 @@ export class RowRenderer extends BeanStub {
 
         this.ensureCellVisible(nextCell);
 
-        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
+        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
 
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
@@ -1056,7 +1060,7 @@ export class RowRenderer extends BeanStub {
 
     public ensureCellVisible(gridCell: CellPosition): void {
         // this scrolls the row into view
-        if (_.missing(gridCell.floating)) {
+        if (_.missing(gridCell.rowPinned)) {
             this.gridPanel.ensureIndexVisible(gridCell.rowIndex);
         }
 
@@ -1081,7 +1085,7 @@ export class RowRenderer extends BeanStub {
 
     private getComponentForCell(cellPosition: CellPosition): CellComp {
         let rowComponent: RowComp;
-        switch (cellPosition.floating) {
+        switch (cellPosition.rowPinned) {
             case Constants.PINNED_TOP:
                 rowComponent = this.floatingTopRowComps[cellPosition.rowIndex];
                 break;
@@ -1202,7 +1206,7 @@ export class RowRenderer extends BeanStub {
         const pGridCell = previousRenderedCell.getCellPosition();
         const nGridCell = nextRenderedCell.getCellPosition();
 
-        const rowsMatch = pGridCell.rowIndex === nGridCell.rowIndex && pGridCell.floating === nGridCell.floating;
+        const rowsMatch = pGridCell.rowIndex === nGridCell.rowIndex && pGridCell.rowPinned === nGridCell.rowPinned;
 
         if (rowsMatch) {
             // same row, so we don't start / stop editing, we just move the focus along
@@ -1241,10 +1245,14 @@ export class RowRenderer extends BeanStub {
                 } as TabToNextCellParams;
                 const userCell = userFunc(params);
                 if (_.exists(userCell)) {
+                    if ((<any>userCell).floating) {
+                        _.doOnce( ()=> {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`)}, 'no floating in userCell');
+                        userCell.rowPinned = (<any>userCell).floating;
+                    }
                     nextCell = {
                         rowIndex: userCell.rowIndex,
                         column: userCell.column,
-                        floating: userCell.floating
+                        rowPinned: userCell.rowPinned
                     } as CellPosition;
                 } else {
                     nextCell = null;
@@ -1268,7 +1276,7 @@ export class RowRenderer extends BeanStub {
             }
 
             // this scrolls the row into view
-            const cellIsNotFloating = _.missing(nextCell.floating);
+            const cellIsNotFloating = _.missing(nextCell.rowPinned);
             if (cellIsNotFloating) {
                 this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
             }
@@ -1312,11 +1320,11 @@ export class RowRenderer extends BeanStub {
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {
-        if (cell.floating === Constants.PINNED_TOP) {
+        if (cell.rowPinned === Constants.PINNED_TOP) {
             return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
         }
 
-        if (cell.floating === Constants.PINNED_BOTTOM) {
+        if (cell.rowPinned === Constants.PINNED_BOTTOM) {
             return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
         }
 

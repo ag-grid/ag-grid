@@ -84,13 +84,13 @@ export class FocusedCellController {
 
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string, forceBrowserFocus = false): void {
         const column = _.makeNull(this.columnController.getGridColumn(colKey));
-        this.focusedCellPosition = {rowIndex: rowIndex, floating: _.makeNull(floating), column: column};
+        this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: _.makeNull(floating), column: column};
         this.onCellFocused(forceBrowserFocus);
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
         if (_.missing(this.focusedCellPosition)) { return false; }
-        return this.focusedCellPosition.column === cellPosition.column && this.isRowFocused(cellPosition.rowIndex, cellPosition.floating);
+        return this.focusedCellPosition.column === cellPosition.column && this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
@@ -104,7 +104,7 @@ export class FocusedCellController {
     public isRowFocused(rowIndex: number, floating: string): boolean {
         if (_.missing(this.focusedCellPosition)) { return false; }
         const floatingOrNull = _.makeNull(floating);
-        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.floating === floatingOrNull;
+        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     }
 
     private onCellFocused(forceBrowserFocus: boolean): void {
@@ -122,7 +122,7 @@ export class FocusedCellController {
         if (this.focusedCellPosition) {
             event.rowIndex = this.focusedCellPosition.rowIndex;
             event.column = this.focusedCellPosition.column;
-            event.rowPinned = this.focusedCellPosition.floating;
+            event.rowPinned = this.focusedCellPosition.rowPinned;
         }
 
         this.eventService.dispatchEvent(event);
