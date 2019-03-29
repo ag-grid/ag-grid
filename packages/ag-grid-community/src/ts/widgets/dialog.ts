@@ -65,6 +65,10 @@ export class Dialog extends PopupComponent {
     private closable = true;
     private isMoving = false;
     private isResizing = false;
+    private dragStartPosition = {
+        x: 0,
+        y: 0
+    };
 
     private position = {
         x: 0,
@@ -166,6 +170,10 @@ export class Dialog extends PopupComponent {
         this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
     }
 
+    private updateDragStartPosition(x: number, y: number) {
+        this.dragStartPosition = { x, y };
+    }
+
     private getResizerElement(side: ResizableSides): HTMLElement | null {
         const map = {
             topLeft: this.eTopLeftResizer,
@@ -220,8 +228,9 @@ export class Dialog extends PopupComponent {
         });
     }
 
-    private onDialogResizeStart() {
+    private onDialogResizeStart(e: MouseEvent) {
         this.isResizing = true;
+        this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
     private onDialogResize(e: MouseEvent, side: ResizableSides) {
@@ -240,8 +249,9 @@ export class Dialog extends PopupComponent {
         if (isHorizontal) {
             const direction = isLeft ? -1 : 1;
             const oldWidth = this.getWidth();
+            const movementX = e.clientX - this.dragStartPosition.x;
 
-            this.setWidth(oldWidth + (e.movementX * direction), true);
+            this.setWidth(oldWidth + (movementX * direction), true);
 
             if (isLeft) {
                 offsetLeft = oldWidth - this.getWidth();
@@ -251,13 +261,16 @@ export class Dialog extends PopupComponent {
         if (isVertical) {
             const direction = isTop ? -1 : 1;
             const oldHeight = this.getHeight();
+            const movementY = e.clientY - this.dragStartPosition.y;
 
-            this.setHeight(oldHeight + (e.movementY * direction), true);
+            this.setHeight(oldHeight + (movementY * direction), true);
 
             if (isTop) {
                 offsetTop = oldHeight - this.getHeight();
             }
         }
+
+        this.updateDragStartPosition(e.clientX, e.clientY);
 
         if (offsetLeft || offsetTop) {
             this.offsetDialog(
@@ -300,15 +313,20 @@ export class Dialog extends PopupComponent {
         }
     }
 
-    private onDialogMoveStart() {
+    private onDialogMoveStart(e: MouseEvent) {
         this.isMoving = true;
+        this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
     private onDialogMove(e: MouseEvent) {
         if (!this.isMoving) { return; }
+        const movementX = e.clientX - this.dragStartPosition.x;
+        const movementY = e.clientY - this.dragStartPosition.y;
         const { x, y } = this.position;
 
-        this.offsetDialog(x + e.movementX, y + e.movementY);
+        this.offsetDialog(x + movementX, y + movementY);
+
+        this.updateDragStartPosition(e.clientX, e.clientY);
 
         this.buildParamsAndDispatchEvent(Dialog.EVENT_MOVE);
     }
