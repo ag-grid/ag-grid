@@ -25,8 +25,8 @@ import { CellRange } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
+import { RowPositionUtils } from "../entities/rowPosition";
 import { _, Promise } from "../utils";
-import {RowPosition, RowPositionUtils} from "../entities/rowPosition";
 
 export class CellComp extends Component {
 
@@ -1617,16 +1617,28 @@ export class CellComp extends Component {
         bottom: boolean,
         left: boolean
     } {
+        type LeftRightDisplayMethods = 'getDisplayedColBefore' | 'getDisplayedColAfter';
+
+        const isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
+
         let top = false;
         let right = false;
         let bottom = false;
         let left = false;
 
+        let leftMethod: LeftRightDisplayMethods  = 'getDisplayedColBefore';
+        let rightMethod: LeftRightDisplayMethods = 'getDisplayedColAfter';
+
+        if (isRtl) {
+            leftMethod = 'getDisplayedColAfter';
+            rightMethod = 'getDisplayedColBefore';
+        }
+
         const rangeController = this.beans.rangeController;
 
         const thisCol = this.cellPosition.column;
-        const leftCol = this.beans.columnController.getDisplayedColBefore(thisCol);
-        const rightCol = this.beans.columnController.getDisplayedColAfter(thisCol);
+        const leftCol = this.beans.columnController[leftMethod](thisCol);
+        const rightCol = this.beans.columnController[rightMethod](thisCol);
 
         const ranges: CellRange[] = rangeController.getCellRanges().filter(
             range => rangeController.isCellInSpecificRange(this.cellPosition, range)
@@ -1642,7 +1654,10 @@ export class CellComp extends Component {
             right = true;
         }
 
-        ranges.forEach(range => {
+        for (let i = 0; i < ranges.length; i++) {
+            if (top && right && bottom && left) { break; }
+
+            const range = ranges[i];
             const startRow = rangeController.getRangeStartRow(range);
             const endRow = rangeController.getRangeEndRow(range);
 
@@ -1658,7 +1673,7 @@ export class CellComp extends Component {
             if (!right && range.columns.indexOf(rightCol) < 0) {
                 right = true;
             }
-        });
+        }
 
         return { top, right, bottom, left };
     }
