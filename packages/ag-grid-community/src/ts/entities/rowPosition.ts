@@ -8,7 +8,12 @@ export interface RowPosition {
 
 export class RowPositionUtils {
 
-    public static sameRow(rowA: RowPosition, rowB: RowPosition): boolean {
+    public static sameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean {
+        // if both missing
+        if (!rowA && !rowB) { return true; }
+        // if only one missing
+        if ( (rowA && !rowB) || (!rowA && rowB) ) { return false; }
+        // otherwise compare
         return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned === rowB.rowPinned;
     }
 

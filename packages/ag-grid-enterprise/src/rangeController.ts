@@ -125,18 +125,6 @@ export class RangeController implements IRangeController {
             return;
         }
 
-        const newRange: CellRange = {
-            startRow: {
-                rowPinned: cell.rowPinned,
-                rowIndex: cell.rowIndex
-            },
-            endRow: {
-                rowPinned: cell.rowPinned,
-                rowIndex: cell.rowIndex
-            },
-            columns: columns
-        };
-
         const suppressMultiRangeSelections = this.gridOptionsWrapper.isSuppressMultiRangeSelection();
 
         // if not appending, then clear previous range selections
@@ -144,10 +132,43 @@ export class RangeController implements IRangeController {
             this.cellRanges.length = 0;
         }
 
-        this.cellRanges.push(newRange);
+        const rowForCell: RowPosition = {rowPinned: cell.rowPinned, rowIndex: cell.rowIndex};
+
+        // if there is already a range for this cell, then we reuse the same range, otherwise the user
+        // can ctrl & click a cell many times and hit ctrl+c, which would result in the cell getting copied
+        // many times to the clipboard.
+        let existingRange: CellRange | undefined;
+        this.cellRanges.forEach( range => {
+            const matches
+                // check cols are same
+                = (range.columns && range.columns.length===1 && range.columns[0]===cell.column)
+                // check rows are same
+                && RowPositionUtils.sameRow(rowForCell, range.startRow)
+                && RowPositionUtils.sameRow(rowForCell, range.endRow);
+            if (matches) {
+                existingRange = range;
+            }
+        });
+
+        if (existingRange) {
+            // we need it at the end of the list, as the dragStart picks the last created
+            // range as the start point for the drag
+            const atEndOfList = this.cellRanges[this.cellRanges.length-1]===existingRange;
+            if (!atEndOfList) {
+                _.removeFromArray(this.cellRanges, existingRange);
+                this.cellRanges.push(existingRange);
+            }
+        } else {
+            const newRange: CellRange = {
+                startRow: rowForCell,
+                endRow: rowForCell,
+                columns: columns
+            };
+            this.cellRanges.push(newRange);
+        }
+
         this.newestRangeStartCell = cell;
         this.onDragStop();
-
         this.dispatchChangedEvent(true, false);
     }
 
@@ -392,15 +413,13 @@ export class RangeController implements IRangeController {
         if (this.cellRanges.length > 0) {
             this.draggingRange = this.cellRanges[this.cellRanges.length-1];
         } else {
+            const mouseRowPosition: RowPosition = {
+                rowIndex: mouseCell.rowIndex,
+                rowPinned: mouseCell.rowPinned
+            };
             this.draggingRange = {
-                startRow: {
-                    rowIndex: mouseCell.rowIndex,
-                    rowPinned: mouseCell.rowPinned
-                },
-                endRow: {
-                    rowIndex: mouseCell.rowIndex,
-                    rowPinned: mouseCell.rowPinned
-                },
+                startRow: mouseRowPosition,
+                endRow: mouseRowPosition,
                 columns: [mouseCell.column]
             };
             this.cellRanges.push(this.draggingRange);
