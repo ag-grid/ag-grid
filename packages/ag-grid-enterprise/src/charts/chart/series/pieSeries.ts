@@ -278,8 +278,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
             const radius = radiusField ? this.radiusScale.convert(radiusData[sectorIndex]) : this.radius;
-            const outerRadius = radius + this.outerRadiusOffset;
-            const innerRadius = this.innerRadiusOffset ? radius + this.innerRadiusOffset : 0;
+            const outerRadius = Math.max(10, radius + this.outerRadiusOffset);
+            const innerRadius = Math.max(0, this.innerRadiusOffset ? radius + this.innerRadiusOffset : 0);
             const startAngle = angleScale.convert(start + rotation);
             const endAngle = angleScale.convert(end + rotation);
 
@@ -311,18 +311,18 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                     text: labelData[sectorIndex],
                     font: labelFont,
                     fillStyle: labelColor,
-                    x: midCos * (radius + calloutLength + this.calloutPadding),
-                    y: midSin * (radius + calloutLength + this.calloutPadding)
+                    x: midCos * (outerRadius + calloutLength + this.calloutPadding),
+                    y: midSin * (outerRadius + calloutLength + this.calloutPadding)
                 } : undefined,
 
                 callout: labelVisible ? {
                     start: {
-                        x: midCos * radius,
-                        y: midSin * radius
+                        x: midCos * outerRadius,
+                        y: midSin * outerRadius
                     },
                     end: {
-                        x: midCos * (radius + calloutLength),
-                        y: midSin * (radius + calloutLength)
+                        x: midCos * (outerRadius + calloutLength),
+                        y: midSin * (outerRadius + calloutLength)
                     },
                     strokeStyle: calloutStrokeStyle
                 } : undefined
