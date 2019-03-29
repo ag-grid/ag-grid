@@ -1,5 +1,4 @@
 import {ChartOptions, ChartType, GridChartFactory} from "./gridChartFactory";
-import {ChartControlComp} from "./chartControlComp";
 import {ChartDatasource} from "./rangeChart/rangeChartService";
 import {Chart} from "../charts/chart/chart";
 import {BarSeries} from "../charts/chart/series/barSeries";
@@ -15,12 +14,12 @@ import {
     DialogEvent
 } from "ag-grid-community";
 import {CartesianChart} from "../charts/chart/cartesianChart";
+import {PolarChart} from "../charts/chart/polarChart";
 
 export class GridChartComp extends Component {
 
     private static TEMPLATE =
         `<div>
-            <ag-chart-control ref="chartControlComp"></ag-chart-control>
             <div ref="eChart"></div>
             <div ref="eErrors"></div>
         </div>`;
@@ -30,7 +29,6 @@ export class GridChartComp extends Component {
     private readonly chartType: ChartType;
     private readonly chart: Chart<any, string, number>;
 
-    @RefSelector('chartControlComp') private chartControlComp: ChartControlComp;
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
 
@@ -51,8 +49,6 @@ export class GridChartComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
-        this.chartControlComp.init(this.chartType, this.chart);
-
         this.refresh();
     }
 
@@ -60,20 +56,10 @@ export class GridChartComp extends Component {
         this.container = container;
 
         this.addDestroyableEventListener(container, Dialog.EVENT_RESIZE, (event: DialogEvent) => {
-            const chartHeight = event.dialog.getBodyHeight() - this.chartControlComp.getGui().offsetHeight - 7;
+            const chartHeight = event.dialog.getBodyHeight() - 7;
             const chartWidth = event.width as number - 2;
             this.chart.height = chartHeight;
             this.chart.width = chartWidth;
-            this.chartControlComp.eHeight.value = chartHeight.toString();
-            this.chartControlComp.eWidth.value = chartWidth.toString();
-        });
-
-        this.addDestroyableEventListener(this.chartControlComp.eWidth, 'blur', (e) => {
-            container.setWidth(parseInt(e.target.value) + 2);
-        });
-        this.addDestroyableEventListener(this.chartControlComp.eHeight, 'blur', (e) => {
-            const baseHeight = (container.getHeight() - container.getBodyHeight()) + this.chartControlComp.getGui().offsetHeight + 7;
-            container.setHeight(baseHeight + parseInt(e.target.value));
         });
     }
 
@@ -128,30 +114,55 @@ export class GridChartComp extends Component {
         const lineChart = this.chart as CartesianChart<any, string, number>;
 
         fields.forEach((field: string, index: number) => {
-            const existingLineSeries = (lineChart.series as LineSeries<any, string, number>[])
+            let lineSeries = (lineChart.series as LineSeries<any, string, number>[])
                 .filter(series => {
                     const lineSeries = series as LineSeries<any, string, number>;
                     return lineSeries.yField === field;
                 })[0];
 
-            if (existingLineSeries) {
-                existingLineSeries.setDataAndFields(data, 'category', field);
-
-            } else {
-                const lineSeries = new LineSeries<any, string, number>();
+            if (!lineSeries) {
+                lineSeries = new LineSeries<any, string, number>();
                 lineSeries.lineWidth = 2;
                 lineSeries.markerRadius = 3;
                 lineSeries.color = colors[index % colors.length];
                 lineChart.addSeries(lineSeries);
-                lineSeries.setDataAndFields(data, 'category', field);
             }
+
+            lineSeries.setDataAndFields(data, 'category', field);
         });
     }
 
     private updatePieChart() {
         const {data, fields} = this.extractFromDatasource(this.datasource);
-        const pieSeries = this.chart.series[0] as PieSeries<any, string, number>;
-        pieSeries.setDataAndFields(data, fields[0], 'category');
+        const pieChart = this.chart as PolarChart<any, string, number>;
+
+        const singleField = fields.length === 1;
+        const thickness = singleField ? 0 : 20;
+        const padding = singleField ? 0 : 5;
+        let offset = 0;
+
+        fields.forEach((field: string) => {
+            let pieSeries = (pieChart.series as PieSeries<any, string, number>[])
+                .filter(series => {
+                    const pieSeries = series as PieSeries<any, string, number>;
+                    return pieSeries.angleField === field;
+                })[0];
+
+
+            if (!pieSeries) {
+                pieSeries = new PieSeries<any, string, number>();
+                pieSeries.lineWidth = 1;
+                pieSeries.calloutWidth = 1;
+                pieChart.addSeries(pieSeries);
+            }
+
+            pieSeries.outerRadiusOffset = offset;
+            offset -= thickness;
+            pieSeries.innerRadiusOffset = offset;
+            offset -= padding;
+
+            pieSeries.setDataAndFields(data, field, singleField ? 'category' : null);
+        });
     }
 
     private extractFromDatasource(ds: ChartDatasource) {
