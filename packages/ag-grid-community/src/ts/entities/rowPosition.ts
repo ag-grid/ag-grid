@@ -8,6 +8,10 @@ export interface RowPosition {
 
 export class RowPositionUtils {
 
+    public static sameRow(rowA: RowPosition, rowB: RowPosition): boolean {
+        return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned === rowB.rowPinned;
+    }
+
     // tests if this row selection is before the other row selection
     public static before(rowA: RowPosition, rowB: RowPosition): boolean {
         switch (rowA.rowPinned) {

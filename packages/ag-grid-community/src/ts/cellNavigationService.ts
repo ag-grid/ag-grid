@@ -128,22 +128,27 @@ export class CellNavigationService {
         const index = rowPosition.rowIndex;
         const pinned = rowPosition.rowPinned;
         if (this.isLastRowInContainer(rowPosition)) {
-            if (pinned===Constants.PINNED_TOP) {
-                return null;
-            } else if (!pinned) {
-                if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
-                    return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
-                } else {
+            switch (pinned) {
+                case Constants.PINNED_BOTTOM:
+                    // never any rows after pinned bottom
                     return null;
-                }
-            } else {
-                if (this.rowModel.isRowsToRender()) {
-                    return {rowIndex: 0, rowPinned: null} as RowPosition;
-                } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
-                    return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
-                } else {
-                    return null;
-                }
+                case Constants.PINNED_TOP:
+                    // if on last row of pinned top, then next row is main body (if rows exist),
+                    // otherwise it's the pinned bottom
+                    if (this.rowModel.isRowsToRender()) {
+                        return {rowIndex: 0, rowPinned: null} as RowPosition;
+                    } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
+                        return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
+                    } else {
+                        return null;
+                    }
+                default:
+                    // if in the main body, then try pinned bottom, otherwise return nothing
+                    if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
+                        return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
+                    } else {
+                        return null;
+                    }
             }
         } else {
             return {rowIndex: index + 1, rowPinned: pinned} as RowPosition;

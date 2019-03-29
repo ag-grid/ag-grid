@@ -26,6 +26,7 @@ import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { _, Promise } from "../utils";
+import {RowPosition, RowPositionUtils} from "../entities/rowPosition";
 
 export class CellComp extends Component {
 
@@ -1621,30 +1622,41 @@ export class CellComp extends Component {
         let bottom = false;
         let left = false;
 
-        const { beans, cellPosition } = this;
-        const { rangeController } = beans;
+        const rangeController = this.beans.rangeController;
+
+        const thisCol = this.cellPosition.column;
+        const leftCol = this.beans.columnController.getDisplayedColBefore(thisCol);
+        const rightCol = this.beans.columnController.getDisplayedColAfter(thisCol);
 
         const ranges: CellRange[] = rangeController.getCellRanges().filter(
-            range => rangeController.isCellInSpecificRange(cellPosition, range)
+            range => rangeController.isCellInSpecificRange(this.cellPosition, range)
         );
 
-        ranges.forEach(range => {
-            const startRowIndex = this.beans.rangeController.getRangeStartRow(range).rowIndex;
-            const endRowIndex = this.beans.rangeController.getRangeEndRow(range).rowIndex;
-            const start = Math.min(startRowIndex, endRowIndex);
-            const end = Math.max(startRowIndex, endRowIndex);
+        // this means we are the first column in the grid
+        if (!leftCol) {
+            left = true;
+        }
 
-            if (start === cellPosition.rowIndex && !top) {
+        // this means we are the last column in the grid
+        if (!rightCol) {
+            right = true;
+        }
+
+        ranges.forEach(range => {
+            const startRow = rangeController.getRangeStartRow(range);
+            const endRow = rangeController.getRangeEndRow(range);
+
+            if (!top && RowPositionUtils.sameRow(startRow, this.cellPosition)) {
                 top = true;
             }
-            if (range.columns[range.columns.length - 1] === cellPosition.column && !right) {
-                right = true;
-            }
-            if (end === cellPosition.rowIndex && !bottom) {
+            if (!bottom && RowPositionUtils.sameRow(endRow, this.cellPosition)) {
                 bottom = true;
             }
-            if (range.columns[0] === cellPosition.column && !left) {
+            if (!left && range.columns.indexOf(leftCol) < 0) {
                 left = true;
+            }
+            if (!right && range.columns.indexOf(rightCol) < 0) {
+                right = true;
             }
         });
 
