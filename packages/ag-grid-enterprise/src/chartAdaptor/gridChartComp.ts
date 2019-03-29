@@ -1,9 +1,9 @@
-import {ChartOptions, ChartType, GridChartFactory} from "./gridChartFactory";
-import {ChartDatasource} from "./rangeChart/rangeChartService";
-import {Chart} from "../charts/chart/chart";
-import {BarSeries} from "../charts/chart/series/barSeries";
-import {LineSeries} from "../charts/chart/series/lineSeries";
-import {PieSeries} from "../charts/chart/series/pieSeries";
+import { ChartOptions, ChartType, GridChartFactory } from "./gridChartFactory";
+import { ChartDatasource } from "./rangeChart/rangeChartService";
+import { Chart } from "../charts/chart/chart";
+import { BarSeries } from "../charts/chart/series/barSeries";
+import { LineSeries } from "../charts/chart/series/lineSeries";
+import { PieSeries } from "../charts/chart/series/pieSeries";
 import colors from "../charts/chart/colors";
 import {
     _,
@@ -13,8 +13,8 @@ import {
     Dialog,
     DialogEvent
 } from "ag-grid-community";
-import {CartesianChart} from "../charts/chart/cartesianChart";
-import {PolarChart} from "../charts/chart/polarChart";
+import { CartesianChart } from "../charts/chart/cartesianChart";
+import { PolarChart } from "../charts/chart/polarChart";
 
 export class GridChartComp extends Component {
 
@@ -148,7 +148,6 @@ export class GridChartComp extends Component {
                     return pieSeries.angleField === field;
                 })[0];
 
-
             if (!pieSeries) {
                 pieSeries = new PieSeries<any, string, number>();
                 pieSeries.lineWidth = 1;
@@ -169,7 +168,7 @@ export class GridChartComp extends Component {
         const data: any[] = [];
         const fields = ds.getFields();
         for (let i = 0; i < ds.getRowCount(); i++) {
-            let item: any = {
+            const item: any = {
                 category: ds.getCategory(i)
             };
             fields.forEach(field => item[field] = ds.getValue(i, field));

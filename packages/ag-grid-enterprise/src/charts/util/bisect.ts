@@ -1,4 +1,4 @@
-import { Comparator} from "./compare";
+import { Comparator } from "./compare";
 
 export function bisect<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
     return bisectRight(list, x, comparator, lo, hi)
@@ -9,10 +9,12 @@ export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, low: 
     let hi = high;
     while (lo < hi) {
         const mid = (lo + hi) >> 1;
-        if (comparator(list[mid], x) > 0) // list[mid] > x
+        if (comparator(list[mid], x) > 0) { // list[mid] > x
             hi = mid;
-        else
+        }
+        else {
             lo = mid + 1;
+        }
     }
     return lo;
 }

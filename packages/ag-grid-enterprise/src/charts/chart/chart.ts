@@ -1,6 +1,6 @@
-import {Scene} from "../scene/scene";
-import {Group} from "../scene/group";
-import {Series} from "./series/series";
+import { Scene } from "../scene/scene";
+import { Group } from "../scene/group";
+import { Series } from "./series/series";
 
 type Padding = {
     top: number,

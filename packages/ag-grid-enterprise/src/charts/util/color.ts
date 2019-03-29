@@ -63,10 +63,10 @@ export class Color {
     static fromHexString(str: string): Color {
         let values = str.match(Color.hexRe);
         if (values) {
-            let r = parseInt(values[1], 16);
-            let g = parseInt(values[2], 16);
-            let b = parseInt(values[3], 16);
-            let a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
+            const r = parseInt(values[1], 16);
+            const g = parseInt(values[2], 16);
+            const b = parseInt(values[3], 16);
+            const a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
 
             return new Color(r / 255, g / 255, b / 255, a / 255);
         }

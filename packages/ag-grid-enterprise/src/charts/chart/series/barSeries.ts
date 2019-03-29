@@ -1,13 +1,13 @@
-import {StackedCartesianSeries} from "./stackedCartesianSeries";
-import {Group} from "../../scene/group";
-import {Selection} from "../../scene/selection";
-import {CartesianChart} from "../cartesianChart";
-import {Rect} from "../../scene/shape/rect";
-import {Text} from "../../scene/shape/text";
-import {BandScale} from "../../scale/bandScale";
-import {DropShadow} from "../../scene/dropShadow";
+import { StackedCartesianSeries } from "./stackedCartesianSeries";
+import { Group } from "../../scene/group";
+import { Selection } from "../../scene/selection";
+import { CartesianChart } from "../cartesianChart";
+import { Rect } from "../../scene/shape/rect";
+import { Text } from "../../scene/shape/text";
+import { BandScale } from "../../scale/bandScale";
+import { DropShadow } from "../../scene/dropShadow";
 import colors from "../colors";
-import {Color} from "../../util/color";
+import { Color } from "../../util/color";
 
 type BarDatum = {
     x: number,
@@ -382,7 +382,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         for (let i = 0; i < n; i++) {
             const category = this.domainX[i];
             const values = this.yData[i];
-            let x = xScale.convert(category);
+            const x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
                 const barX = grouped ? x + groupScale.convert(yFields[yFieldIndex]) : x;

@@ -141,7 +141,7 @@ export class GroupStage implements IRowNodeStage {
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private sortChildren(details: GroupingDetails): void {
-        details.changedPath.forEachChangedNodeDepthFirst( rowNode => {
+        details.changedPath.forEachChangedNodeDepthFirst(rowNode => {
             _.sortRowNodesByOrder(rowNode.childrenAfterGroup, details.rowNodeOrder);
         });
     }
@@ -313,7 +313,7 @@ export class GroupStage implements IRowNodeStage {
 
         if (d1 == null || d2 == null) { return false; }
 
-        if (d1.pivotMode!==d2.pivotMode) { return false; }
+        if (d1.pivotMode !== d2.pivotMode) { return false; }
 
         if (!_.compareArrays(d1.groupedCols, d2.groupedCols)) { return false; }
 
@@ -501,7 +501,7 @@ export class GroupStage implements IRowNodeStage {
     private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
         let keys: (string | null)[] = [];
         if (this.getDataPath) {
-            let path = this.getDataPath(rowNode.data);
+            const path = this.getDataPath(rowNode.data);
             if (path) {
                 // sanitize
                 keys = path.map(p => _.escape(p));

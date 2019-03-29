@@ -9,8 +9,8 @@ import {
     PostConstruct,
     Context
 } from "ag-grid-community/main";
-import {RowGroupDropZonePanel} from "./panels/rowGroupDropZonePanel";
-import {PivotDropZonePanel} from "./panels/pivotDropZonePanel";
+import { RowGroupDropZonePanel } from "./panels/rowGroupDropZonePanel";
+import { PivotDropZonePanel } from "./panels/pivotDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
 
@@ -43,11 +43,11 @@ export class GridHeaderDropZones extends Component {
 
         this.rowGroupComp = new RowGroupDropZonePanel(true);
         this.getContext().wireBean(this.rowGroupComp);
-        this.addDestroyFunc( () => this.rowGroupComp.destroy() );
+        this.addDestroyFunc(() => this.rowGroupComp.destroy());
 
         this.pivotComp = new PivotDropZonePanel(true);
         this.getContext().wireBean(this.pivotComp);
-        this.addDestroyFunc( () => this.pivotComp.destroy() );
+        this.addDestroyFunc(() => this.pivotComp.destroy());
 
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());

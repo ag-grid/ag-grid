@@ -1,7 +1,7 @@
-import {HdpiCanvas} from "../canvas/hdpiCanvas";
-import {Node} from "./node";
-import {Path2D} from "./path2D";
-import {Shape} from "./shape/shape";
+import { HdpiCanvas } from "../canvas/hdpiCanvas";
+import { Node } from "./node";
+import { Path2D } from "./path2D";
+import { Shape } from "./shape/shape";
 
 export class Scene {
 
@@ -189,7 +189,6 @@ export class Scene {
     get renderFrameIndex(): boolean {
         return this._renderFrameIndex;
     }
-
 
     readonly render = () => {
         const ctx = this.ctx;

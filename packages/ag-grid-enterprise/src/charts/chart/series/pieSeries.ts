@@ -1,15 +1,15 @@
-import {Chart} from "../chart";
-import {PolarSeries} from "./polarSeries";
-import {Group} from "../../scene/group";
-import {Line} from "../../scene/shape/line";
-import {Text} from "../../scene/shape/text";
-import {Selection} from "../../scene/selection";
-import {DropShadow} from "../../scene/dropShadow";
-import scaleLinear, {LinearScale} from "../../scale/linearScale";
-import {normalizeAngle180, toRadians} from "../../util/angle";
+import { Chart } from "../chart";
+import { PolarSeries } from "./polarSeries";
+import { Group } from "../../scene/group";
+import { Line } from "../../scene/shape/line";
+import { Text } from "../../scene/shape/text";
+import { Selection } from "../../scene/selection";
+import { DropShadow } from "../../scene/dropShadow";
+import scaleLinear, { LinearScale } from "../../scale/linearScale";
+import { normalizeAngle180, toRadians } from "../../util/angle";
 import colors from "../colors";
-import {Color} from "../../util/color";
-import {Sector} from "../../scene/shape/sector";
+import { Color } from "../../util/color";
+import { Sector } from "../../scene/shape/sector";
 
 type SectorDatum = {
     index: number,

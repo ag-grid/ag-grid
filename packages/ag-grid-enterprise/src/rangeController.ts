@@ -223,7 +223,7 @@ export class RangeController implements IRangeController {
 
         if (params.columns) {
             columns = [];
-            params.columns!.forEach( key => {
+            params.columns!.forEach(key => {
                 const col = this.columnController.getColumnWithValidation(key);
                 if (col) {
                     columns!.push(col);
@@ -238,13 +238,12 @@ export class RangeController implements IRangeController {
             columns = this.calculateColumnsBetween(columnStart, columnEnd);
         }
 
-
         if (!columns) {
             return;
         }
 
         let startRow: RowPosition | undefined = undefined;
-        if (params.rowStartIndex!=null) {
+        if (params.rowStartIndex != null) {
             startRow = {
                 rowIndex: params.rowStartIndex,
                 rowPinned: params.rowStartPinned
@@ -252,7 +251,7 @@ export class RangeController implements IRangeController {
         }
 
         let endRow: RowPosition | undefined = undefined;
-        if (params.rowEndIndex!=null) {
+        if (params.rowEndIndex != null) {
             endRow = {
                 rowIndex: params.rowEndIndex,
                 rowPinned: params.rowEndPinned
@@ -278,7 +277,7 @@ export class RangeController implements IRangeController {
     }
 
     public isMoreThanOneCell(): boolean {
-        if (this.cellRanges.length===0) {
+        if (this.cellRanges.length === 0) {
             // no ranges, so not more than one cell
             return false;
         } else if (this.cellRanges.length > 1) {
@@ -390,7 +389,7 @@ export class RangeController implements IRangeController {
         // rather than creating another range. otherwise we end up with two distinct ranges
         // from a drag operation (one from click, and one from drag).
         if (this.cellRanges.length > 0) {
-            this.draggingRange = this.cellRanges[this.cellRanges.length-1];
+            this.draggingRange = this.cellRanges[this.cellRanges.length - 1];
         } else {
             this.draggingRange = {
                 startRow: {

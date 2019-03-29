@@ -1,5 +1,5 @@
-import {Chart} from "./chart";
-import {PolarSeries} from "./series/polarSeries";
+import { Chart } from "./chart";
+import { PolarSeries } from "./series/polarSeries";
 
 export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
     centerX: number = 0;

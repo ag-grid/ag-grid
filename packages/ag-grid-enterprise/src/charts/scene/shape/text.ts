@@ -1,7 +1,7 @@
-import {Shape} from "./shape";
-import {chainObjects} from "../../util/object";
-import {HdpiCanvas} from "../../canvas/hdpiCanvas";
-import {BBox, isPointInBBox, renderBBox} from "../bbox";
+import { Shape } from "./shape";
+import { chainObjects } from "../../util/object";
+import { HdpiCanvas } from "../../canvas/hdpiCanvas";
+import { BBox, isPointInBBox, renderBBox } from "../bbox";
 
 export class Text extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -150,14 +150,16 @@ export class Text extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene)
+        if (!this.scene) {
             return;
+        }
 
         const lines = this.lines;
         const lineCount = lines.length;
 
-        if (!lineCount)
+        if (!lineCount) {
             return;
+        }
 
         if (this.dirtyTransform) {
             this.computeTransformMatrix();

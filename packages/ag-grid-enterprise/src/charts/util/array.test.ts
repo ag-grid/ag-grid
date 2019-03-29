@@ -1,4 +1,4 @@
-import {extent} from "./array";
+import { extent } from "./array";
 
 test('extent', () => {
     {

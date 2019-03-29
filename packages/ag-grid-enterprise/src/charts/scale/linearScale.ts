@@ -1,7 +1,7 @@
 import { Deinterpolator, Reinterpolator } from "./scale";
 import ContinuousScale from "./continuousScale";
 import { naturalOrder } from "../util/compare";
-import ticks, {tickIncrement} from "../util/ticks";
+import ticks, { tickIncrement } from "../util/ticks";
 
 /**
  * Maps continuous domain to a continuous range.

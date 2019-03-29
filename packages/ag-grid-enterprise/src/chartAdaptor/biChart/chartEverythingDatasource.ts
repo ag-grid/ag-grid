@@ -13,7 +13,7 @@ import {
     ValueService,
     ColumnGroup
 } from "ag-grid-community";
-import {ChartDatasource} from "../rangeChart/rangeChartService";
+import { ChartDatasource } from "../rangeChart/rangeChartService";
 
 export class ChartEverythingDatasource extends BeanStub implements ChartDatasource {
 
@@ -51,7 +51,7 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.clientSideRowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.clientSideRowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.error('ChartEverythingDatasource only works with ClientSideRowModel');
             return;
         }
@@ -82,7 +82,7 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
         const cols = this.columnController.getAllDisplayedColumns();
 
         // pull out all dimension columns from the range
-        cols.forEach( col => {
+        cols.forEach(col => {
             const isDim = isDimension(col);
             console.log(`isDim(${col.getColId()}) = ${isDim}`);
             if (isDim) {
@@ -103,7 +103,7 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
         // if we are doing pivot mode and no row group, it means we are showing
         // the root node and no other rows. otherwise we are showing children of
         // the root node.
-        if (firstRow===rootNode) {
+        if (firstRow === rootNode) {
             this.rows = [rootNode];
         } else {
             this.rows = rootNode.childrenAfterSort;
@@ -127,7 +127,7 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
 
         if (!cols) { return; }
 
-        cols.forEach( col => {
+        cols.forEach(col => {
             console.log(`isValue(${col.getColId()}) = ${col.getColDef().enableValue}`);
 
             // only measure columns can be values
@@ -150,13 +150,13 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
         if (this.columnController.isPivotActive()) {
             const valueColumns = this.columnController.getValueColumns();
             const parts: string[] = [];
-            if (valueColumns.length>1) {
+            if (valueColumns.length > 1) {
                 const part = this.columnController.getDisplayNameForColumn(col, 'chart');
                 parts.unshift(part ? part : '');
             }
             let pointer: ColumnGroup = col.getParent();
             while (pointer) {
-                const part = this.columnController.getDisplayNameForColumnGroup(pointer,'chart');
+                const part = this.columnController.getDisplayNameForColumnGroup(pointer, 'chart');
                 parts.unshift(part ? part : '');
                 pointer = pointer.getParent();
             }
@@ -167,13 +167,12 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
         }
     }
 
-
     public getCategory(i: number): string {
         const rowNode = this.rows[i];
         const resParts: string[] = [];
 
         if (this.categoryCols) {
-            this.categoryCols.forEach( col => {
+            this.categoryCols.forEach(col => {
                 const part = this.valueService.getValue(col, rowNode);
                 // force return type to be string or empty string (as value can be an object)
                 const partStr = (part && part.toString) ? part.toString() : '';

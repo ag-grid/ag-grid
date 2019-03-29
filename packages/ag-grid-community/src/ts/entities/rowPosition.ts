@@ -1,9 +1,9 @@
-import {Constants} from "../constants";
-import {_} from "../utils";
+import { Constants } from "../constants";
+import { _ } from "../utils";
 
 export interface RowPosition {
-    rowIndex: number,
-    rowPinned: string | undefined
+    rowIndex: number;
+    rowPinned: string | undefined;
 }
 
 export class RowPositionUtils {

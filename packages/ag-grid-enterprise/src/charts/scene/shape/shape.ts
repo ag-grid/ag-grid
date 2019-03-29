@@ -1,6 +1,6 @@
-import {Node} from "../node";
-import {chainObjects} from "../../util/object";
-import {DropShadow} from "../dropShadow";
+import { Node } from "../node";
+import { chainObjects } from "../../util/object";
+import { DropShadow } from "../dropShadow";
 
 export type ShapeLineCap = null | 'round' | 'square';  // null is for 'butt'
 export type ShapeLineJoin = null | 'round' | 'bevel';  // null is for 'miter'

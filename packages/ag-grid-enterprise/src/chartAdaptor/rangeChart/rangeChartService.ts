@@ -1,5 +1,5 @@
-import {RangeChartDatasource} from "./rangeChartDatasource";
-import {RangeController} from "../../rangeController";
+import { RangeChartDatasource } from "./rangeChartDatasource";
+import { RangeController } from "../../rangeController";
 import {
     Autowired,
     Bean,
@@ -10,8 +10,8 @@ import {
     IEventEmitter,
     MessageBox
 } from "ag-grid-community";
-import {ChartType} from "../gridChartFactory";
-import {GridChartComp} from "../gridChartComp";
+import { ChartType } from "../gridChartFactory";
+import { GridChartComp } from "../gridChartComp";
 
 export interface ChartDatasource extends IEventEmitter {
     getCategory(i: number): string;
@@ -30,7 +30,7 @@ export class RangeChartService {
     @Autowired('context') private context: Context;
 
     public chartRange(chartType: ChartType = ChartType.Bar): void {
-        let selectedRange = this.getSelectedRange();
+        const selectedRange = this.getSelectedRange();
 
         const ds = this.createDatasource(selectedRange);
 
@@ -51,7 +51,7 @@ export class RangeChartService {
     }
 
     private createDatasource(range: CellRange): ChartDatasource | null {
-        if (!range.columns) return null;
+        if (!range.columns) { return null; }
 
         const ds = new RangeChartDatasource(range);
         this.context.wireBean(ds);

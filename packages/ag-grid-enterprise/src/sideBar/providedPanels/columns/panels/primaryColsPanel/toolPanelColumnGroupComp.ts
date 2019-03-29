@@ -287,7 +287,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
             // ignore lock visible columns and columns set to 'suppressToolPanel'
             const ignoredColumn = column.isLockVisible() || column.getColDef().suppressToolPanel;
-            if (ignoredColumn) return null;
+            if (ignoredColumn) { return null; }
 
             if (this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;

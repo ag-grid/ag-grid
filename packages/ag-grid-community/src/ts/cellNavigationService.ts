@@ -8,7 +8,7 @@ import { PinnedRowModel } from "./rowModels/pinnedRowModel";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { _ } from "./utils";
-import {RowPosition} from "./entities/rowPosition";
+import { RowPosition } from "./entities/rowPosition";
 
 @Bean('cellNavigationService')
 export class CellNavigationService {
@@ -175,10 +175,10 @@ export class CellNavigationService {
     private isLastRowInContainer(rowPosition: RowPosition): boolean {
         const pinned = rowPosition.rowPinned;
         const index = rowPosition.rowIndex;
-        if (pinned===Constants.PINNED_TOP) {
+        if (pinned === Constants.PINNED_TOP) {
             const lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
             return lastTopIndex <= index;
-        } else if (pinned===Constants.PINNED_BOTTOM) {
+        } else if (pinned === Constants.PINNED_BOTTOM) {
             const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             return lastBottomIndex <= index;
         } else {
@@ -268,7 +268,7 @@ export class CellNavigationService {
                 return null;
             }
             newRowIndex = rowBelow ? rowBelow.rowIndex : null;
-            newFloating = rowBelow ? rowBelow.rowPinned: null;
+            newFloating = rowBelow ? rowBelow.rowPinned : null;
         }
 
         return {rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating} as CellPosition;

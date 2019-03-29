@@ -62,11 +62,11 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             return;
         }
 
-        this.avgAggregationComp.setLabel('average','Average');
-        this.countAggregationComp.setLabel('count','Count');
-        this.minAggregationComp.setLabel('min','Min');
-        this.maxAggregationComp.setLabel('max','Max');
-        this.sumAggregationComp.setLabel('sum','Sum');
+        this.avgAggregationComp.setLabel('average', 'Average');
+        this.countAggregationComp.setLabel('count', 'Count');
+        this.minAggregationComp.setLabel('min', 'Min');
+        this.maxAggregationComp.setLabel('max', 'Max');
+        this.sumAggregationComp.setLabel('sum', 'Sum');
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
@@ -141,7 +141,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         break;
                     }
 
-                    cellRange.columns.forEach( col => {
+                    cellRange.columns.forEach(col => {
                         if (currentRow === null) {
                             return;
                         }

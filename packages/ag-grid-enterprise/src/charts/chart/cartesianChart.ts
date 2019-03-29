@@ -1,8 +1,8 @@
-import {Chart} from "./chart";
-import {Axis} from "../axis";
-import {Series} from "./series/series";
-import {ClipRect} from "../scene/clipRect";
-import {extent, checkExtent} from "../util/array";
+import { Chart } from "./chart";
+import { Axis } from "../axis";
+import { Series } from "./series/series";
+import { ClipRect } from "../scene/clipRect";
+import { extent, checkExtent } from "../util/array";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 

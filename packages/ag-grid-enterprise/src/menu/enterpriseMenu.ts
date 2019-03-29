@@ -200,7 +200,7 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private getTabsToCreate() {
-        if (this.restrictTo) return this.restrictTo;
+        if (this.restrictTo) { return this.restrictTo; }
 
         return this.column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT)
             .filter(tabName => this.isValidMenuTabItem(tabName))

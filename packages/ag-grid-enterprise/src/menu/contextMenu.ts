@@ -24,7 +24,7 @@ import { ClipboardService } from "../clipboardService";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
-import {RangeController} from "../rangeController";
+import { RangeController } from "../rangeController";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {

@@ -17,7 +17,7 @@ import { GridCore } from "./gridCore";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusedCellController } from "./focusedCellController";
-import { AddCellRangeParams, CellRange, IRangeController} from "./interfaces/iRangeController";
+import { AddCellRangeParams, CellRange, IRangeController } from "./interfaces/iRangeController";
 import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
@@ -916,7 +916,7 @@ export class GridApi {
 
     public getRangeSelections(): any {
         console.warn(`ag-Grid: in v20.1.x, api.getRangeSelections() is gone, please use getCellRanges() instead.
-        We had to change how cell selections works a small bit to allow charting to integrate. The return type of 
+        We had to change how cell selections works a small bit to allow charting to integrate. The return type of
         getCellRanges() is a bit different, please check the ag-Grid documentation.`);
         return null;
     }

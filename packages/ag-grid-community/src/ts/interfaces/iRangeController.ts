@@ -1,7 +1,7 @@
-import {Column} from "../entities/column";
-import {CellPosition} from "../entities/cellPosition";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {RowPosition} from "../entities/rowPosition";
+import { Column } from "../entities/column";
+import { CellPosition } from "../entities/cellPosition";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { RowPosition } from "../entities/rowPosition";
 
 export interface IRangeController {
     clearSelection(): void;
@@ -26,7 +26,7 @@ export interface IRangeController {
 export interface CellRange {
     startRow?: RowPosition;
     endRow?: RowPosition;
-    columns: Column[]
+    columns: Column[];
 }
 
 export interface AddCellRangeParams {

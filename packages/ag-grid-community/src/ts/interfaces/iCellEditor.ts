@@ -4,7 +4,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IComponent } from "./iComponent";
 import { IPopupComponent } from "./iPopupComponent";
-import {ColDef} from "../entities/colDef";
+import { ColDef } from "../entities/colDef";
 
 export interface ICellEditor extends IPopupComponent {
     /** Return the final value - called by the grid once after editing is complete */

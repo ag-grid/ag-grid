@@ -1,4 +1,4 @@
-import {Path2D} from "./path2D";
+import { Path2D } from "./path2D";
 
 test('parseSvgPath', () => {
     const svgPath = "  M130 110 C 120 140,  180  140 170 110  z ";
@@ -10,7 +10,7 @@ test('parseSvgPath', () => {
         },
         {
             command: 'C',
-            params: [120,140,180,140,170,110]
+            params: [120, 140, 180, 140, 170, 110]
         },
         {
             command: 'z',
@@ -40,7 +40,7 @@ test('fromString (basic)', () => {
 
 test('fromString (real-life)', () => {
     // cog shape
-    let pathString =
+    const pathString =
 `M5.005,16
 A1.003,1.003,0,0,1,4,14.992
 v-1.984

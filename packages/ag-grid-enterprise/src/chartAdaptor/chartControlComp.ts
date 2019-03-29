@@ -1,7 +1,7 @@
-import {Component, RefSelector} from "ag-grid-community";
-import {Chart} from "../charts/chart/chart";
-import {BarSeries} from "../charts/chart/series/barSeries";
-import {ChartType} from "./gridChartFactory";
+import { Component, RefSelector } from "ag-grid-community";
+import { Chart } from "../charts/chart/chart";
+import { BarSeries } from "../charts/chart/series/barSeries";
+import { ChartType } from "./gridChartFactory";
 
 export class ChartControlComp extends Component {
 
@@ -74,7 +74,7 @@ export class ChartControlComp extends Component {
 
     private setupLineWidth(): void {
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
-        if (barSeries.lineWidth>=0) {
+        if (barSeries.lineWidth >= 0) {
             this.eLineWidth.value = `${barSeries.lineWidth}`;
         } else {
             this.eLineWidth.value = '';
@@ -105,7 +105,7 @@ export class ChartControlComp extends Component {
 
     private setupGroupedOrStacked(): void {
         const groupName = `agGroupedOrStacked-${this.getCompId()}`;
-        [this.eGrouped, this.eStacked].forEach( e => {
+        [this.eGrouped, this.eStacked].forEach(e => {
             e.setAttribute('name', groupName);
             this.addDestroyableEventListener(e, 'change', this.onStackedOrGroupedChanged.bind(this));
         });

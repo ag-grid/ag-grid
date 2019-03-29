@@ -1,6 +1,6 @@
-import {Node} from "./node";
-import {Scene} from "./scene";
-import {Group} from "./group";
+import { Node } from "./node";
+import { Scene } from "./scene";
+import { Group } from "./group";
 
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
@@ -464,10 +464,12 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             const updateGroup = updateGroups[j] = new Array<G | undefined>(dataSize);
             const exitGroup = exitGroups[j] = new Array<G | undefined>(groupSize);
 
-            if (key)
+            if (key) {
                 this.bindKey(parent, group, enterGroup, updateGroup, exitGroup, data, key);
-            else
+            }
+            else {
                 this.bindIndex(parent, group, enterGroup, updateGroup, exitGroup, data);
+            }
 
             // Now connect the enter nodes to their following update node, such that
             // appendChild can insert the materialized enter node before this node,
@@ -479,7 +481,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
                         i1 = i0 + 1;
                     }
                     let next;
-                    while (!(next = updateGroup[i1]) && ++i1 < dataSize);
+                    while (!(next = updateGroup[i1]) && ++i1 < dataSize) {; }
                     previous.next = next || null;
                 }
             }

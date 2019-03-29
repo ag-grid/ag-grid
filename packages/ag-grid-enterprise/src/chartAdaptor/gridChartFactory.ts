@@ -1,10 +1,10 @@
-import {CartesianChart} from "../charts/chart/cartesianChart";
-import {CategoryAxis} from "../charts/chart/axis/categoryAxis";
-import {NumberAxis} from "../charts/chart/axis/numberAxis";
-import {BarSeries} from "../charts/chart/series/barSeries";
-import {PolarChart} from "../charts/chart/polarChart";
-import {Chart} from "../charts/chart/chart";
-import {LineSeries} from "../charts/chart/series/lineSeries";
+import { CartesianChart } from "../charts/chart/cartesianChart";
+import { CategoryAxis } from "../charts/chart/axis/categoryAxis";
+import { NumberAxis } from "../charts/chart/axis/numberAxis";
+import { BarSeries } from "../charts/chart/series/barSeries";
+import { PolarChart } from "../charts/chart/polarChart";
+import { Chart } from "../charts/chart/chart";
+import { LineSeries } from "../charts/chart/series/lineSeries";
 
 export interface ChartOptions {
     height: number,

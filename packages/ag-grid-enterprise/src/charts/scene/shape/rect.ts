@@ -1,7 +1,7 @@
-import {Shape} from "./shape";
-import {Path2D} from "../path2D";
-import {isPointInBBox} from "../bbox";
-import {pixelSnap as _pixelSnap} from "../../canvas/canvas";
+import { Shape } from "./shape";
+import { Path2D } from "../path2D";
+import { isPointInBBox } from "../bbox";
+import { pixelSnap as _pixelSnap } from "../../canvas/canvas";
 
 // _pixelSnap(3) compiles to Object(_canvas_canvas__WEBPACK_IMPORTED_MODULE_3__["pixelSnap"])(3)
 // This has some performance hit and is not nice for readability nor debugging.
@@ -131,8 +131,9 @@ export class Rect extends Shape {
     }
 
     updatePath() {
-        if (!this.dirtyPath)
+        if (!this.dirtyPath) {
             return;
+        }
 
         const path = this.path;
         const radius = this.radius;
