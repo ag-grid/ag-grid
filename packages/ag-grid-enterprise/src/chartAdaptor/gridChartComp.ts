@@ -138,7 +138,7 @@ export class GridChartComp extends Component {
 
         const singleField = fields.length === 1;
         const thickness = singleField ? 0 : 20;
-        const padding = singleField ? 0 : 5;
+        const padding = singleField ? 0 : 10;
         let offset = 0;
 
         fields.forEach((field: string) => {
@@ -161,7 +161,7 @@ export class GridChartComp extends Component {
             pieSeries.innerRadiusOffset = offset;
             offset -= padding;
 
-            pieSeries.setDataAndFields(data, field, singleField ? 'category' : null);
+            pieSeries.setDataAndFields(data, field, 'category');
         });
     }
 
