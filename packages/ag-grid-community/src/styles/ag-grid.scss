@@ -926,6 +926,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         display: flex;
         flex: none;
         align-items: center;
+        cursor: default;
     }
 
     .ag-dialog-content-wrapper {

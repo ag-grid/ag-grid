@@ -1387,12 +1387,12 @@
 
         .ag-dialog-button-close {
             width: 24px;
+            cursor: pointer;
         }
         .ag-dialog-button-close:before {
             content: '\00D7';
             font-size: 35px;
             font-weight: bold;
-            cursor: pointer;
         }
 
         .ag-message-box {
