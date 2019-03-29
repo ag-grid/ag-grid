@@ -124,7 +124,8 @@ export class Dialog extends PopupComponent {
         if (title) { this.setTitle(title); }
 
         this.setMovable(!!movable);
-        this.setClosable(!!closable);
+
+        this.setClosable(closable != null ? closable : this.closable);
 
         if (width) {
             _.setFixedWidth(eGui, width);

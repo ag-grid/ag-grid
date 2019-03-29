@@ -947,6 +947,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
             justify-content: center;
         }
     }
+
+    &:not(.ag-dialog-closable) .ag-dialog-button-close {
+        display: none;
+    }
 }
 
 /**
