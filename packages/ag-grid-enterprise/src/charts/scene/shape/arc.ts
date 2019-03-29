@@ -3,6 +3,7 @@ import {Path2D} from "../path2D";
 import {BBox, isPointInBBox} from "../bbox";
 import {normalizeAngle360} from "../../util/angle";
 import {chainObjects} from "../../util/object";
+import {isEqual} from "../../util/number";
 
 export enum ArcType {
     Open,
@@ -19,6 +20,10 @@ export class Arc extends Shape {
         lineWidth: 1,
         fillStyle: null
     });
+
+    // Declare a path to retain for later rendering and hit testing
+    // using custom Path2D class. It's pure TypeScript and works in all browsers.
+    protected path = new Path2D();
 
     constructor() {
         super();
@@ -39,10 +44,6 @@ export class Arc extends Shape {
 
         return arc;
     }
-
-    // Declare a path to retain for later rendering and hit testing
-    // using custom Path2D class. It's pure TypeScript and works in all browsers.
-    protected path = new Path2D();
 
     /**
      * It's not always that the path has to be updated.
@@ -130,7 +131,7 @@ export class Arc extends Shape {
     }
 
     private get fullPie(): boolean {
-        return normalizeAngle360(this.startAngle) === normalizeAngle360(this.endAngle);
+        return isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
     }
 
     private _counterClockwise: boolean = false;

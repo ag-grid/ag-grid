@@ -1,7 +1,6 @@
 import {Chart} from "../chart";
 import {PolarSeries} from "./polarSeries";
 import {Group} from "../../scene/group";
-import {Arc, ArcType} from "../../scene/shape/arc";
 import {Line} from "../../scene/shape/line";
 import {Text} from "../../scene/shape/text";
 import {Selection} from "../../scene/selection";
@@ -10,10 +9,12 @@ import scaleLinear, {LinearScale} from "../../scale/linearScale";
 import {normalizeAngle180, toRadians} from "../../util/angle";
 import colors from "../colors";
 import {Color} from "../../util/color";
+import {Sector} from "../../scene/shape/sector";
 
 type SectorDatum = {
     index: number,
-    radius: number,
+    innerRadius: number,
+    outerRadius: number,
     startAngle: number,
     endAngle: number,
     midAngle: number,
@@ -73,8 +74,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set angleField(value: Extract<keyof D, string> | null) {
         if (this._angleField !== value) {
             this._angleField = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
@@ -86,8 +87,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set labelField(value: Extract<keyof D, string> | null) {
         if (this._labelField !== value) {
             this._labelField = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
@@ -114,13 +115,39 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
     get rotation(): number {
         return this._rotation;
+    }
+
+    private _outerRadiusOffset: number = 0;
+    set outerRadiusOffset(value: number) {
+        if (this._outerRadiusOffset !== value) {
+            this._outerRadiusOffset = value;
+            if (this.chart) {
+                this.chart.layoutPending = true;
+            }
+        }
+    }
+    get outerRadiusOffset(): number {
+        return this._outerRadiusOffset;
+    }
+
+    private _innerRadiusOffset: number = 0;
+    set innerRadiusOffset(value: number) {
+        if (this._innerRadiusOffset !== value) {
+            this._innerRadiusOffset = value;
+            if (this.chart) {
+                this.chart.layoutPending = true;
+            }
+        }
+    }
+    get innerRadiusOffset(): number {
+        return this._innerRadiusOffset;
     }
 
     /**
@@ -141,8 +168,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set radiusField(value: Extract<keyof D, string> | null) {
         if (this._radiusField !== value) {
             this._radiusField = value;
-            if (this.processData()) {
-                this.update();
+            if (this.chart) {
+                this.chart.layoutPending = true;
             }
         }
     }
@@ -160,8 +187,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         this._radiusField = radiusField;
         this._data = data;
 
-        if (this.processData()) {
-            this.update();
+        if (this.chart) {
+            this.chart.layoutPending = true;
         }
     }
 
@@ -186,8 +213,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
-        if (this.processData()) {
-            this.update();
+        if (this.chart) {
+            this.chart.layoutPending = true;
         }
     }
     get data(): any[] {
@@ -251,6 +278,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
             const radius = radiusField ? this.radiusScale.convert(radiusData[sectorIndex]) : this.radius;
+            const outerRadius = radius + this.outerRadiusOffset;
+            const innerRadius = this.innerRadiusOffset ? radius + this.innerRadiusOffset : 0;
             const startAngle = angleScale.convert(start + rotation);
             const endAngle = angleScale.convert(end + rotation);
 
@@ -267,7 +296,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
             sectorsData.push({
                 index: sectorIndex,
-                radius,
+                innerRadius,
+                outerRadius,
                 startAngle,
                 endAngle,
                 midAngle: normalizeAngle180(midAngle),
@@ -317,24 +347,23 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Arc).each(node => node.tag = PieSeriesNodeTag.Sector);
+        enterGroups.append(Sector).each(node => node.tag = PieSeriesNodeTag.Sector);
         enterGroups.append(Line).each(node => node.tag = PieSeriesNodeTag.Callout);
         enterGroups.append(Text).each(node => node.tag = PieSeriesNodeTag.Label);
 
         const groupSelection = updateGroups.merge(enterGroups);
 
-        groupSelection.selectByTag<Arc>(PieSeriesNodeTag.Sector)
-            .each((arc, datum) => {
-                arc.type = ArcType.Round;
-                arc.radiusX = datum.radius;
-                arc.radiusY = datum.radius;
-                arc.startAngle = datum.startAngle;
-                arc.endAngle = datum.endAngle;
-                arc.fillStyle = datum.fillStyle;
-                arc.strokeStyle = datum.strokeStyle;
-                arc.shadow = datum.shadow;
-                arc.lineWidth = datum.lineWidth;
-                arc.lineJoin = 'round';
+        groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector)
+            .each((sector, datum) => {
+                sector.innerRadius = datum.innerRadius;
+                sector.outerRadius = datum.outerRadius;
+                sector.startAngle = datum.startAngle;
+                sector.endAngle = datum.endAngle;
+                sector.fillStyle = datum.fillStyle;
+                sector.strokeStyle = datum.strokeStyle;
+                sector.shadow = datum.shadow;
+                sector.lineWidth = datum.lineWidth;
+                sector.lineJoin = 'round';
             });
 
         groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout)
