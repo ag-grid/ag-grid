@@ -3,13 +3,13 @@ import { SetFilter } from "./setFilter/setFilter";
 import { RichSelectCellEditor } from "./rendering/richSelect/richSelectCellEditor";
 import { LicenseManager } from "./licenseManager";
 import { DetailCellRenderer } from "./rendering/detail/detailCellRenderer";
-import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp";
-import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp";
-import {ColumnToolPanel} from "./sideBar/providedPanels/columns/columnToolPanel";
-import {AggregationComp} from "./statusBar/providedPanels/aggregationComp";
-import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp";
-import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp";
-import {FiltersToolPanel} from "./sideBar/providedPanels/filters/filtersToolPanel";
+import { TotalRowsComp } from "./statusBar/providedPanels/totalRowsComp";
+import { TotalAndFilteredRowsComp } from "./statusBar/providedPanels/totalAndFilteredRowsComp";
+import { ColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPanel";
+import { AggregationComp } from "./statusBar/providedPanels/aggregationComp";
+import { SelectedRowsComp } from "./statusBar/providedPanels/selectedRowsComp";
+import { FilteredRowsComp } from "./statusBar/providedPanels/filteredRowsComp";
+import { FiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 
 @Bean('enterpriseBoot')
 export class EnterpriseBoot {

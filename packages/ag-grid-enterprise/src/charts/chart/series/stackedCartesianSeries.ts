@@ -1,4 +1,4 @@
-import {Series} from "./series";
+import { Series } from "./series";
 
 export abstract class StackedCartesianSeries<D, X, Y> extends Series<D, X, Y> {
 

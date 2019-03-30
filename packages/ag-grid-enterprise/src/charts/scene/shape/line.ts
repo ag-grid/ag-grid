@@ -1,6 +1,6 @@
 import { Shape } from "./shape";
-import {chainObjects} from "../../util/object";
-import {pixelSnap, PixelSnapBias} from "../../canvas/canvas";
+import { chainObjects } from "../../util/object";
+import { pixelSnap, PixelSnapBias } from "../../canvas/canvas";
 
 export class Line extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {

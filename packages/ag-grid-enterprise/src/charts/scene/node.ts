@@ -1,6 +1,6 @@
-import {Scene} from "./scene";
-import {Matrix} from "./matrix";
-import {BBox} from "./bbox";
+import { Scene } from "./scene";
+import { Matrix } from "./matrix";
+import { BBox } from "./bbox";
 
 /**
  * Abstract scene graph node.
@@ -76,8 +76,9 @@ export abstract class Node { // Don't confuse with `window.Node`.
     private static MAX_SAFE_INTEGER = Math.pow(2, 53) - 1; // Number.MAX_SAFE_INTEGER
 
     countChildren(depth = Node.MAX_SAFE_INTEGER): number {
-        if (depth <= 0)
+        if (depth <= 0) {
             return 0;
+        }
 
         const children = this.children;
         const n = children.length;

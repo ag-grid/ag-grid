@@ -13,8 +13,8 @@ import {
     Utils,
     GridOptionsWrapper
 } from "ag-grid-community";
-import {RichSelectRow} from "./richSelectRow";
-import {VirtualList} from "../virtualList";
+import { RichSelectRow } from "./richSelectRow";
+import { VirtualList } from "../virtualList";
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
@@ -121,11 +121,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const valueFormatted = this.params.formatValue(this.selectedValue);
         const eValue = this.getRefElement('eValue') as HTMLElement;
 
-        const params = <ICellRendererParams> {
+        const params = {
             value: this.selectedValue,
             valueFormatted: valueFormatted,
             api: this.gridOptionsWrapper.getApi()
-        };
+        } as ICellRendererParams;
 
         const promise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
         if (promise != null) {

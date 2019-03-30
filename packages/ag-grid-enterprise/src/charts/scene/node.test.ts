@@ -1,4 +1,4 @@
-import {Rect} from "./shape/rect";
+import { Rect } from "./shape/rect";
 
 test('isNode', () => {
     const rect = new Rect();

@@ -1,8 +1,8 @@
 import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _ } from 'ag-grid-community';
 import { ClipboardService } from "../clipboardService";
 import { AggFuncService } from "../aggregation/aggFuncService";
-import {RangeChartService} from "../chartAdaptor/rangeChart/rangeChartService";
-import {ChartType} from "../chartAdaptor/gridChartFactory";
+import { RangeChartService } from "../chartAdaptor/rangeChart/rangeChartService";
+import { ChartType } from "../chartAdaptor/gridChartFactory";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -89,7 +89,7 @@ export class MenuItemMapper {
             };
             case 'resetColumns': return {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
-                action: () => this.columnController.resetColumnState(false,"contextMenu")
+                action: () => this.columnController.resetColumnState(false, "contextMenu")
             };
             case 'expandAll': return {
                 name: localeTextFunc('expandAll', 'Expand All'),

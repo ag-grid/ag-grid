@@ -1,5 +1,5 @@
-import {Shape} from "./shape";
-import {chainObjects} from "../../util/object";
+import { Shape } from "./shape";
+import { chainObjects } from "../../util/object";
 
 /**
  * Circular arc node that uses the experimental `Path2D` class to define

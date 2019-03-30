@@ -1,13 +1,13 @@
-import {CartesianSeries} from "./cartesianSeries";
-import {CartesianChart} from "../cartesianChart";
-import {Path} from "../../scene/shape/path";
-import {Path2D} from "../../scene/path2D";
-import {Color} from "../../util/color";
+import { CartesianSeries } from "./cartesianSeries";
+import { CartesianChart } from "../cartesianChart";
+import { Path } from "../../scene/shape/path";
+import { Path2D } from "../../scene/path2D";
+import { Color } from "../../util/color";
 import ContinuousScale from "../../scale/continuousScale";
-import {Selection} from "../../scene/selection";
-import {Group} from "../../scene/group";
-import {Arc, ArcType} from "../../scene/shape/arc";
-import {extent} from "../../util/array";
+import { Selection } from "../../scene/selection";
+import { Group } from "../../scene/group";
+import { Arc, ArcType } from "../../scene/shape/arc";
+import { extent } from "../../util/array";
 import colors from "../colors";
 
 type MarkerDatum = {

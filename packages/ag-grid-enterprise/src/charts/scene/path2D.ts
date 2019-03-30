@@ -1,4 +1,4 @@
-import {cubicSegmentIntersections, segmentIntersection} from "./intersection";
+import { cubicSegmentIntersections, segmentIntersection } from "./intersection";
 
 export class Path2D {
     // The methods of this class will likely be called many times per animation frame,
@@ -70,7 +70,7 @@ export class Path2D {
         // Convert from endpoint to center parametrization:
         // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
         const xy = this.xy;
-        if (!xy) return;
+        if (!xy) { return; }
 
         if (rx < 0) {
             rx = -rx;
@@ -113,7 +113,7 @@ export class Path2D {
         }
 
         const theta1 = Math.atan2((yp - cpy) / ry, (xp - cpx) / rx);
-        let deltaTheta = Math.atan2((-yp - cpy) / ry, (-xp - cpx) / rx) - theta1;
+        const deltaTheta = Math.atan2((-yp - cpy) / ry, (-xp - cpx) / rx) - theta1;
 
         // if (fS) {
         //     if (deltaTheta <= 0) {
@@ -131,7 +131,7 @@ export class Path2D {
     arcToAlt(rx: number, ry: number, rotation: number, fA: number, fS: number, x2: number, y2: number) {
         // Convert from endpoint to center parametrization. See:
         // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
-        if (!this.xy) return;
+        if (!this.xy) { return; }
 
         if (rx < 0) {
             rx = -rx;
@@ -151,7 +151,7 @@ export class Path2D {
 
         const rx_y1p = rx * rx * y1p * y1p;
         const ry_x1p = ry * ry * x1p * x1p;
-        const root = Math.sqrt( (rx * rx * ry * ry - rx_y1p - ry_x1p) / (rx_y1p + ry_x1p) );
+        const root = Math.sqrt((rx * rx * ry * ry - rx_y1p - ry_x1p) / (rx_y1p + ry_x1p));
         const rootSign = fA === fS ? 0 : 1;
         const cxp =  rootSign * root * rx * y1p / ry;
         const cyp = -rootSign * root * ry * x1p / rx;
@@ -178,11 +178,11 @@ export class Path2D {
                     cx: number, cy: number, rx: number, ry: number,
                     phi: number, theta1: number, theta2: number, anticlockwise: number) {
         if (anticlockwise) {
-            let temp = theta1;
+            const temp = theta1;
             theta1 = theta2;
             theta2 = temp;
         }
-        let start = params.length;
+        const start = params.length;
         // See https://pomax.github.io/bezierinfo/#circles_cubic
         // Arc of unit circle (start angle = 0, end angle <= π/2) in cubic Bézier coordinates:
         // S = [1, 0]
@@ -252,7 +252,7 @@ export class Path2D {
             yy = -temp;
         }
         if (theta2) {
-            const f = 4/3 * Math.tan(theta2 / 4);
+            const f = 4 / 3 * Math.tan(theta2 / 4);
             const sinPhi2 = Math.sin(theta2);
             const cosPhi2 = Math.cos(theta2);
             const C2x = cosPhi2 + f * sinPhi2;

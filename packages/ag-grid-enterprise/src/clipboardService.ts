@@ -434,7 +434,7 @@ export class ClipboardService implements IClipboardService {
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && !_.missing(currentRow) && currentRow) {
             const rowNode = this.getRowNode(currentRow);
-            isLastRow = currentRow.rowIndex===lastRow.rowIndex && currentRow.rowIndex===lastRow.rowIndex;
+            isLastRow = currentRow.rowIndex === lastRow.rowIndex && currentRow.rowIndex === lastRow.rowIndex;
 
             rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
@@ -745,7 +745,7 @@ export class ClipboardService implements IClipboardService {
         const ranges = this.rangeController.getCellRanges();
         let startRangeIndex: number;
         let endRangeIndex: number;
-        if (ranges.length>0) {
+        if (ranges.length > 0) {
             startRangeIndex = 0;
             endRangeIndex = 0;
         } else {

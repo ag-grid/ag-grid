@@ -27,8 +27,8 @@ import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
 import { WatermarkComp } from "./license/watermark";
-import {RangeChartService} from "./chartAdaptor/rangeChart/rangeChartService";
-import {ChartControlComp} from "./chartAdaptor/chartControlComp";
+import { RangeChartService } from "./chartAdaptor/rangeChart/rangeChartService";
+import { ChartControlComp } from "./chartAdaptor/chartControlComp";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";

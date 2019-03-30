@@ -31,7 +31,7 @@ export class SideBarButtonsComp extends Component {
     }
 
     public setActiveButton(id: string | undefined): void {
-        this.buttonComps.forEach( comp => {
+        this.buttonComps.forEach(comp => {
             comp.setSelected(id === comp.getToolPanelId());
         });
     }
@@ -52,7 +52,7 @@ export class SideBarButtonsComp extends Component {
 
     public clearButtons(): void {
         if (this.buttonComps) {
-            this.buttonComps.forEach( comp => comp.destroy() );
+            this.buttonComps.forEach(comp => comp.destroy());
         }
         _.clearElement(this.getGui());
         this.buttonComps.length = 0;
@@ -112,6 +112,6 @@ class SideBarButtonComp extends Component {
     }
 
     public setSelected(selected: boolean): void {
-        this.addOrRemoveCssClass( 'ag-selected', selected);
+        this.addOrRemoveCssClass('ag-selected', selected);
     }
 }

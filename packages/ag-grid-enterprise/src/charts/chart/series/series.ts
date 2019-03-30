@@ -1,5 +1,5 @@
-import {Group} from "../../scene/group";
-import {Chart} from "../chart";
+import { Group } from "../../scene/group";
+import { Chart } from "../chart";
 
 export abstract class Series<D, X, Y> {
 

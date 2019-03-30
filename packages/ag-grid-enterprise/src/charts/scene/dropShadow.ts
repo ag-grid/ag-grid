@@ -1,5 +1,5 @@
-import {Offset} from "./offset";
-export {Offset} from "./offset";
+import { Offset } from "./offset";
+export { Offset } from "./offset";
 
 export class DropShadow {
     constructor(color: string, offset: Offset, blur: number) {

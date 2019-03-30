@@ -1,4 +1,4 @@
-export default function (a: number, b: number, count: number): NumericTicks {
+export default function(a: number, b: number, count: number): NumericTicks {
     const step = tickStep(a, b, count);
     a = Math.ceil(a / step) * step;
     b = Math.floor(b / step) * step + step / 2;
@@ -12,7 +12,7 @@ const e2 = Math.sqrt(2);
 
 function tickStep(a: number, b: number, count: number): number {
     const rawStep = Math.abs(b - a) / Math.max(0, count);
-    let step = Math.pow(10, Math.floor( Math.log(rawStep) / Math.LN10) ); // = Math.log10(rawStep)
+    let step = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10)); // = Math.log10(rawStep)
     const error = rawStep / step;
 
     if (error >= e10) {

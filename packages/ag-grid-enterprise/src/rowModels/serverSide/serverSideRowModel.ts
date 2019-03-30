@@ -32,7 +32,7 @@ import {
     RowRenderer
 } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
-import {ServerSideBlock} from "./serverSideBlock";
+import { ServerSideBlock } from "./serverSideBlock";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -243,8 +243,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         const shouldAnimate = () => {
-            let rowAnimationEnabled = this.gridOptionsWrapper.isAnimateRows();
-            if (rowNode.master) return rowAnimationEnabled && rowNode.expanded;
+            const rowAnimationEnabled = this.gridOptionsWrapper.isAnimateRows();
+            if (rowNode.master) { return rowAnimationEnabled && rowNode.expanded; }
             return rowAnimationEnabled;
         };
 
@@ -262,8 +262,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         this.eventService.dispatchEvent(modelUpdatedEvent);
     }
-
-
 
     private reset(): void {
 

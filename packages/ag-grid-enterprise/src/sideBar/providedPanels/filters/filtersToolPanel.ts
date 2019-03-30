@@ -15,7 +15,7 @@ import {
     ValueService
 } from "ag-grid-community";
 
-import {ToolPanelFilterComp} from "./toolPanelFilterComp";
+import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
 export class FiltersToolPanel extends Component implements IToolPanelComp {
 
@@ -52,8 +52,8 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
         _.clearElement(eGui);
         const primaryCols = this.columnController.getAllPrimaryColumns();
         if (!primaryCols) { return; }
-        const primaryColsWithFilter = primaryCols.filter( col => col.isFilterAllowed() );
-        primaryColsWithFilter.forEach( col => this.addColumnComps(col) );
+        const primaryColsWithFilter = primaryCols.filter(col => col.isFilterAllowed());
+        primaryColsWithFilter.forEach(col => this.addColumnComps(col));
     }
 
     // we don't support refreshing, but must implement because it's on the tool panel interface

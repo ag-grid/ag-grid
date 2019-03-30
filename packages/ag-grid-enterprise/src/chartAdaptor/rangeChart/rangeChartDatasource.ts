@@ -11,7 +11,7 @@ import {
     CellRange,
     ValueService
 } from "ag-grid-community";
-import {ChartDatasource} from "./rangeChartService";
+import { ChartDatasource } from "./rangeChartService";
 
 export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
@@ -82,16 +82,16 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
             displayedCols.indexOf(col) >= 0;
 
         // pull out all dimension columns from the range
-        this.rangeSelection.columns.forEach( col => {
+        this.rangeSelection.columns.forEach(col => {
             if (isDimension(col)) {
                 this.categoryCols.push(col);
             }
         });
 
         // if no dimension columns in the range, then pull out first dimension column from displayed columns
-        if (this.categoryCols.length===0) {
-            displayedCols!.forEach( col => {
-                if (this.categoryCols.length===0 && isDimension(col)) {
+        if (this.categoryCols.length === 0) {
+            displayedCols!.forEach(col => {
+                if (this.categoryCols.length === 0 && isDimension(col)) {
                     this.categoryCols.push(col);
                 }
             });
@@ -118,7 +118,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         const rangeLastRow = Math.min(this.endRow, modelLastRow);
         this.rowCount = rangeLastRow - this.startRow + 1;
 
-        if (this.rowCount<=0) {
+        if (this.rowCount <= 0) {
             this.addError('No rows in selected range.');
         }
     }
@@ -133,7 +133,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
-        const valueColumnsInRange = colsInRange.filter( col =>
+        const valueColumnsInRange = colsInRange.filter(col =>
             // all columns must have enableValue enabled
             col.getColDef().enableValue
             // and the column must be visible in the grid. this gets around issues where user switches
@@ -141,11 +141,11 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
             && displayedCols.indexOf(col) >= 0
         );
 
-        if (valueColumnsInRange.length===0) {
+        if (valueColumnsInRange.length === 0) {
             this.addError('No value column in selected range.');
         }
 
-        valueColumnsInRange.forEach( col => {
+        valueColumnsInRange.forEach(col => {
 
             const colId = col.getColId();
             const displayName = this.columnController.getDisplayNameForColumn(col, 'chart');
@@ -160,7 +160,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     public getCategory(i: number): string {
         const rowNode = this.rowModel.getRow(this.startRow + i);
         const resParts: string[] = [];
-        this.categoryCols.forEach( col => {
+        this.categoryCols.forEach(col => {
             const part = this.valueService.getValue(col, rowNode);
             // force return type to be string or empty string (as value can be an object)
             const partStr = (part && part.toString) ? part.toString() : '';

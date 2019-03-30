@@ -1,5 +1,5 @@
-import {BandScale} from "../../scale/bandScale";
-import {Axis} from "../../axis";
+import { BandScale } from "../../scale/bandScale";
+import { Axis } from "../../axis";
 
 export class CategoryAxis extends Axis<string> {
     constructor() {

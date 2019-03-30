@@ -1,36 +1,36 @@
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {GridPanel, RowContainerComponents} from "../gridPanel/gridPanel";
-import {ExpressionService} from "../valueService/expressionService";
-import {TemplateService} from "../templateService";
-import {ValueService} from "../valueService/valueService";
-import {EventService} from "../eventService";
-import {RowComp} from "./rowComp";
-import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
-import {Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
-import {Constants} from "../constants";
-import {CellComp} from "./cellComp";
-import {Autowired, Bean, Optional, Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import {ColumnApi} from "../columnController/columnApi";
-import {ColumnController} from "../columnController/columnController";
-import {Logger, LoggerFactory} from "../logger";
-import {FocusedCellController} from "../focusedCellController";
-import {IRangeController} from "../interfaces/iRangeController";
-import {CellNavigationService} from "../cellNavigationService";
-import {CellPosition} from "../entities/cellPosition";
-import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOptions";
-import {RowContainerComponent} from "./rowContainerComponent";
-import {BeanStub} from "../context/beanStub";
-import {PaginationProxy} from "../rowModels/paginationProxy";
-import {FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams} from "../gridApi";
-import {PinnedRowModel} from "../rowModels/pinnedRowModel";
-import {Beans} from "./beans";
-import {AnimationFrameService} from "../misc/animationFrameService";
-import {MaxDivHeightScaler} from "./maxDivHeightScaler";
-import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
-import {ICellEditorComp} from "../interfaces/iCellEditor";
-import {_} from "../utils";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
+import { ExpressionService } from "../valueService/expressionService";
+import { TemplateService } from "../templateService";
+import { ValueService } from "../valueService/valueService";
+import { EventService } from "../eventService";
+import { RowComp } from "./rowComp";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
+import { Constants } from "../constants";
+import { CellComp } from "./cellComp";
+import { Autowired, Bean, Optional, Qualifier } from "../context/context";
+import { GridCore } from "../gridCore";
+import { ColumnApi } from "../columnController/columnApi";
+import { ColumnController } from "../columnController/columnController";
+import { Logger, LoggerFactory } from "../logger";
+import { FocusedCellController } from "../focusedCellController";
+import { IRangeController } from "../interfaces/iRangeController";
+import { CellNavigationService } from "../cellNavigationService";
+import { CellPosition } from "../entities/cellPosition";
+import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
+import { RowContainerComponent } from "./rowContainerComponent";
+import { BeanStub } from "../context/beanStub";
+import { PaginationProxy } from "../rowModels/paginationProxy";
+import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";
+import { PinnedRowModel } from "../rowModels/pinnedRowModel";
+import { Beans } from "./beans";
+import { AnimationFrameService } from "../misc/animationFrameService";
+import { MaxDivHeightScaler } from "./maxDivHeightScaler";
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { ICellEditorComp } from "../interfaces/iCellEditor";
+import { _ } from "../utils";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -1029,9 +1029,9 @@ export class RowRenderer extends BeanStub {
                 };
                 const userCell = userFunc(params);
                 if (_.exists(userCell)) {
-                    if ((<any>userCell).floating) {
-                        _.doOnce( ()=> {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`)}, 'no floating in userCell');
-                        userCell.rowPinned = (<any>userCell).floating;
+                    if ((userCell as any).floating) {
+                        _.doOnce(() => {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {
                         rowPinned: userCell.rowPinned,
@@ -1245,9 +1245,9 @@ export class RowRenderer extends BeanStub {
                 } as TabToNextCellParams;
                 const userCell = userFunc(params);
                 if (_.exists(userCell)) {
-                    if ((<any>userCell).floating) {
-                        _.doOnce( ()=> {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`)}, 'no floating in userCell');
-                        userCell.rowPinned = (<any>userCell).floating;
+                    if ((userCell as any).floating) {
+                        _.doOnce(() => {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {
                         rowIndex: userCell.rowIndex,

@@ -1,5 +1,5 @@
-import {Shape} from "./shape";
-import {Path2D} from "../path2D";
+import { Shape } from "./shape";
+import { Path2D } from "../path2D";
 
 export class Path extends Shape {
 

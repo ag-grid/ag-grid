@@ -57,7 +57,6 @@ test('invert linear', () => {
     expect(scale.invert(150)).toBe(200);
 });
 
-
 test('invert linear clamp', () => {
     const scale = scaleLinear();
 

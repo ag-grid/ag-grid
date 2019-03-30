@@ -1,9 +1,9 @@
-import {Shape} from "./shape";
-import {Path2D} from "../path2D";
-import {BBox, isPointInBBox} from "../bbox";
-import {normalizeAngle360} from "../../util/angle";
-import {chainObjects} from "../../util/object";
-import {isEqual} from "../../util/number";
+import { Shape } from "./shape";
+import { Path2D } from "../path2D";
+import { BBox, isPointInBBox } from "../bbox";
+import { normalizeAngle360 } from "../../util/angle";
+import { chainObjects } from "../../util/object";
+import { isEqual } from "../../util/number";
 
 export enum ArcType {
     Open,
@@ -169,8 +169,9 @@ export class Arc extends Shape {
     }
 
     updatePath(): void {
-        if (!this.dirtyPath)
+        if (!this.dirtyPath) {
             return;
+        }
 
         const path = this.path;
 

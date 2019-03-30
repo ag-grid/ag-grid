@@ -1,8 +1,8 @@
-import {Shape} from "./shape";
-import {Path2D} from "../path2D";
-import {normalizeAngle360} from "../../util/angle";
-import {isEqual} from "../../util/number";
-import {BBox} from "../bbox";
+import { Shape } from "./shape";
+import { Path2D } from "../path2D";
+import { normalizeAngle360 } from "../../util/angle";
+import { isEqual } from "../../util/number";
+import { BBox } from "../bbox";
 
 export class Sector extends Shape {
 
@@ -147,8 +147,9 @@ export class Sector extends Shape {
     }
 
     updatePath(): void {
-        if (!this.dirtyPath)
+        if (!this.dirtyPath) {
             return;
+        }
 
         const path = this.path;
 

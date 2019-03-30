@@ -1,12 +1,10 @@
-import {CartesianChart} from "../charts/chart/cartesianChart";
-import {CategoryAxis} from "../charts/chart/axis/categoryAxis";
-import {NumberAxis} from "../charts/chart/axis/numberAxis";
-import {BarSeries} from "../charts/chart/series/barSeries";
-import {PolarChart} from "../charts/chart/polarChart";
-import {PieSeries} from "../charts/chart/series/pieSeries";
-import {DropShadow, Offset} from "../charts/scene/dropShadow";
-import {Chart} from "../charts/chart/chart";
-import {LineSeries} from "../charts/chart/series/lineSeries";
+import { CartesianChart } from "../charts/chart/cartesianChart";
+import { CategoryAxis } from "../charts/chart/axis/categoryAxis";
+import { NumberAxis } from "../charts/chart/axis/numberAxis";
+import { BarSeries } from "../charts/chart/series/barSeries";
+import { PolarChart } from "../charts/chart/polarChart";
+import { Chart } from "../charts/chart/chart";
+import { LineSeries } from "../charts/chart/series/lineSeries";
 
 export interface ChartOptions {
     height: number,
@@ -33,7 +31,7 @@ export class GridChartFactory {
 
         barChart.width = chartOptions.width;
         barChart.height = chartOptions.height;
-        barChart.padding = {top: 10, right: 25, bottom: 100, left: 75};
+        barChart.padding = {top: 15, right: 25, bottom: 100, left: 75};
         barChart.xAxis.labelRotation = 90;
 
         const barSeries = new BarSeries<any>();
@@ -49,14 +47,13 @@ export class GridChartFactory {
 
         lineChart.width = chartOptions.width;
         lineChart.height = chartOptions.height;
-        lineChart.padding = {top: 10, right: 25, bottom: 100, left: 75};
+        lineChart.padding = {top: 15, right: 25, bottom: 100, left: 75};
         lineChart.xAxis.labelRotation = 90;
 
-        // need to a default line series???
+        // TODO currently required due to bug in charting library.
         const lineSeries = new LineSeries<any, string, number>();
         lineSeries.lineWidth = 2;
         lineSeries.markerRadius = 3;
-
         lineChart.addSeries(lineSeries);
 
         return lineChart;
@@ -68,13 +65,6 @@ export class GridChartFactory {
         pieChart.width = chartOptions.width;
         pieChart.height = chartOptions.height;
         pieChart.padding = {top: 50, right: 50, bottom: 50, left: 50};
-
-        const pieSeries = new PieSeries<any>();
-        pieSeries.shadow = new DropShadow('rgba(0,0,0,0.2)', new Offset(0, 0), 15);
-        pieSeries.lineWidth = 1;
-        pieSeries.calloutWidth = 1;
-
-        pieChart.addSeries(pieSeries);
 
         return pieChart;
     }

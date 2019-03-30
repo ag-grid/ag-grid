@@ -248,8 +248,9 @@ export class Matrix {
         // If the matrix is mostly identity (95% of the time),
         // the `if (this.isIdentity)` check can make this call 3-4 times
         // faster on average: https://jsperf.com/matrix-check-first-vs-always-set
-        if (this.identity)
+        if (this.identity) {
             return;
+        }
 
         const e = this.elements;
         ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);
@@ -257,13 +258,17 @@ export class Matrix {
 
     private static matrix = new Matrix();
     static flyweight(elements?: number[] | Matrix): Matrix {
-        if (elements)
-            if (elements instanceof Matrix)
+        if (elements) {
+            if (elements instanceof Matrix) {
                 Matrix.matrix.setElements(elements.elements);
-            else
+            }
+            else {
                 Matrix.matrix.setElements(elements);
-        else
+            }
+        }
+        else {
             Matrix.matrix.setIdentityElements();
+        }
 
         return Matrix.matrix;
     }
