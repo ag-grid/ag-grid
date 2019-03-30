@@ -1617,8 +1617,6 @@ export class CellComp extends Component {
         bottom: boolean,
         left: boolean
     } {
-        type LeftRightDisplayMethods = 'getDisplayedColBefore' | 'getDisplayedColAfter';
-
         const isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
 
         let top = false;
@@ -1626,19 +1624,19 @@ export class CellComp extends Component {
         let bottom = false;
         let left = false;
 
-        let leftMethod: LeftRightDisplayMethods  = 'getDisplayedColBefore';
-        let rightMethod: LeftRightDisplayMethods = 'getDisplayedColAfter';
-
-        if (isRtl) {
-            leftMethod = 'getDisplayedColAfter';
-            rightMethod = 'getDisplayedColBefore';
-        }
-
+        const thisCol = this.cellPosition.column;
         const rangeController = this.beans.rangeController;
 
-        const thisCol = this.cellPosition.column;
-        const leftCol = this.beans.columnController[leftMethod](thisCol);
-        const rightCol = this.beans.columnController[rightMethod](thisCol);
+        let leftCol: Column;
+        let rightCol: Column;
+
+        if (isRtl) {
+            leftCol = this.beans.columnController.getDisplayedColAfter(thisCol);
+            rightCol = this.beans.columnController.getDisplayedColBefore(thisCol);
+        } else {
+            leftCol = this.beans.columnController.getDisplayedColBefore(thisCol);
+            rightCol = this.beans.columnController.getDisplayedColAfter(thisCol);
+        }
 
         const ranges: CellRange[] = rangeController.getCellRanges().filter(
             range => rangeController.isCellInSpecificRange(this.cellPosition, range)
