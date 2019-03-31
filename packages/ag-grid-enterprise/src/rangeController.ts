@@ -384,8 +384,10 @@ export class RangeController implements IRangeController {
             return;
         }
 
+        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
+
         // ctrlKey for windows, metaKey for Apple
-        const multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        const multiKeyPressed = ctrlKey || metaKey;
         const allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         const multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
 
@@ -397,12 +399,15 @@ export class RangeController implements IRangeController {
         }
 
         this.dragging = true;
-        this.newestRangeStartCell = mouseCell;
         this.draggingCell = mouseCell;
         this.lastMouseEvent = mouseEvent;
 
-        if (!multiSelectKeyPressed) {
+        if (!multiSelectKeyPressed && !shiftKey) {
             this.cellRanges.length = 0;
+        }
+
+        if (!shiftKey) {
+            this.newestRangeStartCell = mouseCell;
         }
 
         // if we didn't clear the ranges, then dragging means the user clicked, and when the
