@@ -40,7 +40,7 @@
     "@vue/cli-plugin-unit-jest": "^3.2.0",
     "@vue/cli-service": "^3.2.0",
     "ag-grid-community": "^20.2.0",
-    "typescript": "^3.2.0",
+    "typescript": "~3.4.1",
     "vue-template-compiler": "<= 2.5.17 || >= 2.5.20",
     "gulp-typescript": "^5.0.0",
     "gulp": "^3.9.1"

@@ -33,7 +33,7 @@
     "merge2": "^1.2.2",
     "reflect-metadata": "^0.1.12",
     "systemjs": "^0.21.5",
-    "typescript": "~3.2.1"
+    "typescript": "~3.4.1"
   },
   "peerDependencies": {
     "ag-grid-community": "^20.2.0",
