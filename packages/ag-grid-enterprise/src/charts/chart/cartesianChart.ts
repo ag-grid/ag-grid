@@ -111,12 +111,18 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         if (typeof xDomain[0] === 'number') {
             xAxis.domain = checkExtent(extent(xDomain));
         } else {
+            if (!xDomain.length) {
+                return;
+            }
             xAxis.domain = xDomain; // categories (strings), duplicates will be removed by the axis' scale
         }
 
         if (typeof yDomain[0] === 'number') {
             yAxis.domain = checkExtent(extent(yDomain));
         } else {
+            if (!yDomain.length) {
+                return;
+            }
             yAxis.domain = yDomain;
         }
 
