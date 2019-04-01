@@ -159,12 +159,11 @@ export class Dialog extends PopupComponent {
             this.offsetDialog(x, y);
         }
 
-        this.addDestroyableEventListener(eGui, 'mousedown', () => {
+        this.addDestroyableEventListener(eGui, 'mousedown', (e) => {
             _.addCssClass(eGui.offsetParent as HTMLElement, 'ag-unselectable');
-            this.popupService.bringPopupToFront(eGui);
-        });
-        this.addDestroyableEventListener(eGui, 'mouseup', () => {
-            _.removeCssClass(eGui.offsetParent as HTMLElement, 'ag-unselectable');
+            if ((e.target as HTMLElement).contains(this.eClose)) {
+                return;
+            }
             this.popupService.bringPopupToFront(eGui);
         });
         this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
