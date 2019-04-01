@@ -5,7 +5,6 @@ import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DialogEvent } from "../events";
-import { EventService } from "../eventService";
 import { _ } from "../utils";
 import { Component } from "./component";
 
@@ -42,14 +41,16 @@ export class Dialog extends PopupComponent {
 
     private static TEMPLATE =
         `<div class="ag-dialog">
-            <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
-            <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
-            <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
-            <div ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
-            <div ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
-            <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
-            <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
-            <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
+            <div class="ag-resizer-wrapper">
+                <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
+                <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
+                <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
+                <div ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
+                <div ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
+                <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
+                <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
+                <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
+            </div>
             <div ref="eTitleBar" class="ag-dialog-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-dialog-title-bar-title"></span>
                 <div ref="eTitleBarButtons">
@@ -83,7 +84,6 @@ export class Dialog extends PopupComponent {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;

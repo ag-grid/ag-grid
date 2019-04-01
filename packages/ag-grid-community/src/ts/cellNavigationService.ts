@@ -96,13 +96,13 @@ export class CellNavigationService {
         const colToLeft = this.columnController.getDisplayedColBefore(lastCell.column);
         if (!colToLeft) {
             return null;
-        } else {
-            return {
-                rowIndex: lastCell.rowIndex,
-                column: colToLeft,
-                rowPinned: lastCell.rowPinned
-            } as CellPosition;
         }
+
+        return {
+            rowIndex: lastCell.rowIndex,
+            column: colToLeft,
+            rowPinned: lastCell.rowPinned
+        } as CellPosition;
     }
 
     private getCellToRight(lastCell: CellPosition | null): CellPosition | null {
@@ -114,13 +114,13 @@ export class CellNavigationService {
         // if already on right, do nothing
         if (!colToRight) {
             return null;
-        } else {
-            return {
-                rowIndex: lastCell.rowIndex,
-                column: colToRight,
-                rowPinned: lastCell.rowPinned
-            } as CellPosition;
         }
+
+        return {
+            rowIndex: lastCell.rowIndex,
+            column: colToRight,
+            rowPinned: lastCell.rowPinned
+        } as CellPosition;
     }
 
     public getRowBelow(rowPosition: RowPosition): RowPosition | null {
@@ -139,20 +139,19 @@ export class CellNavigationService {
                         return {rowIndex: 0, rowPinned: null} as RowPosition;
                     } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
                         return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
-                    } else {
-                        return null;
                     }
+
+                    return null;
                 default:
                     // if in the main body, then try pinned bottom, otherwise return nothing
                     if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
                         return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
-                    } else {
-                        return null;
                     }
+                    return null;
             }
-        } else {
-            return {rowIndex: index + 1, rowPinned: pinned} as RowPosition;
         }
+
+        return {rowIndex: index + 1, rowPinned: pinned} as RowPosition;
     }
 
     private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
@@ -167,24 +166,25 @@ export class CellNavigationService {
                 column: lastCell.column,
                 rowPinned: rowBelow.rowPinned
             } as CellPosition;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     private isLastRowInContainer(rowPosition: RowPosition): boolean {
         const pinned = rowPosition.rowPinned;
         const index = rowPosition.rowIndex;
+
         if (pinned === Constants.PINNED_TOP) {
             const lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
             return lastTopIndex <= index;
         } else if (pinned === Constants.PINNED_BOTTOM) {
             const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             return lastBottomIndex <= index;
-        } else {
-            const lastBodyIndex = this.rowModel.getPageLastRow();
-            return lastBodyIndex <= index;
         }
+
+        const lastBodyIndex = this.rowModel.getPageLastRow();
+        return lastBodyIndex <= index;
     }
 
     private getRowAbove(rowIndex: number, pinned: string): RowPosition | null {
@@ -195,23 +195,20 @@ export class CellNavigationService {
             } else if (!pinned) {
                 if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
-                } else {
-                    return null;
                 }
+                return null;
             } else {
                 // last floating bottom
                 if (this.rowModel.isRowsToRender()) {
                     return this.getLastBodyCell();
                 } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
-                } else {
-                    return null;
                 }
+                return null;
             }
-        } else {
-            return {rowIndex: rowIndex - 1, rowPinned: pinned} as RowPosition;
         }
 
+        return {rowIndex: rowIndex - 1, rowPinned: pinned} as RowPosition;
     }
 
     private getCellAbove(lastCell: CellPosition | null): CellPosition | null {
@@ -226,9 +223,9 @@ export class CellNavigationService {
                 column: lastCell.column,
                 rowPinned: rowAbove.rowPinned
             } as CellPosition;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     private getLastBodyCell(): RowPosition {
@@ -244,13 +241,12 @@ export class CellNavigationService {
     public getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null {
         if (backwards) {
             return this.getNextTabbedCellBackwards(gridCell);
-        } else {
-            return this.getNextTabbedCellForwards(gridCell);
         }
+
+        return this.getNextTabbedCellForwards(gridCell);
     }
 
     public getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null {
-
         const displayedColumns = this.columnController.getAllDisplayedColumns();
 
         let newRowIndex: number | null = gridCell.rowIndex;

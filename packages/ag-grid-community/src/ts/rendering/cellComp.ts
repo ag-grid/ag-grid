@@ -1455,21 +1455,31 @@ export class CellComp extends Component {
         // the focus doesn't get to the text field, instead to goes to the div
         // behind, making it impossible to select the text field.
         let forceBrowserFocus = false;
+        const {button, ctrlKey, metaKey, shiftKey, target} = mouseEvent;
+        const cellInRange = this.beans.rangeController.isCellInAnyRange(this.getCellPosition());
 
-        // return if we are clicking on a row selection checkbox, otherwise the row will get selected AND
-        // we do range selection, however if user is clicking checking, they are probably only interested
-        // in row selection.
-        if (_.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-selection-checkbox', 3)) {
+        if (cellInRange && button === 2) {
             return;
         }
 
         if (_.isBrowserIE()) {
-            const target = mouseEvent.target as HTMLElement;
-            if (target.classList.contains('ag-cell')) {
+            if ((target as HTMLElement).classList.contains('ag-cell')) {
                 forceBrowserFocus = true;
             }
         }
-        this.focusCell(forceBrowserFocus);
+
+        if (!shiftKey || !this.beans.rangeController.getCellRanges().length) {
+            this.focusCell(forceBrowserFocus);
+        } else {
+            // if a range is being changed, we need to make sure the focused cell does not change.
+            mouseEvent.preventDefault();
+        }
+
+        // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
+        // is focused but we don't want to change the range selection, so return here.
+        if (_.isElementChildOfClass(target as HTMLElement, 'ag-selection-checkbox', 3)) {
+            return;
+        }
 
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
@@ -1477,10 +1487,10 @@ export class CellComp extends Component {
         const leftMouseButtonClick = _.isLeftClick(mouseEvent);
         if (leftMouseButtonClick && this.beans.rangeController) {
             const thisCell = this.cellPosition;
-            if (mouseEvent.shiftKey) {
+            if (shiftKey) {
                 this.beans.rangeController.extendLatestRangeToCell(thisCell);
             } else {
-                const ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                const ctrlKeyPressed = ctrlKey || metaKey;
                 this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
