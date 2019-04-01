@@ -45,7 +45,7 @@ include('../includes/mediaHeader.php');
 
         <img src="../images/git_current_cmd_line.png" style="width: 100%;padding-bottom: 10px">
 
-        <p>At a glance I can seee who I'm logged in as (<code>seanlandsman</code>), which host I'm on (<code>MPB</code>),
+        <p>At a glance I can see who I'm logged in as (<code>seanlandsman</code>), which host I'm on (<code>MPB</code>),
             the current directory (<code>ag-grid-dev</code>), what branch (<code>master</code>), the
             number of modified files (<code>+1</code>) and the number of untracked files (<code>+1</code>).</p>
 

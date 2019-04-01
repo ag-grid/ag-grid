@@ -261,7 +261,6 @@
         <option value="$PROJECT_DIR$/packages/ag-grid-aurelia/package.json" />
         <option value="$PROJECT_DIR$/packages/ag-grid-community/bower.json" />
         <option value="$PROJECT_DIR$/packages/ag-grid-community/package.json" />
-        <option value="$PROJECT_DIR$/packages/ag-grid-dev/package.json" />
         <option value="$PROJECT_DIR$/packages/ag-grid-docs/package.json" />
         <option value="$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-rendering-components/polymer-dynamic/package.json" />
         <option value="$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-editor/polymer-editor/package.json" />
@@ -307,7 +306,6 @@
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-aurelia-example/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-aurelia/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-community/node_modules" />
-    <handled-path value="$PROJECT_DIR$/packages/ag-grid-dev/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-docs/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-grid-filter-component/polymer-filter/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-enterprise/node_modules" />
@@ -324,7 +322,6 @@
       <path value="$PROJECT_DIR$/packages/ag-grid-angular/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-aurelia-example/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-aurelia/package.json" />
-      <path value="$PROJECT_DIR$/packages/ag-grid-dev/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-docs/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/best-web-component-data-grid/ag-grid-webcomponent/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/framework-examples/polymer-examples/package.json" />
@@ -676,13 +673,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/packages/ag-grid-community/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="20" lean-forward="false" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/packages/ag-grid-dev/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="20" lean-forward="false" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
