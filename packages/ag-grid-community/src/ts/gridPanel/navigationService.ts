@@ -181,7 +181,6 @@ export class NavigationService {
     // scrollColumn - what column to horizontally scroll to
     // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
     private navigateTo(scrollIndex: number, scrollType: string, scrollColumn: Column, focusIndex: number, focusColumn: Column): void {
-
         if (_.exists(scrollColumn)) {
             this.gridPanel.ensureColumnVisible(scrollColumn);
         }
