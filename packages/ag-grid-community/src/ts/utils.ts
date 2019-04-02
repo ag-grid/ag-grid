@@ -167,18 +167,80 @@ export class Utils {
         }
     }
 
-    static getAbsoluteHeight(el: HTMLElement | null): number {
-        const styles: any = window.getComputedStyle(el!);
-        const margin = parseFloat(styles.marginTop) + parseFloat(styles.marginBottom);
+    static getElementSize(el: HTMLElement): {
+        height: number,
+        width: number,
+        paddingTop: number,
+        paddingRight: number,
+        paddingBottom: number,
+        paddingLeft: number,
+        marginTop: number,
+        marginRight: number,
+        marginBottom: number,
+        marginLeft: number,
+        boxSizing: string
+    } {
+        const {
+            height,
+            width,
+            paddingTop,
+            paddingRight,
+            paddingBottom,
+            paddingLeft,
+            marginTop,
+            marginRight,
+            marginBottom,
+            marginLeft,
+            boxSizing
+        } = window.getComputedStyle(el);
 
-        return Math.ceil(el!.offsetHeight + margin);
+        return {
+            height: parseFloat(height),
+            width: parseFloat(width),
+            paddingTop: parseFloat(paddingTop),
+            paddingRight: parseFloat(paddingRight),
+            paddingBottom: parseFloat(paddingBottom),
+            paddingLeft: parseFloat(paddingLeft),
+            marginTop: parseFloat(marginTop),
+            marginRight: parseFloat(marginRight),
+            marginBottom: parseFloat(marginBottom),
+            marginLeft: parseFloat(marginLeft),
+            boxSizing
+        };
+    }
+
+    static getInnerHeight(el: HTMLElement): number {
+        const size = this.getElementSize(el);
+
+        if (size.boxSizing === 'border-box') {
+            return size.height - size.paddingTop - size.paddingBottom;
+        }
+
+        return size.height;
+    }
+
+    static getInnerWidth(el: HTMLElement): number {
+        const size = this.getElementSize(el);
+
+        if (size.boxSizing === 'border-box') {
+            return size.width - size.paddingLeft - size.paddingRight;
+        }
+
+        return size.width;
+    }
+
+    static getAbsoluteHeight(el: HTMLElement): number {
+        const size = this.getElementSize(el);
+        const marginRight = size.marginBottom + size.marginTop;
+
+        return Math.ceil(el.offsetHeight + marginRight);
     }
 
     static getAbsoluteWidth(el: HTMLElement): number {
-        const styles: any = window.getComputedStyle(el);
-        const margin = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight);
+        const size = this.getElementSize(el);
+        const marginWidth = size.marginLeft + size.marginRight;
 
-        return Math.ceil(el.offsetWidth + margin);
+        return Math.ceil(el.offsetWidth + marginWidth);
     }
 
     static getScrollLeft(element: HTMLElement, rtl: boolean): number {

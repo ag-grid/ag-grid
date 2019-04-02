@@ -867,6 +867,7 @@ $handleSize: 5px;
     .ag-resizer {
         position: absolute;
         pointer-events: none;
+        z-index: 10;
         &.ag-resizer-topLeft {
             top: 0;
             left: 0;

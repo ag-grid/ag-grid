@@ -382,11 +382,11 @@ export class Dialog extends PopupComponent {
     }
 
     public getBodyHeight(): number {
-        return this.eContentWrapper.clientHeight;
+        return _.getInnerHeight(this.eContentWrapper);
     }
 
     public getBodyWidth(): number {
-        return this.eContentWrapper.clientWidth;
+        return _.getInnerWidth(this.eContentWrapper);
     }
 
     public setTitle(title: string) {
