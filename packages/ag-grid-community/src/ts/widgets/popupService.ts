@@ -7,7 +7,7 @@ import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
 import { EventService } from "../eventService";
-import { Events } from '../events';
+import { Events, PopupServiceEvent } from '../events';
 import { _ } from "../utils";
 
 @Bean('popupService')
@@ -285,7 +285,7 @@ export class PopupService {
         return Math.min(Math.max(y, 0), Math.abs(maxY));
     }
 
-    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement | null }, x: number): number {
+    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
@@ -293,19 +293,21 @@ export class PopupService {
         const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
         const defaultPadding = 3;
+        const ePopup = params.ePopup;
 
         let minWidth = Math.min(200, parentRect.width);
         let diff = 0;
 
         if (params.minWidth && params.minWidth < minWidth) {
             minWidth = params.minWidth;
-        } else if (params.ePopup!.clientWidth > 0) {
-            minWidth = params.ePopup!.clientWidth;
-            params.ePopup!.style.minWidth = `${minWidth}px`;
-            diff = _.getAbsoluteWidth(params.ePopup!) - minWidth;
+        } else if (ePopup.offsetWidth > 0) {
+            minWidth = ePopup.offsetWidth;
+            ePopup.style.minWidth = `${minWidth}px`;
+            diff = _.getAbsoluteWidth(ePopup) - minWidth;
         }
 
         let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement!) + docElement!.scrollLeft) : parentRect.width;
+
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
@@ -494,5 +496,14 @@ export class PopupService {
         ) { return; }
 
         popupList[popupList.length - 1].insertAdjacentElement('afterend', ePopup);
+
+        const params: PopupServiceEvent = {
+            type: 'popupToFront',
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            ePopup
+        };
+
+        this.eventService.dispatchEvent(params);
     }
 }

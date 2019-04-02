@@ -372,3 +372,7 @@ export interface DialogEvent extends AgGridEvent {
     x?: number;
     y?: number;
 }
+
+export interface PopupServiceEvent extends AgGridEvent {
+    ePopup: HTMLElement
+}

@@ -405,11 +405,11 @@ export class Dialog extends PopupComponent {
             newHeight = eGui.offsetParent.clientHeight - this.position.y;
         }
 
-        if (this.size.width === newHeight) { return; }
+        if (this.size.height === newHeight) { return; }
 
         this.size.height = newHeight;
         _.setFixedHeight(eGui, newHeight);
-        _.setFixedHeight(this.eContentWrapper, newHeight - this.eTitleBar.offsetHeight);
+        _.setFixedHeight(this.eContentWrapper, eGui.clientHeight - this.eTitleBar.offsetHeight);
 
         if (!silent) {
             this.buildParamsAndDispatchEvent(Dialog.EVENT_RESIZE);

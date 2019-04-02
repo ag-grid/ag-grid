@@ -19,9 +19,9 @@ import { PolarChart } from "../charts/chart/polarChart";
 export class GridChartComp extends Component {
 
     private static TEMPLATE =
-        `<div>
-            <div ref="eChart"></div>
-            <div ref="eErrors"></div>
+        `<div class="ag-chart">
+            <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
+            <div ref="eErrors" class="ag-chart-errors"></div>
         </div>`;
 
     private readonly datasource: ChartDatasource;
@@ -56,8 +56,8 @@ export class GridChartComp extends Component {
         this.container = container;
 
         this.addDestroyableEventListener(container, Dialog.EVENT_RESIZE, (event: DialogEvent) => {
-            const chartHeight = event.dialog.getBodyHeight() - 7;
-            const chartWidth = event.width as number - 2;
+            const chartHeight = event.dialog.getBodyHeight();
+            const chartWidth = event.width as number;
             this.chart.height = chartHeight;
             this.chart.width = chartWidth;
         });
