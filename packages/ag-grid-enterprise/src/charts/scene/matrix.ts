@@ -1,3 +1,5 @@
+import { BBox } from "./bbox";
+
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
  * `getTransform(): DOMMatrix;`
@@ -18,7 +20,7 @@ export class Matrix {
     // `1` means first column
     // `2` means second row
 
-    private readonly elements: number[];
+    readonly elements: number[];
 
     constructor(elements: number[] = [1, 0, 0, 1, 0, 0]) {
         this.elements = elements;
@@ -225,6 +227,43 @@ export class Matrix {
             x: x * e[0] + y * e[2] + e[4],
             y: x * e[1] + y * e[3] + e[5]
         };
+    }
+
+    transformBBox(bbox: BBox, radius: number = 0, target?: BBox): BBox {
+        const elements = this.elements;
+        const xx = elements[0];
+        const xy = elements[1];
+        const yx = elements[2];
+        const yy = elements[3];
+
+        let h_w = bbox.width * 0.5;
+        let h_h = bbox.height * 0.5;
+        const cx = bbox.x + h_w;
+        const cy = bbox.y + h_h;
+        let w, h;
+
+        if (radius) {
+            h_w -= radius;
+            h_h -= radius;
+            const sx = Math.sqrt(xx * xx + yx * yx);
+            const sy = Math.sqrt(xy * xy + yy * yy);
+            w = Math.abs(h_w * xx) + Math.abs(h_h * yx) + Math.abs(sx * radius);
+            h = Math.abs(h_w * xy) + Math.abs(h_h * yy) + Math.abs(sy * radius);
+        } else {
+            w = Math.abs(h_w * xx) + Math.abs(h_h * yx);
+            h = Math.abs(h_w * xy) + Math.abs(h_h * yy);
+        }
+
+        if (!target) {
+            target = {} as BBox;
+        }
+
+        target.x = cx * xx + cy * yx + elements[4] - w;
+        target.y = cx * xy + cy * yy + elements[5] - h;
+        target.width = w + w;
+        target.height = h + h;
+
+        return target;
     }
 
     toContext(ctx: CanvasRenderingContext2D) {
