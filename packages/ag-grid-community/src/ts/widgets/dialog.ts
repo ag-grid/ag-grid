@@ -87,6 +87,7 @@ export class Dialog extends PopupComponent {
 
     @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
+    @RefSelector('eTitleBarButtons') private eTitleBarButtons: HTMLElement;
     @RefSelector('eTitle') private eTitle: HTMLElement;
     @RefSelector('eClose') private eClose: HTMLElement;
 
@@ -379,6 +380,30 @@ export class Dialog extends PopupComponent {
     public setBodyComponent(bodyComponent: Component) {
         bodyComponent.setContainer(this);
         this.eContentWrapper.appendChild(bodyComponent.getGui());
+    }
+
+    public addTitleBarButton(button: Component, position?: number) {
+        const eTitleBarButtons = this.eTitleBarButtons;
+        const buttons = eTitleBarButtons.children;
+        const len = buttons.length;
+
+        if (position == null) {
+            position = len;
+        }
+
+        position = Math.max(0, Math.min(position, len));
+
+        const eGui = button.getGui();
+
+        if (position === 0) {
+            eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);
+        } else if (position === len) {
+            eTitleBarButtons.insertAdjacentElement('beforeend', eGui);
+        } else {
+            buttons[position - 1].insertAdjacentElement('afterend', eGui);
+        }
+
+        button.setContainer(this);
     }
 
     public getBodyHeight(): number {
