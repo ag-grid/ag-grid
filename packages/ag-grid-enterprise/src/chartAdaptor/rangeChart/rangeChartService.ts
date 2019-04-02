@@ -29,10 +29,13 @@ export class RangeChartService {
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('context') private context: Context;
 
-    public chartRange(chartType: ChartType = ChartType.Bar): void {
+    public chartCurrentRange(chartType: ChartType = ChartType.Bar): void {
         const selectedRange = this.getSelectedRange();
+        this.chartRange(selectedRange, chartType);
+    }
 
-        const ds = this.createDatasource(selectedRange);
+    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.Bar): void {
+        const ds = this.createDatasource(cellRange);
 
         if (ds) {
             const chart = new GridChartComp(chartType, ds);

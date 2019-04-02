@@ -160,19 +160,19 @@ export class MenuItemMapper {
             case 'barRangeChart': return {
                 name: localeTextFunc('barRangeChart', 'Bar'),
                 action: () => {
-                    this.rangeChartService.chartRange(ChartType.Bar);
+                    this.rangeChartService.chartCurrentRange(ChartType.Bar);
                 }
             };
             case 'lineRangeChart': return {
                 name: localeTextFunc('lineRangeChart', 'Line'),
                 action: () => {
-                    this.rangeChartService.chartRange(ChartType.Line);
+                    this.rangeChartService.chartCurrentRange(ChartType.Line);
                 }
             };
             case 'pieRangeChart': return {
                 name: localeTextFunc('pieRangeChart', 'Pie'),
                 action: () => {
-                    this.rangeChartService.chartRange(ChartType.Pie);
+                    this.rangeChartService.chartCurrentRange(ChartType.Pie);
                 }
             };
             default:

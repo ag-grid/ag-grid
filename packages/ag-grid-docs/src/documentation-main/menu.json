@@ -479,6 +479,11 @@
       {
         "title": "Context",
         "url": "javascript-grid-context/"
+      },
+      {
+        "title": "Charts",
+        "url": "javascript-grid-charts/",
+        "enterprise": true
       }
     ]
   },
