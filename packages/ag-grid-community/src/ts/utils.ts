@@ -902,15 +902,17 @@ export class Utils {
     }
 
     static removeFromArray<T>(array: T[], object: T) {
-        if (array.indexOf(object) >= 0) {
-            array.splice(array.indexOf(object), 1);
+        const index = array.indexOf(object);
+        if (index >= 0) {
+            array.splice(index, 1);
         }
     }
 
     static removeAllFromArray<T>(array: T[], toRemove: T[]) {
         toRemove.forEach(item => {
-            if (array.indexOf(item) >= 0) {
-                array.splice(array.indexOf(item), 1);
+            const index = array.indexOf(item);
+            if (index >= 0) {
+                array.splice(index, 1);
             }
         });
     }
