@@ -50,12 +50,6 @@ export class GridChartFactory {
         lineChart.padding = {top: 15, right: 25, bottom: 100, left: 75};
         lineChart.xAxis.labelRotation = 90;
 
-        // TODO currently required due to bug in charting library.
-        const lineSeries = new LineSeries<any, string, number>();
-        lineSeries.lineWidth = 2;
-        lineSeries.markerRadius = 3;
-        lineChart.addSeries(lineSeries);
-
         return lineChart;
     }
 
