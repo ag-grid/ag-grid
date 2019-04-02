@@ -176,6 +176,9 @@ export class HdpiCanvas {
         const svg = document.createElementNS(xmlns, 'svg');
         svg.setAttribute('width', '100');
         svg.setAttribute('height', '100');
+        // Add a descriptive class name in case someone sees this SVG element
+        // in devtools and wonders about its purpose:
+        svg.classList.add('text-measuring-svg');
         svg.style.position = 'absolute';
         svg.style.top = '-1000px';
         svg.style.visibility = 'hidden';
