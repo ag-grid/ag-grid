@@ -276,8 +276,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             const values: number[] = [];
             yFields.forEach(field => {
                 const value = datum[field];
-                if (isNaN(value)) {
-                    throw new Error(`The ${field} value is not a number. `
+                if (isNaN(value) || !isFinite(value)) {
+                    throw new Error(`The ${field} value is not a finite number. `
                         + `This error might be solved by using the 'setDataAndFields' method.`);
                 }
                 values.push(value);
