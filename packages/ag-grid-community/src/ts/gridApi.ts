@@ -17,7 +17,7 @@ import { GridCore } from "./gridCore";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusedCellController } from "./focusedCellController";
-import { AddCellRangeParams, CellRange, IRangeController } from "./interfaces/iRangeController";
+import { CellRangeParams, CellRange, IRangeController } from "./interfaces/iRangeController";
 import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
@@ -53,6 +53,7 @@ import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
 import { _ } from "./utils";
+import {IRangeChartService} from "./interfaces/iRangeChartService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -117,6 +118,7 @@ export class GridApi {
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
+    @Autowired('rangeChartService') private rangeChartService: IRangeChartService;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -938,7 +940,7 @@ export class GridApi {
         console.warn('ag-Grid: As of version 21.x, range selection changed slightly to allow charting integration. Please call api.addCellRange() instead of api.addRangeSelection()');
     }
 
-    public addCellRange(params: AddCellRangeParams): void {
+    public addCellRange(params: CellRangeParams): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.addCellRange(params);
     }
@@ -946,6 +948,10 @@ export class GridApi {
     public clearRangeSelection(): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.clearSelection();
+    }
+
+    public chartRange(params: CellRangeParams, chartType: string): void {
+        this.rangeChartService.chartCellRangeParams(params, chartType);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

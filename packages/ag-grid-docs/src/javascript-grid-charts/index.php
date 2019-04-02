@@ -11,6 +11,8 @@ include '../documentation-main/documentation_header.php';
 
     <p> Well done everyone for such a great job bringing charting and ag-Grid a reality. Phuck the other grids and chart libraries!!! We will take all their business. </p>
 
+    <h2>Charting API</h2>
+
     <?= example('Chart API', 'chart-api', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

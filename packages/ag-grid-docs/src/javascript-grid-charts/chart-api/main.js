@@ -1,23 +1,41 @@
 var columnDefs = [
-    {field: "athlete"},
+    {field: "athlete", width: 150, enableRowGroup: true},
     {field: "age"},
-    {field: "country"},
-    {field: "year"},
-    {field: "sport"},
+    {field: "country", enableRowGroup: true},
+    {field: "year", enableRowGroup: true},
+    {field: "sport", enableRowGroup: true},
     {field: "date"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"},
-    {field: "total"}
+    {field: "gold", enableValue: true},
+    {field: "silver", enableValue: true},
+    {field: "bronze", enableValue: true},
+    {field: "total", enableValue: true}
 ];
 
 var gridOptions = {
     defaultColDef: {
-        width: 100
+        width: 100,
+        resizable: true
     },
     columnDefs: columnDefs,
-    enableRangeSelection: true
+    enableRangeSelection: true,
+    enableCharts: true
 };
+
+function onChart1() {
+    let cellRangeParams = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['total']
+    };
+    gridOptions.api.chartRange(cellRangeParams, 'bar');
+}
+
+function onChart2() {
+    let cellRangeParams = {
+        columns: ['total']
+    };
+    gridOptions.api.chartRange(cellRangeParams, 'line');
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

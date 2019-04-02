@@ -18,7 +18,7 @@ import {
     IRowModel,
     Logger,
     LoggerFactory,
-    AddCellRangeParams,
+    CellRangeParams,
     MouseEventService,
     PostConstruct,
     CellRange,
@@ -225,7 +225,7 @@ export class RangeController implements IRangeController {
         return newEndCell;
     }
 
-    public setCellRange(params: AddCellRangeParams): void {
+    public setCellRange(params: CellRangeParams): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
             return;
         }
@@ -235,11 +235,7 @@ export class RangeController implements IRangeController {
         this.addCellRange(params);
     }
 
-    public addCellRange(params: AddCellRangeParams): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
-            return;
-        }
-
+    public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
         let columns: Column[] | undefined;
 
         if (params.columns) {
@@ -285,8 +281,19 @@ export class RangeController implements IRangeController {
             columns: columns
         };
 
-        this.cellRanges.push(newRange);
-        this.dispatchChangedEvent(true, false);
+        return newRange;
+    }
+
+    public addCellRange(params: CellRangeParams): void {
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
+
+        const newRange = this.createCellRangeFromCellRangeParams(params);
+        if (newRange) {
+            this.cellRanges.push(newRange);
+            this.dispatchChangedEvent(true, false);
+        }
     }
 
     public getCellRanges(): CellRange[] {

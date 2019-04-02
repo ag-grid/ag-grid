@@ -1,17 +1,8 @@
-import { RangeChartDatasource } from "./rangeChartDatasource";
-import { RangeController } from "../../rangeController";
-import {
-    Autowired,
-    Bean,
-    CellRange,
-    Component,
-    Context,
-    Dialog,
-    IEventEmitter,
-    MessageBox
-} from "ag-grid-community";
-import { ChartType } from "../gridChartFactory";
-import { GridChartComp } from "../gridChartComp";
+import {RangeChartDatasource} from "./rangeChartDatasource";
+import {RangeController} from "../../rangeController";
+import {IRangeChartService, CellRangeParams, Autowired, Bean, CellRange, Component, Context, Dialog, IEventEmitter, MessageBox} from "ag-grid-community";
+import {ChartType} from "../gridChartFactory";
+import {GridChartComp} from "../gridChartComp";
 
 export interface ChartDatasource extends IEventEmitter {
     getCategory(i: number): string;
@@ -24,7 +15,7 @@ export interface ChartDatasource extends IEventEmitter {
 }
 
 @Bean('rangeChartService')
-export class RangeChartService {
+export class RangeChartService implements IRangeChartService {
 
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('context') private context: Context;
@@ -32,6 +23,21 @@ export class RangeChartService {
     public chartCurrentRange(chartType: ChartType = ChartType.Bar): void {
         const selectedRange = this.getSelectedRange();
         this.chartRange(selectedRange, chartType);
+    }
+
+    public chartCellRangeParams(params: CellRangeParams, chartTypeString: string): void {
+        const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params);
+
+        let chartType: ChartType;
+        switch (chartTypeString) {
+            case 'pie': chartType = ChartType.Pie; break;
+            case 'line': chartType = ChartType.Line; break;
+            default: chartType = ChartType.Bar; break;
+        }
+
+        if (cellRange) {
+            this.chartRange(cellRange, chartType);
+        }
     }
 
     public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.Bar): void {

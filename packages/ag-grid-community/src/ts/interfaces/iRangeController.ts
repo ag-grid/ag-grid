@@ -14,8 +14,8 @@ export interface IRangeController {
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): CellRange[] | null;
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
-    setCellRange(params: AddCellRangeParams): void;
-    addCellRange(params: AddCellRangeParams): void;
+    setCellRange(params: CellRangeParams): void;
+    addCellRange(params: CellRangeParams): void;
     extendLatestRangeInDirection(key: number): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     registerGridComp(gridPanel: GridPanel): void;
@@ -29,7 +29,7 @@ export interface CellRange {
     columns: Column[];
 }
 
-export interface AddCellRangeParams {
+export interface CellRangeParams {
     rowStartIndex?: number;
     rowStartPinned?: string;
     rowEndIndex?: number;
