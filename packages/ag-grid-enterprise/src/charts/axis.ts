@@ -7,6 +7,9 @@ import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util
 import { Text } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
+import { Rect } from "./scene/shape/rect";
+import { BBox } from "./scene/bbox";
+import { Matrix } from "./scene/matrix";
 
 enum Tags {
     Tick,
@@ -328,10 +331,11 @@ export class Axis<D> {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
-        labels
-            .attr('x', labelX)
-            .attr('rotationCenterX', labelX)
-            .attr('rotation', autoRotation + labelRotation);
+        labels.each(label => {
+            label.x = labelX;
+            label.rotationCenterX = labelX;
+            label.rotation = autoRotation + labelRotation;
+        });
 
         this.groupSelection = groupSelection;
 
@@ -344,4 +348,50 @@ export class Axis<D> {
         line.lineWidth = this.lineWidth;
         line.strokeStyle = this.lineColor;
     }
+
+    getBBox(): BBox {
+        const line = this.line;
+        const labels = this.groupSelection.selectByClass(Text);
+
+        let left = Infinity;
+        let right = -Infinity;
+        let top = Infinity;
+        let bottom = -Infinity;
+
+        labels.each(label => {
+            // The label itself is rotated, but not translated, the group that
+            // contains it is. So to capture the group transform in the label bbox
+            // calculation we combine the transform matrices of the label and the group.
+            // Depending on the timing of the `axis.getBBox()` method call, we may
+            // not have the group's and the label's transform matrices updated yet (because
+            // the transform matrix is not recalculated whenever a node's transform attributes
+            // change, instead it's marked for recalculation on the next frame by setting
+            // the node's `dirtyTransform` flag to `true`), so we force them to update
+            // right here by calling `computeTransformMatrix`.
+            label.computeTransformMatrix();
+            const matrix = Matrix.flyweight(label.matrix);
+            const group = label.parent!;
+            group.computeTransformMatrix();
+            matrix.preMultiplySelf(group.matrix);
+            const bbox = matrix.transformBBox(label.getBBox());
+            left = Math.min(left, bbox.x);
+            right = Math.max(right, bbox.x + bbox.width);
+            top = Math.min(top, bbox.y);
+            bottom = Math.max(bottom, bbox.y + bbox.height);
+        });
+
+        left = Math.min(left, 0);
+        right = Math.max(right, 0);
+        top = Math.min(top, line.y1, line.y2);
+        bottom = Math.max(bottom, line.y1, line.y2);
+
+        return {
+            x: left,
+            y: top,
+            width: right - left,
+            height: bottom - top
+        };
+    }
+
+    rect = new Rect();
 }

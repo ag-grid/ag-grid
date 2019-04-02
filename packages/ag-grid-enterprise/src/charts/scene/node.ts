@@ -220,7 +220,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     // These matrices may need to have package level visibility
     // for performance optimization purposes.
-    protected matrix = new Matrix();
+    matrix = new Matrix();
     protected inverseMatrix = new Matrix();
 
     /**
@@ -402,7 +402,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return [0, 0];
     }
 
-    protected computeTransformMatrix() {
+    computeTransformMatrix() {
         // TODO: transforms without center of scaling and rotation correspond directly
         //       to `setAttribute('transform', 'translate(tx, ty) rotate(rDeg) scale(sx, sy)')`
         //       in SVG. Our use cases will mostly require positioning elements (rects, circles)
