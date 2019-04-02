@@ -398,7 +398,7 @@ export class Dialog extends PopupComponent {
     }
 
     public setHeight(height: number, silent?: boolean) {
-        let newHeight = Math.max(10, height);
+        let newHeight = Math.max(250, height);
         const eGui = this.getGui();
 
         if (newHeight + this.position.y > eGui.offsetParent.clientHeight) {
@@ -421,7 +421,7 @@ export class Dialog extends PopupComponent {
     }
 
     public setWidth(width: number, silent?: boolean) {
-        let newWidth = Math.max(10, width);
+        let newWidth = Math.max(250, width);
         const eGui = this.getGui();
 
         if (newWidth + this.position.x > eGui.offsetParent.clientWidth) {

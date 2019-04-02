@@ -855,12 +855,15 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  ****************************
 */
 
+$handleSize: 5px;
+
 .ag-dialog {
     display: flex;
     flex-direction: column;
     position: absolute;
     overflow: hidden;
-    $handleSize: 5px;
+    z-index: 10;
+
     .ag-resizer {
         position: absolute;
         pointer-events: none;
