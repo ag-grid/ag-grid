@@ -25,6 +25,8 @@ packages/ag-grid-community/dist/styles/*.css
 
 packages/ag-grid-enterprise/main.d.ts
 packages/ag-grid-enterprise/main.js
+packages/ag-grid-enterprise/chartsModule.d.ts
+packages/ag-grid-enterprise/chartsModule.js
 
 packages/ag-grid-angular/aot/**
 packages/ag-grid-angular/dist/**

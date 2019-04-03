@@ -18,7 +18,7 @@ import { Constants } from "./constants";
 import { ComponentUtil } from "./components/componentUtil";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import {Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier} from "./context/context";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
@@ -35,6 +35,7 @@ import { Events } from "./eventKeys";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
 import { _ } from "./utils";
+import {ModuleNames} from "./modules/moduleNames";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -96,6 +97,7 @@ export class GridOptionsWrapper {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('environment') private environment: Environment;
     @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
+    @Autowired('context') private context: Context;
 
     private propertyEventService: EventService = new EventService();
 
@@ -596,7 +598,16 @@ export class GridOptionsWrapper {
     }
 
     public isEnableCharts() {
-        return isTrue(this.gridOptions.enableCharts);
+        if (isTrue((this.gridOptions.enableCharts))) {
+            if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
+                _.doOnce(() => {
+                    console.warn('ag-grid: Charts is enabled but the Charts Module has not been included.');
+                }, 'ChartsModuleCheck');
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     public getColResizeDefault() {

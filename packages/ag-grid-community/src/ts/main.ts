@@ -303,6 +303,13 @@ export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
 export { TooltipManager } from "./widgets/tooltipManager";
 
+// charts
+export { ChartType } from "./charts/chartType";
+
+// modules
+export { Module } from "./interfaces/iModule";
+export { ModuleNames } from "./modules/moduleNames";
+
 //  events
 export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent,
     ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent,

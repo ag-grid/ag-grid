@@ -75,6 +75,7 @@ import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
+import {Module} from "./interfaces/iModule";
 
 export interface GridParams {
     // used by Web Components
@@ -96,10 +97,13 @@ export class Grid {
 
     private context: Context;
 
-    private static enterpriseBeans: any[];
+    private static enterpriseBeans: any[] = [];
     private static frameworkBeans: any[];
-    private static enterpriseComponents: any[];
-    private static enterpriseDefaultComponents: any[];
+    private static enterpriseComponents: any[] = [];
+    private static enterpriseDefaultComponents: any[] = [];
+
+    private static modulesToInclude: Module[] = [];
+
     protected logger: Logger;
 
     private gridOptions: GridOptions;
@@ -130,6 +134,11 @@ export class Grid {
         this.enterpriseDefaultComponents = enterpriseDefaultComponents;
     }
 
+    public static addModule(modulesToInclude: Module[]): void {
+        // de-duping would need to be done here (while ensuring order etc)
+        this.modulesToInclude.push(...modulesToInclude);
+    }
+
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
 
         if (!eGridDiv) {
@@ -145,6 +154,11 @@ export class Grid {
 
         const enterprise = _.exists(Grid.enterpriseBeans);
 
+        const moduleBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.beans ? module.beans : []);
+        const moduleEnterpriseBeans = this.extractModuleEntity(Grid.modulesToInclude,(module) => module.enterpriseBeans ? module.enterpriseBeans : []);
+        const moduleEnterpriseComponents = this.extractModuleEntity(Grid.modulesToInclude,(module) => module.enterpriseComponents ? module.enterpriseComponents : []);
+        const modulesEnterpriseDefaultComponents = this.extractModuleEntity(Grid.modulesToInclude,(module) => module.enterpriseDefaultComponents ? module.enterpriseDefaultComponents : []);
+
         let frameworkFactory = params ? params.frameworkFactory : null;
         if (_.missing(frameworkFactory)) {
             frameworkFactory = new BaseFrameworkFactory();
@@ -153,7 +167,8 @@ export class Grid {
         let overrideBeans:any[] = [];
 
         if (Grid.enterpriseBeans) {
-            overrideBeans = overrideBeans.concat(Grid.enterpriseBeans);
+            overrideBeans = overrideBeans.concat(Grid.enterpriseBeans)
+                .concat(moduleEnterpriseBeans);
         }
 
         if (Grid.frameworkBeans) {
@@ -183,7 +198,8 @@ export class Grid {
         ];
 
         if (Grid.enterpriseComponents) {
-            components = components.concat(Grid.enterpriseComponents);
+            components = components.concat(Grid.enterpriseComponents)
+                .concat(moduleEnterpriseComponents);
         }
 
         const contextParams = {
@@ -203,10 +219,12 @@ export class Grid {
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer
+                ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer,
+                ...moduleBeans
             ],
             components: components,
-            enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
+            enterpriseDefaultComponents: Grid.enterpriseDefaultComponents.concat(modulesEnterpriseDefaultComponents),
+            registeredModules: Grid.modulesToInclude.map(module => module.moduleName),
             debug: !!gridOptions.debug
         };
 
@@ -220,6 +238,10 @@ export class Grid {
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
         this.logger.log(`initialised successfully, enterprise = ${enterprise}`);
+    }
+
+    private extractModuleEntity(moduleEntities: any[], extractor: (module: any) => any) {
+        return [].concat(...moduleEntities.map(extractor));
     }
 
     private setColumnsAndData(): void {

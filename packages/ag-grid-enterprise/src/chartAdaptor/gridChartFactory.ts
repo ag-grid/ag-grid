@@ -1,3 +1,4 @@
+import { ChartType } from "ag-grid-community";
 import { CartesianChart } from "../charts/chart/cartesianChart";
 import { CategoryAxis } from "../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../charts/chart/axis/numberAxis";
@@ -10,8 +11,6 @@ export interface ChartOptions {
     height: number,
     width: number
 }
-
-export enum ChartType {Bar, Line, Pie}
 
 export class GridChartFactory {
 

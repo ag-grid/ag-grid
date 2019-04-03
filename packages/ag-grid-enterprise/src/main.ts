@@ -27,8 +27,6 @@ import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
 import { WatermarkComp } from "./license/watermark";
-import { RangeChartService } from "./chartAdaptor/rangeChart/rangeChartService";
-import { ChartControlComp } from "./chartAdaptor/chartControlComp";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -65,12 +63,16 @@ export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 export { WatermarkComp } from "./license/watermark";
 
+// modules
+// spl put in exports...
+// export { ChartsModule } from "./modules/chartModule";
+
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
     RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
-    MenuItemMapper, StatusBarService, RangeChartService], rowModelTypes);
+    MenuItemMapper, StatusBarService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgPrimaryColsHeader', theClass: PrimaryColsHeaderPanel},
@@ -81,6 +83,5 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgNameValue', theClass: NameValueComp},
     {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
-    {componentName: 'AgWatermark', theClass: WatermarkComp},
-    {componentName: 'AgChartControl', theClass: ChartControlComp}
+    {componentName: 'AgWatermark', theClass: WatermarkComp}
 ]);

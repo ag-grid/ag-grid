@@ -1,4 +1,5 @@
-import { ChartOptions, ChartType, GridChartFactory } from "./gridChartFactory";
+import { ChartType } from "ag-grid-community";
+import { ChartOptions,  GridChartFactory } from "./gridChartFactory";
 import { ChartDatasource } from "./rangeChart/rangeChartService";
 import { Chart } from "../charts/chart/chart";
 import { BarSeries } from "../charts/chart/series/barSeries";

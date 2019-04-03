@@ -1,8 +1,18 @@
-import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _ } from 'ag-grid-community';
-import { ClipboardService } from "../clipboardService";
-import { AggFuncService } from "../aggregation/aggFuncService";
-import { RangeChartService } from "../chartAdaptor/rangeChart/rangeChartService";
-import { ChartType } from "../chartAdaptor/gridChartFactory";
+import {
+    _,
+    Autowired,
+    Bean,
+    ChartType,
+    Column,
+    ColumnController,
+    GridApi,
+    GridOptionsWrapper,
+    IRangeChartService,
+    MenuItemDef, Optional,
+    Utils
+} from 'ag-grid-community';
+import {ClipboardService} from "../clipboardService";
+import {AggFuncService} from "../aggregation/aggFuncService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -12,10 +22,12 @@ export class MenuItemMapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
-    @Autowired('rangeChartService') private rangeChartService: RangeChartService;
+    @Optional('rangeChartService') private rangeChartService: IRangeChartService;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
-        if (!originalList) { return []; }
+        if (!originalList) {
+            return [];
+        }
 
         const resultList: (MenuItemDef | string)[] = [];
 
@@ -44,82 +56,97 @@ export class MenuItemMapper {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         switch (key) {
-            case 'pinSubMenu': return {
-                name: localeTextFunc('pinColumn', 'Pin Column'),
-                icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
-                subMenu: ['pinLeft', 'pinRight', 'clearPinned']
-            };
-            case 'pinLeft': return {
-                name: localeTextFunc('pinLeft', 'Pin Left'),
-                action: () => this.columnController.setColumnPinned(column, Column.PINNED_LEFT, "contextMenu"),
-                checked: (column as Column).isPinnedLeft()
-            };
-            case 'pinRight': return {
-                name: localeTextFunc('pinRight', 'Pin Right'),
-                action: () => this.columnController.setColumnPinned(column, Column.PINNED_RIGHT, "contextMenu"),
-                checked: (column as Column).isPinnedRight()
-            };
-            case 'clearPinned': return {
-                name: localeTextFunc('noPin', 'No Pin'),
-                action: () => this.columnController.setColumnPinned(column, null, "contextMenu"),
-                checked: !(column as Column).isPinned()
-            };
-            case 'valueAggSubMenu': return {
-                name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
-                subMenu: this.createAggregationSubMenu((column as Column))
-            };
-            case 'autoSizeThis': return {
-                name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                action: () => this.columnController.autoSizeColumn(column, "contextMenu")
-            };
-            case 'autoSizeAll': return {
-                name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                action: () => this.columnController.autoSizeAllColumns("contextMenu")
-            };
-            case 'rowGroup': return {
-                name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
-                action: () => this.columnController.addRowGroupColumn(column, "contextMenu"),
-                icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
-            };
-            case 'rowUnGroup': return {
-                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
-                action: () => this.columnController.removeRowGroupColumn(column, "contextMenu"),
-                icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
-            };
-            case 'resetColumns': return {
-                name: localeTextFunc('resetColumns', 'Reset Columns'),
-                action: () => this.columnController.resetColumnState(false, "contextMenu")
-            };
-            case 'expandAll': return {
-                name: localeTextFunc('expandAll', 'Expand All'),
-                action: () => this.gridApi.expandAll()
-            };
-            case 'contractAll': return {
-                name: localeTextFunc('collapseAll', 'Collapse All'),
-                action: () => this.gridApi.collapseAll()
-            };
-            case 'copy': return {
-                name: localeTextFunc('copy', 'Copy'),
-                shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                action: () => this.clipboardService.copyToClipboard(false)
-            };
-            case 'copyWithHeaders': return {
-                name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
-                // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                action: () => this.clipboardService.copyToClipboard(true)
-            };
-            case 'paste': return {
-                name: localeTextFunc('paste', 'Paste'),
-                shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                disabled: true,
-                icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
-                action: () => this.clipboardService.pasteFromClipboard()
-            };
+            case 'pinSubMenu':
+                return {
+                    name: localeTextFunc('pinColumn', 'Pin Column'),
+                    icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
+                    subMenu: ['pinLeft', 'pinRight', 'clearPinned']
+                };
+            case 'pinLeft':
+                return {
+                    name: localeTextFunc('pinLeft', 'Pin Left'),
+                    action: () => this.columnController.setColumnPinned(column, Column.PINNED_LEFT, "contextMenu"),
+                    checked: (column as Column).isPinnedLeft()
+                };
+            case 'pinRight':
+                return {
+                    name: localeTextFunc('pinRight', 'Pin Right'),
+                    action: () => this.columnController.setColumnPinned(column, Column.PINNED_RIGHT, "contextMenu"),
+                    checked: (column as Column).isPinnedRight()
+                };
+            case 'clearPinned':
+                return {
+                    name: localeTextFunc('noPin', 'No Pin'),
+                    action: () => this.columnController.setColumnPinned(column, null, "contextMenu"),
+                    checked: !(column as Column).isPinned()
+                };
+            case 'valueAggSubMenu':
+                return {
+                    name: localeTextFunc('valueAggregation', 'Value Aggregation'),
+                    icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
+                    subMenu: this.createAggregationSubMenu((column as Column))
+                };
+            case 'autoSizeThis':
+                return {
+                    name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
+                    action: () => this.columnController.autoSizeColumn(column, "contextMenu")
+                };
+            case 'autoSizeAll':
+                return {
+                    name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
+                    action: () => this.columnController.autoSizeAllColumns("contextMenu")
+                };
+            case 'rowGroup':
+                return {
+                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    action: () => this.columnController.addRowGroupColumn(column, "contextMenu"),
+                    icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
+                };
+            case 'rowUnGroup':
+                return {
+                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    action: () => this.columnController.removeRowGroupColumn(column, "contextMenu"),
+                    icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
+                };
+            case 'resetColumns':
+                return {
+                    name: localeTextFunc('resetColumns', 'Reset Columns'),
+                    action: () => this.columnController.resetColumnState(false, "contextMenu")
+                };
+            case 'expandAll':
+                return {
+                    name: localeTextFunc('expandAll', 'Expand All'),
+                    action: () => this.gridApi.expandAll()
+                };
+            case 'contractAll':
+                return {
+                    name: localeTextFunc('collapseAll', 'Collapse All'),
+                    action: () => this.gridApi.collapseAll()
+                };
+            case 'copy':
+                return {
+                    name: localeTextFunc('copy', 'Copy'),
+                    shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
+                    icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                    action: () => this.clipboardService.copyToClipboard(false)
+                };
+            case 'copyWithHeaders':
+                return {
+                    name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
+                    // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                    icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                    action: () => this.clipboardService.copyToClipboard(true)
+                };
+            case 'paste':
+                return {
+                    name: localeTextFunc('paste', 'Paste'),
+                    shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
+                    disabled: true,
+                    icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                    action: () => this.clipboardService.pasteFromClipboard()
+                };
             case 'export':
-                const exportSubMenuItems:string[] = [];
+                const exportSubMenuItems: string[] = [];
                 if (!this.gridOptionsWrapper.isSuppressCsvExport()) {
                     exportSubMenuItems.push('csvExport');
                 }
@@ -131,23 +158,27 @@ export class MenuItemMapper {
                     name: localeTextFunc('export', 'Export'),
                     subMenu: exportSubMenuItems
                 };
-            case 'csvExport': return {
-                name: localeTextFunc('csvExport', 'CSV Export'),
-                action: () => this.gridApi.exportDataAsCsv({})
-            };
-            case 'excelExport': return {
-                name: localeTextFunc('excelExport', 'Excel Export (.xlsx)&lrm;'),
-                action: () => this.gridApi.exportDataAsExcel({
-                    exportMode: 'xlsx'
-                })
-            };
-            case 'excelXmlExport': return {
-                name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)&lrm;'),
-                action: () => this.gridApi.exportDataAsExcel({
-                    exportMode: 'xml'
-                })
-            };
-            case 'separator': return 'separator';
+            case 'csvExport':
+                return {
+                    name: localeTextFunc('csvExport', 'CSV Export'),
+                    action: () => this.gridApi.exportDataAsCsv({})
+                };
+            case 'excelExport':
+                return {
+                    name: localeTextFunc('excelExport', 'Excel Export (.xlsx)&lrm;'),
+                    action: () => this.gridApi.exportDataAsExcel({
+                        exportMode: 'xlsx'
+                    })
+                };
+            case 'excelXmlExport':
+                return {
+                    name: localeTextFunc('excelXmlExport', 'Excel Export (.xml)&lrm;'),
+                    action: () => this.gridApi.exportDataAsExcel({
+                        exportMode: 'xml'
+                    })
+                };
+            case 'separator':
+                return 'separator';
             case 'chartRange':
                 const chartRangeSubMenuItems: string[] = [];
                 chartRangeSubMenuItems.push('barRangeChart');

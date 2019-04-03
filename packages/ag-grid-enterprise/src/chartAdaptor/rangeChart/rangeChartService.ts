@@ -1,7 +1,18 @@
 import {RangeChartDatasource} from "./rangeChartDatasource";
 import {RangeController} from "../../rangeController";
-import {IRangeChartService, CellRangeParams, Autowired, Bean, CellRange, Component, Context, Dialog, IEventEmitter, MessageBox} from "ag-grid-community";
-import {ChartType} from "../gridChartFactory";
+import {
+    Autowired,
+    Bean,
+    CellRange,
+    CellRangeParams,
+    ChartType,
+    Component,
+    Context,
+    Dialog,
+    IEventEmitter,
+    IRangeChartService,
+    MessageBox
+} from "ag-grid-community";
 import {GridChartComp} from "../gridChartComp";
 import {ChartMenu} from "../chartMenu";
 
@@ -99,8 +110,8 @@ export class RangeChartService implements IRangeChartService {
     private addErrorMessageBox(errors: string[]) {
         const errorMessage = errors.join(' ');
 
-        const messageBox = new MessageBox({ 
-            title: 'Can Not Chart', 
+        const messageBox = new MessageBox({
+            title: 'Cannot Chart',
             message: errorMessage,
             centered: true,
             resizable: false,

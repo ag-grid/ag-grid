@@ -25,6 +25,7 @@ import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
 import { RangeController } from "../rangeController";
+import { ModuleNames } from "ag-grid-community";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {
@@ -71,7 +72,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
             // nothing to show, perhaps tool panels???
         }
 
-        if (this.gridOptionsWrapper.isEnableCharts()) {
+        if (this.gridOptionsWrapper.isEnableCharts() && this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             if (!this.rangeController.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }

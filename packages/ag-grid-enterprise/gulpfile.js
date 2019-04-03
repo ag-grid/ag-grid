@@ -25,6 +25,7 @@ gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
 
 gulp.task('tsc', ['tsc-src'], tscMainTask);
+gulp.task('modules', tscModulesTask)
 gulp.task('tsc-no-clean', tscSrcTask);
 gulp.task('tsc-src', ['cleanDist', 'tslint'], tscSrcTask);
 gulp.task('tsc-main', ['cleanMain'], tscMainTask);
@@ -105,6 +106,23 @@ function tscMainTask() {
             .pipe(replace("require(\"./", "require(\"./dist/lib/"))
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(rename("main.js"))
+            .pipe(gulp.dest('./'))
+    ]);
+}
+
+function tscModulesTask() {
+    const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src('./src/modules/**/*.ts')
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.dts
+            .pipe(replace("\"./", "\"./dist/lib/"))
+            .pipe(gulp.dest('./')),
+        tsResult.js
+            .pipe(replace("require(\"../", "require(\"./dist/lib/"))
             .pipe(gulp.dest('./'))
     ]);
 }

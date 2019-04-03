@@ -1,7 +1,6 @@
-import { Component, RefSelector } from "ag-grid-community";
+import { ChartType, Component, RefSelector } from "ag-grid-community";
 import { Chart } from "../charts/chart/chart";
 import { BarSeries } from "../charts/chart/series/barSeries";
-import { ChartType } from "./gridChartFactory";
 
 export class ChartControlComp extends Component {
 
