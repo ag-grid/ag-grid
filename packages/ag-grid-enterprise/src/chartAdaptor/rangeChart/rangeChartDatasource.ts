@@ -112,6 +112,12 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.startRow = startRow ? (startRow.rowIndex + paginationOffset) : 0;
         this.endRow = endRow ? (endRow.rowIndex + paginationOffset) : this.rowModel.getRowCount() - 1;
 
+        if (this.startRow > this.endRow) {
+            this.startRow ^= this.endRow;
+            this.endRow ^= this.startRow;
+            this.startRow ^= this.endRow;
+        }
+
         // make sure enough rows in range to chart. if user filters and less rows, then
         // end row will be the last displayed row, not where the range ends.
         const modelLastRow = this.rowModel.getRowCount() - 1;

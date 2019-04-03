@@ -67,7 +67,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
 
         let multiplier = -1;
-        let alignSide = 'left';
+        let alignSide: 'left' | 'right' = 'left';
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             multiplier = 1;
