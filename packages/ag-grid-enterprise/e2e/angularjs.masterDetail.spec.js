@@ -1,6 +1,6 @@
 describe('Protractor Demo App', () => {
     it('detail grid angularjs binding work - double child grid values', async () => {
-        browser.get('http://localhost:8080/e2e/angularjs-masterDetail.html');
+        await browser.get('http://localhost:8080/e2e/angularjs-masterDetail.html');
 
         let rawCell = null;
         await element.all(by.css('div[ref=eDetailGrid] .ag-cell-value')).then(async (elements) => {

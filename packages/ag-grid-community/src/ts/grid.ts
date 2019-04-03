@@ -116,27 +116,27 @@ export class Grid {
     };
 
     public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {
-        this.enterpriseBeans = enterpriseBeans;
+        Grid.enterpriseBeans = enterpriseBeans;
 
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
         _.iterateObject(rowModelClasses, (key: string, value: any) => Grid.RowModelClasses[key] = value);
     }
 
     public static setEnterpriseComponents(components: any[]): void {
-        this.enterpriseComponents = components;
+        Grid.enterpriseComponents = components;
     }
 
     public static setFrameworkBeans(frameworkBeans: any[]): void {
-        this.frameworkBeans = frameworkBeans;
+        Grid.frameworkBeans = frameworkBeans;
     }
 
     public static setEnterpriseDefaultComponents(enterpriseDefaultComponents: any[]): void {
-        this.enterpriseDefaultComponents = enterpriseDefaultComponents;
+        Grid.enterpriseDefaultComponents = enterpriseDefaultComponents;
     }
 
     public static addModule(modulesToInclude: Module[]): void {
         // de-duping would need to be done here (while ensuring order etc)
-        this.modulesToInclude.push(...modulesToInclude);
+        Grid.modulesToInclude.push(...modulesToInclude);
     }
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
