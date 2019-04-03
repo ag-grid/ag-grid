@@ -25,7 +25,7 @@ export interface IGridChartComp {
 export class GridChartComp extends Component implements IGridChartComp {
 
     private static TEMPLATE =
-        `<div class="ag-chart">
+        `<div class="ag-chart" tabindex="-1">
             <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
             <div ref="eErrors" class="ag-chart-errors"></div>
         </div>`;
@@ -70,6 +70,10 @@ export class GridChartComp extends Component implements IGridChartComp {
         });
 
         this.refresh();
+    }
+
+    public getDataSource(): ChartDatasource {
+        return this.datasource;
     }
 
     public setChartType(chartType: ChartType) {

@@ -163,6 +163,10 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         });
     }
 
+    public getRangeSelection(): CellRange {
+        return this.rangeSelection;
+    }
+
     public getCategory(i: number): string {
         const rowNode = this.rowModel.getRow(this.startRow + i);
         const resParts: string[] = [];

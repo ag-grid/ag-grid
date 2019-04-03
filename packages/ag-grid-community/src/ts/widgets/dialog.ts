@@ -165,7 +165,17 @@ export class Dialog extends PopupComponent {
             this.offsetDialog(x, y);
         }
 
-        this.addDestroyableEventListener(eGui, 'focus', () => {
+        this.addDestroyableEventListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
+            if (eGui.contains(e.relatedTarget as HTMLElement)) { return ; }
+
+            const focusEl = this.eContentWrapper.querySelector('button, [href], input, select, textarea, [tabindex]');
+
+            if (focusEl) {
+                (focusEl as HTMLElement).focus();
+            }
+        });
+        this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
+            if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
             this.popupService.bringPopupToFront(eGui);
         });
     }

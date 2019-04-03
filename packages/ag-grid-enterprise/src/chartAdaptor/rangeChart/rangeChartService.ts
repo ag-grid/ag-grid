@@ -24,6 +24,7 @@ export interface ChartDatasource extends IEventEmitter {
     getRowCount(): number;
     destroy(): void;
     getErrors(): string[];
+    getRangeSelection?(): CellRange;
 }
 
 @Bean('rangeChartService')
@@ -66,6 +67,8 @@ export class RangeChartService implements IRangeChartService {
             } else {
                 this.createChartDialog(chart);
             }
+
+            this.addGridChartListeners(chart);
 
         } else {
             // TODO: replace with error dialog
@@ -122,11 +125,31 @@ export class RangeChartService implements IRangeChartService {
             message: errorMessage,
             centered: true,
             resizable: false,
-            movable: true,
+            movable: true, 
             width: 400,
             height: 150
         });
 
         this.context.wireBean(messageBox);
+    }
+
+    private addGridChartListeners(chart: GridChartComp) {
+        const eGui = chart.getGui();
+
+        chart.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => this.onChartFocus(e, chart));
+    }
+
+    private onChartFocus(e: FocusEvent, chart: GridChartComp) {
+        const chartDatasource = chart.getDataSource();
+        const dataRange = chartDatasource.getRangeSelection!();
+
+        this.rangeController.setCellRange({
+            rowStartIndex: dataRange.startRow!.rowIndex,
+            rowStartPinned: dataRange.startRow!.rowPinned,
+            rowEndIndex: dataRange.endRow!.rowIndex,
+            rowEndPinned: dataRange.endRow!.rowPinned,
+            columnStart: dataRange.columns[0],
+            columnEnd: dataRange.columns[dataRange.columns.length - 1]
+        });
     }
 }

@@ -11,7 +11,8 @@ import {
     PostConstruct,
     RowNode,
     ValueService,
-    ColumnGroup
+    ColumnGroup,
+    CellRange
 } from "ag-grid-community";
 import { ChartDatasource } from "../rangeChart/rangeChartService";
 
