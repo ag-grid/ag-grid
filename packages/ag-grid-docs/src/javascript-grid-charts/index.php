@@ -15,4 +15,8 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Chart API', 'chart-api', 'generated', array("enterprise" => true)) ?>
 
+    <h2>Dashboard</h2>
+
+    <?= example('Dashboard', 'dashboard', 'generated', array("enterprise" => true)) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

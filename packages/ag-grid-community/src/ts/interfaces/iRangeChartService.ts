@@ -3,6 +3,5 @@ import { ChartType } from "../charts/chartType";
 
 export interface IRangeChartService {
     chartCurrentRange(chartType: ChartType): void;
-    chartCellRangeParams(params: CellRangeParams, chartTypeString: string): void;
-    chartCellRangeParams(params: CellRangeParams, chartType: string): void;
+    chartCellRange(params: CellRangeParams, chartType: string, container: HTMLElement): void;
 }

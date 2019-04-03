@@ -951,14 +951,14 @@ export class GridApi {
         this.rangeController.clearSelection();
     }
 
-    public chartRange(params: CellRangeParams, chartType: string): void {
+    public chartRange(params: CellRangeParams, chartType: string, chartContainer: HTMLElement): void {
         if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             _.doOnce(() => {
                 console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
             }, 'ChartsModuleCheck');
             return;
         }
-        this.rangeChartService.chartCellRangeParams(params, chartType);
+        this.rangeChartService.chartCellRange(params, chartType, chartContainer);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

@@ -37,7 +37,7 @@ export class RangeChartService implements IRangeChartService {
         this.chartRange(selectedRange, chartType);
     }
 
-    public chartCellRangeParams(params: CellRangeParams, chartTypeString: string): void {
+    public chartCellRange(params: CellRangeParams, chartTypeString: string, container?: HTMLElement): void {
         const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params);
 
         let chartType: ChartType;
@@ -50,18 +50,23 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            this.chartRange(cellRange, chartType);
+            this.chartRange(cellRange, chartType, container);
         }
     }
 
-    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar): void {
+    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar, container?: HTMLElement): void {
         const ds = this.createDatasource(cellRange);
 
         if (ds) {
             const chart = new GridChartComp(chartType, ds);
-
             this.context.wireBean(chart);
-            this.createChartDialog(chart);
+
+            if (container) {
+                container.appendChild(chart.getGui());
+            } else {
+                this.createChartDialog(chart);
+            }
+
         } else {
             // TODO: replace with error dialog
             console.warn('ag-Grid: unable to perform charting due to invalid range selection');
