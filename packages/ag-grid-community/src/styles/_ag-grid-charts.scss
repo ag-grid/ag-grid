@@ -10,6 +10,8 @@
 .ag-chart {
     position: relative;
     display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
     .ag-chart-canvas-wrapper {
         flex: 1 1 auto;
 

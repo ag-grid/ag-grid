@@ -8,14 +8,13 @@ import { PieSeries } from "../charts/chart/series/pieSeries";
 import colors from "../charts/chart/colors";
 import { CartesianChart } from "../charts/chart/cartesianChart";
 import { PolarChart } from "../charts/chart/polarChart";
-
 import {
-    _,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector,
-    Dialog,
-    DialogEvent
+    ResizeObserverService,
+    _
 } from "ag-grid-community";
 
 export interface IGridChartComp {
@@ -35,6 +34,8 @@ export class GridChartComp extends Component implements IGridChartComp {
 
     private chartType: ChartType;
     private chart: Chart<any, string, number>;
+
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
@@ -63,6 +64,17 @@ export class GridChartComp extends Component implements IGridChartComp {
         // const eChart: HTMLElement = this.getGui();
         // eChart.appendChild(menu.getGui());
 
+        const eGui = this.getGui();
+
+        const observeResize = this.resizeObserverService.observeResize(eGui, () => {
+            if (!eGui || !eGui.offsetParent) {
+                observeResize();
+                return;
+            }
+            this.chart.height = _.getInnerHeight(eGui.offsetParent as HTMLElement);
+            this.chart.width = _.getInnerWidth(eGui.offsetParent as HTMLElement);
+        });
+
         this.refresh();
     }
 
@@ -77,17 +89,6 @@ export class GridChartComp extends Component implements IGridChartComp {
 
     public getChart(): Chart<any, string, number> {
         return this.chart
-    }
-
-    public setContainer(container: Dialog) {
-        this.container = container;
-
-        this.addDestroyableEventListener(container, Dialog.EVENT_RESIZE, (event: DialogEvent) => {
-            const chartHeight = event.dialog.getBodyHeight();
-            const chartWidth = event.dialog.getBodyWidth();
-            this.chart.height = chartHeight;
-            this.chart.width = chartWidth;
-        });
     }
 
     public refresh(): void {

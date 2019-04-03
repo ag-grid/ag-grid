@@ -62,6 +62,7 @@ export class Dialog extends PopupComponent {
 
     private config: DialogOptions | undefined;
     private resizable: ResizableStructure = {};
+    private closableListener: () => void | undefined;
     private movable = false;
     private closable = true;
     private isMoving = false;
@@ -160,14 +161,9 @@ export class Dialog extends PopupComponent {
             this.offsetDialog(x, y);
         }
 
-        this.addDestroyableEventListener(eGui, 'focus', (e) => {
-            if (this.eTitleBarButtons.contains(e.target)) {
-                return;
-            }
+        this.addDestroyableEventListener(eGui, 'focus', () => {
             this.popupService.bringPopupToFront(eGui);
         });
-
-        this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
     }
 
     private updateDragStartPosition(x: number, y: number) {
@@ -357,6 +353,13 @@ export class Dialog extends PopupComponent {
         const eGui = this.getGui();
 
         _.addOrRemoveCssClass(eGui, 'ag-dialog-closable', closable);
+
+        if (closable) {
+            this.closableListener = this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
+        } else if (this.closableListener) {
+            this.closableListener();
+            this.closableListener = undefined;
+        }
     }
 
     private buildParamsAndDispatchEvent(type: string) {

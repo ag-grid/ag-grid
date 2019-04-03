@@ -78,7 +78,7 @@ export class BeanStub implements IEventEmitter {
         eElement: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
         event: string, listener: (event?: any) => void,
         options?: boolean | AddEventListenerOptions
-    ): void {
+    ): (() => void) | undefined {
         if (this.destroyed) { return; }
 
         if (eElement instanceof HTMLElement) {
@@ -91,7 +91,7 @@ export class BeanStub implements IEventEmitter {
             (eElement as IEventEmitter).addEventListener(event, listener);
         }
 
-        this.destroyFunctions.push(() => {
+        const destroyFunc = () => {
             if (eElement instanceof HTMLElement) {
                 (eElement as HTMLElement).removeEventListener(event, listener);
             } else if (eElement instanceof Window) {
@@ -101,7 +101,13 @@ export class BeanStub implements IEventEmitter {
             } else {
                 (eElement as IEventEmitter).removeEventListener(event, listener);
             }
-        });
+
+            this.destroyFunctions = this.destroyFunctions.filter((fn: Function) => fn !== destroyFunc);
+        };
+
+        this.destroyFunctions.push(destroyFunc);
+
+        return destroyFunc;
     }
 
     public isAlive(): boolean {

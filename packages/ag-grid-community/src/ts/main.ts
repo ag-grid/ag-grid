@@ -114,6 +114,7 @@ export { TabbedItem } from "./layout/tabbedLayout";
 
 // misc
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
+export { ResizeObserverService } from "./misc/resizeObserverService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";

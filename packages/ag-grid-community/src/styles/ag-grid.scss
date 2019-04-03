@@ -937,7 +937,9 @@ $handleSize: 5px;
     }
 
     .ag-dialog-content-wrapper {
+        display: flex;
         flex: 1 1 auto;
+        position: relative;
     }
 
     .ag-message-box {
