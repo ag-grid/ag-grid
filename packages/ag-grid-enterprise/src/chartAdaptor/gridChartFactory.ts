@@ -31,7 +31,6 @@ export class GridChartFactory {
 
         barChart.width = chartOptions.width;
         barChart.height = chartOptions.height;
-        barChart.padding = {top: 15, right: 25, bottom: 100, left: 75};
         barChart.xAxis.labelRotation = 90;
 
         const barSeries = new BarSeries<any>();
@@ -47,7 +46,6 @@ export class GridChartFactory {
 
         lineChart.width = chartOptions.width;
         lineChart.height = chartOptions.height;
-        lineChart.padding = {top: 15, right: 25, bottom: 100, left: 75};
         lineChart.xAxis.labelRotation = 90;
 
         return lineChart;
@@ -58,7 +56,6 @@ export class GridChartFactory {
 
         pieChart.width = chartOptions.width;
         pieChart.height = chartOptions.height;
-        pieChart.padding = {top: 50, right: 50, bottom: 50, left: 50};
 
         return pieChart;
     }
