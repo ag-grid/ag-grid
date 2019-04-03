@@ -1,0 +1,22 @@
+.main-wrapper {
+    display: flex;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.quadrant {
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+    border: 1px solid pink;
+}
