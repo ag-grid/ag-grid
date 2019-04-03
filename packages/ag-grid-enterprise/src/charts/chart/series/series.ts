@@ -1,6 +1,10 @@
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 
+export interface SeriesDatum<T = any> {
+    datum: T
+}
+
 export abstract class Series<D, X, Y> {
 
     readonly id: string = this.createId();

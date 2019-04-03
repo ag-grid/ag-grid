@@ -9,15 +9,16 @@ import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
 import { extent } from "../../util/array";
 import colors from "../colors";
+import { SeriesDatum } from "./series";
 
-type MarkerDatum = {
+interface GroupSelectionDatum<T> extends SeriesDatum<T> {
     x: number,
     y: number,
     fillStyle: string | null,
     strokeStyle: string | null,
     lineWidth: number,
     radius: number
-};
+}
 
 export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
 
@@ -215,6 +216,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
+        const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
         const n = xData.length;
@@ -222,7 +224,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         const linePath: Path = this.linePath;
         const path: Path2D = linePath.path;
 
-        const markerData: MarkerDatum[] = [];
+        const groupSelectionData: GroupSelectionDatum<D>[] = [];
 
         path.clear();
         for (let i = 0; i < n; i++) {
@@ -237,7 +239,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
                 path.lineTo(x, y);
             }
 
-            markerData.push({
+            groupSelectionData.push({
+                datum: data[i],
                 x,
                 y,
                 fillStyle: this.color,
@@ -252,7 +255,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
 
         // ------------------------------------------
 
-        const updateGroups = this.groupSelection.setData(markerData);
+        const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);

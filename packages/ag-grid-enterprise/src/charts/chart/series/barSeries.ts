@@ -8,8 +8,9 @@ import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import colors from "../colors";
 import { Color } from "../../util/color";
+import { SeriesDatum } from "./series";
 
-type BarDatum = {
+interface GroupSelectionDatum<T> extends SeriesDatum<T> {
     x: number,
     y: number,
     width: number,
@@ -24,7 +25,7 @@ type BarDatum = {
         x: number,
         y: number
     }
-};
+}
 
 enum BarSeriesNodeTag {
     Bar,
@@ -373,15 +374,18 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
         const labelPadding = this.labelPadding;
+        const data = this.data;
+        const xData = this.domainX;
+        const yData = this.yData;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
-        const barData: BarDatum[] = [];
+        const groupSelectionData: GroupSelectionDatum<D>[] = [];
 
         for (let i = 0; i < n; i++) {
-            const category = this.domainX[i];
-            const values = this.yData[i];
+            const category = xData[i];
+            const values = yData[i];
             const x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
@@ -390,7 +394,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                 const bottomY = yScale.convert(grouped ? 0 : prev);
                 const labelText = this.yFieldNames[yFieldIndex];
 
-                barData.push({
+                groupSelectionData.push({
+                    datum: data[i],
                     x: barX,
                     y: Math.min(y, bottomY),
                     width: barWidth,
@@ -412,7 +417,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             }, 0);
         }
 
-        const updateGroups = this.groupSelection.setData(barData);
+        const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);

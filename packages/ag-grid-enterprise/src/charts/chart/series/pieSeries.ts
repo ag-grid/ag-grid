@@ -10,9 +10,9 @@ import { normalizeAngle180, toRadians } from "../../util/angle";
 import colors from "../colors";
 import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
+import { SeriesDatum } from "./series";
 
-type SectorDatum = {
-    index: number,
+interface GroupSelectionDatum<T> extends SeriesDatum<T> {
     innerRadius: number,
     outerRadius: number,
     startAngle: number,
@@ -43,7 +43,7 @@ type SectorDatum = {
         },
         strokeStyle: string
     }
-};
+}
 
 enum PieSeriesNodeTag {
     Sector,
@@ -203,12 +203,12 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     private radiusScale: LinearScale<number> = scaleLinear();
 
-    private groupSelection: Selection<Group, Group, SectorDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, GroupSelectionDatum<D>, any> = Selection.select(this.group).selectAll<Group>();
 
     /**
      * The processed data that gets visualized.
      */
-    private sectorsData: SectorDatum[] = [];
+    private groupSelectionData: GroupSelectionDatum<D>[] = [];
 
     private _data: any[] = [];
     set data(data: any[]) {
@@ -265,8 +265,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
 
-        const sectorsData = this.sectorsData;
-        sectorsData.length = 0;
+        const groupSelectionData = this.groupSelectionData;
+        groupSelectionData.length = 0;
 
         const rotation = toRadians(this.rotation);
         const colors = this.colors;
@@ -274,10 +274,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         const strokeColors = this.strokeColors;
         const calloutColor = this.calloutColor;
 
-        let sectorIndex = 0;
+        let datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
-            const radius = radiusField ? this.radiusScale.convert(radiusData[sectorIndex]) : this.radius;
+            const radius = radiusField ? this.radiusScale.convert(radiusData[datumIndex]) : this.radius;
             const outerRadius = Math.max(10, radius + this.outerRadiusOffset);
             const innerRadius = Math.max(0, this.innerRadiusOffset ? radius + this.innerRadiusOffset : 0);
             const startAngle = angleScale.convert(start + rotation);
@@ -291,24 +291,24 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
             const labelMinAngle = toRadians(this.labelMinAngle);
             const labelVisible = labelField && span > labelMinAngle;
-            const strokeStyle = strokeColor ? strokeColor : strokeColors[sectorIndex % strokeColors.length];
+            const strokeStyle = strokeColor ? strokeColor : strokeColors[datumIndex % strokeColors.length];
             const calloutStrokeStyle = calloutColor ? calloutColor : strokeStyle;
 
-            sectorsData.push({
-                index: sectorIndex,
+            groupSelectionData.push({
+                datum: data[datumIndex],
                 innerRadius,
                 outerRadius,
                 startAngle,
                 endAngle,
                 midAngle: normalizeAngle180(midAngle),
 
-                fillStyle: colors[sectorIndex % colors.length],
+                fillStyle: colors[datumIndex % colors.length],
                 strokeStyle,
                 lineWidth: this.lineWidth,
                 shadow: this.shadow,
 
                 label: labelVisible ? {
-                    text: labelData[sectorIndex],
+                    text: labelData[datumIndex],
                     font: labelFont,
                     fillStyle: labelColor,
                     x: midCos * (outerRadius + calloutLength + this.calloutPadding),
@@ -328,7 +328,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 } : undefined
             });
 
-            sectorIndex++;
+            datumIndex++;
 
             return end;
         }, 0);
@@ -343,7 +343,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             return;
         }
 
-        const updateGroups = this.groupSelection.setData(this.sectorsData);
+        const updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
