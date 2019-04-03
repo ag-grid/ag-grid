@@ -83,7 +83,7 @@ class Menu extends Component implements IComponent<any> {
         menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     }
 
-    private getMenuItems(): (MenuItemDef )[] {
+    private getMenuItems(): (MenuItemDef | string)[] {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return [
@@ -128,6 +128,7 @@ class Menu extends Component implements IComponent<any> {
                     chart.scene.download("chart");
                 }
             },
+            'separator',
             {
                 name: localeTextFunc('closeDialog', 'Close'),
                 action: () => {
