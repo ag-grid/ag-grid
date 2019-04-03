@@ -100,7 +100,7 @@ export class Dialog extends PopupComponent {
     @RefSelector('eBottomLeftResizer') private eBottomLeftResizer: HTMLElement;
     @RefSelector('eLeftResizer') private eLeftResizer: HTMLElement;
 
-    protected close: () => void;
+    public close: () => void;
 
     constructor(config?: DialogOptions) {
         super(Dialog.TEMPLATE);
