@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Component,
     IComponent,
@@ -13,6 +12,7 @@ import {
 import { MenuItemMapper } from "../menu/menuItemMapper";
 import { MenuList } from "../menu/menuList";
 import { MenuItemComponent } from "../menu/menuItemComponent";
+import {IGridChartComp} from "./gridChartComp";
 
 export class ChartMenu extends Component {
 
@@ -85,12 +85,22 @@ class Menu extends Component implements IComponent<any> {
     private getMenuItems(): (MenuItemDef )[] {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        return [{
-            name: localeTextFunc('closeDialog', 'Close'),
-            action: () => {
-                const chartContainer = this.chart.getContainer();
-                (chartContainer as Dialog).close();
+        return [
+            {
+                name: localeTextFunc('downloadChart', 'Download'),
+                action: () => {
+                    const chartComp: any = this.chart;
+                    const chart = (chartComp as IGridChartComp).getChart();
+                    chart.scene.download("chart");
+                }
+            },
+            {
+                name: localeTextFunc('closeDialog', 'Close'),
+                action: () => {
+                    const chartContainer = this.chart.getContainer();
+                    (chartContainer as Dialog).close();
+                }
             }
-        }];
+        ];
     }
 }
