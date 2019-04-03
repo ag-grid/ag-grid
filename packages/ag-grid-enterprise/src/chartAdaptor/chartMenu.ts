@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Component,
     IComponent,
@@ -43,8 +44,9 @@ export class ChartMenu extends Component {
 
         this.getContext().wireBean(menu);
 
+        const eMenu = menu.getGui();
         const hidePopup = this.popupService.addAsModalPopup(
-            menu.getGui(),
+            eMenu,
             true,
             () => menu.destroy.bind(this)
         );
@@ -53,7 +55,9 @@ export class ChartMenu extends Component {
             {
                 type: 'chartMenu',
                 eventSource: this.eChartMenu,
-                ePopup: menu.getGui(), keepWithinBounds: true
+                ePopup: menu.getGui(),
+                keepWithinBounds: true,
+                nudgeX: (_.getAbsoluteWidth(eMenu) - 18) * -1
             });
 
         menu.addDestroyFunc(() => hidePopup());

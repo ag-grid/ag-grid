@@ -80,10 +80,16 @@ export class GridChartComp extends Component implements IGridChartComp {
 
     public setChartType(chartType: ChartType) {
 
+        // capture current chart dimensions to create chart of the same size
+        const chartOptions = {
+            height: this.chart.height,
+            width: this.chart.width
+        };
+
         _.clearElement(this.eChart);
 
         this.chartType = chartType;
-        this.chart = GridChartFactory.createChart(chartType, this.defaultChartOptions, this.eChart);
+        this.chart = GridChartFactory.createChart(chartType, chartOptions, this.eChart);
         this.refresh();
     }
 
