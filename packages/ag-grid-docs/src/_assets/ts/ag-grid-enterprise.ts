@@ -17,4 +17,6 @@ if (HMR) {
 
 export * from "../../../../ag-grid-community/src/ts/main";
 
+import "../../../../ag-grid-enterprise/src/modules/chartsModule.ts";
+
 import "../../../../ag-grid-enterprise/src/main.ts";
