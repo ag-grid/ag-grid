@@ -152,7 +152,7 @@ export class Grid {
 
         const rowModelClass = this.getRowModelClass(gridOptions);
 
-        const enterprise = _.exists(Grid.enterpriseBeans);
+        const enterprise = !_.missingOrEmpty(Grid.enterpriseBeans);
 
         const moduleBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.beans ? module.beans : []);
         const moduleEnterpriseBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.enterpriseBeans ? module.enterpriseBeans : []);
