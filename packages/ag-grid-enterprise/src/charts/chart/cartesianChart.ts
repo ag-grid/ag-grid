@@ -3,6 +3,7 @@ import { Axis } from "../axis";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
+import { Padding } from "../util/padding";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
@@ -33,6 +34,13 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         this.layoutPending = true;
     }
 
+    private autoPadding: Padding = {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
+    };
+
     performLayout(): void {
         if (!(this.xAxis && this.yAxis)) {
             return;
@@ -51,6 +59,12 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
 
+        const autoPadding = this.autoPadding;
+        shrinkRect.x += autoPadding.left;
+        shrinkRect.y += autoPadding.top;
+        shrinkRect.width -= autoPadding.left + autoPadding.right;
+        shrinkRect.height -= autoPadding.top + autoPadding.bottom;
+
         const seriesClipRect = this.seriesClipRect;
         seriesClipRect.x = shrinkRect.x;
         seriesClipRect.y = shrinkRect.y - padding.top;
@@ -60,7 +74,6 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
 
-        // xAxis.scale.
         xAxis.scale.range = [0, shrinkRect.width];
         xAxis.rotation = -90;
         xAxis.translationX = shrinkRect.x;
@@ -128,5 +141,17 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
         xAxis.update();
         yAxis.update();
+
+        const xAxisBBox = xAxis.getBBox();
+        const yAxisBBox = yAxis.getBBox();
+
+        if (this.autoPadding.left !== yAxisBBox.width) {
+            this.autoPadding.left = yAxisBBox.width;
+            this.layoutPending = true;
+        }
+        if (this.autoPadding.bottom !== xAxisBBox.width) {
+            this.autoPadding.bottom = xAxisBBox.width;
+            this.layoutPending = true;
+        }
     }
 }

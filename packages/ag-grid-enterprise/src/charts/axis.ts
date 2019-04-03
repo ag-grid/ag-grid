@@ -7,7 +7,6 @@ import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util
 import { Text } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
-import { Rect } from "./scene/shape/rect";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 
@@ -392,6 +391,4 @@ export class Axis<D> {
             height: bottom - top
         };
     }
-
-    rect = new Rect();
 }
