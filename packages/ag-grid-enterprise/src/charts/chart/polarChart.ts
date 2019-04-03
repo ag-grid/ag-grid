@@ -1,11 +1,19 @@
 import { Chart } from "./chart";
 import { PolarSeries } from "./series/polarSeries";
+import { Padding } from "../util/padding";
 
 export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
     centerX: number = 0;
     centerY: number = 0;
 
     radius: number = 0;
+
+    protected _padding: Padding = {
+        top: 50,
+        right: 50,
+        bottom: 50,
+        left: 50
+    };
 
     protected _series: PolarSeries<D, X, Y>[] = [];
 

@@ -1,13 +1,7 @@
 import { Scene } from "../scene/scene";
 import { Group } from "../scene/group";
 import { Series } from "./series/series";
-
-type Padding = {
-    top: number,
-    right: number,
-    bottom: number,
-    left: number
-};
+import { Padding } from "../util/padding";
 
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
@@ -17,7 +11,7 @@ export abstract class Chart<D, X, Y> {
         this.scene.root = new Group();
     }
 
-    private _padding: Padding = {
+    protected _padding: Padding = {
         top: 10,
         right: 10,
         bottom: 10,
