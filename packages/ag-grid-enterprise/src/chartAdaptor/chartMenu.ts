@@ -92,7 +92,7 @@ class Menu extends Component implements IComponent<any> {
 
         return [
             {
-                name: 'Chart Range',
+                name: 'Chart Type',
                 subMenu: [
                     {
                         name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
@@ -123,6 +123,12 @@ class Menu extends Component implements IComponent<any> {
                         }
                     }
                 ]
+            },
+            {
+                name: localeTextFunc('formatChart', 'Format Chart'),
+                action: () => {
+                    console.log('See chart formatting tool panel...');
+                }
             },
             {
                 name: localeTextFunc('downloadChart', 'Download'),
