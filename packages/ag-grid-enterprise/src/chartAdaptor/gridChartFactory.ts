@@ -16,8 +16,10 @@ export class GridChartFactory {
 
     static createChart(chartType: ChartType, chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
         switch (chartType) {
-            case ChartType.Bar:
-                return GridChartFactory.createBarChart(parentElement, chartOptions);
+            case ChartType.GroupedBar:
+                return GridChartFactory.createBarChart(true, parentElement, chartOptions);
+            case ChartType.StackedBar:
+                return GridChartFactory.createBarChart(false, parentElement, chartOptions);
             case ChartType.Line:
                 return GridChartFactory.createLineChart(parentElement, chartOptions);
             case ChartType.Pie:
@@ -25,7 +27,7 @@ export class GridChartFactory {
         }
     }
 
-    private static createBarChart(parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
+    private static createBarChart(grouped: boolean, parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
         const barChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), parentElement);
 
         barChart.width = chartOptions.width;
@@ -33,7 +35,7 @@ export class GridChartFactory {
         barChart.xAxis.labelRotation = 90;
 
         const barSeries = new BarSeries<any>();
-        barSeries.grouped = true;
+        barSeries.grouped = grouped;
 
         barChart.addSeries(barSeries);
 

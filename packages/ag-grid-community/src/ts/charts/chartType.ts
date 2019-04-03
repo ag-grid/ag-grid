@@ -1,1 +1,1 @@
-export enum ChartType {Bar, Line, Pie}
+export enum ChartType {GroupedBar, StackedBar, Line, Pie}

@@ -181,17 +181,24 @@ export class MenuItemMapper {
                 return 'separator';
             case 'chartRange':
                 const chartRangeSubMenuItems: string[] = [];
-                chartRangeSubMenuItems.push('barRangeChart');
+                chartRangeSubMenuItems.push('groupedBarRangeChart');
+                chartRangeSubMenuItems.push('stackedBarRangeChart');
                 chartRangeSubMenuItems.push('lineRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
                 return {
                     name: 'Chart Range',
                     subMenu: chartRangeSubMenuItems
                 };
-            case 'barRangeChart': return {
-                name: localeTextFunc('barRangeChart', 'Bar'),
+            case 'groupedBarRangeChart': return {
+                name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Bar);
+                    this.rangeChartService.chartCurrentRange(ChartType.GroupedBar);
+                }
+            };
+            case 'stackedBarRangeChart': return {
+                name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.StackedBar);
                 }
             };
             case 'lineRangeChart': return {

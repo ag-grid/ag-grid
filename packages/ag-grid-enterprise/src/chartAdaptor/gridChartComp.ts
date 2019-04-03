@@ -20,6 +20,7 @@ import {
 
 export interface IGridChartComp {
     getChart(): Chart<any, string, number>;
+    setChartType(chartType: ChartType): void;
 }
 
 export class GridChartComp extends Component implements IGridChartComp {
@@ -32,22 +33,22 @@ export class GridChartComp extends Component implements IGridChartComp {
 
     private readonly datasource: ChartDatasource;
 
-    private readonly chartType: ChartType;
-    private readonly chart: Chart<any, string, number>;
+    private chartType: ChartType;
+    private chart: Chart<any, string, number>;
 
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
+
+    private defaultChartOptions: ChartOptions = {
+        height: 400,
+        width: 800
+    };
 
     constructor(chartType: ChartType, chartDatasource: ChartDatasource) {
         super(GridChartComp.TEMPLATE);
 
         this.chartType = chartType;
-
-        const chartOptions: ChartOptions = {
-            height: 400,
-            width: 800
-        };
-        this.chart = GridChartFactory.createChart(chartType, chartOptions, this.eChart);
+        this.chart = GridChartFactory.createChart(chartType, this.defaultChartOptions, this.eChart);
 
         this.datasource = chartDatasource;
     }
@@ -58,15 +59,24 @@ export class GridChartComp extends Component implements IGridChartComp {
 
         // const menu = new ChartMenu(this);
         // this.getContext().wireBean(menu);
-        //
+
         // const eChart: HTMLElement = this.getGui();
         // eChart.appendChild(menu.getGui());
 
         this.refresh();
     }
 
+    public setChartType(chartType: ChartType) {
+
+        _.clearElement(this.eChart);
+
+        this.chartType = chartType;
+        this.chart = GridChartFactory.createChart(chartType, this.defaultChartOptions, this.eChart);
+        this.refresh();
+    }
+
     public getChart(): Chart<any, string, number> {
-        return this.chart;
+        return this.chart
     }
 
     public setContainer(container: Dialog) {
@@ -110,7 +120,7 @@ export class GridChartComp extends Component implements IGridChartComp {
     }
 
     private updateChart() {
-        if (this.chartType === ChartType.Bar) {
+        if (this.chartType === ChartType.GroupedBar || this.chartType === ChartType.StackedBar) {
             this.updateBarChart();
         } else if (this.chartType === ChartType.Line) {
             this.updateLineChart();

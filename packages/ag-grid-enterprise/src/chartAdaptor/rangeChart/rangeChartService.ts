@@ -32,7 +32,7 @@ export class RangeChartService implements IRangeChartService {
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('context') private context: Context;
 
-    public chartCurrentRange(chartType: ChartType = ChartType.Bar): void {
+    public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): void {
         const selectedRange = this.getSelectedRange();
         this.chartRange(selectedRange, chartType);
     }
@@ -42,9 +42,11 @@ export class RangeChartService implements IRangeChartService {
 
         let chartType: ChartType;
         switch (chartTypeString) {
+            case 'groupedBar': chartType = ChartType.GroupedBar; break;
+            case 'stackedBar': chartType = ChartType.StackedBar; break;
             case 'pie': chartType = ChartType.Pie; break;
             case 'line': chartType = ChartType.Line; break;
-            default: chartType = ChartType.Bar; break;
+            default: chartType = ChartType.GroupedBar;
         }
 
         if (cellRange) {
@@ -52,7 +54,7 @@ export class RangeChartService implements IRangeChartService {
         }
     }
 
-    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.Bar): void {
+    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar): void {
         const ds = this.createDatasource(cellRange);
 
         if (ds) {

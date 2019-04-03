@@ -7,7 +7,8 @@ import {
     RefSelector,
     Dialog,
     PopupService,
-    GridOptionsWrapper
+    GridOptionsWrapper,
+    ChartType
 } from "ag-grid-community";
 import { MenuItemMapper } from "../menu/menuItemMapper";
 import { MenuList } from "../menu/menuList";
@@ -86,6 +87,39 @@ class Menu extends Component implements IComponent<any> {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return [
+            {
+                name: 'Chart Range',
+                subMenu: [
+                    {
+                        name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
+                        action: () => {
+                            const chartComp: any = this.chart;
+                            (chartComp as IGridChartComp).setChartType(ChartType.GroupedBar);
+                        }
+                    },
+                    {
+                        name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
+                        action: () => {
+                            const chartComp: any = this.chart;
+                            (chartComp as IGridChartComp).setChartType(ChartType.StackedBar);
+                        }
+                    },
+                    {
+                        name: localeTextFunc('lineRangeChart', 'Line'),
+                        action: () => {
+                            const chartComp: any = this.chart;
+                            (chartComp as IGridChartComp).setChartType(ChartType.Line);
+                        }
+                    },
+                    {
+                        name: localeTextFunc('pieRangeChart', 'Pie'),
+                        action: () => {
+                            const chartComp: any = this.chart;
+                            (chartComp as IGridChartComp).setChartType(ChartType.Pie);
+                        }
+                    }
+                ]
+            },
             {
                 name: localeTextFunc('downloadChart', 'Download'),
                 action: () => {
