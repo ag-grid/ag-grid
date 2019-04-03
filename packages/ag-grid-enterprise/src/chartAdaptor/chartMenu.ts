@@ -6,7 +6,9 @@ import {
     MenuItemDef,
     PostConstruct,
     RefSelector,
+    Dialog,
     PopupService,
+    GridOptionsWrapper
 } from "ag-grid-community";
 import {MenuItemMapper} from "../menu/menuItemMapper";
 import {MenuList} from "../menu/menuList";
@@ -36,8 +38,7 @@ export class ChartMenu extends Component {
     }
 
     private showMenu(): void {
-        const menuItems: string[] = ['copy', 'paste', 'separator'];
-        const menu = new Menu(menuItems);
+        const menu = new Menu(this.chart);
 
         this.getContext().wireBean(menu);
 
@@ -60,13 +61,14 @@ export class ChartMenu extends Component {
 
 class Menu extends Component implements IComponent<any> {
 
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
 
-    private readonly menuItems: (MenuItemDef | string)[];
+    private chart: Component;
 
-    constructor(menuItems: (MenuItemDef | string)[]) {
+    constructor(chartMenu: Component) {
         super('<div class="ag-menu"></div>');
-        this.menuItems = menuItems;
+        this.chart = chartMenu;
     }
 
     @PostConstruct
@@ -74,11 +76,21 @@ class Menu extends Component implements IComponent<any> {
         const menuList = new MenuList();
         this.getContext().wireBean(menuList);
 
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
-
-        menuList.addMenuItems(menuItemsMapped);
+        menuList.addMenuItems(this.getMenuItems());
 
         this.appendChild(menuList);
         menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
+    }
+
+    private getMenuItems(): (MenuItemDef )[] {
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return [{
+            name: localeTextFunc('closeDialog', 'Close'),
+            action: () => {
+                const chartContainer = this.chart.getContainer();
+                (chartContainer as Dialog).close();
+            }
+        }];
     }
 }
