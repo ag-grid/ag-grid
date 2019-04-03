@@ -124,6 +124,7 @@ class Menu extends Component implements IComponent<any> {
                     }
                 ]
             },
+            'separator',
             {
                 name: localeTextFunc('formatChart', 'Format Chart'),
                 action: () => {
