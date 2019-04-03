@@ -56,8 +56,8 @@ export class ChartMenu extends Component {
                 type: 'chartMenu',
                 eventSource: this.eChartMenu,
                 ePopup: menu.getGui(),
-                keepWithinBounds: true,
-                nudgeX: (_.getAbsoluteWidth(eMenu) - 18) * -1
+                alignSide: 'right',
+                keepWithinBounds: true
             });
 
         menu.addDestroyFunc(() => hidePopup());

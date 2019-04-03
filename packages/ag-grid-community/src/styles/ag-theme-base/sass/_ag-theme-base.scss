@@ -1366,33 +1366,47 @@
     }
 
     ////////////////////////////////////////
+    // Popup
+    ////////////////////////////////////////
+    &.ag-popup > div {
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    }
+    ////////////////////////////////////////
     // Dialog
     ////////////////////////////////////////
     .ag-dialog {
         background-color: $background-color;
         border: 1px solid $border-color;
-        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+
         .ag-dialog-title-bar {
             background-color: $header-background-color;
             color: $header-foreground-color;
             height: 45px;
             padding: 12px 16px;
             .ag-dialog-title-bar-title {
-                flex: 1 1 auto;
                 font-size: 20px;
                 font-weight: 400;
                 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             }
-        }
 
-        .ag-dialog-button-close {
-            width: 24px;
-            cursor: pointer;
-        }
-        .ag-dialog-button-close:before {
-            content: '\00D7';
-            font-size: 35px;
-            font-weight: bold;
+            .ag-dialog-title-bar-buttons {
+                .ag-dialog-button {
+                    height: 25px;
+                    width: 25px;
+                    border-radius: 5px;
+                    &:hover {
+                        background-color: darken($header-background-color, 10%);
+                    }
+                    &:not(:last-child) {
+                        margin-right: 5px;
+                    }
+                    > span {
+                        height: 100%;
+                        width: 100%;
+                        background-size: contain;
+                    }
+                }
+            }
         }
 
         .ag-message-box {

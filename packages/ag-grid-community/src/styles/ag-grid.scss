@@ -934,6 +934,20 @@ $handleSize: 5px;
         flex: none;
         align-items: center;
         cursor: default;
+
+        .ag-dialog-title-bar-title {
+            flex: 1 1 auto;
+        }
+
+        .ag-dialog-title-bar-buttons {
+            display: flex;
+            .ag-dialog-button {
+                cursor: pointer;
+                height: 100%;
+                width: 100%;
+                background-size: contain;
+            }
+        }
     }
 
     .ag-dialog-content-wrapper {

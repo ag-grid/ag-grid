@@ -58,12 +58,6 @@ export class GridChartComp extends Component implements IGridChartComp {
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
 
-        // const menu = new ChartMenu(this);
-        // this.getContext().wireBean(menu);
-
-        // const eChart: HTMLElement = this.getGui();
-        // eChart.appendChild(menu.getGui());
-
         const eGui = this.getGui();
 
         const observeResize = this.resizeObserverService.observeResize(eGui, () => {

@@ -53,16 +53,19 @@ export class Dialog extends PopupComponent {
             </div>
             <div ref="eTitleBar" class="ag-dialog-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-dialog-title-bar-title"></span>
-                <div ref="eTitleBarButtons">
-                    <span ref="eClose" class="ag-dialog-button-close"></span>
-                </div>
+                <div ref="eTitleBarButtons" class="ag-dialog-title-bar-buttons"></div>
             </div>
             <div ref="eContentWrapper" class="ag-dialog-content-wrapper"></div>
         </div>`;
 
+    private static CLOSE_BTN_TEMPLATE =
+        `<div class="ag-dialog-button">
+            <span class="ag-icon-cross"></span>
+        </div>
+        `;
+
     private config: DialogOptions | undefined;
     private resizable: ResizableStructure = {};
-    private closableListener: () => void | undefined;
     private movable = false;
     private closable = true;
     private isMoving = false;
@@ -90,7 +93,6 @@ export class Dialog extends PopupComponent {
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
     @RefSelector('eTitleBarButtons') private eTitleBarButtons: HTMLElement;
     @RefSelector('eTitle') private eTitle: HTMLElement;
-    @RefSelector('eClose') private eClose: HTMLElement;
 
     @RefSelector('eTopLeftResizer') private eTopLeftResizer: HTMLElement;
     @RefSelector('eTopResizer') private eTopResizer: HTMLElement;
@@ -100,6 +102,8 @@ export class Dialog extends PopupComponent {
     @RefSelector('eBottomResizer') private eBottomResizer: HTMLElement;
     @RefSelector('eBottomLeftResizer') private eBottomLeftResizer: HTMLElement;
     @RefSelector('eLeftResizer') private eLeftResizer: HTMLElement;
+
+    private closeButtonComp: Component;
 
     public close: () => void;
 
@@ -350,15 +354,13 @@ export class Dialog extends PopupComponent {
             this.closable = closable;
         }
 
-        const eGui = this.getGui();
-
-        _.addOrRemoveCssClass(eGui, 'ag-dialog-closable', closable);
-
         if (closable) {
-            this.closableListener = this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
-        } else if (this.closableListener) {
-            this.closableListener();
-            this.closableListener = undefined;
+            const closeButtonComp = this.closeButtonComp = new Component(Dialog.CLOSE_BTN_TEMPLATE);
+            this.addTitleBarButton(closeButtonComp);
+            closeButtonComp.addDestroyableEventListener(closeButtonComp.getGui(), 'click', this.onBtClose.bind(this));
+        } else if (this.closeButtonComp) {
+            this.closeButtonComp.destroy();
+            this.closeButtonComp = undefined;
         }
     }
 
@@ -397,6 +399,8 @@ export class Dialog extends PopupComponent {
         position = Math.max(0, Math.min(position, len));
 
         const eGui = button.getGui();
+
+        _.addCssClass(eGui, 'ag-dialog-button');
 
         if (position === 0) {
             eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);
@@ -472,6 +476,11 @@ export class Dialog extends PopupComponent {
     }
 
     public destroy(): void {
+        if (this.closeButtonComp) {
+            this.closeButtonComp.destroy();
+            this.closeButtonComp = undefined;
+        }
+
         super.destroy();
         this.buildParamsAndDispatchEvent(Dialog.EVENT_DESTROYED);
     }

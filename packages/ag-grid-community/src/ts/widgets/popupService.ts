@@ -145,12 +145,13 @@ export class PopupService {
         minHeight?: number,
         nudgeX?: number,
         nudgeY?: number,
+        alignSide: 'left' | 'right',
         keepWithinBounds?: boolean
     }) {
-
         const sourceRect = params.eventSource.getBoundingClientRect();
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
+        const alignSide = params.alignSide || 'left';
 
         let parentRect: ClientRect;
 
@@ -160,13 +161,19 @@ export class PopupService {
             parentRect = popupParent.getBoundingClientRect();
         }
 
+        let x = sourceRect.left - parentRect.left;
+
+        if (alignSide === 'right') {
+            x -= (params.ePopup.offsetWidth - sourceRect.width);
+        }
+
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
             minHeight: params.minHeight,
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
-            x: sourceRect.left - parentRect.left,
+            x,
             y: sourceRect.top - parentRect.top + sourceRect.height,
             keepWithinBounds: params.keepWithinBounds
         });

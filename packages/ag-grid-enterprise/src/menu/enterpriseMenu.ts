@@ -66,6 +66,14 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
 
+        let multiplier = -1;
+        let alignSide = 'left';
+
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            multiplier = 1;
+            alignSide = 'right';
+        }
+
         this.showMenu(column, (menu: EnterpriseMenu) => {
             const minDims = menu.getMinDimensions();
             this.popupService.positionPopupUnderComponent({
@@ -73,10 +81,11 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 type: 'columnMenu',
                 eventSource: eventSource,
                 ePopup: menu.getGui(),
-                nudgeX: -9,
+                nudgeX: 9 * multiplier,
                 nudgeY: -26,
                 minWidth: minDims.width,
                 minHeight: minDims.height,
+                alignSide,
                 keepWithinBounds: true
             });
             if (defaultTab) {
