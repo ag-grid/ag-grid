@@ -4,6 +4,7 @@
     height: 100%;
     width: 100%;
     flex-direction: column;
+    background-color: darkslategray;
 }
 
 .row {
@@ -15,8 +16,16 @@
 }
 
 .quadrant {
+    background-color: aliceblue;
+    position: relative;
     display: flex;
-    flex: 1 1 auto;
+    flex: 1 1 50%;
     overflow: hidden;
-    border: 1px solid pink;
+    border: 1px solid lightgray;
+    margin: 10px;
+}
+
+.quadrant > div {
+    width: 100%;
+    height: 100%;
 }
