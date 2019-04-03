@@ -5,6 +5,9 @@ import { BarSeries } from "../charts/chart/series/barSeries";
 import { LineSeries } from "../charts/chart/series/lineSeries";
 import { PieSeries } from "../charts/chart/series/pieSeries";
 import colors from "../charts/chart/colors";
+import { CartesianChart } from "../charts/chart/cartesianChart";
+import { PolarChart } from "../charts/chart/polarChart";
+import {ChartMenu} from "./chartMenu";
 import {
     _,
     Component,
@@ -13,8 +16,6 @@ import {
     Dialog,
     DialogEvent
 } from "ag-grid-community";
-import { CartesianChart } from "../charts/chart/cartesianChart";
-import { PolarChart } from "../charts/chart/polarChart";
 
 export class GridChartComp extends Component {
 
@@ -49,6 +50,13 @@ export class GridChartComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
+
+        // const menu = new ChartMenu(this);
+        // this.getContext().wireBean(menu);
+        //
+        // const eChart: HTMLElement = this.getGui();
+        // eChart.appendChild(menu.getGui());
+
         this.refresh();
     }
 

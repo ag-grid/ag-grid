@@ -1,3 +1,12 @@
+
+.ag-dialog {
+    .ag-chart-menu {
+        .ag-icon-menu {
+            background-size: 25px 25px;
+        }
+    }
+}
+
 .ag-chart {
     position: relative;
     display: flex;
@@ -6,6 +15,16 @@
 
         canvas {
             display: block;
+        }
+    }
+
+    .ag-chart-menu {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+
+        .ag-icon-menu {
+            background-size: 25px 25px;
         }
     }
 }

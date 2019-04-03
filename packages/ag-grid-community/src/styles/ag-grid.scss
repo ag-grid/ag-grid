@@ -768,6 +768,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Popup
  ****************************
 */
+.ag-popup {
+    z-index: 10;
+}
+
 .ag-popup-backdrop {
     height: 100%;
     left: 0;
@@ -862,7 +866,6 @@ $handleSize: 5px;
     flex-direction: column;
     position: absolute;
     overflow: hidden;
-    z-index: 10;
 
     .ag-resizer {
         position: absolute;

@@ -3,6 +3,7 @@ import {RangeController} from "../../rangeController";
 import {IRangeChartService, CellRangeParams, Autowired, Bean, CellRange, Component, Context, Dialog, IEventEmitter, MessageBox} from "ag-grid-community";
 import {ChartType} from "../gridChartFactory";
 import {GridChartComp} from "../gridChartComp";
+import {ChartMenu} from "../chartMenu";
 
 export interface ChartDatasource extends IEventEmitter {
     getCategory(i: number): string;
@@ -80,13 +81,19 @@ export class RangeChartService implements IRangeChartService {
             movable: true,
             title: 'Chart',
             component: chart,
-            centered: true
+            centered: true,
+            closable: false
         });
 
         this.context.wireBean(chartDialog);
         chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => {
             chart.destroy();
         });
+
+        const menu = new ChartMenu(chart);
+        this.context.wireBean(menu);
+
+        chartDialog.addTitleBarButton(menu, 0);
     }
 
     private addErrorMessageBox(errors: string[]) {
