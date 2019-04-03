@@ -156,6 +156,7 @@ export class DragService {
 
         const eDocument = this.gridOptionsWrapper.getDocument();
 
+        this.setNoSelectToBody(true);
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in mouseup handling.
         eDocument.addEventListener('mousemove', this.onMouseMoveListener);
@@ -203,7 +204,6 @@ export class DragService {
             };
             this.eventService.dispatchEvent(event);
             this.currentDragParams.onDragStart(startEvent);
-            this.setNoSelectToBody(true);
         }
 
         this.currentDragParams.onDragging(currentEvent);

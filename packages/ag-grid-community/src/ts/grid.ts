@@ -75,7 +75,7 @@ import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import {Module} from "./interfaces/iModule";
+import { Module } from "./interfaces/iModule";
 
 export interface GridParams {
     // used by Web Components
@@ -155,9 +155,9 @@ export class Grid {
         const enterprise = _.exists(Grid.enterpriseBeans);
 
         const moduleBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.beans ? module.beans : []);
-        const moduleEnterpriseBeans = this.extractModuleEntity(Grid.modulesToInclude,(module) => module.enterpriseBeans ? module.enterpriseBeans : []);
-        const moduleEnterpriseComponents = this.extractModuleEntity(Grid.modulesToInclude,(module) => module.enterpriseComponents ? module.enterpriseComponents : []);
-        const modulesEnterpriseDefaultComponents = this.extractModuleEntity(Grid.modulesToInclude,(module) => module.enterpriseDefaultComponents ? module.enterpriseDefaultComponents : []);
+        const moduleEnterpriseBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.enterpriseBeans ? module.enterpriseBeans : []);
+        const moduleEnterpriseComponents = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.enterpriseComponents ? module.enterpriseComponents : []);
+        const modulesEnterpriseDefaultComponents = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.enterpriseDefaultComponents ? module.enterpriseDefaultComponents : []);
 
         let frameworkFactory = params ? params.frameworkFactory : null;
         if (_.missing(frameworkFactory)) {

@@ -52,9 +52,9 @@ import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
+import { IRangeChartService } from "./interfaces/iRangeChartService";
+import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
-import {IRangeChartService} from "./interfaces/iRangeChartService";
-import {ModuleNames} from "./modules/moduleNames";
 
 export interface StartEditingCellParams {
     rowIndex: number;

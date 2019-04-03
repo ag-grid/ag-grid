@@ -40,7 +40,7 @@ export class Dialog extends PopupComponent {
     public static EVENT_RESIZE = 'dialogResized';
 
     private static TEMPLATE =
-        `<div class="ag-dialog">
+        `<div class="ag-dialog" tabindex="-1">
             <div class="ag-resizer-wrapper">
                 <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
                 <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
@@ -160,13 +160,13 @@ export class Dialog extends PopupComponent {
             this.offsetDialog(x, y);
         }
 
-        this.addDestroyableEventListener(eGui, 'mousedown', (e) => {
-            _.addCssClass(eGui.offsetParent as HTMLElement, 'ag-unselectable');
-            if ((e.target as HTMLElement).contains(this.eClose)) {
+        this.addDestroyableEventListener(eGui, 'focus', (e) => {
+            if (this.eTitleBarButtons.contains(e.target)) {
                 return;
             }
             this.popupService.bringPopupToFront(eGui);
         });
+
         this.addDestroyableEventListener(this.eClose, 'click', this.onBtClose.bind(this));
     }
 

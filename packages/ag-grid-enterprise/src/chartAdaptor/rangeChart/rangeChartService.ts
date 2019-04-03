@@ -1,20 +1,20 @@
-import {RangeChartDatasource} from "./rangeChartDatasource";
-import {RangeController} from "../../rangeController";
-import {
+import { 
     Autowired,
-    Bean,
-    CellRange,
-    CellRangeParams,
+    Bean, 
     ChartType,
+    CellRangeParams,
+    CellRange, 
     Component,
     Context,
     Dialog,
     IEventEmitter,
     IRangeChartService,
-    MessageBox
+    MessageBox 
 } from "ag-grid-community";
-import {GridChartComp} from "../gridChartComp";
-import {ChartMenu} from "../chartMenu";
+import { RangeChartDatasource } from "./rangeChartDatasource";
+import { RangeController } from "../../rangeController";
+import { GridChartComp } from "../gridChartComp";
+import { ChartMenu } from "../chartMenu";
 
 export interface ChartDatasource extends IEventEmitter {
     getCategory(i: number): string;

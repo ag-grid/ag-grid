@@ -199,7 +199,7 @@ export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 // range
 export { CellRange, CellRangeParams, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 export { IRangeController } from "./interfaces/iRangeController";
-export { IRangeChartService} from "./interfaces/iRangeChartService";
+export { IRangeChartService } from "./interfaces/iRangeChartService";
 
 // exporter
 export { CsvCreator, BaseCreator } from "./exporter/csvCreator";

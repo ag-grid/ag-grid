@@ -8,7 +8,7 @@ import { PieSeries } from "../charts/chart/series/pieSeries";
 import colors from "../charts/chart/colors";
 import { CartesianChart } from "../charts/chart/cartesianChart";
 import { PolarChart } from "../charts/chart/polarChart";
-import {ChartMenu} from "./chartMenu";
+import { ChartMenu } from "./chartMenu";
 import {
     _,
     Component,

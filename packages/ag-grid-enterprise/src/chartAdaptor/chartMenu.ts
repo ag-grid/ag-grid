@@ -10,9 +10,9 @@ import {
     PopupService,
     GridOptionsWrapper
 } from "ag-grid-community";
-import {MenuItemMapper} from "../menu/menuItemMapper";
-import {MenuList} from "../menu/menuList";
-import {MenuItemComponent} from "../menu/menuItemComponent";
+import { MenuItemMapper } from "../menu/menuItemMapper";
+import { MenuList } from "../menu/menuList";
+import { MenuItemComponent } from "../menu/menuItemComponent";
 
 export class ChartMenu extends Component {
 

@@ -12,7 +12,7 @@ export class RowPositionUtils {
         // if both missing
         if (!rowA && !rowB) { return true; }
         // if only one missing
-        if ( (rowA && !rowB) || (!rowA && rowB) ) { return false; }
+        if ((rowA && !rowB) || (!rowA && rowB)) { return false; }
         // otherwise compare
         return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned === rowB.rowPinned;
     }

@@ -1,7 +1,7 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
-import {ModuleNames} from "../modules/moduleNames";
+import { ModuleNames } from "../modules/moduleNames";
 
 // steps in booting up:
 // 1. create all beans
@@ -18,7 +18,7 @@ export interface ContextParams {
     components: ComponentMeta[];
     enterpriseDefaultComponents: any[];
     overrideBeans: any[];
-    registeredModules: string[],
+    registeredModules: string[];
     debug: boolean;
 }
 

@@ -18,7 +18,7 @@ import { Constants } from "./constants";
 import { ComponentUtil } from "./components/componentUtil";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
-import {Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier} from "./context/context";
+import { Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
@@ -34,8 +34,8 @@ import { ColDefUtil } from "./components/colDefUtil";
 import { Events } from "./eventKeys";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
+import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
-import {ModuleNames} from "./modules/moduleNames";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;

@@ -1,5 +1,5 @@
-import {CellRangeParams} from "./iRangeController";
-import {ChartType} from "../charts/chartType";
+import { CellRangeParams } from "./iRangeController";
+import { ChartType } from "../charts/chartType";
 
 export interface IRangeChartService {
     chartCurrentRange(chartType: ChartType): void;

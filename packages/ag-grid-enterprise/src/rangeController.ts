@@ -138,10 +138,10 @@ export class RangeController implements IRangeController {
         // can ctrl & click a cell many times and hit ctrl+c, which would result in the cell getting copied
         // many times to the clipboard.
         let existingRange: CellRange | undefined;
-        this.cellRanges.forEach( range => {
+        this.cellRanges.forEach(range => {
             const matches
                 // check cols are same
-                = (range.columns && range.columns.length===1 && range.columns[0]===cell.column)
+                = (range.columns && range.columns.length === 1 && range.columns[0] === cell.column)
                 // check rows are same
                 && RowPositionUtils.sameRow(rowForCell, range.startRow)
                 && RowPositionUtils.sameRow(rowForCell, range.endRow);
@@ -153,7 +153,7 @@ export class RangeController implements IRangeController {
         if (existingRange) {
             // we need it at the end of the list, as the dragStart picks the last created
             // range as the start point for the drag
-            const atEndOfList = this.cellRanges[this.cellRanges.length-1]===existingRange;
+            const atEndOfList = this.cellRanges[this.cellRanges.length - 1] === existingRange;
             if (!atEndOfList) {
                 _.removeFromArray(this.cellRanges, existingRange);
                 this.cellRanges.push(existingRange);
@@ -240,7 +240,7 @@ export class RangeController implements IRangeController {
 
         if (params.columns) {
             columns = [];
-            params.columns!.forEach(key => {
+            params.columns!.forEach((key: Column | string) => {
                 const col = this.columnController.getColumnWithValidation(key);
                 if (col) {
                     columns!.push(col);
