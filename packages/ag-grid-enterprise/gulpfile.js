@@ -24,8 +24,8 @@ gulp.task('webpack-noStyle', ['tsc'], webpackTask.bind(null, false, false));
 gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
 
-gulp.task('tsc', ['tsc-src'], tscMainTask);
-gulp.task('modules', tscModulesTask)
+gulp.task('tsc', ['tsc-src', 'tsc-modules'], tscMainTask);
+gulp.task('tsc-modules', tscModulesTask);
 gulp.task('tsc-no-clean', tscSrcTask);
 gulp.task('tsc-src', ['cleanDist', 'tslint'], tscSrcTask);
 gulp.task('tsc-main', ['cleanMain'], tscMainTask);
