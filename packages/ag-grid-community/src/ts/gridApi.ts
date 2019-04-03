@@ -54,6 +54,7 @@ import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
 import { _ } from "./utils";
 import {IRangeChartService} from "./interfaces/iRangeChartService";
+import {ModuleNames} from "./modules/moduleNames";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -118,7 +119,7 @@ export class GridApi {
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
-    @Autowired('rangeChartService') private rangeChartService: IRangeChartService;
+    @Optional('rangeChartService') private rangeChartService: IRangeChartService;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -951,6 +952,12 @@ export class GridApi {
     }
 
     public chartRange(params: CellRangeParams, chartType: string): void {
+        if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
+            _.doOnce(() => {
+                console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
+            }, 'ChartsModuleCheck');
+            return;
+        }
         this.rangeChartService.chartCellRangeParams(params, chartType);
     }
 
