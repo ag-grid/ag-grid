@@ -367,7 +367,7 @@ export class Dialog extends PopupComponent {
     }
 
     public setBodyComponent(bodyComponent: Component) {
-        bodyComponent.setContainer(this);
+        bodyComponent.setParentComponent(this);
         this.eContentWrapper.appendChild(bodyComponent.getGui());
     }
 
@@ -394,7 +394,7 @@ export class Dialog extends PopupComponent {
             buttons[position - 1].insertAdjacentElement('afterend', eGui);
         }
 
-        button.setContainer(this);
+        button.setParentComponent(this);
     }
 
     public getBodyHeight(): number {

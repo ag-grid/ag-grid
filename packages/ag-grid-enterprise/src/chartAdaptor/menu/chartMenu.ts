@@ -9,12 +9,12 @@ import {
     PopupService,
     GridOptionsWrapper,
     ChartType,
-    BeanStub,
     EventService,
     TabbedLayout,
     TabbedItem,
     Promise,
-    GridApi
+    GridApi,
+    PopupComponent
 } from "ag-grid-community";
 import { MenuItemMapper } from "../../menu/menuItemMapper";
 import { MenuList } from "../../menu/menuList";
@@ -49,6 +49,8 @@ export class ChartMenu extends Component {
         const chartMenu = new TabbedChartMenu(this.chart);
         this.getContext().wireBean(chartMenu);
 
+        chartMenu.setParentComponent(this);
+
         const eMenu = chartMenu.getGui();
 
         const hidePopup = this.popupService.addAsModalPopup(
@@ -72,7 +74,7 @@ export class ChartMenu extends Component {
     }
 }
 
-class TabbedChartMenu extends BeanStub {
+class TabbedChartMenu extends PopupComponent {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
 
@@ -199,7 +201,7 @@ class TabbedChartMenu extends BeanStub {
             {
                 name: localeTextFunc('closeDialog', 'Close'),
                 action: () => {
-                    const chartContainer = this.chart.getContainer();
+                    const chartContainer = this.chart.getParentComponent();
                     (chartContainer as Dialog).close();
                 }
             }
@@ -254,7 +256,9 @@ class TabbedChartMenu extends BeanStub {
     }
 
     public getGui(): HTMLElement {
-        return this.tabbedLayout.getGui();
+        const layout = this.tabbedLayout;
+
+        return layout && layout.getGui();
     }
 
     public destroy(): void {
