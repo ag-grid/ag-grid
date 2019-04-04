@@ -1460,10 +1460,13 @@ export class CellComp extends Component {
         // behind, making it impossible to select the text field.
         let forceBrowserFocus = false;
         const {button, ctrlKey, metaKey, shiftKey, target} = mouseEvent;
-        const cellInRange = this.beans.rangeController.isCellInAnyRange(this.getCellPosition());
 
-        if (cellInRange && button === 2) {
-            return;
+        if (this.beans.rangeController) {
+            const cellInRange = this.beans.rangeController.isCellInAnyRange(this.getCellPosition());
+
+            if (cellInRange && button === 2) {
+                return;
+            }
         }
 
         if (_.isBrowserIE()) {
@@ -1710,7 +1713,7 @@ export class CellComp extends Component {
             res.push('ag-cell-range-single-cell');
         }
 
-        if (this.rangeCount>0) {
+        if (this.rangeCount > 0) {
             const borders = this.getRangeBorders();
 
             if (borders.top) { res.push('ag-cell-range-top'); }
