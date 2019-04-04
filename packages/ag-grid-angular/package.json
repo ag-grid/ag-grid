@@ -7,7 +7,8 @@
   "scripts": {
     "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
     "verify-properties": "node agGridPropertiesCheck.js",
-    "build": "npm run clean && npm run build-no-verify && npm run verify-properties",
+    "precheck": "tsc -p tsconfig-precheck.json",
+    "build": "npm run precheck && npm run clean && npm run build-no-verify && npm run verify-properties",
     "build-gulp": "npm run build-no-verify-gulp && npm run verify-properties",
     "build-no-verify": "ngc -p tsconfig-src.json && npm run clean-src && gulp clean-build-main",
     "build-no-verify-gulp": "ngc -p tsconfig-gulp.json",

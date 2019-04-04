@@ -145,7 +145,7 @@ export class PopupService {
         minHeight?: number,
         nudgeX?: number,
         nudgeY?: number,
-        alignSide?: 'left' | 'right',
+        alignSide: 'left' | 'right',
         keepWithinBounds?: boolean
     }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
