@@ -7,7 +7,7 @@ import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
 import { EventService } from "../eventService";
-import { Events, PopupServiceEvent } from '../events';
+import { Events } from '../events';
 import { _ } from "../utils";
 
 @Bean('popupService')
@@ -504,7 +504,7 @@ export class PopupService {
 
         popupList[popupList.length - 1].insertAdjacentElement('afterend', ePopup);
 
-        const params: PopupServiceEvent = {
+        const params = {
             type: 'popupToFront',
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
