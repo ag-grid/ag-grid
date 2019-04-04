@@ -24,6 +24,6 @@ export interface IComponent<T> {
     init?(params: T): Promise<void> | void;
 
     /** If this Component is contained within another component, we add a reference to that component */
-    setContainer?(container: Component): void;
-    getContainer?(): Component | undefined;
+    setParentComponent?(component: Component): void;
+    getParentComponent?(): Component | undefined;
 }

@@ -22,7 +22,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
     private visible = true;
 
-    protected container: Component | undefined;
+    protected parentComponent: Component | undefined;
 
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
@@ -216,12 +216,12 @@ export class Component extends BeanStub implements IComponent<any> {
         return this.eGui;
     }
 
-    public setContainer(container: Component) {
-        this.container = container;
+    public setParentComponent(component: Component) {
+        this.parentComponent = component;
     }
 
-    public getContainer(): Component | undefined {
-        return this.container;
+    public getParentComponent(): Component | undefined {
+        return this.parentComponent;
     }
 
     // this method is for older code, that wants to provide the gui element,

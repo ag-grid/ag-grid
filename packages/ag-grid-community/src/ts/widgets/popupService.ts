@@ -181,21 +181,6 @@ export class PopupService {
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     }
 
-    private callPostProcessPopup(ePopup: HTMLElement | null, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
-        const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
-        if (callback) {
-            const params: PostProcessPopupParams = {
-                column: column,
-                rowNode: rowNode,
-                ePopup: ePopup,
-                type: type,
-                eventSource: eventSource,
-                mouseEvent: mouseEvent
-            };
-            callback(params);
-        }
-    }
-
     public positionPopupOverComponent(params: {
         type: string,
         eventSource: HTMLElement,
@@ -231,6 +216,21 @@ export class PopupService {
         });
 
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
+    }
+
+    private callPostProcessPopup(ePopup: HTMLElement | null, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
+        const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        if (callback) {
+            const params: PostProcessPopupParams = {
+                column: column,
+                rowNode: rowNode,
+                ePopup: ePopup,
+                type: type,
+                eventSource: eventSource,
+                mouseEvent: mouseEvent
+            };
+            callback(params);
+        }
     }
 
     public positionPopup(params: {
@@ -405,7 +405,7 @@ export class PopupService {
             _.removeFromArray(this.activePopupElements, eChild);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eDocument.removeEventListener('click', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
@@ -421,7 +421,7 @@ export class PopupService {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
             if (modal) {
-                eDocument.addEventListener('click', hidePopupOnMouseEvent);
+                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
                 this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
@@ -434,26 +434,26 @@ export class PopupService {
     private isEventFromCurrentPopup(mouseEvent: MouseEvent | null | undefined, touchEvent: TouchEvent | undefined, eChild: HTMLElement): boolean {
         const event = mouseEvent ? mouseEvent : touchEvent;
 
-        if (event) {
-            const indexOfThisChild = this.activePopupElements.indexOf(eChild);
-            for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
-                const element = this.activePopupElements[i];
-                if (_.isElementInEventPath(element, event)) {
-                    return true;
-                }
-            }
-
-            // if the user did not write their own Custom Element to be rendered as popup
-            // and this component has additional popup element, they should have the
-            // `ag-custom-component-popup` class to be detected as part of the Custom Component
-            let el = event.target as HTMLElement;
-            while (el && el != document.body) {
-                if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
-                el = el.parentElement;
+        if (!event) {
+            return false;
+        }
+ 
+        const indexOfThisChild = this.activePopupElements.indexOf(eChild);
+        for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
+            const element = this.activePopupElements[i];
+            if (_.isElementInEventPath(element, event)) {
+                return true;
             }
         }
 
-        return false;
+        // if the user did not write their own Custom Element to be rendered as popup
+        // and this component has additional popup element, they should have the
+        // `ag-custom-component-popup` class to be detected as part of the Custom Component
+        let el = event.target as HTMLElement;
+        while (el && el != document.body) {
+            if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
+            el = el.parentElement;
+        }
     }
 
     // in some browsers, the context menu event can be fired before the click event, which means

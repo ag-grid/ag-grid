@@ -1394,7 +1394,7 @@
                     height: 25px;
                     width: 25px;
                     border-radius: 5px;
-                    &:hover {
+                    &:hover, &.ag-has-popup {
                         background-color: darken($header-background-color, 10%);
                     }
                     &:not(:last-child) {
