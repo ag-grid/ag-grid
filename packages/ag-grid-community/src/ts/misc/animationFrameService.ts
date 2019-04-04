@@ -75,11 +75,6 @@ export class AnimationFrameService {
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
 
-        if (this.gridPanel.executeFrame()) {
-            this.requestFrame();
-            return;
-        }
-
         if (this.scrollGoingDown) {
             this.createRowTasks.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
         } else {
@@ -93,15 +88,21 @@ export class AnimationFrameService {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (this.createRowTasks.length > 0) {
-                const taskItem = this.createRowTasks.pop();
-                taskItem.task();
-            } else if (this.destroyRowTasks.length > 0) {
-                const task = this.destroyRowTasks.pop();
-                task();
-            } else {
-                break;
+
+            const gridPanelUpdated = this.gridPanel.executeFrame();
+
+            if (!gridPanelUpdated) {
+                if (this.createRowTasks.length > 0) {
+                    const taskItem = this.createRowTasks.pop();
+                    taskItem.task();
+                } else if (this.destroyRowTasks.length > 0) {
+                    const task = this.destroyRowTasks.pop();
+                    task();
+                } else {
+                    break;
+                }
             }
+
             duration = (new Date().getTime()) - frameStart;
         }
 
