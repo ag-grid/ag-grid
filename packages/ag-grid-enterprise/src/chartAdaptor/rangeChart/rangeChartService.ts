@@ -86,8 +86,6 @@ export class RangeChartService implements IRangeChartService {
                 this.createChartDialog(chartComp);
             }
 
-            this.addGridChartListeners(chartComp);
-
             return chartRef;
 
         } else {

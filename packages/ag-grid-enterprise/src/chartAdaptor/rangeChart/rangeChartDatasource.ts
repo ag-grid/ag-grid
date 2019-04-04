@@ -12,6 +12,7 @@ import {
     ValueService
 } from "ag-grid-community";
 import { ChartDatasource } from "./rangeChartService";
+import { RangeController } from "../../rangeController";
 
 export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
@@ -20,6 +21,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     @Autowired('rowModel') rowModel: IRowModel;
     @Autowired('paginationProxy') paginationProxy: PaginationProxy;
     @Autowired('eventService') eventService: EventService;
+    @Autowired('rangeController') rangeController: RangeController;
 
     private rangeSelection: CellRange;
 
