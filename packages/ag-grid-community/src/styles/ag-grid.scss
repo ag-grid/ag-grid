@@ -388,12 +388,8 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-header-cell-resize {
-    // the resize gets absolutly position to the left or right, depending
-    // on whether the column is pinned and also depending on RTL or LTR
     position: absolute;
-    // z-index, to make sure it appears the header content, so user can grab with mouse
-    z-index: 4;
-    cursor: col-resize;
+    z-index: 1;
     height: 100%;
     width: 4px;
 }
@@ -551,6 +547,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     z-index: 1;
 }
 
+.ag-row-dragging {
+    z-index: 2;
+}
+
 /**
  ****************************
  * Cells
@@ -604,6 +604,11 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     white-space: nowrap;
     //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
     width: 100%;
+}
+
+
+.ag-cell-inline-editing {
+    z-index: 1;
 }
 
 /**
@@ -713,6 +718,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     position: absolute;
     text-overflow: ellipsis;
     user-select: none;
+    z-index: 10;
 }
 
 .ag-dnd-ghost-icon {
@@ -769,7 +775,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  ****************************
 */
 .ag-popup {
-    z-index: 10;
+    > div{
+        z-index: 5;
+    }
+    
 }
 
 .ag-popup-backdrop {
@@ -783,6 +792,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-popup-editor {
     position: absolute;
     user-select: none;
+    z-index: 1;
 }
 
 /**
@@ -870,7 +880,7 @@ $handleSize: 5px;
     .ag-resizer {
         position: absolute;
         pointer-events: none;
-        z-index: 10;
+        z-index: 1;
         &.ag-resizer-topLeft {
             top: 0;
             left: 0;

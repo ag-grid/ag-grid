@@ -317,6 +317,10 @@
         }
     }
 
+    .ag-header-cell-resize {
+        cursor: col-resize;
+    }
+
     .ag-header-group-cell-label {
         height: 100%;
 
@@ -385,11 +389,6 @@
 
     .ag-row-dragging {
         opacity: 0.5;
-        // very bad putting z-index in here, we have avoided it everywhere else in the grid,
-        // however feel it's a minor issue - as it's only a temporary thing while row is dragging,
-        // - it's unlikely user will have something on top of the grid while also moving a row in
-        // the grid.
-        z-index: 10000;
     }
 
     ////////////////////////////////////////
@@ -441,9 +440,7 @@
     ////////////////////////////////////////
     .ag-menu {
         @include card($params);
-
         padding: 0;
-        z-index: 5;
 
         .ag-menu-list {
             cursor: default;
@@ -518,7 +515,6 @@
         margin: 0;
         padding: 0 $grid-size * 2;
         transform: translateY($grid-size * 2);
-        z-index: 10000;
 
         span,
         div {
@@ -964,7 +960,6 @@
     .ag-cell-inline-editing {
         padding: $cell-horizontal-padding;
         height: $row-height + $grid-size * 3;
-        z-index: 2;
     }
 
     .ag-cell-inline-editing, .ag-popup-editor {
@@ -981,7 +976,6 @@
     }
 
     .ag-popup-editor {
-        z-index: 1;
         padding: 0;
         .ag-large-textarea textarea {
             @include textbox($params);
