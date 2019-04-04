@@ -2,3 +2,12 @@
     border: 2px solid darkslategray;
     height: 400px;
 }
+
+.chart-wrapper-top {
+    padding: 10px;
+    text-align: center;
+}
+
+.chart-wrapper-title {
+    font-weight: bold;
+}

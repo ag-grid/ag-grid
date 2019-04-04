@@ -79,6 +79,8 @@ export class GridChartComp extends Component implements IGridChartComp {
             this.addRangeListeners();
         }
 
+        this.addDestroyFunc( () => console.log('destroyed'));
+
         this.refresh();
     }
 
