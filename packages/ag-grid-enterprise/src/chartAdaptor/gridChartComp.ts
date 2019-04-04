@@ -79,8 +79,6 @@ export class GridChartComp extends Component implements IGridChartComp {
             this.addRangeListeners();
         }
 
-        this.addDestroyFunc( () => console.log('destroyed'));
-
         this.refresh();
     }
 
@@ -135,6 +133,9 @@ export class GridChartComp extends Component implements IGridChartComp {
         if (this.datasource) {
             this.datasource.destroy();
         }
+        // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
+        // data will still be visible although the chart is no longer bound to the grid
+        _.clearElement(this.getGui());
     }
 
     private updateChart() {

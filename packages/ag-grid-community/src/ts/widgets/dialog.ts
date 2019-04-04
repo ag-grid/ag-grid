@@ -7,7 +7,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { _ } from "../utils";
 import { Component } from "./component";
 
-type ResizableSides = 'topLeft' |
+export type ResizableSides = 'topLeft' |
                       'top' |
                       'topRight' |
                       'right' |
@@ -16,7 +16,7 @@ type ResizableSides = 'topLeft' |
                       'bottomLeft' |
                       'left';
 
-type ResizableStructure = {
+export type ResizableStructure = {
     [key in ResizableSides]?: boolean;
 };
 
@@ -448,10 +448,12 @@ export class Dialog extends PopupComponent {
 
     // called when user hits the 'x' in the top right
     private onBtClose() {
-        this.close();
+        this.destroy();
     }
 
     public destroy(): void {
+        this.close();
+
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;

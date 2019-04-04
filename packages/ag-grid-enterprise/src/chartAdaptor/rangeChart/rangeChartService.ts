@@ -1,9 +1,9 @@
-import { 
+import {
     Autowired,
-    Bean, 
+    Bean,
     ChartType,
     CellRangeParams,
-    CellRange, 
+    CellRange,
     Component,
     Context,
     Dialog,
@@ -11,7 +11,8 @@ import {
     IRangeChartService,
     MessageBox,
     GridOptionsWrapper,
-    ChartRef
+    ChartRef,
+    _, PreDestroy
 } from "ag-grid-community";
 import { RangeChartDatasource } from "./rangeChartDatasource";
 import { RangeController } from "../../rangeController";
@@ -36,6 +37,14 @@ export class RangeChartService implements IRangeChartService {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
+    // those in developer provided containers.
+    private activeCharts: ChartRef[] = [];
+    // childDialogs only contains charts in our dialogs, doesn't container dev provided containers. there is overlap,
+    // all charts in this list are also listed in activeCharts, however we must also dispose the dialogs as well as
+    // the charts comps.
+    private childDialogs: Dialog[] = [];
+
     public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): ChartRef | undefined {
         const selectedRange = this.getSelectedRange();
         return this.chartRange(selectedRange, chartType);
@@ -58,6 +67,22 @@ export class RangeChartService implements IRangeChartService {
         }
     }
 
+    private createChartRef(chartComp: GridChartComp): ChartRef {
+        const chartRef: ChartRef = {
+            destroyChart: ()=> {
+                if (this.activeCharts.indexOf(chartRef)>=0) {
+                    chartComp.destroy();
+                    _.removeFromArray(this.activeCharts, chartRef);
+                }
+            },
+            chartElement: chartComp.getGui()
+        };
+
+        this.activeCharts.push(chartRef);
+
+        return chartRef;
+    }
+
     public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar, container?: HTMLElement): ChartRef | undefined{
         const ds = this.createDatasource(cellRange);
 
@@ -67,12 +92,7 @@ export class RangeChartService implements IRangeChartService {
 
             const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
-            const chartRef: ChartRef = {
-                destroyChart: ()=> {
-                    chartComp.destroy();
-                },
-                chartElement: chartComp.getGui()
-            };
+            const chartRef = this.createChartRef(chartComp);
 
             if (container) {
                 // if container exists, means developer initiated chart create via API, so place in provided container
@@ -83,7 +103,7 @@ export class RangeChartService implements IRangeChartService {
                 createChartContainerFunc(chartRef);
             } else {
                 // lastly, this means user created chart via grid UI and we are going to use grid's dialog
-                this.createChartDialog(chartComp);
+                this.createChartDialog(chartComp, chartRef);
             }
 
             return chartRef;
@@ -114,7 +134,7 @@ export class RangeChartService implements IRangeChartService {
         return ds;
     }
 
-    private createChartDialog(chart: Component): void {
+    private createChartDialog(chart: Component, chartRef: ChartRef): void {
         const chartDialog = new Dialog({
             resizable: true,
             movable: true,
@@ -123,10 +143,13 @@ export class RangeChartService implements IRangeChartService {
             centered: true,
             closable: false
         });
-
         this.context.wireBean(chartDialog);
+
+        this.childDialogs.push(chartDialog);
+
         chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => {
-            chart.destroy();
+            chartRef.destroyChart();
+            _.removeFromArray(this.childDialogs, chartDialog);
         });
 
         const menu = new ChartMenu(chart);
@@ -151,23 +174,15 @@ export class RangeChartService implements IRangeChartService {
         this.context.wireBean(messageBox);
     }
 
-    private addGridChartListeners(chart: GridChartComp) {
-        const eGui = chart.getGui();
+    @PreDestroy
+    private destroyAllActiveCharts(): void {
 
-        chart.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => this.onChartFocus(e, chart));
-    }
+        // we take copy as the forEach is removing from the array as we process
+        const activeDialogs = this.childDialogs.slice();
+        activeDialogs.forEach( dlg => dlg.destroy() );
 
-    private onChartFocus(e: FocusEvent, chart: GridChartComp) {
-        const chartDatasource = chart.getDataSource();
-        const dataRange = chartDatasource.getRangeSelection!();
-
-        this.rangeController.setCellRange({
-            rowStartIndex: dataRange.startRow!.rowIndex,
-            rowStartPinned: dataRange.startRow!.rowPinned,
-            rowEndIndex: dataRange.endRow!.rowIndex,
-            rowEndPinned: dataRange.endRow!.rowPinned,
-            columnStart: dataRange.columns[0],
-            columnEnd: dataRange.columns[dataRange.columns.length - 1]
-        });
+        // we take copy as the forEach is removing from the array as we process
+        const activeCharts = this.activeCharts.slice();
+        activeCharts.forEach( chart => chart.destroyChart() );
     }
 }
