@@ -4,6 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { EventService } from "../eventService";
+import {GridPanel} from "../gridPanel/gridPanel";
 
 interface TaskItem {
     task: () => void;
@@ -32,9 +33,15 @@ export class AnimationFrameService {
     private scrollGoingDown = true;
     private lastScrollTop = 0;
 
+    private gridPanel: GridPanel;
+
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     @PostConstruct
@@ -67,6 +74,11 @@ export class AnimationFrameService {
 
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
+
+        if (this.gridPanel.executeFrame()) {
+            this.requestFrame();
+            return;
+        }
 
         if (this.scrollGoingDown) {
             this.createRowTasks.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
