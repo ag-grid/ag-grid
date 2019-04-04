@@ -77,11 +77,16 @@ export class RangeController implements IRangeController {
         this.logger = this.loggerFactory.create('RangeController');
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+
+        // we used to remove range when moving column as old range design had start and end cols. but now we allowed
+        // broken ranges (as the cols are in a list). if there is no other side effect of removing these, we can remove
+        // the four lines of code below.
         // this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.removeAllCellRanges.bind(this));
         // this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.removeAllCellRanges.bind(this));
         // this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
         // this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.removeAllCellRanges.bind(this));
+
     }
 
     public getRangeStartRow(cellRange: CellRange): RowPosition {
