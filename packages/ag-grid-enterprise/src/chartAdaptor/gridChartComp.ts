@@ -119,6 +119,7 @@ export class GridChartComp extends Component implements IGridChartComp {
     }
 
     public destroy(): void {
+        super.destroy();
         if (this.datasource) {
             this.datasource.destroy();
         }

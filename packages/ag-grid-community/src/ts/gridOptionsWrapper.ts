@@ -1,5 +1,6 @@
 import { RowNode } from "./entities/rowNode";
 import {
+    CreateChartContainerParams,
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
@@ -527,6 +528,10 @@ export class GridOptionsWrapper {
 
     public rowClassRules() {
         return this.gridOptions.rowClassRules;
+    }
+
+    public getCreateChartContainerFunc(): (params: CreateChartContainerParams)=>void | undefined {
+        return this.gridOptions.createChartContainer;
     }
 
     public getPopupParent() {

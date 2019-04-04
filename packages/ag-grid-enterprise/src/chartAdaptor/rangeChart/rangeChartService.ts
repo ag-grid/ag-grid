@@ -9,7 +9,8 @@ import {
     Dialog,
     IEventEmitter,
     IRangeChartService,
-    MessageBox 
+    MessageBox,
+    GridOptionsWrapper
 } from "ag-grid-community";
 import { RangeChartDatasource } from "./rangeChartDatasource";
 import { RangeController } from "../../rangeController";
@@ -32,6 +33,7 @@ export class RangeChartService implements IRangeChartService {
 
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('context') private context: Context;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): void {
         const selectedRange = this.getSelectedRange();
@@ -62,9 +64,17 @@ export class RangeChartService implements IRangeChartService {
             const chart = new GridChartComp(chartType, ds);
             this.context.wireBean(chart);
 
+            const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
+
             if (container) {
+                // if container exists, means developer initiated chart create via API, so place in provided container
                 container.appendChild(chart.getGui());
+            } if (createChartContainerFunc) {
+                // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
+                // is using it's own dialog's rather than the grid provided dialogs)
+                createChartContainerFunc({htmlElement: chart.getGui()});
             } else {
+                // lastly, this means user created chart via grid UI and we are going to use grid's dialog
                 this.createChartDialog(chart);
             }
 

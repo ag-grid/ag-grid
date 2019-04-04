@@ -19,4 +19,8 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Dashboard', 'dashboard', 'generated', array("enterprise" => true)) ?>
 
+    <h2>Provided Container</h2>
+
+    <?= example('Provided Container', 'provided-container', 'generated', array("enterprise" => true)) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

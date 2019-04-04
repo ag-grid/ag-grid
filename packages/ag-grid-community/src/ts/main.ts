@@ -272,7 +272,9 @@ export {
     ProcessRowParams,
     NavigateToNextCellParams,
     TabToNextCellParams,
-    PostProcessPopupParams
+    PostProcessPopupParams,
+    ProcessDataFromClipboardParams,
+    CreateChartContainerParams
 } from "./entities/gridOptions";
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
