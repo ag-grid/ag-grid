@@ -55,6 +55,7 @@ import { SideBarDef } from "./entities/sideBar";
 import { IRangeChartService } from "./interfaces/iRangeChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
+import {ChartRef} from "./entities/gridOptions";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -951,14 +952,14 @@ export class GridApi {
         this.rangeController.clearSelection();
     }
 
-    public chartRange(params: CellRangeParams, chartType: string, chartContainer: HTMLElement): void {
+    public chartRange(params: CellRangeParams, chartType: string, chartContainer: HTMLElement): ChartRef | undefined {
         if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             _.doOnce(() => {
                 console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
             }, 'ChartsModuleCheck');
             return;
         }
-        this.rangeChartService.chartCellRange(params, chartType, chartContainer);
+        return this.rangeChartService.chartCellRange(params, chartType, chartContainer);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

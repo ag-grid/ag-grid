@@ -274,7 +274,7 @@ export {
     TabToNextCellParams,
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
-    CreateChartContainerParams
+    ChartRef
 } from "./entities/gridOptions";
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";

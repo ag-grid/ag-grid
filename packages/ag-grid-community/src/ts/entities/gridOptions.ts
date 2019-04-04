@@ -363,7 +363,7 @@ export interface GridOptions {
     groupRowRendererParams?: any;
     groupRowInnerRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
-    createChartContainer?: (params: CreateChartContainerParams)=>void;
+    createChartContainer?: (params: ChartRef)=>void;
 
     isExternalFilterPresent?(): boolean;
 
@@ -689,6 +689,7 @@ export interface ProcessDataFromClipboardParams {
     data: string[][];
 }
 
-export interface CreateChartContainerParams {
+export interface ChartRef {
     htmlElement: HTMLElement;
+    destroyChart: ()=>void;
 }

@@ -10,7 +10,8 @@ import {
     IEventEmitter,
     IRangeChartService,
     MessageBox,
-    GridOptionsWrapper
+    GridOptionsWrapper,
+    ChartRef
 } from "ag-grid-community";
 import { RangeChartDatasource } from "./rangeChartDatasource";
 import { RangeController } from "../../rangeController";
@@ -35,12 +36,12 @@ export class RangeChartService implements IRangeChartService {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): void {
+    public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): ChartRef | undefined {
         const selectedRange = this.getSelectedRange();
-        this.chartRange(selectedRange, chartType);
+        return this.chartRange(selectedRange, chartType);
     }
 
-    public chartCellRange(params: CellRangeParams, chartTypeString: string, container?: HTMLElement): void {
+    public chartCellRange(params: CellRangeParams, chartTypeString: string, container?: HTMLElement): ChartRef | undefined {
         const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params);
 
         let chartType: ChartType;
@@ -53,32 +54,41 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            this.chartRange(cellRange, chartType, container);
+            return this.chartRange(cellRange, chartType, container);
         }
     }
 
-    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar, container?: HTMLElement): void {
+    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar, container?: HTMLElement): ChartRef | undefined{
         const ds = this.createDatasource(cellRange);
 
         if (ds) {
-            const chart = new GridChartComp(chartType, ds);
-            this.context.wireBean(chart);
+            const chartComp = new GridChartComp(chartType, ds);
+            this.context.wireBean(chartComp);
 
             const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
+            const chartRef: ChartRef = {
+                destroyChart: ()=> {
+                    chartComp.destroy();
+                },
+                htmlElement: chartComp.getGui()
+            };
+
             if (container) {
                 // if container exists, means developer initiated chart create via API, so place in provided container
-                container.appendChild(chart.getGui());
+                container.appendChild(chartComp.getGui());
             } if (createChartContainerFunc) {
                 // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
                 // is using it's own dialog's rather than the grid provided dialogs)
-                createChartContainerFunc({htmlElement: chart.getGui()});
+                createChartContainerFunc(chartRef);
             } else {
                 // lastly, this means user created chart via grid UI and we are going to use grid's dialog
-                this.createChartDialog(chart);
+                this.createChartDialog(chartComp);
             }
 
-            this.addGridChartListeners(chart);
+            this.addGridChartListeners(chartComp);
+
+            return chartRef;
 
         } else {
             // TODO: replace with error dialog
