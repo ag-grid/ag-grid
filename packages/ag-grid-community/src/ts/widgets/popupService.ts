@@ -437,7 +437,7 @@ export class PopupService {
         if (!event) {
             return false;
         }
- 
+
         const indexOfThisChild = this.activePopupElements.indexOf(eChild);
         for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
             const element = this.activePopupElements[i];
