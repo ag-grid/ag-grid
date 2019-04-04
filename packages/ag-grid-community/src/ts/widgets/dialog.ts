@@ -4,7 +4,6 @@ import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { DialogEvent } from "../events";
 import { _ } from "../utils";
 import { Component } from "./component";
 
@@ -365,24 +364,6 @@ export class Dialog extends PopupComponent {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
         }
-    }
-
-    private buildParamsAndDispatchEvent(type: string) {
-        const event: DialogEvent = {
-            type,
-            dialog: this,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-        };
-
-        if (type !== Dialog.EVENT_DESTROYED) {
-            event.x = this.position.x;
-            event.y = this.position.y;
-            event.width = this.getWidth();
-            event.height = this.getHeight();
-        }
-
-        this.dispatchEvent(event);
     }
 
     public setBodyComponent(bodyComponent: Component) {
