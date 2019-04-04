@@ -690,6 +690,6 @@ export interface ProcessDataFromClipboardParams {
 }
 
 export interface ChartRef {
-    htmlElement: HTMLElement;
+    chartElement: HTMLElement;
     destroyChart: ()=>void;
 }

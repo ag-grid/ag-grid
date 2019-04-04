@@ -71,13 +71,13 @@ export class RangeChartService implements IRangeChartService {
                 destroyChart: ()=> {
                     chartComp.destroy();
                 },
-                htmlElement: chartComp.getGui()
+                chartElement: chartComp.getGui()
             };
 
             if (container) {
                 // if container exists, means developer initiated chart create via API, so place in provided container
                 container.appendChild(chartComp.getGui());
-            } if (createChartContainerFunc) {
+            } else if (createChartContainerFunc) {
                 // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
                 // is using it's own dialog's rather than the grid provided dialogs)
                 createChartContainerFunc(chartRef);

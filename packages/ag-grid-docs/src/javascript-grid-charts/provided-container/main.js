@@ -23,7 +23,7 @@ var gridOptions = {
 };
 
 function createChartContainer(params) {
-    var eChart = params.htmlElement;
+    var eChart = params.chartElement;
 
     var eChartWrapper = document.createElement('div');
     var eParent = document.querySelector('#myGrid').parentElement;

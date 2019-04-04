@@ -952,7 +952,7 @@ export class GridApi {
         this.rangeController.clearSelection();
     }
 
-    public chartRange(params: CellRangeParams, chartType: string, chartContainer: HTMLElement): ChartRef | undefined {
+    public chartRange(params: CellRangeParams, chartType: string, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             _.doOnce(() => {
                 console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
