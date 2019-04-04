@@ -97,7 +97,7 @@ export class RowDragFeature implements DropTarget {
         if (rowWasMoved) {
             this.focusedCellController.clearFocusedCell();
             if (this.rangeController) {
-                this.rangeController.clearSelection();
+                this.rangeController.removeAllCellRanges();
             }
         }
     }

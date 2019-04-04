@@ -949,7 +949,7 @@ export class GridApi {
 
     public clearRangeSelection(): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
-        this.rangeController.clearSelection();
+        this.rangeController.removeAllCellRanges();
     }
 
     public chartRange(params: CellRangeParams, chartType: string, chartContainer?: HTMLElement): ChartRef | undefined {

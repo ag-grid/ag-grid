@@ -76,12 +76,12 @@ export class RangeController implements IRangeController {
     private init(): void {
         this.logger = this.loggerFactory.create('RangeController');
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.removeAllCellRanges.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.removeAllCellRanges.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.removeAllCellRanges.bind(this));
     }
 
     public getRangeStartRow(cellRange: CellRange): RowPosition {
@@ -324,7 +324,7 @@ export class RangeController implements IRangeController {
         }
     }
 
-    public clearSelection(): void {
+    public removeAllCellRanges(): void {
         if (this.isEmpty()) { return; }
 
         this.onDragStop();

@@ -4,7 +4,7 @@ import { GridPanel } from "../gridPanel/gridPanel";
 import { RowPosition } from "../entities/rowPosition";
 
 export interface IRangeController {
-    clearSelection(): void;
+    removeAllCellRanges(): void;
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;

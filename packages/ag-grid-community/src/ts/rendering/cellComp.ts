@@ -225,6 +225,10 @@ export class CellComp extends Component {
         // so need to check before trying to use it
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_MOVED, this.updateRangeBordersIfRangeCount.bind(this));
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_PINNED, this.updateRangeBordersIfRangeCount.bind(this));
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateRangeBordersIfRangeCount.bind(this));
         }
 
         if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
@@ -353,7 +357,7 @@ export class CellComp extends Component {
 
         _.pushAll(cssClasses, this.preProcessClassesFromColDef());
         _.pushAll(cssClasses, this.preProcessCellClassRules());
-        _.pushAll(cssClasses, this.getRangeClasses());
+        _.pushAll(cssClasses, this.getInitialRangeClasses());
 
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
@@ -1686,7 +1690,7 @@ export class CellComp extends Component {
         return { top, right, bottom, left };
     }
 
-    private getRangeClasses(): string[] {
+    private getInitialRangeClasses(): string[] {
         const res: string[] = [];
 
         if (!this.rangeSelectionEnabled || !this.rangeCount) {
@@ -1706,12 +1710,14 @@ export class CellComp extends Component {
             res.push('ag-cell-range-single-cell');
         }
 
-        const borders = this.getRangeBorders();
+        if (this.rangeCount>0) {
+            const borders = this.getRangeBorders();
 
-        if (borders.top) { res.push('ag-cell-range-top'); }
-        if (borders.right) { res.push('ag-cell-range-right'); }
-        if (borders.bottom) { res.push('ag-cell-range-bottom'); }
-        if (borders.left) { res.push('ag-cell-range-left'); }
+            if (borders.top) { res.push('ag-cell-range-top'); }
+            if (borders.right) { res.push('ag-cell-range-right'); }
+            if (borders.bottom) { res.push('ag-cell-range-bottom'); }
+            if (borders.left) { res.push('ag-cell-range-left'); }
+        }
 
         return res;
     }
@@ -1746,15 +1752,31 @@ export class CellComp extends Component {
             this.rangeCount = newRangeCount;
         }
 
-        const rangeBorders = this.getRangeBorders();
         const isSingleCell = this.rangeCount === 1 && !rangeController.isMoreThanOneCell();
+
+        this.updateRangeBorders();
+
+        _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', isSingleCell);
+    }
+
+    private updateRangeBordersIfRangeCount(): void {
+        // we only need to update range borders if we are in a range
+        if (this.rangeCount > 0) {
+            this.updateRangeBorders();
+        }
+    }
+
+    private updateRangeBorders(): void {
+        const rangeBorders = this.getRangeBorders();
+        const isSingleCell = this.rangeCount === 1 && !this.beans.rangeController.isMoreThanOneCell();
 
         const isTop = !isSingleCell && rangeBorders.top;
         const isRight = !isSingleCell && rangeBorders.right;
         const isBottom = !isSingleCell && rangeBorders.bottom;
         const isLeft = !isSingleCell && rangeBorders.left;
 
-        _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', isSingleCell);
+        const element = this.getGui();
+
         _.addOrRemoveCssClass(element, 'ag-cell-range-top', isTop);
         _.addOrRemoveCssClass(element, 'ag-cell-range-right', isRight);
         _.addOrRemoveCssClass(element, 'ag-cell-range-bottom', isBottom);
