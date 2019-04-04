@@ -15,7 +15,7 @@ import {
 import { RangeChartDatasource } from "./rangeChartDatasource";
 import { RangeController } from "../../rangeController";
 import { GridChartComp } from "../gridChartComp";
-import { ChartMenu } from "../chartMenu";
+import { ChartMenu } from "../menu/chartMenu";
 
 export interface ChartDatasource extends IEventEmitter {
     getCategory(i: number): string;
