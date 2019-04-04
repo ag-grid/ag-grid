@@ -36,9 +36,6 @@ export interface DialogOptions {
 
 export class Dialog extends PopupComponent {
 
-    public static EVENT_MOVE = 'dialogMoved';
-    public static EVENT_RESIZE = 'dialogResized';
-
     private static TEMPLATE =
         `<div class="ag-dialog" tabindex="-1">
             <div class="ag-resizer-wrapper">
@@ -261,7 +258,7 @@ export class Dialog extends PopupComponent {
             const oldWidth = this.getWidth();
             const movementX = e.clientX - this.dragStartPosition.x;
 
-            this.setWidth(oldWidth + (movementX * direction), true);
+            this.setWidth(oldWidth + (movementX * direction));
 
             if (isLeft) {
                 offsetLeft = oldWidth - this.getWidth();
@@ -273,7 +270,7 @@ export class Dialog extends PopupComponent {
             const oldHeight = this.getHeight();
             const movementY = e.clientY - this.dragStartPosition.y;
 
-            this.setHeight(oldHeight + (movementY * direction), true);
+            this.setHeight(oldHeight + (movementY * direction));
 
             if (isTop) {
                 offsetTop = oldHeight - this.getHeight();
@@ -288,8 +285,6 @@ export class Dialog extends PopupComponent {
                 this.position.y + offsetTop
             );
         }
-
-        this.buildParamsAndDispatchEvent(Dialog.EVENT_RESIZE);
     }
 
     private onDialogResizeEnd() {
@@ -300,11 +295,11 @@ export class Dialog extends PopupComponent {
         const { width, height } = this.size;
 
         if (!width) {
-            this.setWidth(this.getGui().offsetWidth, true);
+            this.setWidth(this.getGui().offsetWidth);
         }
 
         if (!height) {
-            this.setHeight(this.getGui().offsetHeight, true);
+            this.setHeight(this.getGui().offsetHeight);
         }
     }
 
@@ -337,8 +332,6 @@ export class Dialog extends PopupComponent {
         this.offsetDialog(x + movementX, y + movementY);
 
         this.updateDragStartPosition(e.clientX, e.clientY);
-
-        this.buildParamsAndDispatchEvent(Dialog.EVENT_MOVE);
     }
 
     private offsetDialog(x = 0, y = 0) {
@@ -439,7 +432,7 @@ export class Dialog extends PopupComponent {
         return this.size.height;
     }
 
-    public setHeight(height: number, silent?: boolean) {
+    public setHeight(height: number) {
         let newHeight = Math.max(250, height);
         const eGui = this.getGui();
 
@@ -452,17 +445,13 @@ export class Dialog extends PopupComponent {
         this.size.height = newHeight;
         _.setFixedHeight(eGui, newHeight);
         _.setFixedHeight(this.eContentWrapper, eGui.clientHeight - this.eTitleBar.offsetHeight);
-
-        if (!silent) {
-            this.buildParamsAndDispatchEvent(Dialog.EVENT_RESIZE);
-        }
     }
 
     public getWidth(): number {
         return this.size.width;
     }
 
-    public setWidth(width: number, silent?: boolean) {
+    public setWidth(width: number) {
         let newWidth = Math.max(250, width);
         const eGui = this.getGui();
 
@@ -474,10 +463,6 @@ export class Dialog extends PopupComponent {
 
         this.size.width = newWidth;
         _.setFixedWidth(eGui, newWidth);
-
-        if (!silent) {
-            this.buildParamsAndDispatchEvent(Dialog.EVENT_RESIZE);
-        }
     }
 
     // called when user hits the 'x' in the top right
@@ -492,6 +477,5 @@ export class Dialog extends PopupComponent {
         }
 
         super.destroy();
-        this.buildParamsAndDispatchEvent(Dialog.EVENT_DESTROYED);
     }
 }

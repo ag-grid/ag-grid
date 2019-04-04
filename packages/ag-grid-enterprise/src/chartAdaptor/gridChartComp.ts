@@ -1,6 +1,7 @@
 import { ChartType } from "ag-grid-community";
 import { ChartOptions,  GridChartFactory } from "./gridChartFactory";
 import { ChartDatasource } from "./rangeChart/rangeChartService";
+import { RangeChartDatasource } from "./rangeChart/rangeChartDatasource";
 import { Chart } from "../charts/chart/chart";
 import { BarSeries } from "../charts/chart/series/barSeries";
 import { LineSeries } from "../charts/chart/series/lineSeries";
@@ -34,6 +35,7 @@ export class GridChartComp extends Component implements IGridChartComp {
 
     private chartType: ChartType;
     private chart: Chart<any, string, number>;
+    private isRangeChart: boolean = false;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
@@ -51,6 +53,10 @@ export class GridChartComp extends Component implements IGridChartComp {
         this.chartType = chartType;
         this.chart = GridChartFactory.createChart(chartType, this.defaultChartOptions, this.eChart);
 
+        if (chartDatasource.getRangeSelection) {
+            this.isRangeChart = true;
+        }
+
         this.datasource = chartDatasource;
     }
 
@@ -65,9 +71,13 @@ export class GridChartComp extends Component implements IGridChartComp {
                 observeResize();
                 return;
             }
-            this.chart.height = _.getInnerHeight(eGui.offsetParent as HTMLElement);
-            this.chart.width = _.getInnerWidth(eGui.offsetParent as HTMLElement);
+            this.chart.height = _.getInnerHeight(eGui.parentElement as HTMLElement);
+            this.chart.width = _.getInnerWidth(eGui.parentElement as HTMLElement);
         });
+
+        if (this.isRangeChart) {
+            this.addRangeListeners();
+        }
 
         this.refresh();
     }
@@ -208,5 +218,25 @@ export class GridChartComp extends Component implements IGridChartComp {
             data.push(item);
         }
         return {data, fields};
+    }
+
+    private addRangeListeners() {
+        const eGui = this.getGui();
+        
+        this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
+            if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
+            const datasource = this.getDataSource() as RangeChartDatasource;
+            const rangeController = datasource.rangeController;
+            const selection = datasource.getRangeSelection();
+            const { startRow, endRow, columns } = selection;
+
+            rangeController.setCellRange({
+                rowStartIndex: startRow && startRow.rowIndex,
+                rowStartPinned: startRow && startRow.rowPinned,
+                rowEndIndex: endRow && endRow.rowIndex,
+                rowEndPinned: endRow && endRow.rowPinned,
+                columns: columns
+            });
+        });
     }
 }

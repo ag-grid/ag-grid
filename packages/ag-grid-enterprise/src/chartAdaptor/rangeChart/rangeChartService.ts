@@ -78,8 +78,6 @@ export class RangeChartService implements IRangeChartService {
                 this.createChartDialog(chart);
             }
 
-            this.addGridChartListeners(chart);
-
         } else {
             // TODO: replace with error dialog
             console.warn('ag-Grid: unable to perform charting due to invalid range selection');
@@ -141,25 +139,5 @@ export class RangeChartService implements IRangeChartService {
         });
 
         this.context.wireBean(messageBox);
-    }
-
-    private addGridChartListeners(chart: GridChartComp) {
-        const eGui = chart.getGui();
-
-        chart.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => this.onChartFocus(e, chart));
-    }
-
-    private onChartFocus(e: FocusEvent, chart: GridChartComp) {
-        const chartDatasource = chart.getDataSource();
-        const dataRange = chartDatasource.getRangeSelection!();
-
-        this.rangeController.setCellRange({
-            rowStartIndex: dataRange.startRow!.rowIndex,
-            rowStartPinned: dataRange.startRow!.rowPinned,
-            rowEndIndex: dataRange.endRow!.rowIndex,
-            rowEndPinned: dataRange.endRow!.rowPinned,
-            columnStart: dataRange.columns[0],
-            columnEnd: dataRange.columns[dataRange.columns.length - 1]
-        });
     }
 }
