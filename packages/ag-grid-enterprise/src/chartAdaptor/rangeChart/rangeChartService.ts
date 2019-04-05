@@ -2,7 +2,6 @@ import {
     Autowired,
     Bean,
     ChartType,
-    CellRangeParams,
     CellRange,
     Component,
     Context,
@@ -12,7 +11,10 @@ import {
     MessageBox,
     GridOptionsWrapper,
     ChartRef,
-    _, PreDestroy
+    _,
+    PreDestroy,
+    ChartRangeParams,
+    IAggFunc
 } from "ag-grid-community";
 import { RangeChartDatasource } from "./rangeChartDatasource";
 import { RangeController } from "../../rangeController";
@@ -50,11 +52,11 @@ export class RangeChartService implements IRangeChartService {
         return this.chartRange(selectedRange, chartType);
     }
 
-    public chartCellRange(params: CellRangeParams, chartTypeString: string, container?: HTMLElement): ChartRef | undefined {
-        const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params);
+    public chartCellRange(params: ChartRangeParams): ChartRef | undefined {
+        const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params.cellRange);
 
         let chartType: ChartType;
-        switch (chartTypeString) {
+        switch (params.chartType) {
             case 'groupedBar': chartType = ChartType.GroupedBar; break;
             case 'stackedBar': chartType = ChartType.StackedBar; break;
             case 'pie': chartType = ChartType.Pie; break;
@@ -63,7 +65,7 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, container);
+            return this.chartRange(cellRange, chartType, params.chartContainer, params.aggFunc);
         }
     }
 
@@ -83,8 +85,8 @@ export class RangeChartService implements IRangeChartService {
         return chartRef;
     }
 
-    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar, container?: HTMLElement): ChartRef | undefined{
-        const ds = this.createDatasource(cellRange);
+    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar, container?: HTMLElement, aggFunc?: IAggFunc | string): ChartRef | undefined{
+        const ds = this.createDatasource(cellRange, aggFunc);
 
         if (ds) {
             const chartComp = new GridChartComp(chartType, ds);
@@ -119,10 +121,10 @@ export class RangeChartService implements IRangeChartService {
         return ranges.length > 0 ? ranges[0] : {} as CellRange;
     }
 
-    private createDatasource(range: CellRange): ChartDatasource | null {
+    private createDatasource(range: CellRange, aggFunc?: IAggFunc | string): ChartDatasource | null {
         if (!range.columns) { return null; }
 
-        const ds = new RangeChartDatasource(range);
+        const ds = new RangeChartDatasource(range, aggFunc);
         this.context.wireBean(ds);
 
         const errors = ds.getErrors();

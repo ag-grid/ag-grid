@@ -22,19 +22,25 @@ var gridOptions = {
 };
 
 function onChart1() {
-    let cellRangeParams = {
-        rowStartIndex: 0,
-        rowEndIndex: 4,
-        columns: ['total']
+    let params = {
+        cellRange: {
+            rowStartIndex: 0,
+            rowEndIndex: 4,
+            columns: ['total']
+        },
+        chartType: 'groupedBar'
     };
-    gridOptions.api.chartRange(cellRangeParams, 'bar');
+    gridOptions.api.chartRange(params);
 }
 
 function onChart2() {
-    let cellRangeParams = {
-        columns: ['total']
+    let params = {
+        cellRange: {
+            columns: ['total']
+        },
+        chartType: 'line'
     };
-    gridOptions.api.chartRange(cellRangeParams, 'line');
+    gridOptions.api.chartRange(params);
 }
 
 // setup the grid after the page has finished loading

@@ -8,10 +8,13 @@ import {
     IRowModel,
     PostConstruct,
     CellRange,
-    ValueService
+    ValueService,
+    IAggFunc,
+    _
 } from "ag-grid-community";
 import { ChartDatasource } from "./rangeChartService";
 import { RangeController } from "../../rangeController";
+import { AggregationStage } from "../../rowStages/aggregationStage";
 
 export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
@@ -20,6 +23,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('eventService') eventService: EventService;
     @Autowired('rangeController') rangeController: RangeController;
+    @Autowired('aggregationStage') aggregationStage: AggregationStage;
 
     private cellRange: CellRange;
 
@@ -38,9 +42,12 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     private dataFromGrid: any[];
     private dataGrouped: any[];
 
-    constructor(cellRange: CellRange) {
+    private aggFunc: IAggFunc | string | undefined;
+
+    constructor(cellRange: CellRange, aggFunc?: IAggFunc | string) {
         super();
         this.cellRange = cellRange;
+        this.aggFunc = aggFunc;
     }
 
     public getErrors(): string[] {
@@ -75,8 +82,9 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     private groupRowsByCategory(): void {
         this.dataGrouped = this.dataFromGrid;
 
-/*
-        if (this.categoryCols.length<=0) {
+        const doingGrouping = this.categoryCols.length > 0 && _.exists(this.aggFunc);
+
+        if (!doingGrouping) {
             this.dataGrouped = this.dataFromGrid;
             return;
         }
@@ -85,13 +93,44 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
         const map: any = {};
 
-        this.dataFromGrid.forEach( row => {
-            let mapPointer = map;
-            this.categoryCols.forEach( col => {
+        const lastCol = this.categoryCols[this.categoryCols.length - 1];
 
+        this.dataFromGrid.forEach( data => {
+            let currentMap = map;
+            this.categoryCols.forEach( col => {
+                const key = data[col.getId()];
+                if (col===lastCol) {
+                    let groupItem = currentMap[key];
+                    if (!groupItem) {
+                        groupItem = {__children: []};
+                        this.categoryCols.forEach( col => {
+                                groupItem[col.getId()] = data[col.getId()];
+                        });
+                        currentMap[key] = groupItem;
+                        this.dataGrouped.push(groupItem);
+                    }
+                    groupItem.__children.push(data);
+                } else {
+                    // map of maps
+                    if (!currentMap[key]) {
+                        currentMap[key] = {};
+                    }
+                    currentMap = currentMap[key];
+                }
             });
         });
-*/
+
+        this.dataGrouped.forEach( groupItem => {
+            this.fieldCols.forEach( col => {
+                const dataToAgg: any[] = [];
+                groupItem.__children.forEach( (child:any) => {
+                    dataToAgg.push(child[col.getId()]);
+                });
+                // always use 'sum' agg func, is that right????
+                const aggResult = this.aggregationStage.aggregateValues(dataToAgg, 'sum');
+                groupItem[col.getId()] = aggResult;
+            });
+        });
     }
 
     private calculateCategoryCols(): void {
@@ -205,7 +244,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     public getCategory(i: number): string {
-        const data = this.dataFromGrid[i];
+        const data = this.dataGrouped[i];
         const resParts: string[] = [];
         this.categoryCols.forEach(col => {
             resParts.push(data[col.getId()]);
@@ -223,14 +262,14 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     public getValue(i: number, field: string): number {
-        const data = this.dataFromGrid[i];
+        const data = this.dataGrouped[i];
         const col = this.colsMapped[field];
         const res = data[col.getId()];
         return res;
     }
 
     public getRowCount(): number {
-        return this.dataFromGrid.length;
+        return this.dataGrouped.length;
     }
 
 }

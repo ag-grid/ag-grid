@@ -84,6 +84,13 @@ export interface RedrawRowsParams {
     rowNodes?: RowNode[];
 }
 
+export interface ChartRangeParams {
+    cellRange: CellRangeParams,
+    chartType: string,
+    chartContainer?: HTMLElement,
+    aggFunc?: string | IAggFunc
+}
+
 export interface DetailGridInfo {
     id: string;
     api: GridApi | null | undefined;
@@ -952,14 +959,14 @@ export class GridApi {
         this.rangeController.removeAllCellRanges();
     }
 
-    public chartRange(params: CellRangeParams, chartType: string, chartContainer?: HTMLElement): ChartRef | undefined {
+    public chartRange(params: ChartRangeParams): ChartRef | undefined {
         if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             _.doOnce(() => {
                 console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
             }, 'ChartsModuleCheck');
             return;
         }
-        return this.rangeChartService.chartCellRange(params, chartType, chartContainer);
+        return this.rangeChartService.chartCellRange(params);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

@@ -1,21 +1,29 @@
 var columnDefs = [
-    {field: "athlete", width: 150, enableRowGroup: true},
-    {field: "age"},
-    {field: "country", enableRowGroup: true},
-    {field: "year", enableRowGroup: true},
-    {field: "sport", enableRowGroup: true},
-    {field: "date"},
-    {field: "gold", enableValue: true, editable: true},
-    {field: "silver", enableValue: true, editable: true},
-    {field: "bronze", enableValue: true, editable: true},
-    {field: "total", enableValue: true, editable: true}
+    {field: "athlete", width: 150, enableRowGroup: true, filter: true},
+    {field: "country", enableRowGroup: true, filter: true},
+    {field: "year", enableRowGroup: true, filter: true},
+    {field: "sport", enableRowGroup: true, filter: true},
+    {field: "total", enableValue: true, valueParser: numberValueParser},
+    {field: "gold", enableValue: true, valueParser: numberValueParser},
+    {field: "silver", enableValue: true, valueParser: numberValueParser},
+    {field: "bronze", enableValue: true, valueParser: numberValueParser}
 ];
+
+function numberValueParser(params) {
+    let res = Number.parseInt(params.newValue);
+    if (isNaN(res)) {
+        return undefined;
+    } else {
+        return res;
+    }
+}
 
 var gridOptions = {
     defaultColDef: {
         width: 100,
         resizable: true,
-        sortable: true
+        sortable: true,
+        editable: true
     },
     columnDefs: columnDefs,
     enableRangeSelection: true,
@@ -25,30 +33,40 @@ var gridOptions = {
 
 function onFirstDataRendered() {
     let eContainer1 = document.querySelector('#chart1');
-    let cellRangeParams1 = {
-        rowStartIndex: 0,
-        rowEndIndex: 4,
-        columns: ['total']
+    let params1 = {
+        cellRange: {
+            rowStartIndex: 0,
+            rowEndIndex: 4,
+            columns: ['total']
+        },
+        chartType: 'groupedBar',
+        chartContainer: eContainer1
     };
-    gridOptions.api.chartRange(cellRangeParams1, 'groupedBar', eContainer1);
+    gridOptions.api.chartRange(params1);
 
 
     let eContainer2 = document.querySelector('#chart2');
-    let cellRangeParams2 = {
-        rowStartIndex: 0,
-        rowEndIndex: 4,
-        columns: ['total']
+    let params2 = {
+        cellRange: {
+            columns: ['country','total']
+        },
+        chartType: 'pie',
+        chartContainer: eContainer2,
+        aggFunc: 'sum'
     };
-    gridOptions.api.chartRange(cellRangeParams2, 'pie', eContainer2);
+    gridOptions.api.chartRange(params2);
 
 
     let eContainer3 = document.querySelector('#chart3');
-    let cellRangeParams3 = {
-        rowStartIndex: 0,
-        rowEndIndex: 4,
-        columns: ['total']
+    let params3 = {
+        cellRange: {
+            columns: ['year','total']
+        },
+        chartType: 'pie',
+        chartContainer: eContainer3,
+        aggFunc: 'sum'
     };
-    gridOptions.api.chartRange(cellRangeParams3, 'line', eContainer3);
+    gridOptions.api.chartRange(params3);
 
 }
 

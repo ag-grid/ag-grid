@@ -246,7 +246,7 @@ export class AggregationStage implements IRowNodeStage {
         return values;
     }
 
-    private aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any {
+    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any {
         let aggFunction: IAggFunc;
 
         if (typeof aggFuncOrString === 'string') {

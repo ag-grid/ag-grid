@@ -1,4 +1,6 @@
 // to satisfy server side compilation
+import {ChartRangeParams} from "./gridApi";
+
 declare let global: any;
 const globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -218,7 +220,7 @@ export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants";
 export { Grid , GridParams } from "./grid";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo } from "./gridApi";
+export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, ChartRangeParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusedCellController } from "./focusedCellController";
 export { defaultGroupComparator } from "./functions";
