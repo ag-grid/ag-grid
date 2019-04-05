@@ -1,8 +1,13 @@
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 
-export interface SeriesDatum<T = any> {
-    datum: T
+/**
+ * `D` - raw series datum, an element in the {@link Series.data} array.
+ * `SeriesNodeDatum` - processed series datum used in node selections,
+ *                     contains information used to render pie sectors, bars, line markers, etc.
+ */
+export interface SeriesNodeDatum<D = any> {
+    seriesDatum: D
 }
 
 export abstract class Series<D, X, Y> {
@@ -135,4 +140,7 @@ export abstract class Series<D, X, Y> {
 
     abstract processData(): boolean;
     abstract update(): void;
+
+    abstract showTooltip(nodeDatum: SeriesNodeDatum<D>, event: MouseEvent): void;
+    abstract hideTooltip(): void;
 }

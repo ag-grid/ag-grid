@@ -9,9 +9,9 @@ import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
 import { extent } from "../../util/array";
 import colors from "../colors";
-import { SeriesDatum } from "./series";
+import { SeriesNodeDatum } from "./series";
 
-interface GroupSelectionDatum<T> extends SeriesDatum<T> {
+interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     x: number,
     y: number,
     fillStyle: string | null,
@@ -240,7 +240,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
             }
 
             groupSelectionData.push({
-                datum: data[i],
+                seriesDatum: data[i],
                 x,
                 y,
                 fillStyle: this.color,
@@ -284,5 +284,12 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
 
     getDomainY(): Y[] {
         return this.domainY;
+    }
+
+    showTooltip(nodeDatum: GroupSelectionDatum<D>, event: MouseEvent): void {
+
+    }
+
+    hideTooltip(): void {
     }
 }

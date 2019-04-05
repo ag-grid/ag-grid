@@ -8,9 +8,11 @@ import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import colors from "../colors";
 import { Color } from "../../util/color";
-import { SeriesDatum } from "./series";
+import { SeriesNodeDatum } from "./series";
+import { PointerEvents } from "../../scene/node";
 
-interface GroupSelectionDatum<T> extends SeriesDatum<T> {
+interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
+    yField: string,
     x: number,
     y: number,
     width: number,
@@ -389,13 +391,15 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             const x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
-                const barX = grouped ? x + groupScale.convert(yFields[yFieldIndex]) : x;
+                const yField = yFields[yFieldIndex];
+                const barX = grouped ? x + groupScale.convert(yField) : x;
                 const y = yScale.convert(grouped ? curr : prev + curr);
                 const bottomY = yScale.convert(grouped ? 0 : prev);
                 const labelText = this.yFieldNames[yFieldIndex];
 
                 groupSelectionData.push({
-                    datum: data[i],
+                    seriesDatum: data[i],
+                    yField,
                     x: barX,
                     y: Math.min(y, bottomY),
                     width: barWidth,
@@ -427,6 +431,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         });
         enterGroups.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
+            text.pointerEvents = PointerEvents.None;
             text.textBaseline = 'hanging';
             text.textAlign = 'center';
         });
@@ -464,5 +469,36 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             });
 
         this.groupSelection = groupSelection;
+    }
+
+    showTooltip(nodeDatum: GroupSelectionDatum<D>, event: MouseEvent): void {
+        const chart = this.chart;
+
+        if (!chart) {
+            return;
+        }
+
+        const tooltipDiv = chart.tooltipDiv;
+        const xField = this.xField!;
+        const yField = nodeDatum.yField as Extract<keyof D, string>;
+        // X: ${nodeDatum.seriesDatum[xField]}<br>
+        let labelText = '';
+        if (nodeDatum.label) {
+            labelText = nodeDatum.label.text + ': ';
+        }
+
+        tooltipDiv.innerHTML = `${labelText}${(nodeDatum.seriesDatum[yField] as any as number).toFixed(2)}`;
+        tooltipDiv.style.left = (event.x + 20).toString() + 'px';
+        tooltipDiv.style.top = (event.y + 20).toString() + 'px';
+        tooltipDiv.style.display = 'table';
+        // console.log(`${nodeDatum.seriesDatum[xField]}, ${nodeDatum.seriesDatum[yField]}`);
+    }
+
+    hideTooltip(): void {
+        const chart = this.chart;
+
+        if (chart) {
+            chart.tooltipDiv.style.display = 'none';
+        }
     }
 }

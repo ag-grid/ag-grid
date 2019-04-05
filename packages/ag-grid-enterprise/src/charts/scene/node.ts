@@ -2,6 +2,11 @@ import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
 
+export enum PointerEvents {
+    All,
+    None
+}
+
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
@@ -530,4 +535,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
     get visible(): boolean {
         return this._visible;
     }
+
+    pointerEvents: PointerEvents = PointerEvents.All;
 }

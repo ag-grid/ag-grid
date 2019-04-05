@@ -10,9 +10,9 @@ import { normalizeAngle180, toRadians } from "../../util/angle";
 import colors from "../colors";
 import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
-import { SeriesDatum } from "./series";
+import { SeriesNodeDatum } from "./series";
 
-interface GroupSelectionDatum<T> extends SeriesDatum<T> {
+interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     innerRadius: number,
     outerRadius: number,
     startAngle: number,
@@ -295,7 +295,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             const calloutStrokeStyle = calloutColor ? calloutColor : strokeStyle;
 
             groupSelectionData.push({
-                datum: data[datumIndex],
+                seriesDatum: data[datumIndex],
                 innerRadius,
                 outerRadius,
                 startAngle,
@@ -416,5 +416,12 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             });
 
         this.groupSelection = groupSelection;
+    }
+
+    showTooltip(nodeDatum: GroupSelectionDatum<D>, event: MouseEvent): void {
+
+    }
+
+    hideTooltip(): void {
     }
 }

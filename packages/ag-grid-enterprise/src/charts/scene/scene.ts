@@ -1,5 +1,5 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
-import { Node } from "./node";
+import { Node, PointerEvents } from "./node";
 import { Path2D } from "./path2D";
 import { Shape } from "./shape/shape";
 
@@ -11,13 +11,12 @@ export class Scene {
         return (this.constructor as any).name + '-' + (Scene.id++);
     };
 
-    private readonly hdpiCanvas: HdpiCanvas;
+    readonly hdpiCanvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
 
     constructor(width = 800, height = 600) {
         this.hdpiCanvas = new HdpiCanvas(this._width = width, this._height = height);
         this.ctx = this.hdpiCanvas.context;
-        // this.setupListeners(this.hdpiCanvas.canvas); // debug
     }
 
     set parent(value: HTMLElement | null) {
@@ -31,39 +30,17 @@ export class Scene {
         this.hdpiCanvas.download(fileName);
     }
 
-    private setupListeners(canvas: HTMLCanvasElement) {
-        canvas.addEventListener('mousemove', this.onMouseMove);
-    }
-
-    private lastPick?: { // debug
-        node: Shape,
-        fillStyle: string | null
-    };
-    private onMouseMove = (e: MouseEvent) => { // debug
-        const x = e.offsetX;
-        const y = e.offsetY;
-
-        if (this.root) {
-            const node = this.pickNode(this.root, x, y);
-            if (node) {
-                if (node instanceof Shape) {
-                    if (!this.lastPick) {
-                        this.lastPick = { node, fillStyle: node.fillStyle };
-                    } else if (this.lastPick.node !== node) {
-                        this.lastPick.node.fillStyle = this.lastPick.fillStyle;
-                        this.lastPick = { node, fillStyle: node.fillStyle };
-                    }
-                    node.fillStyle = 'yellow';
-                }
-            } else if (this.lastPick) {
-                this.lastPick.node.fillStyle = this.lastPick.fillStyle;
-                this.lastPick = undefined;
-            }
-        }
-    };
-
+    /**
+     * Hit testing method.
+     * Recursively checks if the given point is inside any of the given node's children.
+     * Returns the first matching node or `undefined`.
+     * Nodes that render later (show on top) are hit tested first.
+     * @param node
+     * @param x
+     * @param y
+     */
     pickNode(node: Node, x: number, y: number): Node | undefined {
-        if (!node.visible || !node.isPointInNode(x, y)) {
+        if (!node.visible || node.pointerEvents === PointerEvents.None || !node.isPointInNode(x, y)) {
             return;
         }
 

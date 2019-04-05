@@ -1,7 +1,9 @@
 import { Scene } from "../scene/scene";
 import { Group } from "../scene/group";
-import { Series } from "./series/series";
+import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
+import { Shape } from "../scene/shape/shape";
+import { Node } from "../scene/node";
 
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
@@ -9,6 +11,16 @@ export abstract class Chart<D, X, Y> {
     constructor(parent: HTMLElement = document.body) {
         this.scene.parent = parent;
         this.scene.root = new Group();
+        this.setupListeners(this.scene.hdpiCanvas.canvas);
+    }
+
+    destroy() {
+        const tooltipParent = this.tooltipDiv.parentNode;
+        if (tooltipParent) {
+            tooltipParent.removeChild(this.tooltipDiv);
+        }
+        this.cleanupListeners(this.scene.hdpiCanvas.canvas);
+        this.scene.parent = null;
     }
 
     protected _padding: Padding = {
@@ -63,7 +75,6 @@ export abstract class Chart<D, X, Y> {
             this.layoutCallbackId = 0;
         }
     }
-
     /**
      * Only `true` while we are waiting for the layout to start.
      * This will be `false` if the layout has already started and is ongoing.
@@ -86,4 +97,91 @@ export abstract class Chart<D, X, Y> {
     get series(): Series<D, X, Y>[] {
         return this._series;
     }
+
+    tooltipDiv = (() => {
+        const div = document.createElement('div');
+        div.style.border = '1px solid gray';
+        div.style.font = '12px Verdana';
+        div.style.padding = '7px';
+        div.style.whiteSpace = 'no-wrap';
+        div.style.background = 'rgba(244, 244, 244, 0.9)';
+        div.style.boxShadow = '3px 3px 5px rgba(0, 0, 0, 0.3)';
+        div.style.position = 'absolute';
+        div.style.zIndex = '100';
+        div.style.display = 'none';
+        // div.classList.add('ag-tooltip');
+        document.body.appendChild(div);
+        return div;
+    })();
+
+    private setupListeners(chartElement: HTMLCanvasElement) {
+        chartElement.addEventListener('mousemove', this.onMouseMove);
+    }
+
+    private cleanupListeners(chartElement: HTMLCanvasElement) {
+        chartElement.removeEventListener('mousemove', this.onMouseMove);
+    }
+
+    private pickSeriesNode(x: number, y: number): {
+        series: Series<D, X, Y>,
+        node: Node
+    } | undefined {
+        const scene = this.scene;
+        const allSeries = this.series;
+
+        let node: Node | undefined = undefined;
+        for (let i = allSeries.length - 1; i >= 0; i--) {
+            const series = allSeries[i];
+            node = scene.pickNode(series.group, x, y);
+            if (node) {
+                return {
+                    series,
+                    node
+                };
+            }
+        }
+    }
+
+    private lastPick?: {
+        series: Series<D, X, Y>,
+        node: Shape,
+        fillStyle: string | null // used to save the original fillStyle of the node,
+                                 // to be restored when the highlight fillStyle is removed
+    };
+
+    private onMouseMove = (event: MouseEvent) => {
+        const x = event.offsetX;
+        const y = event.offsetY;
+
+        const pick = this.pickSeriesNode(x, y);
+        if (pick) {
+            const node = pick.node;
+            if (node instanceof Shape) {
+                if (!this.lastPick) {
+                    this.lastPick = {
+                        series: pick.series,
+                        node,
+                        fillStyle: node.fillStyle
+                    };
+                } else if (this.lastPick.node !== node) {
+                    this.lastPick.node.fillStyle = this.lastPick.fillStyle;
+                    this.lastPick = {
+                        series: pick.series,
+                        node,
+                        fillStyle: node.fillStyle
+                    };
+                }
+                node.fillStyle = 'yellow';
+            }
+        } else if (this.lastPick) {
+            this.lastPick.node.fillStyle = this.lastPick.fillStyle;
+            this.lastPick.series.hideTooltip();
+            this.lastPick = undefined;
+        }
+
+        if (this.lastPick) {
+            const datum = this.lastPick.node.datum as SeriesNodeDatum<D>;
+            this.lastPick.series.showTooltip(datum, event);
+        }
+    };
 }
