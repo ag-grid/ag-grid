@@ -6,7 +6,6 @@ import {
     Events,
     EventService,
     IRowModel,
-    PaginationProxy,
     PostConstruct,
     CellRange,
     ValueService
@@ -19,11 +18,10 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('valueService') valueService: ValueService;
     @Autowired('rowModel') rowModel: IRowModel;
-    @Autowired('paginationProxy') paginationProxy: PaginationProxy;
     @Autowired('eventService') eventService: EventService;
     @Autowired('rangeController') rangeController: RangeController;
 
-    private rangeSelection: CellRange;
+    private cellRange: CellRange;
 
     private colIds: string[];
     private colDisplayNames: string[];
@@ -37,9 +35,9 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     private errors: string[] = [];
 
-    constructor(rangeSelection: CellRange) {
+    constructor(cellRange: CellRange) {
         super();
-        this.rangeSelection = rangeSelection;
+        this.cellRange = cellRange;
     }
 
     public getErrors(): string[] {
@@ -72,7 +70,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     private calculateCategoryCols(): void {
         this.categoryCols = [];
-        if (!this.rangeSelection.columns) { return; }
+        if (!this.cellRange.columns) { return; }
 
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
@@ -84,7 +82,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
             displayedCols.indexOf(col) >= 0;
 
         // pull out all dimension columns from the range
-        this.rangeSelection.columns.forEach(col => {
+        this.cellRange.columns.forEach(col => {
             if (isDimension(col)) {
                 this.categoryCols.push(col);
             }
@@ -106,24 +104,15 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     private calculateRowRange(): void {
-        const paginationOffset = this.paginationProxy.getPageFirstRow();
 
-        const startRow = this.rangeSelection.startRow;
-        const endRow = this.rangeSelection.endRow;
-
-        this.startRow = startRow ? (startRow.rowIndex + paginationOffset) : 0;
-        this.endRow = endRow ? (endRow.rowIndex + paginationOffset) : this.rowModel.getRowCount() - 1;
-
-        if (this.startRow > this.endRow) {
-            this.startRow ^= this.endRow;
-            this.endRow ^= this.startRow;
-            this.startRow ^= this.endRow;
-        }
+        this.startRow = this.rangeController.getRangeStartRow(this.cellRange).rowIndex;
+        this.endRow = this.rangeController.getRangeEndRow(this.cellRange).rowIndex;
 
         // make sure enough rows in range to chart. if user filters and less rows, then
         // end row will be the last displayed row, not where the range ends.
         const modelLastRow = this.rowModel.getRowCount() - 1;
         const rangeLastRow = Math.min(this.endRow, modelLastRow);
+
         this.rowCount = rangeLastRow - this.startRow + 1;
 
         if (this.rowCount <= 0) {
@@ -137,7 +126,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.colDisplayNames = [];
         this.colsMapped = {};
 
-        const colsInRange = this.rangeSelection.columns || [];
+        const colsInRange = this.cellRange.columns || [];
 
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
@@ -166,7 +155,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     public getRangeSelection(): CellRange {
-        return this.rangeSelection;
+        return this.cellRange;
     }
 
     public getCategory(i: number): string {
