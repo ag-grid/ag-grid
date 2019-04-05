@@ -8,9 +8,9 @@ import {
     ColumnApi,
     ColumnController,
     Constants,
+    Context,
     Events,
     EventService,
-    FocusedCellController,
     GridApi,
     GridOptionsWrapper,
     GridPanel,
@@ -23,22 +23,21 @@ import {
     PostConstruct,
     CellRange,
     RangeSelectionChangedEvent,
-    RowRenderer,
     RowPosition,
     RowPositionUtils,
     PinnedRowModel,
     _
 } from "ag-grid-community";
+import { FillHandle } from "./widgets/selection/fillHandle";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
+    @Autowired('context') private context: Context;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -134,7 +133,7 @@ export class RangeController implements IRangeController {
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _.missing(this.cellRanges)) {
-            this.cellRanges.length = 0;
+            this.removeAllCellRanges(true);
         }
 
         const rowForCell: RowPosition = {rowPinned: cell.rowPinned, rowIndex: cell.rowIndex};
@@ -164,17 +163,21 @@ export class RangeController implements IRangeController {
                 this.cellRanges.push(existingRange);
             }
         } else {
+            const fillHandle = new FillHandle();
+            this.context.wireBean(fillHandle);
+            
             const newRange: CellRange = {
                 startRow: rowForCell,
                 endRow: rowForCell,
-                columns: columns
+                columns: columns,
+                fillHandle
             };
             this.cellRanges.push(newRange);
         }
 
         this.newestRangeStartCell = cell;
         this.onDragStop();
-        this.dispatchChangedEvent(true, false);
+        this.onRangeChanged({ started: false, finished: true });
     }
 
     public extendLatestRangeToCell(toCell: CellPosition): void {
@@ -235,8 +238,7 @@ export class RangeController implements IRangeController {
             return;
         }
 
-        this.onDragStop();
-        this.cellRanges.length = 0;
+        this.removeAllCellRanges(true);
         this.addCellRange(params);
     }
 
@@ -280,10 +282,14 @@ export class RangeController implements IRangeController {
             };
         }
 
+        const fillHandle = new FillHandle();
+        this.context.wireBean(fillHandle);
+
         const newRange: CellRange = {
             startRow: startRow,
             endRow: endRow,
-            columns: columns
+            columns: columns,
+            fillHandle
         };
 
         return newRange;
@@ -297,7 +303,7 @@ export class RangeController implements IRangeController {
         const newRange = this.createCellRangeFromCellRangeParams(params);
         if (newRange) {
             this.cellRanges.push(newRange);
-            this.dispatchChangedEvent(true, false);
+            this.onRangeChanged({ started: false, finished: true });
         }
     }
 
@@ -329,12 +335,20 @@ export class RangeController implements IRangeController {
         }
     }
 
-    public removeAllCellRanges(): void {
+    public removeAllCellRanges(silent?: boolean): void {
         if (this.isEmpty()) { return; }
 
         this.onDragStop();
+        this.cellRanges.forEach((range: CellRange) => {
+            if (range.fillHandle) {
+                range.fillHandle.destroy!();
+            }
+        });
         this.cellRanges.length = 0;
-        this.dispatchChangedEvent(true, false);
+
+        if (!silent) {
+            this.onRangeChanged({ started: false, finished: true });   
+        }
     }
 
     // as the user is dragging outside of the panel, the div starts to scroll, which in turn
@@ -410,13 +424,14 @@ export class RangeController implements IRangeController {
             return;
         }
 
+        if (!multiSelectKeyPressed && !shiftKey) {
+            this.removeAllCellRanges(true);
+        }
+
         this.dragging = true;
         this.draggingCell = mouseCell;
         this.lastMouseEvent = mouseEvent;
 
-        if (!multiSelectKeyPressed && !shiftKey) {
-            this.cellRanges.length = 0;
-        }
 
         if (!shiftKey) {
             this.newestRangeStartCell = mouseCell;
@@ -433,28 +448,22 @@ export class RangeController implements IRangeController {
                 rowIndex: mouseCell.rowIndex,
                 rowPinned: mouseCell.rowPinned
             };
+
+            const fillHandle = new FillHandle();
+            this.context.wireBean(fillHandle);
+
             this.draggingRange = {
                 startRow: mouseRowPosition,
                 endRow: mouseRowPosition,
-                columns: [mouseCell.column]
+                columns: [mouseCell.column],
+                fillHandle
             };
             this.cellRanges.push(this.draggingRange);
         }
 
         this.gridPanel.addScrollEventListener(this.bodyScrollListener);
 
-        this.dispatchChangedEvent(false, true);
-    }
-
-    private dispatchChangedEvent(finished: boolean, started: boolean): void {
-        const event: RangeSelectionChangedEvent = {
-            type: Events.EVENT_RANGE_SELECTION_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            finished: finished,
-            started: started
-        };
-        this.eventService.dispatchEvent(event);
+        this.onRangeChanged({ started: true, finished: false });
     }
 
     public onDragStop(): void {
@@ -470,7 +479,7 @@ export class RangeController implements IRangeController {
         this.draggingRange = undefined;
         this.draggingCell = undefined;
 
-        this.dispatchChangedEvent(true, false);
+        this.onRangeChanged({ started: false, finished: false });
     }
 
     public onDragging(mouseEvent: MouseEvent | null): void {
@@ -503,7 +512,36 @@ export class RangeController implements IRangeController {
         };
         this.draggingRange!.columns = columns;
 
-        this.dispatchChangedEvent(false, false);
+        this.onRangeChanged({ started: false, finished: false });
+    }
+
+    private onRangeChanged(params: { started: boolean, finished: boolean}) {
+        const { started, finished } = params;
+
+        this.syncFillHandle();
+
+        this.dispatchChangedEvent(started, finished)
+    }
+
+    private syncFillHandle() {
+        if (!this.cellRanges) { return; }
+
+        this.cellRanges.forEach((range: CellRange) => {
+            if (range.fillHandle) {
+                range.fillHandle.syncPosition(range);
+            }
+        });
+    }
+
+    private dispatchChangedEvent(started: boolean, finished: boolean): void {
+        const event: RangeSelectionChangedEvent = {
+            type: Events.EVENT_RANGE_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            started: started,
+            finished: finished
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private calculateColumnsBetween(columnFrom: Column, columnTo: Column): Column[] | undefined {

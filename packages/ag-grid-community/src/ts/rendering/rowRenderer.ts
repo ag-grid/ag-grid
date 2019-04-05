@@ -1083,7 +1083,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private getComponentForCell(cellPosition: CellPosition): CellComp {
+    public getComponentForCell(cellPosition: CellPosition): CellComp {
         let rowComponent: RowComp;
         switch (cellPosition.rowPinned) {
             case Constants.PINNED_TOP:

@@ -2,6 +2,7 @@ import { Column } from "../entities/column";
 import { CellPosition } from "../entities/cellPosition";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { RowPosition } from "../entities/rowPosition";
+import { IPopupComponent } from "./iPopupComponent";
 
 export interface IRangeController {
     removeAllCellRanges(): void;
@@ -23,10 +24,15 @@ export interface IRangeController {
     getRangeEndRow(cellRange: CellRange): RowPosition;
 }
 
+export interface IFillHandle<T> extends IPopupComponent<T> {
+    syncPosition(range: CellRange): void;
+}
+
 export interface CellRange {
     startRow?: RowPosition;
     endRow?: RowPosition;
     columns: Column[];
+    fillHandle?: IFillHandle<any>;
 }
 
 export interface CellRangeParams {

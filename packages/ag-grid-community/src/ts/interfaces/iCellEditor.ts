@@ -6,7 +6,7 @@ import { IComponent } from "./iComponent";
 import { IPopupComponent } from "./iPopupComponent";
 import { ColDef } from "../entities/colDef";
 
-export interface ICellEditor extends IPopupComponent {
+export interface ICellEditor extends IPopupComponent<ICellEditorParams> {
     /** Return the final value - called by the grid once after editing is complete */
     getValue(): any;
 

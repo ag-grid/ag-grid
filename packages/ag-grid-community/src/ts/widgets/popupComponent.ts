@@ -2,7 +2,7 @@ import { Component } from "./component";
 import { IPopupComponent } from "../interfaces/iPopupComponent";
 import { _ } from "../utils";
 
-export class PopupComponent extends Component implements IPopupComponent {
+export class PopupComponent extends Component implements IPopupComponent<any> {
     public isPopup(): boolean {
         return true;
     }
