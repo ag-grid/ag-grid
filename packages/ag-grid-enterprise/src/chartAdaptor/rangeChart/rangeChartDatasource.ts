@@ -17,7 +17,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('valueService') valueService: ValueService;
-    @Autowired('rowModel') rowModel: IRowModel;
+    @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('eventService') eventService: EventService;
     @Autowired('rangeController') rangeController: RangeController;
 
@@ -26,14 +26,17 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     private colIds: string[];
     private colDisplayNames: string[];
     private colsMapped: {[colId: string]: Column};
+    private fieldCols: Column[];
 
     private categoryCols: Column[];
 
     private startRow: number;
     private endRow: number;
-    private rowCount: number;
 
     private errors: string[] = [];
+
+    private dataFromGrid: any[];
+    private dataGrouped: any[];
 
     constructor(cellRange: CellRange) {
         super();
@@ -64,8 +67,31 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.clearErrors();
 
         this.calculateFields();
-        this.calculateRowRange();
         this.calculateCategoryCols();
+        this.extractRowsFromGridRowModel();
+        this.groupRowsByCategory();
+    }
+
+    private groupRowsByCategory(): void {
+        this.dataGrouped = this.dataFromGrid;
+
+/*
+        if (this.categoryCols.length<=0) {
+            this.dataGrouped = this.dataFromGrid;
+            return;
+        }
+
+        this.dataGrouped = [];
+
+        const map: any = {};
+
+        this.dataFromGrid.forEach( row => {
+            let mapPointer = map;
+            this.categoryCols.forEach( col => {
+
+            });
+        });
+*/
     }
 
     private calculateCategoryCols(): void {
@@ -103,19 +129,38 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.dispatchEvent({type: 'modelUpdated'});
     }
 
-    private calculateRowRange(): void {
+    private extractRowsFromGridRowModel(): void {
 
         this.startRow = this.rangeController.getRangeStartRow(this.cellRange).rowIndex;
         this.endRow = this.rangeController.getRangeEndRow(this.cellRange).rowIndex;
 
         // make sure enough rows in range to chart. if user filters and less rows, then
         // end row will be the last displayed row, not where the range ends.
-        const modelLastRow = this.rowModel.getRowCount() - 1;
+        const modelLastRow = this.gridRowModel.getRowCount() - 1;
         const rangeLastRow = Math.min(this.endRow, modelLastRow);
 
-        this.rowCount = rangeLastRow - this.startRow + 1;
+        const rowCount = rangeLastRow - this.startRow + 1;
 
-        if (this.rowCount <= 0) {
+        this.dataFromGrid = [];
+        for (let i = 0; i<rowCount; i++) {
+            const rowNode = this.gridRowModel.getRow(i + this.startRow)!;
+            const data: any = {};
+
+            this.categoryCols.forEach( col => {
+                const part = this.valueService.getValue(col, rowNode);
+                // force return type to be string or empty string (as value can be an object)
+                const partStr = (part && part.toString) ? part.toString() : '';
+                data[col.getId()] = partStr;
+            });
+
+            this.fieldCols.forEach( col => {
+                data[col.getId()] = this.valueService.getValue(col, rowNode);
+            });
+
+            this.dataFromGrid.push(data);
+        }
+
+        if (rowCount <= 0) {
             this.addError('No rows in selected range.');
         }
     }
@@ -125,12 +170,13 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.colIds = [];
         this.colDisplayNames = [];
         this.colsMapped = {};
+        this.fieldCols = [];
 
         const colsInRange = this.cellRange.columns || [];
 
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
-        const valueColumnsInRange = colsInRange.filter(col =>
+        this.fieldCols = colsInRange.filter(col =>
             // all columns must have enableValue enabled
             col.getColDef().enableValue
             // and the column must be visible in the grid. this gets around issues where user switches
@@ -138,11 +184,11 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
             && displayedCols.indexOf(col) >= 0
         );
 
-        if (valueColumnsInRange.length === 0) {
+        if (this.fieldCols.length === 0) {
             this.addError('No value column in selected range.');
         }
 
-        valueColumnsInRange.forEach(col => {
+        this.fieldCols.forEach(col => {
 
             const colId = col.getColId();
             const displayName = this.columnController.getDisplayNameForColumn(col, 'chart');
@@ -159,13 +205,10 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     public getCategory(i: number): string {
-        const rowNode = this.rowModel.getRow(this.startRow + i);
+        const data = this.dataFromGrid[i];
         const resParts: string[] = [];
         this.categoryCols.forEach(col => {
-            const part = this.valueService.getValue(col, rowNode);
-            // force return type to be string or empty string (as value can be an object)
-            const partStr = (part && part.toString) ? part.toString() : '';
-            resParts.push(partStr);
+            resParts.push(data[col.getId()]);
         });
         const res = resParts.join(', ');
         return res;
@@ -180,14 +223,14 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     }
 
     public getValue(i: number, field: string): number {
-        const rowNode = this.rowModel.getRow(this.startRow + i);
+        const data = this.dataFromGrid[i];
         const col = this.colsMapped[field];
-        const res = this.valueService.getValue(col, rowNode);
+        const res = data[col.getId()];
         return res;
     }
 
     public getRowCount(): number {
-        return this.rowCount;
+        return this.dataFromGrid.length;
     }
 
 }
