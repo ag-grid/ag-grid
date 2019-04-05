@@ -141,6 +141,5 @@ export abstract class Series<D, X, Y> {
     abstract processData(): boolean;
     abstract update(): void;
 
-    abstract showTooltip(nodeDatum: SeriesNodeDatum<D>, event: MouseEvent): void;
-    abstract hideTooltip(): void;
+    abstract getTooltipHtml(nodeDatum: SeriesNodeDatum<D>): string;
 }

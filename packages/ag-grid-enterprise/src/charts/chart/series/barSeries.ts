@@ -10,6 +10,7 @@ import colors from "../colors";
 import { Color } from "../../util/color";
 import { SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
+import { toFixed } from "../../util/number";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     yField: string,
@@ -471,34 +472,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         this.groupSelection = groupSelection;
     }
 
-    showTooltip(nodeDatum: GroupSelectionDatum<D>, event: MouseEvent): void {
-        const chart = this.chart;
-
-        if (!chart) {
-            return;
-        }
-
-        const tooltipDiv = chart.tooltipDiv;
-        const xField = this.xField!;
+    getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
         const yField = nodeDatum.yField as Extract<keyof D, string>;
-        // X: ${nodeDatum.seriesDatum[xField]}<br>
-        let labelText = '';
-        if (nodeDatum.label) {
-            labelText = nodeDatum.label.text + ': ';
-        }
-
-        tooltipDiv.innerHTML = `${labelText}${(nodeDatum.seriesDatum[yField] as any as number).toFixed(2)}`;
-        tooltipDiv.style.left = (event.x + 20).toString() + 'px';
-        tooltipDiv.style.top = (event.y + 20).toString() + 'px';
-        tooltipDiv.style.display = 'table';
-        // console.log(`${nodeDatum.seriesDatum[xField]}, ${nodeDatum.seriesDatum[yField]}`);
-    }
-
-    hideTooltip(): void {
-        const chart = this.chart;
-
-        if (chart) {
-            chart.tooltipDiv.style.display = 'none';
-        }
+        let labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
+        return `${labelText}${toFixed(nodeDatum.seriesDatum[yField] as any as number)}`;
     }
 }

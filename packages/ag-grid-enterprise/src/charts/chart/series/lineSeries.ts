@@ -10,6 +10,8 @@ import { Arc, ArcType } from "../../scene/shape/arc";
 import { extent } from "../../util/array";
 import colors from "../colors";
 import { SeriesNodeDatum } from "./series";
+import { toFixed } from "../../util/number";
+import { PointerEvents } from "../../scene/node";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     x: number,
@@ -35,6 +37,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         super();
         this.linePath.fillStyle = null;
         this.linePath.lineJoin = 'round';
+        this.linePath.pointerEvents = PointerEvents.None;
         this.group.append(this.linePath);
     }
 
@@ -286,10 +289,16 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         return this.domainY;
     }
 
-    showTooltip(nodeDatum: GroupSelectionDatum<D>, event: MouseEvent): void {
+    getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
+        const yField = this.yField;
 
-    }
-
-    hideTooltip(): void {
+        if (!yField) {
+            return '';
+        }
+        const value = nodeDatum.seriesDatum[yField];
+        if (typeof(value) === 'number') {
+            return `${toFixed(value)}`;
+        }
+        return value.toString();
     }
 }

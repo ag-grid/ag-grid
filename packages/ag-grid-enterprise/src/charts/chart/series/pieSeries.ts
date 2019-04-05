@@ -11,6 +11,8 @@ import colors from "../colors";
 import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
 import { SeriesNodeDatum } from "./series";
+import { PointerEvents } from "../../scene/node";
+import { toFixed } from "../../util/number";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     innerRadius: number,
@@ -348,8 +350,14 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         const enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Sector).each(node => node.tag = PieSeriesNodeTag.Sector);
-        enterGroups.append(Line).each(node => node.tag = PieSeriesNodeTag.Callout);
-        enterGroups.append(Text).each(node => node.tag = PieSeriesNodeTag.Label);
+        enterGroups.append(Line).each(node => {
+            node.tag = PieSeriesNodeTag.Callout;
+            node.pointerEvents = PointerEvents.None;
+        });
+        enterGroups.append(Text).each(node => {
+            node.tag = PieSeriesNodeTag.Label;
+            node.pointerEvents = PointerEvents.None;
+        });
 
         const groupSelection = updateGroups.merge(enterGroups);
 
@@ -418,10 +426,16 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         this.groupSelection = groupSelection;
     }
 
-    showTooltip(nodeDatum: GroupSelectionDatum<D>, event: MouseEvent): void {
+    getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
+        const angleField = this.angleField;
 
-    }
-
-    hideTooltip(): void {
+        if (!angleField) {
+            return '';
+        }
+        const value = nodeDatum.seriesDatum[angleField];
+        if (typeof(value) === 'number') {
+            return `${toFixed(value)}`;
+        }
+        return value.toString();
     }
 }

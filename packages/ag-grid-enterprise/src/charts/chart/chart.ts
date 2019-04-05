@@ -8,6 +8,22 @@ import { Node } from "../scene/node";
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
 
+    tooltipElement = (() => {
+        const div = document.createElement('div');
+        div.style.border = '1px solid gray';
+        div.style.font = '12px Verdana';
+        div.style.padding = '7px';
+        div.style.whiteSpace = 'no-wrap';
+        div.style.background = 'rgba(244, 244, 244, 0.9)';
+        div.style.boxShadow = '3px 3px 5px rgba(0, 0, 0, 0.3)';
+        div.style.position = 'absolute';
+        div.style.zIndex = '100';
+        div.style.display = 'none';
+        // div.classList.add('ag-tooltip');
+        document.body.appendChild(div);
+        return div;
+    })();
+
     constructor(parent: HTMLElement = document.body) {
         this.scene.parent = parent;
         this.scene.root = new Group();
@@ -15,9 +31,9 @@ export abstract class Chart<D, X, Y> {
     }
 
     destroy() {
-        const tooltipParent = this.tooltipDiv.parentNode;
+        const tooltipParent = this.tooltipElement.parentNode;
         if (tooltipParent) {
-            tooltipParent.removeChild(this.tooltipDiv);
+            tooltipParent.removeChild(this.tooltipElement);
         }
         this.cleanupListeners(this.scene.hdpiCanvas.canvas);
         this.scene.parent = null;
@@ -98,28 +114,14 @@ export abstract class Chart<D, X, Y> {
         return this._series;
     }
 
-    tooltipDiv = (() => {
-        const div = document.createElement('div');
-        div.style.border = '1px solid gray';
-        div.style.font = '12px Verdana';
-        div.style.padding = '7px';
-        div.style.whiteSpace = 'no-wrap';
-        div.style.background = 'rgba(244, 244, 244, 0.9)';
-        div.style.boxShadow = '3px 3px 5px rgba(0, 0, 0, 0.3)';
-        div.style.position = 'absolute';
-        div.style.zIndex = '100';
-        div.style.display = 'none';
-        // div.classList.add('ag-tooltip');
-        document.body.appendChild(div);
-        return div;
-    })();
-
     private setupListeners(chartElement: HTMLCanvasElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
+        chartElement.addEventListener('mouseout', this.onMouseOut);
     }
 
     private cleanupListeners(chartElement: HTMLCanvasElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
+        chartElement.removeEventListener('mouseout', this.onMouseMove);
     }
 
     private pickSeriesNode(x: number, y: number): {
@@ -149,7 +151,7 @@ export abstract class Chart<D, X, Y> {
                                  // to be restored when the highlight fillStyle is removed
     };
 
-    private onMouseMove = (event: MouseEvent) => {
+    private readonly onMouseMove = (event: MouseEvent) => {
         const x = event.offsetX;
         const y = event.offsetY;
 
@@ -175,13 +177,37 @@ export abstract class Chart<D, X, Y> {
             }
         } else if (this.lastPick) {
             this.lastPick.node.fillStyle = this.lastPick.fillStyle;
-            this.lastPick.series.hideTooltip();
+            this.hideTooltip();
             this.lastPick = undefined;
         }
 
         if (this.lastPick) {
             const datum = this.lastPick.node.datum as SeriesNodeDatum<D>;
-            this.lastPick.series.showTooltip(datum, event);
+            this.showTooltip(this.lastPick.series.getTooltipHtml(datum), event);
         }
     };
+
+    private readonly onMouseOut = (event: MouseEvent) => {
+        this.tooltipElement.style.display = 'none';
+    };
+
+    tooltipOffset = [20, 20];
+
+    showTooltip(html: string, event: MouseEvent) {
+        if (!html) {
+            return;
+        }
+
+        const el = this.tooltipElement;
+        const offset = this.tooltipOffset;
+
+        el.innerHTML = html;
+        el.style.left = `${event.x + scrollX + offset[0]}px`;
+        el.style.top = `${event.y + scrollY + offset[1]}px`;
+        el.style.display = 'table';
+    }
+
+    hideTooltip() {
+        this.tooltipElement.style.display = 'none';
+    }
 }
