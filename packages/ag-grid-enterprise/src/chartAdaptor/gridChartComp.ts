@@ -96,6 +96,8 @@ export class GridChartComp extends Component implements IGridChartComp {
             width: this.chart.width
         };
 
+        // destroy chart and remove it from DOM
+        this.chart.destroy();
         _.clearElement(this.eChart);
 
         this.chartType = chartType;
@@ -139,6 +141,9 @@ export class GridChartComp extends Component implements IGridChartComp {
         if (this.datasource) {
             this.datasource.destroy();
         }
+
+        this.chart.destroy();
+
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
         _.clearElement(this.getGui());
