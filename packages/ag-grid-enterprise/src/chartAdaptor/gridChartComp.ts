@@ -21,6 +21,8 @@ import {
 export interface IGridChartComp {
     getChart(): Chart<any, string, number>;
     setChartType(chartType: ChartType): void;
+    updateChart(fieldsToDisplay?: string[]): void;
+    getFields(): string[];
 }
 
 export class GridChartComp extends Component implements IGridChartComp {
@@ -105,6 +107,10 @@ export class GridChartComp extends Component implements IGridChartComp {
         return this.chart
     }
 
+    public getFields(): string[] {
+        return this.datasource.getFields();
+    }
+
     public refresh(): void {
         const errors = this.datasource.getErrors();
         const eGui = this.getGui();
@@ -138,28 +144,30 @@ export class GridChartComp extends Component implements IGridChartComp {
         _.clearElement(this.getGui());
     }
 
-    private updateChart() {
+    public updateChart(fieldsToDisplay?: string[]) {
         if (this.chartType === ChartType.GroupedBar || this.chartType === ChartType.StackedBar) {
-            this.updateBarChart();
+            this.updateBarChart(fieldsToDisplay);
         } else if (this.chartType === ChartType.Line) {
-            this.updateLineChart();
+            this.updateLineChart(fieldsToDisplay);
         } else if (this.chartType === ChartType.Pie) {
-            this.updatePieChart();
+            this.updatePieChart(fieldsToDisplay);
         }
     }
 
-    private updateBarChart() {
+    private updateBarChart(fieldsToDisplay?: string[]) {
         const {data, fields} = this.extractFromDatasource(this.datasource);
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
         barSeries.yFieldNames = this.datasource.getFieldNames();
-        barSeries.setDataAndFields(data, 'category', fields);
+        barSeries.setDataAndFields(data, 'category', this.filterFields(fields, fieldsToDisplay));
     }
 
-    private updateLineChart() {
+    private updateLineChart(fieldsToDisplay?: string[]) {
         const {data, fields} = this.extractFromDatasource(this.datasource);
         const lineChart = this.chart as CartesianChart<any, string, number>;
 
-        fields.forEach((field: string, index: number) => {
+        const filteredFields = this.filterFields(fields, fieldsToDisplay);
+
+        filteredFields.forEach((field: string, index: number) => {
             let lineSeries = (lineChart.series as LineSeries<any, string, number>[])
                 .filter(series => {
                     const lineSeries = series as LineSeries<any, string, number>;
@@ -178,7 +186,7 @@ export class GridChartComp extends Component implements IGridChartComp {
         });
     }
 
-    private updatePieChart() {
+    private updatePieChart(fieldsToDisplay?: string[]) {
         const {data, fields} = this.extractFromDatasource(this.datasource);
         const pieChart = this.chart as PolarChart<any, string, number>;
 
@@ -187,7 +195,9 @@ export class GridChartComp extends Component implements IGridChartComp {
         const padding = singleField ? 0 : 10;
         let offset = 0;
 
-        fields.forEach((field: string) => {
+        const filteredFields = this.filterFields(fields, fieldsToDisplay);
+
+        filteredFields.forEach((field: string) => {
             let pieSeries = (pieChart.series as PieSeries<any, string, number>[])
                 .filter(series => {
                     const pieSeries = series as PieSeries<any, string, number>;
@@ -208,6 +218,11 @@ export class GridChartComp extends Component implements IGridChartComp {
 
             pieSeries.setDataAndFields(data, field, 'category');
         });
+    }
+
+    private filterFields(fields: string[], fieldsToDisplay?: string[]) {
+        const includeField = (field: string) => fieldsToDisplay ? fieldsToDisplay.indexOf(field) > -1 : true;
+        return fieldsToDisplay ? fields.filter(includeField) : fields;
     }
 
     private extractFromDatasource(ds: ChartDatasource) {

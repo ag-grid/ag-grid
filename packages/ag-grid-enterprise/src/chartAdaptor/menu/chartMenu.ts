@@ -1,26 +1,23 @@
 import {
     _,
     Autowired,
-    Component,
-    MenuItemDef,
-    PostConstruct,
-    RefSelector,
-    Dialog,
-    PopupService,
-    GridOptionsWrapper,
     ChartType,
-    EventService,
-    TabbedLayout,
-    TabbedItem,
+    Component,
+    Dialog,
+    GridOptionsWrapper,
+    MenuItemDef,
+    PopupComponent,
+    PopupService,
+    PostConstruct,
     Promise,
-    GridApi,
-    PopupComponent
+    RefSelector,
+    TabbedItem,
+    TabbedLayout
 } from "ag-grid-community";
-import { MenuItemMapper } from "../../menu/menuItemMapper";
-import { MenuList } from "../../menu/menuList";
-import { MenuItemComponent } from "../../menu/menuItemComponent";
-import { IGridChartComp } from "../gridChartComp";
-import { TabSelectedEvent } from "../../menu/enterpriseMenu";
+import {MenuList} from "../../menu/menuList";
+import {MenuItemComponent} from "../../menu/menuItemComponent";
+import {IGridChartComp} from "../gridChartComp";
+import {ChartColumnPanel} from "./chartColumnPanel";
 
 export class ChartMenu extends Component {
 
@@ -28,6 +25,8 @@ export class ChartMenu extends Component {
         `<div class="ag-chart-menu">
             <span ref="eChartMenu" class="ag-icon-menu"></span>
         </div>`;
+
+    @Autowired('popupService') private popupService: PopupService;
 
     @RefSelector('eChartMenu') private eChartMenu: HTMLElement;
 
@@ -37,8 +36,6 @@ export class ChartMenu extends Component {
         super(ChartMenu.TEMPLATE);
         this.chart = chart;
     }
-
-    @Autowired('popupService') private popupService: PopupService;
 
     @PostConstruct
     private postConstruct(): void {
@@ -77,57 +74,47 @@ export class ChartMenu extends Component {
 class TabbedChartMenu extends PopupComponent {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
-
-    public static TAB_GENERAL = 'generalMenuTab';
-
-    public static TABS_DEFAULT = [TabbedChartMenu.TAB_GENERAL];
-
+    public static TAB_MAIN = 'mainMenuTab';
+    public static TAB_COLUMNS = 'columnsMenuTab';
     public static MENU_ITEM_SEPARATOR = 'separator';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
     private mainMenuList: MenuList;
 
-    private tabItemGeneral: TabbedItem;
-    private tabFactories:{[p:string]:() => TabbedItem} = {};
+    private chartColumnPanel: ChartColumnPanel;
+
+    private mainTab: TabbedItem;
+    private columnsTab: TabbedItem;
 
     private readonly chart: Component;
 
     constructor(chart: Component) {
         super();
         this.chart = chart;
-        this.tabFactories[TabbedChartMenu.TAB_GENERAL] = this.createMainPanel.bind(this);
+    }
+
+    @PostConstruct
+    public init(): void {
+        this.mainTab = this.createMainPanel();
+        this.columnsTab = this.createColumnsPanel();
+
+        this.tabbedLayout = new TabbedLayout({
+            items: [this.mainTab, this.columnsTab],
+            cssClass: 'ag-menu',
+            onActiveItemClicked: this.onHidePopup.bind(this)
+        });
+
+        this.showTab(TabbedChartMenu.TAB_MAIN);
     }
 
     public getMinDimensions(): {width: number, height: number} {
         return this.tabbedLayout.getMinDimensions();
     }
 
-    @PostConstruct
-    public init(): void {
-        const tabs = TabbedChartMenu.TABS_DEFAULT.map(menuTabName => this.createTab(menuTabName));
-
-        this.tabbedLayout = new TabbedLayout({
-            items: tabs,
-            cssClass: 'ag-menu',
-            onActiveItemClicked: this.onHidePopup.bind(this),
-            onItemClicked: this.onTabItemClicked.bind(this)
-        });
-
-        this.showTab(TabbedChartMenu.TAB_GENERAL);
-    }
-
-    private createTab(name: string):TabbedItem {
-        return this.tabFactories[name]();
-    }
-
     private createMainPanel(): TabbedItem {
-
         this.mainMenuList = new MenuList();
         this.getContext().wireBean(this.mainMenuList);
 
@@ -136,13 +123,30 @@ class TabbedChartMenu extends PopupComponent {
         this.mainMenuList.addMenuItems(menuItems);
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
-        this.tabItemGeneral = {
+        return {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, null),
             bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
-            name: TabbedChartMenu.TAB_GENERAL
+            name: TabbedChartMenu.TAB_MAIN
         };
+    }
 
-        return this.tabItemGeneral;
+    private createColumnsPanel(): TabbedItem {
+        const eWrapperDiv: HTMLElement = document.createElement('div');
+        _.addCssClass(eWrapperDiv, 'ag-column-select-panel');
+        eWrapperDiv.style.height = '204px'; //TODO
+
+        const chartComp: any = this.chart;
+        this.chartColumnPanel = new ChartColumnPanel(chartComp as IGridChartComp);
+        this.getContext().wireBean(this.chartColumnPanel);
+        this.chartColumnPanel.init();
+
+        eWrapperDiv.appendChild(this.chartColumnPanel.getGui());
+
+        return {
+            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, null),
+            bodyPromise: Promise.resolve(eWrapperDiv),
+            name: TabbedChartMenu.TAB_COLUMNS
+        };
     }
 
     private getMenuItems(): (string | MenuItemDef)[] {
@@ -209,24 +213,10 @@ class TabbedChartMenu extends PopupComponent {
     }
 
     public showTab(toShow?: string) {
-        if (this.tabItemGeneral && toShow === TabbedChartMenu.TAB_GENERAL) {
-            this.tabbedLayout.showItem(this.tabItemGeneral);
+        if (this.mainTab && toShow === TabbedChartMenu.TAB_MAIN) {
+            this.tabbedLayout.showItem(this.mainTab);
         } else {
             this.tabbedLayout.showFirstItem();
-        }
-    }
-
-    private onTabItemClicked(event: any): void {
-        let key: string | null = null;
-        switch (event.item) {
-            case this.tabItemGeneral: key = TabbedChartMenu.TAB_GENERAL; break;
-        }
-        if (key) {
-            const ev: TabSelectedEvent = {
-                type: TabbedChartMenu.EVENT_TAB_SELECTED,
-                key: key
-            };
-            this.dispatchEvent(ev);
         }
     }
 
@@ -237,27 +227,11 @@ class TabbedChartMenu extends PopupComponent {
     public afterGuiAttached(params: any): void {
         this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
         this.hidePopupFunc = params.hidePopup;
-        const initialScroll = this.gridApi.getHorizontalPixelRange().left;
-        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        const onBodyScroll = (event: any) => {
-            // if h scroll, popup is no longer over the column
-            if (event.direction === 'horizontal') {
-                const newScroll = this.gridApi.getHorizontalPixelRange().left;
-
-                if (Math.abs(newScroll - initialScroll) > this.gridOptionsWrapper.getScrollbarWidth()) {
-                    params.hidePopup();
-                }
-            }
-        };
-
         this.addDestroyFunc(params.hidePopup);
-
-        this.addDestroyableEventListener(this.eventService, 'bodyScroll', onBodyScroll);
     }
 
     public getGui(): HTMLElement {
         const layout = this.tabbedLayout;
-
         return layout && layout.getGui();
     }
 
