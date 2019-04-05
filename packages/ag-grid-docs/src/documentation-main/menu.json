@@ -134,9 +134,34 @@
         "url": "javascript-grid-responsiveness/"
       },
       {
-        "title": "Test With Protractor &amp; Jasmine",
-        "url": "javascript-grid-testing/"
+        "title": "Testing ag-Grid",
+        "gtm": {
+          "tech": "ag-grid testing"
+        },
+        "items": [
+          {
+            "title": "Testing Overview",
+            "url": "javascript-grid-testing/"
+          },
+          {
+            "title": "Testing Angular",
+            "url": "javascript-grid-testing-angular/"
+          },
+          {
+            "title": "Testing React",
+            "url": "javascript-grid-testing-react/"
+          },
+          {
+            "title": "Testing Vue",
+            "url": "javascript-grid-testing-vue/"
+          },
+          {
+            "title": "Jasmine &amp; Protractor ",
+            "url": "javascript-grid-e2e-test-with-jasmine/"
+          }
+        ]
       },
+
       {
         "title": "Use in OpenFin",
         "url": "javascript-grid-openfin/"
