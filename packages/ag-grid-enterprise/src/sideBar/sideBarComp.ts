@@ -29,7 +29,7 @@ export class SideBarComp extends Component implements ISideBar {
     private toolPanelWrappers: ToolPanelWrapper[] = [];
 
     private static readonly TEMPLATE =
-        `<div class="ag-side-bar">
+        `<div class="ag-side-bar ag-unselectable">
               <ag-side-bar-buttons ref="sideBarButtons">
           </div>`;
 

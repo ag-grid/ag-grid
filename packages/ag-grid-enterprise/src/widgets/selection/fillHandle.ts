@@ -15,6 +15,7 @@ export class FillHandle extends PopupComponent implements IFillHandle<any> {
     @Autowired("rowRenderer") private rowRenderer: RowRenderer;
 
     private close: () => void;
+    private range: CellRange;
 
     static TEMPLATE = '<div class="ag-fill-handle"></div>';
 
@@ -54,7 +55,9 @@ export class FillHandle extends PopupComponent implements IFillHandle<any> {
             alignSide: 'right',
             nudgeY: -2.5,
             nudgeX: 1.5
-        });        
+        });
+
+        this.range = range;
     }
 
     public destroy() {
