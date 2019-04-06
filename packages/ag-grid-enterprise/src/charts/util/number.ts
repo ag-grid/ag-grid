@@ -12,7 +12,7 @@ export function isEqual(a: number, b: number, epsilon: number = 1e-10) {
  * @param fractionOrSignificantDigits
  */
 export function toFixed(value: number, fractionOrSignificantDigits: number = 2): string {
-    const power = Math.floor(Math.log(value) / Math.LN10);
+    const power = Math.floor(Math.log(Math.abs(value)) / Math.LN10);
     if (power >= 0) {
         return value.toFixed(fractionOrSignificantDigits); // fraction digits
     }
