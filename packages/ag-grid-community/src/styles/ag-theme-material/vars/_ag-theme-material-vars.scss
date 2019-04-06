@@ -59,6 +59,7 @@ $header-background-color: $background-color !default;
 $header-cell-hover-background-color: darken($header-background-color, 5%) !default;
 $header-cell-moving-background-color: $header-cell-hover-background-color !default;
 $header-foreground-color: $secondary-foreground-color !default;
+$odd-row-background-color : $background-color !default;
 
 $border-color: $mat-grey-300 !default;
 $primary-color: $mat-indigo-500 !default;
@@ -120,6 +121,7 @@ $params: (
     header-cell-hover-background-color: $header-cell-hover-background-color,
     header-cell-moving-background-color: $header-cell-moving-background-color,
     header-foreground-color: $header-foreground-color,
+    odd-row-background-color: $odd-row-background-color,
 
     focused-textbox-border: 2px solid $primary-color,
     input-bottom-border: 2px solid $border-color,
