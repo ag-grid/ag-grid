@@ -21,7 +21,7 @@ import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRen
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition, CellPositionUtils } from "../entities/cellPosition";
-import { CellRange } from "../interfaces/iRangeController";
+import { CellRange, IFillHandle } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
@@ -44,8 +44,6 @@ export class CellComp extends Component {
     private eParentRow: HTMLElement;
     private cellPosition: CellPosition;
     private rangeCount: number;
-
-    private usingWrapper: boolean;
 
     private includeSelectionComponent: boolean;
     private includeRowDraggingComponent: boolean;
@@ -99,6 +97,8 @@ export class CellComp extends Component {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
+    private fillHandle: IFillHandle<any>;
+
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp,
                 autoHeightCell: boolean, printLayout: boolean) {
         super();
@@ -122,7 +122,7 @@ export class CellComp extends Component {
         }
 
         this.getValueAndFormat();
-        this.setUsingWrapper();
+        this.setCellElements();
         this.chooseCellRenderer();
         this.setupColSpan();
         this.rowSpan = this.column.getRowSpan(this.rowNode);
@@ -142,18 +142,13 @@ export class CellComp extends Component {
         const tooltipSanitised = _.escape(this.tooltip);
         const colIdSanitised = _.escape(col.getId());
 
-        let wrapperStartTemplate: string = '';
-        let wrapperEndTemplate: string = '';
-
         const stylesFromColDef = this.preProcessStylesFromColDef();
         const cssClasses = this.getInitialCssClasses();
 
         const stylesForRowSpanning = this.getStylesForRowSpanning();
 
-        if (this.usingWrapper) {
-            wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value" ${unselectable}>`;
-            wrapperEndTemplate = '</span></div>';
-        }
+        const wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value" ${unselectable}>`;
+        const wrapperEndTemplate = '</span></div>';
 
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
@@ -358,11 +353,6 @@ export class CellComp extends Component {
         _.pushAll(cssClasses, this.preProcessClassesFromColDef());
         _.pushAll(cssClasses, this.preProcessCellClassRules());
         _.pushAll(cssClasses, this.getInitialRangeClasses());
-
-        // if using the wrapper, this class goes on the wrapper instead
-        if (!this.usingWrapper) {
-            cssClasses.push('ag-cell-value');
-        }
 
         return cssClasses;
     }
@@ -769,12 +759,11 @@ export class CellComp extends Component {
     }
 
     // a wrapper is used when we are putting a selection checkbox in the cell with the value
-    public setUsingWrapper(): void {
+    public setCellElements(): void {
         const colDef = this.getComponentHolder();
 
         // never allow selection or dragging on pinned rows
         if (this.rowNode.rowPinned) {
-            this.usingWrapper = false;
             this.includeSelectionComponent = false;
             this.includeRowDraggingComponent = false;
             return;
@@ -785,8 +774,6 @@ export class CellComp extends Component {
 
         this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection === true;
         this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag === true;
-
-        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent;
     }
 
     private chooseCellRenderer(): void {
@@ -1803,19 +1790,14 @@ export class CellComp extends Component {
     }
 
     private populateTemplate(): void {
-        if (this.usingWrapper) {
+        this.eParentOfValue = this.getRefElement('eCellValue');
+        this.eCellWrapper = this.getRefElement('eCellWrapper');
 
-            this.eParentOfValue = this.getRefElement('eCellValue');
-            this.eCellWrapper = this.getRefElement('eCellWrapper');
-
-            if (this.includeRowDraggingComponent) {
-                this.addRowDragging();
-            }
-            if (this.includeSelectionComponent) {
-                this.addSelectionCheckbox();
-            }
-        } else {
-            this.eParentOfValue = this.getGui();
+        if (this.includeRowDraggingComponent) {
+            this.addRowDragging();
+        }
+        if (this.includeSelectionComponent) {
+            this.addSelectionCheckbox();
         }
     }
 
@@ -1953,25 +1935,7 @@ export class CellComp extends Component {
         } else {
             _.clearElement(this.getGui());
             // put the cell back the way it was before editing
-            if (this.usingWrapper) {
-                // if wrapper, then put the wrapper back
-                this.getGui().appendChild(this.eCellWrapper);
-            } else {
-                // if cellRenderer, then put the gui back in. if the renderer has
-                // a refresh, it will be called. however if it doesn't, then later
-                // the renderer will be destroyed and a new one will be created.
-                if (this.cellRenderer) {
-                    // we know it's a dom element (not a string) because we converted
-                    // it after the gui was attached if it was a string.
-                    const eCell = this.cellRendererGui as HTMLElement;
-
-                    // can be null if cell was previously null / contained empty string,
-                    // this will result in new value not being rendered.
-                    if (eCell) {
-                        this.getGui().appendChild(eCell);
-                    }
-                }
-            }
+            this.getGui().appendChild(this.eCellWrapper);
         }
 
         this.setInlineEditingClass();

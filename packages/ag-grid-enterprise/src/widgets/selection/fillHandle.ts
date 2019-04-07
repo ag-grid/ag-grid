@@ -1,21 +1,19 @@
 import {
     Autowired,
-    PopupComponent,
-    PopupService,
+    Component,
+    CellComp,
     CellRange,
     RowRenderer,
     IFillHandle,
     _,
-    PostConstruct
+    RowPosition
 } from 'ag-grid-community';
 
-export class FillHandle extends PopupComponent implements IFillHandle<any> {
+export class FillHandle extends Component implements IFillHandle<any> {
 
-    @Autowired("popupService") private popupService: PopupService;
     @Autowired("rowRenderer") private rowRenderer: RowRenderer;
 
-    private close: () => void;
-    private range: CellRange;
+    private cellComp: CellComp;
 
     static TEMPLATE = '<div class="ag-fill-handle"></div>';
 
@@ -23,48 +21,44 @@ export class FillHandle extends PopupComponent implements IFillHandle<any> {
         super(FillHandle.TEMPLATE);
     }
 
-    @PostConstruct
-    private renderPopup() {
-        this.close = this.popupService.addPopup(false, this.getGui(), false);
-    }
-
-    public syncPosition(range: CellRange) {
+    public refresh(cellRange: CellRange) {
+        const oldCellComp = this.cellComp;
         const eGui = this.getGui();
-        const { startRow, columns } = range;
-        let endRow = range.endRow;
-        const isFullColumn = (!startRow || !endRow);
 
-        _.addOrRemoveCssClass(eGui, 'ag-hidden', isFullColumn);
+        const { startRow, endRow, columns } = cellRange;
+        const isColumnRange = !startRow || !endRow;
 
-        if (isFullColumn) { return; }
-
-        if (startRow!.rowIndex > endRow!.rowIndex) {
-            endRow = startRow;
+        if (isColumnRange && oldCellComp) {
+            oldCellComp.getGui().removeChild(eGui);
         }
 
+        let start = startRow as RowPosition;
+        let end = endRow as RowPosition;
+
+        if (start.rowIndex > end.rowIndex) {
+            start = endRow as RowPosition;
+            end = startRow as RowPosition;
+        }
+        
         const cellComp = this.rowRenderer.getComponentForCell({
-            column: columns[columns.length - 1],
-            rowIndex: endRow!.rowIndex,
-            rowPinned: endRow!.rowPinned
+            rowIndex: end.rowIndex,
+            rowPinned: end.rowPinned,
+            column: columns[columns.length - 1]
         });
 
-        this.popupService.positionPopupUnderComponent({
-            type: 'fillHandle',
-            ePopup: eGui,
-            eventSource: cellComp.getGui(),
-            alignSide: 'right',
-            nudgeY: -2.5,
-            nudgeX: 1.5
-        });
+        if (oldCellComp !== cellComp) {
+            cellComp.appendChild(eGui);
+        }
 
-        this.range = range;
     }
 
     public destroy() {
         super.destroy();
 
-        if (this.close) {
-            this.close();
+        const eGui = this.getGui();
+
+        if (eGui.parentElement) {
+            eGui.parentElement.removeChild(eGui);
         }
     }
 }

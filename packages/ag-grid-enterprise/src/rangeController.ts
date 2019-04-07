@@ -518,17 +518,17 @@ export class RangeController implements IRangeController {
     private onRangeChanged(params: { started: boolean, finished: boolean}) {
         const { started, finished } = params;
 
-        this.syncFillHandle();
+        this.refreshFillHandle();
 
         this.dispatchChangedEvent(started, finished)
     }
 
-    private syncFillHandle() {
+    private refreshFillHandle() {
         if (!this.cellRanges) { return; }
 
         this.cellRanges.forEach((range: CellRange) => {
             if (range.fillHandle) {
-                range.fillHandle.syncPosition(range);
+                range.fillHandle.refresh(range);
             }
         });
     }
