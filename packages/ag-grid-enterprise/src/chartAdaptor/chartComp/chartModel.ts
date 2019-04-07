@@ -1,5 +1,14 @@
-import {AgEvent, Autowired, BeanStub, ChartType, ColumnController, PostConstruct} from "ag-grid-community";
-import {ChartDatasource} from "../rangeChart/rangeChartService";
+import {
+    Autowired,
+    PostConstruct,
+    AgEvent,
+    BeanStub,
+    ChartType,
+    ColumnController,
+    Events,
+    EventService
+} from "ag-grid-community";
+import {ChartData, ChartDatasource} from "../rangeChart/rangeChartService";
 
 export interface ChartModelUpdatedEvent extends AgEvent {}
 
@@ -14,9 +23,14 @@ export class ChartModel extends BeanStub {
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
 
     private chartType: ChartType;
-    private datasource: ChartDatasource;
+
+    private chartData: ChartData;
+    private errors: string[];
+
+    private readonly datasource: ChartDatasource;
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') eventService: EventService;
 
     public constructor(chartType: ChartType, datasource: ChartDatasource) {
         super();
@@ -26,21 +40,32 @@ export class ChartModel extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
+        this.updateModel();
+    }
 
+    private updateModel() {
+        this.chartData = this.datasource.getChartData();
+        this.errors = this.datasource.getErrors();
 
-        this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.raiseChartUpdatedEvent.bind(this));
+        this.raiseChartUpdatedEvent();
     }
 
     public getChartType(): ChartType {
         return this.chartType;
     }
 
+    public getErrors(): string[] {
+        return this.errors;
+    }
+
     public getFields(): string[] {
-        return this.datasource.getFields();
+        return this.chartData.colIds;
     }
 
     public getFieldNames(): string[] {
-        return this.datasource.getFieldNames();
+        return this.chartData.colDisplayNames;
     }
 
     public getColStateForMenu(): ColState[] {
@@ -61,24 +86,36 @@ export class ChartModel extends BeanStub {
 
     public getData(): any[] {
         const data: any[] = [];
-        const fields = this.datasource.getFields();
-        for (let i = 0; i < this.datasource.getRowCount(); i++) {
+        const fields = this.chartData.colIds;
+
+        for (let i = 0; i < this.chartData.dataGrouped.length; i++) {
             const item: any = {
-                category: this.datasource.getCategory(i)
+                category: this.getCategory(i)
             };
-            fields.forEach(field => item[field] = this.datasource.getValue(i, field));
+
+            fields.forEach(field => {
+                const data = this.chartData.dataGrouped[i];
+                const col = this.chartData.colsMapped[field];
+                item[field] = data[col.getId()];
+            });
+
             data.push(item);
         }
         return data;
     }
 
-    public getErrors(): string[] {
-        return this.datasource.getErrors();
+    private getCategory(i: number): string {
+        const data = this.chartData.dataGrouped[i];
+        const resParts: string[] = [];
+        this.chartData.categoryCols.forEach(col => {
+            resParts.push(data[col.getId()]);
+        });
+        return resParts.join(', ');
     }
 
     //TODO remove - just for testing
     public setErrors(errors: string[]): void {
-        this.datasource.setErrors(errors);
+        this.errors = errors;
         this.raiseChartUpdatedEvent();
     }
 
@@ -88,7 +125,6 @@ export class ChartModel extends BeanStub {
     }
 
     public update(colState: ColState[]): void {
-        console.log(colState);
         this.raiseChartUpdatedEvent();
     }
 

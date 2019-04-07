@@ -5,7 +5,7 @@ import {
     CellRange,
     ChartRangeParams,
     ChartRef,
-    ChartType,
+    ChartType, Column,
     Context,
     GridOptionsWrapper,
     IAggFunc,
@@ -19,23 +19,17 @@ import {ChartOptions, GridChartComp} from "../chartComp/gridChartComp";
 import {RangeChartDatasource} from "./rangeChartDatasource";
 
 export interface ChartDatasource extends IEventEmitter {
-    getCategory(i: number): string;
-
-    getFields(): string[];
-
-    getFieldNames(): string[];
-
-    getValue(i: number, field: string): number;
-
-    getRowCount(): number;
-
-    destroy(): void;
-
+    getChartData(): ChartData;
     getErrors(): string[];
+    destroy(): void;
+}
 
-    setErrors(errors: string[]): void; //TODO remove - just for initial testing
-
-    getRangeSelection?(): CellRange;
+export interface ChartData {
+    colIds: string[];
+    colDisplayNames: string[];
+    dataGrouped: any[];
+    colsMapped: {[colId: string]: Column}
+    categoryCols: Column[];
 }
 
 @Bean('rangeChartService')
@@ -80,7 +74,7 @@ export class RangeChartService implements IRangeChartService {
         }
     }
 
-    public chartRange(cellRange: CellRange, chartType: ChartType = ChartType.GroupedBar, container?: HTMLElement, aggFunc?: IAggFunc | string): ChartRef | undefined {
+    public chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, aggFunc?: IAggFunc | string): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 

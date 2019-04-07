@@ -5,8 +5,6 @@ import {
     CellRange,
     Column,
     ColumnController,
-    Events,
-    EventService,
     IAggFunc,
     IRowModel,
     PostConstruct,
@@ -14,34 +12,32 @@ import {
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
 import {AggregationStage} from "../../rowStages/aggregationStage";
-import {ChartDatasource} from "./rangeChartService";
+import {ChartData, ChartDatasource} from "./rangeChartService";
 
 export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('valueService') valueService: ValueService;
     @Autowired('rowModel') gridRowModel: IRowModel;
-    @Autowired('eventService') eventService: EventService;
     @Autowired('rangeController') rangeController: RangeController;
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
 
     private readonly cellRange: CellRange;
     private readonly aggFunc: IAggFunc | string | undefined;
 
+    private startRow: number;
+    private endRow: number;
+
     private colIds: string[];
     private colDisplayNames: string[];
     private colsMapped: {[colId: string]: Column};
     private fieldCols: Column[];
-
     private categoryCols: Column[];
-
-    private startRow: number;
-    private endRow: number;
-
-    private errors: string[] = [];
-
     private dataFromGrid: any[];
     private dataGrouped: any[];
+
+    private chartData: ChartData;
+    private errors: string[] = [];
 
     constructor(cellRange: CellRange, aggFunc?: IAggFunc | string) {
         super();
@@ -49,28 +45,17 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.aggFunc = aggFunc;
     }
 
-    public getErrors(): string[] {
-        return this.errors;
-    }
-
-    public setErrors(errors: string[]) {
-        this.errors = errors;
-    }
-
-    private addError(error: string): void {
-        this.errors.push(error);
-    }
-
-    private clearErrors(): void {
-        this.errors = [];
-    }
-
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onModelUpdated.bind(this));
-
         this.reset();
+    }
+
+    public getChartData(): ChartData {
+        return this.chartData;
+    }
+
+    public getErrors(): string[] {
+        return this.errors;
     }
 
     private reset(): void {
@@ -80,6 +65,22 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.calculateCategoryCols();
         this.extractRowsFromGridRowModel();
         this.groupRowsByCategory();
+
+        this.chartData = {
+            colIds: this.colIds,
+            colDisplayNames: this.colDisplayNames,
+            dataGrouped: this.dataGrouped,
+            colsMapped: this.colsMapped,
+            categoryCols: this.categoryCols
+        }
+    }
+
+    private clearErrors(): void {
+        this.errors = [];
+    }
+
+    private addError(error: string): void {
+        this.errors.push(error);
     }
 
     private groupRowsByCategory(): void {
@@ -95,7 +96,6 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.dataGrouped = [];
 
         const map: any = {};
-
         const lastCol = this.categoryCols[this.categoryCols.length - 1];
 
         this.dataFromGrid.forEach( data => {
@@ -240,38 +240,5 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
             this.colsMapped[colId] = col;
         });
-    }
-
-    public getRangeSelection(): CellRange {
-        return this.cellRange;
-    }
-
-    public getCategory(i: number): string {
-        const data = this.dataGrouped[i];
-        const resParts: string[] = [];
-        this.categoryCols.forEach(col => {
-            resParts.push(data[col.getId()]);
-        });
-        const res = resParts.join(', ');
-        return res;
-    }
-
-    public getFields(): string[] {
-        return this.colIds;
-    }
-
-    public getFieldNames(): string[] {
-        return this.colDisplayNames;
-    }
-
-    public getValue(i: number, field: string): number {
-        const data = this.dataGrouped[i];
-        const col = this.colsMapped[field];
-        const res = data[col.getId()];
-        return res;
-    }
-
-    public getRowCount(): number {
-        return this.dataGrouped.length;
     }
 }
