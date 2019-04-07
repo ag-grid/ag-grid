@@ -36,7 +36,6 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     private dataFromGrid: any[];
     private dataGrouped: any[];
 
-    private chartData: ChartData;
     private errors: string[] = [];
 
     constructor(cellRange: CellRange, aggFunc?: IAggFunc | string) {
@@ -45,20 +44,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.aggFunc = aggFunc;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.reset();
-    }
-
     public getChartData(): ChartData {
-        return this.chartData;
-    }
-
-    public getErrors(): string[] {
-        return this.errors;
-    }
-
-    private reset(): void {
         this.clearErrors();
 
         this.calculateFields();
@@ -66,13 +52,17 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.extractRowsFromGridRowModel();
         this.groupRowsByCategory();
 
-        this.chartData = {
+        return {
             colIds: this.colIds,
             colDisplayNames: this.colDisplayNames,
             dataGrouped: this.dataGrouped,
             colsMapped: this.colsMapped,
             categoryCols: this.categoryCols
-        }
+        };
+    }
+
+    public getErrors(): string[] {
+        return this.errors;
     }
 
     private clearErrors(): void {
