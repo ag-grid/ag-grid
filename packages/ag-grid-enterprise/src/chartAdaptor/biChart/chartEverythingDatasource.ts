@@ -12,9 +12,8 @@ import {
     RowNode,
     ValueService,
     ColumnGroup,
-    CellRange
 } from "ag-grid-community";
-import { ChartDatasource } from "../rangeChart/rangeChartService";
+import {ChartDatasource} from "../rangeChart/chartModel";
 
 export class ChartEverythingDatasource extends BeanStub implements ChartDatasource {
 

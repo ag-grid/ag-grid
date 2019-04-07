@@ -118,8 +118,8 @@ export class GridChartComp extends Component implements IGridChartComp {
 
             eGui.innerHTML = html.join('');
         } else {
-
-            if (this.chartModel.getChartType() !== this.currentChartType) {
+            const shouldCreateNewChart = this.chartModel.getChartType() !== this.currentChartType;
+            if (shouldCreateNewChart) {
                 this.createNewChart();
             }
 
@@ -128,8 +128,6 @@ export class GridChartComp extends Component implements IGridChartComp {
     }
 
     public createNewChart() {
-        console.log('new chart');
-
         // capture current chart dimensions so new chart is same size
         this.chartOptions.height = this.chart.height;
         this.chartOptions.width = this.chart.width;

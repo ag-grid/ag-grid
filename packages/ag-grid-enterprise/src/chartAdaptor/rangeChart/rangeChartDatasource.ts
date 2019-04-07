@@ -1,20 +1,20 @@
 import {
+    _,
     Autowired,
     BeanStub,
+    CellRange,
     Column,
     ColumnController,
     Events,
     EventService,
+    IAggFunc,
     IRowModel,
     PostConstruct,
-    CellRange,
-    ValueService,
-    IAggFunc,
-    _
+    ValueService
 } from "ag-grid-community";
-import { ChartDatasource } from "./rangeChartService";
-import { RangeController } from "../../rangeController";
-import { AggregationStage } from "../../rowStages/aggregationStage";
+import {RangeController} from "../../rangeController";
+import {AggregationStage} from "../../rowStages/aggregationStage";
+import {ChartDatasource} from "./chartModel";
 
 export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
@@ -25,7 +25,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     @Autowired('rangeController') rangeController: RangeController;
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
 
-    private cellRange: CellRange;
+    private readonly cellRange: CellRange;
 
     private colIds: string[];
     private colDisplayNames: string[];
@@ -271,5 +271,4 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     public getRowCount(): number {
         return this.dataGrouped.length;
     }
-
 }

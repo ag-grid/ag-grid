@@ -4,12 +4,32 @@ import {
     AgEvent,
     BeanStub,
     ChartType,
-    ColumnController
+    ColumnController,
+    CellRange,
+    IAggFunc,
+    IEventEmitter
 } from "ag-grid-community";
-import {ChartDatasource} from "./rangeChartService";
+import {RangeChartDatasource} from "./rangeChartDatasource";
 
-export interface ChartModelUpdatedEvent extends AgEvent {
+export interface ChartDatasource extends IEventEmitter {
+    getCategory(i: number): string;
+
+    getFields(): string[];
+
+    getFieldNames(): string[];
+
+    getValue(i: number, field: string): number;
+
+    getRowCount(): number;
+
+    destroy(): void;
+
+    getErrors(): string[];
+
+    getRangeSelection?(): CellRange;
 }
+
+export interface ChartModelUpdatedEvent extends AgEvent {}
 
 export type ColState = {
     colId: string,
@@ -22,18 +42,24 @@ export class ChartModel extends BeanStub {
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
 
     private chartType: ChartType;
-    private readonly datasource: ChartDatasource;
+    private datasource: ChartDatasource;
+    private readonly cellRange: CellRange;
+    private readonly aggFunc?: IAggFunc | string;
 
     @Autowired('columnController') private columnController: ColumnController;
 
-    public constructor(chartType: ChartType, chartDatasource: ChartDatasource) {
+    public constructor(chartType: ChartType, cellRange: CellRange, aggFunc?: IAggFunc | string) {
         super();
         this.chartType = chartType;
-        this.datasource = chartDatasource;
+        this.cellRange = cellRange;
+        this.aggFunc = aggFunc;
     }
 
     @PostConstruct
     private postConstruct(): void {
+        this.datasource = new RangeChartDatasource(this.cellRange, this.aggFunc);
+        this.getContext().wireBean(this.datasource);
+
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.raiseChartUpdatedEvent.bind(this));
     }
 
@@ -101,5 +127,9 @@ export class ChartModel extends BeanStub {
 
     public destroy() {
         super.destroy();
+
+        if (this.datasource) {
+            this.datasource.destroy();
+        }
     }
 }
