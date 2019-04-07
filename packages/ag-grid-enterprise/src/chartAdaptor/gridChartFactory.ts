@@ -5,7 +5,13 @@ import {NumberAxis} from "../charts/chart/axis/numberAxis";
 import {BarSeries} from "../charts/chart/series/barSeries";
 import {PolarChart} from "../charts/chart/polarChart";
 import {Chart} from "../charts/chart/chart";
-import {ChartOptions} from "./gridChartComp";
+
+export interface ChartOptions {
+    isRangeChart: boolean,
+    insideDialog: boolean,
+    height: number,
+    width: number
+}
 
 export class GridChartFactory {
 

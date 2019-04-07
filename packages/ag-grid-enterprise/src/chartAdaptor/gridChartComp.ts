@@ -9,7 +9,7 @@ import {
     RefSelector,
     ResizeObserverService
 } from "ag-grid-community";
-import {GridChartFactory} from "./gridChartFactory";
+import {ChartOptions, GridChartFactory} from "./gridChartFactory";
 import {Chart} from "../charts/chart/chart";
 import {BarSeries} from "../charts/chart/series/barSeries";
 import {LineSeries} from "../charts/chart/series/lineSeries";
@@ -22,13 +22,6 @@ import {ChartMenu} from "./menu/chartMenu";
 
 export interface IGridChartComp {
     getChart(): Chart<any, string, number>;
-}
-
-export interface ChartOptions {
-    isRangeChart: boolean,
-    insideDialog: boolean,
-    height: number,
-    width: number
 }
 
 export class GridChartComp extends Component implements IGridChartComp {
