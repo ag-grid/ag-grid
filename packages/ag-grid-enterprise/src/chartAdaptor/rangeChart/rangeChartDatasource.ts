@@ -14,7 +14,7 @@ import {
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
 import {AggregationStage} from "../../rowStages/aggregationStage";
-import {ChartDatasource} from "./chartModel";
+import {ChartDatasource} from "./rangeChartService";
 
 export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 

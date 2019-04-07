@@ -9,16 +9,22 @@ import {
     RefSelector,
     ResizeObserverService
 } from "ag-grid-community";
-import {ChartOptions, GridChartFactory} from "./gridChartFactory";
-import {Chart} from "../charts/chart/chart";
-import {BarSeries} from "../charts/chart/series/barSeries";
-import {LineSeries} from "../charts/chart/series/lineSeries";
-import {PieSeries} from "../charts/chart/series/pieSeries";
-import colors from "../charts/chart/colors";
-import {CartesianChart} from "../charts/chart/cartesianChart";
-import {PolarChart} from "../charts/chart/polarChart";
-import {ChartModel} from "./rangeChart/chartModel";
+import {GridChartFactory} from "./gridChartFactory";
+import {Chart} from "../../charts/chart/chart";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {LineSeries} from "../../charts/chart/series/lineSeries";
+import {PieSeries} from "../../charts/chart/series/pieSeries";
+import colors from "../../charts/chart/colors";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
+import {ChartModel} from "./chartModel";
+
+export interface ChartOptions {
+    insideDialog: boolean,
+    height: number,
+    width: number
+}
 
 export class GridChartComp extends Component {
 
@@ -96,6 +102,7 @@ export class GridChartComp extends Component {
     }
 
     private downloadChart() {
+        // TODO use chart / dialog title for filename
         this.chart.scene.download("chart");
     }
 

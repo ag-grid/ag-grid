@@ -1,35 +1,5 @@
-import {
-    Autowired,
-    PostConstruct,
-    AgEvent,
-    BeanStub,
-    ChartType,
-    ColumnController,
-    CellRange,
-    IAggFunc,
-    IEventEmitter
-} from "ag-grid-community";
-import {RangeChartDatasource} from "./rangeChartDatasource";
-
-export interface ChartDatasource extends IEventEmitter {
-    getCategory(i: number): string;
-
-    getFields(): string[];
-
-    getFieldNames(): string[];
-
-    getValue(i: number, field: string): number;
-
-    getRowCount(): number;
-
-    destroy(): void;
-
-    getErrors(): string[];
-
-    setErrors(errors: string[]): void; //TODO remove - just for initial testing
-
-    getRangeSelection?(): CellRange;
-}
+import {AgEvent, Autowired, BeanStub, ChartType, ColumnController, PostConstruct} from "ag-grid-community";
+import {ChartDatasource} from "../rangeChart/rangeChartService";
 
 export interface ChartModelUpdatedEvent extends AgEvent {}
 
@@ -45,22 +15,18 @@ export class ChartModel extends BeanStub {
 
     private chartType: ChartType;
     private datasource: ChartDatasource;
-    private readonly cellRange: CellRange;
-    private readonly aggFunc?: IAggFunc | string;
 
     @Autowired('columnController') private columnController: ColumnController;
 
-    public constructor(chartType: ChartType, cellRange: CellRange, aggFunc?: IAggFunc | string) {
+    public constructor(chartType: ChartType, datasource: ChartDatasource) {
         super();
         this.chartType = chartType;
-        this.cellRange = cellRange;
-        this.aggFunc = aggFunc;
+        this.datasource = datasource;
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.datasource = new RangeChartDatasource(this.cellRange, this.aggFunc);
-        this.getContext().wireBean(this.datasource);
+
 
         this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.raiseChartUpdatedEvent.bind(this));
     }

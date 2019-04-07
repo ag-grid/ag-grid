@@ -5,7 +5,7 @@
  */
 import {BeanStub, CellRange} from "ag-grid-community";
 
-export class ChartRowModel extends BeanStub {
+export class RangeChartRowModel extends BeanStub {
 
     private cellRange: CellRange;
 

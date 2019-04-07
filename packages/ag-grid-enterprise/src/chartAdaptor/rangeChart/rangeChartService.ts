@@ -9,13 +9,34 @@ import {
     Context,
     GridOptionsWrapper,
     IAggFunc,
+    IEventEmitter,
     IRangeChartService,
     PreDestroy
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
-import {GridChartComp} from "../gridChartComp";
-import {ChartModel} from "./chartModel";
-import {ChartOptions} from "../gridChartFactory";
+import {ChartModel} from "../chartComp/chartModel";
+import {ChartOptions, GridChartComp} from "../chartComp/gridChartComp";
+import {RangeChartDatasource} from "./rangeChartDatasource";
+
+export interface ChartDatasource extends IEventEmitter {
+    getCategory(i: number): string;
+
+    getFields(): string[];
+
+    getFieldNames(): string[];
+
+    getValue(i: number, field: string): number;
+
+    getRowCount(): number;
+
+    destroy(): void;
+
+    getErrors(): string[];
+
+    setErrors(errors: string[]): void; //TODO remove - just for initial testing
+
+    getRangeSelection?(): CellRange;
+}
 
 @Bean('rangeChartService')
 export class RangeChartService implements IRangeChartService {
@@ -68,7 +89,10 @@ export class RangeChartService implements IRangeChartService {
             height: 400, width: 800
         };
 
-        const chartModel = new ChartModel(chartType, cellRange, aggFunc);
+        const ds = new RangeChartDatasource(cellRange, aggFunc);
+        this.context.wireBean(ds);
+
+        const chartModel = new ChartModel(chartType, ds);
         this.context.wireBean(chartModel);
 
         const chartComp = new GridChartComp(chartOptions, chartModel);
