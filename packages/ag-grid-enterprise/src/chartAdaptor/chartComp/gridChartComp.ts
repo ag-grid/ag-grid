@@ -159,7 +159,7 @@ export class GridChartComp extends Component {
     public updateChart() {
         const chartType = this.chartModel.getChartType();
 
-        if (chartType === ChartType.GroupedBar || ChartType.StackedBar) {
+        if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar) {
             this.updateBarChart();
 
         } else if (chartType === ChartType.Line) {
