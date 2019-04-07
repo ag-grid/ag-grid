@@ -45,6 +45,10 @@ export class ChartEverythingDatasource extends BeanStub implements ChartDatasour
         this.errors.push(error);
     }
 
+    public setErrors(errors: string[]): void {
+        //TODO remove - just for initial testing
+    }
+
     private clearErrors(): void {
         this.errors = [];
     }
