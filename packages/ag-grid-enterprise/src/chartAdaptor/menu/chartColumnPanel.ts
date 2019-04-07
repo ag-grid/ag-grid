@@ -1,55 +1,28 @@
-import {
-    _,
-    Autowired,
-    Component,
-    ColumnController,
-    AgCheckbox,
-    Column,
-    PostConstruct,
-    RefSelector
-} from "ag-grid-community/main";
-import {IGridChartComp} from "../gridChartComp";
+import {_, AgCheckbox, Component, PostConstruct, RefSelector} from "ag-grid-community/main";
+import {ChartModel, ColState} from "../rangeChart/chartModel";
 
 export class ChartColumnPanel extends Component {
-
-    @Autowired('columnController') private columnController: ColumnController;
 
     private columnComps: { [key: string]: ChartPanelColumnComp } = {};
 
     public static TEMPLATE = `<div class="ag-primary-cols-list-panel"></div>`;
-    private chart: IGridChartComp;
-    private selectedColIds: string[];
 
-    constructor(chart: IGridChartComp) {
+    private chartModel: ChartModel;
+
+    constructor(chartModel: ChartModel) {
         super(ChartColumnPanel.TEMPLATE);
-        this.chart = chart;
+        this.chartModel = chartModel;
     }
 
     public init(): void {
-        const allValueColsInRange = this.chart.getFields();
-        this.selectedColIds = allValueColsInRange;
+        const colStateForMenu = this.chartModel.getColStateForMenu();
 
-        const updateSelections = (colId: string, selected: boolean) => {
-            if (selected) {
-                this.selectedColIds.push(colId);
-            } else {
-                const includeColId = (selectedId: string) => selectedId !== colId;
-                this.selectedColIds = this.selectedColIds.filter(includeColId);
-            }
-            this.chart.updateChart(this.selectedColIds);
-        };
-
-        const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
-
-        const includeColumn = (col: Column) => allValueColsInRange.indexOf(col.getColId()) > -1;
-        const allValueColumnsInRange = allDisplayedColumns.filter(includeColumn);
-
-        allValueColumnsInRange.forEach(col => {
-            const selected = this.selectedColIds.indexOf(col.getColId()) > -1;
-            const columnComp = new ChartPanelColumnComp(col, selected, updateSelections);
+        colStateForMenu.forEach(colState => {
+            const colStateChanged = () => this.chartModel.update(colStateForMenu);
+            const columnComp = new ChartPanelColumnComp(colState, colStateChanged);
             this.getContext().wireBean(columnComp);
             this.getGui().appendChild(columnComp.getGui());
-            this.columnComps[col.getId()] = columnComp;
+            this.columnComps[colState.colId] = columnComp;
         });
     }
 
@@ -76,22 +49,16 @@ class ChartPanelColumnComp extends Component {
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnController') private columnController: ColumnController;
-
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
 
-    private displayName: string;
+    private readonly colState: ColState;
+    private readonly colStateChanged: () => void;
 
-    private readonly column: Column;
-    private readonly initialSelection: boolean;
-    private readonly updateSelections: (colId: string, selected: boolean) => void;
-
-    constructor(column: Column, initialSelection: boolean, updateSelections: (colId: string, selected: boolean) => void) {
+    constructor(colState: ColState, colStateChanged: () => void) {
         super();
-        this.column = column;
-        this.initialSelection = initialSelection;
-        this.updateSelections = updateSelections;
+        this.colState = colState;
+        this.colStateChanged = colStateChanged;
     }
 
     @PostConstruct
@@ -100,16 +67,14 @@ class ChartPanelColumnComp extends Component {
 
         this.setLabelName();
 
-        this.cbSelect.setSelected(this.initialSelection);
+        this.cbSelect.setSelected(this.colState.selected);
 
         this.addDestroyableEventListener(this.cbSelect, 'change', this.onCheckboxChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
     }
 
     private setLabelName() {
-        const displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        this.displayName = displayName ? displayName : '';
-        this.eLabel.innerHTML = _.escape(displayName) as string;
+        this.eLabel.innerHTML = _.escape(this.colState.displayName) as string;
     }
 
     private onLabelClicked(): void {
@@ -117,6 +82,7 @@ class ChartPanelColumnComp extends Component {
     }
 
     private onCheckboxChanged(): void {
-        this.updateSelections(this.column.getColId(), this.cbSelect.isSelected());
+        this.colState.selected = this.cbSelect.isSelected();
+        this.colStateChanged();
     }
 }

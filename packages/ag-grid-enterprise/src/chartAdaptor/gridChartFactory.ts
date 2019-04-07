@@ -1,33 +1,28 @@
-import { ChartType } from "ag-grid-community";
-import { CartesianChart } from "../charts/chart/cartesianChart";
-import { CategoryAxis } from "../charts/chart/axis/categoryAxis";
-import { NumberAxis } from "../charts/chart/axis/numberAxis";
-import { BarSeries } from "../charts/chart/series/barSeries";
-import { PolarChart } from "../charts/chart/polarChart";
-import { Chart } from "../charts/chart/chart";
-import { LineSeries } from "../charts/chart/series/lineSeries";
-
-export interface ChartOptions {
-    height: number,
-    width: number
-}
+import {ChartType} from "ag-grid-community";
+import {CartesianChart} from "../charts/chart/cartesianChart";
+import {CategoryAxis} from "../charts/chart/axis/categoryAxis";
+import {NumberAxis} from "../charts/chart/axis/numberAxis";
+import {BarSeries} from "../charts/chart/series/barSeries";
+import {PolarChart} from "../charts/chart/polarChart";
+import {Chart} from "../charts/chart/chart";
+import {ChartOptions} from "./gridChartComp";
 
 export class GridChartFactory {
 
     static createChart(chartType: ChartType, chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
         switch (chartType) {
             case ChartType.GroupedBar:
-                return GridChartFactory.createBarChart(true, parentElement, chartOptions);
+                return GridChartFactory.createBarChart(chartOptions, parentElement, true);
             case ChartType.StackedBar:
-                return GridChartFactory.createBarChart(false, parentElement, chartOptions);
+                return GridChartFactory.createBarChart(chartOptions, parentElement, false);
             case ChartType.Line:
-                return GridChartFactory.createLineChart(parentElement, chartOptions);
+                return GridChartFactory.createLineChart(chartOptions, parentElement);
             case ChartType.Pie:
-                return GridChartFactory.createPieChart(parentElement, chartOptions);
+                return GridChartFactory.createPieChart(chartOptions, parentElement);
         }
     }
 
-    private static createBarChart(grouped: boolean, parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
+    private static createBarChart(chartOptions: ChartOptions, parentElement: HTMLElement, grouped: boolean): Chart<any, string, number> {
         const barChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), parentElement);
 
         barChart.width = chartOptions.width;
@@ -42,7 +37,7 @@ export class GridChartFactory {
         return barChart;
     }
 
-    private static createLineChart(parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
+    private static createLineChart(chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
         const lineChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), parentElement);
 
         lineChart.width = chartOptions.width;
@@ -52,7 +47,7 @@ export class GridChartFactory {
         return lineChart;
     }
 
-    private static createPieChart(parentElement: HTMLElement, chartOptions: ChartOptions): Chart<any, string, number> {
+    private static createPieChart(chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
         const pieChart = new PolarChart<any, string, number>(parentElement);
 
         pieChart.width = chartOptions.width;

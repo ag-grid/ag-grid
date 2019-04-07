@@ -1,9 +1,10 @@
 import {
     _,
+    AgEvent,
     Autowired,
     ChartType,
     Component,
-    Dialog,
+    EventService,
     GridOptionsWrapper,
     MenuItemDef,
     PopupComponent,
@@ -16,10 +17,16 @@ import {
 } from "ag-grid-community";
 import {MenuList} from "../../menu/menuList";
 import {MenuItemComponent} from "../../menu/menuItemComponent";
-import {IGridChartComp} from "../gridChartComp";
 import {ChartColumnPanel} from "./chartColumnPanel";
+import {ChartModel} from "../rangeChart/chartModel";
+
+export interface DownloadChartEvent extends AgEvent {}
+export interface CloseChartEvent extends AgEvent {}
 
 export class ChartMenu extends Component {
+
+    public static EVENT_DOWNLOAD_CHART = 'downloadChart';
+    public static EVENT_CLOSE_CHART = 'closeChart';
 
     private static TEMPLATE =
         `<div class="ag-chart-menu">
@@ -30,11 +37,12 @@ export class ChartMenu extends Component {
 
     @RefSelector('eChartMenu') private eChartMenu: HTMLElement;
 
-    private readonly chart: Component;
+    private readonly chartModel: ChartModel;
+    private tabbedMenu: TabbedChartMenu;
 
-    constructor(chart: Component) {
+    constructor(chartModel: ChartModel) {
         super(ChartMenu.TEMPLATE);
-        this.chart = chart;
+        this.chartModel = chartModel;
     }
 
     @PostConstruct
@@ -43,20 +51,20 @@ export class ChartMenu extends Component {
     }
 
     private showMenu(): void {
-        const chartMenu = new TabbedChartMenu(this.chart);
-        this.getContext().wireBean(chartMenu);
+        this.tabbedMenu = new TabbedChartMenu(this, this.chartModel);
+        this.getContext().wireBean(this.tabbedMenu);
 
-        chartMenu.setParentComponent(this);
+        this.tabbedMenu.setParentComponent(this);
 
-        const eMenu = chartMenu.getGui();
+        const eMenu = this.tabbedMenu.getGui();
 
         const hidePopup = this.popupService.addAsModalPopup(
             eMenu,
             true,
-            () => chartMenu.destroy()
+            () => this.tabbedMenu.destroy()
         );
 
-        chartMenu.afterGuiAttached({
+        this.tabbedMenu.afterGuiAttached({
             hidePopup: hidePopup
         });
 
@@ -64,21 +72,30 @@ export class ChartMenu extends Component {
             {
                 type: 'chartMenu',
                 eventSource: this.eChartMenu,
-                ePopup: chartMenu.getGui(),
+                ePopup: this.tabbedMenu.getGui(),
                 alignSide: 'right',
                 keepWithinBounds: true
             });
+    }
+
+    public destroy() {
+        super.destroy();
+        if (this.tabbedMenu) {
+            this.tabbedMenu.destroy();
+        }
     }
 }
 
 class TabbedChartMenu extends PopupComponent {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
+
     public static TAB_MAIN = 'mainMenuTab';
     public static TAB_COLUMNS = 'columnsMenuTab';
     public static MENU_ITEM_SEPARATOR = 'separator';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -89,11 +106,13 @@ class TabbedChartMenu extends PopupComponent {
     private mainTab: TabbedItem;
     private columnsTab: TabbedItem;
 
-    private readonly chart: Component;
+    private readonly chartMenu: ChartMenu;
+    private readonly chartModel: ChartModel;
 
-    constructor(chart: Component) {
+    constructor(chartMenu: ChartMenu, chartModel: ChartModel) {
         super();
-        this.chart = chart;
+        this.chartMenu = chartMenu;
+        this.chartModel = chartModel;
     }
 
     @PostConstruct
@@ -135,8 +154,7 @@ class TabbedChartMenu extends PopupComponent {
         _.addCssClass(eWrapperDiv, 'ag-column-select-panel');
         eWrapperDiv.style.height = '204px'; //TODO
 
-        const chartComp: any = this.chart;
-        this.chartColumnPanel = new ChartColumnPanel(chartComp as IGridChartComp);
+        this.chartColumnPanel = new ChartColumnPanel(this.chartModel);
         this.getContext().wireBean(this.chartColumnPanel);
         this.chartColumnPanel.init();
 
@@ -158,31 +176,19 @@ class TabbedChartMenu extends PopupComponent {
                 subMenu: [
                     {
                         name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
-                        action: () => {
-                            const chartComp: any = this.chart;
-                            (chartComp as IGridChartComp).setChartType(ChartType.GroupedBar);
-                        }
+                        action: () => this.chartModel.setChartType(ChartType.GroupedBar)
                     },
                     {
                         name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
-                        action: () => {
-                            const chartComp: any = this.chart;
-                            (chartComp as IGridChartComp).setChartType(ChartType.StackedBar);
-                        }
+                        action: () => this.chartModel.setChartType(ChartType.StackedBar)
                     },
                     {
                         name: localeTextFunc('lineRangeChart', 'Line'),
-                        action: () => {
-                            const chartComp: any = this.chart;
-                            (chartComp as IGridChartComp).setChartType(ChartType.Line);
-                        }
+                        action: () => this.chartModel.setChartType(ChartType.Line)
                     },
                     {
                         name: localeTextFunc('pieRangeChart', 'Pie'),
-                        action: () => {
-                            const chartComp: any = this.chart;
-                            (chartComp as IGridChartComp).setChartType(ChartType.Pie);
-                        }
+                        action: () => this.chartModel.setChartType(ChartType.Pie)
                     }
                 ]
             },
@@ -196,17 +202,20 @@ class TabbedChartMenu extends PopupComponent {
             {
                 name: localeTextFunc('downloadChart', 'Download'),
                 action: () => {
-                    const chartComp: any = this.chart;
-                    const chart = (chartComp as IGridChartComp).getChart();
-                    chart.scene.download("chart");
+                    const event: DownloadChartEvent = {
+                        type: ChartMenu.EVENT_DOWNLOAD_CHART
+                    };
+                    this.chartMenu.dispatchEvent(event);
                 }
             },
             TabbedChartMenu.MENU_ITEM_SEPARATOR,
             {
                 name: localeTextFunc('closeDialog', 'Close'),
                 action: () => {
-                    const chartContainer = this.chart.getParentComponent();
-                    (chartContainer as Dialog).close();
+                    const event: CloseChartEvent = {
+                        type: ChartMenu.EVENT_CLOSE_CHART
+                    };
+                    this.chartMenu.dispatchEvent(event);
                 }
             }
         ];

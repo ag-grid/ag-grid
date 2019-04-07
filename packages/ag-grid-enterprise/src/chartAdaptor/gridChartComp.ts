@@ -1,28 +1,34 @@
-import { ChartType } from "ag-grid-community";
-import { ChartOptions,  GridChartFactory } from "./gridChartFactory";
-import { ChartDatasource } from "./rangeChart/rangeChartService";
-import { RangeChartDatasource } from "./rangeChart/rangeChartDatasource";
-import { Chart } from "../charts/chart/chart";
-import { BarSeries } from "../charts/chart/series/barSeries";
-import { LineSeries } from "../charts/chart/series/lineSeries";
-import { PieSeries } from "../charts/chart/series/pieSeries";
-import colors from "../charts/chart/colors";
-import { CartesianChart } from "../charts/chart/cartesianChart";
-import { PolarChart } from "../charts/chart/polarChart";
 import {
+    _,
     Autowired,
+    ChartType,
     Component,
+    Dialog,
+    EventService,
     PostConstruct,
     RefSelector,
-    ResizeObserverService,
-    _
+    ResizeObserverService
 } from "ag-grid-community";
+import {GridChartFactory} from "./gridChartFactory";
+import {Chart} from "../charts/chart/chart";
+import {BarSeries} from "../charts/chart/series/barSeries";
+import {LineSeries} from "../charts/chart/series/lineSeries";
+import {PieSeries} from "../charts/chart/series/pieSeries";
+import colors from "../charts/chart/colors";
+import {CartesianChart} from "../charts/chart/cartesianChart";
+import {PolarChart} from "../charts/chart/polarChart";
+import {ChartModel} from "./rangeChart/chartModel";
+import {ChartMenu} from "./menu/chartMenu";
 
 export interface IGridChartComp {
     getChart(): Chart<any, string, number>;
-    setChartType(chartType: ChartType): void;
-    updateChart(fieldsToDisplay?: string[]): void;
-    getFields(): string[];
+}
+
+export interface ChartOptions {
+    isRangeChart: boolean,
+    insideDialog: boolean,
+    height: number,
+    width: number
 }
 
 export class GridChartComp extends Component implements IGridChartComp {
@@ -33,88 +39,75 @@ export class GridChartComp extends Component implements IGridChartComp {
             <div ref="eErrors" class="ag-chart-errors"></div>
         </div>`;
 
-    private readonly datasource: ChartDatasource;
-
-    private chartType: ChartType;
-    private chart: Chart<any, string, number>;
-    private isRangeChart: boolean = false;
-
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('eventService') eventService: EventService;
 
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
 
-    private defaultChartOptions: ChartOptions = {
-        height: 400,
-        width: 800
-    };
+    private readonly chartOptions: ChartOptions;
+    private readonly chartModel: ChartModel;
 
-    constructor(chartType: ChartType, chartDatasource: ChartDatasource) {
+    private chartDialog: Dialog;
+    private chartMenu: ChartMenu;
+
+    private currentChartType: ChartType;
+    private chart: Chart<any, string, number>;
+
+    constructor(chartOptions: ChartOptions, chartModel: ChartModel) {
         super(GridChartComp.TEMPLATE);
 
-        this.chartType = chartType;
-        this.chart = GridChartFactory.createChart(chartType, this.defaultChartOptions, this.eChart);
+        this.chartOptions = chartOptions;
+        this.chartModel = chartModel;
 
-        if (chartDatasource.getRangeSelection) {
-            this.isRangeChart = true;
-        }
-
-        this.datasource = chartDatasource;
+        this.currentChartType = chartModel.getChartType();
+        this.chart = GridChartFactory.createChart(chartModel.getChartType(), chartOptions, this.eChart);
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.datasource, 'modelUpdated', this.refresh.bind(this));
+        this.addMenu();
+        this.addResizeListener();
+        this.addRangeListener();
 
-        const eGui = this.getGui();
+        this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_CLOSE_CHART, this.destroy.bind(this));
 
-        const observeResize = this.resizeObserverService.observeResize(eGui, () => {
-            if (!eGui || !eGui.offsetParent) {
-                observeResize();
-                return;
-            }
-            this.chart.height = _.getInnerHeight(eGui.parentElement as HTMLElement);
-            this.chart.width = _.getInnerWidth(eGui.parentElement as HTMLElement);
-        });
+        this.refresh();
+    }
 
-        if (this.isRangeChart) {
-            this.addRangeListeners();
+    private addMenu() {
+        this.chartMenu = new ChartMenu(this.chartModel);
+        this.getContext().wireBean(this.chartMenu);
+
+        if (this.chartOptions.insideDialog) {
+            this.chartDialog = new Dialog({
+                resizable: true,
+                movable: true,
+                title: 'Chart',
+                component: this,
+                centered: true,
+                closable: false
+            });
+            this.getContext().wireBean(this.chartDialog);
+            this.chartDialog.addTitleBarButton(this.chartMenu, 0);
+        } else {
+            const eChart: HTMLElement = this.getGui();
+            eChart.appendChild(this.chartMenu.getGui());
         }
-
-        this.refresh();
     }
 
-    public getDataSource(): ChartDatasource {
-        return this.datasource;
-    }
-
-    public setChartType(chartType: ChartType) {
-
-        // capture current chart dimensions to create chart of the same size
-        const chartOptions = {
-            height: this.chart.height,
-            width: this.chart.width
-        };
-
-        // destroy chart and remove it from DOM
-        this.chart.destroy();
-        _.clearElement(this.eChart);
-
-        this.chartType = chartType;
-        this.chart = GridChartFactory.createChart(chartType, chartOptions, this.eChart);
-        this.refresh();
+    private downloadChart() {
+        this.chart.scene.download("chart");
     }
 
     public getChart(): Chart<any, string, number> {
         return this.chart
     }
 
-    public getFields(): string[] {
-        return this.datasource.getFields();
-    }
-
     public refresh(): void {
-        const errors = this.datasource.getErrors();
+        const errors = this.chartModel.getErrors();
         const eGui = this.getGui();
 
         const errorsExist = errors && errors.length > 0;
@@ -132,47 +125,63 @@ export class GridChartComp extends Component implements IGridChartComp {
 
             eGui.innerHTML = html.join('');
         } else {
+
+            if (this.chartModel.getChartType() !== this.currentChartType) {
+                this.createNewChart();
+            }
+
             this.updateChart();
         }
     }
 
-    public destroy(): void {
-        super.destroy();
-        if (this.datasource) {
-            this.datasource.destroy();
-        }
+    public createNewChart() {
+        console.log('new chart');
 
+        // capture current chart dimensions so new chart is same size
+        this.chartOptions.height = this.chart.height;
+        this.chartOptions.width = this.chart.width;
+
+        // destroy chart and remove it from DOM
         this.chart.destroy();
+        _.clearElement(this.eChart);
 
-        // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
-        // data will still be visible although the chart is no longer bound to the grid
-        _.clearElement(this.getGui());
+        this.currentChartType = this.chartModel.getChartType();
+        this.chart = GridChartFactory.createChart(this.chartModel.getChartType(), this.chartOptions, this.eChart);
     }
 
-    public updateChart(fieldsToDisplay?: string[]) {
-        if (this.chartType === ChartType.GroupedBar || this.chartType === ChartType.StackedBar) {
-            this.updateBarChart(fieldsToDisplay);
-        } else if (this.chartType === ChartType.Line) {
-            this.updateLineChart(fieldsToDisplay);
-        } else if (this.chartType === ChartType.Pie) {
-            this.updatePieChart(fieldsToDisplay);
+    public updateChart() {
+        switch (this.chartModel.getChartType()) {
+            case ChartType.GroupedBar:
+                this.updateBarChart();
+                break;
+            case ChartType.StackedBar:
+                this.updateBarChart();
+                break;
+            case ChartType.Line:
+                this.updateLineChart();
+                break;
+            case ChartType.Pie:
+                this.updatePieChart();
+                break;
         }
     }
 
-    private updateBarChart(fieldsToDisplay?: string[]) {
-        const {data, fields} = this.extractFromDatasource(this.datasource);
+    private updateBarChart() {
+        const data = this.chartModel.getData();
+        const fields = this.chartModel.getFields();
+
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
-        barSeries.yFieldNames = this.datasource.getFieldNames();
-        barSeries.setDataAndFields(data, 'category', this.filterFields(fields, fieldsToDisplay));
+        barSeries.yFieldNames = this.chartModel.getFieldNames();
+        barSeries.setDataAndFields(data, 'category', fields);
     }
 
-    private updateLineChart(fieldsToDisplay?: string[]) {
-        const {data, fields} = this.extractFromDatasource(this.datasource);
+    private updateLineChart() {
+        const data = this.chartModel.getData();
+        const fields = this.chartModel.getFields();
+
         const lineChart = this.chart as CartesianChart<any, string, number>;
 
-        const filteredFields = this.filterFields(fields, fieldsToDisplay);
-
-        filteredFields.forEach((field: string, index: number) => {
+        fields.forEach((field: string, index: number) => {
             let lineSeries = (lineChart.series as LineSeries<any, string, number>[])
                 .filter(series => {
                     const lineSeries = series as LineSeries<any, string, number>;
@@ -191,8 +200,10 @@ export class GridChartComp extends Component implements IGridChartComp {
         });
     }
 
-    private updatePieChart(fieldsToDisplay?: string[]) {
-        const {data, fields} = this.extractFromDatasource(this.datasource);
+    private updatePieChart() {
+        const data = this.chartModel.getData();
+        const fields = this.chartModel.getFields();
+
         const pieChart = this.chart as PolarChart<any, string, number>;
 
         const singleField = fields.length === 1;
@@ -200,9 +211,7 @@ export class GridChartComp extends Component implements IGridChartComp {
         const padding = singleField ? 0 : 10;
         let offset = 0;
 
-        const filteredFields = this.filterFields(fields, fieldsToDisplay);
-
-        filteredFields.forEach((field: string) => {
+        fields.forEach((field: string) => {
             let pieSeries = (pieChart.series as PieSeries<any, string, number>[])
                 .filter(series => {
                     const pieSeries = series as PieSeries<any, string, number>;
@@ -225,41 +234,60 @@ export class GridChartComp extends Component implements IGridChartComp {
         });
     }
 
-    private filterFields(fields: string[], fieldsToDisplay?: string[]) {
-        const includeField = (field: string) => fieldsToDisplay ? fieldsToDisplay.indexOf(field) > -1 : true;
-        return fieldsToDisplay ? fields.filter(includeField) : fields;
-    }
-
-    private extractFromDatasource(ds: ChartDatasource) {
-        const data: any[] = [];
-        const fields = ds.getFields();
-        for (let i = 0; i < ds.getRowCount(); i++) {
-            const item: any = {
-                category: ds.getCategory(i)
-            };
-            fields.forEach(field => item[field] = ds.getValue(i, field));
-            data.push(item);
-        }
-        return {data, fields};
-    }
-
-    private addRangeListeners() {
+    private addResizeListener() {
         const eGui = this.getGui();
-        
-        this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
-            if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
-            const datasource = this.getDataSource() as RangeChartDatasource;
-            const rangeController = datasource.rangeController;
-            const selection = datasource.getRangeSelection();
-            const { startRow, endRow, columns } = selection;
 
-            rangeController.setCellRange({
-                rowStartIndex: startRow && startRow.rowIndex,
-                rowStartPinned: startRow && startRow.rowPinned,
-                rowEndIndex: endRow && endRow.rowIndex,
-                rowEndPinned: endRow && endRow.rowPinned,
-                columns: columns
-            });
+        const observeResize = this.resizeObserverService.observeResize(eGui, () => {
+            if (!eGui || !eGui.offsetParent) {
+                observeResize();
+                return;
+            }
+            this.chart.height = _.getInnerHeight(eGui.parentElement as HTMLElement);
+            this.chart.width = _.getInnerWidth(eGui.parentElement as HTMLElement);
         });
+    }
+
+    private addRangeListener() {
+        if (!this.chartOptions.isRangeChart) return;
+
+        // TODO
+        // const eGui = this.getGui();
+        //
+        // this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
+        //     if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
+        //     const ds = this.datasource as RangeChartDatasource;
+        //     const rangeController = ds.rangeController;
+        //     const selection = ds.getRangeSelection();
+        //     const { startRow, endRow, columns } = selection;
+        //
+        //     rangeController.setCellRange({
+        //         rowStartIndex: startRow && startRow.rowIndex,
+        //         rowStartPinned: startRow && startRow.rowPinned,
+        //         rowEndIndex: endRow && endRow.rowIndex,
+        //         rowEndPinned: endRow && endRow.rowPinned,
+        //         columns: columns
+        //     });
+        // });
+    }
+
+    public destroy(): void {
+        super.destroy();
+
+        if (this.chartModel) {
+            this.chartModel.destroy();
+        }
+        if (this.chart) {
+            this.chart.destroy();
+        }
+        if (this.chartMenu) {
+            this.chartMenu.destroy();
+        }
+        if (this.chartDialog) {
+            this.chartDialog.destroy();
+        }
+
+        // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
+        // data will still be visible although the chart is no longer bound to the grid
+        _.clearElement(this.getGui());
     }
 }
