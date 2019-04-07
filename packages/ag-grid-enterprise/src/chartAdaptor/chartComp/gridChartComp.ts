@@ -34,7 +34,7 @@ export class GridChartComp extends Component {
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('eventService') eventService: EventService;
+    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
@@ -71,7 +71,6 @@ export class GridChartComp extends Component {
 
         this.addMenu();
         this.addResizeListener();
-        this.addRangeListener();
 
         this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
@@ -158,19 +157,16 @@ export class GridChartComp extends Component {
     }
 
     public updateChart() {
-        switch (this.chartModel.getChartType()) {
-            case ChartType.GroupedBar:
-                this.updateBarChart();
-                break;
-            case ChartType.StackedBar:
-                this.updateBarChart();
-                break;
-            case ChartType.Line:
-                this.updateLineChart();
-                break;
-            case ChartType.Pie:
-                this.updatePieChart();
-                break;
+        const chartType = this.chartModel.getChartType();
+
+        if (chartType === ChartType.GroupedBar || ChartType.StackedBar) {
+            this.updateBarChart();
+
+        } else if (chartType === ChartType.Line) {
+            this.updateLineChart();
+
+        } else if (chartType === ChartType.Pie) {
+            this.updatePieChart();
         }
     }
 
@@ -255,28 +251,28 @@ export class GridChartComp extends Component {
         });
     }
 
-    private addRangeListener() {
-        // TODO move out of chart comp
-        // if (!this.chartOptions.isRangeChart) return;
-        //
-        // const eGui = this.getGui();
-        //
-        // this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
-        //     if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
-        //     const ds = this.datasource as RangeChartDatasource;
-        //     const rangeController = ds.rangeController;
-        //     const selection = ds.getRangeSelection();
-        //     const { startRow, endRow, columns } = selection;
-        //
-        //     rangeController.setCellRange({
-        //         rowStartIndex: startRow && startRow.rowIndex,
-        //         rowStartPinned: startRow && startRow.rowPinned,
-        //         rowEndIndex: endRow && endRow.rowIndex,
-        //         rowEndPinned: endRow && endRow.rowPinned,
-        //         columns: columns
-        //     });
-        // });
-    }
+    // TODO move out of chart comp
+    // private addRangeListener() {
+    //     if (!this.chartOptions.isRangeChart) return;
+    //
+    //     const eGui = this.getGui();
+    //
+    //     this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
+    //         if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
+    //         const ds = this.datasource as RangeChartDatasource;
+    //         const rangeController = ds.rangeController;
+    //         const selection = ds.getRangeSelection();
+    //         const { startRow, endRow, columns } = selection;
+    //
+    //         rangeController.setCellRange({
+    //             rowStartIndex: startRow && startRow.rowIndex,
+    //             rowStartPinned: startRow && startRow.rowPinned,
+    //             rowEndIndex: endRow && endRow.rowIndex,
+    //             rowEndPinned: endRow && endRow.rowPinned,
+    //             columns: columns
+    //         });
+    //     });
+    // }
 
     public destroy(): void {
         super.destroy();

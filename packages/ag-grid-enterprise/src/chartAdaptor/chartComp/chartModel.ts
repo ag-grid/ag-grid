@@ -29,8 +29,8 @@ export class ChartModel extends BeanStub {
 
     private readonly datasource: ChartDatasource;
 
+    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') eventService: EventService;
 
     public constructor(chartType: ChartType, datasource: ChartDatasource) {
         super();

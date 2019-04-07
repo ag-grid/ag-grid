@@ -166,11 +166,6 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         }
     }
 
-    private onModelUpdated(): void {
-        this.reset();
-        this.dispatchEvent({type: 'modelUpdated'});
-    }
-
     private extractRowsFromGridRowModel(): void {
 
         this.startRow = this.rangeController.getRangeStartRow(this.cellRange).rowIndex;
