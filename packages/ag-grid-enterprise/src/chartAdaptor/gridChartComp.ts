@@ -125,7 +125,7 @@ export class GridChartComp extends Component {
         const errorMessage = this.chartModel.getErrors().join(' ');
 
         const messageBox = new MessageBox({
-            title: 'Cannot Chart',
+            title: 'Charting Error',
             message: errorMessage,
             centered: true,
             resizable: false,
