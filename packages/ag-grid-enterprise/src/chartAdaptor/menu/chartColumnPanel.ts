@@ -3,10 +3,10 @@ import {ChartModel, ColState} from "../rangeChart/chartModel";
 
 export class ChartColumnPanel extends Component {
 
-    private columnComps: { [key: string]: ChartPanelColumnComp } = {};
-
+    //TODO refactor class to be chart menu specific
     public static TEMPLATE = `<div class="ag-primary-cols-list-panel"></div>`;
 
+    private columnComps: { [key: string]: ChartPanelColumnComp } = {};
     private chartModel: ChartModel;
 
     constructor(chartModel: ChartModel) {
@@ -42,6 +42,7 @@ export class ChartColumnPanel extends Component {
 
 class ChartPanelColumnComp extends Component {
 
+    //TODO refactor class to be chart menu specific
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>

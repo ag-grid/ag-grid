@@ -26,6 +26,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
 
     private readonly cellRange: CellRange;
+    private readonly aggFunc: IAggFunc | string | undefined;
 
     private colIds: string[];
     private colDisplayNames: string[];
@@ -42,8 +43,6 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
     private dataFromGrid: any[];
     private dataGrouped: any[];
 
-    private aggFunc: IAggFunc | string | undefined;
-
     constructor(cellRange: CellRange, aggFunc?: IAggFunc | string) {
         super();
         this.cellRange = cellRange;
@@ -52,6 +51,10 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
     public getErrors(): string[] {
         return this.errors;
+    }
+
+    public setErrors(errors: string[]) {
+        this.errors = errors;
     }
 
     private addError(error: string): void {

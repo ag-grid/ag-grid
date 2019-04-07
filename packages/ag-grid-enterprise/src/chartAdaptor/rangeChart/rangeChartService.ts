@@ -65,9 +65,7 @@ export class RangeChartService implements IRangeChartService {
 
         const chartOptions: ChartOptions = {
             insideDialog: !(container || createChartContainerFunc),
-            isRangeChart: true,
-            height: 400,
-            width: 800
+            height: 400, width: 800
         };
 
         const chartModel = new ChartModel(chartType, cellRange, aggFunc);

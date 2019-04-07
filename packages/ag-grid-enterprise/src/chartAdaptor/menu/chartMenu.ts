@@ -55,7 +55,6 @@ export class ChartMenu extends Component {
         this.getContext().wireBean(this.tabbedMenu);
 
         this.tabbedMenu.setParentComponent(this);
-
         const eMenu = this.tabbedMenu.getGui();
 
         const hidePopup = this.popupService.addAsModalPopup(
@@ -150,6 +149,7 @@ class TabbedChartMenu extends PopupComponent {
     }
 
     private createColumnsPanel(): TabbedItem {
+        //TODO refactor class to be chart menu specific
         const eWrapperDiv: HTMLElement = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-column-select-panel');
         eWrapperDiv.style.height = '204px'; //TODO
@@ -197,6 +197,13 @@ class TabbedChartMenu extends PopupComponent {
                 name: localeTextFunc('formatChart', 'Format Chart'),
                 action: () => {
                     console.log('See chart formatting tool panel...');
+                }
+            },
+            {
+                name: localeTextFunc('testError', 'Show Error Message'),
+                action: () => {
+                    // TODO remove - just for testing
+                    this.chartModel.setErrors(['Something went wrong - sorry!']);
                 }
             },
             {

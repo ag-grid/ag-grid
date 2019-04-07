@@ -4,7 +4,7 @@ import {
     ChartType,
     Component,
     Dialog,
-    EventService,
+    EventService, MessageBox,
     PostConstruct,
     RefSelector,
     ResizeObserverService
@@ -20,16 +20,11 @@ import {PolarChart} from "../charts/chart/polarChart";
 import {ChartModel} from "./rangeChart/chartModel";
 import {ChartMenu} from "./menu/chartMenu";
 
-export interface IGridChartComp {
-    getChart(): Chart<any, string, number>;
-}
-
-export class GridChartComp extends Component implements IGridChartComp {
+export class GridChartComp extends Component {
 
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
-            <div ref="eErrors" class="ag-chart-errors"></div>
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -59,6 +54,15 @@ export class GridChartComp extends Component implements IGridChartComp {
 
     @PostConstruct
     private postConstruct(): void {
+
+        const errors = this.chartModel.getErrors();
+        const errorsExist = errors && errors.length > 0;
+        if (errorsExist) {
+            this.showErrorMessageBox();
+            this.destroy();
+            return;
+        }
+
         this.addMenu();
         this.addResizeListener();
         this.addRangeListener();
@@ -101,22 +105,10 @@ export class GridChartComp extends Component implements IGridChartComp {
 
     public refresh(): void {
         const errors = this.chartModel.getErrors();
-        const eGui = this.getGui();
-
         const errorsExist = errors && errors.length > 0;
 
-        _.setVisible(this.eChart, !errorsExist);
-        _.setVisible(this.eErrors, errorsExist);
-
         if (errorsExist) {
-            const html: string[] = [];
-
-            html.push(`Could not create chart:`);
-            html.push(`<ul>`);
-            errors.forEach(error => html.push(`<li>${error}</li>`));
-            html.push(`</ul>`);
-
-            eGui.innerHTML = html.join('');
+            this.showErrorMessageBox();
         } else {
             const shouldCreateNewChart = this.chartModel.getChartType() !== this.currentChartType;
             if (shouldCreateNewChart) {
@@ -125,6 +117,24 @@ export class GridChartComp extends Component implements IGridChartComp {
 
             this.updateChart();
         }
+    }
+
+    private showErrorMessageBox() {
+
+        // TODO this message box get destroy when grid is destroyed
+        const errorMessage = this.chartModel.getErrors().join(' ');
+
+        const messageBox = new MessageBox({
+            title: 'Cannot Chart',
+            message: errorMessage,
+            centered: true,
+            resizable: false,
+            movable: true,
+            width: 400,
+            height: 150
+        });
+
+        this.getContext().wireBean(messageBox);
     }
 
     public createNewChart() {
@@ -239,9 +249,9 @@ export class GridChartComp extends Component implements IGridChartComp {
     }
 
     private addRangeListener() {
-        if (!this.chartOptions.isRangeChart) return;
-
-        // TODO
+        // TODO move out of chart comp
+        // if (!this.chartOptions.isRangeChart) return;
+        //
         // const eGui = this.getGui();
         //
         // this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {

@@ -7,7 +7,6 @@ import {PolarChart} from "../charts/chart/polarChart";
 import {Chart} from "../charts/chart/chart";
 
 export interface ChartOptions {
-    isRangeChart: boolean,
     insideDialog: boolean,
     height: number,
     width: number

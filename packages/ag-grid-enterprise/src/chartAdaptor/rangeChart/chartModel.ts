@@ -26,6 +26,8 @@ export interface ChartDatasource extends IEventEmitter {
 
     getErrors(): string[];
 
+    setErrors(errors: string[]): void; //TODO remove - just for initial testing
+
     getRangeSelection?(): CellRange;
 }
 
@@ -106,6 +108,12 @@ export class ChartModel extends BeanStub {
 
     public getErrors(): string[] {
         return this.datasource.getErrors();
+    }
+
+    //TODO remove - just for testing
+    public setErrors(errors: string[]): void {
+        this.datasource.setErrors(errors);
+        this.raiseChartUpdatedEvent();
     }
 
     public setChartType(chartType: ChartType): void {
