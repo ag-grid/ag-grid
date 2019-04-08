@@ -69,6 +69,10 @@ export class GridChartComp extends Component {
             return;
         }
 
+        if (this.chartOptions.insideDialog) {
+            this.addDialog();
+        }
+
         this.addMenu();
         this.addResizeListener();
 
@@ -79,25 +83,24 @@ export class GridChartComp extends Component {
         this.refresh();
     }
 
+    private addDialog() {
+        this.chartDialog = new Dialog({
+            resizable: true,
+            movable: true,
+            title: 'Chart',
+            component: this,
+            centered: true,
+            closable: true
+        });
+        this.getContext().wireBean(this.chartDialog);
+    }
+
     private addMenu() {
         this.chartMenu = new ChartMenu(this.chartModel);
         this.getContext().wireBean(this.chartMenu);
 
-        if (this.chartOptions.insideDialog) {
-            this.chartDialog = new Dialog({
-                resizable: true,
-                movable: true,
-                title: 'Chart',
-                component: this,
-                centered: true,
-                closable: false
-            });
-            this.getContext().wireBean(this.chartDialog);
-            this.chartDialog.addTitleBarButton(this.chartMenu, 0);
-        } else {
-            const eChart: HTMLElement = this.getGui();
-            eChart.appendChild(this.chartMenu.getGui());
-        }
+        const eChart: HTMLElement = this.getGui();
+        eChart.appendChild(this.chartMenu.getGui());
     }
 
     private refresh(): void {
