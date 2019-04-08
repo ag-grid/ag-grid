@@ -4,6 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { _ } from "../utils";
+import {IFrameworkOverrides} from "../interfaces/IFrameworkOverrides";
 
 export class BeanStub implements IEventEmitter {
 
@@ -16,6 +17,7 @@ export class BeanStub implements IEventEmitter {
     private destroyed = false;
 
     @Autowired('context') private context: Context;
+    @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
@@ -82,7 +84,7 @@ export class BeanStub implements IEventEmitter {
         if (this.destroyed) { return; }
 
         if (eElement instanceof HTMLElement) {
-            _.addSafePassiveEventListener((eElement as HTMLElement), event, listener, options);
+            _.addSafePassiveEventListener(this.frameworkOverrides, (eElement as HTMLElement), event, listener, options);
         } else if (eElement instanceof Window) {
             (eElement as Window).addEventListener(event, listener);
         } else if (eElement instanceof GridOptionsWrapper) {

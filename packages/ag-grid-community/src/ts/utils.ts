@@ -5,6 +5,7 @@ import { Constants } from "./constants";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { SuppressKeyboardEventParams } from "./entities/colDef";
 import { CellComp } from "./rendering/cellComp";
+import {IFrameworkOverrides} from "./interfaces/IFrameworkOverrides";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -35,6 +36,10 @@ const HTML_ESCAPES: { [id: string]: string } = {
 const reUnescapedHtml = /[&<>"']/g;
 
 export class Utils {
+
+    private static PASSIVE_EVENTS: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+
+    private static OUTSIDE_ANGULAR_EVENTS: string[] = ['mouseover','mouseout','mouseenter','mouseleave'];
 
     // taken from:
     // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
@@ -1903,15 +1908,17 @@ export class Utils {
         }
     }
 
-    static passiveEvents: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
-
     static addSafePassiveEventListener(
+        frameworkOverrides: IFrameworkOverrides,
         eElement: HTMLElement,
         event: string, listener: (event?: any) => void,
         options?: boolean | AddEventListenerOptions
     ) {
 
-        if (Utils.passiveEvents.indexOf(event) !== -1) {
+        const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
+        const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
+
+        if (isPassive) {
             if (options === undefined) {
                 options = {};
             } else if (typeof options === 'boolean') {
@@ -1920,7 +1927,13 @@ export class Utils {
 
             options.passive = true;
         }
-        eElement.addEventListener(event, listener, options);
+
+        if (isOutsideAngular) {
+            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        } else {
+            eElement.addEventListener(event, listener, options);
+        }
+
     }
 
     static camelCaseToHumanText(camelCase: string | undefined): string | null {

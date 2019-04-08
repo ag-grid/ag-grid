@@ -10,7 +10,8 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
     // for Vanilla JS, we just add the event to the element
     public addEventListenerOutsideAngular(element: HTMLElement, type: string,
-                                         listener: EventListenerOrEventListenerObject): void {
-        element.addEventListener(type, listener);
+                                         listener: EventListenerOrEventListenerObject,
+                                          useCapture?: boolean): void {
+        element.addEventListener(type, listener, useCapture);
     }
 }
