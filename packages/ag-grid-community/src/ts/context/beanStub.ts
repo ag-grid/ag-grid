@@ -34,6 +34,11 @@ export class BeanStub implements IEventEmitter {
     //     }, 5000);
     // }
 
+    // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
+    protected getFrameworkOverrides(): IFrameworkOverrides {
+        return this.frameworkOverrides;
+    }
+
     public getContext(): Context {
         return this.context;
     }
@@ -84,7 +89,7 @@ export class BeanStub implements IEventEmitter {
         if (this.destroyed) { return; }
 
         if (eElement instanceof HTMLElement) {
-            _.addSafePassiveEventListener(this.frameworkOverrides, (eElement as HTMLElement), event, listener, options);
+            _.addSafePassiveEventListener(this.getFrameworkOverrides(), (eElement as HTMLElement), event, listener, options);
         } else if (eElement instanceof Window) {
             (eElement as Window).addEventListener(event, listener);
         } else if (eElement instanceof GridOptionsWrapper) {
