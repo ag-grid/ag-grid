@@ -146,7 +146,7 @@ export class Dialog extends PopupComponent {
         this.close = this.popupService.addPopup(
             false,
             eGui,
-            false,
+            true,
             this.destroy.bind(this)
         );
 
@@ -448,10 +448,11 @@ export class Dialog extends PopupComponent {
 
     // called when user hits the 'x' in the top right
     private onBtClose() {
-        this.destroy();
+        this.close();
     }
 
     public destroy(): void {
+        super.destroy();
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
@@ -462,7 +463,5 @@ export class Dialog extends PopupComponent {
         if (eGui && eGui.offsetParent) {
             this.close();
         }
-
-        super.destroy();
     }
 }

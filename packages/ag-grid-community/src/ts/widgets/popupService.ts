@@ -369,7 +369,7 @@ export class PopupService {
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
             const key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE) {
+            if (key === Constants.KEY_ESCAPE && eWrapper.contains(document.activeElement)) {
                 hidePopup(null);
             }
         };

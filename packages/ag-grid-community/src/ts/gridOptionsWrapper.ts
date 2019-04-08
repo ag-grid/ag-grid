@@ -528,7 +528,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
-    public getCreateChartContainerFunc(): (params: ChartRef)=>void | undefined {
+    public getCreateChartContainerFunc(): (params: ChartRef) => void | undefined {
         return this.gridOptions.createChartContainer;
     }
 
