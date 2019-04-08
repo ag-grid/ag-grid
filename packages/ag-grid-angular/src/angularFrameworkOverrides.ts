@@ -15,9 +15,9 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         });
     }
 
-    addEventListenerOutsideAngular(element: HTMLElement, type: string, listener: EventListener | EventListenerObject): void {
+    addEventListenerOutsideAngular(element: HTMLElement, type: string, listener: EventListener | EventListenerObject, useCapture?: boolean): void {
         this._ngZone.runOutsideAngular(() => {
-            super.addEventListenerOutsideAngular(element, type, listener);
+            super.addEventListenerOutsideAngular(element, type, listener, useCapture);
         });
     }
 }
