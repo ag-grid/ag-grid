@@ -1916,7 +1916,7 @@ export class Utils {
     ) {
 
         const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
-        const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
+        const isOutsideAngular = frameworkOverrides && Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
 
         if (isPassive) {
             if (options === undefined) {
