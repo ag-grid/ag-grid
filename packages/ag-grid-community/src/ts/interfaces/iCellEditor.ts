@@ -3,10 +3,10 @@ import { RowNode } from "../entities/rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IComponent } from "./iComponent";
-import { IPopupComponent } from "./iPopupComponent";
 import { ColDef } from "../entities/colDef";
+import { IPopupComponent } from "./iPopupComponent";
 
-export interface ICellEditor extends IPopupComponent<ICellEditorParams> {
+export interface ICellEditor {
     /** Return the final value - called by the grid once after editing is complete */
     getValue(): any;
 
@@ -65,5 +65,5 @@ export interface ICellEditorParams {
     formatValue: (value: any) => any;
 }
 
-export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
+export interface ICellEditorComp extends ICellEditor, IPopupComponent<ICellEditorParams> {
 }
