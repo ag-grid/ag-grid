@@ -4,7 +4,7 @@ import { AgFrameworkComponent } from "./interfaces";
 
 @Injectable()
 @Bean("frameworkComponentWrapper")
-export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
+export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
     private componentFactoryResolver: ComponentFactoryResolver;
 

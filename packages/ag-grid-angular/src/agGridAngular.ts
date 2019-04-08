@@ -25,21 +25,21 @@ import {
     Utils as _
 } from "ag-grid-community";
 
-import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
+import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AgGridColumn } from "./agGridColumn";
-import { Ng2FrameworkComponentWrapper } from "./ng2FrameworkComponentWrapper";
+import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
 
 @Component({
     selector: 'ag-grid-angular',
     template: '',
     providers: [
-        Ng2FrameworkFactory,
-        Ng2FrameworkComponentWrapper
+        AngularFrameworkOverrides,
+        AngularFrameworkComponentWrapper
     ],
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridNg2 implements AfterViewInit {
+export class AgGridAngular implements AfterViewInit {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -62,8 +62,8 @@ export class AgGridNg2 implements AfterViewInit {
 
     constructor(elementDef: ElementRef,
                 private viewContainerRef: ViewContainerRef,
-                private ng2FrameworkFactory: Ng2FrameworkFactory,
-                private frameworkComponentWrapper: Ng2FrameworkComponentWrapper,
+                private angularFrameworkOverrides: AngularFrameworkOverrides,
+                private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
                 private _componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
 
@@ -78,7 +78,7 @@ export class AgGridNg2 implements AfterViewInit {
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkFactory: this.ng2FrameworkFactory,
+            frameworkOverrides: this.angularFrameworkOverrides,
             seedBeanInstances: {
                 frameworkComponentWrapper: this.frameworkComponentWrapper
             }
@@ -104,8 +104,8 @@ export class AgGridNg2 implements AfterViewInit {
         this._initialised = true;
 
         // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
-        // this ties these together so that gridReady will always fire after AgGridNg2's ngAfterViewInit
-        // the actual containing component's ngAfterViewInit will fire just after AgGridNg2's
+        // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
+        // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
         this._fullyReady.resolveNow(null, resolve => resolve);
     }
 
