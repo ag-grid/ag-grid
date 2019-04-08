@@ -89,7 +89,7 @@ export class DragService {
 
         if (includeTouch && !suppressTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, {passive:false} as any);
+            params.eElement.addEventListener('touchstart', touchListener, { passive:false } as any);
         }
 
         this.dragSources.push({

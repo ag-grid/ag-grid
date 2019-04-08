@@ -2,7 +2,6 @@ import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
-import { IComponent } from "./iComponent";
 import { ColDef } from "../entities/colDef";
 import { IPopupComponent } from "./iPopupComponent";
 
