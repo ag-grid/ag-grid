@@ -523,7 +523,7 @@ export class RangeController implements IRangeController {
         this.dispatchChangedEvent(started, finished)
     }
 
-    private refreshFillHandle() {
+    public refreshFillHandle() {
         if (!this.cellRanges) { return; }
 
         this.cellRanges.forEach((range: CellRange) => {
