@@ -16,7 +16,6 @@ import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnUtils } from "../columnController/columnUtils";
 import { RowNode } from "./rowNode";
-import { IFrameworkFactory } from "../interfaces/iFrameworkFactory";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
@@ -67,7 +66,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
