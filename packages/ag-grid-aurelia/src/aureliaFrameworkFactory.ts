@@ -20,7 +20,7 @@ export class AureliaFrameworkFactory implements IFrameworkOverrides {
         this._baseFrameworkFactory.setTimeout(action, timeout);
     }
 
-    addEventListenerOutsideAngular(element: HTMLElement, type: string, listener: EventListener | EventListenerObject): void {
-        this._baseFrameworkFactory.addEventListenerOutsideAngular(element, type, listener);
+    addEventListenerOutsideAngular(element: HTMLElement, type: string, listener: EventListener | EventListenerObject, useCapture?: boolean): void {
+        this._baseFrameworkFactory.addEventListenerOutsideAngular(element, type, listener, useCapture);
     }
 }
