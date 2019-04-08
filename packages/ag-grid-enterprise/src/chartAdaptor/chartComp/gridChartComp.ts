@@ -50,6 +50,7 @@ export class GridChartComp extends Component {
 
     private currentChartType: ChartType;
     private chart: Chart<any, string, number>;
+    private shouldDestroyDialog: boolean;
 
     constructor(chartOptions: ChartOptions, chartModel: ChartModel) {
         super(GridChartComp.TEMPLATE);
@@ -97,6 +98,15 @@ export class GridChartComp extends Component {
             closable: true
         });
         this.getContext().wireBean(this.chartDialog);
+
+        // by default function dialog's should also be destroyed along with the GridChartComp
+        this.shouldDestroyDialog = true;
+
+        this.chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => {
+            // the dialog has been destroyed so don't invoke Dialog.destroy() again
+            this.shouldDestroyDialog = false;
+            this.destroy();
+        });
     }
 
     private addMenu() {
@@ -127,6 +137,9 @@ export class GridChartComp extends Component {
 
             eGui.innerHTML = html.join('');
         } else {
+            if (this.chartModel.getChartType() !== this.currentChartType) {
+                this.createNewChart();
+            }
             this.updateChart();
         }
     }
@@ -281,7 +294,9 @@ export class GridChartComp extends Component {
         if (this.chartMenu) {
             this.chartMenu.destroy();
         }
-        if (this.chartDialog) {
+
+        // don't invoke Dialog.destroy() when this.destroy() originates from the dialog itself (prevents destroy loop)
+        if (this.shouldDestroyDialog && this.chartDialog) {
             this.chartDialog.destroy();
         }
 
