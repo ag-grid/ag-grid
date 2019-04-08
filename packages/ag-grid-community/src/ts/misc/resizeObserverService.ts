@@ -1,17 +1,17 @@
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { IFrameworkFactory } from "../interfaces/iFrameworkFactory";
+import { IFrameworkOverrides } from "../interfaces/IFrameworkOverrides";
 import { _ } from "../utils";
 
 @Bean('resizeObserverService')
 export class ResizeObserverService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
+    @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
 
     public observeResize(element: HTMLElement, callback: () => void): () => void {
         // put in variable, so available to usePolyfill() function below
-        const frameworkFactory = this.frameworkFactory;
+        const frameworkFactory = this.frameworkOverrides;
 
         const useBrowserResizeObserver = () => {
             const resizeObserver = new (window as any).ResizeObserver(callback);
