@@ -4,7 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { EventService } from "../eventService";
-import {GridPanel} from "../gridPanel/gridPanel";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 interface TaskItem {
     task: () => void;

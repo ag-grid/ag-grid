@@ -5,7 +5,7 @@ import { Constants } from "./constants";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { SuppressKeyboardEventParams } from "./entities/colDef";
 import { CellComp } from "./rendering/cellComp";
-import {IFrameworkOverrides} from "./interfaces/IFrameworkOverrides";
+import { IFrameworkOverrides } from "./interfaces/IFrameworkOverrides";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -39,7 +39,7 @@ export class Utils {
 
     private static PASSIVE_EVENTS: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
-    private static OUTSIDE_ANGULAR_EVENTS: string[] = ['mouseover','mouseout','mouseenter','mouseleave'];
+    private static OUTSIDE_ANGULAR_EVENTS: string[] = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 
     // taken from:
     // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser

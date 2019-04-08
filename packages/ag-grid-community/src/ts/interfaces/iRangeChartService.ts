@@ -1,6 +1,6 @@
-import {ChartType} from "../charts/chartType";
-import {ChartRef} from "../entities/gridOptions";
-import {ChartRangeParams} from "../gridApi";
+import { ChartType } from "../charts/chartType";
+import { ChartRef } from "../entities/gridOptions";
+import { ChartRangeParams } from "../gridApi";
 
 export interface IRangeChartService {
     chartCurrentRange(chartType: ChartType): ChartRef | undefined;

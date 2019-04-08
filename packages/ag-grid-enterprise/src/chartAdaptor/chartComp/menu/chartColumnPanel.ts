@@ -1,5 +1,11 @@
-import {_, AgCheckbox, Component, PostConstruct, RefSelector} from "ag-grid-community/main";
-import {ChartModel, ColState} from "../chartModel";
+import { 
+    AgCheckbox,
+    Component,
+    PostConstruct,
+    RefSelector,
+    _ 
+} from "ag-grid-community";
+import { ChartModel, ColState } from "../chartModel";
 
 export class ChartColumnPanel extends Component {
 

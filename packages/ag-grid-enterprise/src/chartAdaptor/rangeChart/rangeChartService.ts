@@ -12,10 +12,10 @@ import {
     IRangeChartService,
     PreDestroy
 } from "ag-grid-community";
-import {RangeController} from "../../rangeController";
-import {ChartModel} from "../chartComp/chartModel";
-import {ChartOptions, GridChartComp} from "../chartComp/gridChartComp";
-import {RangeChartDatasource} from "./rangeChartDatasource";
+import { RangeController } from "../../rangeController";
+import { ChartModel } from "../chartComp/chartModel";
+import { ChartOptions, GridChartComp } from "../chartComp/gridChartComp";
+import { RangeChartDatasource } from "./rangeChartDatasource";
 
 export interface ChartDatasource {
     getChartData(): ChartData;

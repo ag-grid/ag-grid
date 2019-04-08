@@ -8,8 +8,8 @@ import {
     Events,
     EventService
 } from "ag-grid-community";
-import {ChartData, ChartDatasource} from "../rangeChart/rangeChartService";
-import {RangeController} from "../../rangeController";
+import { ChartData, ChartDatasource } from "../rangeChart/rangeChartService";
+import { RangeController } from "../../rangeController";
 
 export interface ChartModelUpdatedEvent extends AgEvent {}
 
@@ -140,7 +140,7 @@ export class ChartModel extends BeanStub {
     }
 
     public updateCellRange() {
-        if (!this.chartData.cellRange) return;
+        if (!this.chartData.cellRange) { return; }
 
         const { startRow, endRow, columns } = this.chartData.cellRange;
 

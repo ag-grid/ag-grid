@@ -10,9 +10,9 @@ import {
     PostConstruct,
     ValueService
 } from "ag-grid-community";
-import {RangeController} from "../../rangeController";
-import {AggregationStage} from "../../rowStages/aggregationStage";
-import {ChartData, ChartDatasource} from "./rangeChartService";
+import { RangeController } from "../../rangeController";
+import { AggregationStage } from "../../rowStages/aggregationStage";
+import { ChartData, ChartDatasource } from "./rangeChartService";
 
 export class RangeChartDatasource extends BeanStub implements ChartDatasource {
 
@@ -89,15 +89,15 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         const map: any = {};
         const lastCol = this.categoryCols[this.categoryCols.length - 1];
 
-        this.dataFromGrid.forEach( data => {
+        this.dataFromGrid.forEach(data => {
             let currentMap = map;
-            this.categoryCols.forEach( col => {
+            this.categoryCols.forEach(col => {
                 const key = data[col.getId()];
-                if (col===lastCol) {
+                if (col === lastCol) {
                     let groupItem = currentMap[key];
                     if (!groupItem) {
                         groupItem = {__children: []};
-                        this.categoryCols.forEach( col => {
+                        this.categoryCols.forEach(col => {
                                 groupItem[col.getId()] = data[col.getId()];
                         });
                         currentMap[key] = groupItem;
@@ -114,10 +114,10 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
             });
         });
 
-        this.dataGrouped.forEach( groupItem => {
-            this.fieldCols.forEach( col => {
+        this.dataGrouped.forEach(groupItem => {
+            this.fieldCols.forEach(col => {
                 const dataToAgg: any[] = [];
-                groupItem.__children.forEach( (child:any) => {
+                groupItem.__children.forEach((child:any) => {
                     dataToAgg.push(child[col.getId()]);
                 });
                 // always use 'sum' agg func, is that right????
@@ -170,18 +170,18 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         const rowCount = rangeLastRow - this.startRow + 1;
 
         this.dataFromGrid = [];
-        for (let i = 0; i<rowCount; i++) {
+        for (let i = 0; i < rowCount; i++) {
             const rowNode = this.gridRowModel.getRow(i + this.startRow)!;
             const data: any = {};
 
-            this.categoryCols.forEach( col => {
+            this.categoryCols.forEach(col => {
                 const part = this.valueService.getValue(col, rowNode);
                 // force return type to be string or empty string (as value can be an object)
                 const partStr = (part && part.toString) ? part.toString() : '';
                 data[col.getId()] = partStr;
             });
 
-            this.fieldCols.forEach( col => {
+            this.fieldCols.forEach(col => {
                 data[col.getId()] = this.valueService.getValue(col, rowNode);
             });
 

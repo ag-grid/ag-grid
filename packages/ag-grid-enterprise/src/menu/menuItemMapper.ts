@@ -11,8 +11,8 @@ import {
     MenuItemDef, Optional,
     Utils
 } from 'ag-grid-community';
-import {ClipboardService} from "../clipboardService";
-import {AggFuncService} from "../aggregation/aggFuncService";
+import { ClipboardService } from "../clipboardService";
+import { AggFuncService } from "../aggregation/aggFuncService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {

@@ -55,7 +55,7 @@ import { SideBarDef } from "./entities/sideBar";
 import { IRangeChartService } from "./interfaces/iRangeChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
-import {ChartRef} from "./entities/gridOptions";
+import { ChartRef } from "./entities/gridOptions";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -85,10 +85,10 @@ export interface RedrawRowsParams {
 }
 
 export interface ChartRangeParams {
-    cellRange: CellRangeParams,
-    chartType: string,
-    chartContainer?: HTMLElement,
-    aggFunc?: string | IAggFunc
+    cellRange: CellRangeParams;
+    chartType: string;
+    chartContainer?: HTMLElement;
+    aggFunc?: string | IAggFunc;
 }
 
 export interface DetailGridInfo {

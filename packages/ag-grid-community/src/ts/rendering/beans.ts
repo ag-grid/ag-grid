@@ -26,7 +26,7 @@ import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { TooltipManager } from "../widgets/tooltipManager";
-import {IFrameworkOverrides} from "../interfaces/IFrameworkOverrides";
+import { IFrameworkOverrides } from "../interfaces/IFrameworkOverrides";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp

@@ -1,6 +1,6 @@
-import {Grid, Module} from "ag-grid-community";
-import {RangeChartService} from "../chartAdaptor/rangeChart/rangeChartService";
-import {ModuleNames} from "ag-grid-community";
+import { Grid, Module } from "ag-grid-community";
+import { RangeChartService } from "../chartAdaptor/rangeChart/rangeChartService";
+import { ModuleNames } from "ag-grid-community";
 
 export const ChartsModule: Module = {
     moduleName: ModuleNames.ChartsModule,
@@ -12,5 +12,3 @@ export const ChartsModule: Module = {
 };
 
 Grid.addModule([ChartsModule]);
-
-

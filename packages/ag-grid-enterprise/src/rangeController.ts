@@ -432,7 +432,6 @@ export class RangeController implements IRangeController {
         this.draggingCell = mouseCell;
         this.lastMouseEvent = mouseEvent;
 
-
         if (!shiftKey) {
             this.newestRangeStartCell = mouseCell;
         }

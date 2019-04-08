@@ -1,5 +1,5 @@
 // to satisfy server side compilation
-import {ChartRangeParams} from "./gridApi";
+import { ChartRangeParams } from "./gridApi";
 
 declare let global: any;
 const globalObj = typeof global === 'undefined' ? {} : global;

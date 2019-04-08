@@ -1327,7 +1327,7 @@ export class GridPanel extends Component {
     }
 
     public executeFrame(): boolean {
-        const frameNeeded = this.scrollTop!==this.nextScrollTop;
+        const frameNeeded = this.scrollTop !== this.nextScrollTop;
         if (frameNeeded) {
             this.scrollTop = this.nextScrollTop;
             this.redrawRowsAfterScroll();

@@ -19,7 +19,7 @@ import { Component } from "../widgets/component";
 import { Beans } from "./beans";
 import { ProcessRowParams } from "../entities/gridOptions";
 import { _ } from "../utils";
-import {IFrameworkOverrides} from "../interfaces/IFrameworkOverrides";
+import { IFrameworkOverrides } from "../interfaces/IFrameworkOverrides";
 
 interface CellTemplate {
     template: string;

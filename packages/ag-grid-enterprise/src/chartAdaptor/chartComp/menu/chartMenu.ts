@@ -15,10 +15,10 @@ import {
     TabbedItem,
     TabbedLayout
 } from "ag-grid-community";
-import {ChartModel} from "../chartModel";
-import {MenuList} from "../../../menu/menuList";
-import {ChartColumnPanel} from "./chartColumnPanel";
-import {MenuItemComponent} from "../../../menu/menuItemComponent";
+import { ChartModel } from "../chartModel";
+import { MenuList } from "../../../menu/menuList";
+import { ChartColumnPanel } from "./chartColumnPanel";
+import { MenuItemComponent } from "../../../menu/menuItemComponent";
 
 export interface DownloadChartEvent extends AgEvent {}
 
