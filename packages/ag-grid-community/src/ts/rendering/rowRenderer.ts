@@ -87,6 +87,10 @@ export class RowRenderer extends BeanStub {
         this.gridCore = gridCore;
     }
 
+    public getGridCore(): GridCore {
+        return this.gridCore;
+    }
+
     public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");
     }

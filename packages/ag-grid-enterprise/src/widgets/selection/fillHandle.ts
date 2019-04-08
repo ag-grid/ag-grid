@@ -1,17 +1,18 @@
 import {
-    AgEvent,
     Autowired,
-    Component,
     CellComp,
+    CellPosition,
     CellRange,
-    RowRenderer,
-    IFillHandle,
-    RowPosition,
+    Column,
+    Component,
     DragService,
+    IFillHandle,
+    GridOptionsWrapper,
+    MouseEventService,
     PostConstruct,
-    EventService,
-    RowNode,
-    _
+    RowPosition,
+    RowRenderer,
+    _,
 } from 'ag-grid-community';
 import { RangeController } from '../../rangeController';
 
@@ -20,11 +21,20 @@ export class FillHandle extends Component implements IFillHandle<any> {
     @Autowired("rowRenderer") private rowRenderer: RowRenderer;
     @Autowired("dragService") private dragService: DragService;
     @Autowired("rangeController") private rangeController: RangeController;
-    @Autowired("eventService") private eventService: EventService;
+    @Autowired("mouseEventService") private mouseEventService: MouseEventService;
+    @Autowired("gridOptionsWrapper") gridOptionsWrapper: GridOptionsWrapper;
 
     private cellComp: CellComp;
     private cellRange: CellRange;
-    private rowHoverListener: (() => void) | undefined;
+
+    private rangeStartRow: RowPosition;
+    private rangeEndRow: RowPosition;
+
+    private lastCellHovered: CellPosition | undefined;
+    private lastCellMarked: CellPosition | undefined;
+    private cellHoverListener: (() => void) | undefined;
+    private markedCellComps: CellComp[] = [];
+    private dragAxis: 'x' | 'y';
 
     static TEMPLATE = '<div class="ag-fill-handle"></div>';
 
@@ -54,26 +64,140 @@ export class FillHandle extends Component implements IFillHandle<any> {
     }
 
     private onDragStart(e: MouseEvent) {
-        this.rowHoverListener = this.addDestroyableEventListener(
-            this.eventService, 
-            RowNode.EVENT_MOUSE_ENTER, 
-            this.updateLastHoveredRow.bind(this)
+        this.cellHoverListener = this.addDestroyableEventListener(
+            this.rowRenderer.getGridCore().getRootGui(), 
+            'mousemove', 
+            this.updateLastCellPositionHovered.bind(this)
         );
     }
 
     private onDrag(e: MouseEvent) {
+        const { x, y } = this.getGui().getBoundingClientRect() as DOMRect;
+        const diffX = Math.abs(x - e.clientX);
+        const diffY = Math.abs(y - e.clientY);
+        const direction: 'x' | 'y' = diffX > diffY ? 'x' : 'y';
 
-    }
+        if (direction !== this.dragAxis) {
+            this.dragAxis = direction;
+        }
 
-    private onDragEnd(e: MouseEvent) {
-        if (this.rowHoverListener) {
-            console.log('removing listener');
-            this.rowHoverListener();
+        if (this.lastCellHovered && this.lastCellHovered !== this.lastCellMarked) {
+            this.markPathFrom(this.cellComp, this.lastCellHovered);
         }
     }
 
-    private updateLastHoveredRow(e: AgEvent) {
-        console.log(e);
+    private onDragEnd(e: MouseEvent) {
+        this.clearMarkedPath();
+        this.lastCellHovered = undefined;
+        this.lastCellMarked = undefined;
+
+        if (this.cellHoverListener) {
+            this.cellHoverListener();
+            this.cellHoverListener = undefined;
+        }
+    }
+
+    private markPathFrom(initialComp: CellComp, currentPosition: CellPosition) {
+        this.clearMarkedPath();
+        if (this.dragAxis === 'y') {
+            const rowIndex = initialComp.getRenderedRow().getRowNode().rowIndex;
+            if (rowIndex < currentPosition.rowIndex) {
+                this.extendVertical(rowIndex + 1, currentPosition.rowIndex);
+            }
+            else if (currentPosition.rowIndex < this.rangeStartRow.rowIndex) {
+                this.extendVertical(currentPosition.rowIndex, this.rangeStartRow.rowIndex - 1, true);
+            }
+        }
+        else {
+            const displayedColumns = this.gridOptionsWrapper.getColumnApi()!.getDisplayedCenterColumns();
+            const colIndex = displayedColumns.indexOf(initialComp.getColumn())
+            const endIndex = displayedColumns.indexOf(currentPosition.column);
+            let rangeStartColIdx;
+
+            if (colIndex < endIndex) {
+                this.extendHorizontal(colIndex + 1, endIndex, displayedColumns);
+            }
+            else if (endIndex < (rangeStartColIdx = displayedColumns.indexOf(this.cellRange.columns[0]))) {
+                this.extendHorizontal(endIndex, rangeStartColIdx, displayedColumns, true);
+            }
+        }
+    }
+
+    private extendVertical(startIdx: number, endIdx: number, isMovingUp?: boolean) {
+        for (let i = startIdx; i <= endIdx; i++) {
+            const colLen = this.cellRange.columns.length;
+            for (let j = 0; j < colLen; j++) {
+                if (j !== 0 && j !== colLen - 1 && i !== (isMovingUp ? startIdx : endIdx)) { continue; }
+
+                const cellComp = this.rowRenderer.getComponentForCell({
+                    rowIndex: i,
+                    rowPinned: undefined,
+                    column: this.cellRange.columns[j]
+                });
+                if (!cellComp) { continue; }
+                this.markedCellComps.push(cellComp);
+
+                const eGui = cellComp.getGui();
+        
+                _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', j === 0);
+                _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', j === colLen - 1);
+                if (isMovingUp) {
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', i === startIdx);
+                }
+                else {
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', i === endIdx);
+                }
+            }
+        }
+    }
+
+    private extendHorizontal(startIdx: number, endIdx: number, columns: Column[], isMovingLeft?: boolean) {
+        for (let i = startIdx; i <= endIdx; i++) { 
+            for (let j = this.rangeStartRow.rowIndex; j <= this.rangeEndRow.rowIndex; j++) {
+                if (j !== this.rangeStartRow.rowIndex && j !== this.rangeEndRow.rowIndex && i !== (isMovingLeft ? startIdx : endIdx)) { continue; }
+
+                const cellComp = this.rowRenderer.getComponentForCell({
+                    rowIndex: j,
+                    rowPinned: undefined,
+                    column: columns[i]
+                });
+
+                if (!cellComp) { continue; }
+                this.markedCellComps.push(cellComp);
+
+                const eGui = cellComp.getGui();
+
+                _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', j === this.rangeStartRow.rowIndex);
+                _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', j === this.rangeEndRow.rowIndex);
+                if (isMovingLeft) {
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', i === startIdx);
+                }
+                else {
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', i === endIdx);
+                }
+            }
+        }
+    }
+
+    private clearMarkedPath() {
+        this.markedCellComps.forEach(cellComp => {
+            const eGui = cellComp.getGui();
+            _.removeCssClass(eGui, 'ag-selection-fill-top');
+            _.removeCssClass(eGui, 'ag-selection-fill-right');
+            _.removeCssClass(eGui, 'ag-selection-fill-bottom');
+            _.removeCssClass(eGui, 'ag-selection-fill-left');
+        });
+
+        this.markedCellComps.length = 0;
+    }
+
+    private updateLastCellPositionHovered(e: MouseEvent) {
+        const cell = this.mouseEventService.getCellPositionForEvent(e);
+
+        if (cell === this.lastCellHovered) { return; }
+
+        this.lastCellHovered = cell;
+        
     }
 
     public refresh(cellRange: CellRange) {
@@ -87,12 +211,12 @@ export class FillHandle extends Component implements IFillHandle<any> {
             oldCellComp.getGui().removeChild(eGui);
         }
 
-        let start = startRow as RowPosition;
-        let end = endRow as RowPosition;
+        let start = this.rangeStartRow = startRow as RowPosition;
+        let end = this.rangeEndRow = endRow as RowPosition;
 
         if (start.rowIndex > end.rowIndex) {
-            start = endRow as RowPosition;
-            end = startRow as RowPosition;
+            start = this.rangeStartRow = endRow as RowPosition;
+            end = this.rangeEndRow = startRow as RowPosition;
         }
         
         const cellComp = this.rowRenderer.getComponentForCell({
@@ -102,6 +226,7 @@ export class FillHandle extends Component implements IFillHandle<any> {
         });
 
         if (oldCellComp !== cellComp) {
+            this.cellComp = cellComp;
             cellComp.appendChild(eGui);
         }
 
