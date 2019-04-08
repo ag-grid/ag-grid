@@ -4,7 +4,8 @@ import {
     ChartType,
     Component,
     Dialog,
-    EventService, MessageBox,
+    EventService,
+    MessageBox,
     PostConstruct,
     RefSelector,
     ResizeObserverService
@@ -22,6 +23,7 @@ import {ChartModel} from "./chartModel";
 
 export interface ChartOptions {
     insideDialog: boolean,
+    tooltip: boolean,
     height: number,
     width: number
 }
@@ -74,6 +76,7 @@ export class GridChartComp extends Component {
         }
 
         this.addMenu();
+        this.addRangeListener();
         this.addResizeListener();
 
         this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
@@ -187,6 +190,7 @@ export class GridChartComp extends Component {
 
             if (!lineSeries) {
                 lineSeries = new LineSeries<any, string, number>();
+                lineSeries.tooltip = this.chartOptions.tooltip;
                 lineSeries.lineWidth = 2;
                 lineSeries.markerRadius = 3;
                 lineSeries.color = colors[index % colors.length];
@@ -217,6 +221,7 @@ export class GridChartComp extends Component {
 
             if (!pieSeries) {
                 pieSeries = new PieSeries<any, string, number>();
+                pieSeries.tooltip = this.chartOptions.tooltip;
                 pieSeries.lineWidth = 1;
                 pieSeries.calloutWidth = 1;
                 pieChart.addSeries(pieSeries);
@@ -227,7 +232,7 @@ export class GridChartComp extends Component {
             pieSeries.innerRadiusOffset = offset;
             offset -= padding;
 
-            pieSeries.setDataAndFields(data, field, 'category');
+            pieSeries.setDataAndFields(data, field);
         });
     }
 
@@ -249,28 +254,13 @@ export class GridChartComp extends Component {
         });
     }
 
-    // TODO move out of chart comp
-    // private addRangeListener() {
-    //     if (!this.chartOptions.isRangeChart) return;
-    //
-    //     const eGui = this.getGui();
-    //
-    //     this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
-    //         if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
-    //         const ds = this.datasource as RangeChartDatasource;
-    //         const rangeController = ds.rangeController;
-    //         const selection = ds.getRangeSelection();
-    //         const { startRow, endRow, columns } = selection;
-    //
-    //         rangeController.setCellRange({
-    //             rowStartIndex: startRow && startRow.rowIndex,
-    //             rowStartPinned: startRow && startRow.rowPinned,
-    //             rowEndIndex: endRow && endRow.rowIndex,
-    //             rowEndPinned: endRow && endRow.rowPinned,
-    //             columns: columns
-    //         });
-    //     });
-    // }
+    private addRangeListener() {
+        const eGui = this.getGui();
+        this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
+            if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
+            this.chartModel.updateCellRange();
+        });
+    }
 
     public destroy(): void {
         super.destroy();

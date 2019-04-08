@@ -24,6 +24,7 @@ export interface ChartDatasource {
 }
 
 export interface ChartData {
+    cellRange: CellRange;
     colIds: string[];
     colDisplayNames: string[];
     dataGrouped: any[];
@@ -79,7 +80,9 @@ export class RangeChartService implements IRangeChartService {
 
         const chartOptions: ChartOptions = {
             insideDialog: !(container || createChartContainerFunc),
-            height: 400, width: 800
+            tooltip: true,
+            height: 400,
+            width: 800
         };
 
         const ds = new RangeChartDatasource(cellRange, aggFunc);
