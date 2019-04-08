@@ -23,7 +23,7 @@ import {ChartModel} from "./chartModel";
 
 export interface ChartOptions {
     insideDialog: boolean,
-    tooltip: boolean,
+    showTooltips: boolean,
     height: number,
     width: number
 }
@@ -45,11 +45,11 @@ export class GridChartComp extends Component {
     private readonly chartOptions: ChartOptions;
     private readonly chartModel: ChartModel;
 
+    private chart: Chart<any, string, number>;
     private chartDialog: Dialog;
     private chartMenu: ChartMenu;
 
     private currentChartType: ChartType;
-    private chart: Chart<any, string, number>;
     private shouldDestroyDialog: boolean;
 
     constructor(chartOptions: ChartOptions, chartModel: ChartModel) {
@@ -213,7 +213,7 @@ export class GridChartComp extends Component {
 
             if (!lineSeries) {
                 lineSeries = new LineSeries<any, string, number>();
-                lineSeries.tooltip = this.chartOptions.tooltip;
+                lineSeries.tooltip = this.chartOptions.showTooltips;
                 lineSeries.lineWidth = 2;
                 lineSeries.markerRadius = 3;
                 lineSeries.color = colors[index % colors.length];
@@ -244,7 +244,7 @@ export class GridChartComp extends Component {
 
             if (!pieSeries) {
                 pieSeries = new PieSeries<any, string, number>();
-                pieSeries.tooltip = this.chartOptions.tooltip;
+                pieSeries.tooltip = this.chartOptions.showTooltips;
                 pieSeries.lineWidth = 1;
                 pieSeries.calloutWidth = 1;
                 pieChart.addSeries(pieSeries);

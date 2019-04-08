@@ -21,12 +21,10 @@ import {ChartColumnPanel} from "./chartColumnPanel";
 import {MenuItemComponent} from "../../../menu/menuItemComponent";
 
 export interface DownloadChartEvent extends AgEvent {}
-export interface CloseChartEvent extends AgEvent {}
 
 export class ChartMenu extends Component {
 
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
-    public static EVENT_CLOSE_CHART = 'closeChart';
 
     private static TEMPLATE =
         `<div class="ag-chart-menu">

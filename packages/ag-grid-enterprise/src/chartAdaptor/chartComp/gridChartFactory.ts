@@ -30,7 +30,7 @@ export class GridChartFactory {
         barChart.xAxis.labelRotation = 90;
 
         const barSeries = new BarSeries<any>();
-        barSeries.tooltip = chartOptions.tooltip;
+        barSeries.tooltip = chartOptions.showTooltips;
         barSeries.grouped = grouped;
 
         barChart.addSeries(barSeries);
