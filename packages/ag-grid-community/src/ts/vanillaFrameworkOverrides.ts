@@ -9,7 +9,7 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     }
 
     // for Vanilla JS, we just add the event to the element
-    public addEventListenerOutsizeZoneJS(element: HTMLElement, type: string,
+    public addEventListenerOutsizeAngular(element: HTMLElement, type: string,
                                          listener: EventListenerOrEventListenerObject): void {
         element.addEventListener(type, listener);
     }

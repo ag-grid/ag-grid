@@ -10,6 +10,6 @@ export interface IFrameworkOverrides {
      * these events, as we will be outside of ZoneJS and hence Angular2 Change Detection won't work. However it's fine
      * for our code to result in ag-Grid events (and Angular application action on these) as these go through
      * Event Emitter's. */
-    addEventListenerOutsizeZoneJS(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject): void;
+    addEventListenerOutsizeAngular(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject): void;
 
 }
