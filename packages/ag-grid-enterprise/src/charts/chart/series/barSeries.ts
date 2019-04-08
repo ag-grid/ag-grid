@@ -473,8 +473,19 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
-        const yField = nodeDatum.yField as Extract<keyof D, string>;
-        let labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
-        return `${labelText}${toFixed(nodeDatum.seriesDatum[yField] as any as number)}`;
+        let html: string = '';
+        if (this.tooltip) {
+            const yField = nodeDatum.yField as Extract<keyof D, string>;
+            let labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
+
+            if (this.tooltipRenderer && this.xField) {
+                html = this.tooltipRenderer(nodeDatum.seriesDatum, yField, this.xField);
+            } else {
+                html = `${labelText}${toFixed(nodeDatum.seriesDatum[yField] as any as number)}`;
+            }
+        }
+        return html;
     }
+
+    tooltipRenderer?: (datum: D, yField: Extract<keyof D, string>, xField: Extract<keyof D, string>) => string;
 }

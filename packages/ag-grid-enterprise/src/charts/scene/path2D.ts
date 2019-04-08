@@ -9,14 +9,6 @@ export class Path2D {
     readonly commands: string[] = [];
     readonly params: number[] = [];
 
-    /**
-     * The number of parameters for each of the SVG path commands.
-     */
-    private static paramCounts = {
-        A: 7, C: 6, H: 1, L: 2, M: 2, Q: 4, S: 4, T: 2, V: 1, Z: 0,
-        a: 7, c: 6, h: 1, l: 2, m: 2, q: 4, s: 4, t: 2, v: 1, z: 0
-    };
-
     private static splitCommandsRe = /(?=[AaCcHhLlMmQqSsTtVvZz])/g;
     private static matchParamsRe = /-?[0-9]*\.?\d+/g;
     private static quadraticCommandRe = /[QqTt]/;
@@ -510,7 +502,6 @@ export class Path2D {
             }
         }
 
-        // TODO: use the regular for loop for better performance
         // But that will make compiler complain about x/y, cpx/cpy
         // being used without being set first.
         parts.forEach(part => {

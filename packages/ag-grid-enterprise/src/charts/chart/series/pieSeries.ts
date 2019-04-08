@@ -427,15 +427,25 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
+        let html: string = '';
         const angleField = this.angleField;
 
         if (!angleField) {
-            return '';
+            return html;
         }
-        const value = nodeDatum.seriesDatum[angleField];
-        if (typeof(value) === 'number') {
-            return `${toFixed(value)}`;
+
+        if (this.tooltipRenderer) {
+            html = this.tooltipRenderer(nodeDatum.seriesDatum, angleField, this.radiusField);
+        } else {
+            const value = nodeDatum.seriesDatum[angleField];
+            if (typeof(value) === 'number') {
+                html = `${toFixed(value)}`;
+            } else {
+                html = value.toString();
+            }
         }
-        return value.toString();
+        return html;
     }
+
+    tooltipRenderer?: (datum: D, angleField: Extract<keyof D, string>, radiusField: Extract<keyof D, string> | null) => string;
 }

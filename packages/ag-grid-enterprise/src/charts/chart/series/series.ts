@@ -142,4 +142,6 @@ export abstract class Series<D, X, Y> {
     abstract update(): void;
 
     abstract getTooltipHtml(nodeDatum: SeriesNodeDatum<D>): string;
+
+    tooltip: boolean = false;
 }
