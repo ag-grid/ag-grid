@@ -29,8 +29,17 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
     addSeries(series: Series<D, X, Y>): void {
         this.seriesClipRect.append(series.group);
-        this._series.push(series);
+        this.series.push(series);
         series.chart = this;
+        this.layoutPending = true;
+    }
+
+    removeAllSeries(): void {
+        this.series.forEach(series => {
+            series.chart = null;
+            this.seriesClipRect.removeChild(series.group);
+        });
+        this.series = [];
         this.layoutPending = true;
     }
 
