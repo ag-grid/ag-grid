@@ -80,7 +80,7 @@ export class RangeChartService implements IRangeChartService {
 
         const chartOptions: ChartOptions = {
             insideDialog: !(container || createChartContainerFunc),
-            tooltip: true,
+            showTooltips: true,
             height: 400,
             width: 800
         };
