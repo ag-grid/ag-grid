@@ -19,6 +19,7 @@ import { Component } from "../widgets/component";
 import { Beans } from "./beans";
 import { ProcessRowParams } from "../entities/gridOptions";
 import { _ } from "../utils";
+import {IFrameworkOverrides} from "../interfaces/IFrameworkOverrides";
 
 interface CellTemplate {
     template: string;
@@ -1252,6 +1253,10 @@ export class RowComp extends Component {
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
         return Math.min(Math.max(minPixel, rowTop), maxPixel);
+    }
+
+    protected getFrameworkOverrides(): IFrameworkOverrides {
+        return this.beans.frameworkOverrides;
     }
 
     private onRowHeightChanged(): void {

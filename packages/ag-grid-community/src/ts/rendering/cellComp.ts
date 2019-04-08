@@ -27,6 +27,7 @@ import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { _, Promise } from "../utils";
+import {IFrameworkOverrides} from "../interfaces/IFrameworkOverrides";
 
 export class CellComp extends Component {
 
@@ -1799,6 +1800,10 @@ export class CellComp extends Component {
         if (this.includeSelectionComponent) {
             this.addSelectionCheckbox();
         }
+    }
+
+    protected getFrameworkOverrides(): IFrameworkOverrides {
+        return this.beans.frameworkOverrides;
     }
 
     private addRowDragging(): void {
