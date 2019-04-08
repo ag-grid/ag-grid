@@ -53,6 +53,7 @@ export class RangeChartDatasource extends BeanStub implements ChartDatasource {
         this.groupRowsByCategory();
 
         return {
+            cellRange: this.cellRange,
             colIds: this.colIds,
             colDisplayNames: this.colDisplayNames,
             dataGrouped: this.dataGrouped,

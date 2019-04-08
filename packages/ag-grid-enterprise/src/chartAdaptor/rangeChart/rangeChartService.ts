@@ -24,6 +24,7 @@ export interface ChartDatasource {
 }
 
 export interface ChartData {
+    cellRange: CellRange;
     colIds: string[];
     colDisplayNames: string[];
     dataGrouped: any[];

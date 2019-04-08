@@ -9,6 +9,7 @@ import {
     EventService
 } from "ag-grid-community";
 import {ChartData, ChartDatasource} from "../rangeChart/rangeChartService";
+import {RangeController} from "../../rangeController";
 
 export interface ChartModelUpdatedEvent extends AgEvent {}
 
@@ -23,14 +24,15 @@ export class ChartModel extends BeanStub {
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
 
     private chartType: ChartType;
-
     private chartData: ChartData;
+
     private errors: string[];
 
     private readonly datasource: ChartDatasource;
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rangeController') rangeController: RangeController;
 
     public constructor(chartType: ChartType, datasource: ChartDatasource) {
         super();
@@ -141,5 +143,17 @@ export class ChartModel extends BeanStub {
         if (this.datasource) {
             this.datasource.destroy();
         }
+    }
+
+    public updateCellRange() {
+        const { startRow, endRow, columns } = this.chartData.cellRange;
+
+        this.rangeController.setCellRange({
+            rowStartIndex: startRow && startRow.rowIndex,
+            rowStartPinned: startRow && startRow.rowPinned,
+            rowEndIndex: endRow && endRow.rowIndex,
+            rowEndPinned: endRow && endRow.rowPinned,
+            columns: columns
+        });
     }
 }
