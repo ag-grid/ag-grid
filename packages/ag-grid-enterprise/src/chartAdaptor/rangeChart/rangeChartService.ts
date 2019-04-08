@@ -9,7 +9,6 @@ import {
     Context,
     GridOptionsWrapper,
     IAggFunc,
-    IEventEmitter,
     IRangeChartService,
     PreDestroy
 } from "ag-grid-community";
@@ -18,7 +17,7 @@ import {ChartModel} from "../chartComp/chartModel";
 import {ChartOptions, GridChartComp} from "../chartComp/gridChartComp";
 import {RangeChartDatasource} from "./rangeChartDatasource";
 
-export interface ChartDatasource extends IEventEmitter {
+export interface ChartDatasource {
     getChartData(): ChartData;
     getErrors(): string[];
     destroy(): void;

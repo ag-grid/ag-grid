@@ -100,24 +100,14 @@ export class GridChartComp extends Component {
         }
     }
 
-    private downloadChart() {
-        // TODO use chart / dialog title for filename
-        this.chart.scene.download("chart");
-    }
-
-    public getChart(): Chart<any, string, number> {
-        return this.chart
-    }
-
-    public refresh(): void {
+    private refresh(): void {
         const errors = this.chartModel.getErrors();
         const errorsExist = errors && errors.length > 0;
 
         if (errorsExist) {
             this.showErrorMessageBox();
         } else {
-            const shouldCreateNewChart = this.chartModel.getChartType() !== this.currentChartType;
-            if (shouldCreateNewChart) {
+            if (this.chartModel.getChartType() !== this.currentChartType) {
                 this.createNewChart();
             }
 
@@ -236,6 +226,11 @@ export class GridChartComp extends Component {
 
             pieSeries.setDataAndFields(data, field, 'category');
         });
+    }
+
+    private downloadChart() {
+        // TODO use chart / dialog title for filename
+        this.chart.scene.download("chart");
     }
 
     private addResizeListener() {
