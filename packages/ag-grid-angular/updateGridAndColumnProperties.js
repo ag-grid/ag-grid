@@ -135,7 +135,7 @@ const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const gridPropertiesAndEvents = getGridPropertiesAndEvents();
     const optionsForGrid = {
-        files: './src/agGridNg2.ts',
+        files: './src/agGridAngular.ts',
         from: /(\/\/ @START@)[^]*(\/\/ @END@)/,
         to: `// @START@\n${gridPropertiesAndEvents}    // @END@`,
     };
