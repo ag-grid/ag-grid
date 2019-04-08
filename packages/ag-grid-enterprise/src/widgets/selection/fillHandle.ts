@@ -107,8 +107,6 @@ export class FillHandle extends Component implements IFillHandle<any> {
                 };
                 this.rangeController.setRangeToCell(startPosition);
 
-                this.rowRenderer.getComponentForCell(startPosition).focusCell(true);
-
                 this.rangeController.extendLatestRangeToCell({
                     rowIndex: this.rangeEndRow.rowIndex,
                     rowPinned: undefined,
