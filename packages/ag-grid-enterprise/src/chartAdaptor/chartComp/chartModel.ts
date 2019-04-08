@@ -146,6 +146,8 @@ export class ChartModel extends BeanStub {
     }
 
     public updateCellRange() {
+        if (!this.chartData.cellRange) return;
+
         const { startRow, endRow, columns } = this.chartData.cellRange;
 
         this.rangeController.setCellRange({

@@ -76,9 +76,9 @@ export class GridChartComp extends Component {
         }
 
         this.addMenu();
-        this.addRangeListener();
         this.addResizeListener();
 
+        this.addDestroyableEventListener(this.getGui(), 'focusin', this.updateCellRange.bind(this));
         this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_CLOSE_CHART, this.destroy.bind(this));
@@ -254,12 +254,9 @@ export class GridChartComp extends Component {
         });
     }
 
-    private addRangeListener() {
-        const eGui = this.getGui();
-        this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
-            if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
-            this.chartModel.updateCellRange();
-        });
+    private updateCellRange(focusEvent: FocusEvent) {
+        if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) { return; }
+        this.chartModel.updateCellRange();
     }
 
     public destroy(): void {
