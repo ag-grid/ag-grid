@@ -192,35 +192,11 @@ class TabbedChartMenu extends PopupComponent {
                     }
                 ]
             },
-            TabbedChartMenu.MENU_ITEM_SEPARATOR,
-            {
-                name: localeTextFunc('formatChart', 'Format Chart'),
-                action: () => {
-                    console.log('See chart formatting tool panel...');
-                }
-            },
-            {
-                name: localeTextFunc('testError', 'Show Error Message'),
-                action: () => {
-                    // TODO remove - just for testing
-                    this.chartModel.setErrors(['Something went wrong - sorry!']);
-                }
-            },
             {
                 name: localeTextFunc('downloadChart', 'Download'),
                 action: () => {
                     const event: DownloadChartEvent = {
                         type: ChartMenu.EVENT_DOWNLOAD_CHART
-                    };
-                    this.chartMenu.dispatchEvent(event);
-                }
-            },
-            TabbedChartMenu.MENU_ITEM_SEPARATOR,
-            {
-                name: localeTextFunc('closeDialog', 'Close'),
-                action: () => {
-                    const event: CloseChartEvent = {
-                        type: ChartMenu.EVENT_CLOSE_CHART
                     };
                     this.chartMenu.dispatchEvent(event);
                 }

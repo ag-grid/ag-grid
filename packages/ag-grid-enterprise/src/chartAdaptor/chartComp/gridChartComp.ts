@@ -81,9 +81,9 @@ export class GridChartComp extends Component {
         this.addResizeListener();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.updateCellRange.bind(this));
+
         this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
-        this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_CLOSE_CHART, this.destroy.bind(this));
 
         this.refresh();
     }

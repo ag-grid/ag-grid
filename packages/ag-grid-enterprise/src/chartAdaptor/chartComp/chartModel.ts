@@ -115,12 +115,6 @@ export class ChartModel extends BeanStub {
         return resParts.join(', ');
     }
 
-    //TODO remove - just for testing
-    public setErrors(errors: string[]): void {
-        this.errors = errors;
-        this.raiseChartUpdatedEvent();
-    }
-
     public setChartType(chartType: ChartType): void {
         this.chartType = chartType;
         this.raiseChartUpdatedEvent();
