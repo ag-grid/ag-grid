@@ -182,8 +182,12 @@ export abstract class Chart<D, X, Y> {
         }
 
         if (this.lastPick) {
-            const datum = this.lastPick.node.datum as SeriesNodeDatum<D>;
-            this.showTooltip(this.lastPick.series.getTooltipHtml(datum), event);
+            const lastPick = this.lastPick;
+            const datum = lastPick.node.datum as SeriesNodeDatum<D>;
+            const html = lastPick.series.tooltip && lastPick.series.getTooltipHtml(datum);
+            if (html) {
+                this.showTooltip(html, event);
+            }
         }
     };
 

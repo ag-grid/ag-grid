@@ -290,15 +290,25 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
+        let html: string = '';
         const yField = this.yField;
 
         if (!yField) {
-            return '';
+            return html;
         }
-        const value = nodeDatum.seriesDatum[yField];
-        if (typeof(value) === 'number') {
-            return `${toFixed(value)}`;
+
+        if (this.tooltipRenderer && this.xField) {
+            html = this.tooltipRenderer(nodeDatum.seriesDatum, yField, this.xField);
+        } else {
+            const value = nodeDatum.seriesDatum[yField];
+            if (typeof(value) === 'number') {
+                html = `${toFixed(value)}`;
+            } else {
+                html = value.toString();
+            }
         }
-        return value.toString();
+        return html;
     }
+
+    tooltipRenderer?: (datum: D, yField: Extract<keyof D, string>, xField: Extract<keyof D, string>) => string;
 }
