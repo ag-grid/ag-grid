@@ -452,11 +452,15 @@ export class Dialog extends PopupComponent {
     }
 
     public destroy(): void {
-        this.close();
-
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
+        }
+
+        const eGui = this.getGui();
+
+        if (eGui && eGui.offsetParent) {
+            this.close();
         }
 
         super.destroy();
