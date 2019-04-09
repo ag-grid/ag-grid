@@ -956,19 +956,19 @@
 
     .ag-ltr, .ag-rtl {
         .ag-selection-fill-top {
-            border-top: 1px dotted $primary-color;
+            border-top: 1px dashed $primary-color;
         }
     
         .ag-selection-fill-right {
-            border-right: 1px dotted $primary-color;
+            border-right: 1px dashed $primary-color;
         }
     
         .ag-selection-fill-bottom {
-            border-bottom: 1px dotted $primary-color;
+            border-bottom: 1px dashed $primary-color;
         }
     
         .ag-selection-fill-left {
-            border-left: 1px dotted $primary-color;
+            border-left: 1px dashed $primary-color;
         }
     }
 
