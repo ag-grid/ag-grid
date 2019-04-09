@@ -121,11 +121,9 @@ export class ChartModel extends BeanStub {
     }
 
     public getData(): any[] {
-        const data: any[] = [];
-
+        const res: any[] = [];
         for (let i = 0; i < this.chartData.length; i++) {
             const data = this.chartData[i];
-
             const item: any = {
                 category: data[this.selectedCategory.getColId()]
             };
@@ -134,9 +132,9 @@ export class ChartModel extends BeanStub {
                 item[field.getColId()] = data[field.getColId()];
             });
 
-            data.push(item);
+            res.push(item);
         }
-        return data;
+        return res;
     }
 
     public setChartType(chartType: ChartType): void {
