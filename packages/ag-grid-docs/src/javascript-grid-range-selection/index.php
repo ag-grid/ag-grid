@@ -134,14 +134,40 @@ interface RowPosition {
     exclusively, then call clearRangeSelection() first. The method takes the following params:
         <snippet>
 interface AddCellRangeParams {
+
+    // start row
     rowStartIndex?: number;
-    rowStartPinned?: string;
+    rowStartPinned?: string; // either 'top', 'bottom' or undefined
+
+    // end row
     rowEndIndex?: number;
-    rowEndPinned?: string;
+    rowEndPinned?: string; // either 'top', 'bottom' or undefined
+
+    // columns
     columnStart?: string | Column;
     columnEnd?: string | Column;
+    columns?: (string | Column)[];
 }
 </snippet>
+    </p>
+
+    <p>
+        Ranges are normally bounded by a start and end row. However it is also possible to define a range
+        unbounded by rows (ie to contain all rows). For an unbounded range, do not provided start or end
+        row positions.
+    </p>
+
+    <p>
+        Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned
+        can be either 'top' (row is in pinned top section), 'bottom' (row in in pinned bottom section) or
+        undefined (row is in the main body). See <a href="../javascript-grid-row-pinning">Row Pinning</a>
+        for information on row pinning.
+    </p>
+
+    <p>
+        Ranges are defined by a list of columns. Pass in either a) a list of columns or b) a start and end
+        column and let the grid work out the columns in between. Passing a list of columns instead of a start and
+        end column has the advantage that the columns do not need to be contiguous.
     </p>
 
     <h3>Callback <code>processCellForClipboard()</code></h3>

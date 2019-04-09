@@ -1,10 +1,5 @@
 var columnDefs = [
     {field: "athlete", width: 150, enableRowGroup: true},
-    {field: "age"},
-    {field: "country", enableRowGroup: true},
-    {field: "year", enableRowGroup: true},
-    {field: "sport", enableRowGroup: true},
-    {field: "date"},
     {field: "gold", enableValue: true},
     {field: "silver", enableValue: true},
     {field: "bronze", enableValue: true},
