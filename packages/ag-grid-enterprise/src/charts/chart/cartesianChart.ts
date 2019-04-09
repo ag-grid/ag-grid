@@ -27,6 +27,16 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         return this._yAxis;
     }
 
+    set series(values: Series<D, X, Y>[]) {
+        this.removeAllSeries();
+        values.forEach(series => {
+            this.addSeries(series);
+        });
+    }
+    get series(): Series<D, X, Y>[] {
+        return this._series;
+    }
+
     addSeries(series: Series<D, X, Y>): void {
         this.seriesClipRect.append(series.group);
         this.series.push(series);
@@ -34,12 +44,29 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         this.layoutPending = true;
     }
 
+    removeSeries(value: Series<D, X, Y>): boolean {
+        const allSeries = this.series;
+
+        for (let i = 0; i < allSeries.length; i++) {
+            const series = allSeries[i];
+
+            if (series === value) {
+                allSeries.splice(i, 1);
+                series.chart = null;
+                this.seriesClipRect.removeChild(series.group);
+                this.layoutPending = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
     removeAllSeries(): void {
         this.series.forEach(series => {
             series.chart = null;
             this.seriesClipRect.removeChild(series.group);
         });
-        this.series = [];
+        this._series = []; // using `_series` instead of `series` to prevent infinite recursion
         this.layoutPending = true;
     }
 
