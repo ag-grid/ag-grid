@@ -957,18 +957,30 @@
     .ag-ltr, .ag-rtl {
         .ag-selection-fill-top {
             border-top: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-top: 1px dashed darkgrey;
+            }
         }
     
         .ag-selection-fill-right {
             border-right: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-right: 1px dashed darkgrey;
+            }
         }
     
         .ag-selection-fill-bottom {
             border-bottom: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-bottom: 1px dashed darkgrey;
+            }
         }
     
         .ag-selection-fill-left {
             border-left: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-left: 1px dashed darkgrey;
+            }
         }
     }
 
