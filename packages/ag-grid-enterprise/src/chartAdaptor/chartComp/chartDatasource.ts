@@ -25,7 +25,7 @@ export class ChartDatasource extends BeanStub {
         this.aggFunc = aggFunc;
     }
 
-    public getChartData(categories: Column[], fields: Column[], startRow: number, endRow: number, aggFunc?: IAggFunc | string): any [] {
+    public getData(categories: Column[], fields: Column[], startRow: number, endRow: number, aggFunc?: IAggFunc | string): any [] {
         this.aggFunc = aggFunc!;
         this.categories = categories;
         this.fields = fields;

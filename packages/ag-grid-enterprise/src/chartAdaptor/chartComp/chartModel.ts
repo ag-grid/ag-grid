@@ -80,7 +80,7 @@ export class ChartModel extends BeanStub {
     }
 
     private updateModel() {
-        this.chartData = this.datasource.getChartData(this.categories, this.fields, this.startRow, this.endRow, this.aggFunc);
+        this.chartData = this.datasource.getData(this.categories, this.fields, this.startRow, this.endRow, this.aggFunc);
         this.errors = this.datasource.getErrors();
 
         this.raiseChartUpdatedEvent();
@@ -112,8 +112,7 @@ export class ChartModel extends BeanStub {
         return allDisplayedColumns.map(column => {
             const colId = column.getColId();
 
-            let displayName = this.columnController.getDisplayNameForColumn(column, 'chart');
-            displayName = displayName ? displayName : '';
+            let displayName = this.columnController.getDisplayNameForColumn(column, 'chart') as string;
 
             const selectedCol = selectedColumns.filter(col => col.getColId() === colId);
             const selected = selectedCol && selectedCol.length === 1;
@@ -125,23 +124,19 @@ export class ChartModel extends BeanStub {
         const data: any[] = [];
 
         for (let i = 0; i < this.chartData.length; i++) {
+            const data = this.chartData[i];
+
             const item: any = {
-                category: this.getCategoryValue(i)
+                category: data[this.selectedCategory.getColId()]
             };
 
             this.fields.forEach(field => {
-                const data = this.chartData[i];
                 item[field.getColId()] = data[field.getColId()];
             });
 
             data.push(item);
         }
         return data;
-    }
-
-    private getCategoryValue(i: number): string {
-        const data = this.chartData[i];
-        return data[this.selectedCategory.getColId()];
     }
 
     public setChartType(chartType: ChartType): void {

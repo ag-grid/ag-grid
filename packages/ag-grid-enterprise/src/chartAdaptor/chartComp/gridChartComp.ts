@@ -204,6 +204,7 @@ export class GridChartComp extends Component {
         const fields = this.chartModel.getFields();
 
         const lineChart = this.chart as CartesianChart<any, string, number>;
+
         lineChart.removeAllSeries();
 
         lineChart.series = fields.map((field: string, index: number) => {
@@ -224,27 +225,20 @@ export class GridChartComp extends Component {
         const fields = this.chartModel.getFields();
 
         const pieChart = this.chart as PolarChart<any, string, number>;
-        pieChart.removeAllSeries();
 
         const singleField = fields.length === 1;
         const thickness = singleField ? 0 : 20;
         const padding = singleField ? 0 : 10;
         let offset = 0;
 
-        fields.forEach((field: string) => {
-            let pieSeries = (pieChart.series as PieSeries<any, string, number>[])
-                .filter(series => {
-                    const pieSeries = series as PieSeries<any, string, number>;
-                    return pieSeries.angleField === field;
-                })[0];
+        pieChart.removeAllSeries();
 
-            if (!pieSeries) {
-                pieSeries = new PieSeries<any, string, number>();
-                pieSeries.tooltip = this.chartOptions.showTooltips;
-                pieSeries.lineWidth = 1;
-                pieSeries.calloutWidth = 1;
-                pieChart.addSeries(pieSeries);
-            }
+        pieChart.series = fields.map((field: string) => {
+            const pieSeries = new PieSeries<any, string, number>();
+            pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.lineWidth = 1;
+            pieSeries.calloutWidth = 1;
+            pieChart.addSeries(pieSeries);
 
             pieSeries.outerRadiusOffset = offset;
             offset -= thickness;
@@ -252,6 +246,8 @@ export class GridChartComp extends Component {
             offset -= padding;
 
             pieSeries.setDataAndFields(data, field);
+
+            return pieSeries;
         });
     }
 
@@ -274,9 +270,7 @@ export class GridChartComp extends Component {
     }
 
     private updateCellRange(focusEvent: FocusEvent) {
-        if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
-            return;
-        }
+        if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) return;
         this.chartModel.updateCellRange();
     }
 
