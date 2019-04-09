@@ -1176,6 +1176,8 @@ export class Utils {
         checkboxCheckedReadOnly: 'checkbox-checked-readonly',
         checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
         checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
+        radioButtonOn: 'radio-button-on',
+        radioButtonOff: 'radio-button-off',
         groupLoading: 'loading',
         menu: 'menu',
         filter: 'filter',

@@ -192,6 +192,7 @@ export { StylingService } from "./styling/stylingService";
 
 // widgets
 export { AgCheckbox } from "./widgets/agCheckbox";
+export { AgRadioButton } from "./widgets/agRadioButton";
 export { Dialog } from "./widgets/dialog";
 export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";

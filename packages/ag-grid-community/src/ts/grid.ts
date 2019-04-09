@@ -38,6 +38,7 @@ import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
+import { AgRadioButton } from "./widgets/AgRadioButton";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { IFrameworkOverrides } from "./interfaces/IFrameworkOverrides";
 import { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
@@ -191,6 +192,7 @@ export class Grid {
 
         let components = [
             {componentName: 'AgCheckbox', theClass: AgCheckbox},
+            {componentName: 'AgRadioButton', theClass: AgRadioButton},
             {componentName: 'AgGridComp', theClass: GridPanel},
             {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
             {componentName: 'AgPagination', theClass: PaginationComp},
