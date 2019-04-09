@@ -67,7 +67,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set chart(chart: CartesianChart<D, string, number> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
-            this.update();
+            if (chart) {
+                chart.layoutPending = true;
+            }
         }
     }
     get chart(): CartesianChart<D, string, number> | null {
