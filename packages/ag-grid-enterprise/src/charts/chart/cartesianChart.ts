@@ -37,27 +37,37 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         return this._series;
     }
 
-    addSeries(series: Series<D, X, Y>): void {
-        this.seriesClipRect.append(series.group);
-        this.series.push(series);
-        series.chart = this;
-        this.layoutPending = true;
+    addSeries(series: Series<D, X, Y>, before: Series<D, X, Y> | null = null): boolean {
+        const canAdd = this.series.indexOf(series) < 0;
+
+        if (canAdd) {
+            const beforeIndex = before ? this.series.indexOf(before) : -1;
+            if (beforeIndex >= 0) {
+                this.series.splice(beforeIndex, 0, series);
+                this.seriesClipRect.insertBefore(series.group, before!.group);
+            } else {
+                this.series.push(series);
+                this.seriesClipRect.append(series.group);
+            }
+            series.chart = this;
+            this.layoutPending = true;
+            return true;
+        }
+
+        return false;
     }
 
-    removeSeries(value: Series<D, X, Y>): boolean {
-        const allSeries = this.series;
+    removeSeries(series: Series<D, X, Y>): boolean {
+        const index = this.series.indexOf(series);
 
-        for (let i = 0; i < allSeries.length; i++) {
-            const series = allSeries[i];
-
-            if (series === value) {
-                allSeries.splice(i, 1);
-                series.chart = null;
-                this.seriesClipRect.removeChild(series.group);
-                this.layoutPending = true;
-                return true;
-            }
+        if (index >= 0) {
+            this.series.splice(index, 1);
+            series.chart = null;
+            this.seriesClipRect.removeChild(series.group);
+            this.layoutPending = true;
+            return true;
         }
+
         return false;
     }
 
