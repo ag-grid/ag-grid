@@ -57,6 +57,9 @@ export abstract class Chart<D, X, Y> {
         this.scene.size = value;
         this.layoutPending = true;
     }
+    get size(): [number, number] {
+        return [this.scene.width, this.scene.height];
+    }
 
     /**
      * The width of the chart in CSS pixels.
