@@ -11,9 +11,8 @@ import {
     IAggFunc,
     PostConstruct
 } from "ag-grid-community";
-import {ChartDatasource} from "../rangeChart/rangeChartService";
 import {RangeController} from "../../rangeController";
-import {RangeChartDatasource} from "../rangeChart/rangeChartDatasource";
+import {ChartDatasource} from "./chartDatasource";
 
 export interface ChartModelUpdatedEvent extends AgEvent {}
 
@@ -57,7 +56,7 @@ export class ChartModel extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.datasource = new RangeChartDatasource();
+        this.datasource = new ChartDatasource();
         this.getContext().wireBean(this.datasource);
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));

@@ -1,8 +1,7 @@
 import {_, Autowired, BeanStub, Column, IAggFunc, IRowModel, ValueService} from "ag-grid-community";
 import {AggregationStage} from "../../rowStages/aggregationStage";
-import {ChartDatasource} from "./rangeChartService";
 
-export class RangeChartDatasource extends BeanStub implements ChartDatasource {
+export class ChartDatasource extends BeanStub {
 
     @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('valueService') valueService: ValueService;

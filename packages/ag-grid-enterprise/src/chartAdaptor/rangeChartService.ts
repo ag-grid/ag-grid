@@ -5,22 +5,17 @@ import {
     CellRange,
     ChartRangeParams,
     ChartRef,
-    ChartType, Column,
+    ChartType,
     Context,
     GridOptionsWrapper,
     IAggFunc,
     IRangeChartService,
     PreDestroy
 } from "ag-grid-community";
-import { RangeController } from "../../rangeController";
-import { ChartModel } from "../chartComp/chartModel";
-import { ChartOptions, GridChartComp } from "../chartComp/gridChartComp";
+import { RangeController } from "../rangeController";
+import { ChartModel } from "./chartComp/chartModel";
+import { ChartOptions, GridChartComp } from "./chartComp/gridChartComp";
 
-export interface ChartDatasource {
-    getChartData(categories: Column[], fields: Column[], startRow: number, endRow: number, aggFunc?: IAggFunc | string): any[];
-    getErrors(): string[];
-    destroy(): void;
-}
 
 @Bean('rangeChartService')
 export class RangeChartService implements IRangeChartService {
