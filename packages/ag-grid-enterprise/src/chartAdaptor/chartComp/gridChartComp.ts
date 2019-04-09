@@ -283,7 +283,6 @@ export class GridChartComp extends Component {
     }
 
     public destroy(): void {
-        console.log('GridChartComp.destroy()');
         super.destroy();
 
         if (this.chartModel) {

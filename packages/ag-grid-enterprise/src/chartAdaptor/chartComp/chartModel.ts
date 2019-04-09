@@ -150,8 +150,13 @@ export class ChartModel extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
-    public update(colState: ColState[]): void {
-        //this.colState = colState;
+    public update(colState: ColState): void {
+        if (colState.selected) {
+            const newColumn = this.columnController.getGridColumn(colState.colId) as Column;
+            this.fields.push(newColumn)
+        } else {
+            this.fields = this.fields.filter(col => col.getColId() !== colState.colId);
+        }
 
         this.updateModel();
 
