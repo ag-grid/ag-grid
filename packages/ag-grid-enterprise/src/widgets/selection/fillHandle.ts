@@ -135,9 +135,17 @@ export class FillHandle extends Component implements IFillHandle {
 
             const isBefore = RowPositionUtils.before(currentPosition, initialPosition);
 
-            if (isBefore &&
-                currentPosition.rowPinned == this.rangeStartRow.rowPinned &&
-                currentPosition.rowIndex >= this.rangeStartRow.rowIndex
+            if (isBefore && (
+                    (
+                        currentPosition.rowPinned == this.rangeStartRow.rowPinned &&
+                        currentPosition.rowIndex >= this.rangeStartRow.rowIndex
+                    ) ||
+                    (
+                        this.rangeStartRow.rowPinned != this.rangeEndRow.rowPinned &&
+                        currentPosition.rowPinned == this.rangeEndRow.rowPinned &&
+                        currentPosition.rowIndex <= this.rangeEndRow.rowIndex
+                    )
+                )
             ) { 
                 this.reduceVertical(initialPosition, currentPosition);
             }
@@ -180,7 +188,7 @@ export class FillHandle extends Component implements IFillHandle {
                     column: this.cellRange.columns[i]
                 });
 
-                if (!cellComp) { break; }
+                if (!cellComp) { continue; }
                 this.markedCellComps.push(cellComp);
 
                 const eGui = cellComp.getGui();
@@ -213,7 +221,8 @@ export class FillHandle extends Component implements IFillHandle {
                     column: this.cellRange.columns[i]
                 });
 
-                if (!cellComp) { break; }
+                if (!cellComp) { continue; }
+
                 this.markedCellComps.push(cellComp);
 
                 const eGui = cellComp.getGui();
@@ -248,19 +257,19 @@ export class FillHandle extends Component implements IFillHandle {
                     column: column
                 });
 
-                if (!cellComp) { break; }
-                this.markedCellComps.push(cellComp);
+                if (cellComp) {
+                    this.markedCellComps.push(cellComp);
+                    const eGui = cellComp.getGui();
 
-                const eGui = cellComp.getGui();
-
-                _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', RowPositionUtils.sameRow(row, this.rangeStartRow));
-                _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', RowPositionUtils.sameRow(row, this.rangeEndRow));
-                if (isMovingLeft) {
-                    this.isLeft = true;
-                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
-                }
-                else {
-                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[colsToMark.length - 1]);
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', RowPositionUtils.sameRow(row, this.rangeStartRow));
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', RowPositionUtils.sameRow(row, this.rangeEndRow));
+                    if (isMovingLeft) {
+                        this.isLeft = true;
+                        _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
+                    }
+                    else {
+                        _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[colsToMark.length - 1]);
+                    }
                 }
 
                 row = this.cellNavigationService.getRowBelow(row) as RowPosition;
@@ -287,12 +296,11 @@ export class FillHandle extends Component implements IFillHandle {
                     column: column
                 });
 
-                if (!cellComp) { break; }
-                this.markedCellComps.push(cellComp);
-
-                const eGui = cellComp.getGui();
-
-                _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[0]);
+                if (cellComp) {
+                    this.markedCellComps.push(cellComp);
+                    const eGui = cellComp.getGui();
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[0]);
+                }
 
                 row = this.cellNavigationService.getRowBelow(row) as RowPosition;
             }
@@ -327,25 +335,26 @@ export class FillHandle extends Component implements IFillHandle {
         const oldCellComp = this.cellComp;
         const eGui = this.getGui();
 
-        const { startRow, endRow, columns } = cellRange;
-        const isColumnRange = !startRow || !endRow;
+        const isColumnRange = !cellRange.startRow || !cellRange.endRow;
 
-        if (isColumnRange && oldCellComp) {
-            oldCellComp.getGui().removeChild(eGui);
+        if (isColumnRange && eGui.parentElement) {
+            eGui.parentElement.removeChild(eGui);
         }
 
-        let start = this.rangeStartRow = startRow as RowPosition;
-        let end = this.rangeEndRow = endRow as RowPosition;
+        let start = this.rangeStartRow = cellRange.startRow as RowPosition;
+        let end = this.rangeEndRow = cellRange.endRow as RowPosition;
 
-        if (start.rowIndex > end.rowIndex) {
-            this.rangeStartRow = endRow as RowPosition;
-            end = this.rangeEndRow = startRow as RowPosition;
+        const isBefore = RowPositionUtils.before(end, start);
+
+        if (isBefore) {
+            this.rangeStartRow = end;
+            this.rangeEndRow = start;
         }
         
         const cellComp = this.rowRenderer.getComponentForCell({
-            rowIndex: end.rowIndex,
-            rowPinned: end.rowPinned,
-            column: columns[columns.length - 1]
+            rowIndex: this.rangeEndRow.rowIndex,
+            rowPinned: this.rangeEndRow.rowPinned,
+            column: cellRange.columns[cellRange.columns.length - 1]
         });
 
         if (oldCellComp !== cellComp) {
