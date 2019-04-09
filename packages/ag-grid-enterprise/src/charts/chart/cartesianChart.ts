@@ -34,6 +34,22 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         this.layoutPending = true;
     }
 
+    removeSeries(value: Series<D, X, Y>): boolean {
+        const allSeries = this.series;
+
+        for (let i = 0; i < allSeries.length; i++) {
+            const series = allSeries[i];
+
+            if (series === value) {
+                series.chart = null;
+                this.seriesClipRect.removeChild(series.group);
+                this.layoutPending = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
     removeAllSeries(): void {
         this.series.forEach(series => {
             series.chart = null;
