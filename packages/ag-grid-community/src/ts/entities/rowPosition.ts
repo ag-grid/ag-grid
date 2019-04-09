@@ -13,8 +13,8 @@ export class RowPositionUtils {
         if (!rowA && !rowB) { return true; }
         // if only one missing
         if ((rowA && !rowB) || (!rowA && rowB)) { return false; }
-        // otherwise compare
-        return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned === rowB.rowPinned;
+        // otherwise compare (use == to compare rowPinned because it can be null or undefined)
+        return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned == rowB.rowPinned;
     }
 
     // tests if this row selection is before the other row selection

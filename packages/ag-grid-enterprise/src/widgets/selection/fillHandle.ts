@@ -174,7 +174,7 @@ export class FillHandle extends Component implements IFillHandle {
                     column: this.cellRange.columns[i]
                 });
 
-                if (!cellComp) { continue; }
+                if (!cellComp) { break; }
                 this.markedCellComps.push(cellComp);
 
                 const eGui = cellComp.getGui();
