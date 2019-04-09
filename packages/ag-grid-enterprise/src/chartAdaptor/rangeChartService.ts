@@ -5,32 +5,17 @@ import {
     CellRange,
     ChartRangeParams,
     ChartRef,
-    ChartType, Column,
+    ChartType,
     Context,
     GridOptionsWrapper,
     IAggFunc,
     IRangeChartService,
     PreDestroy
 } from "ag-grid-community";
-import { RangeController } from "../../rangeController";
-import { ChartModel } from "../chartComp/chartModel";
-import { ChartOptions, GridChartComp } from "../chartComp/gridChartComp";
-import { RangeChartDatasource } from "./rangeChartDatasource";
+import { RangeController } from "../rangeController";
+import { ChartModel } from "./chartComp/chartModel";
+import { ChartOptions, GridChartComp } from "./chartComp/gridChartComp";
 
-export interface ChartDatasource {
-    getChartData(): ChartData;
-    getErrors(): string[];
-    destroy(): void;
-}
-
-export interface ChartData {
-    cellRange: CellRange;
-    colIds: string[];
-    colDisplayNames: string[];
-    dataGrouped: any[];
-    colsMapped: {[colId: string]: Column}
-    categoryCols: Column[];
-}
 
 @Bean('rangeChartService')
 export class RangeChartService implements IRangeChartService {
@@ -85,10 +70,7 @@ export class RangeChartService implements IRangeChartService {
             width: 800
         };
 
-        const ds = new RangeChartDatasource(cellRange, aggFunc);
-        this.context.wireBean(ds);
-
-        const chartModel = new ChartModel(chartType, ds);
+        const chartModel = new ChartModel(chartType, cellRange, aggFunc);
         this.context.wireBean(chartModel);
 
         const chartComp = new GridChartComp(chartOptions, chartModel);

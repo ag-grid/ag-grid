@@ -24,7 +24,7 @@ export class ChartColumnPanel extends Component {
         const colStateForMenu = this.chartModel.getColStateForMenu();
 
         colStateForMenu.forEach(colState => {
-            const colStateChanged = () => this.chartModel.update(colStateForMenu);
+            const colStateChanged = (cs: ColState) => this.chartModel.update(cs);
             const columnComp = new ChartPanelColumnComp(colState, colStateChanged);
             this.getContext().wireBean(columnComp);
             this.getGui().appendChild(columnComp.getGui());
@@ -52,7 +52,6 @@ class ChartPanelColumnComp extends Component {
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-drag" ref="eDragHandle"></span>
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
         </div>`;
 
@@ -60,9 +59,9 @@ class ChartPanelColumnComp extends Component {
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
 
     private readonly colState: ColState;
-    private readonly colStateChanged: () => void;
+    private readonly colStateChanged: (colState: ColState) => void;
 
-    constructor(colState: ColState, colStateChanged: () => void) {
+    constructor(colState: ColState, colStateChanged: (colState: ColState) => void) {
         super();
         this.colState = colState;
         this.colStateChanged = colStateChanged;
@@ -90,6 +89,6 @@ class ChartPanelColumnComp extends Component {
 
     private onCheckboxChanged(): void {
         this.colState.selected = this.cbSelect.isSelected();
-        this.colStateChanged();
+        this.colStateChanged(this.colState);
     }
 }

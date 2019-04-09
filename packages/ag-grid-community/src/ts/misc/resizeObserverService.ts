@@ -12,9 +12,11 @@ export class ResizeObserverService {
     public observeResize(element: HTMLElement, callback: () => void): () => void {
         // put in variable, so available to usePolyfill() function below
         const frameworkFactory = this.frameworkOverrides;
-
+        // this gets fired too often and might cause some relayout issues
+        // so we add a debounce to the callback here to avoid the flashing effect.
+        const myFunc = _.debounce(callback, 50);
         const useBrowserResizeObserver = () => {
-            const resizeObserver = new (window as any).ResizeObserver(callback);
+            const resizeObserver = new (window as any).ResizeObserver(myFunc);
             resizeObserver.observe(element);
             return () => resizeObserver.disconnect();
         };
