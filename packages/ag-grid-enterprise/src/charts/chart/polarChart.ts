@@ -1,6 +1,7 @@
 import { Chart } from "./chart";
 import { PolarSeries } from "./series/polarSeries";
 import { Padding } from "../util/padding";
+import { Node } from "../scene/node";
 
 export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
     centerX: number = 0;
@@ -15,15 +16,19 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
         left: 50
     };
 
-    protected _series: PolarSeries<D, X, Y>[] = [];
+    get seriesRoot(): Node {
+        return this.scene.root!;
+    }
 
-    addSeries(series: PolarSeries<D, X, Y>): void {
-        if (this.scene.root) {
-            this.scene.root.append(series.group);
-        }
-        this._series.push(series);
-        series.chart = this;
-        this.layoutPending = true;
+    protected _series: PolarSeries<D, X, Y>[] = [];
+    set series(values: PolarSeries<D, X, Y>[]) {
+        this.removeAllSeries();
+        values.forEach(series => {
+            this.addSeries(series, null);
+        });
+    }
+    get series(): PolarSeries<D, X, Y>[] {
+        return this._series;
     }
 
     performLayout(): void {

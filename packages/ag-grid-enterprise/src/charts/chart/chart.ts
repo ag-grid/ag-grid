@@ -106,12 +106,58 @@ export abstract class Chart<D, X, Y> {
 
     abstract performLayout(): void;
 
+    abstract get seriesRoot(): Node;
+
     protected _series: Series<D, X, Y>[] = [];
     set series(values: Series<D, X, Y>[]) {
         this._series = values;
     }
     get series(): Series<D, X, Y>[] {
         return this._series;
+    }
+
+    addSeries(series: Series<D, X, Y>, before: Series<D, X, Y> | null = null): boolean {
+        const canAdd = this.series.indexOf(series) < 0;
+
+        if (canAdd) {
+            const beforeIndex = before ? this.series.indexOf(before) : -1;
+
+            if (beforeIndex >= 0) {
+                this.series.splice(beforeIndex, 0, series);
+                this.seriesRoot.insertBefore(series.group, before!.group);
+            } else {
+                this.series.push(series);
+                this.seriesRoot.append(series.group);
+            }
+            series.chart = this;
+            this.layoutPending = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    removeSeries(series: Series<D, X, Y>): boolean {
+        const index = this.series.indexOf(series);
+
+        if (index >= 0) {
+            this.series.splice(index, 1);
+            series.chart = null;
+            this.seriesRoot.removeChild(series.group);
+            this.layoutPending = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    removeAllSeries(): void {
+        this.series.forEach(series => {
+            series.chart = null;
+            this.seriesRoot.removeChild(series.group);
+        });
+        this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+        this.layoutPending = true;
     }
 
     private setupListeners(chartElement: HTMLCanvasElement) {

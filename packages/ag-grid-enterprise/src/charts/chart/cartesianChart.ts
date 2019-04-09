@@ -17,6 +17,10 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
     private seriesClipRect = new ClipRect();
 
+    get seriesRoot(): ClipRect {
+        return this.seriesClipRect;
+    }
+
     private readonly _xAxis: Axis<X>;
     get xAxis(): Axis<X> {
         return this._xAxis;
@@ -35,49 +39,6 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
     }
     get series(): Series<D, X, Y>[] {
         return this._series;
-    }
-
-    addSeries(series: Series<D, X, Y>, before: Series<D, X, Y> | null = null): boolean {
-        const canAdd = this.series.indexOf(series) < 0;
-
-        if (canAdd) {
-            const beforeIndex = before ? this.series.indexOf(before) : -1;
-            if (beforeIndex >= 0) {
-                this.series.splice(beforeIndex, 0, series);
-                this.seriesClipRect.insertBefore(series.group, before!.group);
-            } else {
-                this.series.push(series);
-                this.seriesClipRect.append(series.group);
-            }
-            series.chart = this;
-            this.layoutPending = true;
-            return true;
-        }
-
-        return false;
-    }
-
-    removeSeries(series: Series<D, X, Y>): boolean {
-        const index = this.series.indexOf(series);
-
-        if (index >= 0) {
-            this.series.splice(index, 1);
-            series.chart = null;
-            this.seriesClipRect.removeChild(series.group);
-            this.layoutPending = true;
-            return true;
-        }
-
-        return false;
-    }
-
-    removeAllSeries(): void {
-        this.series.forEach(series => {
-            series.chart = null;
-            this.seriesClipRect.removeChild(series.group);
-        });
-        this._series = []; // using `_series` instead of `series` to prevent infinite recursion
-        this.layoutPending = true;
     }
 
     private autoPadding: Padding = {
