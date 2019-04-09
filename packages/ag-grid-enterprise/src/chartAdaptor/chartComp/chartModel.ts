@@ -152,14 +152,37 @@ export class ChartModel extends BeanStub {
     public update(colState: ColState): void {
         if (colState.selected) {
             const newColumn = this.columnController.getGridColumn(colState.colId) as Column;
-            this.fields.push(newColumn)
+
+            const displayedCols = this.columnController.getAllDisplayedColumns();
+
+            const isDimension = (col: Column) =>
+                // col has to be defined by user as a dimension
+                (col.getColDef().enableRowGroup || col.getColDef().enablePivot)
+                &&
+                // plus the col must be visible
+                displayedCols.indexOf(col) >= 0;
+
+            const isValueCol = (col: Column) =>
+                // all columns must have enableValue enabled
+                col.getColDef().enableValue
+                // and the column must be visible in the grid. this gets around issues where user switches
+                // into / our of pivot mode (range no longer valid as switching between primary and secondary cols)
+                && displayedCols.indexOf(col) >= 0;
+
+            if (isDimension(newColumn)) {
+                this.categories = [newColumn];
+                this.selectedCategory = newColumn;
+            }
+
+            if (isValueCol(newColumn)) {
+                this.fields.push(newColumn);
+            }
+
         } else {
             this.fields = this.fields.filter(col => col.getColId() !== colState.colId);
         }
 
         this.updateModel();
-
-        this.raiseChartUpdatedEvent();
     }
 
     private raiseChartUpdatedEvent() {

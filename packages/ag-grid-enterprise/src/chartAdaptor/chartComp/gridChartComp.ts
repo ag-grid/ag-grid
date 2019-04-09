@@ -10,16 +10,16 @@ import {
     RefSelector,
     ResizeObserverService
 } from "ag-grid-community";
-import { GridChartFactory } from "./gridChartFactory";
-import { Chart } from "../../charts/chart/chart";
-import { BarSeries } from "../../charts/chart/series/barSeries";
-import { LineSeries } from "../../charts/chart/series/lineSeries";
-import { PieSeries } from "../../charts/chart/series/pieSeries";
+import {GridChartFactory} from "./gridChartFactory";
+import {Chart} from "../../charts/chart/chart";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {LineSeries} from "../../charts/chart/series/lineSeries";
+import {PieSeries} from "../../charts/chart/series/pieSeries";
 import colors from "../../charts/chart/colors";
-import { CartesianChart } from "../../charts/chart/cartesianChart";
-import { PolarChart } from "../../charts/chart/polarChart";
-import { ChartMenu } from "./menu/chartMenu";
-import { ChartModel } from "./chartModel";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {PolarChart} from "../../charts/chart/polarChart";
+import {ChartMenu} from "./menu/chartMenu";
+import {ChartModel} from "./chartModel";
 
 export interface ChartOptions {
     insideDialog: boolean,
@@ -194,6 +194,7 @@ export class GridChartComp extends Component {
         const fields = this.chartModel.getFields();
 
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
+
         barSeries.yFieldNames = this.chartModel.getFieldNames();
         barSeries.setDataAndFields(data, 'category', fields);
     }
@@ -203,24 +204,18 @@ export class GridChartComp extends Component {
         const fields = this.chartModel.getFields();
 
         const lineChart = this.chart as CartesianChart<any, string, number>;
+        lineChart.removeAllSeries();
 
-        fields.forEach((field: string, index: number) => {
-            let lineSeries = (lineChart.series as LineSeries<any, string, number>[])
-                .filter(series => {
-                    const lineSeries = series as LineSeries<any, string, number>;
-                    return lineSeries.yField === field;
-                })[0];
-
-            if (!lineSeries) {
-                lineSeries = new LineSeries<any, string, number>();
-                lineSeries.tooltip = this.chartOptions.showTooltips;
-                lineSeries.lineWidth = 2;
-                lineSeries.markerRadius = 3;
-                lineSeries.color = colors[index % colors.length];
-                lineChart.addSeries(lineSeries);
-            }
+        lineChart.series = fields.map((field: string, index: number) => {
+            const lineSeries = new LineSeries<any, string, number>();
+            lineSeries.tooltip = this.chartOptions.showTooltips;
+            lineSeries.lineWidth = 2;
+            lineSeries.markerRadius = 3;
+            lineSeries.color = colors[index % colors.length];
 
             lineSeries.setDataAndFields(data, 'category', field);
+
+            return lineSeries;
         });
     }
 
@@ -229,6 +224,7 @@ export class GridChartComp extends Component {
         const fields = this.chartModel.getFields();
 
         const pieChart = this.chart as PolarChart<any, string, number>;
+        pieChart.removeAllSeries();
 
         const singleField = fields.length === 1;
         const thickness = singleField ? 0 : 20;
@@ -278,7 +274,9 @@ export class GridChartComp extends Component {
     }
 
     private updateCellRange(focusEvent: FocusEvent) {
-        if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) { return; }
+        if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
+            return;
+        }
         this.chartModel.updateCellRange();
     }
 
