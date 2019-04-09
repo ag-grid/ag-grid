@@ -414,11 +414,11 @@
     ////////////////////////////////////////
     // Icons
     ////////////////////////////////////////
-    $icons: aggregation arrows asc radio-button-on radio-button-off checkbox-checked-readonly checkbox-checked
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked
             checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
             column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu
-            minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross
-            tree-open tree-closed tree-indeterminate;
+            minus none not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right 
+            small-up small-down tick cross tree-open tree-closed tree-indeterminate;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
