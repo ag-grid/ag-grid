@@ -64,7 +64,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
      */
     private groupScale = new BandScale<string>();
 
-    set chart(chart: CartesianChart<D, string, number> | null) {
+    set chart(chart: CartesianChart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             if (chart) {
@@ -72,8 +72,8 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             }
         }
     }
-    get chart(): CartesianChart<D, string, number> | null {
-        return this._chart as CartesianChart<D, string, number>;
+    get chart(): CartesianChart<D, X, Y> | null {
+        return this._chart as CartesianChart<D, X, Y>;
     }
 
     private _data: any[] = [];
@@ -391,13 +391,13 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         for (let i = 0; i < n; i++) {
             const category = xData[i];
             const values = yData[i];
-            const x = xScale.convert(category);
+            const x = xScale.convert(category as any as X);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
                 const yField = yFields[yFieldIndex];
                 const barX = grouped ? x + groupScale.convert(yField) : x;
-                const y = yScale.convert(grouped ? curr : prev + curr);
-                const bottomY = yScale.convert(grouped ? 0 : prev);
+                const y = yScale.convert((grouped ? curr : prev + curr) as any as Y);
+                const bottomY = yScale.convert((grouped ? 0 : prev) as any as Y);
                 const labelText = this.yFieldNames[yFieldIndex];
 
                 groupSelectionData.push({
