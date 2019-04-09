@@ -558,10 +558,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 */
 .ag-cell {
     display: inline-block;
+    overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow: visible;
 }
 
 .ag-cell-wrapper {
