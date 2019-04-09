@@ -38,7 +38,7 @@ import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
-import { AgRadioButton } from "./widgets/AgRadioButton";
+import { AgRadioButton } from "./widgets/agRadioButton";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { IFrameworkOverrides } from "./interfaces/IFrameworkOverrides";
 import { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
