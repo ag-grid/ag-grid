@@ -187,7 +187,7 @@ export class CellNavigationService {
         return lastBodyIndex <= index;
     }
 
-    private getRowAbove(rowIndex: number, pinned: string): RowPosition | null {
+    public getRowAbove(rowIndex: number, pinned: string): RowPosition | null {
         // if already on top row, do nothing
         if (rowIndex === 0) {
             if (pinned === Constants.PINNED_TOP) {
