@@ -26,6 +26,8 @@ export class NavigationService {
     private scrollWidth: number;
     private gridPanel: GridPanel;
 
+    private timeLastPageEventProcessed = 0;
+
     @PostConstruct
     private init(): void {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
@@ -34,8 +36,6 @@ export class NavigationService {
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
     }
-
-    private timeLastPageEventProcessed = 0;
 
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
 

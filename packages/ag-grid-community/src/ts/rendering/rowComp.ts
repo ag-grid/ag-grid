@@ -1408,7 +1408,7 @@ export class RowComp extends Component {
 
         const spanList = Object.keys(this.cellComps)
             .map(name => this.cellComps[name])
-            .filter(cmp => cmp.getColSpanningList().indexOf(column) !== -1);
+            .filter(cmp => cmp && cmp.getColSpanningList().indexOf(column) !== -1);
 
         return spanList.length ? spanList[0] : undefined;
     }

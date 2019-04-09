@@ -16,7 +16,7 @@ import {
 } from 'ag-grid-community';
 import { RangeController } from '../../rangeController';
 
-export class FillHandle extends Component implements IFillHandle<any> {
+export class FillHandle extends Component implements IFillHandle {
 
     @Autowired("rowRenderer") private rowRenderer: RowRenderer;
     @Autowired("dragService") private dragService: DragService;
@@ -45,7 +45,7 @@ export class FillHandle extends Component implements IFillHandle<any> {
     }
 
     @PostConstruct
-    init() {
+    private init() {
         this.dragService.addDragSource({
             eElement: this.getGui(),
             onDragStart: this.onDragStart.bind(this),
@@ -247,7 +247,7 @@ export class FillHandle extends Component implements IFillHandle<any> {
         let end = this.rangeEndRow = endRow as RowPosition;
 
         if (start.rowIndex > end.rowIndex) {
-            start = this.rangeStartRow = endRow as RowPosition;
+            this.rangeStartRow = endRow as RowPosition;
             end = this.rangeEndRow = startRow as RowPosition;
         }
         

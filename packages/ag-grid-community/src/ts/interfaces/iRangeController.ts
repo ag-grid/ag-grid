@@ -24,15 +24,17 @@ export interface IRangeController {
     getRangeEndRow(cellRange: CellRange): RowPosition;
 }
 
-export interface IFillHandle<T> extends IComponent<T> {
+export interface IFillHandle {
     refresh(range: CellRange): void;
+    destroy(): void;
+    getGui(): HTMLElement;
 }
 
 export interface CellRange {
     startRow?: RowPosition;
     endRow?: RowPosition;
     columns: Column[];
-    fillHandle?: IFillHandle<any>;
+    fillHandle?: IFillHandle;
 }
 
 export interface CellRangeParams {

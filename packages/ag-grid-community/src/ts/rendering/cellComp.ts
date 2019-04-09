@@ -98,8 +98,6 @@ export class CellComp extends Component {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
-    private fillHandle: IFillHandle<any>;
-
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp,
                 autoHeightCell: boolean, printLayout: boolean) {
         super();
