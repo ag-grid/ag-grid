@@ -20,7 +20,7 @@ function tickStep(a: number, b: number, count: number): number {
     } else if (error >= e5) {
         step *= 5;
     } else if (error >= e2) {
-        step *= 2
+        step *= 2;
     }
     return b < a ? -step : step;
 }
