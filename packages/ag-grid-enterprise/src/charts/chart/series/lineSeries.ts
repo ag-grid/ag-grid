@@ -62,7 +62,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         return this._data;
     }
 
-    set xField(value: Extract<keyof D, string> | null) {
+    set xField(value: Extract<keyof D, string> | undefined) {
         if (this._xField !== value) {
             this._xField = value;
             if (this.chart) {
@@ -70,11 +70,11 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
             }
         }
     }
-    get xField(): Extract<keyof D, string> | null {
+    get xField(): Extract<keyof D, string> | undefined {
         return this._xField;
     }
 
-    set yField(value: Extract<keyof D, string> | null) {
+    set yField(value: Extract<keyof D, string> | undefined) {
         if (this._yField !== value) {
             this._yField = value;
             if (this.chart) {
@@ -82,7 +82,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
             }
         }
     }
-    get yField(): Extract<keyof D, string> | null {
+    get yField(): Extract<keyof D, string> | undefined {
         return this._yField;
     }
 

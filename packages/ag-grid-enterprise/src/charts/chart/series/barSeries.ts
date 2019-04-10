@@ -87,7 +87,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return this._data;
     }
 
-    set xField(value: Extract<keyof D, string> | null) {
+    set xField(value: Extract<keyof D, string> | undefined) {
         if (this._xField !== value) {
             this._xField = value;
             if (this.chart) {
@@ -95,7 +95,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             }
         }
     }
-    get xField(): Extract<keyof D, string> | null {
+    get xField(): Extract<keyof D, string> | undefined {
         return this._xField;
     }
 

@@ -428,13 +428,11 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 labelField: this.labelField
             });
         } else {
-            const value = nodeDatum.seriesDatum[angleField];
+            const name = this.name && `<strong>${this.name}</strong><br>`;
             const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
-            if (typeof(value) === 'number') {
-                html = `${label}${toFixed(value)}`;
-            } else {
-                html = `${label}${value.toString()}`;
-            }
+            const value = nodeDatum.seriesDatum[angleField];
+            const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();
+            html = `${name}${label}${formattedValue}`;
         }
         return html;
     }

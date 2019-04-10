@@ -14,6 +14,16 @@ export abstract class Series<D, X, Y> {
 
     readonly id: string = this.createId();
 
+    protected _name: string = '';
+    set name(value: string) {
+        if (this._name !== value) {
+            this._name = value;
+        }
+    }
+    get name(): string {
+        return this._name;
+    }
+
     /**
      * The group node that contains all the nodes used to render this series.
      */
