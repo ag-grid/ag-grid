@@ -105,19 +105,25 @@ export class ChartModel extends BeanStub {
         });
     }
 
-    public getColStateForMenu(): ColState[] {
-        const allDisplayedColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        const selectedColumns: Column[] = this.cellRange!.columns;
+    public getColStateForMenu(): {dimensionCols: ColState[], valueCols: ColState[]} {
+        const {dimensionCols, valueCols} = this.getAllChartColumns();
 
-        return allDisplayedColumns.map(column => {
-            const colId = column.getColId();
+        const colStateMapper = (isSelected: (col: Column) => boolean) => {
+            return (column: Column) => {
+                const colId = column.getColId();
+                let displayName = this.columnController.getDisplayNameForColumn(column, 'chart') as string;
+                const selected = isSelected(column);
+                return {column, colId, displayName, selected}
+            }
+        };
 
-            let displayName = this.columnController.getDisplayNameForColumn(column, 'chart') as string;
+        const isDimensionColSelected = (column: Column) => this.selectedCategory.getColId() === column.getColId();
+        const isValueColSelected = (column: Column) => this.fields.indexOf(column) > -1;
 
-            const selectedCol = selectedColumns.filter(col => col.getColId() === colId);
-            const selected = selectedCol && selectedCol.length === 1;
-            return {column, colId, displayName, selected}
-        });
+        return {
+            dimensionCols: dimensionCols.map(colStateMapper(isDimensionColSelected)),
+            valueCols: valueCols.map(colStateMapper(isValueColSelected))
+        }
     }
 
     public getData(): any[] {
@@ -146,28 +152,12 @@ export class ChartModel extends BeanStub {
         if (colState.selected) {
             const newColumn = this.columnController.getGridColumn(colState.colId) as Column;
 
-            const displayedCols = this.columnController.getAllDisplayedColumns();
-
-            const isDimension = (col: Column) =>
-                // col has to be defined by user as a dimension
-                (col.getColDef().enableRowGroup || col.getColDef().enablePivot)
-                &&
-                // plus the col must be visible
-                displayedCols.indexOf(col) >= 0;
-
-            const isValueCol = (col: Column) =>
-                // all columns must have enableValue enabled
-                col.getColDef().enableValue
-                // and the column must be visible in the grid. this gets around issues where user switches
-                // into / our of pivot mode (range no longer valid as switching between primary and secondary cols)
-                && displayedCols.indexOf(col) >= 0;
-
-            if (isDimension(newColumn)) {
+            const {dimensionCols, valueCols} = this.getAllChartColumns();
+            if (dimensionCols.indexOf(newColumn) > -1) {
                 this.categories = [newColumn];
                 this.selectedCategory = newColumn;
             }
-
-            if (isValueCol(newColumn)) {
+            if (valueCols.indexOf(newColumn) > -1) {
                 this.fields.push(newColumn);
             }
 
@@ -196,6 +186,34 @@ export class ChartModel extends BeanStub {
         const categoriesInRange: Column[] = [];
         const fieldsInRange: Column[] = [];
 
+        const {dimensionCols, valueCols} = this.getAllChartColumns();
+
+        // pull out all dimension columns from the range
+        cellRange.columns.forEach(col => {
+            if (dimensionCols.indexOf(col) > -1) {
+                categoriesInRange.push(col);
+            } else if (valueCols.indexOf(col) > -1) {
+                fieldsInRange.push(col);
+            } else {
+                console.warn(`ag-Grid - column '${col.getColId()}' is not configured for charting`);
+            }
+        });
+
+        if (fieldsInRange.length === 0) {
+            this.errors.push('No value column in selected range.');
+        }
+
+        // if no dimension columns in the range, then pull out first dimension column from displayed columns
+        if (categoriesInRange.length === 0 && dimensionCols.length > 0) {
+            categoriesInRange.push(dimensionCols[0]);
+        } else {
+            this.errors.push('No dimension / category columns found.');
+        }
+
+        return {categoriesInRange, fieldsInRange};
+    }
+
+    private getAllChartColumns(): {dimensionCols: Column[], valueCols: Column[]} {
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
         const isDimension = (col: Column) =>
@@ -212,31 +230,17 @@ export class ChartModel extends BeanStub {
             // into / our of pivot mode (range no longer valid as switching between primary and secondary cols)
             && displayedCols.indexOf(col) >= 0;
 
-        // pull out all dimension columns from the range
-        cellRange.columns.forEach(col => {
+        const dimensionCols: Column[] = [];
+        const valueCols: Column[] = [];
+        displayedCols.forEach(col => {
             if (isDimension(col)) {
-                categoriesInRange.push(col);
+                dimensionCols.push(col);
             } else if (isValueCol(col)) {
-                fieldsInRange.push(col);
-            } else {
-                console.warn(`ag-Grid - column '${col.getColId()}' is not configured for charting`);
+                valueCols.push(col);
             }
         });
 
-        if (fieldsInRange.length === 0) {
-            this.errors.push('No value column in selected range.');
-        }
-
-        // if no dimension columns in the range, then pull out first dimension column from displayed columns
-        if (categoriesInRange.length === 0) {
-            displayedCols!.forEach(col => {
-                if (categoriesInRange.length === 0 && isDimension(col)) {
-                    categoriesInRange.push(col);
-                }
-            });
-        }
-
-        return {categoriesInRange, fieldsInRange};
+        return {dimensionCols, valueCols};
     }
 
     public updateCellRange() {

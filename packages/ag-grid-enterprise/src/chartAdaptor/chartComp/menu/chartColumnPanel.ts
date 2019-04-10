@@ -1,18 +1,20 @@
-import { 
+import {
     AgCheckbox,
+    AgRadioButton,
     Component,
     PostConstruct,
     RefSelector,
-    _ 
+    _
 } from "ag-grid-community";
-import { ChartModel, ColState } from "../chartModel";
+import {ChartModel, ColState} from "../chartModel";
 
 export class ChartColumnPanel extends Component {
 
     //TODO refactor class to be chart menu specific
     public static TEMPLATE = `<div class="ag-primary-cols-list-panel"></div>`;
 
-    private columnComps: { [key: string]: ChartPanelColumnComp } = {};
+    private columnComps: { [key: string]: ChartPanelRadioComp | ChartPanelCheckboxComp } = {};
+    private dimensionComps: ChartPanelRadioComp[] = [];
     private chartModel: ChartModel;
 
     constructor(chartModel: ChartModel) {
@@ -21,15 +23,36 @@ export class ChartColumnPanel extends Component {
     }
 
     public init(): void {
-        const colStateForMenu = this.chartModel.getColStateForMenu();
+        const {dimensionCols, valueCols} = this.chartModel.getColStateForMenu();
 
-        colStateForMenu.forEach(colState => {
-            const colStateChanged = (cs: ColState) => this.chartModel.update(cs);
-            const columnComp = new ChartPanelColumnComp(colState, colStateChanged);
-            this.getContext().wireBean(columnComp);
-            this.getGui().appendChild(columnComp.getGui());
-            this.columnComps[colState.colId] = columnComp;
-        });
+        // create ChartPanelRadioComps for dimensions and ChartPanelCheckboxComp for value cols
+        dimensionCols.forEach(this.getColumnStateMapper(true));
+        valueCols.forEach(this.getColumnStateMapper(false));
+    }
+
+    private getColumnStateMapper(dimension: boolean) {
+
+        const checkboxChanged = (updatedColState: ColState) => this.chartModel.update(updatedColState);
+
+        const radioButtonChanged = (radioComp: ChartPanelRadioComp, updatedColState: ColState) => {
+            this.dimensionComps.forEach(comp => comp.select(false));
+            this.chartModel.update(updatedColState);
+            radioComp.select(true);
+        };
+
+        return (colState: ColState) => {
+            const comp = dimension ?
+                new ChartPanelRadioComp(colState, radioButtonChanged) :
+                new ChartPanelCheckboxComp(colState, checkboxChanged);
+
+            this.getContext().wireBean(comp);
+            this.getGui().appendChild(comp.getGui());
+            this.columnComps[colState.colId] = comp;
+
+            if (dimension) {
+                this.dimensionComps.push(comp as ChartPanelRadioComp);
+            }
+        };
     }
 
     public destroy(): void {
@@ -46,7 +69,58 @@ export class ChartColumnPanel extends Component {
     }
 }
 
-class ChartPanelColumnComp extends Component {
+class ChartPanelRadioComp extends Component {
+
+    //TODO refactor class to be chart menu specific
+    private static TEMPLATE =
+        `<div class="ag-column-tool-panel-column">
+            <ag-radio-button ref="rbSelect" class="ag-column-select-checkbox"></ag-radio-button>
+            <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
+        </div>`;
+
+    @RefSelector('eLabel') private eLabel: HTMLElement;
+    @RefSelector('rbSelect') private rbSelect: AgRadioButton;
+
+    private readonly colState: ColState;
+    private readonly selectionChanged: (radioComp: ChartPanelRadioComp, updatedColState: ColState) => void;
+
+    constructor(colState: ColState, selectionChanged: (radioComp: ChartPanelRadioComp, updatedColState: ColState) => void) {
+        super();
+        this.colState = colState;
+        this.selectionChanged = selectionChanged;
+    }
+
+    @PostConstruct
+    public init(): void {
+        this.setTemplate(ChartPanelRadioComp.TEMPLATE);
+
+        this.setLabelName();
+
+        this.rbSelect.setSelected(this.colState.selected);
+
+        this.addDestroyableEventListener(this.rbSelect, 'change', this.onRadioButtonChanged.bind(this));
+        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+    }
+
+    public select(selected: boolean) {
+        this.rbSelect.select(selected);
+    }
+
+    private setLabelName() {
+        this.eLabel.innerHTML = _.escape(this.colState.displayName) as string;
+    }
+
+    private onLabelClicked(): void {
+        this.rbSelect.setSelected(!this.rbSelect.isSelected());
+    }
+
+    private onRadioButtonChanged(): void {
+        this.colState.selected = this.rbSelect.isSelected();
+        this.selectionChanged(this, this.colState);
+    }
+}
+
+class ChartPanelCheckboxComp extends Component {
 
     //TODO refactor class to be chart menu specific
     private static TEMPLATE =
@@ -59,17 +133,17 @@ class ChartPanelColumnComp extends Component {
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
 
     private readonly colState: ColState;
-    private readonly colStateChanged: (colState: ColState) => void;
+    private readonly selectionChanged: (updatedColState: ColState) => void;
 
-    constructor(colState: ColState, colStateChanged: (colState: ColState) => void) {
+    constructor(colState: ColState, selectionChanged: (updatedColState: ColState) => void) {
         super();
         this.colState = colState;
-        this.colStateChanged = colStateChanged;
+        this.selectionChanged = selectionChanged;
     }
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(ChartPanelColumnComp.TEMPLATE);
+        this.setTemplate(ChartPanelCheckboxComp.TEMPLATE);
 
         this.setLabelName();
 
@@ -89,6 +163,6 @@ class ChartPanelColumnComp extends Component {
 
     private onCheckboxChanged(): void {
         this.colState.selected = this.cbSelect.isSelected();
-        this.colStateChanged(this.colState);
+        this.selectionChanged(this.colState);
     }
 }

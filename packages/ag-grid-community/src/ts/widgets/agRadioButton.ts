@@ -82,6 +82,14 @@ export class AgRadioButton extends Component {
         this.setSelected(nextValue);
     }
 
+    public select(selected: boolean): void {
+        if (this.selected === selected) {
+            return;
+        }
+        this.selected = selected;
+        this.updateIcons();
+    }
+
     public setSelected(selected: boolean | null): void {
         if (this.selected === selected) {
             return;

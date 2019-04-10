@@ -229,6 +229,9 @@ class TabbedChartMenu extends PopupComponent {
         if (this.mainMenuList) {
             this.mainMenuList.destroy();
         }
+        if (this.chartColumnPanel) {
+            this.chartColumnPanel.destroy();
+        }
         super.destroy();
     }
 }
