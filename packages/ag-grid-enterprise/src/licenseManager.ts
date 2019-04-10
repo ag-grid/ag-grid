@@ -1,46 +1,29 @@
-import { Autowired, Bean, PreConstruct, _ } from 'ag-grid-community';
-import { MD5 } from './license/md5';
+import {_, Autowired, Bean, PreConstruct} from 'ag-grid-community';
+import {MD5} from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = 'MTU1MzA4OTQ1Njk3Mw==';
-    private static licenseKey:string;
+    private static RELEASE_INFORMATION: string = 'MTU1MzA4OTQ1Njk3Mw==';
+    // private static licenseKey: string = "Adcore_Desarrollo_y_Comunicación_S.L_Sitweb_1Devs1_SaaS_18_April_2019__MTU1NTU0MjAwMDAwMA==3c5a3b0fcc94ec4a5bd5452284b614df";
+    // private static licenseKey: string = "Adcore_Desarrollo_y_Comunicación_S.L_Sit[ur]web_1Devs1_SaaS_18_April_2019__MTU1NTU0MjAwMDAwMA==3c5a3b0fcc94ec4a5bd5452284b614df";
+    // private static licenseKey: string = "My_Co_My_App_Single_Devs__10_June_2019_[v2]_[TRIAL]_MTU2MDEyNDgwMDAwMA==ec73cef7323ec1ed2666237323e562f1";
+    private static licenseKey: string = "My_Co_My_App_Single_Devs__10_June_2019_[v2]_MTU2MDEyNDgwMDAwMA==ec73cef7323ec1ed2666237323e562f1";
     private displayWatermark: boolean = false;
 
     @Autowired('md5') private md5: MD5;
 
     @PreConstruct
     public validateLicense(): void {
-        const gridReleaseDate = LicenseManager.getGridReleaseDate();
-        let valid: boolean = false;
-        let current: boolean = false;
-        let expiry: Date | null = null;
-
         if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
-            const {md5, license} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
+            const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
 
             if (md5 === this.md5.md5(license)) {
-
-                expiry = LicenseManager.extractExpiry(license);
-
-                if (!isNaN(expiry.getTime())) {
-                    valid = true;
-                    current = (gridReleaseDate < expiry);
+                if (_.exists(version) && version) {
+                    this.validateLicenseKeyForVersion(version, isTrial, license);
+                } else {
+                    this.validateLegacyKey(license);
                 }
             }
-        }
-
-        if (!valid) {
-            LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
-                '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
-            this.displayWatermark = true;
-        } else if (!current) {
-            const formattedExpiryDate = LicenseManager.formatDate(expiry);
-            const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
-            LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
-                `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. Please ` +
-                'contact accounts@ag-grid.com to renew your license');
-            this.displayWatermark = true;
         }
     }
 
@@ -53,7 +36,8 @@ export class LicenseManager {
         const hashStart = licenseKey.length - 32;
         const md5 = licenseKey.substring(hashStart);
         const license = licenseKey.substring(0, hashStart);
-        return {md5, license};
+        const [version, isTrial] = LicenseManager.extractBracketedInformation(licenseKey);
+        return {md5, license, version, isTrial};
     }
 
     public getLicenseDetails(licenseKey: string) {
@@ -153,5 +137,83 @@ export class LicenseManager {
 
     static setLicenseKey(licenseKey: string): void {
         LicenseManager.licenseKey = licenseKey;
+    }
+
+    private static extractBracketedInformation(licenseKey: string): [string | null, boolean] {
+        var matches = licenseKey.split('[')
+            .filter(function (v) {
+                return v.indexOf(']') > -1
+            })
+            .map(function (value) {
+                return value.split(']')[0]
+            });
+
+        if (!matches || matches.length === 0) {
+            return [null, false];
+        }
+
+        const isTrial = matches.filter(match => match === 'TRIAL').length === 1;
+        const version = matches.filter(match => match.startsWith("v")).map(match => match.replace(/^v/, ""))[0];
+
+        return [version, isTrial];
+    }
+
+    private validateLicenseKeyForVersion(version: string, isTrial: boolean, license: string) {
+        switch (version) {
+            case "2":
+                if (isTrial) {
+                    this.validateForTrial(license);
+                } else {
+                    this.validateLegacyKey(license);
+                }
+                break;
+        }
+    }
+
+    private validateLegacyKey(license: string) {
+        const gridReleaseDate = LicenseManager.getGridReleaseDate();
+        const expiry = LicenseManager.extractExpiry(license);
+
+        let valid: boolean = false;
+        let current: boolean = false;
+        if (!isNaN(expiry.getTime())) {
+            valid = true;
+            current = (gridReleaseDate < expiry);
+        }
+
+        if (!valid) {
+            LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
+                '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
+            this.displayWatermark = true;
+        } else if (!current) {
+            const formattedExpiryDate = LicenseManager.formatDate(expiry);
+            const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
+            LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
+                `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. Please contact accounts@ag-grid.com to renew your license.`);
+            this.displayWatermark = true;
+        }
+    }
+
+    private validateForTrial(license: string) {
+        const expiry = LicenseManager.extractExpiry(license);
+        const now = new Date();
+
+        let valid: boolean = false;
+        let current: boolean = false;
+        if (!isNaN(expiry.getTime())) {
+            valid = true;
+            current = (expiry > now);
+        }
+
+        if (!valid) {
+            LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
+                '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
+            this.displayWatermark = true;
+        } else if (!current) {
+            const formattedExpiryDate = LicenseManager.formatDate(expiry);
+            LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
+                `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate}. Please contact accounts@ag-grid.com to renew your license.`);
+            this.displayWatermark = true;
+        }
     }
 }

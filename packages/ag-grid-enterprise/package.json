@@ -6,6 +6,7 @@
   "types": "main.d.ts",
   "scripts": {
     "test": "jest",
+    "test:debug": "node --inspect-brk ./node_modules/.bin/jest --no-cache -runInBand",
     "testWithCoverage": "jest --coverage",
     "watchWebpack": "webpack --watch",
     "precheck": "tsc -p tsconfig-precheck.json",
