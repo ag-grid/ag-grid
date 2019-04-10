@@ -95,6 +95,12 @@ export class FillHandle extends Component implements IFillHandle {
         if (this.markedCellComps.length) {
             const isX = this.dragAxis === 'x';
             if (!this.isUp && !this.isLeft) {
+                const startPosition = {
+                    rowIndex: this.rangeStartRow.rowIndex,
+                    rowPinned: this.rangeStartRow.rowPinned,
+                    column: this.cellRange.columns[0]
+                }
+                this.rangeController.setRangeToCell(startPosition);
                 this.rangeController.extendLatestRangeToCell({
                     rowIndex: isX ? this.rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
                     rowPinned: isX ? this.rangeEndRow.rowPinned : this.lastCellMarked!.rowPinned,
