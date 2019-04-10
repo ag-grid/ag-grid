@@ -52,4 +52,10 @@ export abstract class Series<D, X, Y> {
     abstract getTooltipHtml(nodeDatum: SeriesNodeDatum<D>): string;
 
     tooltip: boolean = false;
+
+    scheduleLayout() {
+        if (this.chart) {
+            this.chart.layoutPending = true;
+        }
+    }
 }

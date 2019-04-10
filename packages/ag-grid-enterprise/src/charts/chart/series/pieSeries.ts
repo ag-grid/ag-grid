@@ -62,9 +62,6 @@ export interface PieTooltipRendererParams<D> {
 
 export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
-    protected fieldPropertiesX: (keyof this)[] = ['angleField'];
-    protected fieldPropertiesY: (keyof this)[] = ['radiusField'];
-
     set chart(chart: Chart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
@@ -83,9 +80,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set angleField(value: Extract<keyof D, string> | undefined) {
         if (this._angleField !== value) {
             this._angleField = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get angleField(): Extract<keyof D, string> | undefined {
@@ -99,9 +94,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set radiusField(value: Extract<keyof D, string> | undefined) {
         if (this._radiusField !== value) {
             this._radiusField = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get radiusField(): Extract<keyof D, string> | undefined {
@@ -112,13 +105,22 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set labelField(value: Extract<keyof D, string> | undefined) {
         if (this._labelField !== value) {
             this._labelField = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get labelField(): Extract<keyof D, string> | undefined {
         return this._labelField;
+    }
+
+    _label: boolean = true;
+    set label(value: boolean) {
+        if (this._label !== value) {
+            this._label = value;
+            this.scheduleLayout();
+        }
+    }
+    get label(): boolean {
+        return this._label;
     }
 
     labelFont: string = '12px Tahoma';
@@ -140,9 +142,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get rotation(): number {
@@ -153,9 +153,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set outerRadiusOffset(value: number) {
         if (this._outerRadiusOffset !== value) {
             this._outerRadiusOffset = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get outerRadiusOffset(): number {
@@ -166,9 +164,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set innerRadiusOffset(value: number) {
         if (this._innerRadiusOffset !== value) {
             this._innerRadiusOffset = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get innerRadiusOffset(): number {
@@ -207,9 +203,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
+        this.scheduleLayout();
     }
     get data(): any[] {
         return this._data;
@@ -240,10 +234,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             return angleData.map(datum => sum += datum / angleDataTotal);
         })();
 
-        const labelField = this.labelField;
+        const labelField = this.label && this.labelField;
         let labelData: string[] = [];
         if (labelField) {
-            labelData = data.map(datum => datum[labelField]);
+            labelData = data.map(datum => String(datum[labelField]));
         }
 
         const radiusField = this.radiusField;

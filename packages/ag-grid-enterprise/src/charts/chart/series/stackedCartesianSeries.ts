@@ -2,9 +2,6 @@ import { Series } from "./series";
 
 export abstract class StackedCartesianSeries<D, X, Y> extends Series<D, X, Y> {
 
-    protected fieldPropertiesX: (keyof this)[] = ['xField'];
-    protected fieldPropertiesY: (keyof this)[] = ['yFields'];
-
     protected _xField: Extract<keyof D, string> | null = null;
     abstract set xField(value: Extract<keyof D, string> | null);
     abstract get xField(): Extract<keyof D, string> | null;
