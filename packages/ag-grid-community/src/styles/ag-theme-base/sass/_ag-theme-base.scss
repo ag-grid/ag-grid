@@ -436,6 +436,10 @@
     .ag-icon-checkbox-checked:empty {
         @include colorful-icon($icons-path, "checkbox-checked", $accent-color, map-get($params, "alt-icon-color"));
     }
+    
+    .ag-icon-radio-button-on:empty {
+        @include colorful-icon($icons-path, "radio-button-on", $accent-color, map-get($params, "alt-icon-color"));
+    }
 
     ////////////////////////////////////////
     // Context Menu
