@@ -245,7 +245,8 @@ export class GridChartComp extends Component {
             pieSeries.innerRadiusOffset = offset;
             offset -= padding;
 
-            pieSeries.setDataAndFields(data, field);
+            pieSeries.data = data;
+            pieSeries.angleField = field;
 
             return pieSeries;
         });

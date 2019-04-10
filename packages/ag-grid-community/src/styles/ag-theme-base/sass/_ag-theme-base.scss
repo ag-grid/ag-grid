@@ -1475,6 +1475,21 @@
     }
 
     ////////////////////////////////////////
+    // Chart Component
+    ////////////////////////////////////////
+
+    .ag-chart-menu {
+        background: $background-color;
+        border: 1px solid darken($background-color, 5%);
+        border-radius: 5px;
+        padding: 2px;
+        cursor: pointer;
+        &:hover, &.ag-has-popup {
+            background-color: darken($background-color, 10%);
+        }
+    }
+
+    ////////////////////////////////////////
     // Right-To-Left
     ////////////////////////////////////////
     .ag-rtl {

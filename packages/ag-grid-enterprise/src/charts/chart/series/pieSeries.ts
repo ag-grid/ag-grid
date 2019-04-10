@@ -53,6 +53,13 @@ enum PieSeriesNodeTag {
     Label
 }
 
+export interface PieTooltipRendererParams<D> {
+    datum: D,
+    angleField: Extract<keyof D, string>,
+    radiusField?: Extract<keyof D, string>,
+    labelField?: Extract<keyof D, string>
+}
+
 export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     protected fieldPropertiesX: (keyof this)[] = ['angleField'];
@@ -72,8 +79,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
      * The name of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    _angleField: Extract<keyof D, string> | null = null;
-    set angleField(value: Extract<keyof D, string> | null) {
+    _angleField: Extract<keyof D, string> | undefined = undefined;
+    set angleField(value: Extract<keyof D, string> | undefined) {
         if (this._angleField !== value) {
             this._angleField = value;
             if (this.chart) {
@@ -81,12 +88,28 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             }
         }
     }
-    get angleField(): Extract<keyof D, string> | null {
+    get angleField(): Extract<keyof D, string> | undefined {
         return this._angleField;
     }
 
-    _labelField: Extract<keyof D, string> | null = null;
-    set labelField(value: Extract<keyof D, string> | null) {
+    /**
+     * The name of the numeric field to use to determine the radii of pie slices.
+     */
+    private _radiusField: Extract<keyof D, string> | undefined = undefined;
+    set radiusField(value: Extract<keyof D, string> | undefined) {
+        if (this._radiusField !== value) {
+            this._radiusField = value;
+            if (this.chart) {
+                this.chart.layoutPending = true;
+            }
+        }
+    }
+    get radiusField(): Extract<keyof D, string> | undefined {
+        return this._radiusField;
+    }
+
+    _labelField: Extract<keyof D, string> | undefined = undefined;
+    set labelField(value: Extract<keyof D, string> | undefined) {
         if (this._labelField !== value) {
             this._labelField = value;
             if (this.chart) {
@@ -94,7 +117,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             }
         }
     }
-    get labelField(): Extract<keyof D, string> | null {
+    get labelField(): Extract<keyof D, string> | undefined {
         return this._labelField;
     }
 
@@ -162,37 +185,6 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     strokeStyle: string | null = null;
     lineWidth: number = 2;
     shadow: DropShadow | null = null;
-
-    /**
-     * The name of the numeric field to use to determine the radii of pie slices.
-     */
-    private _radiusField: Extract<keyof D, string> | null = null;
-    set radiusField(value: Extract<keyof D, string> | null) {
-        if (this._radiusField !== value) {
-            this._radiusField = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
-        }
-    }
-    get radiusField(): Extract<keyof D, string> | null {
-        return this._radiusField;
-    }
-
-    setDataAndFields(data: D[],
-                     angleField: Extract<keyof D, string> | null,
-                     labelField: Extract<keyof D, string> | null = null,
-                     radiusField: Extract<keyof D, string> | null = null) {
-
-        this._angleField = angleField;
-        this._labelField = labelField;
-        this._radiusField = radiusField;
-        this._data = data;
-
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
-    }
 
     private angleScale: LinearScale<number> = (() => {
         const scale = scaleLinear();
@@ -435,17 +427,23 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         }
 
         if (this.tooltipRenderer) {
-            html = this.tooltipRenderer(nodeDatum.seriesDatum, angleField, this.radiusField);
+            html = this.tooltipRenderer({
+                datum: nodeDatum.seriesDatum,
+                angleField,
+                radiusField: this.radiusField,
+                labelField: this.labelField
+            });
         } else {
             const value = nodeDatum.seriesDatum[angleField];
+            const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
             if (typeof(value) === 'number') {
-                html = `${toFixed(value)}`;
+                html = `${label}${toFixed(value)}`;
             } else {
-                html = value.toString();
+                html = `${label}${value.toString()}`;
             }
         }
         return html;
     }
 
-    tooltipRenderer?: (datum: D, angleField: Extract<keyof D, string>, radiusField: Extract<keyof D, string> | null) => string;
+    tooltipRenderer?: (params: PieTooltipRendererParams<D>) => string;
 }

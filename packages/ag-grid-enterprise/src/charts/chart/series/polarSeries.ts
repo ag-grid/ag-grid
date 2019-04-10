@@ -34,6 +34,6 @@ export abstract class PolarSeries<D, X, Y> extends Series<D, X, Y> {
      */
     radius: number = 0;
 
-    abstract set angleField(value: Extract<keyof D, string> | null);
-    abstract get angleField(): Extract<keyof D, string> | null;
+    abstract set angleField(value: Extract<keyof D, string> | undefined);
+    abstract get angleField(): Extract<keyof D, string> | undefined;
 }
