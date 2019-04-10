@@ -63,16 +63,18 @@ export class RangeChartService implements IRangeChartService {
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
         const chartOptions: ChartOptions = {
+            chartType: chartType,
             insideDialog: !(container || createChartContainerFunc),
+            aggregate: aggregate,
             showTooltips: true,
             height: 400,
             width: 800
         };
 
-        const chartModel = new ChartModel(chartType, cellRange, aggregate);
+        const chartModel = new ChartModel(chartOptions, cellRange);
         this.context.wireBean(chartModel);
 
-        const chartComp = new GridChartComp(chartOptions, chartModel);
+        const chartComp = new GridChartComp(chartModel);
         this.context.wireBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);

@@ -22,14 +22,15 @@ import {ChartMenu} from "./menu/chartMenu";
 import {ChartModel} from "./chartModel";
 
 export interface ChartOptions {
+    chartType: ChartType,
     insideDialog: boolean,
     showTooltips: boolean,
+    aggregate: boolean,
     height: number,
     width: number
 }
 
 export class GridChartComp extends Component {
-
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
@@ -42,7 +43,6 @@ export class GridChartComp extends Component {
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
 
-    private readonly chartOptions: ChartOptions;
     private readonly chartModel: ChartModel;
 
     private chart: Chart<any, string, number>;
@@ -50,16 +50,11 @@ export class GridChartComp extends Component {
     private chartMenu: ChartMenu;
 
     private currentChartType: ChartType;
-    private shouldDestroyDialog: boolean;
+    private messageBox: MessageBox;
 
-    constructor(chartOptions: ChartOptions, chartModel: ChartModel) {
+    constructor(chartModel: ChartModel) {
         super(GridChartComp.TEMPLATE);
-
-        this.chartOptions = chartOptions;
         this.chartModel = chartModel;
-
-        this.currentChartType = chartModel.getChartType();
-        this.chart = GridChartFactory.createChart(chartModel.getChartType(), chartOptions, this.eChart);
     }
 
     @PostConstruct
@@ -73,7 +68,9 @@ export class GridChartComp extends Component {
             return;
         }
 
-        if (this.chartOptions.insideDialog) {
+        this.createChart();
+
+        if (this.chartModel.isInsideDialog()) {
             this.addDialog();
         }
 
@@ -88,6 +85,26 @@ export class GridChartComp extends Component {
         this.refresh();
     }
 
+    private createChart() {
+        // destroy chart and remove it from DOM
+
+        if (this.chart) {
+            this.chart.destroy();
+            _.clearElement(this.eChart);
+        }
+
+        const chartOptions = {
+            chartType: this.chartModel.getChartType(),
+            parentElement: this.eChart,
+            width: this.chartModel.getWidth(),
+            height: this.chartModel.getHeight(),
+            showTooltips: this.chartModel.isShowTooltips()
+        };
+
+        this.chart = GridChartFactory.createChart(chartOptions);
+        this.currentChartType = this.chartModel.getChartType();
+    }
+
     private addDialog() {
         this.chartDialog = new Dialog({
             resizable: true,
@@ -99,14 +116,7 @@ export class GridChartComp extends Component {
         });
         this.getContext().wireBean(this.chartDialog);
 
-        // by default function dialog's should also be destroyed along with the GridChartComp
-        this.shouldDestroyDialog = true;
-
-        this.chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => {
-            // the dialog has been destroyed so don't invoke Dialog.destroy() again
-            this.shouldDestroyDialog = false;
-            this.destroy();
-        });
+        this.chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => this.destroy());
     }
 
     private addMenu() {
@@ -138,7 +148,7 @@ export class GridChartComp extends Component {
             eGui.innerHTML = html.join('');
         } else {
             if (this.chartModel.getChartType() !== this.currentChartType) {
-                this.createNewChart();
+                this.createChart();
             }
             this.updateChart();
         }
@@ -146,10 +156,9 @@ export class GridChartComp extends Component {
 
     private showErrorMessageBox() {
 
-        // TODO this message box get destroy when grid is destroyed
         const errorMessage = this.chartModel.getErrors().join(' ');
 
-        const messageBox = new MessageBox({
+        this.messageBox = new MessageBox({
             title: 'Charting Error',
             message: errorMessage,
             centered: true,
@@ -159,20 +168,9 @@ export class GridChartComp extends Component {
             height: 150
         });
 
-        this.getContext().wireBean(messageBox);
-    }
+        this.getContext().wireBean(this.messageBox);
 
-    public createNewChart() {
-        // capture current chart dimensions so new chart is same size
-        this.chartOptions.height = this.chart.height;
-        this.chartOptions.width = this.chart.width;
-
-        // destroy chart and remove it from DOM
-        this.chart.destroy();
-        _.clearElement(this.eChart);
-
-        this.currentChartType = this.chartModel.getChartType();
-        this.chart = GridChartFactory.createChart(this.chartModel.getChartType(), this.chartOptions, this.eChart);
+        this.chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => this.destroy());
     }
 
     public updateChart() {
@@ -209,7 +207,7 @@ export class GridChartComp extends Component {
 
         lineChart.series = fields.map((field: string, index: number) => {
             const lineSeries = new LineSeries<any, string, number>();
-            lineSeries.tooltip = this.chartOptions.showTooltips;
+            lineSeries.tooltip = this.chartModel.isShowTooltips();
             lineSeries.lineWidth = 2;
             lineSeries.markerRadius = 3;
             lineSeries.color = colors[index % colors.length];
@@ -235,7 +233,7 @@ export class GridChartComp extends Component {
 
         pieChart.series = fields.map((field: string) => {
             const pieSeries = new PieSeries<any, string, number>();
-            pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.tooltip = this.chartModel.isShowTooltips();
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
             pieChart.addSeries(pieSeries);
@@ -247,6 +245,9 @@ export class GridChartComp extends Component {
 
             pieSeries.data = data;
             pieSeries.angleField = field;
+
+            pieSeries.labelField = 'category';
+            pieSeries.label = false;
 
             return pieSeries;
         });
@@ -265,8 +266,11 @@ export class GridChartComp extends Component {
                 observeResize();
                 return;
             }
-            this.chart.height = _.getInnerHeight(eGui.parentElement as HTMLElement);
-            this.chart.width = _.getInnerWidth(eGui.parentElement as HTMLElement);
+            this.chartModel.setHeight(_.getInnerHeight(eGui.parentElement as HTMLElement));
+            this.chartModel.setWidth(_.getInnerWidth(eGui.parentElement as HTMLElement));
+
+            this.chart.height = this.chartModel.getHeight();
+            this.chart.width = this.chartModel.getWidth();
         });
     }
 
@@ -288,9 +292,14 @@ export class GridChartComp extends Component {
             this.chartMenu.destroy();
         }
 
-        // don't invoke Dialog.destroy() when this.destroy() originates from the dialog itself (prevents destroy loop)
-        if (this.shouldDestroyDialog && this.chartDialog) {
+        // don't want to invoke destroy() on the Dialog / MessageBox (prevents destroy loop)
+        if (this.chartDialog && this.chartDialog.isAlive()) {
             this.chartDialog.destroy();
+        }
+
+        // don't invoke MessageBox.destroy() when this.destroy() originates from the MessageBox itself (prevents destroy loop)
+        if (this.messageBox && this.messageBox.isAlive()) {
+            this.messageBox.destroy();
         }
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart

@@ -1,36 +1,43 @@
-import { ChartType } from "ag-grid-community";
-import { CartesianChart } from "../../charts/chart/cartesianChart";
-import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
-import { NumberAxis } from "../../charts/chart/axis/numberAxis";
-import { BarSeries } from "../../charts/chart/series/barSeries";
-import { PolarChart } from "../../charts/chart/polarChart";
-import { Chart } from "../../charts/chart/chart";
-import { ChartOptions } from "./gridChartComp";
+import {ChartType} from "ag-grid-community";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
+import {NumberAxis} from "../../charts/chart/axis/numberAxis";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {PolarChart} from "../../charts/chart/polarChart";
+import {Chart} from "../../charts/chart/chart";
+
+interface CreateChartOptions {
+    chartType: ChartType,
+    width: number,
+    height: number,
+    showTooltips: boolean
+    parentElement: HTMLElement
+}
 
 export class GridChartFactory {
 
-    static createChart(chartType: ChartType, chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
-        switch (chartType) {
+    static createChart(options: CreateChartOptions): Chart<any, string, number> {
+        switch (options.chartType) {
             case ChartType.GroupedBar:
-                return GridChartFactory.createBarChart(chartOptions, parentElement, true);
+                return GridChartFactory.createBarChart(options, true);
             case ChartType.StackedBar:
-                return GridChartFactory.createBarChart(chartOptions, parentElement, false);
+                return GridChartFactory.createBarChart(options, false);
             case ChartType.Line:
-                return GridChartFactory.createLineChart(chartOptions, parentElement);
+                return GridChartFactory.createLineChart(options);
             case ChartType.Pie:
-                return GridChartFactory.createPieChart(chartOptions, parentElement);
+                return GridChartFactory.createPieChart(options);
         }
     }
 
-    private static createBarChart(chartOptions: ChartOptions, parentElement: HTMLElement, grouped: boolean): Chart<any, string, number> {
-        const barChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), parentElement);
+    private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart<any, string, number> {
+        const barChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), options.parentElement);
 
-        barChart.width = chartOptions.width;
-        barChart.height = chartOptions.height;
+        barChart.width = options.width;
+        barChart.height = options.height;
         barChart.xAxis.labelRotation = 90;
 
         const barSeries = new BarSeries<any>();
-        barSeries.tooltip = chartOptions.showTooltips;
+        barSeries.tooltip = options.showTooltips;
         barSeries.grouped = grouped;
 
         barChart.addSeries(barSeries);
@@ -38,21 +45,21 @@ export class GridChartFactory {
         return barChart;
     }
 
-    private static createLineChart(chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
-        const lineChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), parentElement);
+    private static createLineChart(options: CreateChartOptions): Chart<any, string, number> {
+        const lineChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), options.parentElement);
 
-        lineChart.width = chartOptions.width;
-        lineChart.height = chartOptions.height;
+        lineChart.width = options.width;
+        lineChart.height = options.height;
         lineChart.xAxis.labelRotation = 90;
 
         return lineChart;
     }
 
-    private static createPieChart(chartOptions: ChartOptions, parentElement: HTMLElement): Chart<any, string, number> {
-        const pieChart = new PolarChart<any, string, number>(parentElement);
+    private static createPieChart(options: CreateChartOptions): Chart<any, string, number> {
+        const pieChart = new PolarChart<any, string, number>(options.parentElement);
 
-        pieChart.width = chartOptions.width;
-        pieChart.height = chartOptions.height;
+        pieChart.width = options.width;
+        pieChart.height = options.height;
 
         return pieChart;
     }

@@ -12,6 +12,7 @@ import {
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
 import {ChartDatasource} from "./chartDatasource";
+import {ChartOptions} from "./gridChartComp";
 
 export interface ChartModelUpdatedEvent extends AgEvent {}
 
@@ -31,8 +32,8 @@ export class ChartModel extends BeanStub {
     @Autowired('rangeController') rangeController: RangeController;
 
     private readonly aggregate: boolean;
-
     private readonly cellRange?: CellRange;
+
     private startRow: number;
     private endRow: number;
 
@@ -45,12 +46,20 @@ export class ChartModel extends BeanStub {
     private datasource: ChartDatasource;
 
     private errors: string[] = [];
+    private width: number;
+    private height: number;
+    private showTooltips: boolean;
+    private insideDialog: boolean;
 
-    public constructor(chartType: ChartType, cellRange: CellRange, aggregate: boolean) {
+    public constructor(chartOptions: ChartOptions, cellRange: CellRange) {
         super();
-        this.chartType = chartType;
+        this.chartType = chartOptions.chartType;
+        this.aggregate = chartOptions.aggregate;
         this.cellRange = cellRange;
-        this.aggregate = aggregate;
+        this.width = chartOptions.width;
+        this.height = chartOptions.height;
+        this.showTooltips = chartOptions.showTooltips;
+        this.insideDialog = chartOptions.insideDialog;
     }
 
     @PostConstruct
@@ -67,7 +76,6 @@ export class ChartModel extends BeanStub {
     }
 
     private init() {
-
         this.startRow = this.rangeController.getRangeStartRow(this.cellRange!).rowIndex;
         this.endRow = this.rangeController.getRangeEndRow(this.cellRange!).rowIndex;
 
@@ -90,6 +98,30 @@ export class ChartModel extends BeanStub {
 
     public getChartType(): ChartType {
         return this.chartType;
+    }
+
+    public getWidth(): number {
+        return this.width;
+    }
+
+    public setWidth(width: number): void {
+        this.width = width;
+    }
+
+    public getHeight(): number {
+        return this.height;
+    }
+
+    public setHeight(height: number): void {
+        this.height = height;
+    }
+
+    public isShowTooltips(): boolean {
+        return this.showTooltips;
+    }
+
+    public isInsideDialog(): boolean {
+        return this.insideDialog;
     }
 
     public getErrors(): string[] {
