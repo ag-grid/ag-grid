@@ -95,5 +95,19 @@ $params: (
     tooltip-border-radius: $tooltip-border-radius,
     tooltip-border-color: $tooltip-border-color,
     tooltip-border-width: $tooltip-border-width,
-    tooltip-border-style: $tooltip-border-style
+    tooltip-border-style: $tooltip-border-style,
+
+    dialog-background-color: $dialog-background-color,
+    dialog-border-size: $dialog-border-size,
+    dialog-border-style: $dialog-border-style,
+    dialog-border-color: $dialog-border-color,
+
+    dialog-title-background-color: $dialog-title-background-color,
+    dialog-title-foreground-color: $dialog-title-foreground-color,
+    dialog-title-height: $dialog-title-height,
+    dialog-title-font-family: $dialog-title-font-family,
+    dialog-title-font-size: $dialog-title-font-size,
+    dialog-title-font-weight: $dialog-title-font-weight,
+    dialog-title-padding: $dialog-title-padding,
+    dialog-title-icon-size: $dialog-title-icon-size
 );

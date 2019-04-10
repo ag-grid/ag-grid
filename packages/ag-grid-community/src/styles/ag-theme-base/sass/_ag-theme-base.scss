@@ -86,6 +86,20 @@
     $row-group-indent-size: map-get($params, "row-group-indent-size");
     $row-floating-background-color: map-get($params, "row-floating-background-color");
 
+    $dialog-background-color: map-get($params, "dialog-background-color");
+    $dialog-border-size: map-get($params, "dialog-border-size");
+    $dialog-border-style: map-get($params, "dialog-border-style");
+    $dialog-border-color: map-get($params, "dialog-border-color");
+
+    $dialog-title-background-color: map-get($params, "dialog-title-background-color");
+    $dialog-title-foreground-color: map-get($params, "dialog-title-foreground-color");
+    $dialog-title-height: map-get($params, "dialog-title-height");
+    $dialog-title-font-family: map-get($params, "dialog-title-font-family");
+    $dialog-title-font-size: map-get($params, "dialog-title-font-size");
+    $dialog-title-font-weight: map-get($params, "dialog-title-font-weight");
+    $dialog-title-padding: map-get($params, "dialog-title-padding");
+    $dialog-title-icon-size: map-get($params, "dialog-title-icon-size");
+
     ////////////////////////////////////////
     // Chinese wall of inline vars over
     ////////////////////////////////////////
@@ -1405,27 +1419,26 @@
     // Dialog
     ////////////////////////////////////////
     .ag-dialog {
-        background-color: $background-color;
-        border: 1px solid $border-color;
+        background-color: $dialog-background-color;
+        border: $dialog-border-size $dialog-border-style $dialog-border-color;
 
         .ag-dialog-title-bar {
-            background-color: $header-background-color;
-            color: $header-foreground-color;
-            height: 45px;
-            padding: 12px 16px;
-            .ag-dialog-title-bar-title {
-                font-size: 20px;
-                font-weight: 400;
-                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            }
+            background-color: $dialog-title-background-color;
+            color: $dialog-title-foreground-color;
+            height: $dialog-title-height;
+            font-size: $dialog-title-font-size;
+            font-weight: $dialog-title-font-weight;
+            font-family: $dialog-title-font-family;
+            padding-left: $cell-horizontal-padding;
+            padding: $dialog-title-padding;
 
             .ag-dialog-title-bar-buttons {
                 .ag-dialog-button {
-                    height: 25px;
-                    width: 25px;
+                    height: $dialog-title-icon-size;
+                    width: $dialog-title-icon-size;
                     border-radius: 5px;
                     &:hover, &.ag-has-popup {
-                        background-color: darken($header-background-color, 10%);
+                        background-color: darken($dialog-title-background-color, 10%);
                     }
                     &:not(:last-child) {
                         margin-right: 5px;
