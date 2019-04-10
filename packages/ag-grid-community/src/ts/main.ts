@@ -87,7 +87,7 @@ export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
 export { BaseFilter } from "./filter/baseFilter";
-export { DateFilter, SerializedDateFilter } from "./filter/dateFilter";
+export { DateFilter, DateFilterModel } from "./filter/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { NumberFilter } from "./filter/numberFilter";
 export { TextFilter, SerializedTextFilter } from "./filter/textFilter";

@@ -16,13 +16,13 @@ export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 
-export interface SerializedDateFilter extends SerializedFilter {
+export interface DateFilterModel extends SerializedFilter {
     dateFrom: string;
     dateTo: string;
     type: string;
 }
 
-export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, SerializedDateFilter> {
+export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, DateFilterModel> {
 
     private dateToComponent: IDateComp;
     private dateFromComponent: IDateComp;
@@ -50,7 +50,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateFromCondition: Date;
     private dateToCondition: Date;
 
-    public modelFromFloatingFilter(from: string): SerializedDateFilter {
+    public modelFromFloatingFilter(from: string): DateFilterModel {
         return {
             dateFrom: from,
             dateTo: this.getDateTo(),
@@ -188,7 +188,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         return cellValue != null ? 0 : -1;
     }
 
-    public serialize(type:FilterConditionType): SerializedDateFilter {
+    public serialize(type:FilterConditionType): DateFilterModel {
         const dateToComponent = type === FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
         const dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
         const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
@@ -281,7 +281,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         this.setDateTo(null, FilterConditionType.CONDITION);
     }
 
-    public parse(model: SerializedDateFilter, type:FilterConditionType): void {
+    public parse(model: DateFilterModel, type:FilterConditionType): void {
         this.setDateFrom(model.dateFrom, type);
         this.setDateTo(model.dateTo, type);
         this.setFilterType(model.type, type);

@@ -1,6 +1,6 @@
 import { Autowired } from "../context/context";
 import { SerializedTextFilter } from "./textFilter";
-import { DateFilter, SerializedDateFilter } from "./dateFilter";
+import { DateFilter, DateFilterModel } from "./dateFilter";
 import { SerializedNumberFilter } from "./numberFilter";
 import { IComponent } from "../interfaces/iComponent";
 import { RefSelector } from "../widgets/componentAnnotations";
@@ -156,22 +156,23 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
 
 export class DateFloatingFilterComp extends Component
     implements IFloatingFilter
-                <SerializedDateFilter,
-                 BaseFloatingFilterChange<SerializedDateFilter>,
-                 IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>
+                <DateFilterModel,
+                 BaseFloatingFilterChange<DateFilterModel>,
+                 IFloatingFilterParams<DateFilterModel, BaseFloatingFilterChange<DateFilterModel>>
                 > {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private dateComponentPromise: Promise<IDateComp>;
 
-    private onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
-    private currentParentModel: () => SerializedDateFilter;
-    private lastKnownModel: SerializedDateFilter = null;
+    private onFloatingFilterChangedFunc: (change: BaseFloatingFilterChange<DateFilterModel>) => void;
+    private currentParentModelFunc: () => DateFilterModel;
+    private lastKnownModel: DateFilterModel = null;
 
-    private init(params: IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>) {
-        this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.currentParentModel = params.currentParentModel;
+    private init(params: IFloatingFilterParams<DateFilterModel, BaseFloatingFilterChange<DateFilterModel>>) {
+
+        this.onFloatingFilterChangedFunc = params.onFloatingFilterChanged;
+        this.currentParentModelFunc = params.currentParentModel;
         const debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
         const toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         const dateComponentParams: IDateParams = {
@@ -184,14 +185,15 @@ export class DateFloatingFilterComp extends Component
         this.dateComponentPromise.then(dateComponent => {
             body.appendChild(dateComponent.getGui());
 
+            // disable the filter if inRange is the only configured option
             const columnDef = (params.column.getDefinition() as any);
-            const isInRange = (columnDef.filterParams &&
+            const inRangeIsOnlyOption = (columnDef.filterParams &&
                 columnDef.filterParams.filterOptions &&
                 columnDef.filterParams.filterOptions.length === 1 &&
                 columnDef.filterParams.filterOptions[0] === 'inRange');
 
             if (dateComponent.eDateInput) {
-                dateComponent.eDateInput.disabled = isInRange;
+                dateComponent.eDateInput.disabled = inRangeIsOnlyOption;
             }
         });
 
@@ -202,12 +204,12 @@ export class DateFloatingFilterComp extends Component
     }
 
     private onDateChanged(): void {
-        const parentModel: SerializedDateFilter = this.currentParentModel();
+        const parentModel: DateFilterModel = this.currentParentModelFunc();
         const model = this.asParentModel();
 
         if (this.equalModels(parentModel, model)) { return; }
 
-        this.onFloatingFilterChanged({
+        this.onFloatingFilterChangedFunc({
             model: model,
             apply: true
         });
@@ -215,7 +217,7 @@ export class DateFloatingFilterComp extends Component
         this.lastKnownModel = model;
     }
 
-    equalModels(left: SerializedDateFilter, right: SerializedDateFilter): boolean {
+    equalModels(left: DateFilterModel, right: DateFilterModel): boolean {
         if (_.referenceCompare(left, right)) { return true; }
         if (!left || !right) { return false; }
 
@@ -229,20 +231,20 @@ export class DateFloatingFilterComp extends Component
         );
     }
 
-    asParentModel(): SerializedDateFilter {
-        const currentParentModel = this.currentParentModel();
+    asParentModel(): DateFilterModel {
+        const currentParentModel = this.currentParentModelFunc();
         const filterValueDate: Date = this.dateComponentPromise.resolveNow(null, dateComponent => dateComponent.getDate());
         const filterValueText: string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(filterValueDate), "-");
 
         return {
-            type: currentParentModel.type,
+            type: currentParentModel ? currentParentModel.type : null,
             dateFrom: filterValueText,
             dateTo: currentParentModel ? currentParentModel.dateTo : null,
             filterType: 'date'
         };
     }
 
-    public onParentModelChanged(parentModel: SerializedDateFilter): void {
+    public onParentModelChanged(parentModel: DateFilterModel): void {
         this.lastKnownModel = parentModel;
         this.dateComponentPromise.then(dateComponent => {
             if (!parentModel || !parentModel.dateFrom) {
