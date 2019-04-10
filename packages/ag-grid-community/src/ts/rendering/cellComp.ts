@@ -232,7 +232,7 @@ export class CellComp extends Component {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateRangeBordersIfRangeCount.bind(this));
         }
 
-        if (this.tooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+        if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.beans.tooltipManager.registerTooltip(this);
         }
     }
