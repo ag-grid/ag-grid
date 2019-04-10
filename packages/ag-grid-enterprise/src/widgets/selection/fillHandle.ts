@@ -122,7 +122,6 @@ export class FillHandle extends Component implements IFillHandle {
                     column: this.cellRange.columns[this.cellRange.columns.length - 1]
                 });
             }
-            this.rangeController.refreshFillHandle();
         }
         this.clearMarkedPath();
         this.lastCellHovered = undefined;
@@ -337,9 +336,11 @@ export class FillHandle extends Component implements IFillHandle {
         
     }
 
-    public refresh(cellRange: CellRange) {
+    public refresh(cellComp: CellComp) {
         const oldCellComp = this.cellComp;
         const eGui = this.getGui();
+
+        const cellRange = this.rangeController.getCellRanges()[0];
 
         const isColumnRange = !cellRange.startRow || !cellRange.endRow;
 
@@ -356,12 +357,6 @@ export class FillHandle extends Component implements IFillHandle {
             this.rangeStartRow = end;
             this.rangeEndRow = start;
         }
-        
-        const cellComp = this.rowRenderer.getComponentForCell({
-            rowIndex: this.rangeEndRow.rowIndex,
-            rowPinned: this.rangeEndRow.rowPinned,
-            column: cellRange.columns[cellRange.columns.length - 1]
-        });
 
         if (oldCellComp !== cellComp) {
             this.cellComp = cellComp;

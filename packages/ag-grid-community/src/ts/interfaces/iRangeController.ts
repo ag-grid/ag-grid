@@ -2,6 +2,7 @@ import { Column } from "../entities/column";
 import { CellPosition } from "../entities/cellPosition";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { RowPosition } from "../entities/rowPosition";
+import { CellComp } from "../rendering/cellComp";
 import { IComponent } from "./iComponent";
 
 export interface IRangeController {
@@ -25,7 +26,7 @@ export interface IRangeController {
 }
 
 export interface IFillHandle {
-    refresh(range: CellRange): void;
+    refresh(cellComp: CellComp): void;
     destroy(): void;
     getGui(): HTMLElement;
 }
@@ -34,7 +35,6 @@ export interface CellRange {
     startRow?: RowPosition;
     endRow?: RowPosition;
     columns: Column[];
-    fillHandle?: IFillHandle;
 }
 
 export interface CellRangeParams {

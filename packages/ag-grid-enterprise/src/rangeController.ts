@@ -8,7 +8,6 @@ import {
     ColumnApi,
     ColumnController,
     Constants,
-    Context,
     Events,
     EventService,
     GridApi,
@@ -28,13 +27,11 @@ import {
     PinnedRowModel,
     _
 } from "ag-grid-community";
-import { FillHandle } from "./widgets/selection/fillHandle";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('context') private context: Context;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -92,31 +89,32 @@ export class RangeController implements IRangeController {
         if (cellRange.startRow && cellRange.endRow) {
             const startRowIsFirst = RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
             return startRowIsFirst ? cellRange.startRow : cellRange.endRow;
-        } else {
-            const pinned = (this.pinnedRowModel.getPinnedTopRowCount() > 0) ? Constants.PINNED_TOP : undefined;
-            return {rowIndex: 0, rowPinned: pinned} as RowPosition;
         }
+
+        const pinned = (this.pinnedRowModel.getPinnedTopRowCount() > 0) ? Constants.PINNED_TOP : undefined;
+        return {rowIndex: 0, rowPinned: pinned} as RowPosition;
     }
 
     public getRangeEndRow(cellRange: CellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
             const startRowIsFirst = RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
             return startRowIsFirst ? cellRange.endRow : cellRange.startRow;
-        } else {
-            const pinnedBottomRowCount = this.pinnedRowModel.getPinnedBottomRowCount();
-            const pinnedBottom = pinnedBottomRowCount > 0;
-            if (pinnedBottom) {
-                return {
-                    rowIndex: pinnedBottomRowCount - 1,
-                    rowPinned: Constants.PINNED_BOTTOM
-                } as RowPosition;
-            } else {
-                return {
-                    rowIndex: this.rowModel.getRowCount() - 1,
-                    rowPinned: undefined
-                } as RowPosition;
-            }
         }
+
+        const pinnedBottomRowCount = this.pinnedRowModel.getPinnedBottomRowCount();
+        const pinnedBottom = pinnedBottomRowCount > 0;
+
+        if (pinnedBottom) {
+            return {
+                rowIndex: pinnedBottomRowCount - 1,
+                rowPinned: Constants.PINNED_BOTTOM
+            } as RowPosition;
+        }
+ 
+        return {
+            rowIndex: this.rowModel.getRowCount() - 1,
+            rowPinned: undefined
+        } as RowPosition;
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
@@ -143,12 +141,12 @@ export class RangeController implements IRangeController {
         // many times to the clipboard.
         let existingRange: CellRange | undefined;
         this.cellRanges.forEach(range => {
-            const matches
+            const matches =
                 // check cols are same
-                = (range.columns && range.columns.length === 1 && range.columns[0] === cell.column)
+                (range.columns && range.columns.length === 1 && range.columns[0] === cell.column) &&
                 // check rows are same
-                && RowPositionUtils.sameRow(rowForCell, range.startRow)
-                && RowPositionUtils.sameRow(rowForCell, range.endRow);
+                RowPositionUtils.sameRow(rowForCell, range.startRow) &&
+                RowPositionUtils.sameRow(rowForCell, range.endRow);
             if (matches) {
                 existingRange = range;
             }
@@ -163,14 +161,10 @@ export class RangeController implements IRangeController {
                 this.cellRanges.push(existingRange);
             }
         } else {
-            const fillHandle = new FillHandle();
-            this.context.wireBean(fillHandle);
-            
             const newRange: CellRange = {
                 startRow: rowForCell,
                 endRow: rowForCell,
-                columns: columns,
-                fillHandle
+                columns: columns
             };
             this.cellRanges.push(newRange);
         }
@@ -181,8 +175,7 @@ export class RangeController implements IRangeController {
     }
 
     public extendLatestRangeToCell(toCell: CellPosition): void {
-        if (this.isEmpty()) { return; }
-        if (!this.newestRangeStartCell) { return; }
+        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
 
         const startCell = this.newestRangeStartCell;
 
@@ -198,8 +191,7 @@ export class RangeController implements IRangeController {
 
     // returns true if successful, false if not successful
     public extendLatestRangeInDirection(key: number): CellPosition | undefined {
-        if (this.isEmpty()) { return; }
-        if (!this.newestRangeStartCell) { return; }
+        if (this.isEmpty() || !this.newestRangeStartCell) { return; }
 
         const lastRange = this.cellRanges![this.cellRanges!.length - 1];
 
@@ -217,9 +209,7 @@ export class RangeController implements IRangeController {
         const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell);
 
         // if user is at end of grid, so no cell to extend to, we return false
-        if (!newEndCell) {
-            return;
-        }
+        if (!newEndCell) { return; }
 
         this.setCellRange({
             rowStartIndex: startCell.rowIndex,
@@ -262,11 +252,10 @@ export class RangeController implements IRangeController {
             columns = this.calculateColumnsBetween(columnStart, columnEnd);
         }
 
-        if (!columns) {
-            return;
-        }
+        if (!columns) { return; }
 
         let startRow: RowPosition | undefined = undefined;
+
         if (params.rowStartIndex != null) {
             startRow = {
                 rowIndex: params.rowStartIndex,
@@ -275,6 +264,7 @@ export class RangeController implements IRangeController {
         }
 
         let endRow: RowPosition | undefined = undefined;
+
         if (params.rowEndIndex != null) {
             endRow = {
                 rowIndex: params.rowEndIndex,
@@ -282,14 +272,10 @@ export class RangeController implements IRangeController {
             };
         }
 
-        const fillHandle = new FillHandle();
-        this.context.wireBean(fillHandle);
-
         const newRange: CellRange = {
             startRow: startRow,
             endRow: endRow,
-            columns: columns,
-            fillHandle
+            columns: columns
         };
 
         return newRange;
@@ -301,6 +287,7 @@ export class RangeController implements IRangeController {
         }
 
         const newRange = this.createCellRangeFromCellRangeParams(params);
+
         if (newRange) {
             this.cellRanges.push(newRange);
             this.onRangeChanged({ started: false, finished: true });
@@ -322,28 +309,23 @@ export class RangeController implements IRangeController {
         } else if (this.cellRanges.length > 1) {
             // many ranges, so more than one cell
             return true;
-        } else {
-            // only one range, return true if range has more than one
-            const range = this.cellRanges[0];
-            const startRow = this.getRangeStartRow(range);
-            const endRow = this.getRangeEndRow(range);
-            const moreThanOneCell =
-                startRow.rowPinned !== endRow.rowPinned
-                || startRow.rowIndex !== endRow.rowIndex
-                || range.columns.length !== 1;
-            return moreThanOneCell;
         }
+
+        // only one range, return true if range has more than one
+        const range = this.cellRanges[0];
+        const startRow = this.getRangeStartRow(range);
+        const endRow = this.getRangeEndRow(range);
+        const moreThanOneCell =
+            startRow.rowPinned !== endRow.rowPinned ||
+            startRow.rowIndex !== endRow.rowIndex ||
+            range.columns.length !== 1;
+        return moreThanOneCell;
     }
 
     public removeAllCellRanges(silent?: boolean): void {
         if (this.isEmpty()) { return; }
 
         this.onDragStop();
-        this.cellRanges.forEach((range: CellRange) => {
-            if (range.fillHandle) {
-                range.fillHandle.destroy!();
-            }
-        });
         this.cellRanges.length = 0;
 
         if (!silent) {
@@ -397,12 +379,11 @@ export class RangeController implements IRangeController {
 
         if (equalsFirstRow || equalsLastRow) {
             return true;
-        } else {
-            const afterFirstRow = !RowPositionUtils.before(thisRow, firstRow);
-            const beforeLastRow = RowPositionUtils.before(thisRow, lastRow);
-            return afterFirstRow && beforeLastRow;
         }
 
+        const afterFirstRow = !RowPositionUtils.before(thisRow, firstRow);
+        const beforeLastRow = RowPositionUtils.before(thisRow, lastRow);
+        return afterFirstRow && beforeLastRow;
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
@@ -448,14 +429,10 @@ export class RangeController implements IRangeController {
                 rowPinned: mouseCell.rowPinned
             };
 
-            const fillHandle = new FillHandle();
-            this.context.wireBean(fillHandle);
-
             this.draggingRange = {
                 startRow: mouseRowPosition,
                 endRow: mouseRowPosition,
-                columns: [mouseCell.column],
-                fillHandle
+                columns: [mouseCell.column]
             };
             this.cellRanges.push(this.draggingRange);
         }
@@ -466,9 +443,7 @@ export class RangeController implements IRangeController {
     }
 
     public onDragStop(): void {
-        if (!this.dragging) {
-            return;
-        }
+        if (!this.dragging) { return; }
 
         this.autoScrollService.ensureCleared();
 
@@ -496,11 +471,14 @@ export class RangeController implements IRangeController {
 
         this.autoScrollService.check(mouseEvent, skipVerticalScroll);
 
-        if (!cellPosition || !this.draggingCell || CellPositionUtils.equals(this.draggingCell, cellPosition)) {
-            return;
-        }
+        if (
+            !cellPosition ||
+            !this.draggingCell ||
+            CellPositionUtils.equals(this.draggingCell, cellPosition)
+        ) { return; }
 
         const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
+
         if (!columns) { return; }
 
         this.draggingCell = cellPosition;
@@ -517,19 +495,7 @@ export class RangeController implements IRangeController {
     private onRangeChanged(params: { started: boolean, finished: boolean}) {
         const { started, finished } = params;
 
-        this.refreshFillHandle();
-
         this.dispatchChangedEvent(started, finished)
-    }
-
-    public refreshFillHandle() {
-        if (!this.cellRanges) { return; }
-
-        this.cellRanges.forEach((range: CellRange) => {
-            if (range.fillHandle) {
-                range.fillHandle.refresh(range);
-            }
-        });
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean): void {
@@ -562,6 +528,7 @@ export class RangeController implements IRangeController {
         const lastIndex = Math.max(fromIndex, toIndex);
 
         const columns: Column[] = [];
+
         for (let i = firstIndex; i <= lastIndex; i++) {
             columns.push(allColumns[i]);
         }

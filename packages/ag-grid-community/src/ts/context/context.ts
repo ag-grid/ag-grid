@@ -96,9 +96,8 @@ export class Context {
             const newComponent = new this.componentsMappedByName[key]() as Component;
             this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
-        } else {
-            return null;
         }
+        return null;
     }
 
     // public createBean(BeanClass: new () => any): Component {

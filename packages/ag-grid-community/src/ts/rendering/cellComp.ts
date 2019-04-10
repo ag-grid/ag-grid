@@ -68,6 +68,7 @@ export class CellComp extends Component {
     // the GUI is initially element or string, however once the UI is created, it becomes UI
     private cellRendererGui: HTMLElement | null;
     private cellEditor: ICellEditorComp | null;
+    private fillHandle: IFillHandle | null;
 
     private autoHeightCell: boolean;
 
@@ -230,6 +231,10 @@ export class CellComp extends Component {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_MOVED, this.updateRangeBordersIfRangeCount.bind(this));
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_PINNED, this.updateRangeBordersIfRangeCount.bind(this));
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateRangeBordersIfRangeCount.bind(this));
+
+            if (this.shouldHaveFillHandle()) {
+                this.addFillHandle();
+            }
         }
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
@@ -1597,6 +1602,10 @@ export class CellComp extends Component {
             this.cellRenderer.destroy();
             this.cellRenderer = null;
         }
+
+        if (this.fillHandle) {
+            this.fillHandle.destroy();
+        }
     }
 
     private onLeftChanged(): void {
@@ -1759,8 +1768,36 @@ export class CellComp extends Component {
         const isSingleCell = this.rangeCount === 1 && !rangeController.isMoreThanOneCell();
 
         this.updateRangeBorders();
-
         _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', isSingleCell);
+
+        if (this.fillHandle) {
+            this.fillHandle.destroy();
+            this.fillHandle = null;
+        }
+
+        if (this.shouldHaveFillHandle()) {
+            this.addFillHandle();
+        }
+    }
+
+    private shouldHaveFillHandle(): boolean {
+        const { rangeController } = this.beans;
+        const el = this.getGui();
+
+        return this.rangeCount &&
+               rangeController.getCellRanges().length === 1 &&
+               (
+                    _.containsClass(el, 'ag-cell-range-single-cell') ||
+                    el.matches('.ag-cell-range-bottom.ag-cell-range-right')
+               );
+    }
+
+    private addFillHandle() {
+        this.fillHandle = this.beans.context.createComponentFromElement(
+            document.createElement('ag-fill-handle')
+        ) as any as IFillHandle;
+
+        this.fillHandle.refresh(this);
     }
 
     private updateRangeBordersIfRangeCount(): void {
