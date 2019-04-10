@@ -84,7 +84,7 @@ export class Text extends Shape {
         return this._textBaseline;
     }
 
-    readonly getBBox = HdpiCanvas.supports.textMetrics
+    readonly getBBox = HdpiCanvas.supports().textMetrics
         ? (): BBox => {
             const metrics = HdpiCanvas.measureText(this.text, this.font,
                 this.textBaseline, this.textAlign);
