@@ -44,7 +44,7 @@ export class ChartModel extends BeanStub {
     private fields: Column[];
     private datasource: ChartDatasource;
 
-    private errors: string[];
+    private errors: string[] = [];
 
     public constructor(chartType: ChartType, cellRange: CellRange, aggregate: boolean) {
         super();
@@ -67,6 +67,7 @@ export class ChartModel extends BeanStub {
     }
 
     private init() {
+
         this.startRow = this.rangeController.getRangeStartRow(this.cellRange!).rowIndex;
         this.endRow = this.rangeController.getRangeEndRow(this.cellRange!).rowIndex;
 
@@ -79,6 +80,8 @@ export class ChartModel extends BeanStub {
     }
 
     private updateModel() {
+        this.errors = [];
+
         this.chartData = this.datasource.getData(this.categories, this.fields, this.startRow, this.endRow, this.aggregate);
         this.errors = this.datasource.getErrors();
 
