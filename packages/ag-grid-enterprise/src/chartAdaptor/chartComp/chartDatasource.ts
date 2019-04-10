@@ -7,7 +7,7 @@ export class ChartDatasource extends BeanStub {
     @Autowired('valueService') valueService: ValueService;
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
 
-    private aggFunc: IAggFunc | string | undefined;
+    private aggregate: boolean;
 
     private categories: Column[];
     private fields: Column[];
@@ -16,17 +16,16 @@ export class ChartDatasource extends BeanStub {
     private endRow: number;
 
     private dataFromGrid: any[];
-    private dataGrouped: any[];
+    private dataAggregated: any[];
 
     private errors: string[] = [];
 
-    constructor(aggFunc?: IAggFunc | string) {
+    constructor() {
         super();
-        this.aggFunc = aggFunc;
     }
 
-    public getData(categories: Column[], fields: Column[], startRow: number, endRow: number, aggFunc?: IAggFunc | string): any [] {
-        this.aggFunc = aggFunc!;
+    public getData(categories: Column[], fields: Column[], startRow: number, endRow: number, aggregate: boolean): any [] {
+        this.aggregate = aggregate;
         this.categories = categories;
         this.fields = fields;
 
@@ -36,22 +35,21 @@ export class ChartDatasource extends BeanStub {
         this.clearErrors();
 
         this.extractRowsFromGridRowModel();
-        this.groupRowsByCategory();
+        this.aggregateRowsByCategory();
 
-        return this.dataGrouped;
+        return this.dataAggregated;
     }
 
-    private groupRowsByCategory(): void {
-        this.dataGrouped = this.dataFromGrid;
+    private aggregateRowsByCategory(): void {
+        this.dataAggregated = this.dataFromGrid;
 
-        const doingGrouping = this.categories.length > 0 && _.exists(this.aggFunc);
-
-        if (!doingGrouping) {
-            this.dataGrouped = this.dataFromGrid;
+        const dontAggregate = !this.aggregate || this.categories.length===0;
+        if (dontAggregate) {
+            this.dataAggregated = this.dataFromGrid;
             return;
         }
 
-        this.dataGrouped = [];
+        this.dataAggregated = [];
 
         const map: any = {};
         const lastCol = this.categories[this.categories.length - 1];
@@ -68,7 +66,7 @@ export class ChartDatasource extends BeanStub {
                                 groupItem[col.getId()] = data[col.getId()];
                         });
                         currentMap[key] = groupItem;
-                        this.dataGrouped.push(groupItem);
+                        this.dataAggregated.push(groupItem);
                     }
                     groupItem.__children.push(data);
                 } else {
@@ -81,7 +79,7 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        this.dataGrouped.forEach(groupItem => {
+        this.dataAggregated.forEach(groupItem => {
             this.fields.forEach(col => {
                 const dataToAgg: any[] = [];
                 groupItem.__children.forEach((child:any) => {

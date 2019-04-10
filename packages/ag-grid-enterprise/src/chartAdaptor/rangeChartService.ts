@@ -8,7 +8,6 @@ import {
     ChartType,
     Context,
     GridOptionsWrapper,
-    IAggFunc,
     IRangeChartService,
     PreDestroy
 } from "ag-grid-community";
@@ -55,11 +54,11 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, params.chartContainer, params.aggFunc);
+            return this.chartRange(cellRange, chartType, params.chartContainer, params.aggregate);
         }
     }
 
-    public chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, aggFunc?: IAggFunc | string): ChartRef | undefined {
+    public chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, aggregate = false): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -70,7 +69,7 @@ export class RangeChartService implements IRangeChartService {
             width: 800
         };
 
-        const chartModel = new ChartModel(chartType, cellRange, aggFunc);
+        const chartModel = new ChartModel(chartType, cellRange, aggregate);
         this.context.wireBean(chartModel);
 
         const chartComp = new GridChartComp(chartOptions, chartModel);

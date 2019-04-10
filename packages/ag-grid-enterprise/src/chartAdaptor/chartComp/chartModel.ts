@@ -8,7 +8,6 @@ import {
     ColumnController,
     Events,
     EventService,
-    IAggFunc,
     PostConstruct
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
@@ -31,7 +30,7 @@ export class ChartModel extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rangeController') rangeController: RangeController;
 
-    private readonly aggFunc?: IAggFunc | string;
+    private readonly aggregate: boolean;
 
     private readonly cellRange?: CellRange;
     private startRow: number;
@@ -47,11 +46,11 @@ export class ChartModel extends BeanStub {
 
     private errors: string[];
 
-    public constructor(chartType: ChartType, cellRange: CellRange, aggFunc?: IAggFunc | string) {
+    public constructor(chartType: ChartType, cellRange: CellRange, aggregate: boolean) {
         super();
         this.chartType = chartType;
         this.cellRange = cellRange;
-        this.aggFunc = aggFunc;
+        this.aggregate = aggregate;
     }
 
     @PostConstruct
@@ -80,7 +79,7 @@ export class ChartModel extends BeanStub {
     }
 
     private updateModel() {
-        this.chartData = this.datasource.getData(this.categories, this.fields, this.startRow, this.endRow, this.aggFunc);
+        this.chartData = this.datasource.getData(this.categories, this.fields, this.startRow, this.endRow, this.aggregate);
         this.errors = this.datasource.getErrors();
 
         this.raiseChartUpdatedEvent();

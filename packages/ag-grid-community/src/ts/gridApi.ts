@@ -88,7 +88,7 @@ export interface ChartRangeParams {
     cellRange: CellRangeParams;
     chartType: string;
     chartContainer?: HTMLElement;
-    aggFunc?: string | IAggFunc;
+    aggregate?: boolean;
 }
 
 export interface DetailGridInfo {

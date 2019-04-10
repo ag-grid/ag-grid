@@ -87,7 +87,7 @@ function onFirstDataRendered() {
         },
         chartType: 'pie',
         chartContainer: eContainer2,
-        aggFunc: 'sum'
+        aggregate: true
     };
     gridOptions.api.chartRange(params2);
 
@@ -99,7 +99,7 @@ function onFirstDataRendered() {
         },
         chartType: 'pie',
         chartContainer: eContainer3,
-        aggFunc: 'sum'
+        aggregate: true
     };
     gridOptions.api.chartRange(params3);
 
