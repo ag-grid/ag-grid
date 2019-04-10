@@ -154,17 +154,22 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
     }
 }
 
-export class DateFloatingFilterComp extends Component implements IFloatingFilter <SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>> {
+export class DateFloatingFilterComp extends Component
+    implements IFloatingFilter
+                <SerializedDateFilter,
+                 BaseFloatingFilterChange<SerializedDateFilter>,
+                 IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>
+                > {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private dateComponentPromise: Promise<IDateComp>;
 
-    onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
-    currentParentModel: () => SerializedDateFilter;
-    lastKnownModel: SerializedDateFilter = null;
+    private onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
+    private currentParentModel: () => SerializedDateFilter;
+    private lastKnownModel: SerializedDateFilter = null;
 
-    init(params: IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>) {
+    private init(params: IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>) {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
         const debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
@@ -237,7 +242,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         };
     }
 
-    onParentModelChanged(parentModel: SerializedDateFilter): void {
+    public onParentModelChanged(parentModel: SerializedDateFilter): void {
         this.lastKnownModel = parentModel;
         this.dateComponentPromise.then(dateComponent => {
             if (!parentModel || !parentModel.dateFrom) {

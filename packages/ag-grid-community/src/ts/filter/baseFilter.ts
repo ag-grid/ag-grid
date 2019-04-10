@@ -52,7 +52,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
  * Contains common logic to ALL filters.. Translation, apply and clear button
  * get/setModel context wiring....
  */
-export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Component implements IFilterComp {
+export abstract class BaseFilter<P extends IFilterParams, M> extends Component implements IFilterComp {
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
     public static NOT_EQUAL = 'notEqual';
@@ -399,7 +399,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams, M> extends BaseFilter<T, P, M> {
+export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams, M> extends BaseFilter<P, M> {
     @QuerySelector('#filterType')
     private eTypeSelector: HTMLSelectElement;
 

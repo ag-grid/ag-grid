@@ -16,7 +16,7 @@ import { VirtualList, VirtualListModel } from "../rendering/virtualList";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
-export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | SerializedSetFilter | null> {
+export class SetFilter extends BaseFilter <ISetFilterParams, string[] | SerializedSetFilter | null> {
 
     private model: SetFilterModel;
 

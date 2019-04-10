@@ -23,6 +23,7 @@ export interface SerializedDateFilter extends SerializedFilter {
 }
 
 export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, SerializedDateFilter> {
+
     private dateToComponent: IDateComp;
     private dateFromComponent: IDateComp;
 
