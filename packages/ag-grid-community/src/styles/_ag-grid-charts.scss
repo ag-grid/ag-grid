@@ -17,8 +17,16 @@
         position: absolute;
         top: 10px;
         right: 20px;
+        height: 25px;
+        width: 25px;
+        opacity: 0.5;
+        &:hover, &.ag-has-popup {
+            opacity: 1;
+        }
         .ag-icon-menu {
             background-size: 25px 25px;
+            width: 100%;
+            height: 100%;
         }
     }
 }

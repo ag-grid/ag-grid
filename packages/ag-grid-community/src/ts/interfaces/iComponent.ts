@@ -23,8 +23,4 @@ export interface IComponent<T> {
 
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
     init?(params: T): Promise<void> | void;
-
-    /** If this Component is contained within another component, we add a reference to that component */
-    setParentComponent?(component: Component): void;
-    getParentComponent?(): Component | undefined;
 }
