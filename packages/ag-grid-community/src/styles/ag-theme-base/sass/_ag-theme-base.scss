@@ -1481,14 +1481,24 @@
         }
     }
 
-    .ag-fill-handle {
+    %selection-handle {
         position: absolute;
-        width: 5px;
-        height: 5px;
-        background-color: $primary-color;
+        width: 6px;
+        height: 6px;
         bottom: -1px;
-        right: -1px;
-        cursor: crosshair;
+        right: -1px
+    }
+
+    .ag-fill-handle {
+        @extend %selection-handle;
+        background-color: $primary-color;
+        cursor: cell;
+    }
+
+    .ag-range-handle {
+        @extend %selection-handle;
+        background-color: invert($primary-color);
+        cursor: move;
     }
 
     ////////////////////////////////////////

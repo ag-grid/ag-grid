@@ -185,7 +185,8 @@ export class RangeController implements IRangeController {
             rowEndIndex: toCell.rowIndex,
             rowEndPinned: toCell.rowPinned,
             columnStart: startCell.column,
-            columnEnd: toCell.column
+            columnEnd: toCell.column,
+            chartMode: this.cellRanges[0].chartMode
         });
     }
 
@@ -277,6 +278,17 @@ export class RangeController implements IRangeController {
             endRow: endRow,
             columns: columns
         };
+
+        if (params.chartMode) {
+            if (params.columns) {
+                this.newestRangeStartCell = {
+                    rowIndex: newRange.startRow!.rowIndex,
+                    rowPinned: newRange.startRow!.rowPinned,
+                    column: (params.columns as Column[])[0]
+                }
+            }
+            newRange.chartMode = true;
+        }
 
         return newRange;
     }
@@ -386,6 +398,10 @@ export class RangeController implements IRangeController {
         return afterFirstRow && beforeLastRow;
     }
 
+    public getDraggingRange(): CellRange | undefined {
+        return this.draggingRange;
+    }
+
     public onDragStart(mouseEvent: MouseEvent): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
             return;
@@ -460,7 +476,6 @@ export class RangeController implements IRangeController {
         if (!this.dragging || !mouseEvent) {
             return;
         }
-
         this.lastMouseEvent = mouseEvent;
 
         const cellPosition = this.mouseEventService.getCellPositionForEvent(mouseEvent);

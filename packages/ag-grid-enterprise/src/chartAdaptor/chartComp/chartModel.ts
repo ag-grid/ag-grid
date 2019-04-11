@@ -287,7 +287,8 @@ export class ChartModel extends BeanStub {
             rowStartPinned: startRow && startRow.rowPinned,
             rowEndIndex: endRow && endRow.rowIndex,
             rowEndPinned: endRow && endRow.rowPinned,
-            columns: columns
+            columns: columns,
+            chartMode: true
         });
     }
 

@@ -18,6 +18,8 @@ export class FillHandle extends AbstractSelectionHandle {
     private isUp: boolean = false;
     private isLeft: boolean = false;
 
+    protected type = 'fill';
+
     constructor() {
         super(FillHandle.TEMPLATE);
     }
@@ -34,7 +36,6 @@ export class FillHandle extends AbstractSelectionHandle {
 
         const cellComp = this.getCellComp();
         const lastCellHovered = this.getLastCellHovered();
-        console.log(lastCellHovered);
 
         if (lastCellHovered && lastCellHovered !== this.lastCellMarked) {
             this.lastCellMarked = lastCellHovered;
@@ -294,35 +295,14 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     public refresh(cellComp: CellComp) {
-        const oldCellComp = this.getCellComp();
-        const eGui = this.getGui();
-
         const cellRange = this.rangeController.getCellRanges()[0];
-
         const isColumnRange = !cellRange.startRow || !cellRange.endRow;
 
-        if (isColumnRange && eGui.parentElement) {
-            eGui.parentElement.removeChild(eGui);
+        if (isColumnRange) {
+            this.destroy();
+            return;
         }
 
-        let start = cellRange.startRow as RowPosition;
-        let end = cellRange.endRow as RowPosition;
-
-        const isBefore = RowPositionUtils.before(end, start);
-
-        if (isBefore) {
-            this.setRangeStartRow(end);
-            this.setRangeEndRow(start);
-        } else {
-            this.setRangeStartRow(start);
-            this.setRangeEndRow(end);
-        }
-
-        if (oldCellComp !== cellComp) {
-            this.setCellComp(cellComp);
-            cellComp.appendChild(eGui);
-        }
-
-        this.setCellRange(cellRange);
+        super.refresh(cellComp);
     }
 }

@@ -3,7 +3,6 @@ import { CellPosition } from "../entities/cellPosition";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { RowPosition } from "../entities/rowPosition";
 import { CellComp } from "../rendering/cellComp";
-import { IComponent } from "./iComponent";
 
 export interface IRangeController {
     removeAllCellRanges(): void;
@@ -26,15 +25,17 @@ export interface IRangeController {
 }
 
 export interface ISelectionHandle {
-    refresh(cellComp: CellComp): void;
-    destroy(): void;
     getGui(): HTMLElement;
+    destroy(): void;
+    getType(): string;
+    refresh(cellComp: CellComp): void;
 }
 
 export interface CellRange {
     startRow?: RowPosition;
     endRow?: RowPosition;
     columns: Column[];
+    chartMode?: boolean;
 }
 
 export interface CellRangeParams {
@@ -45,6 +46,7 @@ export interface CellRangeParams {
     columnStart?: string | Column;
     columnEnd?: string | Column;
     columns?: (string | Column)[];
+    chartMode?: boolean;
 }
 
 /** @deprecated */

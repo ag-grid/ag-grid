@@ -68,7 +68,7 @@ export class CellComp extends Component {
     // the GUI is initially element or string, however once the UI is created, it becomes UI
     private cellRendererGui: HTMLElement | null;
     private cellEditor: ICellEditorComp | null;
-    private fillHandle: ISelectionHandle | null;
+    private selectionHandle: ISelectionHandle | null;
 
     private autoHeightCell: boolean;
 
@@ -232,8 +232,8 @@ export class CellComp extends Component {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_PINNED, this.updateRangeBordersIfRangeCount.bind(this));
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateRangeBordersIfRangeCount.bind(this));
 
-            if (this.shouldHaveFillHandle()) {
-                this.addFillHandle();
+            if (this.shouldHaveSelectionHandle()) {
+                this.addSelectionHandle();
             }
         }
 
@@ -1603,8 +1603,8 @@ export class CellComp extends Component {
             this.cellRenderer = null;
         }
 
-        if (this.fillHandle) {
-            this.fillHandle.destroy();
+        if (this.selectionHandle) {
+            this.selectionHandle.destroy();
         }
     }
 
@@ -1770,17 +1770,19 @@ export class CellComp extends Component {
         this.updateRangeBorders();
         _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', isSingleCell);
 
-        if (this.fillHandle) {
-            this.fillHandle.destroy();
-            this.fillHandle = null;
+        const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
+
+        if (this.selectionHandle && !shouldHaveSelectionHandle) {
+            this.selectionHandle.destroy();
+            this.selectionHandle = null;
         }
 
-        if (this.shouldHaveFillHandle()) {
-            this.addFillHandle();
+        if (shouldHaveSelectionHandle) {
+            this.addSelectionHandle();
         }
     }
 
-    private shouldHaveFillHandle(): boolean {
+    private shouldHaveSelectionHandle(): boolean {
         const { rangeController } = this.beans;
         const el = this.getGui();
 
@@ -1792,12 +1794,23 @@ export class CellComp extends Component {
                );
     }
 
-    private addFillHandle() {
-        this.fillHandle = this.beans.context.createComponentFromElement(
-            document.createElement('ag-fill-handle')
-        ) as any as ISelectionHandle;
+    private addSelectionHandle() {
+        const { context, rangeController } = this.beans;
+        const isChart = !!rangeController.getCellRanges()[0].chartMode;
+        const type = isChart ? 'range' : 'fill';
 
-        this.fillHandle.refresh(this);
+        if (this.selectionHandle && this.selectionHandle.getType() !== type) {
+            this.selectionHandle.destroy();
+            this.selectionHandle = undefined;
+        }
+
+        if (!this.selectionHandle) {
+            this.selectionHandle = context.createComponentFromElement(
+                document.createElement(`ag-${type}-handle`)
+            ) as any as ISelectionHandle;
+        }
+
+        this.selectionHandle.refresh(this);
     }
 
     private updateRangeBordersIfRangeCount(): void {

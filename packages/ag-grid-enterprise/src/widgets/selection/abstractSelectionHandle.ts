@@ -11,7 +11,8 @@ import {
     RowPosition,
     CellPosition,
     PostConstruct,
-    ISelectionHandle
+    ISelectionHandle,
+    RowPositionUtils
 } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 
@@ -32,6 +33,8 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private lastCellHovered: CellPosition | undefined;
     
     private cellHoverListener: (() => void) | undefined;
+    
+    protected abstract type: string;
 
     @PostConstruct
     private init() {
@@ -51,7 +54,6 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected abstract onDrag(e: MouseEvent): void;
     protected abstract onDragEnd(e: MouseEvent): void;
-    abstract refresh(cellComp: CellComp): void;
 
     protected getCellComp(): CellComp | undefined {
         return this.cellComp;
@@ -94,7 +96,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         e.stopPropagation();
     }
 
-    private onDragStart(e: MouseEvent) {
+    protected onDragStart(e: MouseEvent) {
         this.cellHoverListener = this.addDestroyableEventListener(
             this.rowRenderer.getGridCore().getRootGui(), 
             'mousemove', 
@@ -104,21 +106,56 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     private updateLastCellPositionHovered(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
-
         if (cell === this.lastCellHovered) { return; }
         this.lastCellHovered = cell;
     }
 
     protected clearValues() {
         this.lastCellHovered = undefined;
+        this.removeListeners();
+    }
+
+    private removeListeners() {
         if (this.cellHoverListener) {
             this.cellHoverListener();
             this.cellHoverListener = undefined;
         }
     }
 
+    public getType(): string {
+        return this.type;
+    }
+
+    public refresh(cellComp: CellComp) {
+        const oldCellComp = this.getCellComp();
+        const eGui = this.getGui();
+
+        const cellRange = this.rangeController.getCellRanges()[0];
+
+        let start = cellRange.startRow as RowPosition;
+        let end = cellRange.endRow as RowPosition;
+
+        const isBefore = RowPositionUtils.before(end, start);
+
+        if (isBefore) {
+            this.setRangeStartRow(end);
+            this.setRangeEndRow(start);
+        } else {
+            this.setRangeStartRow(start);
+            this.setRangeEndRow(end);
+        }
+
+        if (oldCellComp !== cellComp) {
+            this.setCellComp(cellComp);
+            cellComp.appendChild(eGui);
+        }
+
+        this.setCellRange(cellRange);
+    }
+
     public destroy() {
         super.destroy();
+        this.removeListeners();
 
         const eGui = this.getGui();
 

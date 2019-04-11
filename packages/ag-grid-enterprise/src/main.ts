@@ -28,6 +28,7 @@ import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/pr
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
 import { WatermarkComp } from "./license/watermark";
 import { FillHandle } from "./widgets/selection/fillHandle";
+import { RangeHandle } from "./widgets/selection/rangeHandle";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -64,6 +65,7 @@ export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 export { WatermarkComp } from "./license/watermark";
 export { FillHandle } from "./widgets/selection/fillHandle";
+export { RangeHandle } from "./widgets/selection/rangeHandle";
 
 // modules
 // spl put in exports...
@@ -86,5 +88,6 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
     {componentName: 'AgWatermark', theClass: WatermarkComp},
-    {componentName: 'AgFillHandle', theClass: FillHandle}
+    {componentName: 'AgFillHandle', theClass: FillHandle},
+    {componentName: 'AgRangeHandle', theClass: RangeHandle}
 ]);
