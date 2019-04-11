@@ -208,35 +208,23 @@ export abstract class Chart<D, X, Y> {
         if (pick) {
             const node = pick.node;
             if (node instanceof Shape) {
-                if (!this.lastPick) {
-                    this.lastPick = {
-                        series: pick.series,
-                        node,
-                        fillStyle: node.fillStyle
-                    };
-                } else if (this.lastPick.node !== node) {
-                    this.lastPick.node.fillStyle = this.lastPick.fillStyle;
-                    this.lastPick = {
-                        series: pick.series,
-                        node,
-                        fillStyle: node.fillStyle
-                    };
+                if (!this.lastPick) { // cursor moved from empty space to a node
+                    this.onSeriesNodePick(event, pick.series, node);
+                } else {
+                    if (this.lastPick.node !== node) { // cursor moved from one node to another
+                        this.lastPick.node.fillStyle = this.lastPick.fillStyle;
+                        this.onSeriesNodePick(event, pick.series, node);
+                    } else { // cursor moved within the same node
+                        if (pick.series.tooltip) {
+                            this.showTooltip(event);
+                        }
+                    }
                 }
-                node.fillStyle = 'yellow';
             }
-        } else if (this.lastPick) {
+        } else if (this.lastPick) { // cursor moved from a node to empty space
             this.lastPick.node.fillStyle = this.lastPick.fillStyle;
             this.hideTooltip();
             this.lastPick = undefined;
-        }
-
-        if (this.lastPick) {
-            const lastPick = this.lastPick;
-            const datum = lastPick.node.datum as SeriesNodeDatum<D>;
-            const html = lastPick.series.tooltip && lastPick.series.getTooltipHtml(datum);
-            if (html) {
-                this.showTooltip(html, event);
-            }
         }
     };
 
@@ -244,17 +232,33 @@ export abstract class Chart<D, X, Y> {
         this.tooltipElement.style.display = 'none';
     };
 
+    private onSeriesNodePick(event: MouseEvent, series: Series<D, X, Y>, node: Shape) {
+        this.lastPick = {
+            series,
+            node,
+            fillStyle: node.fillStyle
+        };
+        node.fillStyle = 'yellow';
+
+        const html = series.tooltip && series.getTooltipHtml(node.datum as SeriesNodeDatum<D>);
+        if (html) {
+            this.showTooltip(event, html);
+        }
+    }
+
     tooltipOffset = [20, 20];
 
-    showTooltip(html: string, event: MouseEvent) {
-        if (!html) {
-            return;
-        }
-
+    /**
+     * Shows tooltip at the given event's coordinates.
+     * If the `html` parameter is missing, moves the existing tooltip to the new position.
+     */
+    private showTooltip(event: MouseEvent, html?: string) {
         const el = this.tooltipElement;
         const offset = this.tooltipOffset;
 
-        el.innerHTML = html;
+        if (html) {
+            el.innerHTML = html;
+        }
         el.style.left = `${event.x + scrollX + offset[0]}px`;
         el.style.top = `${event.y + scrollY + offset[1]}px`;
         el.style.display = 'table';
