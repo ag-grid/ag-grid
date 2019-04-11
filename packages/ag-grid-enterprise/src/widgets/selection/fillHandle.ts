@@ -1,81 +1,28 @@
 import {
-    Autowired,
     CellComp,
-    CellNavigationService,
     CellPosition,
-    CellRange,
-    ColumnController,
-    Component,
-    DragService,
-    IFillHandle,
-    MouseEventService,
-    PostConstruct,
     RowPosition,
     RowPositionUtils,
-    RowRenderer,
     _,
 } from 'ag-grid-community';
-import { RangeController } from '../../rangeController';
 
-export class FillHandle extends Component implements IFillHandle {
+import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
-    @Autowired("rowRenderer") private rowRenderer: RowRenderer;
-    @Autowired("dragService") private dragService: DragService;
-    @Autowired("rangeController") private rangeController: RangeController;
-    @Autowired("mouseEventService") private mouseEventService: MouseEventService;
-    @Autowired("columnController") private columnController: ColumnController;
-    @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
+export class FillHandle extends AbstractSelectionHandle {
 
-    private cellComp: CellComp;
-    private cellRange: CellRange;
+    static TEMPLATE = '<div class="ag-fill-handle"></div>';
 
-    private rangeStartRow: RowPosition;
-    private rangeEndRow: RowPosition;
-
-    private lastCellHovered: CellPosition | undefined;
     private lastCellMarked: CellPosition | undefined;
-    private cellHoverListener: (() => void) | undefined;
     private markedCellComps: CellComp[] = [];
     private dragAxis: 'x' | 'y';
     private isUp: boolean = false;
     private isLeft: boolean = false;
 
-    static TEMPLATE = '<div class="ag-fill-handle"></div>';
-
     constructor() {
         super(FillHandle.TEMPLATE);
     }
 
-    @PostConstruct
-    private init() {
-        this.dragService.addDragSource({
-            eElement: this.getGui(),
-            onDragStart: this.onDragStart.bind(this),
-            onDragging: this.onDrag.bind(this),
-            onDragStop: this.onDragEnd.bind(this)
-        });
-
-        this.addDestroyableEventListener(
-            this.getGui(),
-            'mousedown',
-            this.preventRangeExtension.bind(this)
-        );
-    }
-
-    private preventRangeExtension(e: MouseEvent) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    private onDragStart(e: MouseEvent) {
-        this.cellHoverListener = this.addDestroyableEventListener(
-            this.rowRenderer.getGridCore().getRootGui(), 
-            'mousemove', 
-            this.updateLastCellPositionHovered.bind(this)
-        );
-    }
-
-    private onDrag(e: MouseEvent) {
+    protected onDrag(e: MouseEvent) {
         const { x, y } = this.getGui().getBoundingClientRect() as DOMRect;
         const diffX = Math.abs(x - e.clientX);
         const diffY = Math.abs(y - e.clientY);
@@ -85,52 +32,62 @@ export class FillHandle extends Component implements IFillHandle {
             this.dragAxis = direction;
         }
 
-        if (this.lastCellHovered && this.lastCellHovered !== this.lastCellMarked) {
-            this.lastCellMarked = this.lastCellHovered;
-            this.markPathFrom(this.cellComp.getCellPosition(), this.lastCellHovered);
+        const cellComp = this.getCellComp();
+        const lastCellHovered = this.getLastCellHovered();
+        console.log(lastCellHovered);
+
+        if (lastCellHovered && lastCellHovered !== this.lastCellMarked) {
+            this.lastCellMarked = lastCellHovered;
+            this.markPathFrom(cellComp!.getCellPosition(), lastCellHovered);
         }
     }
 
-    private onDragEnd(e: MouseEvent) {
+    protected onDragEnd(e: MouseEvent) {
         if (this.markedCellComps.length) {
             const isX = this.dragAxis === 'x';
+            const cellRange = this.getCellRange();
+            const colLen = cellRange.columns.length;
+            const rangeStartRow = this.getRangeStartRow();
+            const rangeEndRow = this.getRangeEndRow();
+
             if (!this.isUp && !this.isLeft) {
                 const startPosition = {
-                    rowIndex: this.rangeStartRow.rowIndex,
-                    rowPinned: this.rangeStartRow.rowPinned,
-                    column: this.cellRange.columns[0]
+                    rowIndex: rangeStartRow.rowIndex,
+                    rowPinned: rangeStartRow.rowPinned,
+                    column: cellRange.columns[0]
                 }
                 this.rangeController.setRangeToCell(startPosition);
                 this.rangeController.extendLatestRangeToCell({
-                    rowIndex: isX ? this.rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
-                    rowPinned: isX ? this.rangeEndRow.rowPinned : this.lastCellMarked!.rowPinned,
-                    column: isX ? this.lastCellMarked!.column : this.cellRange.columns[this.cellRange.columns.length - 1]
+                    rowIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
+                    rowPinned: isX ? rangeEndRow.rowPinned : this.lastCellMarked!.rowPinned,
+                    column: isX ? this.lastCellMarked!.column : cellRange.columns[colLen - 1]
                 });
             }
             else {
-                const startRow = isX ? this.rangeStartRow: this.lastCellMarked!;
+                const startRow = isX ? rangeStartRow: this.lastCellMarked!;
                 const startPosition = {
                     rowIndex: startRow.rowIndex,
                     rowPinned: startRow.rowPinned,
-                    column: isX ? this.lastCellMarked!.column : this.cellRange.columns[0]
+                    column: isX ? this.lastCellMarked!.column : cellRange.columns[0]
                 }
                 this.rangeController.setRangeToCell(startPosition);
 
                 this.rangeController.extendLatestRangeToCell({
-                    rowIndex: this.rangeEndRow.rowIndex,
-                    rowPinned: this.rangeEndRow.rowPinned,
-                    column: this.cellRange.columns[this.cellRange.columns.length - 1]
+                    rowIndex: rangeEndRow.rowIndex,
+                    rowPinned: rangeEndRow.rowPinned,
+                    column: cellRange.columns[colLen - 1]
                 });
             }
         }
+
+        this.clearValues();
+    }
+
+    protected clearValues() {
         this.clearMarkedPath();
-        this.lastCellHovered = undefined;
         this.lastCellMarked = undefined;
 
-        if (this.cellHoverListener) {
-            this.cellHoverListener();
-            this.cellHoverListener = undefined;
-        }
+        super.clearValues();
     }
 
     private markPathFrom(initialPosition: CellPosition, currentPosition: CellPosition) {
@@ -139,16 +96,18 @@ export class FillHandle extends Component implements IFillHandle {
             if (RowPositionUtils.sameRow(currentPosition, initialPosition)) { return; }
 
             const isBefore = RowPositionUtils.before(currentPosition, initialPosition);
+            const rangeStartRow = this.getRangeStartRow();
+            const rangeEndRow = this.getRangeEndRow();
 
             if (isBefore && (
                     (
-                        currentPosition.rowPinned == this.rangeStartRow.rowPinned &&
-                        currentPosition.rowIndex >= this.rangeStartRow.rowIndex
+                        currentPosition.rowPinned == rangeStartRow.rowPinned &&
+                        currentPosition.rowIndex >= rangeStartRow.rowIndex
                     ) ||
                     (
-                        this.rangeStartRow.rowPinned != this.rangeEndRow.rowPinned &&
-                        currentPosition.rowPinned == this.rangeEndRow.rowPinned &&
-                        currentPosition.rowIndex <= this.rangeEndRow.rowIndex
+                        rangeStartRow.rowPinned != rangeEndRow.rowPinned &&
+                        currentPosition.rowPinned == rangeEndRow.rowPinned &&
+                        currentPosition.rowIndex <= rangeEndRow.rowIndex
                     )
                 )
             ) { 
@@ -168,7 +127,7 @@ export class FillHandle extends Component implements IFillHandle {
             const initialIndex = displayedColumns.indexOf(initialColumn)
             const currentIndex = displayedColumns.indexOf(currentColumn);
 
-            if (currentIndex <= initialIndex && currentIndex >= displayedColumns.indexOf(this.cellRange.columns[0])) {
+            if (currentIndex <= initialIndex && currentIndex >= displayedColumns.indexOf(this.getCellRange().columns[0])) {
                 this.reduceHorizontal(initialPosition, currentPosition)
             } 
             else {
@@ -185,12 +144,13 @@ export class FillHandle extends Component implements IFillHandle {
                 this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string) : 
                 this.cellNavigationService.getRowBelow(row)
         ) {
-            const colLen = this.cellRange.columns.length;
+            const cellRange = this.getCellRange();
+            const colLen = cellRange.columns.length;
             for (let i = 0; i < colLen; i++) {
                 const cellComp = this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
-                    column: this.cellRange.columns[i]
+                    column: cellRange.columns[i]
                 });
 
                 if (!cellComp) { continue; }
@@ -218,12 +178,13 @@ export class FillHandle extends Component implements IFillHandle {
         let row: RowPosition | null = initialPosition;
 
         while(row = this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string)) {
-            const colLen = this.cellRange.columns.length;
+            const cellRange = this.getCellRange();
+            const colLen = cellRange.columns.length;
             for (let i = 0; i < colLen; i++) {
                 const cellComp = this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
-                    column: this.cellRange.columns[i]
+                    column: cellRange.columns[i]
                 });
 
                 if (!cellComp) { continue; }
@@ -246,16 +207,18 @@ export class FillHandle extends Component implements IFillHandle {
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
         const allCols = this.columnController.getAllDisplayedColumns();
         const startCol = allCols.indexOf(isMovingLeft ? endPosition.column : initialPosition.column);
-        const endCol = allCols.indexOf(isMovingLeft ? this.cellRange.columns[0] : endPosition.column);
+        const endCol = allCols.indexOf(isMovingLeft ? this.getCellRange().columns[0] : endPosition.column);
         const offset = isMovingLeft ? 0 : 1;
 
         const colsToMark = allCols.slice(startCol + offset, endCol + offset);
+        const rangeStartRow = this.getRangeStartRow();
+        const rangeEndRow = this.getRangeEndRow();
         colsToMark.forEach(column => {
-            let row: RowPosition = this.rangeStartRow;
+            let row: RowPosition = rangeStartRow;
             let isLastRow: boolean = false;
 
             do {
-                isLastRow = RowPositionUtils.sameRow(row, this.rangeEndRow);
+                isLastRow = RowPositionUtils.sameRow(row, rangeEndRow);
                 const cellComp = this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
@@ -266,8 +229,8 @@ export class FillHandle extends Component implements IFillHandle {
                     this.markedCellComps.push(cellComp);
                     const eGui = cellComp.getGui();
 
-                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', RowPositionUtils.sameRow(row, this.rangeStartRow));
-                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', RowPositionUtils.sameRow(row, this.rangeEndRow));
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', RowPositionUtils.sameRow(row, rangeStartRow));
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', RowPositionUtils.sameRow(row, rangeEndRow));
                     if (isMovingLeft) {
                         this.isLeft = true;
                         _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
@@ -289,12 +252,15 @@ export class FillHandle extends Component implements IFillHandle {
         const endCol = allCols.indexOf(initialPosition.column);
 
         const colsToMark = allCols.slice(startCol, endCol);
+        const rangeStartRow = this.getRangeStartRow();
+        const rangeEndRow = this.getRangeEndRow();
+
         colsToMark.forEach(column => {
-            let row: RowPosition = this.rangeStartRow;
+            let row: RowPosition = rangeStartRow;
             let isLastRow: boolean = false;
 
             do {
-                isLastRow = RowPositionUtils.sameRow(row, this.rangeEndRow);
+                isLastRow = RowPositionUtils.sameRow(row, rangeEndRow);
                 const cellComp = this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
@@ -327,17 +293,8 @@ export class FillHandle extends Component implements IFillHandle {
         this.isLeft = false;
     }
 
-    private updateLastCellPositionHovered(e: MouseEvent) {
-        const cell = this.mouseEventService.getCellPositionForEvent(e);
-
-        if (cell === this.lastCellHovered) { return; }
-
-        this.lastCellHovered = cell;
-        
-    }
-
     public refresh(cellComp: CellComp) {
-        const oldCellComp = this.cellComp;
+        const oldCellComp = this.getCellComp();
         const eGui = this.getGui();
 
         const cellRange = this.rangeController.getCellRanges()[0];
@@ -348,30 +305,24 @@ export class FillHandle extends Component implements IFillHandle {
             eGui.parentElement.removeChild(eGui);
         }
 
-        let start = this.rangeStartRow = cellRange.startRow as RowPosition;
-        let end = this.rangeEndRow = cellRange.endRow as RowPosition;
+        let start = cellRange.startRow as RowPosition;
+        let end = cellRange.endRow as RowPosition;
 
         const isBefore = RowPositionUtils.before(end, start);
 
         if (isBefore) {
-            this.rangeStartRow = end;
-            this.rangeEndRow = start;
+            this.setRangeStartRow(end);
+            this.setRangeEndRow(start);
+        } else {
+            this.setRangeStartRow(start);
+            this.setRangeEndRow(end);
         }
 
         if (oldCellComp !== cellComp) {
-            this.cellComp = cellComp;
+            this.setCellComp(cellComp);
             cellComp.appendChild(eGui);
         }
 
-        this.cellRange = cellRange;
-    }
-
-    public destroy() {
-        super.destroy();
-        const eGui = this.getGui();
-
-        if (eGui.parentElement) {
-            eGui.parentElement.removeChild(eGui);
-        }
+        this.setCellRange(cellRange);
     }
 }

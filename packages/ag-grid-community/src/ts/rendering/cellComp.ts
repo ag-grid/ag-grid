@@ -21,7 +21,7 @@ import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRen
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition, CellPositionUtils } from "../entities/cellPosition";
-import { CellRange, IFillHandle } from "../interfaces/iRangeController";
+import { CellRange, ISelectionHandle } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
@@ -68,7 +68,7 @@ export class CellComp extends Component {
     // the GUI is initially element or string, however once the UI is created, it becomes UI
     private cellRendererGui: HTMLElement | null;
     private cellEditor: ICellEditorComp | null;
-    private fillHandle: IFillHandle | null;
+    private fillHandle: ISelectionHandle | null;
 
     private autoHeightCell: boolean;
 
@@ -1795,7 +1795,7 @@ export class CellComp extends Component {
     private addFillHandle() {
         this.fillHandle = this.beans.context.createComponentFromElement(
             document.createElement('ag-fill-handle')
-        ) as any as IFillHandle;
+        ) as any as ISelectionHandle;
 
         this.fillHandle.refresh(this);
     }

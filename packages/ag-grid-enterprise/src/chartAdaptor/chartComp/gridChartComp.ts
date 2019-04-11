@@ -4,7 +4,6 @@ import {
     ChartType,
     Component,
     Dialog,
-    EventService,
     MessageBox,
     PostConstruct,
     RefSelector,
@@ -38,7 +37,6 @@ export class GridChartComp extends Component {
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eErrors') private eErrors: HTMLElement;
@@ -77,7 +75,7 @@ export class GridChartComp extends Component {
         this.addMenu();
         this.addResizeListener();
 
-        this.addDestroyableEventListener(this.getGui(), 'focusin', this.updateCellRange.bind(this));
+        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setGridChartEditMode.bind(this));
 
         this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
@@ -274,8 +272,9 @@ export class GridChartComp extends Component {
         });
     }
 
-    private updateCellRange(focusEvent: FocusEvent) {
+    private setGridChartEditMode(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) return;
+        
         this.chartModel.updateCellRange();
     }
 

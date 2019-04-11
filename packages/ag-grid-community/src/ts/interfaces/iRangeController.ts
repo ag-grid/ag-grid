@@ -25,7 +25,7 @@ export interface IRangeController {
     getRangeEndRow(cellRange: CellRange): RowPosition;
 }
 
-export interface IFillHandle {
+export interface ISelectionHandle {
     refresh(cellComp: CellComp): void;
     destroy(): void;
     getGui(): HTMLElement;

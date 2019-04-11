@@ -20,7 +20,6 @@ export class DragService {
 
     private currentDragParams: DragListenerParams;
     private dragging: boolean;
-    private mouseEventLastTime: MouseEvent;
     private mouseStartEvent: MouseEvent;
     private touchLastTime: Touch;
     private touchStart: Touch;
@@ -151,7 +150,6 @@ export class DragService {
         this.currentDragParams = params;
         this.dragging = false;
 
-        this.mouseEventLastTime = mouseEvent;
         this.mouseStartEvent = mouseEvent;
 
         const eDocument = this.gridOptionsWrapper.getDocument();
@@ -274,7 +272,6 @@ export class DragService {
         this.setNoSelectToBody(false);
 
         this.mouseStartEvent = null;
-        this.mouseEventLastTime = null;
         this.touchStart = null;
         this.touchLastTime = null;
         this.currentDragParams = null;
