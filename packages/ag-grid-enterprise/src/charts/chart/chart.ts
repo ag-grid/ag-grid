@@ -248,6 +248,8 @@ export abstract class Chart<D, X, Y> {
 
     tooltipOffset = [20, 20];
 
+    private tooltipRect?: ClientRect;
+
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
@@ -255,13 +257,25 @@ export abstract class Chart<D, X, Y> {
     private showTooltip(event: MouseEvent, html?: string) {
         const el = this.tooltipElement;
         const offset = this.tooltipOffset;
+        const parent = el.parentElement;
 
+        let left = event.x + scrollX + offset[0];
+        let top = event.y + scrollY + offset[1];
+
+        el.style.display = 'table';
+
+        let tooltipRect: ClientRect | undefined;
         if (html) {
             el.innerHTML = html;
+            this.tooltipRect = tooltipRect = el.getBoundingClientRect();
         }
-        el.style.left = `${event.x + scrollX + offset[0]}px`;
-        el.style.top = `${event.y + scrollY + offset[1]}px`;
-        el.style.display = 'table';
+        if (tooltipRect && parent && parent.parentElement) {
+            if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
+                left -= tooltipRect.width + offset[0];
+            }
+        }
+        el.style.left = `${left}px`;
+        el.style.top = `${top}px`;
     }
 
     hideTooltip() {
