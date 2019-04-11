@@ -11,6 +11,7 @@ import { Color } from "../../util/color";
 import { SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
+import { PieTooltipRendererParams } from "./pieSeries";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     yField: string,
@@ -33,6 +34,12 @@ interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
 enum BarSeriesNodeTag {
     Bar,
     Label
+}
+
+export interface BarTooltipRendererParams<D> {
+    datum: D,
+    xField: Extract<keyof D, string>,
+    yField: Extract<keyof D, string>
 }
 
 export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries<D, X, Y> {
@@ -481,7 +488,11 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             const labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
 
             if (this.tooltipRenderer && this.xField) {
-                html = this.tooltipRenderer(nodeDatum.seriesDatum, yField, this.xField);
+                html = this.tooltipRenderer({
+                    datum: nodeDatum.seriesDatum,
+                    xField: this.xField,
+                    yField,
+                });
             } else {
                 html = `${labelText}${toFixed(nodeDatum.seriesDatum[yField] as any as number)}`;
             }
@@ -489,5 +500,5 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         return html;
     }
 
-    tooltipRenderer?: (datum: D, yField: Extract<keyof D, string>, xField: Extract<keyof D, string>) => string;
+    tooltipRenderer?: (params: BarTooltipRendererParams<D>) => string;
 }

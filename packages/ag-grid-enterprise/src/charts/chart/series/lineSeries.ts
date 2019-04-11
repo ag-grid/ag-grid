@@ -22,6 +22,12 @@ interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     radius: number
 }
 
+export interface LineTooltipRendererParams<D> {
+    datum: D,
+    xField: Extract<keyof D, string>,
+    yField: Extract<keyof D, string>
+}
+
 export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
 
     private domainX: X[] = [];
@@ -298,7 +304,11 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         }
 
         if (this.tooltipRenderer && this.xField) {
-            html = this.tooltipRenderer(nodeDatum.seriesDatum, yField, this.xField);
+            html = this.tooltipRenderer({
+                datum: nodeDatum.seriesDatum,
+                xField: this.xField,
+                yField
+            });
         } else {
             const value = nodeDatum.seriesDatum[yField];
             if (typeof(value) === 'number') {
@@ -310,5 +320,5 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
         return html;
     }
 
-    tooltipRenderer?: (datum: D, yField: Extract<keyof D, string>, xField: Extract<keyof D, string>) => string;
+    tooltipRenderer?: (params: LineTooltipRendererParams<D>) => string;
 }
