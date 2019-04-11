@@ -4,7 +4,6 @@ import {
     ChartType,
     Component,
     Dialog,
-    MessageBox,
     PostConstruct,
     RefSelector,
     ResizeObserverService
@@ -48,7 +47,6 @@ export class GridChartComp extends Component {
     private chartMenu: ChartMenu;
 
     private currentChartType: ChartType;
-    private messageBox: MessageBox;
 
     constructor(chartModel: ChartModel) {
         super(GridChartComp.TEMPLATE);
@@ -56,16 +54,7 @@ export class GridChartComp extends Component {
     }
 
     @PostConstruct
-    private postConstruct(): void {
-
-        const errors = this.chartModel.getErrors();
-        const errorsExist = errors && errors.length > 0;
-        if (errorsExist) {
-            this.showErrorMessageBox();
-            this.destroy();
-            return;
-        }
-
+    public init(): void {
         this.createChart();
 
         if (this.chartModel.isInsideDialog()) {
@@ -85,7 +74,6 @@ export class GridChartComp extends Component {
 
     private createChart() {
         // destroy chart and remove it from DOM
-
         if (this.chart) {
             this.chart.destroy();
             _.clearElement(this.eChart);
@@ -150,25 +138,6 @@ export class GridChartComp extends Component {
             }
             this.updateChart();
         }
-    }
-
-    private showErrorMessageBox() {
-
-        const errorMessage = this.chartModel.getErrors().join(' ');
-
-        this.messageBox = new MessageBox({
-            title: 'Charting Error',
-            message: errorMessage,
-            centered: true,
-            resizable: false,
-            movable: true,
-            width: 400,
-            height: 150
-        });
-
-        this.getContext().wireBean(this.messageBox);
-
-        this.chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => this.destroy());
     }
 
     public updateChart() {
@@ -308,11 +277,6 @@ export class GridChartComp extends Component {
         // don't want to invoke destroy() on the Dialog / MessageBox (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {
             this.chartDialog.destroy();
-        }
-
-        // don't invoke MessageBox.destroy() when this.destroy() originates from the MessageBox itself (prevents destroy loop)
-        if (this.messageBox && this.messageBox.isAlive()) {
-            this.messageBox.destroy();
         }
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart

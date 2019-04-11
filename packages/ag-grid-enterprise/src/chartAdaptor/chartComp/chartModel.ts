@@ -27,7 +27,7 @@ export class ChartModel extends BeanStub {
 
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
 
-    public static DEFAULT_CATEGORY = '*ag-default-category*';
+    public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -65,43 +65,46 @@ export class ChartModel extends BeanStub {
     }
 
     @PostConstruct
-    private postConstruct(): void {
+    private init(): void {
         this.datasource = new ChartDatasource();
         this.getContext().wireBean(this.datasource);
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
-
-        this.init();
-
-        this.updateModel();
-    }
-
-    private init() {
         this.startRow = this.rangeController.getRangeStartRow(this.cellRange!).rowIndex;
         this.endRow = this.rangeController.getRangeEndRow(this.cellRange!).rowIndex;
 
-        this.initColumnState(this.cellRange!);
+        this.initColumnState();
+
+        // abort if any errors occurred during init of column state
+        if (this.errors.length > 0) return;
+
+        this.updateModel();
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
     }
 
-    private initColumnState(cellRange: CellRange): void {
-        if (!cellRange.columns) {
+    private initColumnState(): void {
+        if (!this.cellRange || !this.cellRange!.columns) {
             this.errors.push('No columns found in range');
             return;
         }
+
+        const colsInCellRange: Column[] = this.cellRange!.columns;
 
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
         const colStateMapper = (column: Column) => {
             const colId = column.getColId();
             let displayName = this.getFieldName(column);
-            const selected = cellRange.columns.indexOf(column) > -1;
+            const selected = colsInCellRange.indexOf(column) > -1;
             return {column, colId, displayName, selected}
         };
 
         this.valueColState = valueCols.map(colStateMapper);
-        if (this.valueColState.length === 0) {
+        const valueColsInRange = this.valueColState.filter(cs => cs.selected);
+        if (valueColsInRange.length === 0) {
             this.errors.push('No value column in selected range.');
+            return;
         }
 
         const defaultCategory = {
@@ -112,14 +115,11 @@ export class ChartModel extends BeanStub {
 
         this.dimensionColState = dimensionCols.map(colStateMapper);
 
-        const dimensionsInCellRange = dimensionCols.filter(col => cellRange.columns.indexOf(col) > -1);
+        const dimensionsInCellRange = dimensionCols.filter(col => colsInCellRange.indexOf(col) > -1);
 
         if (dimensionsInCellRange.length > 0) {
             const selectedDimensionId = dimensionsInCellRange[0].getColId();
-
-            this.dimensionColState
-                .filter(cs => cs.colId === selectedDimensionId)
-                .forEach(cs => cs.selected = true);
+            this.dimensionColState.forEach(cs => cs.selected = cs.colId === selectedDimensionId);
 
         } else {
             defaultCategory.selected = true;
