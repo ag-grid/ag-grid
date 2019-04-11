@@ -1790,7 +1790,7 @@ export class CellComp extends Component {
                rangeController.getCellRanges().length === 1 &&
                (
                     _.containsClass(el, 'ag-cell-range-single-cell') ||
-                    el.matches('.ag-cell-range-bottom.ag-cell-range-right')
+                    (_.containsClass(el, 'ag-cell-range-bottom') && _.containsClass(el, 'ag-cell-range-right'))
                );
     }
 
