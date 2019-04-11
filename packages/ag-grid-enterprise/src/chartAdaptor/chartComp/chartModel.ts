@@ -11,7 +11,7 @@ import {
     PostConstruct
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
-import {ChartDatasource} from "./chartDatasource";
+import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 
 export interface ChartModelUpdatedEvent extends AgEvent {}
@@ -40,16 +40,16 @@ export class ChartModel extends BeanStub {
     private chartType: ChartType;
     private chartData: any[];
 
-    private selectedCategory: Column;
-    private categories: Column[];
-    private fields: Column[];
-    private datasource: ChartDatasource;
+    private dimensionColState: ColState[];
+    private valueColState: ColState[];
 
     private errors: string[] = [];
     private width: number;
     private height: number;
     private showTooltips: boolean;
     private insideDialog: boolean;
+
+    private datasource: ChartDatasource;
 
     public constructor(chartOptions: ChartOptions, cellRange: CellRange) {
         super();
@@ -79,21 +79,80 @@ export class ChartModel extends BeanStub {
         this.startRow = this.rangeController.getRangeStartRow(this.cellRange!).rowIndex;
         this.endRow = this.rangeController.getRangeEndRow(this.cellRange!).rowIndex;
 
-        const {categoriesInRange, fieldsInRange} = this.getColumnsFromRange(this.cellRange!);
+        this.initColumnState(this.cellRange!);
+    }
 
-        this.categories = categoriesInRange;
-        this.fields = fieldsInRange;
+    private initColumnState(cellRange: CellRange): void {
+        if (!cellRange.columns) {
+            this.errors.push('No columns found in range');
+            return;
+        }
 
-        this.selectedCategory = categoriesInRange[0];
+        const {dimensionCols, valueCols} = this.getAllChartColumns();
+
+        const colStateMapper = (column: Column) => {
+            const colId = column.getColId();
+            let displayName = this.getFieldName(column);
+            const selected = cellRange.columns.indexOf(column) > -1;
+            return {column, colId, displayName, selected}
+        };
+
+        this.valueColState = valueCols.map(colStateMapper);
+        this.dimensionColState = dimensionCols.map(colStateMapper);
+
+        if (this.valueColState.length === 0) {
+            this.errors.push('No value column in selected range.');
+        }
+
+        if (dimensionCols.length === 0) {
+            // TODO - allow charting with no dimensions
+            this.errors.push("There are no visible columns configured with 'enableRowGroup' / 'enablePivot'");
+            return;
+        }
+
+        const dimensionsInCellRange = dimensionCols.filter(col => cellRange.columns.indexOf(col) > -1);
+
+        const dimensionColumn = (dimensionsInCellRange.length > 0) ? dimensionsInCellRange[0] : dimensionCols[0];
+
+        this.dimensionColState
+            .filter(cs => cs.colId === dimensionColumn.getColId())
+            .forEach(cs => cs.selected = true);
     }
 
     private updateModel() {
         this.errors = [];
 
-        this.chartData = this.datasource.getData(this.categories, this.fields, this.startRow, this.endRow, this.aggregate);
+        const params: ChartDatasourceParams = {
+            categories: [this.getSelectedCategory()],
+            fields: this.getValueCols(),
+            startRow: this.startRow,
+            endRow: this.endRow,
+            aggregate: this.aggregate
+        };
+
+        this.chartData = this.datasource.getData(params);
         this.errors = this.datasource.getErrors();
 
         this.raiseChartUpdatedEvent();
+    }
+
+    public getSelectedCategory(): Column {
+        return this.dimensionColState.filter(cs => cs.selected).map(cs => cs.column)[0];
+    }
+
+    public getFields(): { colId: string, displayName: string }[] {
+        return this.valueColState
+            .filter(cs => cs.selected)
+            .map(cs => {
+                return {
+                    colId: cs.colId,
+                    displayName: cs.displayName
+                };
+            });
+    };
+
+    private getValueCols(): Column[] {
+        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column);
     }
 
     public getChartType(): ChartType {
@@ -128,53 +187,16 @@ export class ChartModel extends BeanStub {
         return this.errors;
     }
 
-    public getFields(): string[] {
-        return this.fields.map(col => col.getColId());
-    }
-
-    public getFieldNames(): string[] {
-        return this.fields.map(col => {
-            const displayName = this.columnController.getDisplayNameForColumn(col, 'chart');
-            return displayName ? displayName : '';
-        });
+    private getFieldName(col: Column): string {
+        return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 
     public getColStateForMenu(): {dimensionCols: ColState[], valueCols: ColState[]} {
-        const {dimensionCols, valueCols} = this.getAllChartColumns();
-
-        const colStateMapper = (isSelected: (col: Column) => boolean) => {
-            return (column: Column) => {
-                const colId = column.getColId();
-                let displayName = this.columnController.getDisplayNameForColumn(column, 'chart') as string;
-                const selected = isSelected(column);
-                return {column, colId, displayName, selected}
-            }
-        };
-
-        const isDimensionColSelected = (column: Column) => this.selectedCategory.getColId() === column.getColId();
-        const isValueColSelected = (column: Column) => this.fields.indexOf(column) > -1;
-
-        return {
-            dimensionCols: dimensionCols.map(colStateMapper(isDimensionColSelected)),
-            valueCols: valueCols.map(colStateMapper(isValueColSelected))
-        }
+        return {dimensionCols: this.dimensionColState, valueCols: this.valueColState}
     }
 
     public getData(): any[] {
-        const res: any[] = [];
-        for (let i = 0; i < this.chartData.length; i++) {
-            const data = this.chartData[i];
-            const item: any = {
-                category: data[this.selectedCategory.getColId()]
-            };
-
-            this.fields.forEach(field => {
-                item[field.getColId()] = data[field.getColId()];
-            });
-
-            res.push(item);
-        }
-        return res;
+        return this.chartData;
     }
 
     public setChartType(chartType: ChartType): void {
@@ -182,69 +204,24 @@ export class ChartModel extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
-    public update(colState: ColState): void {
-        if (colState.selected) {
-            const newColumn = this.columnController.getGridColumn(colState.colId) as Column;
-
-            const {dimensionCols, valueCols} = this.getAllChartColumns();
-            if (dimensionCols.indexOf(newColumn) > -1) {
-                this.categories = [newColumn];
-                this.selectedCategory = newColumn;
-            }
-            if (valueCols.indexOf(newColumn) > -1) {
-                this.fields.push(newColumn);
-            }
-
-        } else {
-            this.fields = this.fields.filter(col => col.getColId() !== colState.colId);
-        }
-
+    public update(updatedColState: ColState): void {
+        this.updateColumnState(updatedColState);
         this.updateModel();
     }
 
-    private raiseChartUpdatedEvent() {
-        const event: ChartModelUpdatedEvent = {
-            type: ChartModel.EVENT_CHART_MODEL_UPDATED
-        };
-        this.dispatchEvent(event);
-    }
+    private updateColumnState(updatedCol: ColState) {
+        const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
+        const isDimensionCol = this.dimensionColState.filter(idsMatch).length > 0;
+        const isValueCol = this.valueColState.filter(idsMatch).length > 0;
 
-    private getColumnsFromRange(cellRange: CellRange): {categoriesInRange: Column[], fieldsInRange: Column[]} {
-        if (!cellRange.columns) {
-            return {
-                categoriesInRange: [],
-                fieldsInRange: []
-            };
+        if (isDimensionCol) {
+            // only one dimension should be selected
+            this.dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
+
+        } else if (isValueCol) {
+            // just update the selected value on the supplied value column
+            this.valueColState.forEach(cs => cs.selected = idsMatch(cs) ? updatedCol.selected : cs.selected);
         }
-
-        const categoriesInRange: Column[] = [];
-        const fieldsInRange: Column[] = [];
-
-        const {dimensionCols, valueCols} = this.getAllChartColumns();
-
-        // pull out all dimension columns from the range
-        cellRange.columns.forEach(col => {
-            if (dimensionCols.indexOf(col) > -1) {
-                categoriesInRange.push(col);
-            } else if (valueCols.indexOf(col) > -1) {
-                fieldsInRange.push(col);
-            } else {
-                console.warn(`ag-Grid - column '${col.getColId()}' is not configured for charting`);
-            }
-        });
-
-        if (fieldsInRange.length === 0) {
-            this.errors.push('No value column in selected range.');
-        }
-
-        // if no dimension columns in the range, then pull out first dimension column from displayed columns
-        if (categoriesInRange.length === 0 && dimensionCols.length > 0) {
-            categoriesInRange.push(dimensionCols[0]);
-        } else {
-            this.errors.push('No dimension / category columns found.');
-        }
-
-        return {categoriesInRange, fieldsInRange};
     }
 
     private getAllChartColumns(): {dimensionCols: Column[], valueCols: Column[]} {
@@ -290,6 +267,13 @@ export class ChartModel extends BeanStub {
             columns: columns,
             chartMode: true
         });
+    }
+
+    private raiseChartUpdatedEvent() {
+        const event: ChartModelUpdatedEvent = {
+            type: ChartModel.EVENT_CHART_MODEL_UPDATED
+        };
+        this.dispatchEvent(event);
     }
 
     public destroy() {

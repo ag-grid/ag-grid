@@ -186,31 +186,36 @@ export class GridChartComp extends Component {
     }
 
     private updateBarChart() {
-        const data = this.chartModel.getData();
-        const fields = this.chartModel.getFields();
-
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
+        barSeries.yFieldNames = this.chartModel.getFields().map(f => f.displayName);
 
-        barSeries.yFieldNames = this.chartModel.getFieldNames();
-        barSeries.setDataAndFields(data, 'category', fields);
+        const data = this.chartModel.getData();
+        const category = this.chartModel.getSelectedCategory().getColId();
+        const fields = this.chartModel.getFields().map(f => f.colId);
+
+        barSeries.setDataAndFields(data, category, fields);
     }
 
     private updateLineChart() {
         const data = this.chartModel.getData();
+        const category = this.chartModel.getSelectedCategory().getColId();
         const fields = this.chartModel.getFields();
 
         const lineChart = this.chart as CartesianChart<any, string, number>;
 
         lineChart.removeAllSeries();
 
-        lineChart.series = fields.map((field: string, index: number) => {
+        lineChart.series = fields.map((f: {colId: string, displayName: string}, index: number)  => {
             const lineSeries = new LineSeries<any, string, number>();
+
+            lineSeries.name = f.displayName;
+
             lineSeries.tooltip = this.chartModel.isShowTooltips();
             lineSeries.lineWidth = 2;
             lineSeries.markerRadius = 3;
             lineSeries.color = colors[index % colors.length];
 
-            lineSeries.setDataAndFields(data, 'category', field);
+            lineSeries.setDataAndFields(data, category, f.colId);
 
             return lineSeries;
         });
@@ -218,6 +223,7 @@ export class GridChartComp extends Component {
 
     private updatePieChart() {
         const data = this.chartModel.getData();
+        const category = this.chartModel.getSelectedCategory().getColId();
         const fields = this.chartModel.getFields();
 
         const pieChart = this.chart as PolarChart<any, string, number>;
@@ -229,8 +235,11 @@ export class GridChartComp extends Component {
 
         pieChart.removeAllSeries();
 
-        pieChart.series = fields.map((field: string) => {
+        pieChart.series = fields.map((f: {colId: string, displayName: string}) => {
             const pieSeries = new PieSeries<any, string, number>();
+
+            pieSeries.name = f.displayName;
+
             pieSeries.tooltip = this.chartModel.isShowTooltips();
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
@@ -242,9 +251,9 @@ export class GridChartComp extends Component {
             offset -= padding;
 
             pieSeries.data = data;
-            pieSeries.angleField = field;
+            pieSeries.angleField = f.colId;
 
-            pieSeries.labelField = 'category';
+            pieSeries.labelField = category;
             pieSeries.label = false;
 
             return pieSeries;

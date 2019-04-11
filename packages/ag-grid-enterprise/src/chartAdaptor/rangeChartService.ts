@@ -15,7 +15,6 @@ import { RangeController } from "../rangeController";
 import { ChartModel } from "./chartComp/chartModel";
 import { ChartOptions, GridChartComp } from "./chartComp/gridChartComp";
 
-
 @Bean('rangeChartService')
 export class RangeChartService implements IRangeChartService {
 
