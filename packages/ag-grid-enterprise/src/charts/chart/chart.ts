@@ -19,7 +19,6 @@ export abstract class Chart<D, X, Y> {
         div.style.position = 'absolute';
         div.style.zIndex = '100';
         div.style.display = 'none';
-        // div.classList.add('ag-tooltip');
         document.body.appendChild(div);
         return div;
     })();
