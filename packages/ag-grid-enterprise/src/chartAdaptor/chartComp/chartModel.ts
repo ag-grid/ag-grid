@@ -151,7 +151,6 @@ export class ChartModel extends BeanStub {
         };
 
         this.chartData = this.datasource.getData(params);
-        this.errors = this.datasource.getErrors();
 
         this.raiseChartUpdatedEvent();
     }

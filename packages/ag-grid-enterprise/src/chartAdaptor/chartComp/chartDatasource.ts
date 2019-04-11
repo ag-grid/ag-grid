@@ -29,16 +29,12 @@ export class ChartDatasource extends BeanStub {
     private dataFromGrid: any[];
     private dataAggregated: any[];
 
-    private errors: string[] = [];
-
     constructor() {
         super();
     }
 
     public getData(params: ChartDatasourceParams): any [] {
         this.params = params;
-
-        this.clearErrors();
 
         this.extractRowsFromGridRowModel();
         this.aggregateRowsByCategory();
@@ -132,21 +128,5 @@ export class ChartDatasource extends BeanStub {
 
             this.dataFromGrid.push(data);
         }
-
-        if (rowCount <= 0) {
-            this.addError('No rows in selected range.');
-        }
-    }
-
-    public getErrors(): string[] {
-        return this.errors;
-    }
-
-    private clearErrors(): void {
-        this.errors = [];
-    }
-
-    private addError(error: string): void {
-        this.errors.push(error);
     }
 }
