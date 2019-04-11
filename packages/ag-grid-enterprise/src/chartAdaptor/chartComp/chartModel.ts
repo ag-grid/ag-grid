@@ -17,7 +17,7 @@ import {ChartOptions} from "./gridChartComp";
 export interface ChartModelUpdatedEvent extends AgEvent {}
 
 export type ColState = {
-    column: Column,
+    column?: Column,
     colId: string,
     displayName: string,
     selected: boolean
@@ -26,6 +26,8 @@ export type ColState = {
 export class ChartModel extends BeanStub {
 
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
+
+    public static DEFAULT_CATEGORY = '*ag-default-category*';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -40,8 +42,8 @@ export class ChartModel extends BeanStub {
     private chartType: ChartType;
     private chartData: any[];
 
-    private dimensionColState: ColState[];
-    private valueColState: ColState[];
+    private dimensionColState: ColState[] = [];
+    private valueColState: ColState[] = [];
 
     private errors: string[] = [];
     private width: number;
@@ -98,33 +100,46 @@ export class ChartModel extends BeanStub {
         };
 
         this.valueColState = valueCols.map(colStateMapper);
-        this.dimensionColState = dimensionCols.map(colStateMapper);
-
         if (this.valueColState.length === 0) {
             this.errors.push('No value column in selected range.');
         }
 
-        if (dimensionCols.length === 0) {
-            // TODO - allow charting with no dimensions
-            this.errors.push("There are no visible columns configured with 'enableRowGroup' / 'enablePivot'");
-            return;
-        }
+        const defaultCategory = {
+            colId: ChartModel.DEFAULT_CATEGORY,
+            displayName: '(None)',
+            selected: false
+        };
+
+        this.dimensionColState = dimensionCols.map(colStateMapper);
 
         const dimensionsInCellRange = dimensionCols.filter(col => cellRange.columns.indexOf(col) > -1);
 
-        const dimensionColumn = (dimensionsInCellRange.length > 0) ? dimensionsInCellRange[0] : dimensionCols[0];
+        if (dimensionsInCellRange.length > 0) {
+            const selectedDimensionId = dimensionsInCellRange[0].getColId();
 
-        this.dimensionColState
-            .filter(cs => cs.colId === dimensionColumn.getColId())
-            .forEach(cs => cs.selected = true);
+            this.dimensionColState
+                .filter(cs => cs.colId === selectedDimensionId)
+                .forEach(cs => cs.selected = true);
+
+        } else {
+            defaultCategory.selected = true;
+        }
+
+        this.dimensionColState.unshift(defaultCategory);
     }
 
     private updateModel() {
         this.errors = [];
 
+        const categoryIds = [this.getSelectedCategory()];
+
+        const fields = this.valueColState
+            .filter(cs => cs.selected)
+            .map(cs => cs.column) as Column[];
+
         const params: ChartDatasourceParams = {
-            categories: [this.getSelectedCategory()],
-            fields: this.getValueCols(),
+            categoryIds: categoryIds,
+            fields: fields,
             startRow: this.startRow,
             endRow: this.endRow,
             aggregate: this.aggregate
@@ -133,74 +148,6 @@ export class ChartModel extends BeanStub {
         this.chartData = this.datasource.getData(params);
         this.errors = this.datasource.getErrors();
 
-        this.raiseChartUpdatedEvent();
-    }
-
-    public getSelectedCategory(): Column {
-        return this.dimensionColState.filter(cs => cs.selected).map(cs => cs.column)[0];
-    }
-
-    public getFields(): { colId: string, displayName: string }[] {
-        return this.valueColState
-            .filter(cs => cs.selected)
-            .map(cs => {
-                return {
-                    colId: cs.colId,
-                    displayName: cs.displayName
-                };
-            });
-    };
-
-    private getValueCols(): Column[] {
-        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column);
-    }
-
-    public getChartType(): ChartType {
-        return this.chartType;
-    }
-
-    public getWidth(): number {
-        return this.width;
-    }
-
-    public setWidth(width: number): void {
-        this.width = width;
-    }
-
-    public getHeight(): number {
-        return this.height;
-    }
-
-    public setHeight(height: number): void {
-        this.height = height;
-    }
-
-    public isShowTooltips(): boolean {
-        return this.showTooltips;
-    }
-
-    public isInsideDialog(): boolean {
-        return this.insideDialog;
-    }
-
-    public getErrors(): string[] {
-        return this.errors;
-    }
-
-    private getFieldName(col: Column): string {
-        return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
-    }
-
-    public getColStateForMenu(): {dimensionCols: ColState[], valueCols: ColState[]} {
-        return {dimensionCols: this.dimensionColState, valueCols: this.valueColState}
-    }
-
-    public getData(): any[] {
-        return this.chartData;
-    }
-
-    public setChartType(chartType: ChartType): void {
-        this.chartType = chartType;
         this.raiseChartUpdatedEvent();
     }
 
@@ -267,6 +214,74 @@ export class ChartModel extends BeanStub {
             columns: columns,
             chartMode: true
         });
+    }
+
+    public getColStateForMenu(): {dimensionCols: ColState[], valueCols: ColState[]} {
+        // don't return the default category to the menu
+        const hideDefaultCategoryFilter = (cs: ColState) => cs.colId !== ChartModel.DEFAULT_CATEGORY;
+        const dimensionColState = this.dimensionColState.filter(hideDefaultCategoryFilter);
+
+        return {dimensionCols: dimensionColState, valueCols: this.valueColState}
+    }
+
+    public getData(): any[] {
+        return this.chartData;
+    }
+
+    public getSelectedCategory(): string {
+        return this.dimensionColState.filter(cs => cs.selected)[0].colId;
+    }
+
+    public getFields(): { colId: string, displayName: string }[] {
+        return this.valueColState
+            .filter(cs => cs.selected)
+            .map(cs => {
+                return {
+                    colId: cs.colId,
+                    displayName: cs.displayName
+                };
+            });
+    };
+
+    public getChartType(): ChartType {
+        return this.chartType;
+    }
+
+    public getWidth(): number {
+        return this.width;
+    }
+
+    public setWidth(width: number): void {
+        this.width = width;
+    }
+
+    public getHeight(): number {
+        return this.height;
+    }
+
+    public setHeight(height: number): void {
+        this.height = height;
+    }
+
+    public isShowTooltips(): boolean {
+        return this.showTooltips;
+    }
+
+    public isInsideDialog(): boolean {
+        return this.insideDialog;
+    }
+
+    public getErrors(): string[] {
+        return this.errors;
+    }
+
+    public setChartType(chartType: ChartType): void {
+        this.chartType = chartType;
+        this.raiseChartUpdatedEvent();
+    }
+
+    private getFieldName(col: Column): string {
+        return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 
     private raiseChartUpdatedEvent() {

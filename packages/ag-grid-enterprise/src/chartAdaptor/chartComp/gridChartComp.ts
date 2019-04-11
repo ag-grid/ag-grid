@@ -190,18 +190,23 @@ export class GridChartComp extends Component {
         barSeries.yFieldNames = this.chartModel.getFields().map(f => f.displayName);
 
         const data = this.chartModel.getData();
-        const category = this.chartModel.getSelectedCategory().getColId();
+        const categoryId = this.chartModel.getSelectedCategory();
+
+        const barChart = barSeries.chart as CartesianChart<any, string, number>;
+        barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
+
         const fields = this.chartModel.getFields().map(f => f.colId);
 
-        barSeries.setDataAndFields(data, category, fields);
+        barSeries.setDataAndFields(data, categoryId, fields);
     }
 
     private updateLineChart() {
         const data = this.chartModel.getData();
-        const category = this.chartModel.getSelectedCategory().getColId();
+        const categoryId = this.chartModel.getSelectedCategory();
         const fields = this.chartModel.getFields();
 
         const lineChart = this.chart as CartesianChart<any, string, number>;
+        lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         lineChart.removeAllSeries();
 
@@ -215,7 +220,7 @@ export class GridChartComp extends Component {
             lineSeries.markerRadius = 3;
             lineSeries.color = colors[index % colors.length];
 
-            lineSeries.setDataAndFields(data, category, f.colId);
+            lineSeries.setDataAndFields(data, categoryId, f.colId);
 
             return lineSeries;
         });
@@ -223,7 +228,7 @@ export class GridChartComp extends Component {
 
     private updatePieChart() {
         const data = this.chartModel.getData();
-        const category = this.chartModel.getSelectedCategory().getColId();
+        const categoryId = this.chartModel.getSelectedCategory();
         const fields = this.chartModel.getFields();
 
         const pieChart = this.chart as PolarChart<any, string, number>;
@@ -253,7 +258,7 @@ export class GridChartComp extends Component {
             pieSeries.data = data;
             pieSeries.angleField = f.colId;
 
-            pieSeries.labelField = category;
+            pieSeries.labelField = categoryId;
             pieSeries.label = false;
 
             return pieSeries;

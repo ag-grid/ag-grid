@@ -34,7 +34,6 @@ export class GridChartFactory {
 
         barChart.width = options.width;
         barChart.height = options.height;
-        barChart.xAxis.labelRotation = -90;
 
         const barSeries = new BarSeries<any>();
         barSeries.tooltip = options.showTooltips;
@@ -50,7 +49,6 @@ export class GridChartFactory {
 
         lineChart.width = options.width;
         lineChart.height = options.height;
-        lineChart.xAxis.labelRotation = -90;
 
         return lineChart;
     }
