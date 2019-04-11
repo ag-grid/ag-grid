@@ -11,7 +11,7 @@ import { Color } from "../../util/color";
 import { SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
-import { PieTooltipRendererParams } from "./pieSeries";
+import { LegendDatum } from "../legend";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     yField: string,
@@ -86,9 +86,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
+        this.scheduleLayout();
     }
     get data(): any[] {
         return this._data;
@@ -501,4 +499,10 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
 
     tooltipRenderer?: (params: BarTooltipRendererParams<D>) => string;
+
+    provideLegendData(data: LegendDatum[]): void {
+        if (this.data.length) {
+
+        }
+    }
 }

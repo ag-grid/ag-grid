@@ -12,6 +12,7 @@ import colors from "../colors";
 import { SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
+import { LegendDatum } from "../legend";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     x: number,
@@ -60,9 +61,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
+        this.scheduleLayout();
     }
     get data(): any[] {
         return this._data;
@@ -321,4 +320,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     }
 
     tooltipRenderer?: (params: LineTooltipRendererParams<D>) => string;
+
+    provideLegendData(data: LegendDatum[]): void {
+
+    }
 }

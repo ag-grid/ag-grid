@@ -13,6 +13,7 @@ import { Sector } from "../../scene/shape/sector";
 import { SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
+import { LegendDatum } from "../legend";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     innerRadius: number,
@@ -438,4 +439,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     }
 
     tooltipRenderer?: (params: PieTooltipRendererParams<D>) => string;
+
+    provideLegendData(data: LegendDatum[]): void {
+
+    }
 }

@@ -1,5 +1,6 @@
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
+import { LegendDatum } from "../legend";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -62,6 +63,8 @@ export abstract class Series<D, X, Y> {
     abstract getTooltipHtml(nodeDatum: SeriesNodeDatum<D>): string;
 
     tooltip: boolean = false;
+
+    abstract provideLegendData(data: LegendDatum[]): void;
 
     scheduleLayout() {
         if (this.chart) {
