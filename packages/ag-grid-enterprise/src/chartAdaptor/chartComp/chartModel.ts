@@ -93,39 +93,44 @@ export class ChartModel extends BeanStub {
 
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
-        const colStateMapper = (column: Column) => {
-            const colId = column.getColId();
-            let displayName = this.getFieldName(column);
-            const selected = colsInCellRange.indexOf(column) > -1;
-            return {column, colId, displayName, selected}
-        };
+        this.valueColState = valueCols.map(column => {
+            return {
+                column,
+                colId: column.getColId(),
+                displayName: this.getFieldName(column),
+                selected: colsInCellRange.indexOf(column) > -1}
+        });
 
-        this.valueColState = valueCols.map(colStateMapper);
-        const valueColsInRange = this.valueColState.filter(cs => cs.selected);
-        if (valueColsInRange.length === 0) {
+        const noValueColsInRange = this.valueColState.filter(cs => cs.selected).length === 0;
+        if (noValueColsInRange) {
             this.errors.push('No value column in selected range.');
             return;
         }
 
-        const defaultCategory = {
-            colId: ChartModel.DEFAULT_CATEGORY,
-            displayName: '(None)',
-            selected: false
-        };
-
-        this.dimensionColState = dimensionCols.map(colStateMapper);
+        this.dimensionColState = dimensionCols.map(column => {
+            return {
+                column,
+                colId: column.getColId(),
+                displayName: this.getFieldName(column),
+                selected: false}
+        });
 
         const dimensionsInCellRange = dimensionCols.filter(col => colsInCellRange.indexOf(col) > -1);
 
         if (dimensionsInCellRange.length > 0) {
+            // select the first dimension from the range
             const selectedDimensionId = dimensionsInCellRange[0].getColId();
             this.dimensionColState.forEach(cs => cs.selected = cs.colId === selectedDimensionId);
 
         } else {
-            defaultCategory.selected = true;
+            // add a default category if no dimensions in range
+            const defaultCategory = {
+                colId: ChartModel.DEFAULT_CATEGORY,
+                displayName: '(None)',
+                selected: true
+            };
+            this.dimensionColState.push(defaultCategory);
         }
-
-        this.dimensionColState.unshift(defaultCategory);
     }
 
     private updateModel() {
