@@ -264,14 +264,13 @@ export abstract class Chart<D, X, Y> {
 
         el.style.display = 'table';
 
-        let tooltipRect: ClientRect | undefined;
         if (html) {
             el.innerHTML = html;
-            this.tooltipRect = tooltipRect = el.getBoundingClientRect();
+            this.tooltipRect = el.getBoundingClientRect();
         }
-        if (tooltipRect && parent && parent.parentElement) {
-            if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
-                left -= tooltipRect.width + offset[0];
+        if (this.tooltipRect && parent && parent.parentElement) {
+            if (left + this.tooltipRect.width > parent.parentElement.offsetWidth) {
+                left -= this.tooltipRect.width + offset[0];
             }
         }
         el.style.left = `${left}px`;
