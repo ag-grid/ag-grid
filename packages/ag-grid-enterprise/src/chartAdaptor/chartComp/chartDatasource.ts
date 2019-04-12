@@ -24,10 +24,6 @@ export class ChartDatasource extends BeanStub {
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
     @Autowired('columnController') private columnController: ColumnController;
 
-    constructor() {
-        super();
-    }
-
     public getData(params: ChartDatasourceParams): any [] {
 
         const dataFromGrid = this.extractRowsFromGridRowModel(params);
