@@ -201,15 +201,6 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
      */
     private groupSelectionData: GroupSelectionDatum<D>[] = [];
 
-    private _data: any[] = [];
-    set data(data: any[]) {
-        this._data = data;
-        this.scheduleLayout();
-    }
-    get data(): any[] {
-        return this._data;
-    }
-
     getDomainX(): [number, number] {
         return this.angleScale.domain as [number, number];
     }
@@ -219,7 +210,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     }
 
     processData(): boolean {
-        const data = this.data;
+        const data = this.data as any[];
         const centerX = this.centerX + this.offsetX;
         const centerY = this.centerY + this.offsetY;
 

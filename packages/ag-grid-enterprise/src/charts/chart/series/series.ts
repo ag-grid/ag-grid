@@ -8,7 +8,7 @@ import { LegendDatum } from "../legend";
  *                     contains information used to render pie sectors, bars, line markers, etc.
  */
 export interface SeriesNodeDatum<D = any> {
-    seriesDatum: D
+    seriesDatum: D;
 }
 
 export abstract class Series<D, X, Y> {
@@ -36,8 +36,17 @@ export abstract class Series<D, X, Y> {
         return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
 
-    abstract set data(data: D[]);
-    abstract get data(): D[];
+    // abstract set data(data: D[]);
+    // abstract get data(): D[];
+    //
+    protected _data: D[] = [];
+    set data(data: D[]) {
+        this._data = data;
+        this.scheduleLayout();
+    }
+    get data(): D[] {
+        return this._data;
+    }
 
     protected _chart: Chart<D, X, Y> | null = null;
     abstract set chart(chart: Chart<D, X, Y> | null);

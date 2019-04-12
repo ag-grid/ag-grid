@@ -51,28 +51,17 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     set chart(chart: CartesianChart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get chart(): CartesianChart<D, X, Y> | null {
         return this._chart as CartesianChart<D, X, Y>;
     }
 
-    private _data: any[] = [];
-    set data(data: any[]) {
-        this._data = data;
-        this.scheduleLayout();
-    }
-    get data(): any[] {
-        return this._data;
-    }
-
     set xField(value: Extract<keyof D, string> | undefined) {
         if (this._xField !== value) {
             this._xField = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get xField(): Extract<keyof D, string> | undefined {
@@ -82,23 +71,11 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     set yField(value: Extract<keyof D, string> | undefined) {
         if (this._yField !== value) {
             this._yField = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get yField(): Extract<keyof D, string> | undefined {
         return this._yField;
-    }
-
-    setDataAndFields(data: D[], xField: Extract<keyof D, string>, yField: Extract<keyof D, string>) {
-        this._xField = xField;
-        this._yField = yField;
-        this._data = data;
-
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
     }
 
     private _markerRadius: number = 5;
@@ -124,7 +101,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     }
 
     processData(): boolean {
-        const data = this.data;
+        const data = this.data as any[];
         const xField = this.xField;
         const yField = this.yField;
         const chart = this.chart;

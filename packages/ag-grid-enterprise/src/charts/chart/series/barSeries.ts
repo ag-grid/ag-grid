@@ -74,30 +74,17 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set chart(chart: CartesianChart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
-            if (chart) {
-                chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get chart(): CartesianChart<D, X, Y> | null {
         return this._chart as CartesianChart<D, X, Y>;
     }
 
-    private _data: any[] = [];
-    set data(data: any[]) {
-        this._data = data;
-        this.scheduleLayout();
-    }
-    get data(): any[] {
-        return this._data;
-    }
-
     set xField(value: Extract<keyof D, string> | undefined) {
         if (this._xField !== value) {
             this._xField = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get xField(): Extract<keyof D, string> | undefined {
@@ -118,41 +105,10 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         groupScale.padding = 0.1;
         groupScale.round = true;
 
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
+        this.scheduleLayout();
     }
     get yFields(): Extract<keyof D, string>[] {
         return this._yFields;
-    }
-
-    /**
-     * If the type of series datum is declared as `any`, one can change the values of the
-     * {@link data}, {@link xField} and {@link yFields} configs on the fly, where the type
-     * of data and the fields names are completely different from ones currently in use by
-     * the series. This can lead to a situation where one sets the new {@link data},
-     * which triggers the series to fetch the fields from the datums, but the
-     * datums have no such fields. Conversely, one can set the new {@link xField} or {@link yFields}
-     * that are not present in the current {@link data}.
-     * In such cases, the {@link data}, {@link xField} and {@link yFields} configs have to be set
-     * simultaneously, as an atomic operation.
-     * @param data
-     * @param xField
-     * @param yFields
-     */
-    setDataAndFields(data: any[], xField: Extract<keyof D, string>, yFields: Extract<keyof D, string>[]) {
-        this._xField = xField;
-        this._yFields = yFields;
-        this._data = data;
-
-        const groupScale = this.groupScale;
-        groupScale.domain = yFields;
-        groupScale.padding = 0.1;
-        groupScale.round = true;
-
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
     }
 
     set yFieldNames(values: string[]) {
@@ -167,9 +123,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set grouped(value: boolean) {
         if (this._grouped !== value) {
             this._grouped = value;
-            if (this.chart) {
-                this.chart.layoutPending = true;
-            }
+            this.scheduleLayout();
         }
     }
     get grouped(): boolean {
@@ -253,7 +207,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
 
     processData(): boolean {
-        const data = this.data;
+        const data = this.data as any[];
         const xField = this.xField;
         const yFields = this.yFields;
 
@@ -278,8 +232,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const xData: string[] = this.domainX = data.map(datum => {
             const value = datum[xField];
             if (typeof value !== 'string') {
-                throw new Error(`The ${xField} value is not a string. `
-                    + `This error might be solved by using the 'setDataAndFields' method.`);
+                throw new Error(`The ${xField} value is not a string.`);
             }
             return value;
         });
@@ -288,8 +241,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             yFields.forEach(field => {
                 const value = datum[field];
                 if (isNaN(value) || !isFinite(value)) {
-                    throw new Error(`The ${field} value is not a finite number. `
-                        + `This error might be solved by using the 'setDataAndFields' method.`);
+                    throw new Error(`The ${field} value is not a finite number.`);
                 }
                 values.push(value);
             });
