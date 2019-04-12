@@ -38,6 +38,15 @@ export abstract class Chart<D, X, Y> {
         this.scene.parent = null;
     }
 
+    private _data: D[] = [];
+    set data(data: D[]) {
+        this._data = data;
+        this.series.forEach(series => series.data = data);
+    }
+    get data(): D[] {
+        return this._data;
+    }
+
     protected _padding: Padding = {
         top: 20,
         right: 20,
