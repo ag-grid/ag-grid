@@ -196,7 +196,7 @@ export class ChartModel extends BeanStub {
             const shouldRemoveRange = matchingRange.columns.length === 1;
             if (shouldRemoveRange) {
 
-                //TODO remove
+                //TODO remove dimensions that are not selected
                 const rangesDontMatch = (cellRange: CellRange) => cellRange.columns.filter(colsMatch).length !== 1;
 
                 if (this.cellRanges!.length === 1) {
