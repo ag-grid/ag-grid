@@ -137,6 +137,7 @@ export class GridChartComp extends Component {
                 this.createChart();
             }
             this.updateChart();
+            this.chartModel.setCellRanges();
         }
     }
 
@@ -259,8 +260,7 @@ export class GridChartComp extends Component {
 
     private setGridChartEditMode(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) return;
-        
-        this.chartModel.updateCellRange();
+        this.chartModel.setCellRanges();
     }
 
     public destroy(): void {

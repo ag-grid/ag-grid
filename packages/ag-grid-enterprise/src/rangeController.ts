@@ -177,17 +177,30 @@ export class RangeController implements IRangeController {
     public extendLatestRangeToCell(toCell: CellPosition): void {
         if (this.isEmpty() || !this.newestRangeStartCell) { return; }
 
-        const startCell = this.newestRangeStartCell;
+        this.updateRangeEnd(
+            {
+                rowIndex: toCell.rowIndex,
+                rowPinned: toCell.rowPinned,
+            },
+            toCell.column,
+            !!this.cellRanges[0].chartMode
+        );
+    }
 
-        this.setCellRange({
-            rowStartIndex: startCell.rowIndex,
-            rowStartPinned: startCell.rowPinned,
-            rowEndIndex: toCell.rowIndex,
-            rowEndPinned: toCell.rowPinned,
-            columnStart: startCell.column,
-            columnEnd: toCell.column,
-            chartMode: this.cellRanges[0].chartMode
-        });
+    private updateRangeEnd(endRow: RowPosition, endColumn: Column, chartMode: boolean) {
+        const range = this.cellRanges[this.cellRanges.length - 1];
+
+        range.endRow = endRow;
+        range.columns = this.calculateColumnsBetween(range.columns[range.columns.length - 1], endColumn) as Column[];
+
+        // this.onRangeChanged({ started: false, finished: true });
+
+        const event  = {
+            type: 'fred',
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     // returns true if successful, false if not successful
@@ -231,6 +244,26 @@ export class RangeController implements IRangeController {
 
         this.removeAllCellRanges(true);
         this.addCellRange(params);
+    }
+
+    public setCellRanges(cellRanges: CellRange[]): void {
+
+        this.removeAllCellRanges(true);
+
+        cellRanges.forEach(newRange => {
+            if (newRange.columns && newRange.startRow) {
+                this.newestRangeStartCell = {
+                    rowIndex: newRange.startRow.rowIndex,
+                    rowPinned: newRange.startRow.rowPinned,
+                    column: (newRange.columns as Column[])[0]
+                };
+                newRange.chartMode = true;
+            }
+
+            this.cellRanges.push(newRange);
+        });
+
+        this.onRangeChanged({ started: false, finished: true });
     }
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {
@@ -278,17 +311,6 @@ export class RangeController implements IRangeController {
             endRow: endRow,
             columns: columns
         };
-
-        if (params.chartMode) {
-            if (params.columns) {
-                this.newestRangeStartCell = {
-                    rowIndex: newRange.startRow!.rowIndex,
-                    rowPinned: newRange.startRow!.rowPinned,
-                    column: (params.columns as Column[])[0]
-                }
-            }
-            newRange.chartMode = true;
-        }
 
         return newRange;
     }
