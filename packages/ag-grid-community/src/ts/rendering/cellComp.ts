@@ -257,7 +257,7 @@ export class CellComp extends Component {
     private getCellLeft(): number {
         let mostLeftCol: Column;
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
-            mostLeftCol = this.colsSpanning[this.colsSpanning.length - 1];
+            mostLeftCol = _.last(this.colsSpanning);
         } else {
             mostLeftCol = this.column;
         }

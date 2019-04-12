@@ -369,9 +369,9 @@ export class ColumnController {
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[0] : null;
-            firstRight = this.displayedRightColumns ? this.displayedRightColumns[this.displayedRightColumns.length - 1] : null;
+            firstRight = this.displayedRightColumns ? _.last(this.displayedRightColumns) : null;
         } else {
-            lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
+            lastLeft = this.displayedLeftColumns ? _.last(this.displayedLeftColumns) : null;
             firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
         }
 

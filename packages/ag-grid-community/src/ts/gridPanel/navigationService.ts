@@ -216,7 +216,7 @@ export class NavigationService {
         const leftKey = key === Constants.KEY_LEFT;
 
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        const columnToSelect: Column = leftKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        const columnToSelect: Column = leftKey ? allColumns[0] : _.last(allColumns);
 
         this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
     }
@@ -228,7 +228,7 @@ export class NavigationService {
         const homeKey = key === Constants.KEY_PAGE_HOME;
 
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        const columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        const columnToSelect = homeKey ? allColumns[0] : _.last(allColumns);
         const rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
 
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);

@@ -35,6 +35,7 @@ export interface CellRange {
     startRow?: RowPosition;
     endRow?: RowPosition;
     columns: Column[];
+    startColumn: Column;
     chartMode?: boolean;
 }
 

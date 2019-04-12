@@ -685,7 +685,7 @@ export class GridPanel extends Component {
                 rowEndIndex: rowEnd,
                 rowEndPinned: floatingEnd,
                 columnStart: allDisplayedColumns[0],
-                columnEnd: allDisplayedColumns[allDisplayedColumns.length - 1]
+                columnEnd: _.last(allDisplayedColumns)
             });
         }
         event.preventDefault();

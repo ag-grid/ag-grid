@@ -1007,6 +1007,12 @@ export class Utils {
         }
     }
 
+    static last<T>(arr: T[]): T | undefined {
+        if (!arr || !arr.length) { return undefined; }
+
+        return arr[arr.length - 1];
+    }
+
     static compareArrays(array1: any[] | undefined, array2: any[]): boolean {
         if (this.missing(array1) && this.missing(array2)) {
             return true;

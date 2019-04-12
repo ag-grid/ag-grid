@@ -999,7 +999,7 @@ export class RowRenderer extends BeanStub {
             if (key === Constants.KEY_RIGHT && colSpanningList.length > 1) {
                 currentCell = {
                     rowIndex: currentCell.rowIndex,
-                    column: colSpanningList[colSpanningList.length - 1],
+                    column: _.last(colSpanningList),
                     rowPinned: currentCell.rowPinned
                 };
             }

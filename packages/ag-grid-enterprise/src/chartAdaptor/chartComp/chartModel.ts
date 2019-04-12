@@ -246,6 +246,7 @@ export class ChartModel extends BeanStub {
             startRow: referenceRange.startRow,
             endRow: referenceRange.endRow,
             columns: columns,
+            startColumn: columns[0],
             chartMode: true
         });
     }

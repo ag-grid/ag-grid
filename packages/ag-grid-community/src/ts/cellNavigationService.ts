@@ -282,7 +282,7 @@ export class CellNavigationService {
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
-            newColumn = displayedColumns[displayedColumns.length - 1];
+            newColumn = _.last(displayedColumns);
 
             const rowAbove = this.getRowAbove(gridCell.rowIndex, gridCell.rowPinned);
             if (_.missing(rowAbove)) {

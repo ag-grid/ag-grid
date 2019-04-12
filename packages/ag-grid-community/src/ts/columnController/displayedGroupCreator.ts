@@ -67,7 +67,7 @@ export class DisplayedGroupCreator {
                 // path (no groups), and we just add the column to the root list.
                 result.push(currentColumn);
             } else {
-                const leafGroup = currentRealPath[currentRealPath.length - 1];
+                const leafGroup = _.last(currentRealPath);
                 leafGroup.addChild(currentColumn);
             }
 

@@ -4,7 +4,8 @@ import {
     Column,
     IRowModel,
     ValueService,
-    ColumnController
+    ColumnController,
+    _
 } from "ag-grid-community";
 import { AggregationStage } from "../../rowStages/aggregationStage";
 import { ChartModel } from "./chartModel";
@@ -72,7 +73,7 @@ export class ChartDatasource extends BeanStub {
             return dataFromGrid;
         }
 
-        const lastColId = categoryIds[categoryIds.length - 1];
+        const lastColId = _.last(categoryIds);
 
         const map: any = {};
         const dataAggregated: any[] = [];

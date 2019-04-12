@@ -122,7 +122,7 @@ function aggFirst(input: any[]): any {
 
 function aggLast(input: any[]): any {
     if (input.length >= 0) {
-        return input[input.length - 1];
+        return _.last(input);
     } else {
         return null;
     }

@@ -141,7 +141,7 @@ export class PinnedRowModel {
         if (!rowNodes || rowNodes.length === 0) {
             return 0;
         } else {
-            const lastNode = rowNodes[rowNodes.length - 1];
+            const lastNode = _.last(rowNodes);
             return lastNode.rowTop + lastNode.rowHeight;
         }
     }

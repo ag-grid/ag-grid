@@ -237,7 +237,7 @@ export class FillHandle extends AbstractSelectionHandle {
                         _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
                     }
                     else {
-                        _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[colsToMark.length - 1]);
+                        _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === _.last(colsToMark));
                     }
                 }
 

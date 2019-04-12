@@ -43,13 +43,9 @@ export class RangeController implements IRangeController {
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
 
     private logger: Logger;
-
     private gridPanel: GridPanel;
-
     private cellRanges: CellRange[] = [];
-
     private lastMouseEvent: MouseEvent | null;
-
     private bodyScrollListener = this.onBodyScroll.bind(this);
 
     // when a range is created, we mark the 'start cell' for further processing as follows:
@@ -123,9 +119,7 @@ export class RangeController implements IRangeController {
         }
 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
-        if (!columns) {
-            return;
-        }
+        if (!columns) { return; }
 
         const suppressMultiRangeSelections = this.gridOptionsWrapper.isSuppressMultiRangeSelection();
 
@@ -134,13 +128,17 @@ export class RangeController implements IRangeController {
             this.removeAllCellRanges(true);
         }
 
-        const rowForCell: RowPosition = {rowPinned: cell.rowPinned, rowIndex: cell.rowIndex};
+        const rowForCell: RowPosition = {
+            rowIndex: cell.rowIndex,
+            rowPinned: cell.rowPinned
+        };
 
         // if there is already a range for this cell, then we reuse the same range, otherwise the user
         // can ctrl & click a cell many times and hit ctrl+c, which would result in the cell getting copied
         // many times to the clipboard.
         let existingRange: CellRange | undefined;
-        this.cellRanges.forEach(range => {
+        for (let i = 0; i < this.cellRanges.length; i++) {
+            const range = this.cellRanges[i];
             const matches =
                 // check cols are same
                 (range.columns && range.columns.length === 1 && range.columns[0] === cell.column) &&
@@ -149,13 +147,14 @@ export class RangeController implements IRangeController {
                 RowPositionUtils.sameRow(rowForCell, range.endRow);
             if (matches) {
                 existingRange = range;
+                break;
             }
-        });
+        }
 
         if (existingRange) {
             // we need it at the end of the list, as the dragStart picks the last created
             // range as the start point for the drag
-            const atEndOfList = this.cellRanges[this.cellRanges.length - 1] === existingRange;
+            const atEndOfList = _.last(this.cellRanges) === existingRange;
             if (!atEndOfList) {
                 _.removeFromArray(this.cellRanges, existingRange);
                 this.cellRanges.push(existingRange);
@@ -164,7 +163,8 @@ export class RangeController implements IRangeController {
             const newRange: CellRange = {
                 startRow: rowForCell,
                 endRow: rowForCell,
-                columns: columns
+                columns: columns.columns,
+                startColumn: cell.column
             };
             this.cellRanges.push(newRange);
         }
@@ -174,45 +174,47 @@ export class RangeController implements IRangeController {
         this.onRangeChanged({ started: false, finished: true });
     }
 
-    public extendLatestRangeToCell(toCell: CellPosition): void {
+    public extendLatestRangeToCell(cellPosition: CellPosition): void {
         if (this.isEmpty() || !this.newestRangeStartCell) { return; }
+        const cellRange = _.last(this.cellRanges) as CellRange;
 
-        this.updateRangeEnd(
-            {
-                rowIndex: toCell.rowIndex,
-                rowPinned: toCell.rowPinned,
-            },
-            toCell.column,
-            !!this.cellRanges[0].chartMode
-        );
+        this.updateRangeEnd({
+            cellRange,
+            cellPosition
+        });
     }
 
-    private updateRangeEnd(endRow: RowPosition, endColumn: Column, chartMode: boolean) {
-        const range = this.cellRanges[this.cellRanges.length - 1];
+    public updateRangeEnd(params: {
+        cellRange: CellRange;
+        cellPosition: CellPosition;
+    }) {
+        const { cellRange, cellPosition } = params;
+        const endColumn = cellPosition.column;
+        const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
 
-        range.endRow = endRow;
-        range.columns = this.calculateColumnsBetween(range.columns[range.columns.length - 1], endColumn) as Column[];
+        if (!colsToAdd) { return; }
 
-        // this.onRangeChanged({ started: false, finished: true });
+        if (colsToAdd.position === 'after') {
+            cellRange.columns = [cellRange.startColumn, ...colsToAdd.columns];
+        } else {
+            cellRange.columns = [...colsToAdd.columns, cellRange.startColumn];
+        }
 
-        const event  = {
-            type: 'fred',
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(event);
+        cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned }; 
+
+        this.onRangeChanged({ started: false, finished: true });
     }
 
     // returns true if successful, false if not successful
     public extendLatestRangeInDirection(key: number): CellPosition | undefined {
         if (this.isEmpty() || !this.newestRangeStartCell) { return; }
 
-        const lastRange = this.cellRanges![this.cellRanges!.length - 1];
+        const lastRange = _.last(this.cellRanges)!;
 
         const startCell = this.newestRangeStartCell;
 
         const firstCol = lastRange.columns[0];
-        const lastCol = lastRange.columns[lastRange.columns.length - 1];
+        const lastCol = _.last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
         const endCellIndex = lastRange.endRow!.rowIndex;
@@ -247,7 +249,6 @@ export class RangeController implements IRangeController {
     }
 
     public setCellRanges(cellRanges: CellRange[]): void {
-
         this.removeAllCellRanges(true);
 
         cellRanges.forEach(newRange => {
@@ -283,7 +284,10 @@ export class RangeController implements IRangeController {
             if (!columnStart || !columnEnd) {
                 return;
             }
-            columns = this.calculateColumnsBetween(columnStart, columnEnd);
+            const colsToAdd = this.calculateColumnsBetween(columnStart, columnEnd);
+            if (colsToAdd) {
+                columns = colsToAdd.columns;
+            }
         }
 
         if (!columns) { return; }
@@ -309,7 +313,8 @@ export class RangeController implements IRangeController {
         const newRange: CellRange = {
             startRow: startRow,
             endRow: endRow,
-            columns: columns
+            columns: columns,
+            startColumn: columns[0]
         };
 
         return newRange;
@@ -460,7 +465,7 @@ export class RangeController implements IRangeController {
         // rather than creating another range. otherwise we end up with two distinct ranges
         // from a drag operation (one from click, and one from drag).
         if (this.cellRanges.length > 0) {
-            this.draggingRange = this.cellRanges[this.cellRanges.length - 1];
+            this.draggingRange = _.last(this.cellRanges);
         } else {
             const mouseRowPosition: RowPosition = {
                 rowIndex: mouseCell.rowIndex,
@@ -470,7 +475,8 @@ export class RangeController implements IRangeController {
             this.draggingRange = {
                 startRow: mouseRowPosition,
                 endRow: mouseRowPosition,
-                columns: [mouseCell.column]
+                columns: [mouseCell.column],
+                startColumn: this.newestRangeStartCell!.column
             };
             this.cellRanges.push(this.draggingRange);
         }
@@ -514,9 +520,9 @@ export class RangeController implements IRangeController {
             CellPositionUtils.equals(this.draggingCell, cellPosition)
         ) { return; }
 
-        const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
+        const colsToAdd = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
 
-        if (!columns) { return; }
+        if (!colsToAdd) { return; }
 
         this.draggingCell = cellPosition;
 
@@ -524,7 +530,7 @@ export class RangeController implements IRangeController {
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned
         };
-        this.draggingRange!.columns = columns;
+        this.draggingRange!.columns = colsToAdd.columns;
 
         this.onRangeChanged({ started: false, finished: false });
     }
@@ -546,11 +552,12 @@ export class RangeController implements IRangeController {
         this.eventService.dispatchEvent(event);
     }
 
-    private calculateColumnsBetween(columnFrom: Column, columnTo: Column): Column[] | undefined {
+    private calculateColumnsBetween(columnFrom: Column, columnTo: Column): { columns: Column[], position: 'before' | 'after' } | undefined {
         const allColumns = this.columnController.getAllDisplayedColumns();
-
+        const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom);
-        const toIndex = allColumns.indexOf(columnTo);
+
+        const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
 
         if (fromIndex < 0) {
             console.warn('ag-Grid: column ' + columnFrom.getId() + ' is not visible');
@@ -561,8 +568,23 @@ export class RangeController implements IRangeController {
             return undefined;
         }
 
-        const firstIndex = Math.min(fromIndex, toIndex);
-        const lastIndex = Math.max(fromIndex, toIndex);
+        if (isSameColumn) {
+            return { columns: [columnFrom], position: 'after' };
+        }
+
+        let position: 'after' | 'before';
+        let firstIndex: number;
+        let lastIndex: number;
+
+        if (toIndex < fromIndex) {
+            position = 'before';
+            firstIndex = toIndex;
+            lastIndex = fromIndex;
+        } else {
+            position = 'after';
+            firstIndex = fromIndex;
+            lastIndex = toIndex;
+        }
 
         const columns: Column[] = [];
 
@@ -570,7 +592,7 @@ export class RangeController implements IRangeController {
             columns.push(allColumns[i]);
         }
 
-        return columns;
+        return { columns: columns, position };
     }
 }
 

@@ -206,7 +206,7 @@ export class MoveColumnController implements DropListener {
         movingCols.forEach(col => indexes.push(gridCols.indexOf(col)));
         _.sortNumberArray(indexes);
         const firstIndex = indexes[0];
-        const lastIndex = indexes[indexes.length - 1];
+        const lastIndex = _.last(indexes);
         const spread = lastIndex - firstIndex;
         const gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;

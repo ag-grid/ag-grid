@@ -182,8 +182,8 @@ export class ClipboardService implements IClipboardService {
         }
 
         // remove last row if empty, excel puts empty last row in
-        const lastLine = parsedData[parsedData.length - 1];
-        if (lastLine.length === 1 && lastLine[0] === '') {
+        const lastLine = _.last(parsedData);
+        if (lastLine && lastLine.length === 1 && lastLine[0] === '') {
             _.removeFromArray(parsedData, lastLine);
         }
 
@@ -732,7 +732,10 @@ export class ClipboardService implements IClipboardService {
 
             // Now that we have our value string, let's add
             // it to the data array.
-            arrData[arrData.length - 1].push(strMatchedValue);
+            const lastItem = _.last(arrData);
+            if (lastItem) {
+                lastItem.push(strMatchedValue)
+            }
 
             atFirstRow = false;
         }
