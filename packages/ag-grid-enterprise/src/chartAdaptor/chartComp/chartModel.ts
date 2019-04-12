@@ -98,7 +98,8 @@ export class ChartModel extends BeanStub {
                 column,
                 colId: column.getColId(),
                 displayName: this.getFieldName(column),
-                selected: colsInCellRange.indexOf(column) > -1}
+                selected: colsInCellRange.indexOf(column) > -1
+            };
         });
 
         const noValueColsInRange = this.valueColState.filter(cs => cs.selected).length === 0;
@@ -112,7 +113,8 @@ export class ChartModel extends BeanStub {
                 column,
                 colId: column.getColId(),
                 displayName: this.getFieldName(column),
-                selected: false}
+                selected: false
+            };
         });
 
         const dimensionsInCellRange = dimensionCols.filter(col => colsInCellRange.indexOf(col) > -1);

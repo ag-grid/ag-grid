@@ -20,12 +20,12 @@ import {ChartMenu} from "./menu/chartMenu";
 import {ChartModel} from "./chartModel";
 
 export interface ChartOptions {
-    chartType: ChartType,
-    insideDialog: boolean,
-    showTooltips: boolean,
-    aggregate: boolean,
-    height: number,
-    width: number
+    chartType: ChartType;
+    insideDialog: boolean;
+    showTooltips: boolean;
+    aggregate: boolean;
+    height: number;
+    width: number;
 }
 
 export class GridChartComp extends Component {
@@ -95,7 +95,7 @@ export class GridChartComp extends Component {
         this.chartDialog = new Dialog({
             resizable: true,
             movable: true,
-            title: 'Chart',
+            title: '',
             component: this,
             centered: true,
             closable: true
@@ -158,15 +158,14 @@ export class GridChartComp extends Component {
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
         barSeries.yFieldNames = this.chartModel.getFields().map(f => f.displayName);
 
-        const data = this.chartModel.getData();
         const categoryId = this.chartModel.getSelectedCategory();
 
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
         barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
-        const fields = this.chartModel.getFields().map(f => f.colId);
-
-        barSeries.setDataAndFields(data, categoryId, fields);
+        barSeries.data = this.chartModel.getData();
+        barSeries.xField = categoryId;
+        barSeries.yFields = this.chartModel.getFields().map(f => f.colId);
     }
 
     private updateLineChart() {
@@ -189,7 +188,9 @@ export class GridChartComp extends Component {
             lineSeries.markerRadius = 3;
             lineSeries.color = colors[index % colors.length];
 
-            lineSeries.setDataAndFields(data, categoryId, f.colId);
+            lineSeries.data = this.chartModel.getData();
+            lineSeries.xField = categoryId;
+            lineSeries.yField = f.colId;
 
             return lineSeries;
         });
@@ -241,14 +242,15 @@ export class GridChartComp extends Component {
 
     private addResizeListener() {
         const eGui = this.getGui();
+        const eParent = eGui.parentElement as HTMLElement;
 
         const observeResize = this.resizeObserverService.observeResize(eGui, () => {
             if (!eGui || !eGui.offsetParent) {
                 observeResize();
                 return;
             }
-            this.chartModel.setHeight(_.getInnerHeight(eGui.parentElement as HTMLElement));
-            this.chartModel.setWidth(_.getInnerWidth(eGui.parentElement as HTMLElement));
+            this.chartModel.setHeight(_.getInnerHeight(eParent));
+            this.chartModel.setWidth(_.getInnerWidth(eParent));
 
             this.chart.height = this.chartModel.getHeight();
             this.chart.width = this.chartModel.getWidth();
