@@ -176,20 +176,35 @@ export class ChartModel extends BeanStub {
     }
 
     private updateCellRanges(updatedColState: ColState) {
+        const colToUpdate = updatedColState.colId;
+
         if (updatedColState.selected) {
+            const isDimensionCol = this.dimensionColState
+                .map(cs => cs.colId)
+                .filter(id => id === colToUpdate).length > 0;
+
+            if (isDimensionCol) {
+                // remove any existing dimension ranges
+                this.dimensionColState.forEach(cs => {
+                    const rangeToRemove = this.getCellRangeWithColId(cs.colId);
+                    if (rangeToRemove) {
+                        this.cellRanges = this.cellRanges.filter(range => range !== rangeToRemove);
+                    }
+                });
+            }
+
             const column = this.columnController.getGridColumn(updatedColState.colId) as Column;
             this.addRange(this.referenceCellRange, [column]);
 
         } else {
-            const colToUpdate = updatedColState.colId;
             const rangeToUpdate = this.getCellRangeWithColId(colToUpdate);
-
-            const removeColFromRange = () => {
-                rangeToUpdate.columns = rangeToUpdate.columns.filter(col => col.getColId() !== colToUpdate);
-            };
 
             const removeRange = () => {
                 this.cellRanges = this.cellRanges.filter(range => range !== rangeToUpdate);
+            };
+
+            const removeColFromRange = () => {
+                rangeToUpdate.columns = rangeToUpdate.columns.filter(col => col.getColId() !== colToUpdate);
             };
 
             if (rangeToUpdate.columns.length === 1) {
