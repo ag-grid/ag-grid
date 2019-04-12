@@ -152,6 +152,8 @@ export class Dialog extends PopupComponent {
 
         this.refreshSize();
 
+        eGui.focus();
+
         if (centered) {
             x = (eGui.offsetParent.clientWidth / 2) - (this.getWidth() / 2);
             y = (eGui.offsetParent.clientHeight / 2) - (this.getHeight() / 2);
@@ -162,7 +164,7 @@ export class Dialog extends PopupComponent {
         }
 
         this.addDestroyableEventListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
-            if (eGui.contains(e.relatedTarget as HTMLElement)) { return ; }
+            if (eGui.contains(e.relatedTarget as HTMLElement) || eGui.contains(document.activeElement)) { return ; }
 
             const focusEl = this.eContentWrapper.querySelector('button, [href], input, select, textarea, [tabindex]');
 
