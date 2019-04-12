@@ -47,7 +47,8 @@ export class ChartModel extends BeanStub {
     private showTooltips: boolean;
     private insideDialog: boolean;
 
-    private firstCellRange: CellRange;
+    // this is used to restore cols after all have been removed via menu
+    private referenceCellRange: CellRange;
 
     private datasource: ChartDatasource;
 
@@ -78,7 +79,7 @@ export class ChartModel extends BeanStub {
 
     private initCellRanges(cellRanges: CellRange[]): void {
         cellRanges.forEach(range => range.chartMode = true);
-        this.firstCellRange = cellRanges[0];
+        this.referenceCellRange = cellRanges[0];
         this.cellRanges = cellRanges;
     }
 
@@ -179,7 +180,7 @@ export class ChartModel extends BeanStub {
 
             const column = this.columnController.getGridColumn(updatedColState.colId) as Column;
 
-            const firstCellRange: CellRange = this.firstCellRange;
+            const firstCellRange: CellRange = this.referenceCellRange;
             this.cellRanges!.push({
                 startRow: firstCellRange.startRow,
                 endRow: firstCellRange.endRow,
@@ -196,15 +197,15 @@ export class ChartModel extends BeanStub {
             const shouldRemoveRange = matchingRange.columns.length === 1;
             if (shouldRemoveRange) {
 
-                //TODO remove dimensions that are not selected
                 const rangesDontMatch = (cellRange: CellRange) => cellRange.columns.filter(colsMatch).length !== 1;
 
                 if (this.cellRanges!.length === 1) {
-                    this.firstCellRange = this.cellRanges![0];
+                    this.referenceCellRange = this.cellRanges![0];
                 }
 
                 this.cellRanges = this.cellRanges!.filter(rangesDontMatch);
             } else {
+                //TODO remove dimensions that are not selected
                 this.cellRanges!.forEach(cellRange => {
                    if (rangesMatch(cellRange)) {
                        const colsDontMatch = (col: Column) => col.getColId() !== updatedColState.colId;
@@ -249,6 +250,10 @@ export class ChartModel extends BeanStub {
 
     public setCellRanges() {
         this.rangeController.setCellRanges(this.cellRanges!);
+    }
+
+    public removeRanges() {
+        this.rangeController.setCellRanges([]);
     }
 
     public getColStateForMenu(): {dimensionCols: ColState[], valueCols: ColState[]} {
