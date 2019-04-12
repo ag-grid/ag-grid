@@ -75,6 +75,7 @@ export class ChartModel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, 'fred', this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForColumnChange.bind(this));
     }
 
     private initCellRanges(cellRanges: CellRange[]): void {
@@ -154,6 +155,11 @@ export class ChartModel extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
+    private updateForColumnChange() {
+        this.initColumnState();
+        this.updateModel();
+    }
+
     public update(updatedColState: ColState): void {
         this.updateColumnState(updatedColState);
         this.updateCellRanges(updatedColState);
@@ -199,19 +205,19 @@ export class ChartModel extends BeanStub {
         } else {
             const rangeToUpdate = this.getCellRangeWithColId(colToUpdate);
 
-            const removeRange = () => {
+            const removeThisRange = () => {
                 this.cellRanges = this.cellRanges.filter(range => range !== rangeToUpdate);
             };
 
-            const removeColFromRange = () => {
+            const removeColFromThisRange = () => {
                 rangeToUpdate.columns = rangeToUpdate.columns.filter(col => col.getColId() !== colToUpdate);
             };
 
             if (rangeToUpdate.columns.length === 1) {
-                removeRange();
+                removeThisRange();
 
             } else if (rangeToUpdate.columns.length === 2) {
-                removeColFromRange();
+                removeColFromThisRange();
 
             } else {
                 const colIdsInRange = rangeToUpdate.columns.map(col => col.getColId());
@@ -225,9 +231,9 @@ export class ChartModel extends BeanStub {
                     this.addRange(rangeToUpdate, firstRangeCols);
                     this.addRange(rangeToUpdate, secondRangeCols);
 
-                    removeRange();
+                    removeThisRange();
                 } else {
-                    removeColFromRange();
+                    removeColFromThisRange();
                 }
             }
         }
