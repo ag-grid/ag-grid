@@ -156,19 +156,19 @@ export class HdpiCanvas {
     }
 
     // 2D canvas context used for measuring text.
-    private static textMeasuringContext?: CanvasRenderingContext2D;
-    private static getTextMeasuringContext(): CanvasRenderingContext2D {
-        if (HdpiCanvas.textMeasuringContext) {
-            return HdpiCanvas.textMeasuringContext;
+    private static _textMeasuringContext?: CanvasRenderingContext2D;
+    private static get textMeasuringContext(): CanvasRenderingContext2D {
+        if (HdpiCanvas._textMeasuringContext) {
+            return HdpiCanvas._textMeasuringContext;
         }
         const canvas = document.createElement('canvas');
-        return HdpiCanvas.textMeasuringContext = canvas.getContext('2d')!;
+        return HdpiCanvas._textMeasuringContext = canvas.getContext('2d')!;
     }
 
-    // Offscreen SVGTextElement for measuring text
-    // (this fallback method is at least 25 times slower).
-    // Using a <span> and its `getBoundingClientRect` for the same purpose
-    // often results in a grossly incorrect measured height.
+    // Offscreen SVGTextElement for measuring text. This fallback method
+    // is at least 25 times slower than `CanvasRenderingContext2D.measureText`.
+    // Using a <span> and its `getBoundingClientRect` for text measurement
+    // is also slow and often results in a grossly incorrect measured height.
     private static _svgText: SVGTextElement;
     private static get svgText(): SVGTextElement {
         if (HdpiCanvas._svgText) {
@@ -208,21 +208,21 @@ export class HdpiCanvas {
         textMetrics: boolean,
         getTransform: boolean
     }>;
-    static supports() {
+    static get supports() {
         if (HdpiCanvas._supports) {
             return HdpiCanvas._supports;
         }
         return HdpiCanvas._supports = Object.freeze({
-            textMetrics: HdpiCanvas.getTextMeasuringContext().measureText('test')
+            textMetrics: HdpiCanvas.textMeasuringContext.measureText('test')
                 .actualBoundingBoxDescent !== undefined,
-            getTransform: HdpiCanvas.getTextMeasuringContext().getTransform !== undefined
+            getTransform: HdpiCanvas.textMeasuringContext.getTransform !== undefined
         });
     };
 
     static measureText(text: string, font: string,
                        textBaseline: CanvasTextBaseline,
                        textAlign: CanvasTextAlign): TextMetrics {
-        const ctx = HdpiCanvas.getTextMeasuringContext();
+        const ctx = HdpiCanvas.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
         ctx.textAlign = textAlign;
@@ -235,10 +235,10 @@ export class HdpiCanvas {
      * @param font The font shorthand string.
      */
     static getTextSize(text: string, font: string): Size {
-        if (HdpiCanvas.supports().textMetrics) {
-            const context = HdpiCanvas.getTextMeasuringContext();
-            context.font = font;
-            const metrics = context.measureText(text);
+        if (HdpiCanvas.supports.textMetrics) {
+            const ctx = HdpiCanvas.textMeasuringContext;
+            ctx.font = font;
+            const metrics = ctx.measureText(text);
 
             return {
                 width: metrics.width,

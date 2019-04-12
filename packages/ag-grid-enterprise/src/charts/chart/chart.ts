@@ -38,6 +38,15 @@ export abstract class Chart<D, X, Y> {
         this.scene.parent = null;
     }
 
+    private _data: D[] = [];
+    set data(data: D[]) {
+        this._data = data;
+        this.series.forEach(series => series.data = data);
+    }
+    get data(): D[] {
+        return this._data;
+    }
+
     protected _padding: Padding = {
         top: 20,
         right: 20,
@@ -258,18 +267,21 @@ export abstract class Chart<D, X, Y> {
         const offset = this.tooltipOffset;
         const parent = el.parentElement;
 
+        if (html !== undefined) {
+            el.innerHTML = html;
+        } else if (!el.innerHTML) {
+            return;
+        }
+
+        el.style.display = 'table';
+        const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
+
         let left = event.x + scrollX + offset[0];
         let top = event.y + scrollY + offset[1];
 
-        el.style.display = 'table';
-
-        if (html) {
-            el.innerHTML = html;
-            this.tooltipRect = el.getBoundingClientRect();
-        }
-        if (this.tooltipRect && parent && parent.parentElement) {
-            if (left + this.tooltipRect.width > parent.parentElement.offsetWidth) {
-                left -= this.tooltipRect.width + offset[0];
+        if (tooltipRect && parent && parent.parentElement) {
+            if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
+                left -= tooltipRect.width + offset[0];
             }
         }
         el.style.left = `${left}px`;
@@ -277,6 +289,9 @@ export abstract class Chart<D, X, Y> {
     }
 
     hideTooltip() {
-        this.tooltipElement.style.display = 'none';
+        const el = this.tooltipElement;
+
+        el.style.display = 'none';
+        el.innerHTML = '';
     }
 }
