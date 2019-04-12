@@ -63,7 +63,7 @@ export class GridChartComp extends Component {
         this.addResizeListener();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setGridChartEditMode.bind(this));
-        this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, (params) => this.refresh(params.fromGrid));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
@@ -110,14 +110,16 @@ export class GridChartComp extends Component {
         eChart.appendChild(this.chartMenu.getGui());
     }
 
-    private refresh(): void {
+    private refresh(fromGrid: boolean = false): void {
         if (this.chartModel.getChartType() !== this.currentChartType) {
             this.createChart();
         }
         this.updateChart();
 
         // ensure ranges are highlighted
-        this.chartModel.setCellRanges();
+        if (!fromGrid) {
+            this.chartModel.setCellRanges();
+        }
     }
 
     public updateChart() {

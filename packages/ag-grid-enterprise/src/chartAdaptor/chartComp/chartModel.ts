@@ -15,7 +15,9 @@ import {RangeController} from "../../rangeController";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 
-export interface ChartModelUpdatedEvent extends AgEvent {}
+export interface ChartModelUpdatedEvent extends AgEvent {
+    fromGrid: boolean;
+}
 
 export type ColState = {
     column?: Column,
@@ -72,7 +74,7 @@ export class ChartModel extends BeanStub {
         this.initColumnState();
         this.updateModel();
 
-        this.addDestroyableEventListener(this.eventService, 'fred', this.updateModel.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.updateModel.bind(this, true));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForColumnChange.bind(this));
@@ -130,7 +132,7 @@ export class ChartModel extends BeanStub {
         }
     }
 
-    private updateModel() {
+    private updateModel(fromGrid: boolean = false) {
         if (this.cellRanges.length === 0 || this.valueColState.length === 0) return;
 
         const startRow = this.rangeController.getRangeStartRow(this.cellRanges[0]).rowIndex;
@@ -151,8 +153,7 @@ export class ChartModel extends BeanStub {
         };
 
         this.chartData = this.datasource.getData(params);
-
-        this.raiseChartUpdatedEvent();
+        this.raiseChartUpdatedEvent(fromGrid);
     }
 
     private updateForColumnChange() {
@@ -359,9 +360,10 @@ export class ChartModel extends BeanStub {
         return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 
-    private raiseChartUpdatedEvent() {
+    private raiseChartUpdatedEvent(fromGrid: boolean = false) {
         const event: ChartModelUpdatedEvent = {
-            type: ChartModel.EVENT_CHART_MODEL_UPDATED
+            type: ChartModel.EVENT_CHART_MODEL_UPDATED,
+            fromGrid
         };
         this.dispatchEvent(event);
     }
