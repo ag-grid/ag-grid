@@ -450,6 +450,10 @@ export class Utils {
         return object;
     }
 
+    static flatten(arrayOfArrays: any[]) {
+        return [].concat.apply([], arrayOfArrays);
+    }
+
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null {
         try {
             if (!yyyyMmDd) {

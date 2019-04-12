@@ -1,4 +1,5 @@
 import {
+    _,
     AgEvent,
     Autowired,
     BeanStub,
@@ -26,7 +27,6 @@ export type ColState = {
 export class ChartModel extends BeanStub {
 
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
-
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('eventService') private eventService: EventService;
@@ -34,10 +34,7 @@ export class ChartModel extends BeanStub {
     @Autowired('rangeController') rangeController: RangeController;
 
     private readonly aggregate: boolean;
-    private cellRanges?: CellRange[];
-
-    private startRow: number;
-    private endRow: number;
+    private cellRanges: CellRange[];
 
     private chartType: ChartType;
     private chartData: any[];
@@ -45,7 +42,6 @@ export class ChartModel extends BeanStub {
     private dimensionColState: ColState[] = [];
     private valueColState: ColState[] = [];
 
-    private errors: string[] = [];
     private width: number;
     private height: number;
     private showTooltips: boolean;
@@ -55,19 +51,16 @@ export class ChartModel extends BeanStub {
 
     private datasource: ChartDatasource;
 
-    public constructor(chartOptions: ChartOptions, cellRange: CellRange) {
+    public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super();
         this.chartType = chartOptions.chartType;
         this.aggregate = chartOptions.aggregate;
-
-        cellRange.chartMode = true;
-        this.firstCellRange = cellRange;
-        this.cellRanges = [cellRange];
-
         this.width = chartOptions.width;
         this.height = chartOptions.height;
         this.showTooltips = chartOptions.showTooltips;
         this.insideDialog = chartOptions.insideDialog;
+
+        this.initCellRanges(cellRanges);
     }
 
     @PostConstruct
@@ -75,49 +68,38 @@ export class ChartModel extends BeanStub {
         this.datasource = new ChartDatasource();
         this.getContext().wireBean(this.datasource);
 
-        this.startRow = this.rangeController.getRangeStartRow(this.cellRanges![0]).rowIndex;
-        this.endRow = this.rangeController.getRangeEndRow(this.cellRanges![0]).rowIndex;
-
         this.initColumnState();
-
-        // abort if any errors occurred during init of column state
-        if (this.errors.length > 0) return;
-
         this.updateModel();
 
-        this.addDestroyableEventListener(this.eventService, 'fred', this.fred.bind(this));
+        this.addDestroyableEventListener(this.eventService, 'fred', this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
     }
 
-    private fred() {
-        this.updateModel();
+    private initCellRanges(cellRanges: CellRange[]): void {
+        cellRanges.forEach(range => range.chartMode = true);
+        this.firstCellRange = cellRanges[0];
+        this.cellRanges = cellRanges;
     }
 
     private initColumnState(): void {
-        if (!this.cellRanges || this.cellRanges.length === 0 || !this.cellRanges![0].columns) {
-            this.errors.push('No columns found in range');
-            return;
-        }
-
-        const colsInCellRange: Column[] = this.cellRanges![0].columns;
+        const colsFromAllRanges: Column[] = _.flatten(this.cellRanges.map(range => range.columns));
 
         const {dimensionCols, valueCols} = this.getAllChartColumns();
+
+        if (valueCols.length === 0) {
+            console.warn("ag-Grid - charts require at least one visible column set with 'enableValue=true'");
+            return;
+        }
 
         this.valueColState = valueCols.map(column => {
             return {
                 column,
                 colId: column.getColId(),
                 displayName: this.getFieldName(column),
-                selected: colsInCellRange.indexOf(column) > -1
+                selected: colsFromAllRanges.indexOf(column) > -1
             };
         });
-
-        const noValueColsInRange = this.valueColState.filter(cs => cs.selected).length === 0;
-        if (noValueColsInRange) {
-            this.errors.push('No value column in selected range.');
-            return;
-        }
 
         this.dimensionColState = dimensionCols.map(column => {
             return {
@@ -128,7 +110,7 @@ export class ChartModel extends BeanStub {
             };
         });
 
-        const dimensionsInCellRange = dimensionCols.filter(col => colsInCellRange.indexOf(col) > -1);
+        const dimensionsInCellRange = dimensionCols.filter(col => colsFromAllRanges.indexOf(col) > -1);
 
         if (dimensionsInCellRange.length > 0) {
             // select the first dimension from the range
@@ -147,20 +129,16 @@ export class ChartModel extends BeanStub {
     }
 
     private updateModel() {
-        this.errors = [];
+        if (this.cellRanges.length === 0 || this.valueColState.length === 0) return;
+
+        const startRow = this.rangeController.getRangeStartRow(this.cellRanges[0]).rowIndex;
+        const endRow = this.rangeController.getRangeEndRow(this.cellRanges[0]).rowIndex;
 
         const categoryIds = [this.getSelectedCategory()];
 
         const fields = this.valueColState
             .filter(cs => cs.selected)
             .map(cs => cs.column) as Column[];
-
-        let startRow = 0;
-        let endRow = 0;
-        if (this.cellRanges!.length > 0) {
-            startRow = this.cellRanges![0].startRow!.rowIndex;
-            endRow = this.cellRanges![0].endRow!.rowIndex;
-        }
 
         const params: ChartDatasourceParams = {
             categoryIds: categoryIds,
@@ -177,7 +155,7 @@ export class ChartModel extends BeanStub {
 
     public update(updatedColState: ColState): void {
         this.updateColumnState(updatedColState);
-        this.addNewCellRange(updatedColState);
+        this.updateCellRanges(updatedColState);
         this.updateModel();
     }
 
@@ -196,7 +174,7 @@ export class ChartModel extends BeanStub {
         }
     }
 
-    private addNewCellRange(updatedColState: ColState) {
+    private updateCellRanges(updatedColState: ColState) {
         if (updatedColState.selected) {
 
             const column = this.columnController.getGridColumn(updatedColState.colId) as Column;
@@ -217,6 +195,8 @@ export class ChartModel extends BeanStub {
 
             const shouldRemoveRange = matchingRange.columns.length === 1;
             if (shouldRemoveRange) {
+
+                //TODO remove
                 const rangesDontMatch = (cellRange: CellRange) => cellRange.columns.filter(colsMatch).length !== 1;
 
                 if (this.cellRanges!.length === 1) {
@@ -324,10 +304,6 @@ export class ChartModel extends BeanStub {
 
     public isInsideDialog(): boolean {
         return this.insideDialog;
-    }
-
-    public getErrors(): string[] {
-        return this.errors;
     }
 
     public setChartType(chartType: ChartType): void {

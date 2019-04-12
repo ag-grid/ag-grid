@@ -27,12 +27,17 @@ export class RangeChartService implements IRangeChartService {
     private activeCharts: ChartRef[] = [];
 
     public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): ChartRef | undefined {
-        const selectedRange = this.getSelectedRange();
-        return this.chartRange(selectedRange, chartType);
+        const selectedRange: CellRange = this.getSelectedRange();
+        return this.chartRange([selectedRange], chartType);
     }
 
     public chartCellRange(params: ChartRangeParams): ChartRef | undefined {
         const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params.cellRange);
+
+        if (!cellRange) {
+            console.warn("ag-Grid - unable to chart as no range is selected");
+            return;
+        }
 
         let chartType: ChartType;
         switch (params.chartType) {
@@ -53,11 +58,11 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, params.chartContainer, params.aggregate);
+            return this.chartRange([cellRange], chartType, params.chartContainer, params.aggregate);
         }
     }
 
-    public chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, aggregate = false): ChartRef | undefined {
+    public chartRange(cellRanges: CellRange[], chartType: ChartType, container?: HTMLElement, aggregate = false): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -70,7 +75,7 @@ export class RangeChartService implements IRangeChartService {
             width: 800
         };
 
-        const chartModel = new ChartModel(chartOptions, cellRange);
+        const chartModel = new ChartModel(chartOptions, cellRanges);
         this.context.wireBean(chartModel);
 
         const chartComp = new GridChartComp(chartModel);

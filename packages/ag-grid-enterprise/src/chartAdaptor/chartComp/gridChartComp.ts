@@ -32,13 +32,11 @@ export class GridChartComp extends Component {
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
-             <div ref="eErrors" class="ag-chart-errors"></div>
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @RefSelector('eChart') private eChart: HTMLElement;
-    @RefSelector('eErrors') private eErrors: HTMLElement;
 
     private readonly chartModel: ChartModel;
 
@@ -65,7 +63,6 @@ export class GridChartComp extends Component {
         this.addResizeListener();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setGridChartEditMode.bind(this));
-
         this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
@@ -114,31 +111,13 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        const eGui = this.getGui();
-
-        const errors = this.chartModel.getErrors();
-        const errorsExist = errors && errors.length > 0;
-
-        _.setVisible(this.eChart, !errorsExist);
-        _.setVisible(this.eErrors, errorsExist);
-
-        if (errorsExist) {
-            const html: string[] = [];
-
-            //TODO: update error styles
-            html.push(`Could not create chart:`);
-            html.push(`<ul>`);
-            errors.forEach(error => html.push(`<li>${error}</li>`));
-            html.push(`</ul>`);
-
-            eGui.innerHTML = html.join('');
-        } else {
-            if (this.chartModel.getChartType() !== this.currentChartType) {
-                this.createChart();
-            }
-            this.updateChart();
-            this.chartModel.setCellRanges();
+        if (this.chartModel.getChartType() !== this.currentChartType) {
+            this.createChart();
         }
+        this.updateChart();
+
+        // ensure ranges are highlighted
+        this.chartModel.setCellRanges();
     }
 
     public updateChart() {
