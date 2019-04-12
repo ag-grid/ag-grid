@@ -177,45 +177,62 @@ export class ChartModel extends BeanStub {
 
     private updateCellRanges(updatedColState: ColState) {
         if (updatedColState.selected) {
-
             const column = this.columnController.getGridColumn(updatedColState.colId) as Column;
-
-            const firstCellRange: CellRange = this.referenceCellRange;
-            this.cellRanges!.push({
-                startRow: firstCellRange.startRow,
-                endRow: firstCellRange.endRow,
-                columns: [column],
-                chartMode: true
-            });
+            this.addRange(this.referenceCellRange, [column]);
 
         } else {
-            const colsMatch = (col: Column) => col.getColId() === updatedColState.colId;
+            const colToUpdate = updatedColState.colId;
+            const rangeToUpdate = this.getCellRangeWithColId(colToUpdate);
 
-            const rangesMatch = (cellRange: CellRange) => cellRange.columns.filter(colsMatch).length === 1;
-            const matchingRange = this.cellRanges!.filter(rangesMatch)[0];
+            const removeColFromRange = () => {
+                rangeToUpdate.columns = rangeToUpdate.columns.filter(col => col.getColId() !== colToUpdate);
+            };
 
-            const shouldRemoveRange = matchingRange.columns.length === 1;
-            if (shouldRemoveRange) {
+            const removeRange = () => {
+                this.cellRanges = this.cellRanges.filter(range => range !== rangeToUpdate);
+            };
 
-                const rangesDontMatch = (cellRange: CellRange) => cellRange.columns.filter(colsMatch).length !== 1;
+            if (rangeToUpdate.columns.length === 1) {
+                removeRange();
 
-                if (this.cellRanges!.length === 1) {
-                    this.referenceCellRange = this.cellRanges![0];
-                }
+            } else if (rangeToUpdate.columns.length === 2) {
+                removeColFromRange();
 
-                this.cellRanges = this.cellRanges!.filter(rangesDontMatch);
             } else {
-                //TODO remove dimensions that are not selected
-                this.cellRanges!.forEach(cellRange => {
-                   if (rangesMatch(cellRange)) {
-                       const colsDontMatch = (col: Column) => col.getColId() !== updatedColState.colId;
-                       cellRange.columns = cellRange.columns.filter(colsDontMatch);
-                   }
-                });
+                const colIdsInRange = rangeToUpdate.columns.map(col => col.getColId());
+                const indexOfColToRemove = colIdsInRange.indexOf(updatedColState.colId);
+                const shouldSplitRange = indexOfColToRemove > 0 && indexOfColToRemove < colIdsInRange.length -1;
+
+                if (shouldSplitRange) {
+                    const firstRangeCols = rangeToUpdate.columns.slice(0, indexOfColToRemove);
+                    const secondRangeCols = rangeToUpdate.columns.slice(indexOfColToRemove + 1);
+
+                    this.addRange(rangeToUpdate, firstRangeCols);
+                    this.addRange(rangeToUpdate, secondRangeCols);
+
+                    removeRange();
+                } else {
+                    removeColFromRange();
+                }
             }
         }
 
         this.setCellRanges();
+    }
+
+    private addRange(referenceRange: CellRange, columns: Column[]) {
+        this.cellRanges.push({
+            startRow: referenceRange.startRow,
+            endRow: referenceRange.endRow,
+            columns: columns,
+            chartMode: true
+        });
+    }
+
+    private getCellRangeWithColId(colId: string): CellRange {
+        return this.cellRanges.filter((cellRange: CellRange) => {
+            return cellRange.columns.filter(col => col.getColId() === colId).length === 1
+        })[0];
     }
 
     private getAllChartColumns(): {dimensionCols: Column[], valueCols: Column[]} {
