@@ -218,8 +218,31 @@ export class ChartModel extends BeanStub {
                 return;
             }
 
+            const removeRange = (rangeToRemove: CellRange) => {
+                this.cellRanges = this.cellRanges.filter(range => range !== rangeToRemove);
+            };
+
             const valueRanges = this.cellRanges.filter(range => range.chartMode === 'value');
 
+            // Step 1: try and concatenate ranges
+            const colBeforeNewCol = this.columnController.getDisplayedColBefore(newColumn) as Column;
+            const colAfterNewCol = this.columnController.getDisplayedColAfter(newColumn) as Column;
+
+            const adjacentBeforeRanges = valueRanges.filter(range => _.last(range.columns) === colBeforeNewCol);
+            const adjacentAfterRanges = valueRanges.filter(range => range.columns[0] === colAfterNewCol);
+
+            if (adjacentBeforeRanges.length === 1 && adjacentAfterRanges.length === 1)  {
+                const adjacentBeforeRange = adjacentBeforeRanges[0];
+                const adjacentAfterRange = adjacentAfterRanges[0];
+
+                adjacentBeforeRange.columns.push(newColumn);
+                adjacentAfterRange.columns.forEach(col => adjacentBeforeRange.columns.push(col));
+
+                removeRange(adjacentAfterRange);
+                return;
+            }
+
+            // Step 2: try and add to existing range
             for (let i=0; i<valueRanges.length; i++) {
                 const valueRange = valueRanges[i];
 
@@ -242,7 +265,7 @@ export class ChartModel extends BeanStub {
                 }
             }
 
-            // otherwise add the new column to a new range
+            // Step 3: otherwise add the new column to a new range
             this.addRange(this.referenceCellRange, [newColumn], isDimensionCol);
 
         } else {
