@@ -142,9 +142,10 @@ export class ChartModel extends BeanStub {
         }
 
         if (this.cellRanges.length > 0 && this.cellRanges.length <= 2) {
-            const colIdsInRange = lastRange.columns.map(col => col.getColId());
-            const colInRange = (cs: ColState) => colIdsInRange.indexOf(cs.colId) > -1;
-            this.valueColState.forEach(cs => cs.selected = colInRange(cs) ? true : cs.selected);
+            const updateSelection = (cs: ColState) => {
+                cs.selected = lastRange.columns.some(col => col.getColId() === cs.colId);
+            };
+            this.valueColState.forEach(updateSelection);
         }
 
         const fields = this.valueColState
