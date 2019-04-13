@@ -112,6 +112,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     private updateLastCellPositionHovered(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
+        this.rangeController.autoScrollService.check(e);
         if (cell === this.lastCellHovered) {
             this.changedCell = false; 
             return; 
@@ -126,6 +127,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     private removeListeners() {
+        this.rangeController.autoScrollService.ensureCleared();
         if (this.cellHoverListener) {
             this.cellHoverListener();
             this.cellHoverListener = undefined;
