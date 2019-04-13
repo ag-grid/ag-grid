@@ -12,7 +12,8 @@ import {
     CellPosition,
     PostConstruct,
     ISelectionHandle,
-    RowPositionUtils
+    RowPositionUtils,
+    _
 } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 
@@ -31,6 +32,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private rangeEndRow: RowPosition;
 
     private lastCellHovered: CellPosition | undefined;
+    private changedCell: boolean = false;
     
     private cellHoverListener: (() => void) | undefined;
     
@@ -41,7 +43,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         this.dragService.addDragSource({
             eElement: this.getGui(),
             onDragStart: this.onDragStart.bind(this),
-            onDragging: this.onDrag.bind(this),
+            onDragging: (e: MouseEvent | Touch) => {
+                if (this.changedCell) {
+                    this.onDrag(e as MouseEvent);
+                }
+            },
             onDragStop: this.onDragEnd.bind(this)
         });
 
@@ -106,8 +112,12 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     private updateLastCellPositionHovered(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
-        if (cell === this.lastCellHovered) { return; }
+        if (cell === this.lastCellHovered) {
+            this.changedCell = false; 
+            return; 
+        }
         this.lastCellHovered = cell;
+        this.changedCell = true;
     }
 
     protected clearValues() {
@@ -130,7 +140,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         const oldCellComp = this.getCellComp();
         const eGui = this.getGui();
 
-        const cellRange = this.rangeController.getCellRanges()[0];
+        const cellRange = _.last(this.rangeController.getCellRanges()) as CellRange;
 
         let start = cellRange.startRow as RowPosition;
         let end = cellRange.endRow as RowPosition;

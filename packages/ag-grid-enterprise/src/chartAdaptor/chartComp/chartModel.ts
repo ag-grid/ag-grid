@@ -135,13 +135,14 @@ export class ChartModel extends BeanStub {
     private updateModel(fromGrid: boolean = false) {
         if (this.cellRanges.length === 0 || this.valueColState.length === 0) return;
 
-        const startRow = this.rangeController.getRangeStartRow(this.cellRanges[0]).rowIndex;
-        const endRow = this.rangeController.getRangeEndRow(this.cellRanges[0]).rowIndex;
+        const lastRange = _.last(this.cellRanges) as CellRange;
+        const startRow = this.rangeController.getRangeStartRow(lastRange).rowIndex;
+        const endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;
 
         const categoryIds = [this.getSelectedCategory()];
 
-        if (this.cellRanges.length === 1) {
-            const colIdsInRange = this.cellRanges[0].columns.map(col => col.getColId());
+        if (this.cellRanges.length <= 2) {
+            const colIdsInRange = lastRange.columns.map(col => col.getColId());
             this.valueColState.filter(cs => cs.selected = colIdsInRange.indexOf(cs.colId) > -1);
         }
 
@@ -191,9 +192,7 @@ export class ChartModel extends BeanStub {
         const colToUpdate = updatedColState.colId;
 
         if (updatedColState.selected) {
-            const isDimensionCol = this.dimensionColState
-                .map(cs => cs.colId)
-                .filter(id => id === colToUpdate).length > 0;
+            const isDimensionCol = this.dimensionColState.some(col => col.colId === colToUpdate);
 
             if (isDimensionCol) {
                 // remove any existing dimension ranges
@@ -206,7 +205,7 @@ export class ChartModel extends BeanStub {
             }
 
             const column = this.columnController.getGridColumn(updatedColState.colId) as Column;
-            this.addRange(this.referenceCellRange, [column]);
+            this.addRange(this.referenceCellRange, [column], true);
 
         } else {
             const rangeToUpdate = this.getCellRangeWithColId(colToUpdate);
@@ -247,14 +246,21 @@ export class ChartModel extends BeanStub {
         this.setCellRanges();
     }
 
-    private addRange(referenceRange: CellRange, columns: Column[]) {
-        this.cellRanges.push({
+    private addRange(referenceRange: CellRange, columns: Column[], atStart?: boolean) {
+        const newRange = {
             startRow: referenceRange.startRow,
             endRow: referenceRange.endRow,
             columns: columns,
             startColumn: columns[0],
             chartMode: true
-        });
+        };
+
+        if (atStart) {
+            this.cellRanges = [newRange, ...this.cellRanges];
+        }
+        else {
+            this.cellRanges = [...this.cellRanges, newRange];
+        }
     }
 
     private getCellRangeWithColId(colId: string): CellRange {

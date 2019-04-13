@@ -57,7 +57,7 @@ export class RangeController implements IRangeController {
     private draggingCell: CellPosition | undefined;
     private draggingRange: CellRange | undefined;
 
-    private autoScrollService: AutoScrollService;
+    public autoScrollService: AutoScrollService;
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
@@ -254,9 +254,7 @@ export class RangeController implements IRangeController {
                     rowPinned: newRange.startRow.rowPinned,
                     column: (newRange.columns as Column[])[0]
                 };
-                newRange.chartMode = true;
             }
-
             this.cellRanges.push(newRange);
         });
 
@@ -479,20 +477,6 @@ export class RangeController implements IRangeController {
         this.onRangeChanged({ started: true, finished: false });
     }
 
-    public onDragStop(): void {
-        if (!this.dragging) { return; }
-
-        this.autoScrollService.ensureCleared();
-
-        this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
-        this.lastMouseEvent = null;
-        this.dragging = false;
-        this.draggingRange = undefined;
-        this.draggingCell = undefined;
-
-        this.onRangeChanged({ started: false, finished: false });
-    }
-
     public onDragging(mouseEvent: MouseEvent | null): void {
         if (!this.dragging || !mouseEvent) {
             return;
@@ -524,6 +508,20 @@ export class RangeController implements IRangeController {
             rowPinned: cellPosition.rowPinned
         };
         this.draggingRange!.columns = columns;
+
+        this.onRangeChanged({ started: false, finished: false });
+    }
+
+    public onDragStop(): void {
+        if (!this.dragging) { return; }
+
+        this.autoScrollService.ensureCleared();
+
+        this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
+        this.lastMouseEvent = null;
+        this.dragging = false;
+        this.draggingRange = undefined;
+        this.draggingCell = undefined;
 
         this.onRangeChanged({ started: false, finished: false });
     }

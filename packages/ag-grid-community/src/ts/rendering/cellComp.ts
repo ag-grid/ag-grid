@@ -1785,9 +1785,16 @@ export class CellComp extends Component {
     private shouldHaveSelectionHandle(): boolean {
         const { rangeController } = this.beans;
         const el = this.getGui();
+        const cellRanges = rangeController.getCellRanges();
+        let rangesAllowed = cellRanges.length === 1;
+
+        if (!rangesAllowed && cellRanges.length === 2) {
+            const allChartRanges = !cellRanges.some(range => !range.chartMode);
+            rangesAllowed = allChartRanges && rangeController.isCellInSpecificRange(this.getCellPosition(), _.last(cellRanges));
+        }
 
         return this.rangeCount &&
-               rangeController.getCellRanges().length === 1 &&
+               rangesAllowed &&
                (
                     _.containsClass(el, 'ag-cell-range-single-cell') ||
                     (_.containsClass(el, 'ag-cell-range-bottom') && _.containsClass(el, 'ag-cell-range-right'))
@@ -1796,7 +1803,7 @@ export class CellComp extends Component {
 
     private addSelectionHandle() {
         const { context, rangeController } = this.beans;
-        const isChart = !!rangeController.getCellRanges()[0].chartMode;
+        const isChart = _.last(rangeController.getCellRanges()).chartMode;
         const type = isChart ? 'range' : 'fill';
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
