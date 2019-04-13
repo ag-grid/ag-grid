@@ -163,7 +163,7 @@ export class RangeController implements IRangeController {
             const newRange: CellRange = {
                 startRow: rowForCell,
                 endRow: rowForCell,
-                columns: columns.columns,
+                columns: columns,
                 startColumn: cell.column
             };
             this.cellRanges.push(newRange);
@@ -194,11 +194,7 @@ export class RangeController implements IRangeController {
 
         if (!colsToAdd) { return; }
 
-        if (colsToAdd.position === 'after') {
-            cellRange.columns = [cellRange.startColumn, ...colsToAdd.columns];
-        } else {
-            cellRange.columns = [...colsToAdd.columns, cellRange.startColumn];
-        }
+        cellRange.columns = colsToAdd;
 
         cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned }; 
 
@@ -284,10 +280,7 @@ export class RangeController implements IRangeController {
             if (!columnStart || !columnEnd) {
                 return;
             }
-            const colsToAdd = this.calculateColumnsBetween(columnStart, columnEnd);
-            if (colsToAdd) {
-                columns = colsToAdd.columns;
-            }
+            columns = this.calculateColumnsBetween(columnStart, columnEnd);
         }
 
         if (!columns) { return; }
@@ -520,9 +513,9 @@ export class RangeController implements IRangeController {
             CellPositionUtils.equals(this.draggingCell, cellPosition)
         ) { return; }
 
-        const colsToAdd = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
+        const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
 
-        if (!colsToAdd) { return; }
+        if (!columns) { return; }
 
         this.draggingCell = cellPosition;
 
@@ -530,7 +523,7 @@ export class RangeController implements IRangeController {
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned
         };
-        this.draggingRange!.columns = colsToAdd.columns;
+        this.draggingRange!.columns = columns;
 
         this.onRangeChanged({ started: false, finished: false });
     }
@@ -552,7 +545,7 @@ export class RangeController implements IRangeController {
         this.eventService.dispatchEvent(event);
     }
 
-    private calculateColumnsBetween(columnFrom: Column, columnTo: Column): { columns: Column[], position: 'before' | 'after' } | undefined {
+    private calculateColumnsBetween(columnFrom: Column, columnTo: Column): Column[] | undefined {
         const allColumns = this.columnController.getAllDisplayedColumns();
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom);
@@ -569,22 +562,11 @@ export class RangeController implements IRangeController {
         }
 
         if (isSameColumn) {
-            return { columns: [columnFrom], position: 'after' };
+            return [columnFrom];
         }
 
-        let position: 'after' | 'before';
-        let firstIndex: number;
-        let lastIndex: number;
-
-        if (toIndex < fromIndex) {
-            position = 'before';
-            firstIndex = toIndex;
-            lastIndex = fromIndex;
-        } else {
-            position = 'after';
-            firstIndex = fromIndex;
-            lastIndex = toIndex;
-        }
+        const firstIndex = Math.min(fromIndex, toIndex);
+        const lastIndex = firstIndex === fromIndex ? toIndex : fromIndex;
 
         const columns: Column[] = [];
 
@@ -592,7 +574,7 @@ export class RangeController implements IRangeController {
             columns.push(allColumns[i]);
         }
 
-        return { columns: columns, position };
+        return columns;
     }
 }
 

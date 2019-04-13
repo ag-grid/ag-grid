@@ -158,7 +158,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 this.markedCellComps.push(cellComp);
 
                 const eGui = cellComp.getGui();
-        
+
                 _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', i === 0);
                 _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', i === colLen - 1);
 
