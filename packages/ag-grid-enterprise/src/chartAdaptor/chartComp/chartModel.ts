@@ -209,9 +209,6 @@ export class ChartModel extends BeanStub {
 
             const newColumn = this.columnController.getGridColumn(updatedColState.colId) as Column;
 
-            // TODO big assumption ;-)
-            // const valueColRange = _.last(this.cellRanges) as CellRange;
-
             const noValueRanges =
                 this.cellRanges.length === 0 || !this.cellRanges.some(range => range.chartMode === 'value');
 
