@@ -133,22 +133,25 @@ export class ChartModel extends BeanStub {
     }
 
     private updateModel(fromGrid: boolean = false) {
-        if (this.cellRanges.length === 0 || this.valueColState.length === 0) return;
-
         const lastRange = _.last(this.cellRanges) as CellRange;
-        const startRow = this.rangeController.getRangeStartRow(lastRange).rowIndex;
-        const endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;
 
-        const categoryIds = [this.getSelectedCategory()];
+        let startRow = 0, endRow = 0;
+        if (lastRange) {
+            startRow = this.rangeController.getRangeStartRow(lastRange).rowIndex;
+            endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;
+        }
 
-        if (this.cellRanges.length <= 2) {
+        if (this.cellRanges.length > 0 && this.cellRanges.length <= 2) {
             const colIdsInRange = lastRange.columns.map(col => col.getColId());
-            this.valueColState.filter(cs => cs.selected = colIdsInRange.indexOf(cs.colId) > -1);
+            const colInRange = (cs: ColState) => colIdsInRange.indexOf(cs.colId) > -1;
+            this.valueColState.forEach(cs => cs.selected = colInRange(cs) ? true : cs.selected);
         }
 
         const fields = this.valueColState
             .filter(cs => cs.selected)
             .map(cs => cs.column) as Column[];
+
+        const categoryIds = [this.getSelectedCategory()];
 
         const params: ChartDatasourceParams = {
             categoryIds: categoryIds,

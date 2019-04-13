@@ -138,16 +138,15 @@ export class GridChartComp extends Component {
 
     private updateBarChart() {
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
-        barSeries.yFieldNames = this.chartModel.getFields().map(f => f.displayName);
 
         const categoryId = this.chartModel.getSelectedCategory();
-
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
         barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         barSeries.data = this.chartModel.getData();
         barSeries.xField = categoryId;
         barSeries.yFields = this.chartModel.getFields().map(f => f.colId);
+        barSeries.yFieldNames = this.chartModel.getFields().map(f => f.displayName);
     }
 
     private updateLineChart() {
