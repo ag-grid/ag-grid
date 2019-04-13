@@ -207,8 +207,46 @@ export class ChartModel extends BeanStub {
                 });
             }
 
-            const column = this.columnController.getGridColumn(updatedColState.colId) as Column;
-            this.addRange(this.referenceCellRange, [column], isDimensionCol);
+            const newColumn = this.columnController.getGridColumn(updatedColState.colId) as Column;
+
+            // TODO big assumption ;-)
+            // const valueColRange = _.last(this.cellRanges) as CellRange;
+
+            const noValueRanges =
+                this.cellRanges.length === 0 || !this.cellRanges.some(range => range.chartMode === 'value');
+
+            // if there is no value range just add new column to a new range
+            if (noValueRanges) {
+                this.addRange(this.referenceCellRange, [newColumn], isDimensionCol);
+                return;
+            }
+
+            const valueRanges = this.cellRanges.filter(range => range.chartMode === 'value');
+
+            for (let i=0; i<valueRanges.length; i++) {
+                const valueRange = valueRanges[i];
+
+                // if new column is immediately before current value range, just prepend it
+                const firstColInRange = valueRange.columns[0] as Column;
+                const colBefore = this.columnController.getDisplayedColBefore(firstColInRange);
+                const addBeforeLastRange = colBefore && colBefore.getColId() === updatedColState.colId;
+                if (addBeforeLastRange) {
+                    valueRange.columns.unshift(newColumn);
+                    return;
+                }
+
+                // if new column is immediately after current value range, just append it
+                const lastColInRange = _.last(valueRange.columns) as Column;
+                const colAfter = this.columnController.getDisplayedColAfter(lastColInRange);
+                const addAfterLastRange = colAfter && colAfter.getColId() === updatedColState.colId;
+                if (addAfterLastRange) {
+                    valueRange.columns.push(newColumn);
+                    return;
+                }
+            }
+
+            // otherwise add the new column to a new range
+            this.addRange(this.referenceCellRange, [newColumn], isDimensionCol);
 
         } else {
             const rangeToUpdate = this.getCellRangeWithColId(colToUpdate);
