@@ -81,7 +81,7 @@ export class ChartModel extends BeanStub {
     }
 
     private initCellRanges(cellRanges: CellRange[]): void {
-        cellRanges.forEach(range => range.chartMode = true);
+        cellRanges.forEach(range => range.chartMode = 'value');
         this.referenceCellRange = cellRanges[0];
         this.cellRanges = cellRanges;
     }
@@ -252,7 +252,7 @@ export class ChartModel extends BeanStub {
             endRow: referenceRange.endRow,
             columns: columns,
             startColumn: columns[0],
-            chartMode: true
+            chartMode: (atStart ? 'category' : 'value') as 'category' | 'value'
         };
 
         if (atStart) {

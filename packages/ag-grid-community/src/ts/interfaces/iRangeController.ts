@@ -36,7 +36,7 @@ export interface CellRange {
     endRow?: RowPosition;
     columns: Column[];
     startColumn: Column;
-    chartMode?: boolean;
+    chartMode?: 'value' | 'category';
 }
 
 export interface CellRangeParams {
