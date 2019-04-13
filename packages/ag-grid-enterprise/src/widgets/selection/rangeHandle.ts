@@ -6,7 +6,6 @@ export class RangeHandle extends AbstractSelectionHandle {
     static TEMPLATE = '<div class="ag-range-handle"></div>';
 
     protected type = 'range';
-    private dragging: boolean = false;
     private shouldDestroyOnEndDragging: boolean = false;
 
     constructor() {
@@ -46,16 +45,16 @@ export class RangeHandle extends AbstractSelectionHandle {
     }
 
     protected onDragEnd(e: MouseEvent) {
-        this.dragging = false;
         if (this.shouldDestroyOnEndDragging) {
             this.destroy();
         }
+        this.dragging = false;
     }
 
     public destroy() {
         const cellComp = this.getCellComp();
-
-        if (this.dragging && cellComp && cellComp.isAlive()) {
+        
+        if (!this.shouldDestroyOnEndDragging && this.dragging && cellComp && cellComp.isAlive()) {
             _.setVisible(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;
             return;

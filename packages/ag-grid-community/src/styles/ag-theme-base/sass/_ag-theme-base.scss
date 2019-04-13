@@ -987,28 +987,28 @@
         .ag-selection-fill-top {
             border-top: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-top: 1px dashed $border-color;
+                border-top: 1px dashed darken($border-color, 20%);
             }
         }
     
         .ag-selection-fill-right {
             border-right: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-right: 1px dashed $border-color;
+                border-right: 1px dashed darken($border-color, 20%);
             }
         }
     
         .ag-selection-fill-bottom {
             border-bottom: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-bottom: 1px dashed $border-color;
+                border-bottom: 1px dashed darken($border-color, 20%);
             }
         }
     
         .ag-selection-fill-left {
             border-left: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-left: 1px dashed $border-color;
+                border-left: 1px dashed darken($border-color, 20%);
             }
         }
     }
@@ -1449,6 +1449,10 @@
     .ag-dialog {
         background-color: $dialog-background-color;
         border: $dialog-border-size $dialog-border-style $dialog-border-color;
+        .ag-dragging-range-handle &, .ag-dragging-fill-handle & {
+            opacity: 0.7;
+            pointer-events: none;
+        }
 
         .ag-dialog-title-bar {
             background-color: $dialog-title-background-color;

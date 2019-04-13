@@ -37,6 +37,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private cellHoverListener: (() => void) | undefined;
     
     protected abstract type: string;
+    protected dragging: boolean = false;
 
     @PostConstruct
     private init() {
@@ -108,6 +109,8 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             'mousemove', 
             this.updateLastCellPositionHovered.bind(this)
         );
+
+        _.addCssClass(document.body, `ag-dragging-${this.type}-handle`);
     }
 
     private updateLastCellPositionHovered(e: MouseEvent) {
@@ -127,7 +130,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     private removeListeners() {
-        this.rangeController.autoScrollService.ensureCleared();
+        if (this.dragging) {
+            this.rangeController.autoScrollService.ensureCleared();
+            _.removeCssClass(document.body, `ag-dragging-${this.type}-handle`);
+        }
+ 
         if (this.cellHoverListener) {
             this.cellHoverListener();
             this.cellHoverListener = undefined;
