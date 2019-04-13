@@ -140,6 +140,11 @@ export class ChartModel extends BeanStub {
 
         const categoryIds = [this.getSelectedCategory()];
 
+        if (this.cellRanges.length === 1) {
+            const colIdsInRange = this.cellRanges[0].columns.map(col => col.getColId());
+            this.valueColState.filter(cs => cs.selected = colIdsInRange.indexOf(cs.colId) > -1);
+        }
+
         const fields = this.valueColState
             .filter(cs => cs.selected)
             .map(cs => cs.column) as Column[];
