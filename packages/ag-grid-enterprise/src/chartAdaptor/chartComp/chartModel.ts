@@ -205,7 +205,7 @@ export class ChartModel extends BeanStub {
             }
 
             const column = this.columnController.getGridColumn(updatedColState.colId) as Column;
-            this.addRange(this.referenceCellRange, [column], true);
+            this.addRange(this.referenceCellRange, [column], isDimensionCol);
 
         } else {
             const rangeToUpdate = this.getCellRangeWithColId(colToUpdate);

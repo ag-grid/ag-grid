@@ -125,7 +125,7 @@ export class CellComp extends Component {
             this.rangeCount = rangeController.getCellRangeCount(this.cellPosition);
 
             if (this.rangeCount) {
-                this.hasChartRange = !rangeController.getCellRanges().some(range => !range.chartMode);
+                this.hasChartRange = rangeController.getCellRanges().every(range => !!range.chartMode);
             }
         }
 
@@ -1775,7 +1775,7 @@ export class CellComp extends Component {
             this.rangeCount = newRangeCount;
         }
 
-        const hasChartRange = this.rangeCount && !rangeController.getCellRanges().some(range => !range.chartMode);
+        const hasChartRange = this.rangeCount && rangeController.getCellRanges().every(range => !!range.chartMode);
 
         if (this.hasChartRange !== hasChartRange) {
             _.addOrRemoveCssClass(element, 'ag-cell-range-chart', hasChartRange);
@@ -1803,17 +1803,34 @@ export class CellComp extends Component {
         const { rangeController } = this.beans;
         const el = this.getGui();
         const cellRanges = rangeController.getCellRanges();
-        let rangesAllowed = cellRanges.length === 1;
+        const rangesLen = cellRanges.length;
 
-        if (!rangesAllowed && cellRanges.length === 2) {
-            rangesAllowed = this.hasChartRange && rangeController.isCellInSpecificRange(
-                this.getCellPosition(), _.last(cellRanges)
-            );
-            _.addOrRemoveCssClass(el, 'ag-cell-range-chart-category', this.hasChartRange && !rangesAllowed);
+        if (!rangesLen) { return false; }
+
+        let handlesAllowed = rangesLen === 1;
+
+        if (!handlesAllowed) {
+            const cellPosition = this.getCellPosition();
+            const isFirstRangeCategory = this.hasChartRange && cellRanges[0].chartMode === 'category';
+
+            handlesAllowed =
+                isFirstRangeCategory &&
+                rangesLen === 2 &&
+                rangeController.isCellInSpecificRange(
+                    this.getCellPosition(), _.last(cellRanges)
+                );
+
+            const isCategory =
+                isFirstRangeCategory &&
+                rangeController.isCellInSpecificRange(
+                    cellPosition, cellRanges[0]
+                );
+
+            _.addOrRemoveCssClass(el, 'ag-cell-range-chart-category', isCategory);
         }
 
         return this.rangeCount &&
-               rangesAllowed &&
+               handlesAllowed &&
                (
                     _.containsClass(el, 'ag-cell-range-single-cell') ||
                     (_.containsClass(el, 'ag-cell-range-bottom') && _.containsClass(el, 'ag-cell-range-right'))
