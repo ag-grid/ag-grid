@@ -25,7 +25,6 @@ export class FillHandle extends AbstractSelectionHandle {
     }
 
     protected onDrag(e: MouseEvent) {
-        this.dragging = true;
         const { x, y } = this.getGui().getBoundingClientRect() as DOMRect;
         const diffX = Math.abs(x - e.clientX);
         const diffY = Math.abs(y - e.clientY);
@@ -81,9 +80,6 @@ export class FillHandle extends AbstractSelectionHandle {
                 });
             }
         }
-
-        this.clearValues();
-        this.dragging = false;
     }
 
     protected clearValues() {

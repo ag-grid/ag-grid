@@ -37,19 +37,28 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private cellHoverListener: (() => void) | undefined;
     
     protected abstract type: string;
-    protected dragging: boolean = false;
+    private dragging: boolean = false;
 
     @PostConstruct
     private init() {
         this.dragService.addDragSource({
+            dragStartPixels: 0,
             eElement: this.getGui(),
             onDragStart: this.onDragStart.bind(this),
             onDragging: (e: MouseEvent | Touch) => {
+                this.dragging = true;
+                this.rangeController.autoScrollService.check(e as MouseEvent);
+
                 if (this.changedCell) {
-                    this.onDrag(e as MouseEvent);
+                    this.onDrag(e);
                 }
             },
-            onDragStop: this.onDragEnd.bind(this)
+            onDragStop: (e: MouseEvent | Touch) => {
+                this.onDragEnd(e);
+                this.clearValues();
+                this.rangeController.autoScrollService.ensureCleared();
+                _.removeCssClass(document.body, `ag-dragging-${this.type}-handle`);
+            }
         });
 
         this.addDestroyableEventListener(
@@ -59,8 +68,12 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         );
     }
 
-    protected abstract onDrag(e: MouseEvent): void;
-    protected abstract onDragEnd(e: MouseEvent): void;
+    protected abstract onDrag(e: MouseEvent | Touch): void;
+    protected abstract onDragEnd(e: MouseEvent | Touch): void;
+
+    protected isDragging(): boolean {
+        return this.dragging;
+    }
 
     protected getCellComp(): CellComp | undefined {
         return this.cellComp;
@@ -115,30 +128,12 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     private updateLastCellPositionHovered(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
-        this.rangeController.autoScrollService.check(e);
         if (cell === this.lastCellHovered) {
             this.changedCell = false; 
             return; 
         }
         this.lastCellHovered = cell;
         this.changedCell = true;
-    }
-
-    protected clearValues() {
-        this.lastCellHovered = undefined;
-        this.removeListeners();
-    }
-
-    private removeListeners() {
-        if (this.dragging) {
-            this.rangeController.autoScrollService.ensureCleared();
-            _.removeCssClass(document.body, `ag-dragging-${this.type}-handle`);
-        }
- 
-        if (this.cellHoverListener) {
-            this.cellHoverListener();
-            this.cellHoverListener = undefined;
-        }
     }
 
     public getType(): string {
@@ -170,6 +165,19 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         }
 
         this.setCellRange(cellRange);
+    }
+
+    protected clearValues() {
+        this.lastCellHovered = undefined;
+        this.dragging = false;
+        this.removeListeners();
+    }
+
+    private removeListeners() {
+        if (this.cellHoverListener) {
+            this.cellHoverListener();
+            this.cellHoverListener = undefined;
+        }
     }
 
     public destroy() {

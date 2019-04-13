@@ -15,8 +15,6 @@ export class RangeHandle extends AbstractSelectionHandle {
     protected onDrag(e: MouseEvent) {
         const lastCellHovered = this.getLastCellHovered();
 
-        this.dragging = true;
-
         if (!lastCellHovered ) { return; }
         const cellRanges = this.rangeController.getCellRanges();
         const lastRange = _.last(cellRanges) as CellRange;
@@ -48,13 +46,12 @@ export class RangeHandle extends AbstractSelectionHandle {
         if (this.shouldDestroyOnEndDragging) {
             this.destroy();
         }
-        this.dragging = false;
     }
 
     public destroy() {
         const cellComp = this.getCellComp();
         
-        if (!this.shouldDestroyOnEndDragging && this.dragging && cellComp && cellComp.isAlive()) {
+        if (!this.shouldDestroyOnEndDragging && this.isDragging() && cellComp && cellComp.isAlive()) {
             _.setVisible(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;
             return;
