@@ -72,6 +72,7 @@ $tool-panel-background-color: $mat-grey-50 !default;
 $chip-background-color: $mat-grey-300 !default;
 
 $range-selection-background-color: transparentize(darken($mat-indigo-50, 30%), 0.9) !default;
+$range-selection-chart-background-color: adjust-hue(saturate($range-selection-background-color, 70%), 30%) !default;
 $range-selection-highlight-color: $mat-pink-50 !default;
 $ag-range-selected-color-1: opacify($range-selection-background-color, 0.1) !default;
 $ag-range-selected-color-2: opacify($range-selection-background-color, 0.2) !default;
@@ -136,6 +137,8 @@ $params: (
     editor-background-color-color: $editor-background-color,
     
     range-selection-background-color: $range-selection-background-color,
+    range-selection-chart-background-color: $range-selection-chart-background-color,
+    range-selection-chart-category-background-color: $range-selection-chart-category-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
     ag-range-selected-color-1: $ag-range-selected-color-1,
     ag-range-selected-color-2: $ag-range-selected-color-2,

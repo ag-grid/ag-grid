@@ -45,6 +45,8 @@
     $editor-background-color-color: map-get($params, "editor-background-color-color");
 
     $range-selection-background-color: map-get($params, "range-selection-background-color");
+    $range-selection-chart-background-color: map-get($params, "range-selection-chart-background-color");
+    $range-selection-chart-category-background-color: map-get($params, "range-selection-chart-category-background-color");
     $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
     $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
     $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
@@ -956,6 +958,13 @@
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus) {
         background-color: $range-selection-background-color;
+        &.ag-cell-range-chart {
+            background-color: $range-selection-chart-background-color;
+        }
+
+        &.ag-cell-range-chart.ag-cell-range-chart-category {
+            background-color: $range-selection-chart-category-background-color;
+        }
     }
 
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
@@ -978,30 +987,49 @@
         .ag-selection-fill-top {
             border-top: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-top: 1px dashed darkgrey;
+                border-top: 1px dashed $border-color;
             }
         }
     
         .ag-selection-fill-right {
             border-right: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-right: 1px dashed darkgrey;
+                border-right: 1px dashed $border-color;
             }
         }
     
         .ag-selection-fill-bottom {
             border-bottom: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-bottom: 1px dashed darkgrey;
+                border-bottom: 1px dashed $border-color;
             }
         }
     
         .ag-selection-fill-left {
             border-left: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
-                border-left: 1px dashed darkgrey;
+                border-left: 1px dashed $border-color;
             }
         }
+    }
+
+    %selection-handle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        bottom: -1px;
+        right: -1px;
+        background-color: $primary-color;
+    }
+
+    .ag-fill-handle {
+        @extend %selection-handle;
+        cursor: cell;
+    }
+
+    .ag-range-handle {
+        @extend %selection-handle;
+        cursor: nwse-resize;
     }
 
     ////////////////////////////////////////
@@ -1479,26 +1507,6 @@
         &.ag-tooltip-hiding {
             opacity: 0;
         }
-    }
-
-    %selection-handle {
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        bottom: -1px;
-        right: -1px
-    }
-
-    .ag-fill-handle {
-        @extend %selection-handle;
-        background-color: $primary-color;
-        cursor: cell;
-    }
-
-    .ag-range-handle {
-        @extend %selection-handle;
-        background-color: invert($primary-color);
-        cursor: move;
     }
 
     ////////////////////////////////////////

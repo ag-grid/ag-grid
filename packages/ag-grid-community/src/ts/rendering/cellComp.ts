@@ -45,6 +45,7 @@ export class CellComp extends Component {
     private eParentRow: HTMLElement;
     private cellPosition: CellPosition;
     private rangeCount: number;
+    private hasChartRange: boolean;
 
     private usingWrapper: boolean;
 
@@ -120,7 +121,12 @@ export class CellComp extends Component {
         this.lastLeftPinned = this.column.isLastLeftPinned();
 
         if (this.rangeSelectionEnabled) {
-            this.rangeCount = this.beans.rangeController.getCellRangeCount(this.cellPosition);
+            const { rangeController } = this.beans;
+            this.rangeCount = rangeController.getCellRangeCount(this.cellPosition);
+
+            if (this.rangeCount) {
+                this.hasChartRange = !rangeController.getCellRanges().some(range => !range.chartMode);
+            }
         }
 
         this.getValueAndFormat();
@@ -1715,6 +1721,10 @@ export class CellComp extends Component {
 
         res.push('ag-cell-range-selected');
 
+        if (this.hasChartRange) {
+            res.push('ag-cell-range-chart');
+        }
+
         const count = Math.min(this.rangeCount, 4);
 
         res.push(`ag-cell-range-selected-${count}`);
@@ -1765,9 +1775,16 @@ export class CellComp extends Component {
             this.rangeCount = newRangeCount;
         }
 
-        const isSingleCell = this.rangeCount === 1 && !rangeController.isMoreThanOneCell();
+        const hasChartRange = this.rangeCount && !rangeController.getCellRanges().some(range => !range.chartMode);
+
+        if (this.hasChartRange !== hasChartRange) {
+            _.addOrRemoveCssClass(element, 'ag-cell-range-chart', hasChartRange);
+            this.hasChartRange = hasChartRange;
+        }
 
         this.updateRangeBorders();
+
+        const isSingleCell = this.rangeCount === 1 && !rangeController.isMoreThanOneCell();
         _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', isSingleCell);
 
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
@@ -1789,8 +1806,10 @@ export class CellComp extends Component {
         let rangesAllowed = cellRanges.length === 1;
 
         if (!rangesAllowed && cellRanges.length === 2) {
-            const allChartRanges = !cellRanges.some(range => !range.chartMode);
-            rangesAllowed = allChartRanges && rangeController.isCellInSpecificRange(this.getCellPosition(), _.last(cellRanges));
+            rangesAllowed = this.hasChartRange && rangeController.isCellInSpecificRange(
+                this.getCellPosition(), _.last(cellRanges)
+            );
+            _.addOrRemoveCssClass(el, 'ag-cell-range-chart-category', this.hasChartRange && !rangesAllowed);
         }
 
         return this.rangeCount &&

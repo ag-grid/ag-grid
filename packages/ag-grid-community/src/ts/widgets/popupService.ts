@@ -34,7 +34,6 @@ export class PopupService {
     private getPopupParent(): HTMLElement {
         const ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
-            // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         }
 
