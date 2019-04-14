@@ -19,10 +19,23 @@ export function isPointInBBox(bbox: BBox, x: number, y: number) {
         && y >= bbox.y && y <= (bbox.y + bbox.height);
 }
 
-export function renderBBox(ctx: CanvasRenderingContext2D, bbox: BBox) {
+export function renderBBox(params: {
+    ctx: CanvasRenderingContext2D,
+    bbox: BBox,
+    resetTransform?: boolean,
+    strokeStyle?: string,
+    lineWidth?: number
+}) {
+    const {ctx, bbox} = params;
+
     ctx.save();
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 1;
+
+    if (params.resetTransform) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    ctx.strokeStyle = params.strokeStyle || 'red';
+    ctx.lineWidth = params.lineWidth || 1;
+
     ctx.strokeRect(bbox.x, bbox.y, bbox.width, bbox.height);
     ctx.restore();
 }

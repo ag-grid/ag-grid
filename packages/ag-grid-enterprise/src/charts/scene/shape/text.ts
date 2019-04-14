@@ -164,7 +164,6 @@ export class Text extends Shape {
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
-        // renderBBox(ctx, this.matrix.transformBBox(this.getBBox!())); // debug
         this.matrix.toContext(ctx);
 
         this.applyContextAttributes(ctx);
@@ -179,6 +178,12 @@ export class Text extends Shape {
                 ctx.strokeText(this.text, this.x, this.y);
             }
         }
+
+        // // debug
+        // renderBBox({
+        //     ctx,
+        //     bbox: this.matrix.transformBBox(this.getBBox!())
+        // });
 
         this.dirty = false;
     }

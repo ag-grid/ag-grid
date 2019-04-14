@@ -194,6 +194,7 @@ export class Arc extends Shape {
     }
 
     readonly getBBox = (): BBox => {
+        // Only works with full arcs (circles) and untransformed ellipses.
         return {
             x: this.centerX - this.radiusX,
             y: this.centerY - this.radiusY,

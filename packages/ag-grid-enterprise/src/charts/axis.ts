@@ -9,6 +9,7 @@ import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
+import { Rect } from "./scene/shape/rect";
 
 enum Tags {
     Tick,
@@ -30,10 +31,21 @@ export type GridStyle = {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 export class Axis<D> {
+
+    // debug (bbox)
+    // private bboxRect = (() => {
+    //     const rect = new Rect();
+    //     rect.fillStyle = null;
+    //     rect.strokeStyle = 'blue';
+    //     rect.lineWidth = 1;
+    //     return rect;
+    // })();
+
     constructor(scale: Scale<D, number>) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.group.append(this.line);
+        // this.group.append(this.bboxRect); // debug (bbox)
     }
 
     readonly scale: Scale<D, number>;
@@ -262,7 +274,7 @@ export class Axis<D> {
         const groupSelection = update.merge(enter);
 
         groupSelection
-            .attrFn('translationY', (node, datum) => {
+            .attrFn('translationY', (_, datum) => {
                 return Math.round(scale.convert(datum) + bandwidth);
             });
 
@@ -346,6 +358,14 @@ export class Axis<D> {
         line.y2 = scale.range[scale.range.length - 1];
         line.lineWidth = this.lineWidth;
         line.strokeStyle = this.lineColor;
+
+        // debug (bbox)
+        // const bbox = this.getBBox();
+        // const bboxRect = this.bboxRect;
+        // bboxRect.x = bbox.x;
+        // bboxRect.y = bbox.y;
+        // bboxRect.width = bbox.width;
+        // bboxRect.height = bbox.height;
     }
 
     getBBox(): BBox {
