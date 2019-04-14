@@ -1,22 +1,24 @@
 import {
     _,
-    Autowired,
-    PostConstruct,
     AgEvent,
+    Autowired,
     BeanStub,
     CellRange,
     CellRangeType,
     ChartType,
+    ColDef,
     Column,
     ColumnController,
     Events,
     EventService,
+    PostConstruct,
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 
-export interface ChartModelUpdatedEvent extends AgEvent {}
+export interface ChartModelUpdatedEvent extends AgEvent {
+}
 
 export type ColState = {
     column?: Column,
@@ -69,7 +71,7 @@ export class ChartModel extends BeanStub {
         this.datasource = new ChartDatasource();
         this.getContext().wireBean(this.datasource);
 
-        this.initCellRanges(this.cellRanges);
+        this.initCellRanges();
         this.initColumnState();
         this.updateModel();
 
@@ -79,18 +81,58 @@ export class ChartModel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForColumnChange.bind(this));
     }
 
-    private initCellRanges(cellRanges: CellRange[]): void {
-
-        // TODO - need to split ranges when there is a mix of dimensions and valueCols
-        cellRanges.forEach(range => range.type = CellRangeType.VALUE);
-
-        this.cellRanges = cellRanges;
-
+    private initCellRanges(): void {
         // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
-        this.referenceCellRange = cellRanges[0];
+        this.referenceCellRange = this.cellRanges[0];
+
+        this.splitInitialRange();
 
         // update the range controller now that we have updated the cell ranges as 'value' or 'dimension'
         this.setChartCellRangesInRangeController();
+    }
+
+    private splitInitialRange() {
+        // there is only one range provided initially
+        const colsToSplit = this.cellRanges[0].columns;
+
+        this.cellRanges = [];
+
+        const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
+
+        const dimensionCols = colsToSplit.filter(col => this.isDimensionColumn(col, allDisplayedColumns));
+        if (dimensionCols.length > 0) {
+            const firstDimensionInRange = dimensionCols[0];
+            this.addRange(CellRangeType.DIMENSION, [firstDimensionInRange])
+        }
+
+        const valueCols = colsToSplit.filter(col => this.isValueColumn(col, allDisplayedColumns));
+        if (valueCols.length === 0) {
+            // no range to add
+        } else if (valueCols.length === 1) {
+            this.addRange(CellRangeType.VALUE, valueCols)
+        } else {
+
+            let currentRange = [];
+            for (let i = 0; i < valueCols.length; i++) {
+                const currentValCol = valueCols[i];
+                currentRange.push(currentValCol);
+
+                // if last value col, close out range
+                if (i === valueCols.length - 1) {
+                    this.addRange(CellRangeType.VALUE, currentRange);
+                    break;
+                }
+
+                const nextValCol = valueCols[i + 1];
+                const nextDisplayedCol = this.columnController.getDisplayedColAfter(currentValCol) as Column;
+
+                // if next val col is not contiguous, close out range and start over
+                if (nextValCol !== nextDisplayedCol) {
+                    this.addRange(CellRangeType.VALUE, currentRange);
+                    currentRange = [];
+                }
+            }
+        }
     }
 
     private initColumnState(): void {
@@ -169,6 +211,9 @@ export class ChartModel extends BeanStub {
         };
 
         this.chartData = this.datasource.getData(params);
+
+        console.log("leave updateModel: ", this);
+
         this.raiseChartUpdatedEvent();
     }
 
@@ -242,7 +287,7 @@ export class ChartModel extends BeanStub {
             const adjacentBeforeRanges = valueRanges.filter(range => _.last(range.columns) === colBeforeNewCol);
             const adjacentAfterRanges = valueRanges.filter(range => range.columns[0] === colAfterNewCol);
 
-            if (adjacentBeforeRanges.length === 1 && adjacentAfterRanges.length === 1)  {
+            if (adjacentBeforeRanges.length === 1 && adjacentAfterRanges.length === 1) {
                 const adjacentBeforeRange = adjacentBeforeRanges[0];
                 const adjacentAfterRange = adjacentAfterRanges[0];
 
@@ -254,7 +299,7 @@ export class ChartModel extends BeanStub {
             }
 
             // Step 2: try and add to existing range
-            for (let i=0; i<valueRanges.length; i++) {
+            for (let i = 0; i < valueRanges.length; i++) {
                 const valueRange = valueRanges[i];
 
                 // if new column is immediately before current value range, just prepend it
@@ -299,7 +344,7 @@ export class ChartModel extends BeanStub {
             } else {
                 const colIdsInRange = rangeToUpdate.columns.map(col => col.getColId());
                 const indexOfColToRemove = colIdsInRange.indexOf(updatedColState.colId);
-                const shouldSplitRange = indexOfColToRemove > 0 && indexOfColToRemove < colIdsInRange.length -1;
+                const shouldSplitRange = indexOfColToRemove > 0 && indexOfColToRemove < colIdsInRange.length - 1;
 
                 if (shouldSplitRange) {
                     const firstRangeCols = rangeToUpdate.columns.slice(0, indexOfColToRemove);
@@ -340,34 +385,32 @@ export class ChartModel extends BeanStub {
         })[0];
     }
 
-    private getAllChartColumns(): {dimensionCols: Column[], valueCols: Column[]} {
+    private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
         const displayedCols = this.columnController.getAllDisplayedColumns();
-
-        const isDimension = (col: Column) =>
-            // col has to be defined by user as a dimension
-            (col.getColDef().enableRowGroup || col.getColDef().enablePivot)
-            &&
-            // plus the col must be visible
-            displayedCols.indexOf(col) >= 0;
-
-        const isValueCol = (col: Column) =>
-            // all columns must have enableValue enabled
-            col.getColDef().enableValue
-            // and the column must be visible in the grid. this gets around issues where user switches
-            // into / our of pivot mode (range no longer valid as switching between primary and secondary cols)
-            && displayedCols.indexOf(col) >= 0;
 
         const dimensionCols: Column[] = [];
         const valueCols: Column[] = [];
         displayedCols.forEach(col => {
-            if (isDimension(col)) {
+            if (this.isDimensionColumn(col, displayedCols)) {
                 dimensionCols.push(col);
-            } else if (isValueCol(col)) {
+            } else if (this.isValueColumn(col, displayedCols)) {
                 valueCols.push(col);
+            } else {
+                // ignore!
             }
         });
 
         return {dimensionCols, valueCols};
+    }
+
+    private isDimensionColumn(col: Column, displayedCols: Column[]): boolean {
+        const colDef = col.getColDef() as ColDef;
+        return displayedCols.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
+    }
+
+    private isValueColumn(col: Column, displayedCols: Column[]): boolean {
+        const colDef = col.getColDef() as ColDef;
+        return displayedCols.indexOf(col) > -1 && (!!colDef.enableValue);
     }
 
     public setChartCellRangesInRangeController() {
@@ -378,7 +421,7 @@ export class ChartModel extends BeanStub {
         this.rangeController.setCellRanges([]);
     }
 
-    public getColStateForMenu(): {dimensionCols: ColState[], valueCols: ColState[]} {
+    public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
         // don't return the default category to the menu
         const hideDefaultCategoryFilter = (cs: ColState) => cs.colId !== ChartModel.DEFAULT_CATEGORY;
         const dimensionColState = this.dimensionColState.filter(hideDefaultCategoryFilter);
