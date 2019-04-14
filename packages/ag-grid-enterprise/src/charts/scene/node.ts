@@ -14,7 +14,6 @@ export enum PointerEvents {
 export abstract class Node { // Don't confuse with `window.Node`.
 
     private static fnNameRegex = /function (\w+)\(/;
-    // TODO: what does ag-Grid use for component identification?
     // Uniquely identify nodes (to check for duplicates, for example).
     private createId(): string {
         const constructor = this.constructor as any;
@@ -394,7 +393,8 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return false;
     }
 
-    readonly getBBox?: () => BBox;
+    readonly getBBox?: () => BBox; // we use this signature to be able to conditionally set
+                                   // this property (see Text shape)
 
     getBBoxCenter(): [number, number] {
         const bbox = this.getBBox && this.getBBox();

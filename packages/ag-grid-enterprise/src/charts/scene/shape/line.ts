@@ -1,6 +1,7 @@
 import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { pixelSnap, PixelSnapBias } from "../../canvas/canvas";
+import { BBox } from "../bbox";
 
 export class Line extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -80,7 +81,14 @@ export class Line extends Shape {
         return this._y2;
     }
 
-    readonly getBBox: any = undefined;
+    readonly getBBox = (): BBox => {
+        return {
+            x: this.x1,
+            y: this.y1,
+            width: this.x2 - this.x1,
+            height: this.y2 - this.y1
+        };
+    };
 
     private _pixelSnapBias = PixelSnapBias.Positive;
     set pixelSnapBias(value: PixelSnapBias) {
