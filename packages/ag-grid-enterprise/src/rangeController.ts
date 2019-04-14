@@ -189,16 +189,35 @@ export class RangeController implements IRangeController {
         cellPosition: CellPosition;
     }) {
         const { cellRange, cellPosition } = params;
+
+        // TODO - RC this is temporary measure before the CellRange is an event emitter
+        const beforeCols = [...cellRange.columns];
+        const beforeEndRow = _.cloneObject(cellRange.endRow);
+
         const endColumn = cellPosition.column;
         const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
 
         if (!colsToAdd) { return; }
 
         cellRange.columns = colsToAdd;
+        cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
 
-        cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned }; 
-
+        // TODO RC - will this always be finished???
         this.onRangeChanged({ started: false, finished: true });
+
+        // TODO RC - only raise a 'chartRangeSelectionChanged' event if the rows or cols have changed
+        const colsChanged = !_.compareArrays(beforeCols, cellRange.columns);
+        const endRowChanged = JSON.stringify(beforeEndRow) !== JSON.stringify(cellRange.endRow);
+        if ( colsChanged || endRowChanged) {
+
+            // TODO RC - a more elegant solution would be for the ChartModel to listen to the CellRange instead
+            // Note that we are raising a new event as the Chart shouldn't be notified when other ranges are changed
+            // or when the chart setCellRanges when the chart gains focus!
+            const event = {
+                type: 'chartRangeSelectionChanged'
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     // returns true if successful, false if not successful

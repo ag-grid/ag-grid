@@ -1,7 +1,8 @@
 import {
     _,
-    AgEvent,
     Autowired,
+    PostConstruct,
+    AgEvent,
     BeanStub,
     CellRange,
     ChartType,
@@ -9,15 +10,12 @@ import {
     ColumnController,
     Events,
     EventService,
-    PostConstruct
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 
-export interface ChartModelUpdatedEvent extends AgEvent {
-    fromGrid: boolean;
-}
+export interface ChartModelUpdatedEvent extends AgEvent {}
 
 export type ColState = {
     column?: Column,
@@ -62,8 +60,7 @@ export class ChartModel extends BeanStub {
         this.height = chartOptions.height;
         this.showTooltips = chartOptions.showTooltips;
         this.insideDialog = chartOptions.insideDialog;
-
-        this.initCellRanges(cellRanges);
+        this.cellRanges = cellRanges;
     }
 
     @PostConstruct
@@ -71,19 +68,36 @@ export class ChartModel extends BeanStub {
         this.datasource = new ChartDatasource();
         this.getContext().wireBean(this.datasource);
 
+        this.initCellRanges(this.cellRanges);
         this.initColumnState();
         this.updateModel();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.updateModel.bind(this, true));
+        // this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, rangeChangeListener);
+
+        // TODO remove - just for debugging purposes
+        const rangeChangeListener = () => {
+            console.log("chartRangeSelectionChanged");
+            this.updateModel();
+        };
+
+        this.addDestroyableEventListener(this.eventService, "chartRangeSelectionChanged", rangeChangeListener);
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForColumnChange.bind(this));
     }
 
     private initCellRanges(cellRanges: CellRange[]): void {
+
+        // TODO - need to split ranges when there is a mix of dimensions and valueCols
         cellRanges.forEach(range => range.chartMode = 'value');
-        this.referenceCellRange = cellRanges[0];
+
         this.cellRanges = cellRanges;
+
+        // cell range to use as a reference after removing all cols (via menu) so we can re-add later
+        this.referenceCellRange = cellRanges[0];
+
+        // update the range controller now that we have updated the cell ranges as 'value' or 'dimension'
+        this.setChartCellRangesInRangeController();
     }
 
     private initColumnState(): void {
@@ -132,7 +146,7 @@ export class ChartModel extends BeanStub {
         }
     }
 
-    private updateModel(fromGrid: boolean = false) {
+    private updateModel() {
         const lastRange = _.last(this.cellRanges) as CellRange;
 
         let startRow = 0, endRow = 0;
@@ -141,12 +155,12 @@ export class ChartModel extends BeanStub {
             endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;
         }
 
-        if (this.cellRanges.length > 0 && this.cellRanges.length <= 2) {
-            const updateSelection = (cs: ColState) => {
-                cs.selected = lastRange.columns.some(col => col.getColId() === cs.colId);
-            };
-            this.valueColState.forEach(updateSelection);
-        }
+        const allColsFromRanges: Column[] = _.flatten(this.cellRanges.map(range => range.columns));
+
+        console.log(allColsFromRanges.map(col => col.getColId()).join(','));
+        this.valueColState.forEach(cs => {
+            cs.selected = allColsFromRanges.some(col => col.getColId() === cs.colId);
+        });
 
         const fields = this.valueColState
             .filter(cs => cs.selected)
@@ -163,7 +177,7 @@ export class ChartModel extends BeanStub {
         };
 
         this.chartData = this.datasource.getData(params);
-        this.raiseChartUpdatedEvent(fromGrid);
+        this.raiseChartUpdatedEvent();
     }
 
     private updateForColumnChange() {
@@ -175,6 +189,7 @@ export class ChartModel extends BeanStub {
         this.updateColumnState(updatedColState);
         this.updateCellRanges(updatedColState);
         this.updateModel();
+        this.setChartCellRangesInRangeController();
     }
 
     private updateColumnState(updatedCol: ColState) {
@@ -304,8 +319,6 @@ export class ChartModel extends BeanStub {
                 }
             }
         }
-
-        this.setCellRanges();
     }
 
     private addRange(referenceRange: CellRange, columns: Column[], atStart?: boolean) {
@@ -361,11 +374,11 @@ export class ChartModel extends BeanStub {
         return {dimensionCols, valueCols};
     }
 
-    public setCellRanges() {
-        this.rangeController.setCellRanges(this.cellRanges!);
+    public setChartCellRangesInRangeController() {
+        this.rangeController.setCellRanges(this.cellRanges);
     }
 
-    public removeRanges() {
+    public removeChartCellRangesFromRangeController() {
         this.rangeController.setCellRanges([]);
     }
 
@@ -433,10 +446,9 @@ export class ChartModel extends BeanStub {
         return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 
-    private raiseChartUpdatedEvent(fromGrid: boolean = false) {
+    private raiseChartUpdatedEvent() {
         const event: ChartModelUpdatedEvent = {
-            type: ChartModel.EVENT_CHART_MODEL_UPDATED,
-            fromGrid
+            type: ChartModel.EVENT_CHART_MODEL_UPDATED
         };
         this.dispatchEvent(event);
     }
