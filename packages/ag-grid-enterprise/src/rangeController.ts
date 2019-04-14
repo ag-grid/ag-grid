@@ -195,6 +195,9 @@ export class RangeController implements IRangeController {
         const beforeEndRow = _.cloneObject(cellRange.endRow);
 
         const endColumn = cellPosition.column;
+
+        // TODO - RC calculateColumnsBetween() returns the incorrect cols after value range is dragged left to
+        // TODO   add new col(s) and then dragged down
         const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
 
         if (!colsToAdd) { return; }
