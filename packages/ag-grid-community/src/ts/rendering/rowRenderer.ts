@@ -1,8 +1,5 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
-import { ExpressionService } from "../valueService/expressionService";
-import { TemplateService } from "../templateService";
-import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { RowComp } from "./rowComp";
 import { Column } from "../entities/column";
@@ -30,7 +27,9 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
+import { IRowModel } from "../interfaces/iRowModel";
 import { _ } from "../utils";
+import { RowPosition } from "../entities/rowPosition";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -39,11 +38,9 @@ export class RowRenderer extends BeanStub {
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("$scope") private $scope: any;
-    @Autowired("expressionService") private expressionService: ExpressionService;
-    @Autowired("templateService") private templateService: TemplateService;
-    @Autowired("valueService") private valueService: ValueService;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
+    @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
     @Autowired("focusedCellController") private focusedCellController: FocusedCellController;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
@@ -1107,6 +1104,17 @@ export class RowRenderer extends BeanStub {
 
         const cellComponent: CellComp = rowComponent.getRenderedCellForColumn(cellPosition.column);
         return cellComponent;
+    }
+
+    public getRowNode(gridRow: RowPosition): RowNode | null {
+        switch (gridRow.rowPinned) {
+            case Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
+            default:
+                return this.rowModel.getRow(gridRow.rowIndex);
+        }
     }
 
     public onTabKeyDown(previousRenderedCell: CellComp, keyboardEvent: KeyboardEvent): void {

@@ -2,24 +2,19 @@ import {
     Autowired,
     CellNavigationService,
     Component,
-    Constants,
-    Context,
     Events,
     EventService,
     GridApi,
     GridOptions,
     GridOptionsWrapper,
     RowPosition,
-    IRowModel,
     IStatusPanelComp,
-    PinnedRowModel,
     PostConstruct,
-    PreConstruct,
     RefSelector,
-    RowNode,
     ValueService,
     _, CellPositionUtils,
-    RowPositionUtils
+    RowPositionUtils,
+    RowRenderer
 } from 'ag-grid-community';
 import { RangeController } from "../../rangeController";
 import { NameValueComp } from "./nameValueComp";
@@ -39,8 +34,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -157,7 +151,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                         cellsSoFar[cellId] = true;
 
-                        const rowNode = this.getRowNode(currentRow);
+                        const rowNode = this.rowRenderer.getRowNode(currentRow);
                         if (_.missing(rowNode)) {
                             return;
                         }
@@ -211,16 +205,5 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.setAggregationComponentValue('min', min, gotNumberResult);
         this.setAggregationComponentValue('max', max, gotNumberResult);
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
-    }
-
-    private getRowNode(gridRow: RowPosition): RowNode | null {
-        switch (gridRow.rowPinned) {
-            case Constants.PINNED_TOP:
-                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case Constants.PINNED_BOTTOM:
-                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
-            default:
-                return this.rowModel.getRow(gridRow.rowIndex);
-        }
     }
 }
