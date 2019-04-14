@@ -1,12 +1,15 @@
+import { 
+    CellRange,
+    RowPositionUtils,
+    _ 
+} from "ag-grid-community";
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
-import { _, CellRange, RowPositionUtils, CellPositionUtils } from "ag-grid-community";
 
 export class RangeHandle extends AbstractSelectionHandle {
 
     static TEMPLATE = '<div class="ag-range-handle"></div>';
 
     protected type = 'range';
-    private shouldDestroyOnEndDragging: boolean = false;
 
     constructor() {
         super(RangeHandle.TEMPLATE);
@@ -43,21 +46,6 @@ export class RangeHandle extends AbstractSelectionHandle {
     }
 
     protected onDragEnd(e: MouseEvent) {
-        if (this.shouldDestroyOnEndDragging) {
-            this.destroy();
-        }
-    }
-
-    public destroy() {
-        const cellComp = this.getCellComp();
         
-        if (!this.shouldDestroyOnEndDragging && this.isDragging() && cellComp && cellComp.isAlive()) {
-            _.setVisible(this.getGui(), false);
-            this.shouldDestroyOnEndDragging = true;
-            return;
-        }
-
-        this.shouldDestroyOnEndDragging = false;
-        super.destroy();
     }
 }

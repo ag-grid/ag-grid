@@ -38,9 +38,10 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     
     protected abstract type: string;
     private dragging: boolean = false;
+    protected shouldDestroyOnEndDragging: boolean = false;
 
     @PostConstruct
-    private init() {
+    protected init() {
         this.dragService.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),
@@ -54,10 +55,14 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
                 }
             },
             onDragStop: (e: MouseEvent | Touch) => {
+                this.dragging = false;
                 this.onDragEnd(e);
                 this.clearValues();
                 this.rangeController.autoScrollService.ensureCleared();
                 _.removeCssClass(document.body, `ag-dragging-${this.type}-handle`);
+                if (this.shouldDestroyOnEndDragging) {
+                    this.destroy();
+                }
             }
         });
 
@@ -161,7 +166,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
         if (oldCellComp !== cellComp) {
             this.setCellComp(cellComp);
-            cellComp.appendChild(eGui);
+            window.setTimeout(() => {
+                if (this.isAlive()) {
+                    cellComp.appendChild(eGui);
+                }
+            }, 1);
         }
 
         this.setCellRange(cellRange);
@@ -169,7 +178,6 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected clearValues() {
         this.lastCellHovered = undefined;
-        this.dragging = false;
         this.removeListeners();
     }
 
@@ -181,6 +189,14 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     public destroy() {
+        if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
+            _.setVisible(this.getGui(), false);
+            this.shouldDestroyOnEndDragging = true;
+            return;
+        }
+
+        this.shouldDestroyOnEndDragging = false;
+
         super.destroy();
         this.removeListeners();
 
