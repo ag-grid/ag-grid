@@ -31,12 +31,14 @@ export interface ISelectionHandle {
     refresh(cellComp: CellComp): void;
 }
 
+export enum CellRangeType {VALUE, DIMENSION}
+
 export interface CellRange {
+    type?: CellRangeType;
     startRow?: RowPosition;
     endRow?: RowPosition;
     columns: Column[];
     startColumn: Column;
-    chartMode?: 'value' | 'category';
 }
 
 export interface CellRangeParams {
@@ -47,7 +49,6 @@ export interface CellRangeParams {
     columnStart?: string | Column;
     columnEnd?: string | Column;
     columns?: (string | Column)[];
-    chartMode?: boolean;
 }
 
 /** @deprecated */

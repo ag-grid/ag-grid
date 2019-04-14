@@ -5,6 +5,7 @@ import {
     AgEvent,
     BeanStub,
     CellRange,
+    CellRangeType,
     ChartType,
     Column,
     ColumnController,
@@ -26,8 +27,8 @@ export type ColState = {
 
 export class ChartModel extends BeanStub {
 
-    public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
+    public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -72,15 +73,7 @@ export class ChartModel extends BeanStub {
         this.initColumnState();
         this.updateModel();
 
-        // this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, rangeChangeListener);
-
-        // TODO remove - just for debugging purposes
-        const rangeChangeListener = () => {
-            console.log("chartRangeSelectionChanged");
-            this.updateModel();
-        };
-
-        this.addDestroyableEventListener(this.eventService, "chartRangeSelectionChanged", rangeChangeListener);
+        this.addDestroyableEventListener(this.eventService, "chartRangeSelectionChanged", this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForColumnChange.bind(this));
@@ -89,11 +82,11 @@ export class ChartModel extends BeanStub {
     private initCellRanges(cellRanges: CellRange[]): void {
 
         // TODO - need to split ranges when there is a mix of dimensions and valueCols
-        cellRanges.forEach(range => range.chartMode = 'value');
+        cellRanges.forEach(range => range.type = CellRangeType.VALUE);
 
         this.cellRanges = cellRanges;
 
-        // cell range to use as a reference after removing all cols (via menu) so we can re-add later
+        // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
         this.referenceCellRange = cellRanges[0];
 
         // update the range controller now that we have updated the cell ranges as 'value' or 'dimension'
@@ -157,7 +150,6 @@ export class ChartModel extends BeanStub {
 
         const allColsFromRanges: Column[] = _.flatten(this.cellRanges.map(range => range.columns));
 
-        console.log(allColsFromRanges.map(col => col.getColId()).join(','));
         this.valueColState.forEach(cs => {
             cs.selected = allColsFromRanges.some(col => col.getColId() === cs.colId);
         });
@@ -211,6 +203,8 @@ export class ChartModel extends BeanStub {
         const colToUpdate = updatedColState.colId;
 
         if (updatedColState.selected) {
+            const newColumn = this.columnController.getGridColumn(updatedColState.colId) as Column;
+
             const isDimensionCol = this.dimensionColState.some(col => col.colId === colToUpdate);
 
             if (isDimensionCol) {
@@ -221,16 +215,17 @@ export class ChartModel extends BeanStub {
                         this.cellRanges = this.cellRanges.filter(range => range !== rangeToRemove);
                     }
                 });
+
+                this.addRange(CellRangeType.DIMENSION, [newColumn]);
+                return;
             }
 
-            const newColumn = this.columnController.getGridColumn(updatedColState.colId) as Column;
-
             const noValueRanges =
-                this.cellRanges.length === 0 || !this.cellRanges.some(range => range.chartMode === 'value');
+                this.cellRanges.length === 0 || !this.cellRanges.some(range => range.type === CellRangeType.VALUE);
 
             // if there is no value range just add new column to a new range
             if (noValueRanges) {
-                this.addRange(this.referenceCellRange, [newColumn], isDimensionCol);
+                this.addRange(CellRangeType.VALUE, [newColumn]);
                 return;
             }
 
@@ -238,7 +233,7 @@ export class ChartModel extends BeanStub {
                 this.cellRanges = this.cellRanges.filter(range => range !== rangeToRemove);
             };
 
-            const valueRanges = this.cellRanges.filter(range => range.chartMode === 'value');
+            const valueRanges = this.cellRanges.filter(range => range.type === CellRangeType.VALUE);
 
             // Step 1: try and concatenate ranges
             const colBeforeNewCol = this.columnController.getDisplayedColBefore(newColumn) as Column;
@@ -282,7 +277,7 @@ export class ChartModel extends BeanStub {
             }
 
             // Step 3: otherwise add the new column to a new range
-            this.addRange(this.referenceCellRange, [newColumn], isDimensionCol);
+            this.addRange(CellRangeType.VALUE, [newColumn]);
 
         } else {
             const rangeToUpdate = this.getCellRangeWithColId(colToUpdate);
@@ -310,8 +305,8 @@ export class ChartModel extends BeanStub {
                     const firstRangeCols = rangeToUpdate.columns.slice(0, indexOfColToRemove);
                     const secondRangeCols = rangeToUpdate.columns.slice(indexOfColToRemove + 1);
 
-                    this.addRange(rangeToUpdate, firstRangeCols);
-                    this.addRange(rangeToUpdate, secondRangeCols);
+                    this.addRange(CellRangeType.VALUE, firstRangeCols);
+                    this.addRange(CellRangeType.VALUE, secondRangeCols);
 
                     removeThisRange();
                 } else {
@@ -321,21 +316,22 @@ export class ChartModel extends BeanStub {
         }
     }
 
-    private addRange(referenceRange: CellRange, columns: Column[], atStart?: boolean) {
+    private addRange(cellRangeType: CellRangeType, columns: Column[]) {
+        const valueRanges = this.cellRanges.filter(range => range.type === CellRangeType.VALUE);
+
+        if (valueRanges.length > 0) {
+            this.referenceCellRange = valueRanges[0];
+        }
+
         const newRange = {
-            startRow: referenceRange.startRow,
-            endRow: referenceRange.endRow,
+            startRow: this.referenceCellRange.startRow,
+            endRow: this.referenceCellRange.endRow,
             columns: columns,
             startColumn: columns[0],
-            chartMode: (atStart ? 'category' : 'value') as 'category' | 'value'
+            type: cellRangeType
         };
 
-        if (atStart) {
-            this.cellRanges = [newRange, ...this.cellRanges];
-        }
-        else {
-            this.cellRanges = [...this.cellRanges, newRange];
-        }
+        cellRangeType === CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
     }
 
     private getCellRangeWithColId(colId: string): CellRange {

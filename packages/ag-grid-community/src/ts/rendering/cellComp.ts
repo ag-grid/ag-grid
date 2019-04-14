@@ -21,7 +21,7 @@ import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRen
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition, CellPositionUtils } from "../entities/cellPosition";
-import { CellRange, ISelectionHandle } from "../interfaces/iRangeController";
+import { CellRange, CellRangeType, ISelectionHandle } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
@@ -125,7 +125,7 @@ export class CellComp extends Component {
             this.rangeCount = rangeController.getCellRangeCount(this.cellPosition);
 
             if (this.rangeCount) {
-                this.hasChartRange = rangeController.getCellRanges().every(range => !!range.chartMode);
+                this.hasChartRange = rangeController.getCellRanges().every(range => _.exists(range.type));
             }
         }
 
@@ -1775,7 +1775,7 @@ export class CellComp extends Component {
             this.rangeCount = newRangeCount;
         }
 
-        const hasChartRange = this.rangeCount && rangeController.getCellRanges().every(range => !!range.chartMode);
+        const hasChartRange = this.rangeCount && rangeController.getCellRanges().every(range => _.exists(range.type));
 
         if (this.hasChartRange !== hasChartRange) {
             _.addOrRemoveCssClass(element, 'ag-cell-range-chart', hasChartRange);
@@ -1811,7 +1811,7 @@ export class CellComp extends Component {
 
         if (!handlesAllowed) {
             const cellPosition = this.getCellPosition();
-            const isFirstRangeCategory = this.hasChartRange && cellRanges[0].chartMode === 'category';
+            const isFirstRangeCategory = this.hasChartRange && cellRanges[0].type === CellRangeType.DIMENSION;
 
             handlesAllowed =
                 isFirstRangeCategory &&
@@ -1839,8 +1839,8 @@ export class CellComp extends Component {
 
     private addSelectionHandle() {
         const { context, rangeController } = this.beans;
-        const isChart = _.last(rangeController.getCellRanges()).chartMode;
-        const type = isChart ? 'range' : 'fill';
+        const cellRangeType = _.last(rangeController.getCellRanges()).type;
+        const type = _.exists(cellRangeType) ? 'range' : 'fill';
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
             this.selectionHandle.destroy();
