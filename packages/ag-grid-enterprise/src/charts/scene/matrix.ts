@@ -70,7 +70,6 @@ export class Matrix {
                e[3] === 1 && e[4] === 0 && e[5] === 0;
     }
 
-    private _a = 1;
     set a(value: number) {
         this.elements[0] = value;
     }
@@ -78,7 +77,6 @@ export class Matrix {
         return this.elements[0];
     }
 
-    private _b = 0;
     set b(value: number) {
         this.elements[1] = value;
     }
@@ -86,7 +84,6 @@ export class Matrix {
         return this.elements[1];
     }
 
-    private _c = 0;
     set c(value: number) {
         this.elements[2] = value;
     }
@@ -94,7 +91,6 @@ export class Matrix {
         return this.elements[2];
     }
 
-    private _d = 1;
     set d(value: number) {
         this.elements[3] = value;
     }
@@ -102,7 +98,6 @@ export class Matrix {
         return this.elements[3];
     }
 
-    private _e = 0;
     set e(value: number) {
         this.elements[4] = value;
     }
@@ -110,7 +105,6 @@ export class Matrix {
         return this.elements[4];
     }
 
-    private _f = 0;
     set f(value: number) {
         this.elements[5] = value;
     }
