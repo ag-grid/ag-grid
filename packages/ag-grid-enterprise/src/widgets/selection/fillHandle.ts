@@ -122,17 +122,17 @@ export class FillHandle extends AbstractSelectionHandle {
         const reducerFunction = this.isReduce ? this.reduceFunction : this.extendFunction;
 
         if (reducerFunction) {
-            this.runReducer(reducerFunction);
+            this.runReducer(reducerFunction, this.isReduce ? 0 : 1);
         }
     }
 
-    private runReducer(fn: (...params: any[]) => any) {
+    private runReducer(fn: (...params: any[]) => any, startAt: number) {
         if (!this.cellValues.length) { return; }
         const mapToVal = (val: FillValues): any => {
             return val.value;
         };
         const first = this.cellValues[0];
-        this.cellValues.slice(1).reduce((prev, cur) => {
+        this.cellValues.slice(startAt).reduce((prev, cur) => {
             const modifiedValues = fn(prev.map(mapToVal), cur.map(mapToVal));
 
             cur.forEach((val: FillValues, idx: number) => {
@@ -150,7 +150,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 }
             });
             return cur;
-        }, first);
+        }, startAt ? first : new Array(first.length));
     }
 
     protected clearValues() {
@@ -278,10 +278,14 @@ export class FillHandle extends AbstractSelectionHandle {
     private reduceVertical(initialPosition: CellPosition, endPosition: CellPosition) {
         let row: RowPosition | null = initialPosition;
 
-        while(row = this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string)) {
+        do {
             const cellRange = this.getCellRange();
             const colLen = cellRange.columns.length;
-            this.cellValues.push([]);
+            const isLastRow = RowPositionUtils.sameRow(row, endPosition);
+
+            if (!this.cellValues.length || !isLastRow){ 
+                this.cellValues.push([]);
+            }
             for (let i = 0; i < colLen; i++) {
                 const column = cellRange.columns[i];
                 const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
@@ -300,14 +304,15 @@ export class FillHandle extends AbstractSelectionHandle {
                     );
                 }
 
-                const node = this.rowRenderer.getRowNode(rowPos);
-                const value = this.valueService.getValue(column, node);
+                if (!isLastRow) {
+                    const node = this.rowRenderer.getRowNode(rowPos);
+                    const value = this.valueService.getValue(column, node);
                 
-                _.last(this.cellValues)!.push({ position: celPos, value });
+                    _.last(this.cellValues)!.push({ position: celPos, value });
+                }
             }
-
-            if (RowPositionUtils.sameRow(row, endPosition)) { break; }
-        }
+            if (isLastRow) { break; }
+        } while (row = this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string))
         this.isReduce = true;
     }
 
