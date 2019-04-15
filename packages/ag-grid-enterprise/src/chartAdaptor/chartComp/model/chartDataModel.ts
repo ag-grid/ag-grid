@@ -24,10 +24,10 @@ export class ChartDataModel extends BeanStub {
         this.getContext().wireBean(this.datasource);
     }
 
-    public updateModel(dimension: string, valueCols: Column[], startRow: number, endRow: number): void {
+    public updateData(dimension: string, valueCols: Column[], startRow: number, endRow: number): void {
         const params: ChartDatasourceParams = {
-            categoryIds: [dimension],
-            fields: valueCols,
+            dimensionColIds: [dimension],
+            valueCols: valueCols,
             startRow: startRow,
             endRow: endRow,
             aggregate: this.aggregate
@@ -42,5 +42,9 @@ export class ChartDataModel extends BeanStub {
 
     public destroy(): void {
         super.destroy();
+
+        if (this.datasource) {
+            this.datasource.destroy();
+        }
     }
 }

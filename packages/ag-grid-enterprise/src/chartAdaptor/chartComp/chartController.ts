@@ -98,7 +98,7 @@ export class ChartController extends BeanStub {
         const selectedValueCols = this.columnModel.getSelectedValueCols();
         const {startRow, endRow} = this.getRowIndexes();
 
-        this.dataModel.updateModel(selectedDimension, selectedValueCols, startRow, endRow);
+        this.dataModel.updateData(selectedDimension, selectedValueCols, startRow, endRow);
 
         this.raiseChartUpdatedEvent();
     }
@@ -160,9 +160,5 @@ export class ChartController extends BeanStub {
 
     public destroy() {
         super.destroy();
-
-        if (this.datasource) {
-            this.datasource.destroy();
-        }
     }
 }

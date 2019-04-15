@@ -3,8 +3,8 @@ import { AggregationStage } from "../../rowStages/aggregationStage";
 import { ChartColumnModel } from "./model/chartColumnModel";
 
 export interface ChartDatasourceParams {
-    categoryIds: string[];
-    fields: Column[];
+    dimensionColIds: string[];
+    valueCols: Column[];
     startRow: number;
     endRow: number;
     aggregate: boolean;
@@ -19,7 +19,7 @@ export class ChartDatasource extends BeanStub {
     public getData(params: ChartDatasourceParams): any [] {
         const dataFromGrid = this.extractRowsFromGridRowModel(params);
 
-        return this.aggregateRowsByCategory(params, dataFromGrid);
+        return this.aggregateRowsByDimension(params, dataFromGrid);
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): any[] {
@@ -35,7 +35,7 @@ export class ChartDatasource extends BeanStub {
             const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
             const data: any = {};
 
-            params.categoryIds.forEach(colId => {
+            params.dimensionColIds.forEach(colId => {
                 const column = this.columnController.getGridColumn(colId);
                 if (column) {
                     const part = this.valueService.getValue(column, rowNode);
@@ -46,7 +46,7 @@ export class ChartDatasource extends BeanStub {
                 }
             });
 
-            params.fields.forEach(col => {
+            params.valueCols.forEach(col => {
                 data[col.getId()] = this.valueService.getValue(col, rowNode);
             });
 
@@ -56,27 +56,27 @@ export class ChartDatasource extends BeanStub {
         return dataFromGrid;
     }
 
-    private aggregateRowsByCategory(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
-        const categoryIds = params.categoryIds;
-        const dontAggregate = !params.aggregate || categoryIds.length === 0;
+    private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
+        const dimensionColIds = params.dimensionColIds;
+        const dontAggregate = !params.aggregate || dimensionColIds.length === 0;
         if (dontAggregate) {
             return dataFromGrid;
         }
 
-        const lastColId = _.last(categoryIds);
+        const lastColId = _.last(dimensionColIds);
 
         const map: any = {};
         const dataAggregated: any[] = [];
 
         dataFromGrid.forEach(data => {
             let currentMap = map;
-            categoryIds.forEach(colId => {
+            dimensionColIds.forEach(colId => {
                 const key = data[colId];
                 if (colId === lastColId) {
                     let groupItem = currentMap[key];
                     if (!groupItem) {
                         groupItem = {__children: []};
-                        categoryIds.forEach(colId => {
+                        dimensionColIds.forEach(colId => {
                             groupItem[colId] = data[colId];
                         });
                         currentMap[key] = groupItem;
@@ -94,7 +94,7 @@ export class ChartDatasource extends BeanStub {
         });
 
         dataAggregated.forEach(groupItem => {
-            params.fields.forEach(col => {
+            params.valueCols.forEach(col => {
                 const dataToAgg: any[] = [];
                 groupItem.__children.forEach((child:any) => {
                     dataToAgg.push(child[col.getId()]);
