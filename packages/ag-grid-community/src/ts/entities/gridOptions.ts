@@ -52,6 +52,7 @@ import {
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     RangeSelectionChangedEvent,
+    ChartRangeSelectionChanged,
     RowClickedEvent,
     RowDataChangedEvent,
     RowDataUpdatedEvent,
@@ -469,6 +470,8 @@ export interface GridOptions {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
 
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
+
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
 
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
 

@@ -217,7 +217,7 @@ export class RangeController implements IRangeController {
             // Note that we are raising a new event as the Chart shouldn't be notified when other ranges are changed
             // or when the chart setCellRanges when the chart gains focus!
             const event = {
-                type: 'chartRangeSelectionChanged'
+                type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED
             };
             this.eventService.dispatchEvent(event);
         }

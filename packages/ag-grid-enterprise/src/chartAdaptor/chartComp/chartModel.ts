@@ -75,7 +75,7 @@ export class ChartModel extends BeanStub {
         this.initColumnState();
         this.updateModel();
 
-        this.addDestroyableEventListener(this.eventService, "chartRangeSelectionChanged", this.updateModel.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForColumnChange.bind(this));

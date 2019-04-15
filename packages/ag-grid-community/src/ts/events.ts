@@ -161,6 +161,9 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
     started: boolean;
 }
 
+export interface ChartRangeSelectionChanged extends AgGridEvent {
+}
+
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
     columnGroup: OriginalColumnGroup;
 }
