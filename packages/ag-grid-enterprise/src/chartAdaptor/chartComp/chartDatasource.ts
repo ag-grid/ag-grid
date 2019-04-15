@@ -52,7 +52,7 @@ export class ChartDatasource extends BeanStub {
                     // force return type to be string or empty string (as value can be an object)
                     data[colId] = (part && part.toString) ? part.toString() : '';
                 } else {
-                    data[ChartModel.DEFAULT_CATEGORY] = i.toString();
+                    data[ChartModel.DEFAULT_CATEGORY] = (i + 1).toString();
                 }
             });
 
