@@ -41,7 +41,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected shouldDestroyOnEndDragging: boolean = false;
 
     @PostConstruct
-    protected init() {
+    private init() {
         this.dragService.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),

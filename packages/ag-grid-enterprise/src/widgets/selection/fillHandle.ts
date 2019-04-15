@@ -32,24 +32,11 @@ export class FillHandle extends AbstractSelectionHandle {
     private isLeft: boolean = false;
     private isReduce: boolean = false;
     private extendFunction: (...params: any[]) => any;
-    private reduceFunction: (...params: any[]) => any;
 
     protected type = 'fill';
 
     constructor() {
         super(FillHandle.TEMPLATE);
-    }
-
-    protected init() {
-        super.init();
-
-        this.extendFunction = (previousValue, currentValue) => {
-            return previousValue;
-        }
-
-        this.reduceFunction = (previousValue, currentValue) => {
-            return '';
-        }
     }
 
     protected onDrag(e: MouseEvent) {
@@ -118,39 +105,37 @@ export class FillHandle extends AbstractSelectionHandle {
                 column: cellRange.columns[colLen - 1]
             });
         }
-
-        const reducerFunction = this.isReduce ? this.reduceFunction : this.extendFunction;
-
-        if (reducerFunction) {
-            this.runReducer(reducerFunction, this.isReduce ? 0 : 1);
+        
+        if (this.cellValues.length) {
+            this.runReducers();
         }
     }
 
-    private runReducer(fn: (...params: any[]) => any, startAt: number) {
-        if (!this.cellValues.length) { return; }
-        const mapToVal = (val: FillValues): any => {
-            return val.value;
-        };
-        const first = this.cellValues[0];
-        this.cellValues.slice(startAt).reduce((prev, cur) => {
-            const modifiedValues = fn(prev.map(mapToVal), cur.map(mapToVal));
+    private runReducers() {
 
-            cur.forEach((val: FillValues, idx: number) => {
-                const currentRow = cur[idx];
-                const rowNode = this.rowRenderer.getRowNode(currentRow.position);
-                if (!rowNode) { return; }
+        if (!this.isReduce && !this.extendFunction) { return; }
 
-                if (currentRow.value != modifiedValues[idx]) {
-                    currentRow.value = modifiedValues[idx];
-                    this.valueService.setValue(
-                        rowNode, 
-                        currentRow.position.column,
-                        currentRow.value
-                    );
-                }
-            });
-            return cur;
-        }, startAt ? first : new Array(first.length));
+        this.cellValues.forEach(column => {
+            const values = column.map(fillValue => fillValue.value);
+            const initial = [];
+
+            if (!this.isReduce) {
+                initial.push(values[0]);
+            }
+            const startAt = initial.length;
+
+            values.slice(startAt).reduce((prev, cur, idx) => {
+                const val = this.isReduce ? null : this.extendFunction(prev, cur);
+                const position = column[idx + startAt].position;
+                const rowNode = this.rowRenderer.getRowNode({
+                    rowIndex: position.rowIndex,
+                    rowPinned: position.rowPinned
+                });
+
+                this.valueService.setValue(rowNode!, position.column, val);
+                return val;
+            }, initial);
+        });
     }
 
     protected clearValues() {
@@ -216,9 +201,6 @@ export class FillHandle extends AbstractSelectionHandle {
         do {
             const cellRange = this.getCellRange();
             const colLen = cellRange.columns.length;
-            if (!this.cellValues.length || _.last(this.cellValues)!.length) {
-                this.cellValues.push([]);
-            }
             
             for (let i = 0; i < colLen; i++) {
                 const column = cellRange.columns[i];
@@ -258,10 +240,14 @@ export class FillHandle extends AbstractSelectionHandle {
                 }
 
                 if (shouldAddValue) {
+                    if (!this.cellValues[i]) {
+                        this.cellValues[i] = [];
+                    }
+                    
                     const node = this.rowRenderer.getRowNode(rowPos);
                     const value = this.valueService.getValue(column, node);
-                
-                    _.last(this.cellValues)!.push({ position: cellPos, value: value });
+
+                    this.cellValues[i].push({ position: cellPos, value: value });
                 }
             }
 
@@ -283,9 +269,6 @@ export class FillHandle extends AbstractSelectionHandle {
             const colLen = cellRange.columns.length;
             const isLastRow = RowPositionUtils.sameRow(row, endPosition);
 
-            if (!this.cellValues.length || !isLastRow){ 
-                this.cellValues.push([]);
-            }
             for (let i = 0; i < colLen; i++) {
                 const column = cellRange.columns[i];
                 const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
@@ -305,10 +288,13 @@ export class FillHandle extends AbstractSelectionHandle {
                 }
 
                 if (!isLastRow) {
+                    if (!this.cellValues[i]) {
+                        this.cellValues[i] = [];
+                    }
                     const node = this.rowRenderer.getRowNode(rowPos);
                     const value = this.valueService.getValue(column, node);
-                
-                    _.last(this.cellValues)!.push({ position: celPos, value });
+
+                    this.cellValues[i].push({ position: celPos, value });
                 }
             }
             if (isLastRow) { break; }
@@ -328,7 +314,7 @@ export class FillHandle extends AbstractSelectionHandle {
         colsToMark.forEach(column => {
             let row: RowPosition = rangeStartRow;
             let isLastRow: boolean = false;
-            this.cellValues.push([]);
+
             do {
                 isLastRow = RowPositionUtils.sameRow(row, rangeEndRow);
                 const cellComp = this.rowRenderer.getComponentForCell({
@@ -371,7 +357,7 @@ export class FillHandle extends AbstractSelectionHandle {
         colsToMark.forEach(column => {
             let row: RowPosition = rangeStartRow;
             let isLastRow: boolean = false;
-            this.cellValues.push([]);
+
             do {
                 isLastRow = RowPositionUtils.sameRow(row, rangeEndRow);
                 const cellComp = this.rowRenderer.getComponentForCell({
