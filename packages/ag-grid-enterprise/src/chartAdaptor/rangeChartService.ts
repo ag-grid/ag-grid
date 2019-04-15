@@ -63,7 +63,6 @@ export class RangeChartService implements IRangeChartService {
     }
 
     public chartRange(cellRanges: CellRange[], chartType: ChartType, container?: HTMLElement, aggregate = false): ChartRef | undefined {
-
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
         const chartOptions: ChartOptions = {

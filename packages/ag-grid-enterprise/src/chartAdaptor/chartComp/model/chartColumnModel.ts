@@ -1,11 +1,11 @@
 import { Autowired, BeanStub, Column, ColumnController, } from "ag-grid-community";
 import { ChartController } from "../chartController";
 
-export type ColState = {
-    column?: Column,
-    colId: string,
-    displayName: string,
-    selected: boolean
+export interface ColState  {
+    column?: Column;
+    colId: string;
+    displayName: string;
+    selected: boolean;
 }
 
 export class ChartColumnModel extends BeanStub {
@@ -61,7 +61,6 @@ export class ChartColumnModel extends BeanStub {
             // select the first dimension from the range
             const selectedDimensionId = dimensionsInCellRange[0].getColId();
             this.dimensionColState.forEach(cs => cs.selected = cs.colId === selectedDimensionId);
-
         }
 
         // if no dimensions in range select the default
@@ -94,8 +93,12 @@ export class ChartColumnModel extends BeanStub {
         }
     }
 
-    public getValueCols(): Column[] {
-        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column) as Column[];
+    public getSelectedColState(): ColState[] {
+        return this.valueColState.filter(cs => cs.selected);
+    }
+
+    public getSelectedValueCols(): Column[] {
+        return this.getSelectedColState().map(cs => cs.column) as Column[];
     }
 
     public getSelectedDimensionId(): string {

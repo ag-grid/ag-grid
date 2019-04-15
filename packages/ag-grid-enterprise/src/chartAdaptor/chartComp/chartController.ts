@@ -87,6 +87,13 @@ export class ChartController extends BeanStub {
         this.columnModel.resetColumnState(allColsFromRanges);
     }
 
+    public updateForColumnSelection(updatedCol: ColState): void {
+        this.columnModel.updateColumnState(updatedCol);
+        this.rangeModel.updateCellRanges(this.columnModel.getDimensionColState(), updatedCol);
+        this.updateModel();
+        this.setChartCellRangesInRangeController();
+    }
+
     private updateModel() {
         const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
         this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
@@ -95,7 +102,7 @@ export class ChartController extends BeanStub {
 
         const params: ChartDatasourceParams = {
             categoryIds: [this.columnModel.getSelectedDimensionId()],
-            fields: this.columnModel.getValueCols(),
+            fields: this.columnModel.getSelectedValueCols(),
             startRow: startRow,
             endRow: endRow,
             aggregate: this.aggregate
@@ -106,11 +113,9 @@ export class ChartController extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
-    public update(updatedColState: ColState): void {
-        this.columnModel.updateColumnState(updatedColState);
-        this.rangeModel.updateCellRanges(this.columnModel.getDimensionColState(), updatedColState);
-        this.updateModel();
-        this.setChartCellRangesInRangeController();
+    public setChartType(chartType: ChartType): void {
+        this.chartType = chartType;
+        this.raiseChartUpdatedEvent();
     }
 
     private onGridColumnChange() {
@@ -132,14 +137,12 @@ export class ChartController extends BeanStub {
     }
 
     public getFields(): { colId: string, displayName: string }[] {
-        return this.columnModel.getValueColState()
-            .filter(cs => cs.selected)
-            .map(cs => {
-                return {
-                    colId: cs.colId,
-                    displayName: cs.displayName
-                };
-            });
+        return this.columnModel.getSelectedColState().map(cs => {
+            return {
+                colId: cs.colId,
+                displayName: cs.displayName
+            };
+        });
     };
 
     public getChartType(): ChartType {
@@ -170,9 +173,12 @@ export class ChartController extends BeanStub {
         return this.insideDialog;
     }
 
-    public setChartType(chartType: ChartType): void {
-        this.chartType = chartType;
-        this.raiseChartUpdatedEvent();
+    public setChartCellRangesInRangeController() {
+        this.rangeController.setCellRanges(this.rangeModel.getCellRanges());
+    }
+
+    public removeChartCellRangesFromRangeController() {
+        this.rangeController.setCellRanges([]);
     }
 
     private raiseChartUpdatedEvent() {
@@ -190,14 +196,6 @@ export class ChartController extends BeanStub {
     static isValueColumn(col: Column, displayedCols: Column[]): boolean {
         const colDef = col.getColDef() as ColDef;
         return displayedCols.indexOf(col) > -1 && (!!colDef.enableValue);
-    }
-
-    public setChartCellRangesInRangeController() {
-        this.rangeController.setCellRanges(this.rangeModel.getCellRanges());
-    }
-
-    public removeChartCellRangesFromRangeController() {
-        this.rangeController.setCellRanges([]);
     }
 
     private getRowIndexes(): {startRow: number, endRow: number} {
