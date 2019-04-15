@@ -404,11 +404,11 @@ export class Axis<D> {
         top = Math.min(top, line.y1, line.y2);
         bottom = Math.max(bottom, line.y1, line.y2);
 
-        return {
-            x: left,
-            y: top,
-            width: right - left,
-            height: bottom - top
-        };
+        return new BBox(
+            left,
+            top,
+            right - left,
+            bottom - top
+        );
     }
 }

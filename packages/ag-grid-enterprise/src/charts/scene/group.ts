@@ -54,12 +54,12 @@ export class Group extends Node {
             }
         });
 
-        return {
-            x: left,
-            y: top,
-            width: right - left,
-            height: bottom - top
-        };
+        return new BBox(
+            left,
+            top,
+            right - left,
+            bottom - top
+        );
     };
 
     render(ctx: CanvasRenderingContext2D) {

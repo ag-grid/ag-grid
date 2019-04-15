@@ -195,12 +195,12 @@ export class Arc extends Shape {
 
     readonly getBBox = (): BBox => {
         // Only works with full arcs (circles) and untransformed ellipses.
-        return {
-            x: this.centerX - this.radiusX,
-            y: this.centerY - this.radiusY,
-            width: this.radiusX * 2,
-            height: this.radiusY * 2
-        };
+        return new BBox(
+            this.centerX - this.radiusX,
+            this.centerY - this.radiusY,
+            this.radiusX * 2,
+            this.radiusY * 2
+        );
     };
 
     isPointInPath(x: number, y: number): boolean {

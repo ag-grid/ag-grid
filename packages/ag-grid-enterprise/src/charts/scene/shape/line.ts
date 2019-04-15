@@ -82,12 +82,12 @@ export class Line extends Shape {
     }
 
     readonly getBBox = (): BBox => {
-        return {
-            x: this.x1,
-            y: this.y1,
-            width: this.x2 - this.x1,
-            height: this.y2 - this.y1
-        };
+        return new BBox(
+            this.x1,
+            this.y1,
+            this.x2 - this.x1,
+            this.y2 - this.y1
+        );
     };
 
     private _pixelSnapBias = PixelSnapBias.Positive;

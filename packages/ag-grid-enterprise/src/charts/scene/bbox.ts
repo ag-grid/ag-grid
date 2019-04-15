@@ -7,11 +7,25 @@
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
 
-export type BBox = {
-    x: number,
-    y: number,
-    width: number,
-    height: number
+export class BBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+
+    constructor(x: number, y: number, width: number, height: number) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    dilate(value: number) {
+        this.x -= value;
+        this.y -= value;
+        this.width += value * 2;
+        this.height += value * 2;
+    }
 }
 
 export function isPointInBBox(bbox: BBox, x: number, y: number) {

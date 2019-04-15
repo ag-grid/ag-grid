@@ -118,6 +118,7 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         // with the right edge of the `seriesClipRect`.
         legend.group.translationX = 0;
         const legendBBox = legend.group.getBBox();
+        legendBBox.dilate(20);
         legend.group.translationX = seriesClipRect.x + seriesClipRect.width - legendBBox.x;
         legend.group.translationY = (this.height - legendBBox.height) / 2;
 

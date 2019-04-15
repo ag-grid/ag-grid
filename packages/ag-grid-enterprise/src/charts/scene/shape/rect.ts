@@ -1,6 +1,6 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
-import { isPointInBBox } from "../bbox";
+import { BBox, isPointInBBox } from "../bbox";
 import { pixelSnap as _pixelSnap } from "../../canvas/canvas";
 
 // _pixelSnap(3) compiles to Object(_canvas_canvas__WEBPACK_IMPORTED_MODULE_3__["pixelSnap"])(3)
@@ -161,12 +161,12 @@ export class Rect extends Shape {
     }
 
     readonly getBBox = () => {
-        return {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
-        };
+        return new BBox(
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
     };
 
     isPointInPath(x: number, y: number): boolean {

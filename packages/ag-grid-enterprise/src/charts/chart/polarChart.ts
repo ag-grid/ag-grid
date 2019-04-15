@@ -74,9 +74,11 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
         const legend = this.legend;
         legend.data = legendData;
         legend.group.translationX = 0;
+        legend.group.translationY = 0;
         const legendBBox = legend.group.getBBox();
+        legendBBox.dilate(20);
         legend.group.translationX = shrinkRect.x + shrinkRect.width - legendBBox.x;
-        legend.group.translationY = (this.height - legendBBox.height) / 2;
+        legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
 
         if (this.legendAutoPadding.right !== legendBBox.width) {
             this.legendAutoPadding.right = legendBBox.width;

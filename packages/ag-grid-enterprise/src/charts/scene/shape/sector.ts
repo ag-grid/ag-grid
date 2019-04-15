@@ -125,12 +125,12 @@ export class Sector extends Shape {
 
     readonly getBBox = (): BBox => {
         const radius = this.outerRadius;
-        return {
-            x: this.centerX - radius,
-            y: this.centerY - radius,
-            width: radius * 2,
-            height: radius * 2
-        };
+        return new BBox(
+            this.centerX - radius,
+            this.centerY - radius,
+            radius * 2,
+            radius * 2
+        );
     };
 
     isPointInPath(x: number, y: number): boolean {

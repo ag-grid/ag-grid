@@ -89,12 +89,12 @@ export class Text extends Shape {
             const metrics = HdpiCanvas.measureText(this.text, this.font,
                 this.textBaseline, this.textAlign);
 
-            return {
-                x: this.x - metrics.actualBoundingBoxLeft,
-                y: this.y - metrics.actualBoundingBoxAscent,
-                width: metrics.width,
-                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
-            };
+            return new BBox(
+                this.x - metrics.actualBoundingBoxLeft,
+                this.y - metrics.actualBoundingBoxAscent,
+                metrics.width,
+                metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+            );
         }
         : (): BBox => {
             const size = HdpiCanvas.getTextSize(this.text, this.font);
@@ -128,7 +128,7 @@ export class Text extends Shape {
                     break;
             }
 
-            return {x, y, width: size.width, height: size.height};
+            return new BBox(x, y, size.width, size.height);
         };
 
     isPointInPath(x: number, y: number): boolean {
