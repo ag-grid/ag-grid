@@ -26,7 +26,6 @@ export class FillHandle extends AbstractSelectionHandle {
     private markedCellComps: CellComp[] = [];
     private cellValues: FillValues[][] = [];
 
-
     private dragAxis: 'x' | 'y';
     private isUp: boolean = false;
     private isLeft: boolean = false;
@@ -92,7 +91,7 @@ export class FillHandle extends AbstractSelectionHandle {
             });
         }
         else {
-            const startRow = isX ? rangeStartRow: this.lastCellMarked!;
+            const startRow = isX ? rangeStartRow : this.lastCellMarked!;
             const startPosition = {
                 rowIndex: startRow.rowIndex,
                 rowPinned: startRow.rowPinned,
@@ -252,7 +251,7 @@ export class FillHandle extends AbstractSelectionHandle {
             }
 
             if (RowPositionUtils.sameRow(row, endPosition)) { break; }
-        } while(
+        } while (
             row = isMovingUp ? 
                 this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string) : 
                 this.cellNavigationService.getRowBelow(row)
@@ -340,7 +339,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
                 row = this.cellNavigationService.getRowBelow(row) as RowPosition;
             }
-            while(!isLastRow)
+            while (!isLastRow)
         });
         this.isReduce = false;
     }
@@ -374,7 +373,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
                 row = this.cellNavigationService.getRowBelow(row) as RowPosition;
             }
-            while(!isLastRow)
+            while (!isLastRow)
         });
         this.isReduce = true;
     }

@@ -10,11 +10,11 @@ import {
     EventService,
     PostConstruct,
 } from "ag-grid-community";
-import {RangeController} from "../../rangeController";
-import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
-import {ChartOptions} from "./gridChartComp";
-import {ChartRangeModel} from "./model/chartRangeModel";
-import {ChartColumnModel, ColState} from "./model/chartColumnModel";
+import { RangeController } from "../../rangeController";
+import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
+import { ChartOptions } from "./gridChartComp";
+import { ChartRangeModel } from "./model/chartRangeModel";
+import { ChartColumnModel, ColState } from "./model/chartColumnModel";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

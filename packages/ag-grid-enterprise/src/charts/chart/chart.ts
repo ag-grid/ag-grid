@@ -274,7 +274,7 @@ export abstract class Chart<D, X, Y> {
         const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
 
         let left = event.x + scrollX + offset[0];
-        let top = event.y + scrollY + offset[1];
+        const top = event.y + scrollY + offset[1];
 
         if (tooltipRect && parent && parent.parentElement) {
             if (left + tooltipRect.width > parent.parentElement.offsetWidth) {

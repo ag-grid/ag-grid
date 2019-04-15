@@ -1,5 +1,5 @@
-import {Autowired, BeanStub, Column, ColumnController,} from "ag-grid-community";
-import {ChartController} from "../chartController";
+import { Autowired, BeanStub, Column, ColumnController, } from "ag-grid-community";
+import { ChartController } from "../chartController";
 
 export type ColState = {
     column?: Column,

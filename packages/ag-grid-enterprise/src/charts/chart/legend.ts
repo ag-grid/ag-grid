@@ -117,4 +117,3 @@ export class Legend {
         this.groupSelection = groupSelection;
     }
 }
-

@@ -31,13 +31,12 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private rangeStartRow: RowPosition;
     private rangeEndRow: RowPosition;
 
+    private cellHoverListener: (() => void) | undefined;
     private lastCellHovered: CellPosition | undefined;
     private changedCell: boolean = false;
-    
-    private cellHoverListener: (() => void) | undefined;
+    private dragging: boolean = false;
     
     protected abstract type: string;
-    private dragging: boolean = false;
     protected shouldDestroyOnEndDragging: boolean = false;
 
     @PostConstruct
@@ -151,8 +150,8 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
         const cellRange = _.last(this.rangeController.getCellRanges()) as CellRange;
 
-        let start = cellRange.startRow as RowPosition;
-        let end = cellRange.endRow as RowPosition;
+        const start = cellRange.startRow as RowPosition;
+        const end = cellRange.endRow as RowPosition;
 
         const isBefore = RowPositionUtils.before(end, start);
 

@@ -211,7 +211,7 @@ export class RangeController implements IRangeController {
         // TODO RC - only raise a 'chartRangeSelectionChanged' event if the rows or cols have changed
         const colsChanged = !_.compareArrays(beforeCols, cellRange.columns);
         const endRowChanged = JSON.stringify(beforeEndRow) !== JSON.stringify(cellRange.endRow);
-        if ( colsChanged || endRowChanged) {
+        if (colsChanged || endRowChanged) {
 
             // TODO RC - a more elegant solution would be for the ChartModel to listen to the CellRange instead
             // Note that we are raising a new event as the Chart shouldn't be notified when other ranges are changed
@@ -461,7 +461,7 @@ export class RangeController implements IRangeController {
             return;
         }
 
-        if (!multiSelectKeyPressed && !shiftKey) {
+        if (!multiSelectKeyPressed && (!shiftKey || _.exists(_.last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
         }
 

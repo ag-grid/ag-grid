@@ -8,8 +8,8 @@ import {
     ColumnController,
     PostConstruct,
 } from "ag-grid-community";
-import {ChartController} from "../chartController";
-import {ChartColumnModel, ColState} from "./chartColumnModel";
+import { ChartController } from "../chartController";
+import { ChartColumnModel, ColState } from "./chartColumnModel";
 
 export class ChartRangeModel extends BeanStub {
 

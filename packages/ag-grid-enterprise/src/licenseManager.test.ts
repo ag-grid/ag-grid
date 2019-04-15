@@ -1,5 +1,5 @@
-import {LicenseManager} from "./licenseManager";
-import {MD5} from "./license/md5";
+import { LicenseManager } from "./licenseManager";
+import { MD5 } from "./license/md5";
 
 let licenseManager :LicenseManager;
 let validationHeader = '';

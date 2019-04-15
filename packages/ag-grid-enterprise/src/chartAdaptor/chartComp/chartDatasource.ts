@@ -1,6 +1,6 @@
-import {_, Autowired, BeanStub, Column, ColumnController, IRowModel, ValueService} from "ag-grid-community";
-import {AggregationStage} from "../../rowStages/aggregationStage";
-import {ChartColumnModel} from "./model/chartColumnModel";
+import { _, Autowired, BeanStub, Column, ColumnController, IRowModel, ValueService } from "ag-grid-community";
+import { AggregationStage } from "../../rowStages/aggregationStage";
+import { ChartColumnModel } from "./model/chartColumnModel";
 
 export interface ChartDatasourceParams {
     categoryIds: string[];

@@ -1,5 +1,5 @@
-import {_, Autowired, Bean, PreConstruct} from 'ag-grid-community';
-import {MD5} from './license/md5';
+import { _, Autowired, Bean, PreConstruct } from 'ag-grid-community';
+import { MD5 } from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
@@ -141,10 +141,10 @@ export class LicenseManager {
 
     private static extractBracketedInformation(licenseKey: string): [string | null, boolean] {
         var matches = licenseKey.split('[')
-            .filter(function (v) {
+            .filter(function(v) {
                 return v.indexOf(']') > -1
             })
-            .map(function (value) {
+            .map(function(value) {
                 return value.split(']')[0]
             });
 
