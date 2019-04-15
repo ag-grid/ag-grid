@@ -102,6 +102,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this._radiusField;
     }
 
+    /**
+     * The value of the label field is supposed to be a string.
+     * If it isn't, it will be coerced to a string value.
+     */
     _labelField: Extract<keyof D, string> | undefined = undefined;
     set labelField(value: Extract<keyof D, string> | undefined) {
         if (this._labelField !== value) {
@@ -211,8 +215,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     processData(): boolean {
         const data = this.data as any[];
-        const centerX = this.centerX + this.offsetX;
-        const centerY = this.centerY + this.offsetY;
+        const centerX = this.centerX;
+        const centerY = this.centerY;
 
         this.group.translationX = centerX;
         this.group.translationY = centerY;
@@ -432,6 +436,20 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     tooltipRenderer?: (params: PieTooltipRendererParams<D>) => string;
 
     provideLegendData(data: LegendDatum[]): void {
-
+        const labelField = this.labelField;
+        if (this.data.length && labelField) {
+            this.data.forEach((datum, index) => {
+                data.push({
+                    id: this.id,
+                    tag: index,
+                    name: String(datum[labelField]),
+                    marker: {
+                        fillStyle: this.colors[index % this.colors.length],
+                        strokeStyle: this.strokeColors[index % this.strokeColors.length]
+                    },
+                    enabled: this.visible
+                });
+            });
+        }
     }
 }

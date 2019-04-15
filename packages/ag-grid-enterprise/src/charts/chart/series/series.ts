@@ -25,6 +25,14 @@ export abstract class Series<D, X, Y> {
         return this._name;
     }
 
+    protected _title: string | string[] = '';
+    set title(value: string | string[]) {
+        this._title = value;
+    }
+    get title(): string | string[] {
+        return this._title;
+    }
+
     /**
      * The group node that contains all the nodes used to render this series.
      */

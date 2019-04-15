@@ -299,6 +299,16 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     tooltipRenderer?: (params: LineTooltipRendererParams<D>) => string;
 
     provideLegendData(data: LegendDatum[]): void {
-
+        if (this.data.length && this.xField && this.yField) {
+            data.push({
+                id: this.id,
+                name: this.yField,
+                marker: {
+                    fillStyle: this.color,
+                    strokeStyle: this.strokeColor
+                },
+                enabled: this.visible
+            });
+        }
     }
 }

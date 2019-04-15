@@ -4,13 +4,18 @@ import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
+import { LegendDatum } from "./legend";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
+
+    private axisAutoPadding = new Padding();
+    private legendAutoPadding = new Padding();
 
     constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent: HTMLElement = document.body) {
         super(parent);
 
         this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
+        this.scene.root!.append(this.legend.group);
         this._xAxis = xAxis;
         this._yAxis = yAxis;
     }
@@ -41,13 +46,6 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         return this._series;
     }
 
-    private autoPadding: Padding = {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
-    };
-
     performLayout(): void {
         if (!(this.xAxis && this.yAxis)) {
             return;
@@ -66,11 +64,17 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
 
-        const autoPadding = this.autoPadding;
-        shrinkRect.x += autoPadding.left;
-        shrinkRect.y += autoPadding.top;
-        shrinkRect.width -= autoPadding.left + autoPadding.right;
-        shrinkRect.height -= autoPadding.top + autoPadding.bottom;
+        const axisAutoPadding = this.axisAutoPadding;
+        shrinkRect.x += axisAutoPadding.left;
+        shrinkRect.y += axisAutoPadding.top;
+        shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
+        shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
+
+        const legendAutoPadding = this.legendAutoPadding;
+        shrinkRect.x += legendAutoPadding.left;
+        shrinkRect.y += legendAutoPadding.top;
+        shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
+        shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
 
         const seriesClipRect = this.seriesClipRect;
         seriesClipRect.x = shrinkRect.x;
@@ -101,9 +105,26 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
         this.updateAxes();
 
+        const legendData: LegendDatum[] = [];
         this.series.forEach(series => {
-            series.update();
+            series.update(); // this has to happen after the `updateAxis` call
+            series.provideLegendData(legendData);
         });
+
+        const legend = this.legend;
+        legend.data = legendData;
+        // We reset the `translationX` intentionally here to get `legendBBox.x`
+        // which is the offset we need to apply to align the left edge of legend
+        // with the right edge of the `seriesClipRect`.
+        legend.group.translationX = 0;
+        const legendBBox = legend.group.getBBox();
+        legend.group.translationX = seriesClipRect.x + seriesClipRect.width - legendBBox.x;
+        legend.group.translationY = (this.height - legendBBox.height) / 2;
+
+        if (this.legendAutoPadding.right !== legendBBox.width) {
+            this.legendAutoPadding.right = legendBBox.width;
+            this.layoutPending = true;
+        }
     }
 
     updateAxes() {
@@ -152,12 +173,12 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         const xAxisBBox = xAxis.getBBox();
         const yAxisBBox = yAxis.getBBox();
 
-        if (this.autoPadding.left !== yAxisBBox.width) {
-            this.autoPadding.left = yAxisBBox.width;
+        if (this.axisAutoPadding.left !== yAxisBBox.width) {
+            this.axisAutoPadding.left = yAxisBBox.width;
             this.layoutPending = true;
         }
-        if (this.autoPadding.bottom !== xAxisBBox.width) {
-            this.autoPadding.bottom = xAxisBBox.width;
+        if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
+            this.axisAutoPadding.bottom = xAxisBBox.width;
             this.layoutPending = true;
         }
     }

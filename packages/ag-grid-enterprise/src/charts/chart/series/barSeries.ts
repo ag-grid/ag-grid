@@ -453,8 +453,19 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     tooltipRenderer?: (params: BarTooltipRendererParams<D>) => string;
 
     provideLegendData(data: LegendDatum[]): void {
-        if (this.data.length) {
-
+        if (this.data.length && this.xField && this.yFields.length) {
+            this.yFields.forEach((yField, index) => {
+                data.push({
+                    id: this.id,
+                    tag: index,
+                    name: this.yFieldNames[index] || this.yFields[index],
+                    marker: {
+                        fillStyle: this.colors[index % this.colors.length],
+                        strokeStyle: this.strokeColors[index % this.strokeColors.length]
+                    },
+                    enabled: this.visible
+                });
+            });
         }
     }
 }

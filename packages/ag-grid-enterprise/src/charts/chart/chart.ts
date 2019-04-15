@@ -4,9 +4,11 @@ import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
+import { Legend } from "./legend";
 
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
+    protected legend = new Legend();
 
     tooltipElement = (() => {
         const div = document.createElement('div');
@@ -23,7 +25,7 @@ export abstract class Chart<D, X, Y> {
         return div;
     })();
 
-    constructor(parent: HTMLElement = document.body) {
+    protected constructor(parent: HTMLElement = document.body) {
         this.scene.parent = parent;
         this.scene.root = new Group();
         this.setupListeners(this.scene.hdpiCanvas.canvas);
@@ -47,12 +49,7 @@ export abstract class Chart<D, X, Y> {
         return this._data;
     }
 
-    protected _padding: Padding = {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20
-    };
+    protected _padding = new Padding(20);
     set padding(value: Padding) {
         this._padding = value;
         this.layoutPending = true;
