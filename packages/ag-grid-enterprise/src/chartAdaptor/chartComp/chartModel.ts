@@ -170,15 +170,15 @@ export class ChartModel extends BeanStub {
             const selectedDimensionId = dimensionsInCellRange[0].getColId();
             this.dimensionColState.forEach(cs => cs.selected = cs.colId === selectedDimensionId);
 
-        } else {
-            // add a default category if no dimensions in range
-            const defaultCategory = {
-                colId: ChartModel.DEFAULT_CATEGORY,
-                displayName: '(None)',
-                selected: true
-            };
-            this.dimensionColState.push(defaultCategory);
         }
+
+        // if no dimensions in range select the default
+        const defaultCategory = {
+            colId: ChartModel.DEFAULT_CATEGORY,
+            displayName: '(None)',
+            selected: dimensionsInCellRange.length === 0
+        };
+        this.dimensionColState.unshift(defaultCategory);
     }
 
     private updateModel() {
@@ -212,8 +212,6 @@ export class ChartModel extends BeanStub {
 
         this.chartData = this.datasource.getData(params);
 
-        console.log("leave updateModel: ", this);
-
         this.raiseChartUpdatedEvent();
     }
 
@@ -246,6 +244,11 @@ export class ChartModel extends BeanStub {
 
     private updateCellRanges(updatedColState: ColState) {
         const colToUpdate = updatedColState.colId;
+
+        // the default category shouldn't be added to a cell range
+        if (colToUpdate === ChartModel.DEFAULT_CATEGORY) {
+            return;
+        }
 
         if (updatedColState.selected) {
             const newColumn = this.columnController.getGridColumn(updatedColState.colId) as Column;
@@ -422,11 +425,7 @@ export class ChartModel extends BeanStub {
     }
 
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
-        // don't return the default category to the menu
-        const hideDefaultCategoryFilter = (cs: ColState) => cs.colId !== ChartModel.DEFAULT_CATEGORY;
-        const dimensionColState = this.dimensionColState.filter(hideDefaultCategoryFilter);
-
-        return {dimensionCols: dimensionColState, valueCols: this.valueColState}
+        return {dimensionCols: this.dimensionColState, valueCols: this.valueColState}
     }
 
     public getData(): any[] {
