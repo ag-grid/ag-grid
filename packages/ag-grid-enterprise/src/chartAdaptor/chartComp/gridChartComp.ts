@@ -1,12 +1,12 @@
 import {
     _,
     Autowired,
+    CellRange,
     ChartType,
     Component,
     Dialog,
     PostConstruct,
     RefSelector,
-    CellRange,
     ResizeObserverService
 } from "ag-grid-community";
 import {GridChartFactory} from "./gridChartFactory";

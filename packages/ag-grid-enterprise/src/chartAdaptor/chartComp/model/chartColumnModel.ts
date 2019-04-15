@@ -1,4 +1,4 @@
-import {Autowired, BeanStub, Column, ColumnController, PostConstruct,} from "ag-grid-community";
+import {Autowired, BeanStub, Column, ColumnController,} from "ag-grid-community";
 import {ChartController} from "../chartController";
 
 export type ColState = {
@@ -92,6 +92,14 @@ export class ChartColumnModel extends BeanStub {
             // just update the selected value on the supplied value column
             this.valueColState.forEach(cs => cs.selected = idsMatch(cs) ? updatedCol.selected : cs.selected);
         }
+    }
+
+    public getValueCols(): Column[] {
+        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column) as Column[];
+    }
+
+    public getSelectedDimensionId(): string {
+        return this.dimensionColState.filter(cs => cs.selected)[0].colId;
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
