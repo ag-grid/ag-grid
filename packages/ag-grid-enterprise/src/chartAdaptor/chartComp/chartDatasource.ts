@@ -8,7 +8,7 @@ import {
     _
 } from "ag-grid-community";
 import { AggregationStage } from "../../rowStages/aggregationStage";
-import { ChartModel } from "./chartModel";
+import { ChartModel } from "./model/chartModel";
 
 export interface ChartDatasourceParams {
     categoryIds: string[];

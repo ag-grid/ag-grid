@@ -12,7 +12,7 @@ import {
     PreDestroy
 } from "ag-grid-community";
 import { RangeController } from "../rangeController";
-import { ChartModel } from "./chartComp/chartModel";
+import { ChartModel } from "./chartComp/model/chartModel";
 import { ChartOptions, GridChartComp } from "./chartComp/gridChartComp";
 
 @Bean('rangeChartService')

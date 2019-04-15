@@ -17,7 +17,7 @@ import colors from "../../charts/chart/colors";
 import {CartesianChart} from "../../charts/chart/cartesianChart";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
-import {ChartModel} from "./chartModel";
+import {ChartModel} from "./model/chartModel";
 
 export interface ChartOptions {
     chartType: ChartType;
