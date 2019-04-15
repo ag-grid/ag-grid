@@ -15,8 +15,12 @@ export class Group extends Node {
         let top = Infinity;
         let bottom = -Infinity;
 
+        if (this.dirtyTransform) {
+            this.computeTransformMatrix();
+        }
+
         this.children.forEach(child => {
-            if (child.getBBox) {
+            if (child.visible && child.getBBox) {
                 const bbox = child.getBBox();
 
                 if (!(child instanceof Group)) {
