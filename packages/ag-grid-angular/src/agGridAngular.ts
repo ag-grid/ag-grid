@@ -340,6 +340,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressMovableColumns : any = undefined;
     @Input() public suppressFieldDotNotation : any = undefined;
     @Input() public enableRangeSelection : any = undefined;
+    @Input() public enableRangeHandle : any = undefined;
+    @Input() public enableFillHandle : any = undefined;
     @Input() public deltaSort : any = undefined;
     @Input() public suppressTouch : any = undefined;
     @Input() public suppressAsyncEvents : any = undefined;
