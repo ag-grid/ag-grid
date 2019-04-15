@@ -1,6 +1,6 @@
 import {_, Autowired, BeanStub, Column, ColumnController, PostConstruct,} from "ag-grid-community";
 import {ChartRangeModel} from "./chartRangeModel";
-import {ChartModel} from "./chartModel";
+import {ChartController} from "../chartController";
 
 export type ColState = {
     column?: Column,
@@ -106,9 +106,9 @@ export class ChartColumnModel extends BeanStub {
         const dimensionCols: Column[] = [];
         const valueCols: Column[] = [];
         displayedCols.forEach(col => {
-            if (ChartModel.isDimensionColumn(col, displayedCols)) {
+            if (ChartController.isDimensionColumn(col, displayedCols)) {
                 dimensionCols.push(col);
-            } else if (ChartModel.isValueColumn(col, displayedCols)) {
+            } else if (ChartController.isValueColumn(col, displayedCols)) {
                 valueCols.push(col);
             } else {
                 // ignore!

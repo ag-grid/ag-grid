@@ -15,7 +15,7 @@ import {
     TabbedItem,
     TabbedLayout
 } from "ag-grid-community";
-import { ChartModel } from "../model/chartModel";
+import { ChartController } from "../chartController";
 import { MenuList } from "../../../menu/menuList";
 import { ChartColumnPanel } from "./chartColumnPanel";
 import { MenuItemComponent } from "../../../menu/menuItemComponent";
@@ -35,12 +35,12 @@ export class ChartMenu extends Component {
 
     @RefSelector('eChartMenu') private eChartMenu: HTMLElement;
 
-    private readonly chartModel: ChartModel;
+    private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
 
-    constructor(chartModel: ChartModel) {
+    constructor(chartModel: ChartController) {
         super(ChartMenu.TEMPLATE);
-        this.chartModel = chartModel;
+        this.chartController = chartModel;
     }
 
     @PostConstruct
@@ -49,7 +49,7 @@ export class ChartMenu extends Component {
     }
 
     private showMenu(): void {
-        this.tabbedMenu = new TabbedChartMenu(this, this.chartModel);
+        this.tabbedMenu = new TabbedChartMenu(this, this.chartController);
         this.getContext().wireBean(this.tabbedMenu);
 
         this.tabbedMenu.setParentComponent(this);
@@ -104,12 +104,12 @@ class TabbedChartMenu extends PopupComponent {
     private columnsTab: TabbedItem;
 
     private readonly chartMenu: ChartMenu;
-    private readonly chartModel: ChartModel;
+    private readonly chartController: ChartController;
 
-    constructor(chartMenu: ChartMenu, chartModel: ChartModel) {
+    constructor(chartMenu: ChartMenu, chartController: ChartController) {
         super();
         this.chartMenu = chartMenu;
-        this.chartModel = chartModel;
+        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -152,7 +152,7 @@ class TabbedChartMenu extends PopupComponent {
         _.addCssClass(eWrapperDiv, 'ag-column-select-panel');
         eWrapperDiv.style.height = '204px'; //TODO
 
-        this.chartColumnPanel = new ChartColumnPanel(this.chartModel);
+        this.chartColumnPanel = new ChartColumnPanel(this.chartController);
         this.getContext().wireBean(this.chartColumnPanel);
         this.chartColumnPanel.init();
 
@@ -174,19 +174,19 @@ class TabbedChartMenu extends PopupComponent {
                 subMenu: [
                     {
                         name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
-                        action: () => this.chartModel.setChartType(ChartType.GroupedBar)
+                        action: () => this.chartController.setChartType(ChartType.GroupedBar)
                     },
                     {
                         name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
-                        action: () => this.chartModel.setChartType(ChartType.StackedBar)
+                        action: () => this.chartController.setChartType(ChartType.StackedBar)
                     },
                     {
                         name: localeTextFunc('lineRangeChart', 'Line'),
-                        action: () => this.chartModel.setChartType(ChartType.Line)
+                        action: () => this.chartController.setChartType(ChartType.Line)
                     },
                     {
                         name: localeTextFunc('pieRangeChart', 'Pie'),
-                        action: () => this.chartModel.setChartType(ChartType.Pie)
+                        action: () => this.chartController.setChartType(ChartType.Pie)
                     }
                 ]
             },

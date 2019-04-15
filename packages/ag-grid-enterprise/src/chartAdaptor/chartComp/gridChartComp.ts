@@ -6,6 +6,7 @@ import {
     Dialog,
     PostConstruct,
     RefSelector,
+    CellRange,
     ResizeObserverService
 } from "ag-grid-community";
 import {GridChartFactory} from "./gridChartFactory";
@@ -17,7 +18,8 @@ import colors from "../../charts/chart/colors";
 import {CartesianChart} from "../../charts/chart/cartesianChart";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
-import {ChartModel} from "./model/chartModel";
+import {ChartController} from "./chartController";
+import {ChartColumnModel} from "./model/chartColumnModel";
 
 export interface ChartOptions {
     chartType: ChartType;
@@ -38,24 +40,30 @@ export class GridChartComp extends Component {
 
     @RefSelector('eChart') private eChart: HTMLElement;
 
-    private readonly chartModel: ChartModel;
+    private chartController: ChartController;
 
     private chart: Chart<any, string, number>;
     private chartDialog: Dialog;
     private chartMenu: ChartMenu;
 
     private currentChartType: ChartType;
+    private readonly chartOptions: ChartOptions;
+    private readonly cellRanges: CellRange[];
 
-    constructor(chartModel: ChartModel) {
+    constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super(GridChartComp.TEMPLATE);
-        this.chartModel = chartModel;
+        this.chartOptions = chartOptions;
+        this.cellRanges = cellRanges;
     }
 
     @PostConstruct
     public init(): void {
+        this.chartController = new ChartController(this.chartOptions, this.cellRanges);
+        this.getContext().wireBean(this.chartController);
+
         this.createChart();
 
-        if (this.chartModel.isInsideDialog()) {
+        if (this.chartController.isInsideDialog()) {
             this.addDialog();
         }
 
@@ -63,7 +71,7 @@ export class GridChartComp extends Component {
         this.addResizeListener();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setGridChartEditMode.bind(this));
-        this.addDestroyableEventListener(this.chartModel, ChartModel.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
@@ -77,15 +85,15 @@ export class GridChartComp extends Component {
         }
 
         const chartOptions = {
-            chartType: this.chartModel.getChartType(),
+            chartType: this.chartController.getChartType(),
             parentElement: this.eChart,
-            width: this.chartModel.getWidth(),
-            height: this.chartModel.getHeight(),
-            showTooltips: this.chartModel.isShowTooltips()
+            width: this.chartController.getWidth(),
+            height: this.chartController.getHeight(),
+            showTooltips: this.chartController.isShowTooltips()
         };
 
         this.chart = GridChartFactory.createChart(chartOptions);
-        this.currentChartType = this.chartModel.getChartType();
+        this.currentChartType = this.chartController.getChartType();
     }
 
     private addDialog() {
@@ -103,7 +111,7 @@ export class GridChartComp extends Component {
     }
 
     private addMenu() {
-        this.chartMenu = new ChartMenu(this.chartModel);
+        this.chartMenu = new ChartMenu(this.chartController);
         this.getContext().wireBean(this.chartMenu);
 
         const eChart: HTMLElement = this.getGui();
@@ -111,14 +119,14 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        if (this.chartModel.getChartType() !== this.currentChartType) {
+        if (this.chartController.getChartType() !== this.currentChartType) {
             this.createChart();
         }
         this.updateChart();
     }
 
     public updateChart() {
-        const chartType = this.chartModel.getChartType();
+        const chartType = this.chartController.getChartType();
 
         if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar) {
             this.updateBarChart();
@@ -134,23 +142,23 @@ export class GridChartComp extends Component {
     private updateBarChart() {
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
 
-        const categoryId = this.chartModel.getSelectedCategory();
+        const categoryId = this.chartController.getSelectedCategory();
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
-        barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
+        barChart.xAxis.labelRotation = categoryId === ChartColumnModel.DEFAULT_CATEGORY ? 0 : -90;
 
-        barSeries.data = this.chartModel.getData();
+        barSeries.data = this.chartController.getData();
         barSeries.xField = categoryId;
-        barSeries.yFields = this.chartModel.getFields().map(f => f.colId);
-        barSeries.yFieldNames = this.chartModel.getFields().map(f => f.displayName);
+        barSeries.yFields = this.chartController.getFields().map(f => f.colId);
+        barSeries.yFieldNames = this.chartController.getFields().map(f => f.displayName);
     }
 
     private updateLineChart() {
-        const data = this.chartModel.getData();
-        const categoryId = this.chartModel.getSelectedCategory();
-        const fields = this.chartModel.getFields();
+        const data = this.chartController.getData();
+        const categoryId = this.chartController.getSelectedCategory();
+        const fields = this.chartController.getFields();
 
         const lineChart = this.chart as CartesianChart<any, string, number>;
-        lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
+        lineChart.xAxis.labelRotation = categoryId === ChartColumnModel.DEFAULT_CATEGORY ? 0 : -90;
 
         lineChart.removeAllSeries();
 
@@ -159,12 +167,12 @@ export class GridChartComp extends Component {
 
             lineSeries.name = f.displayName;
 
-            lineSeries.tooltip = this.chartModel.isShowTooltips();
+            lineSeries.tooltip = this.chartController.isShowTooltips();
             lineSeries.lineWidth = 2;
             lineSeries.markerRadius = 3;
             lineSeries.color = colors[index % colors.length];
 
-            lineSeries.data = this.chartModel.getData();
+            lineSeries.data = this.chartController.getData();
             lineSeries.xField = categoryId;
             lineSeries.yField = f.colId;
 
@@ -173,9 +181,9 @@ export class GridChartComp extends Component {
     }
 
     private updatePieChart() {
-        const data = this.chartModel.getData();
-        const categoryId = this.chartModel.getSelectedCategory();
-        const fields = this.chartModel.getFields();
+        const data = this.chartController.getData();
+        const categoryId = this.chartController.getSelectedCategory();
+        const fields = this.chartController.getFields();
 
         const pieChart = this.chart as PolarChart<any, string, number>;
 
@@ -191,7 +199,7 @@ export class GridChartComp extends Component {
 
             pieSeries.name = f.displayName;
 
-            pieSeries.tooltip = this.chartModel.isShowTooltips();
+            pieSeries.tooltip = this.chartController.isShowTooltips();
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
             pieChart.addSeries(pieSeries);
@@ -225,25 +233,25 @@ export class GridChartComp extends Component {
                 observeResize();
                 return;
             }
-            this.chartModel.setHeight(_.getInnerHeight(eParent));
-            this.chartModel.setWidth(_.getInnerWidth(eParent));
+            this.chartController.setHeight(_.getInnerHeight(eParent));
+            this.chartController.setWidth(_.getInnerWidth(eParent));
 
-            this.chart.height = this.chartModel.getHeight();
-            this.chart.width = this.chartModel.getWidth();
+            this.chart.height = this.chartController.getHeight();
+            this.chart.width = this.chartController.getWidth();
         });
     }
 
     private setGridChartEditMode(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) return;
-        this.chartModel.setChartCellRangesInRangeController();
+        this.chartController.setChartCellRangesInRangeController();
     }
 
     public destroy(): void {
         super.destroy();
 
-        if (this.chartModel) {
-            this.chartModel.removeChartCellRangesFromRangeController();
-            this.chartModel.destroy();
+        if (this.chartController) {
+            this.chartController.removeChartCellRangesFromRangeController();
+            this.chartController.destroy();
         }
         if (this.chart) {
             this.chart.destroy();

@@ -6,7 +6,7 @@ import {
     RefSelector,
     _
 } from "ag-grid-community";
-import {ChartModel} from "../model/chartModel";
+import {ChartController} from "../chartController";
 import {ColState} from "../model/chartColumnModel";
 
 export class ChartColumnPanel extends Component {
@@ -16,15 +16,15 @@ export class ChartColumnPanel extends Component {
 
     private columnComps: { [key: string]: ChartPanelRadioComp | ChartPanelCheckboxComp } = {};
     private dimensionComps: ChartPanelRadioComp[] = [];
-    private chartModel: ChartModel;
+    private chartController: ChartController;
 
-    constructor(chartModel: ChartModel) {
+    constructor(chartModel: ChartController) {
         super(ChartColumnPanel.TEMPLATE);
-        this.chartModel = chartModel;
+        this.chartController = chartModel;
     }
 
     public init(): void {
-        const {dimensionCols, valueCols} = this.chartModel.getColStateForMenu();
+        const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
 
         // create ChartPanelRadioComps for dimensions and ChartPanelCheckboxComp for value cols
         dimensionCols.forEach(this.getColumnStateMapper(true));
@@ -33,11 +33,11 @@ export class ChartColumnPanel extends Component {
 
     private getColumnStateMapper(dimension: boolean) {
 
-        const checkboxChanged = (updatedColState: ColState) => this.chartModel.update(updatedColState);
+        const checkboxChanged = (updatedColState: ColState) => this.chartController.update(updatedColState);
 
         const radioButtonChanged = (radioComp: ChartPanelRadioComp, updatedColState: ColState) => {
             this.dimensionComps.forEach(comp => comp.select(false));
-            this.chartModel.update(updatedColState);
+            this.chartController.update(updatedColState);
             radioComp.select(true);
         };
 

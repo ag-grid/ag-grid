@@ -8,8 +8,8 @@ import {
     ColumnController,
     PostConstruct,
 } from "ag-grid-community";
-import {ChartModel} from "./chartModel";
-import {ColState} from "./chartColumnModel";
+import {ChartController} from "../chartController";
+import {ChartColumnModel, ColState} from "./chartColumnModel";
 
 export class ChartRangeModel extends BeanStub {
 
@@ -45,13 +45,13 @@ export class ChartRangeModel extends BeanStub {
 
         const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
 
-        const dimensionCols = colsToSplit.filter(col => ChartModel.isDimensionColumn(col, allDisplayedColumns));
+        const dimensionCols = colsToSplit.filter(col => ChartController.isDimensionColumn(col, allDisplayedColumns));
         if (dimensionCols.length > 0) {
             const firstDimensionInRange = dimensionCols[0];
             this.addRange(CellRangeType.DIMENSION, [firstDimensionInRange])
         }
 
-        const valueCols = colsToSplit.filter(col => ChartModel.isValueColumn(col, allDisplayedColumns));
+        const valueCols = colsToSplit.filter(col => ChartController.isValueColumn(col, allDisplayedColumns));
         if (valueCols.length === 0) {
             // no range to add
         } else if (valueCols.length === 1) {
@@ -85,7 +85,7 @@ export class ChartRangeModel extends BeanStub {
         const colToUpdate = updatedColState.colId;
 
         // the default category shouldn't be added to a cell range
-        if (colToUpdate === ChartModel.DEFAULT_CATEGORY) {
+        if (colToUpdate === ChartColumnModel.DEFAULT_CATEGORY) {
             return;
         }
 

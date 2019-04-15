@@ -12,18 +12,16 @@ import {
     EventService,
     PostConstruct,
 } from "ag-grid-community";
-import {RangeController} from "../../../rangeController";
-import {ChartDatasource, ChartDatasourceParams} from "../chartDatasource";
-import {ChartOptions} from "../gridChartComp";
-import {ChartRangeModel} from "./chartRangeModel";
-import {ChartColumnModel, ColState} from "./chartColumnModel";
+import {RangeController} from "../../rangeController";
+import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
+import {ChartOptions} from "./gridChartComp";
+import {ChartRangeModel} from "./model/chartRangeModel";
+import {ChartColumnModel, ColState} from "./model/chartColumnModel";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
 
-export class ChartModel extends BeanStub {
-
-    public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
+export class ChartController extends BeanStub {
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
 
     @Autowired('eventService') private eventService: EventService;
@@ -126,7 +124,6 @@ export class ChartModel extends BeanStub {
         this.setChartCellRangesInRangeController();
     }
 
-
     static isDimensionColumn(col: Column, displayedCols: Column[]): boolean {
         const colDef = col.getColDef() as ColDef;
         return displayedCols.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
@@ -203,7 +200,7 @@ export class ChartModel extends BeanStub {
 
     private raiseChartUpdatedEvent() {
         const event: ChartModelUpdatedEvent = {
-            type: ChartModel.EVENT_CHART_MODEL_UPDATED
+            type: ChartController.EVENT_CHART_MODEL_UPDATED
         };
         this.dispatchEvent(event);
     }

@@ -12,7 +12,7 @@ import {
     PreDestroy
 } from "ag-grid-community";
 import { RangeController } from "../rangeController";
-import { ChartModel } from "./chartComp/model/chartModel";
+import { ChartController } from "./chartComp/chartController";
 import { ChartOptions, GridChartComp } from "./chartComp/gridChartComp";
 
 @Bean('rangeChartService')
@@ -75,10 +75,7 @@ export class RangeChartService implements IRangeChartService {
             width: 800
         };
 
-        const chartModel = new ChartModel(chartOptions, cellRanges);
-        this.context.wireBean(chartModel);
-
-        const chartComp = new GridChartComp(chartModel);
+        const chartComp = new GridChartComp(chartOptions, cellRanges);
         this.context.wireBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);
