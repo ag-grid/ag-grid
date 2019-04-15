@@ -15,19 +15,23 @@ export class Group extends Node {
         let top = Infinity;
         let bottom = -Infinity;
 
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
-        }
-
         this.children.forEach(child => {
             if (child.getBBox) {
-                if (child.dirtyTransform) {
-                    child.computeTransformMatrix();
-                }
                 const bbox = child.getBBox();
-                const matrix = Matrix.flyweight(child.matrix);
-                matrix.preMultiplySelf(this.matrix);
-                matrix.transformBBox(bbox, 0, bbox);
+
+                if (!(child instanceof Group)) {
+                    if (child.dirtyTransform) {
+                        child.computeTransformMatrix();
+                    }
+                    const matrix = Matrix.flyweight(child.matrix);
+                    let parent = child.parent;
+                    while (parent) {
+                        matrix.preMultiplySelf(parent.matrix);
+                        parent = parent.parent;
+                    }
+                    matrix.transformBBox(bbox, 0, bbox);
+                }
+
                 const x = bbox.x;
                 const y = bbox.y;
 
@@ -79,8 +83,10 @@ export class Group extends Node {
         // renderBBox({
         //     ctx,
         //     bbox: this.getBBox(),
+        //     text: this.id,
         //     resetTransform: true,
-        //     strokeStyle: this.parent ? 'red' : 'orange'
+        //     fillStyle: 'rgba(0, 0, 0, 0.5)',
+        //     strokeStyle: 'cyan'
         // });
     }
 }
