@@ -156,64 +156,64 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         return ChangeDetectionStrategyType.DeepValueCheck;
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    componentDidUpdate(prevProps: any) {
         const changes = <any>{};
 
-        this.extractGridPropertyChanges(nextProps, changes);
-        this.extractDeclarativeColDefChanges(nextProps, changes);
+        this.extractGridPropertyChanges(prevProps, changes);
+        this.extractDeclarativeColDefChanges(prevProps, changes);
 
         AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
     }
 
-    private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
-        let debugLogging = !!nextProps.debug;
+    private extractDeclarativeColDefChanges(prevProps: any, changes: any) {
+        let debugLogging = !!this.props.debug;
 
-        if (AgGridColumn.hasChildColumns(nextProps)) {
+        if (AgGridColumn.hasChildColumns(this.props)) {
             const detectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
 
-            const currentColDefs = this.gridOptions.columnDefs;
-            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
-            if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
+            const previousColDefs = AgGridColumn.mapChildColumnDefs(prevProps);
+            const newColDefs = this.gridOptions.columnDefs;
+            if (!detectionStrategy.areEqual(previousColDefs, newColDefs)) {
                 if (debugLogging) {
                     console.log(`agGridReact: colDefs definitions changed`);
                 }
 
                 changes['columnDefs'] =
                     {
-                        previousValue: this.gridOptions.columnDefs,
-                        currentValue: AgGridColumn.mapChildColumnDefs(nextProps)
+                        previousValue: AgGridColumn.mapChildColumnDefs(prevProps),
+                        currentValue: this.gridOptions.columnDefs
                     }
             }
         }
     }
 
-    private extractGridPropertyChanges(nextProps: any, changes: any) {
-        let debugLogging = !!nextProps.debug;
+    private extractGridPropertyChanges(prevProps: any, changes: any) {
+        let debugLogging = !!this.props.debug;
 
-        const changedKeys = Object.keys(nextProps);
+        const changedKeys = Object.keys(this.props);
         changedKeys.forEach((propKey) => {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
                 const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
-                if (!changeDetectionStrategy.areEqual(this.props[propKey], nextProps[propKey])) {
+                if (!changeDetectionStrategy.areEqual(prevProps[propKey], this.props[propKey])) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
                     }
 
                     changes[propKey] = {
-                        previousValue: this.props[propKey],
-                        currentValue: nextProps[propKey]
+                        previousValue: prevProps[propKey],
+                        currentValue: this.props[propKey]
                     };
                 }
             }
         });
         AgGrid.ComponentUtil.getEventCallbacks().forEach((funcName: string) => {
-            if (this.props[funcName] !== nextProps[funcName]) {
+            if (prevProps[funcName] !== this.props[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
                 }
                 changes[funcName] = {
-                    previousValue: this.props[funcName],
-                    currentValue: nextProps[funcName]
+                    previousValue: prevProps[funcName],
+                    currentValue: this.props[funcName]
                 };
             }
         });
