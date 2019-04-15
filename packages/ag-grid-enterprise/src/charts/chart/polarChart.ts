@@ -55,7 +55,6 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
         shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
         shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
 
-        console.log(shrinkRect);
         const centerX = this.centerX = shrinkRect.x + shrinkRect.width / 2;
         const centerY = this.centerY = shrinkRect.y + shrinkRect.height / 2;
         const radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;

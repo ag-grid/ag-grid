@@ -70,7 +70,7 @@ export class Legend {
                     x: 14,
                     y: 10,
                     text: datum.name,
-                    font: '14px Verdana',
+                    font: '12px Verdana',
                     fillStyle: 'black'
                 }
             };
