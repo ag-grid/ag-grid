@@ -6,7 +6,8 @@ import {
     RefSelector,
     _
 } from "ag-grid-community";
-import {ChartModel, ColState} from "../model/chartModel";
+import {ChartModel} from "../model/chartModel";
+import {ColState} from "../model/chartColumnModel";
 
 export class ChartColumnPanel extends Component {
 

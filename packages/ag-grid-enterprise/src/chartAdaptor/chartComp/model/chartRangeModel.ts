@@ -1,15 +1,15 @@
 import {
     _,
     Autowired,
-    PostConstruct,
     BeanStub,
     CellRange,
     CellRangeType,
-    ColDef,
     Column,
     ColumnController,
+    PostConstruct,
 } from "ag-grid-community";
-import {ChartModel, ColState} from "./chartModel";
+import {ChartModel} from "./chartModel";
+import {ColState} from "./chartColumnModel";
 
 export class ChartRangeModel extends BeanStub {
 
@@ -19,12 +19,10 @@ export class ChartRangeModel extends BeanStub {
 
     // this is used to restore cols after all have been removed via menu
     private referenceCellRange: CellRange;
-    private dimensionColState: ColState[];
 
-    public constructor(cellRanges: CellRange[], dimensionColState: ColState[]) {
+    public constructor(cellRanges: CellRange[]) {
         super();
         this.cellRanges = cellRanges;
-        this.dimensionColState = dimensionColState;
     }
 
     @PostConstruct
@@ -33,14 +31,6 @@ export class ChartRangeModel extends BeanStub {
         this.referenceCellRange = this.cellRanges[0];
 
         this.splitInitialRange();
-    }
-
-    public getReferenceRange(): CellRange {
-        return this.referenceCellRange;
-    }
-
-    public setReferenceRange(cellRange: CellRange): void {
-        this.referenceCellRange = cellRange;
     }
 
     public getCellRanges(): CellRange[] {
@@ -55,13 +45,13 @@ export class ChartRangeModel extends BeanStub {
 
         const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
 
-        const dimensionCols = colsToSplit.filter(col => this.isDimensionColumn(col, allDisplayedColumns));
+        const dimensionCols = colsToSplit.filter(col => ChartModel.isDimensionColumn(col, allDisplayedColumns));
         if (dimensionCols.length > 0) {
             const firstDimensionInRange = dimensionCols[0];
             this.addRange(CellRangeType.DIMENSION, [firstDimensionInRange])
         }
 
-        const valueCols = colsToSplit.filter(col => this.isValueColumn(col, allDisplayedColumns));
+        const valueCols = colsToSplit.filter(col => ChartModel.isValueColumn(col, allDisplayedColumns));
         if (valueCols.length === 0) {
             // no range to add
         } else if (valueCols.length === 1) {
@@ -91,7 +81,7 @@ export class ChartRangeModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(updatedColState: ColState): void {
+    public updateCellRanges(dimensionColState: ColState[], updatedColState: ColState): void {
         const colToUpdate = updatedColState.colId;
 
         // the default category shouldn't be added to a cell range
@@ -102,11 +92,11 @@ export class ChartRangeModel extends BeanStub {
         if (updatedColState.selected) {
             const newColumn = this.columnController.getGridColumn(updatedColState.colId) as Column;
 
-            const isDimensionCol = this.dimensionColState.some(col => col.colId === colToUpdate);
+            const isDimensionCol = dimensionColState.some(col => col.colId === colToUpdate);
 
             if (isDimensionCol) {
                 // remove any existing dimension ranges
-                this.dimensionColState.forEach(cs => {
+                dimensionColState.forEach(cs => {
                     const rangeToRemove = this.getCellRangeWithColId(cs.colId);
                     if (rangeToRemove) {
                         this.cellRanges = this.cellRanges.filter(range => range !== rangeToRemove);
@@ -237,14 +227,7 @@ export class ChartRangeModel extends BeanStub {
         })[0];
     }
 
-    private isDimensionColumn(col: Column, displayedCols: Column[]): boolean {
-        const colDef = col.getColDef() as ColDef;
-        return displayedCols.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
+    public destroy() {
+        super.destroy();
     }
-
-    private isValueColumn(col: Column, displayedCols: Column[]): boolean {
-        const colDef = col.getColDef() as ColDef;
-        return displayedCols.indexOf(col) > -1 && (!!colDef.enableValue);
-    }
-
 }
