@@ -441,6 +441,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public rowDataUpdated: EventEmitter<any> = new EventEmitter<any>();
     @Output() public pinnedRowDataChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rangeSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public chartRangeSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public toolPanelVisibleChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public modelUpdated: EventEmitter<any> = new EventEmitter<any>();
     @Output() public pasteStart: EventEmitter<any> = new EventEmitter<any>();
