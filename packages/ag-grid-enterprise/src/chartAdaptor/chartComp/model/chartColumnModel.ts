@@ -1,5 +1,4 @@
-import { Autowired, BeanStub, Column, ColumnController, } from "ag-grid-community";
-import { ChartController } from "../chartController";
+import { Autowired, BeanStub, Column, ColDef, ColumnController, } from "ag-grid-community";
 
 export interface ColState  {
     column?: Column;
@@ -111,9 +110,9 @@ export class ChartColumnModel extends BeanStub {
         const dimensionCols: Column[] = [];
         const valueCols: Column[] = [];
         displayedCols.forEach(col => {
-            if (ChartController.isDimensionColumn(col, displayedCols)) {
+            if (this.isDimensionColumn(col, displayedCols)) {
                 dimensionCols.push(col);
-            } else if (ChartController.isValueColumn(col, displayedCols)) {
+            } else if (this.isValueColumn(col, displayedCols)) {
                 valueCols.push(col);
             } else {
                 // ignore!
@@ -125,6 +124,16 @@ export class ChartColumnModel extends BeanStub {
 
     private getFieldName(col: Column): string {
         return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
+    }
+
+    private isDimensionColumn(col: Column, displayedCols: Column[]): boolean {
+        const colDef = col.getColDef() as ColDef;
+        return displayedCols.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
+    }
+
+    private isValueColumn(col: Column, displayedCols: Column[]): boolean {
+        const colDef = col.getColDef() as ColDef;
+        return displayedCols.indexOf(col) > -1 && (!!colDef.enableValue);
     }
 
     public destroy() {

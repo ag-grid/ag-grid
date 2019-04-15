@@ -4,12 +4,12 @@ import {
     BeanStub,
     CellRange,
     CellRangeType,
+    ColDef,
     Column,
     ColumnController,
     PostConstruct,
 } from "ag-grid-community";
-import { ChartController } from "../chartController";
-import { ChartColumnModel, ColState } from "./chartColumnModel";
+import {ChartColumnModel, ColState} from "./chartColumnModel";
 
 export class ChartRangeModel extends BeanStub {
 
@@ -53,13 +53,13 @@ export class ChartRangeModel extends BeanStub {
 
         const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
 
-        const dimensionCols = colsToSplit.filter(col => ChartController.isDimensionColumn(col, allDisplayedColumns));
+        const dimensionCols = colsToSplit.filter(col => this.isDimensionColumn(col, allDisplayedColumns));
         if (dimensionCols.length > 0) {
             const firstDimensionInRange = dimensionCols[0];
             this.addRange(CellRangeType.DIMENSION, [firstDimensionInRange])
         }
 
-        const valueCols = colsToSplit.filter(col => ChartController.isValueColumn(col, allDisplayedColumns));
+        const valueCols = colsToSplit.filter(col => this.isValueColumn(col, allDisplayedColumns));
         if (valueCols.length === 0) {
             // no range to add
         } else if (valueCols.length === 1) {
@@ -233,6 +233,16 @@ export class ChartRangeModel extends BeanStub {
         return this.cellRanges.filter((cellRange: CellRange) => {
             return cellRange.columns.filter(col => col.getColId() === colId).length === 1
         })[0];
+    }
+
+    private isDimensionColumn(col: Column, displayedCols: Column[]): boolean {
+        const colDef = col.getColDef() as ColDef;
+        return displayedCols.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
+    }
+
+    private isValueColumn(col: Column, displayedCols: Column[]): boolean {
+        const colDef = col.getColDef() as ColDef;
+        return displayedCols.indexOf(col) > -1 && (!!colDef.enableValue);
     }
 
     public destroy() {

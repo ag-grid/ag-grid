@@ -11,14 +11,12 @@ export interface ChartDatasourceParams {
 }
 
 export class ChartDatasource extends BeanStub {
-
     @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('valueService') valueService: ValueService;
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
     @Autowired('columnController') private columnController: ColumnController;
 
     public getData(params: ChartDatasourceParams): any [] {
-
         const dataFromGrid = this.extractRowsFromGridRowModel(params);
 
         return this.aggregateRowsByCategory(params, dataFromGrid);

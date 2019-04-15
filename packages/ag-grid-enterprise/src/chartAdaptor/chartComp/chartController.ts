@@ -4,17 +4,16 @@ import {
     BeanStub,
     CellRange,
     ChartType,
-    ColDef,
-    Column,
     Events,
     EventService,
     PostConstruct,
 } from "ag-grid-community";
-import { RangeController } from "../../rangeController";
-import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { ChartOptions } from "./gridChartComp";
-import { ChartRangeModel } from "./model/chartRangeModel";
-import { ChartColumnModel, ColState } from "./model/chartColumnModel";
+import {RangeController} from "../../rangeController";
+import {ChartDatasource} from "./chartDatasource";
+import {ChartOptions} from "./gridChartComp";
+import {ChartRangeModel} from "./model/chartRangeModel";
+import {ChartColumnModel, ColState} from "./model/chartColumnModel";
+import {ChartDataModel} from "./model/chartDataModel";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -26,16 +25,11 @@ export class ChartController extends BeanStub {
     @Autowired('rangeController') rangeController: RangeController;
 
     private readonly aggregate: boolean;
-    private readonly showTooltips: boolean;
-    private readonly insideDialog: boolean;
     private readonly startingCellRanges: CellRange[];
 
-    private width: number;
-    private height: number;
-
     private chartType: ChartType;
-    private chartData: any[];
 
+    private dataModel: ChartDataModel;
     private rangeModel: ChartRangeModel;
     private columnModel: ChartColumnModel;
 
@@ -45,18 +39,14 @@ export class ChartController extends BeanStub {
         super();
         this.chartType = chartOptions.chartType;
         this.aggregate = chartOptions.aggregate;
-        this.width = chartOptions.width;
-        this.height = chartOptions.height;
-        this.showTooltips = chartOptions.showTooltips;
-        this.insideDialog = chartOptions.insideDialog;
         this.startingCellRanges = cellRanges;
     }
 
     @PostConstruct
     private init(): void {
-        this.setupDatasource();
         this.setupRangeModel();
         this.setupColumnModel();
+        this.setupDataModel();
 
         this.updateModel();
 
@@ -66,12 +56,7 @@ export class ChartController extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onGridColumnChange.bind(this));
     }
 
-    private setupDatasource() {
-        this.datasource = new ChartDatasource();
-        this.getContext().wireBean(this.datasource);
-    }
-
-    private setupRangeModel() {
+    private setupRangeModel(): void {
         this.rangeModel = new ChartRangeModel(this.startingCellRanges);
         this.getContext().wireBean(this.rangeModel);
 
@@ -79,12 +64,17 @@ export class ChartController extends BeanStub {
         this.setChartCellRangesInRangeController();
     }
 
-    private setupColumnModel() {
+    private setupColumnModel(): void {
         this.columnModel = new ChartColumnModel();
         this.getContext().wireBean(this.columnModel);
 
         const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
         this.columnModel.resetColumnState(allColsFromRanges);
+    }
+
+    private setupDataModel(): void {
+        this.dataModel = new ChartDataModel(this.aggregate);
+        this.getContext().wireBean(this.dataModel);
     }
 
     public updateForColumnSelection(updatedCol: ColState): void {
@@ -94,21 +84,21 @@ export class ChartController extends BeanStub {
         this.setChartCellRangesInRangeController();
     }
 
+    private onGridColumnChange() {
+        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        this.columnModel.resetColumnState(allColsFromRanges);
+        this.updateModel();
+    }
+
     private updateModel() {
         const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
         this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
 
+        const selectedDimension = this.columnModel.getSelectedDimensionId();
+        const selectedValueCols = this.columnModel.getSelectedValueCols();
         const {startRow, endRow} = this.getRowIndexes();
 
-        const params: ChartDatasourceParams = {
-            categoryIds: [this.columnModel.getSelectedDimensionId()],
-            fields: this.columnModel.getSelectedValueCols(),
-            startRow: startRow,
-            endRow: endRow,
-            aggregate: this.aggregate
-        };
-
-        this.chartData = this.datasource.getData(params);
+        this.dataModel.updateModel(selectedDimension, selectedValueCols, startRow, endRow);
 
         this.raiseChartUpdatedEvent();
     }
@@ -118,18 +108,12 @@ export class ChartController extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
-    private onGridColumnChange() {
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
-        this.columnModel.resetColumnState(allColsFromRanges);
-        this.updateModel();
-    }
-
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
         return {dimensionCols: this.columnModel.getDimensionColState(), valueCols: this.columnModel.getValueColState()}
     }
 
     public getData(): any[] {
-        return this.chartData;
+        return this.dataModel.getData();
     }
 
     public getSelectedCategory(): string {
@@ -149,30 +133,6 @@ export class ChartController extends BeanStub {
         return this.chartType;
     }
 
-    public getWidth(): number {
-        return this.width;
-    }
-
-    public setWidth(width: number): void {
-        this.width = width;
-    }
-
-    public getHeight(): number {
-        return this.height;
-    }
-
-    public setHeight(height: number): void {
-        this.height = height;
-    }
-
-    public isShowTooltips(): boolean {
-        return this.showTooltips;
-    }
-
-    public isInsideDialog(): boolean {
-        return this.insideDialog;
-    }
-
     public setChartCellRangesInRangeController() {
         this.rangeController.setCellRanges(this.rangeModel.getCellRanges());
     }
@@ -186,16 +146,6 @@ export class ChartController extends BeanStub {
             type: ChartController.EVENT_CHART_MODEL_UPDATED
         };
         this.dispatchEvent(event);
-    }
-
-    static isDimensionColumn(col: Column, displayedCols: Column[]): boolean {
-        const colDef = col.getColDef() as ColDef;
-        return displayedCols.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
-    }
-
-    static isValueColumn(col: Column, displayedCols: Column[]): boolean {
-        const colDef = col.getColDef() as ColDef;
-        return displayedCols.indexOf(col) > -1 && (!!colDef.enableValue);
     }
 
     private getRowIndexes(): {startRow: number, endRow: number} {

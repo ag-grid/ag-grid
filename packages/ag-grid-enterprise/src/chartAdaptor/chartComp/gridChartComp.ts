@@ -9,17 +9,17 @@ import {
     RefSelector,
     ResizeObserverService
 } from "ag-grid-community";
-import { GridChartFactory } from "./gridChartFactory";
-import { Chart } from "../../charts/chart/chart";
-import { BarSeries } from "../../charts/chart/series/barSeries";
-import { LineSeries } from "../../charts/chart/series/lineSeries";
-import { PieSeries } from "../../charts/chart/series/pieSeries";
+import {GridChartFactory} from "./gridChartFactory";
+import {Chart} from "../../charts/chart/chart";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {LineSeries} from "../../charts/chart/series/lineSeries";
+import {PieSeries} from "../../charts/chart/series/pieSeries";
 import colors from "../../charts/chart/colors";
-import { CartesianChart } from "../../charts/chart/cartesianChart";
-import { PolarChart } from "../../charts/chart/polarChart";
-import { ChartMenu } from "./menu/chartMenu";
-import { ChartController } from "./chartController";
-import { ChartColumnModel } from "./model/chartColumnModel";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {PolarChart} from "../../charts/chart/polarChart";
+import {ChartMenu} from "./menu/chartMenu";
+import {ChartController} from "./chartController";
+import {ChartColumnModel} from "./model/chartColumnModel";
 
 export interface ChartOptions {
     chartType: ChartType;
@@ -63,7 +63,7 @@ export class GridChartComp extends Component {
 
         this.createChart();
 
-        if (this.chartController.isInsideDialog()) {
+        if (this.chartOptions.insideDialog) {
             this.addDialog();
         }
 
@@ -87,9 +87,9 @@ export class GridChartComp extends Component {
         const chartOptions = {
             chartType: this.chartController.getChartType(),
             parentElement: this.eChart,
-            width: this.chartController.getWidth(),
-            height: this.chartController.getHeight(),
-            showTooltips: this.chartController.isShowTooltips()
+            width: this.chartOptions.width,
+            height: this.chartOptions.height,
+            showTooltips: this.chartOptions.showTooltips
         };
 
         this.chart = GridChartFactory.createChart(chartOptions);
@@ -167,7 +167,7 @@ export class GridChartComp extends Component {
 
             lineSeries.name = f.displayName;
 
-            lineSeries.tooltip = this.chartController.isShowTooltips();
+            lineSeries.tooltip = this.chartOptions.showTooltips;
             lineSeries.lineWidth = 2;
             lineSeries.markerRadius = 3;
             lineSeries.color = colors[index % colors.length];
@@ -199,7 +199,7 @@ export class GridChartComp extends Component {
 
             pieSeries.name = f.displayName;
 
-            pieSeries.tooltip = this.chartController.isShowTooltips();
+            pieSeries.tooltip = this.chartOptions.showTooltips;
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
             pieChart.addSeries(pieSeries);
@@ -233,11 +233,9 @@ export class GridChartComp extends Component {
                 observeResize();
                 return;
             }
-            this.chartController.setHeight(_.getInnerHeight(eParent));
-            this.chartController.setWidth(_.getInnerWidth(eParent));
 
-            this.chart.height = this.chartController.getHeight();
-            this.chart.width = this.chartController.getWidth();
+            this.chart.height = _.getInnerHeight(eParent);
+            this.chart.width = _.getInnerWidth(eParent);
         });
     }
 
