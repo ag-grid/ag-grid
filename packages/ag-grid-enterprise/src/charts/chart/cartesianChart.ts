@@ -117,10 +117,11 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         // which is the offset we need to apply to align the left edge of legend
         // with the right edge of the `seriesClipRect`.
         legend.group.translationX = 0;
+        legend.group.translationY = 0;
         const legendBBox = legend.group.getBBox();
         legendBBox.dilate(20);
         legend.group.translationX = seriesClipRect.x + seriesClipRect.width - legendBBox.x;
-        legend.group.translationY = (this.height - legendBBox.height) / 2;
+        legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
 
         if (this.legendAutoPadding.right !== legendBBox.width) {
             this.legendAutoPadding.right = legendBBox.width;
