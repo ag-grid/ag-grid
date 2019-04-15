@@ -29,20 +29,20 @@ export class ChartController extends BeanStub {
     @Autowired('rangeController') rangeController: RangeController;
 
     private readonly aggregate: boolean;
-
-    private startingCellRanges: CellRange[];
-    private chartType: ChartType;
-    private chartData: any[];
+    private readonly showTooltips: boolean;
+    private readonly insideDialog: boolean;
+    private readonly startingCellRanges: CellRange[];
 
     private width: number;
     private height: number;
-    private showTooltips: boolean;
-    private insideDialog: boolean;
 
-    private datasource: ChartDatasource;
+    private chartType: ChartType;
+    private chartData: any[];
 
     private rangeModel: ChartRangeModel;
     private columnModel: ChartColumnModel;
+
+    private datasource: ChartDatasource;
 
     public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super();
@@ -66,8 +66,11 @@ export class ChartController extends BeanStub {
         // update the range controller now that we have updated the cell ranges as 'value' or 'dimension'
         this.setChartCellRangesInRangeController();
 
-        this.columnModel = new ChartColumnModel(this.rangeModel);
+        this.columnModel = new ChartColumnModel();
         this.getContext().wireBean(this.columnModel);
+
+        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        this.columnModel.resetColumnState(allColsFromRanges);
 
         this.updateModel();
 
@@ -87,11 +90,8 @@ export class ChartController extends BeanStub {
             endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;
         }
 
-        const allColsFromRanges: Column[] = _.flatten(cellRanges.map(range => range.columns));
-
-        this.columnModel.getValueColState().forEach(cs => {
-            cs.selected = allColsFromRanges.some(col => col.getColId() === cs.colId);
-        });
+        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
 
         const fields = this.columnModel.getValueColState()
             .filter(cs => cs.selected)
@@ -113,7 +113,8 @@ export class ChartController extends BeanStub {
     }
 
     private updateForColumnChange() {
-        this.columnModel.resetColumnState();
+        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        this.columnModel.resetColumnState(allColsFromRanges);
         this.updateModel();
     }
 

@@ -1,5 +1,4 @@
-import {_, Autowired, BeanStub, Column, ColumnController, PostConstruct,} from "ag-grid-community";
-import {ChartRangeModel} from "./chartRangeModel";
+import {Autowired, BeanStub, Column, ColumnController, PostConstruct,} from "ag-grid-community";
 import {ChartController} from "../chartController";
 
 export type ColState = {
@@ -18,16 +17,8 @@ export class ChartColumnModel extends BeanStub {
     private dimensionColState: ColState[] = [];
     private valueColState: ColState[] = [];
 
-    private rangeModel: ChartRangeModel;
-
-    public constructor(rangeModel: ChartRangeModel) {
+    public constructor() {
         super();
-        this.rangeModel = rangeModel;
-    }
-
-    @PostConstruct
-    private init(): void {
-        this.resetColumnState();
     }
 
     public getValueColState(): ColState[] {
@@ -38,10 +29,7 @@ export class ChartColumnModel extends BeanStub {
         return this.dimensionColState;
     }
 
-    public resetColumnState(): void {
-        const cellRanges = this.rangeModel.getCellRanges();
-        const colsFromAllRanges: Column[] = _.flatten(cellRanges.map(range => range.columns));
-
+    public resetColumnState(allColsFromRanges: Column[]): void {
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
         if (valueCols.length === 0) {
@@ -54,7 +42,7 @@ export class ChartColumnModel extends BeanStub {
                 column,
                 colId: column.getColId(),
                 displayName: this.getFieldName(column),
-                selected: colsFromAllRanges.indexOf(column) > -1
+                selected: allColsFromRanges.indexOf(column) > -1
             };
         });
 
@@ -67,7 +55,7 @@ export class ChartColumnModel extends BeanStub {
             };
         });
 
-        const dimensionsInCellRange = dimensionCols.filter(col => colsFromAllRanges.indexOf(col) > -1);
+        const dimensionsInCellRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
 
         if (dimensionsInCellRange.length > 0) {
             // select the first dimension from the range
@@ -83,6 +71,12 @@ export class ChartColumnModel extends BeanStub {
             selected: dimensionsInCellRange.length === 0
         };
         this.dimensionColState.unshift(defaultCategory);
+    }
+
+    public updateColumnStateFromRanges(allColsFromRanges: Column[]) {
+        this.valueColState.forEach(cs => {
+            cs.selected = allColsFromRanges.some(col => col.getColId() === cs.colId);
+        });
     }
 
     public updateColumnState(updatedCol: ColState) {

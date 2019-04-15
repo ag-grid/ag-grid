@@ -40,25 +40,25 @@ export class GridChartComp extends Component {
 
     @RefSelector('eChart') private eChart: HTMLElement;
 
+    private chart: Chart<any, string, number>;
+    private chartMenu: ChartMenu;
+    private chartDialog: Dialog;
     private chartController: ChartController;
 
-    private chart: Chart<any, string, number>;
-    private chartDialog: Dialog;
-    private chartMenu: ChartMenu;
-
     private currentChartType: ChartType;
+
     private readonly chartOptions: ChartOptions;
-    private readonly cellRanges: CellRange[];
+    private readonly startingCellRanges: CellRange[];
 
     constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super(GridChartComp.TEMPLATE);
         this.chartOptions = chartOptions;
-        this.cellRanges = cellRanges;
+        this.startingCellRanges = cellRanges;
     }
 
     @PostConstruct
     public init(): void {
-        this.chartController = new ChartController(this.chartOptions, this.cellRanges);
+        this.chartController = new ChartController(this.chartOptions, this.startingCellRanges);
         this.getContext().wireBean(this.chartController);
 
         this.createChart();

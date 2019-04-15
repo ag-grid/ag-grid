@@ -37,6 +37,10 @@ export class ChartRangeModel extends BeanStub {
         return this.cellRanges;
     }
 
+    public getAllColumnsFromRanges(): Column[] {
+        return _.flatten(this.cellRanges.map(range => range.columns));
+    }
+
     private splitInitialRange() {
         // there is only one range provided initially
         const colsToSplit = this.cellRanges[0].columns;
