@@ -186,6 +186,8 @@ export interface GridOptions {
     suppressEnterpriseResetOnNewColumns?: boolean;
     // enterprise only
     enableRangeSelection?: boolean;
+    enableRangeHandle?: boolean;
+    enableFillHandle?: boolean;
     suppressMultiRangeSelection?: boolean;
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;

@@ -1800,18 +1800,22 @@ export class CellComp extends Component {
     }
 
     private shouldHaveSelectionHandle(): boolean {
-        const { rangeController } = this.beans;
+        const { gridOptionsWrapper, rangeController } = this.beans;
         const el = this.getGui();
         const cellRanges = rangeController.getCellRanges();
         const rangesLen = cellRanges.length;
 
         if (!rangesLen) { return false; }
 
-        let handlesAllowed = rangesLen === 1;
+        let handlesAllowed = (
+            gridOptionsWrapper.isEnableFillHandle() ||
+            gridOptionsWrapper.isEnableRangeHandle() ||
+            this.hasChartRange
+            ) && rangesLen === 1;
 
-        if (!handlesAllowed) {
+        if (!handlesAllowed && this.hasChartRange) {
             const cellPosition = this.getCellPosition();
-            const isFirstRangeCategory = this.hasChartRange && cellRanges[0].type === CellRangeType.DIMENSION;
+            const isFirstRangeCategory = cellRanges[0].type === CellRangeType.DIMENSION;
 
             handlesAllowed =
                 isFirstRangeCategory &&
@@ -1838,9 +1842,9 @@ export class CellComp extends Component {
     }
 
     private addSelectionHandle() {
-        const { context, rangeController } = this.beans;
+        const { gridOptionsWrapper, context, rangeController } = this.beans;
         const cellRangeType = _.last(rangeController.getCellRanges()).type;
-        const type = _.exists(cellRangeType) ? 'range' : 'fill';
+        const type = (gridOptionsWrapper.isEnableFillHandle() && _.missing(cellRangeType)) ? 'fill' : 'range';
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
             this.selectionHandle.destroy();

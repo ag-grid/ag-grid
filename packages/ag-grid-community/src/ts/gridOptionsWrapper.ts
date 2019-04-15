@@ -821,6 +821,14 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.enableRangeSelection);
     }
 
+    public isEnableRangeHandle(): boolean {
+        return isTrue(this.gridOptions.enableRangeHandle);
+    }
+
+    public isEnableFillHandle(): boolean {
+        return isTrue(this.gridOptions.enableFillHandle);
+    }
+
     public isSuppressMultiRangeSelection(): boolean {
         return isTrue(this.gridOptions.suppressMultiRangeSelection);
     }
