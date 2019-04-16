@@ -1,14 +1,14 @@
 import {AbstractTextFloatingFilterComp} from "../../floating/abstractTextFloatingFilter";
-import {SerializedTextFilter} from "./textFilter";
+import {TextFilterModel} from "./textFilter";
 import {BaseFloatingFilterChange, IFloatingFilterParams} from "../../floating/floatingFilter";
 
-export class TextFloatingFilterComp extends AbstractTextFloatingFilterComp<SerializedTextFilter, IFloatingFilterParams<SerializedTextFilter, BaseFloatingFilterChange<SerializedTextFilter>>> {
-    asFloatingFilterText(parentModel: SerializedTextFilter): string {
+export class TextFloatingFilterComp extends AbstractTextFloatingFilterComp<TextFilterModel, IFloatingFilterParams<TextFilterModel, BaseFloatingFilterChange<TextFilterModel>>> {
+    asFloatingFilterText(parentModel: TextFilterModel): string {
         if (!parentModel) { return ''; }
         return parentModel.filter;
     }
 
-    asParentModel(): SerializedTextFilter {
+    asParentModel(): TextFilterModel {
         const currentParentModel = this.currentParentModel();
         return {
             type: currentParentModel.type,
@@ -17,7 +17,7 @@ export class TextFloatingFilterComp extends AbstractTextFloatingFilterComp<Seria
         };
     }
 
-    parseAsText(model: SerializedTextFilter): string {
+    parseAsText(model: TextFilterModel): string {
         return this.asFloatingFilterText(model);
     }
 }

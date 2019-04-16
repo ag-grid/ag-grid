@@ -5,19 +5,19 @@ import {
     ISetFilterParams,
     QuerySelector,
     RefSelector,
-    SerializedSetFilter,
     ValueFormatterService,
     _, AbstractFilter
 } from "ag-grid-community";
 import { SetValueModel, SetFilterModelValuesType } from "./setValueModel";
 import { SetFilterListItem } from "./setFilterListItem";
 import { VirtualList, VirtualListModel } from "../rendering/virtualList";
+import {SetFilterModel} from "./setFilterModel";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
-export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | SerializedSetFilter | null> {
+export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | SetFilterModel | null> {
 
-    private model: SetValueModel;
+    private valueModel: SetValueModel;
 
     @QuerySelector('#selectAll')
     private eSelectAll: HTMLInputElement;
@@ -94,7 +94,7 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 
-        this.model = new SetValueModel(
+        this.valueModel = new SetValueModel(
             this.filterParams.colDef,
             this.filterParams.rowModel,
             this.filterParams.valueGetter,
@@ -105,10 +105,10 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
             this.valueFormatterService,
             this.filterParams.column
         );
-        this.virtualList.setModel(new ModelWrapper(this.model));
+        this.virtualList.setModel(new ModelWrapper(this.valueModel));
         _.setVisible(this.getGui().querySelector('#ag-mini-filter') as HTMLElement, !this.filterParams.suppressMiniFilter);
 
-        this.eMiniFilter.value = this.model.getMiniFilter() as any;
+        this.eMiniFilter.value = this.valueModel.getMiniFilter() as any;
         this.addDestroyableEventListener(this.eMiniFilter, 'input', () => this.onMiniFilterChanged());
 
         this.updateCheckboxIcon();
@@ -118,7 +118,7 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
         this.virtualList.refresh();
     }
 
-    modelFromFloatingFilter(from: string): string[] | SerializedSetFilter {
+    modelFromFloatingFilter(from: string): string[] | SetFilterModel {
         if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
             return [from];
         } else {
@@ -137,7 +137,7 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
 
         const listItem = new SetFilterListItem(value, this.filterParams.column);
         this.getContext().wireBean(listItem);
-        listItem.setSelected(this.model.isValueSelected(value));
+        listItem.setSelected(this.valueModel.isValueSelected(value));
 
         listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, () => {
             this.onItemSelected(value, listItem.isSelected());
@@ -154,17 +154,17 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
     }
 
     public isFilterActive(): boolean {
-        return this.model.isFilterActive();
+        return this.valueModel.isFilterActive();
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
 
         // if no filter, always pass
-        if (this.model.isEverythingSelected() && !this.filterParams.selectAllOnMiniFilter) {
+        if (this.valueModel.isEverythingSelected() && !this.filterParams.selectAllOnMiniFilter) {
             return true;
         }
         // if nothing selected in filter, always fail
-        if (this.model.isNothingSelected() && !this.filterParams.selectAllOnMiniFilter) {
+        if (this.valueModel.isNothingSelected() && !this.filterParams.selectAllOnMiniFilter) {
             return false;
         }
 
@@ -177,13 +177,13 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
 
         if (Array.isArray(value)) {
             for (let i = 0; i < value.length; i++) {
-                if (this.model.isValueSelected(value[i])) {
+                if (this.valueModel.isValueSelected(value[i])) {
                     return true;
                 }
             }
             return false;
         } else {
-            return this.model.isValueSelected(value);
+            return this.valueModel.isValueSelected(value);
         }
     }
 
@@ -192,7 +192,7 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
         const isSelectAll = this.selectAllState === CheckboxState.CHECKED;
 
         // default is reset
-        this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
+        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
@@ -207,15 +207,15 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
      * @param toSelect The subset of options to subselect
      */
     public setFilterValues(options: string[], selectAll: boolean = false, notify: boolean = true, toSelect ?: string[]): void {
-        this.model.onFilterValuesReady(() => {
+        this.valueModel.onFilterValuesReady(() => {
             const keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-            this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
-            this.model.refreshValues(options, keepSelection, selectAll);
+            this.valueModel.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
+            this.valueModel.refreshValues(options, keepSelection, selectAll);
             this.updateSelectAll();
 
             const actualToSelect: string[] = toSelect ? toSelect : options;
 
-            actualToSelect.forEach(option => this.model.selectValue(option));
+            actualToSelect.forEach(option => this.valueModel.selectValue(option));
             this.virtualList.refresh();
             if (notify) {
                 this.debounceFilterChanged(true);
@@ -229,12 +229,12 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
      * @param options The options to use.
      */
     public resetFilterValues(): void {
-        this.model.setValuesType(SetFilterModelValuesType.NOT_PROVIDED);
+        this.valueModel.setValuesType(SetFilterModelValuesType.NOT_PROVIDED);
         this.onNewRowsLoaded();
     }
 
     public onAnyFilterChanged(): void {
-        this.model.refreshAfterAnyFilterChanged();
+        this.valueModel.refreshAfterAnyFilterChanged();
         this.virtualList.refresh();
     }
 
@@ -256,9 +256,9 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
     }
 
     private updateSelectAll(): void {
-        if (this.model.isEverythingSelected()) {
+        if (this.valueModel.isEverythingSelected()) {
             this.selectAllState = CheckboxState.CHECKED;
-        } else if (this.model.isNothingSelected()) {
+        } else if (this.valueModel.isNothingSelected()) {
             this.selectAllState = CheckboxState.UNCHECKED;
         } else {
             this.selectAllState = CheckboxState.INTERMEDIATE;
@@ -267,7 +267,7 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
     }
 
     private onMiniFilterChanged() {
-        const miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
+        const miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
             this.virtualList.refresh();
         }
@@ -287,9 +287,9 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
     private doSelectAll(): void {
         const checked = this.selectAllState === CheckboxState.CHECKED;
         if (checked) {
-            this.model.selectEverything();
+            this.valueModel.selectEverything();
         } else {
-            this.model.selectNothing();
+            this.valueModel.selectNothing();
         }
         this.virtualList.refresh();
         this.debounceFilterChanged();
@@ -298,9 +298,9 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
 
     private onItemSelected(value: any, selected: boolean) {
         if (selected) {
-            this.model.selectValue(value);
+            this.valueModel.selectValue(value);
         } else {
-            this.model.unselectValue(value);
+            this.valueModel.unselectValue(value);
         }
 
         this.updateSelectAll();
@@ -309,81 +309,84 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | Seri
     }
 
     public setMiniFilter(newMiniFilter: any): void {
-        this.model.setMiniFilter(newMiniFilter);
-        this.eMiniFilter.value = this.model.getMiniFilter() as any;
+        this.valueModel.setMiniFilter(newMiniFilter);
+        this.eMiniFilter.value = this.valueModel.getMiniFilter() as any;
     }
 
     public getMiniFilter() {
-        return this.model.getMiniFilter();
+        return this.valueModel.getMiniFilter();
     }
 
     public selectEverything() {
-        this.model.selectEverything();
+        this.valueModel.selectEverything();
         this.updateSelectAll();
         this.virtualList.refresh();
     }
 
     public selectNothing() {
-        this.model.selectNothing();
+        this.valueModel.selectNothing();
         this.updateSelectAll();
         this.virtualList.refresh();
     }
 
     public unselectValue(value: any) {
-        this.model.unselectValue(value);
+        this.valueModel.unselectValue(value);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
 
     public selectValue(value: any) {
-        this.model.selectValue(value);
+        this.valueModel.selectValue(value);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
 
     public isValueSelected(value: any) {
-        return this.model.isValueSelected(value);
+        return this.valueModel.isValueSelected(value);
     }
 
     public isEverythingSelected() {
-        return this.model.isEverythingSelected();
+        return this.valueModel.isEverythingSelected();
     }
 
     public isNothingSelected() {
-        return this.model.isNothingSelected();
+        return this.valueModel.isNothingSelected();
     }
 
     public getUniqueValueCount() {
-        return this.model.getUniqueValueCount();
+        return this.valueModel.getUniqueValueCount();
     }
 
     public getUniqueValue(index: any) {
-        return this.model.getUniqueValue(index);
+        return this.valueModel.getUniqueValue(index);
     }
 
-    public serialize(): string[] | SerializedSetFilter | null {
+    public serialize(): string[] | SetFilterModel | null {
+        const values = this.valueModel.getModel();
+        if (!values) { return null; }
+
         if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
-            return this.model.getModel();
+            return values;
         } else {
             return {
-                values: this.model.getModel(),
+                values: values,
                 filterType: 'set'
             };
         }
     }
 
-    public parse(dataModel: string[] | SerializedSetFilter) {
+    public parse(dataModel: string[] | SetFilterModel) {
         // also supporting old filter model for backwards compatibility
         const newValues: string[] | null = (dataModel instanceof Array) ? dataModel : dataModel.values;
 
-        this.model.setModel(newValues);
+        this.valueModel.setModel(newValues);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
 
     public resetState() {
         this.setMiniFilter(null);
-        this.model.setModel(null, true);
+        this.valueModel.setModel(null, true);
         this.selectEverything();
     }
 

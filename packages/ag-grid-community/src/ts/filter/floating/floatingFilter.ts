@@ -1,9 +1,7 @@
 import {IComponent} from "../../interfaces/iComponent";
 import {Column} from "../../entities/column";
 import {GridApi} from "../../gridApi";
-import {SerializedSetFilter} from "../../interfaces/iSerializedSetFilter";
 import {CombinedFilter} from "../provided/abstractFilter";
-import {AbstractTextFloatingFilterComp} from "./abstractTextFloatingFilter";
 
 export interface FloatingFilterChange {
 }

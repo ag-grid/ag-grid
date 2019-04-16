@@ -1,11 +1,12 @@
-import { Component } from "../../widgets/component";
-import { IFilterOptionDef, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { QuerySelector } from "../../widgets/componentAnnotations";
-import { Autowired } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { BaseFloatingFilterChange, FloatingFilterChange } from "../floating/floatingFilter";
-import { INumberFilterParams, ITextFilterParams } from "./text/textFilter";
-import { _ } from "../../utils";
+import {Component} from "../../widgets/component";
+import {IDoesFilterPassParams, IFilterComp, IFilterOptionDef, IFilterParams} from "../../interfaces/iFilter";
+import {QuerySelector} from "../../widgets/componentAnnotations";
+import {Autowired} from "../../context/context";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {BaseFloatingFilterChange, FloatingFilterChange} from "../floating/floatingFilter";
+import {ITextFilterParams} from "./text/textFilter";
+import {_} from "../../utils";
+import {INumberFilterParams} from "./number/numberFilter";
 
 export interface Comparator<T> {
     (left: T, right: T): number;

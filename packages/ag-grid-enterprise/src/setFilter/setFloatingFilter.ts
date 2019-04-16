@@ -1,12 +1,13 @@
-import {AbstractTextFloatingFilterComp, SerializedSetFilter, IFloatingFilterParams, BaseFloatingFilterChange} from "ag-grid-community";
+import {AbstractTextFloatingFilterComp, IFloatingFilterParams, BaseFloatingFilterChange} from "ag-grid-community";
+import {SetFilterModel} from "./setFilterModel";
 
-export class SetFloatingFilterComp extends AbstractTextFloatingFilterComp<SerializedSetFilter, IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>> {
-    init(params: IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>): void {
+export class SetFloatingFilterComp extends AbstractTextFloatingFilterComp<SetFilterModel, IFloatingFilterParams<SetFilterModel, BaseFloatingFilterChange<SetFilterModel>>> {
+    init(params: IFloatingFilterParams<SetFilterModel, BaseFloatingFilterChange<SetFilterModel>>): void {
         super.init(params);
         this.eColumnFloatingFilter.disabled = true;
     }
 
-    asFloatingFilterText(parentModel: string[] | SerializedSetFilter): string {
+    asFloatingFilterText(parentModel: string[] | SetFilterModel): string {
         this.eColumnFloatingFilter.disabled = true;
         if (!parentModel) { return ''; }
 
@@ -19,11 +20,11 @@ export class SetFloatingFilterComp extends AbstractTextFloatingFilterComp<Serial
         return `(${values.length}) ${arrayToDisplay.join(",")}`;
     }
 
-    parseAsText(model: SerializedSetFilter): string {
+    parseAsText(model: SetFilterModel): string {
         return this.asFloatingFilterText(model);
     }
 
-    asParentModel(): SerializedSetFilter {
+    asParentModel(): SetFilterModel {
         if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
             return {
                 values: [],
@@ -36,7 +37,7 @@ export class SetFloatingFilterComp extends AbstractTextFloatingFilterComp<Serial
         };
     }
 
-    equalModels(left: SerializedSetFilter, right: SerializedSetFilter): boolean {
+    equalModels(left: SetFilterModel, right: SetFilterModel): boolean {
         return false;
     }
 }

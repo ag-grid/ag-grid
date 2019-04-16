@@ -90,7 +90,7 @@ export { AbstractFilter } from "./filter/provided/abstractFilter";
 export { DateFilter, DateFilterModel } from "./filter/provided/date/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { NumberFilter } from "./filter/provided/number/numberFilter";
-export { TextFilter, SerializedTextFilter } from "./filter/provided/text/textFilter";
+export { TextFilter, TextFilterModel } from "./filter/provided/text/textFilter";
 export { IFloatingFilter, IFloatingFilterParams } from "./filter/floating/floatingFilter";
 
 // gridPanel
@@ -285,7 +285,6 @@ export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
 export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, FilterModel } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
-export { SerializedSetFilter } from "./interfaces/iSerializedSetFilter";
 export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";

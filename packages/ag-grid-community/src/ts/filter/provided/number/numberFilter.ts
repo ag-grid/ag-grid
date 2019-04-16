@@ -1,7 +1,6 @@
 import {FilterModel} from "../../../interfaces/iFilter";
 import {QuerySelector} from "../../../widgets/componentAnnotations";
-import {AbstractFilter, Comparator, FilterConditionType} from "../abstractFilter";
-import {INumberFilterParams} from "../text/textFilter";
+import {AbstractFilter, Comparator, FilterConditionType, IScalarFilterParams} from "../abstractFilter";
 import {_} from "../../../utils";
 import {AbstractScalerFilter} from "../abstractScalerFilter";
 
@@ -9,6 +8,10 @@ export interface NumberFilterModel extends FilterModel {
     filter: number;
     filterTo: number;
     type: string;
+}
+
+export interface INumberFilterParams extends IScalarFilterParams {
+    debounceMs?: number;
 }
 
 export class NumberFilter extends AbstractScalerFilter<number, INumberFilterParams, NumberFilterModel> {

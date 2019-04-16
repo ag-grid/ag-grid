@@ -1,10 +1,10 @@
 import {FilterModel, IDoesFilterPassParams} from "../../../interfaces/iFilter";
-import {AbstractFilter, FilterConditionType, IComparableFilterParams, IScalarFilterParams} from "../abstractFilter";
+import {AbstractFilter, FilterConditionType, IComparableFilterParams} from "../abstractFilter";
 import {QuerySelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
 import {AbstractComparableFilter} from "../abstractComparableFilter";
 
-export interface SerializedTextFilter extends FilterModel {
+export interface TextFilterModel extends FilterModel {
     filter: string;
     type: string;
 }
@@ -17,17 +17,13 @@ export interface TextFormatter {
     (from: string): string;
 }
 
-export interface INumberFilterParams extends IScalarFilterParams {
-    debounceMs?: number;
-}
-
 export interface ITextFilterParams extends IComparableFilterParams {
     textCustomComparator?: TextComparator;
     debounceMs?: number;
     caseSensitive?: boolean;
 }
 
-export class TextFilter extends AbstractComparableFilter <string, ITextFilterParams, SerializedTextFilter> {
+export class TextFilter extends AbstractComparableFilter <string, ITextFilterParams, TextFilterModel> {
     @QuerySelector('#filterText')
     private eFilterTextField: HTMLInputElement;
 
@@ -83,7 +79,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         super.customInit();
     }
 
-    modelFromFloatingFilter(from: string): SerializedTextFilter {
+    modelFromFloatingFilter(from: string): TextFilterModel {
         return {
             type: this.selectedFilter,
             filter: from,
@@ -247,7 +243,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         this.setFilter(null, FilterConditionType.CONDITION);
     }
 
-    public serialize(type:FilterConditionType): SerializedTextFilter {
+    public serialize(type:FilterConditionType): TextFilterModel {
         const filter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         const filterText = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
 
@@ -258,7 +254,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         };
     }
 
-    public parse(model: SerializedTextFilter, type:FilterConditionType): void {
+    public parse(model: TextFilterModel, type:FilterConditionType): void {
         this.setFilterType(model.type, type);
         this.setFilter(model.filter, type);
     }
