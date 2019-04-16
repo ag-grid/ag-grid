@@ -20,48 +20,35 @@ export class ChartController extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.updateModel();
 
-        this.setChartCellRangesInRangeController();
+        this.updateForGridChange();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, this.updateModel.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onGridColumnChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
     }
 
-    public updateForColumnSelection(updatedCol: ColState): void {
+    public updateForGridChange() {
+        this.model.updateCellRanges();
+        this.model.resetColumnState();
+        this.model.updateData();
+
+        // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
+        this.setChartCellRangesInRangeController();
+
+        this.raiseChartUpdatedEvent();
+    }
+
+    public updateForMenuChange(updatedCol: ColState): void {
         this.model.updateColumnState(updatedCol);
         this.model.updateCellRanges(updatedCol);
-        this.updateModel();
+        this.model.updateData();
+
+        // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
         this.setChartCellRangesInRangeController();
-    }
-
-    private onGridColumnChange() {
-        this.model.resetColumnState();
-        this.updateModel();
-    }
-
-    private onColumnMoved() {
-        const allColsFromRanges = this.model.getAllColumnsFromRanges();
-        this.model.updateColumnStateFromRanges(allColsFromRanges);
-
-        this.model.updateCellRanges();
-
-        this.updateModel();
-        this.setChartCellRangesInRangeController();
-    }
-
-    private updateModel() {
-        const allColsFromRanges = this.model.getAllColumnsFromRanges();
-        this.model.updateColumnStateFromRanges(allColsFromRanges);
-
-        const selectedDimension = this.model.getSelectedDimensionId();
-        const selectedValueCols = this.model.getSelectedValueCols();
-        const {startRow, endRow} = this.getRowIndexes();
-
-        this.model.updateData(selectedDimension, selectedValueCols, startRow, endRow);
 
         this.raiseChartUpdatedEvent();
     }
@@ -88,16 +75,6 @@ export class ChartController extends BeanStub {
             type: ChartController.EVENT_CHART_MODEL_UPDATED
         };
         this.dispatchEvent(event);
-    }
-
-    private getRowIndexes(): {startRow: number, endRow: number} {
-        let startRow = 0, endRow = 0;
-        const lastRange = this.model.getLastRange();
-        if (lastRange) {
-            startRow = this.rangeController.getRangeStartRow(lastRange).rowIndex;
-            endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;
-        }
-        return {startRow, endRow}
     }
 
     public destroy() {

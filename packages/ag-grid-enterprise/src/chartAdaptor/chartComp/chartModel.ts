@@ -1,6 +1,18 @@
-import {_, Autowired, PostConstruct, BeanStub, Column, ColDef, ColumnController, CellRangeType, CellRange, ChartType } from "ag-grid-community";
+import {
+    _,
+    Autowired,
+    BeanStub,
+    CellRange,
+    CellRangeType,
+    ChartType,
+    ColDef,
+    Column,
+    ColumnController,
+    PostConstruct
+} from "ag-grid-community";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
+import {RangeController} from "../../rangeController";
 
 export interface ColState  {
     column?: Column;
@@ -14,6 +26,7 @@ export class ChartModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rangeController') rangeController: RangeController;
 
     // model state
     private cellRanges: CellRange[];
@@ -42,16 +55,17 @@ export class ChartModel extends BeanStub {
 
         // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
         this.referenceCellRange = this.cellRanges[0];
-        this.updateCellRanges();
-
-        this.resetColumnState();
     }
 
-    public updateData(dimension: string, valueCols: Column[], startRow: number, endRow: number): void {
+    public updateData(): void {
+        const {startRow, endRow} = this.getRowIndexes();
+        const selectedDimension = this.getSelectedDimensionId();
+        const selectedValueCols = this.getSelectedValueCols();
+
         const params: ChartDatasourceParams = {
             aggregate: this.aggregate,
-            dimensionColIds: [dimension],
-            valueCols: valueCols,
+            dimensionColIds: [selectedDimension],
+            valueCols: selectedValueCols,
             startRow: startRow,
             endRow: endRow
         };
@@ -115,12 +129,6 @@ export class ChartModel extends BeanStub {
         this.dimensionColState.unshift(defaultCategory);
     }
 
-    public updateColumnStateFromRanges(allColsFromRanges: Column[]) {
-        this.valueColState.forEach(cs => {
-            cs.selected = allColsFromRanges.some(col => col.getColId() === cs.colId);
-        });
-    }
-
     public updateColumnState(updatedCol: ColState) {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const isDimensionCol = this.dimensionColState.filter(idsMatch).length > 0;
@@ -152,11 +160,10 @@ export class ChartModel extends BeanStub {
         return _.flatten(this.cellRanges.map(range => range.columns));
     }
 
-    public getLastRange(): CellRange {
-        return _.last(this.cellRanges) as CellRange;
-    }
-
     public updateCellRanges(updatedCol?: ColState) {
+        // update the reference range
+        this.referenceCellRange = _.last(this.cellRanges) as CellRange;
+
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
         console.log(dimensionCols, valueCols);
@@ -230,12 +237,6 @@ export class ChartModel extends BeanStub {
     }
 
     private addRange(cellRangeType: CellRangeType, columns: Column[]) {
-        const valueRanges = this.cellRanges.filter(range => range.type === CellRangeType.VALUE);
-
-        if (valueRanges.length > 0) {
-            this.referenceCellRange = valueRanges[0];
-        }
-
         const newRange = {
             startRow: this.referenceCellRange.startRow,
             endRow: this.referenceCellRange.endRow,
@@ -282,6 +283,16 @@ export class ChartModel extends BeanStub {
         return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 
+    private getRowIndexes(): {startRow: number, endRow: number} {
+        let startRow = 0, endRow = 0;
+        const range = _.last(this.cellRanges) as CellRange;
+        if (range) {
+            startRow = this.rangeController.getRangeStartRow(range).rowIndex;
+            endRow = this.rangeController.getRangeEndRow(range).rowIndex;
+        }
+        return {startRow, endRow}
+    }
+
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
@@ -312,5 +323,9 @@ export class ChartModel extends BeanStub {
 
     public destroy() {
         super.destroy();
+
+        if (this.datasource) {
+            this.datasource.destroy();
+        }
     }
 }
