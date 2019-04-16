@@ -21,17 +21,14 @@ export class ChartController extends BeanStub {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') rangeController: RangeController;
 
-    private readonly aggregate: boolean;
+    private readonly chartOptions: ChartOptions;
     private readonly startingCellRanges: CellRange[];
 
-    private chartType: ChartType;
-
-    private columnModel: ChartModel;
+    private model: ChartModel;
 
     public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super();
-        this.chartType = chartOptions.chartType;
-        this.aggregate = chartOptions.aggregate;
+        this.chartOptions = chartOptions;
         this.startingCellRanges = cellRanges;
     }
 
@@ -52,66 +49,70 @@ export class ChartController extends BeanStub {
     }
 
     private setupColumnModel(): void {
-        this.columnModel = new ChartModel(this.startingCellRanges, this.aggregate);
-        this.getContext().wireBean(this.columnModel);
+        this.model = new ChartModel(this.chartOptions, this.startingCellRanges);
+        this.getContext().wireBean(this.model);
 
-        this.columnModel.resetColumnState();
+        this.model.resetColumnState();
     }
 
     public updateForColumnSelection(updatedCol: ColState): void {
-        this.columnModel.updateColumnState(updatedCol);
-        this.columnModel.updateCellRanges(updatedCol);
+        this.model.updateColumnState(updatedCol);
+        this.model.updateCellRanges(updatedCol);
         this.updateModel();
         this.setChartCellRangesInRangeController();
     }
 
     private onGridColumnChange() {
-        this.columnModel.resetColumnState();
+        this.model.resetColumnState();
         this.updateModel();
     }
 
     private onColumnMoved() {
-        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
-        this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
+        const allColsFromRanges = this.model.getAllColumnsFromRanges();
+        this.model.updateColumnStateFromRanges(allColsFromRanges);
 
-        this.columnModel.updateCellRanges();
+        this.model.updateCellRanges();
 
         this.updateModel();
         this.setChartCellRangesInRangeController();
     }
 
     private updateModel() {
-        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
-        this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
+        const allColsFromRanges = this.model.getAllColumnsFromRanges();
+        this.model.updateColumnStateFromRanges(allColsFromRanges);
 
-        const selectedDimension = this.columnModel.getSelectedDimensionId();
-        const selectedValueCols = this.columnModel.getSelectedValueCols();
+        const selectedDimension = this.model.getSelectedDimensionId();
+        const selectedValueCols = this.model.getSelectedValueCols();
         const {startRow, endRow} = this.getRowIndexes();
 
-        this.columnModel.updateData(selectedDimension, selectedValueCols, startRow, endRow);
+        this.model.updateData(selectedDimension, selectedValueCols, startRow, endRow);
 
         this.raiseChartUpdatedEvent();
     }
 
     public setChartType(chartType: ChartType): void {
-        this.chartType = chartType;
+        this.model.setChartType(chartType);
         this.raiseChartUpdatedEvent();
     }
 
+    public getChartType(): ChartType {
+        return this.model.getChartType();
+    }
+
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
-        return {dimensionCols: this.columnModel.getDimensionColState(), valueCols: this.columnModel.getValueColState()}
+        return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
     }
 
     public getData(): any[] {
-        return this.columnModel.getData();
+        return this.model.getData();
     }
 
     public getSelectedCategory(): string {
-        return this.columnModel.getSelectedDimensionId();
+        return this.model.getSelectedDimensionId();
     }
 
     public getFields(): { colId: string, displayName: string }[] {
-        return this.columnModel.getSelectedColState().map(cs => {
+        return this.model.getSelectedColState().map(cs => {
             return {
                 colId: cs.colId,
                 displayName: cs.displayName
@@ -119,12 +120,8 @@ export class ChartController extends BeanStub {
         });
     };
 
-    public getChartType(): ChartType {
-        return this.chartType;
-    }
-
     public setChartCellRangesInRangeController() {
-        this.rangeController.setCellRanges(this.columnModel.getCellRanges());
+        this.rangeController.setCellRanges(this.model.getCellRanges());
     }
 
     public removeChartCellRangesFromRangeController() {
@@ -140,7 +137,7 @@ export class ChartController extends BeanStub {
 
     private getRowIndexes(): {startRow: number, endRow: number} {
         let startRow = 0, endRow = 0;
-        const lastRange = this.columnModel.getLastRange();
+        const lastRange = this.model.getLastRange();
         if (lastRange) {
             startRow = this.rangeController.getRangeStartRow(lastRange).rowIndex;
             endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;

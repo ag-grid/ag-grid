@@ -1,5 +1,6 @@
-import {_, Autowired, PostConstruct, BeanStub, Column, ColDef, ColumnController, CellRangeType, CellRange } from "ag-grid-community";
+import {_, Autowired, PostConstruct, BeanStub, Column, ColDef, ColumnController, CellRangeType, CellRange, ChartType } from "ag-grid-community";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
+import {ChartOptions} from "./gridChartComp";
 
 export interface ColState  {
     column?: Column;
@@ -14,23 +15,24 @@ export class ChartModel extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
 
+    // model state
     private cellRanges: CellRange[];
-
-    // this is used to restore cols after all have been removed via menu
     private referenceCellRange: CellRange;
-
     private dimensionColState: ColState[] = [];
     private valueColState: ColState[] = [];
-
-    private readonly aggregate: boolean;
     private chartData: any[];
+
+    private aggregate: boolean;
+    private chartType: ChartType;
 
     private datasource: ChartDatasource;
 
-    public constructor(cellRanges: CellRange[], aggregate: boolean) {
+    public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super();
+
+        this.chartType = chartOptions.chartType;
+        this.aggregate = chartOptions.aggregate;
         this.cellRanges = cellRanges;
-        this.aggregate = aggregate;
     }
 
     @PostConstruct
@@ -47,11 +49,11 @@ export class ChartModel extends BeanStub {
 
     public updateData(dimension: string, valueCols: Column[], startRow: number, endRow: number): void {
         const params: ChartDatasourceParams = {
+            aggregate: this.aggregate,
             dimensionColIds: [dimension],
             valueCols: valueCols,
             startRow: startRow,
-            endRow: endRow,
-            aggregate: this.aggregate
+            endRow: endRow
         };
 
         this.chartData = this.datasource.getData(params);
@@ -132,6 +134,14 @@ export class ChartModel extends BeanStub {
             // just update the selected value on the supplied value column
             this.valueColState.forEach(cs => cs.selected = idsMatch(cs) ? updatedCol.selected : cs.selected);
         }
+    }
+
+    public setChartType(chartType: ChartType) {
+        this.chartType = chartType;
+    }
+
+    public getChartType(): ChartType {
+        return this.chartType;
     }
 
     public getCellRanges(): CellRange[] {
@@ -246,6 +256,7 @@ export class ChartModel extends BeanStub {
         return this.getAllColumnsFromRanges().filter(col => isDimension(col));
     }
 
+
     private getValueColsFromRanges(allDisplayedColumns: Column[]) {
         const isValueCol = (col: Column) => {
             const colDef = col.getColDef() as ColDef;
@@ -254,7 +265,6 @@ export class ChartModel extends BeanStub {
 
         return this.getAllColumnsFromRanges().filter(col => isValueCol(col));
     }
-
 
     public getSelectedColState(): ColState[] {
         return this.valueColState.filter(cs => cs.selected);
