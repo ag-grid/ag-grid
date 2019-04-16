@@ -35,8 +35,8 @@ export class ChartModel extends BeanStub {
     private valueColState: ColState[] = [];
     private chartData: any[];
 
-    private aggregate: boolean;
     private chartType: ChartType;
+    private readonly aggregate: boolean;
 
     private datasource: ChartDatasource;
 
@@ -137,11 +137,12 @@ export class ChartModel extends BeanStub {
         this.referenceCellRange = _.last(this.cellRanges) as CellRange;
 
         const {dimensionCols, valueCols} = this.getAllChartColumns();
+        const allColsFromRanges = this.getAllColumnsFromRanges();
 
         console.log(dimensionCols, valueCols);
 
-        let valueColsInRange = this.getValueColsFromRanges(valueCols);
-        let dimensionColsInRange = this.getDimensionsFromRanges(dimensionCols);
+        let valueColsInRange = valueCols.filter(col => allColsFromRanges.indexOf(col) > -1);
+        let dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
 
         // clear ranges
         this.cellRanges = [];
@@ -161,12 +162,10 @@ export class ChartModel extends BeanStub {
         }
 
         if (dimensionColsInRange.length > 0) {
+            // add first dimension in range
             const firstDimensionInRange = dimensionColsInRange[0];
             this.addRange(CellRangeType.DIMENSION, [firstDimensionInRange]);
         }
-
-        console.log('valueColsInRange: ', valueColsInRange.map(col => col.getColId()).join(','));
-        console.log('dimensions: ', dimensionColsInRange.map(col => col.getColId()).join(','));
 
         if (valueColsInRange.length === 0) {
             // no range to add
@@ -194,8 +193,6 @@ export class ChartModel extends BeanStub {
                 }
             }
         }
-
-        console.log('ranges: ', this.cellRanges);
     }
 
     public getData(): any[] {
@@ -258,24 +255,6 @@ export class ChartModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Column[] {
         return _.flatten(this.cellRanges.map(range => range.columns));
-    }
-
-    private getDimensionsFromRanges(allDisplayedColumns: Column[]) {
-        const isDimension = (col: Column) => {
-            const colDef = col.getColDef() as ColDef;
-            return allDisplayedColumns.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
-        };
-
-        return this.getAllColumnsFromRanges().filter(col => isDimension(col));
-    }
-
-    private getValueColsFromRanges(allDisplayedColumns: Column[]) {
-        const isValueCol = (col: Column) => {
-            const colDef = col.getColDef() as ColDef;
-            return allDisplayedColumns.indexOf(col) > -1 && (!!colDef.enableValue);
-        };
-
-        return this.getAllColumnsFromRanges().filter(col => isValueCol(col));
     }
 
     private getFieldName(col: Column): string {
