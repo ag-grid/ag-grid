@@ -39,6 +39,11 @@ enum LegendNodeTag {
     Label
 }
 
+export enum Orientation {
+    Vertical,
+    Horizontal
+}
+
 export class Legend {
 
     readonly group: Group = new Group();
@@ -54,14 +59,14 @@ export class Legend {
         return this._data;
     }
 
-    private _vertical: boolean = true;
-    set vertical(value: boolean) {
-        if (this._vertical !== value) {
-            this._vertical = value;
+    private _orientation: Orientation = Orientation.Vertical;
+    set orientation(value: Orientation) {
+        if (this._orientation !== value) {
+            this._orientation = value;
         }
     }
-    get vertical(): boolean {
-        return this._vertical;
+    get vertical(): Orientation {
+        return this._orientation;
     }
 
     update() {
@@ -70,7 +75,7 @@ export class Legend {
             return {
                 marker: {
                     x: 0,
-                    y: 10,
+                    y: 0,
                     radius: 6,
                     fillStyle: datum.marker.fillStyle,
                     strokeStyle: datum.marker.strokeStyle,
@@ -78,7 +83,7 @@ export class Legend {
                 },
                 label: {
                     x: 14,
-                    y: 10,
+                    y: 0,
                     text: datum.name,
                     font: '12px Verdana',
                     fillStyle: 'black'
@@ -94,7 +99,6 @@ export class Legend {
             arc.tag = LegendNodeTag.Marker;
             arc.radiusX = 8;
             arc.radiusY = 8;
-            arc.centerY = 10;
         });
         enterGroups.append(Text).each(text => {
             text.tag = LegendNodeTag.Label;
