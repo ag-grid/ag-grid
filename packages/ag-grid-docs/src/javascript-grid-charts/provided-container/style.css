@@ -1,9 +1,13 @@
 .chart-wrapper {
+    display: flex;
+    flex-direction: column;
     border: 2px solid darkslategray;
-    height: 400px;
+    height: 440px;
+    overflow: hidden;
 }
 
 .chart-wrapper-top {
+    height: 40px;
     padding: 10px;
     text-align: center;
 }

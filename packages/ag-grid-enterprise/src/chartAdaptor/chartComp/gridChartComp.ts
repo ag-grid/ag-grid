@@ -229,9 +229,9 @@ export class GridChartComp extends Component {
 
     private addResizeListener() {
         const eGui = this.getGui();
-        const eParent = eGui.parentElement as HTMLElement;
 
         const observeResize = this.resizeObserverService.observeResize(eGui, () => {
+            const eParent = eGui.parentElement as HTMLElement;
             if (!eGui || !eGui.offsetParent) {
                 observeResize();
                 return;
