@@ -42,6 +42,8 @@ export class ChartController extends BeanStub {
        
         this.updateModel();
 
+        this.setChartCellRangesInRangeController();
+
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
@@ -53,8 +55,7 @@ export class ChartController extends BeanStub {
         this.columnModel = new ChartModel(this.startingCellRanges, this.aggregate);
         this.getContext().wireBean(this.columnModel);
 
-        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
-        this.columnModel.resetColumnState(allColsFromRanges);
+        this.columnModel.resetColumnState();
     }
 
     public updateForColumnSelection(updatedCol: ColState): void {
@@ -65,8 +66,7 @@ export class ChartController extends BeanStub {
     }
 
     private onGridColumnChange() {
-        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
-        this.columnModel.resetColumnState(allColsFromRanges);
+        this.columnModel.resetColumnState();
         this.updateModel();
     }
 

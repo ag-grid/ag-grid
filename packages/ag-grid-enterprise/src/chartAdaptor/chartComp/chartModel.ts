@@ -41,6 +41,8 @@ export class ChartModel extends BeanStub {
         // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
         this.referenceCellRange = this.cellRanges[0];
         this.updateCellRanges();
+
+        this.resetColumnState();
     }
 
     public updateData(dimension: string, valueCols: Column[], startRow: number, endRow: number): void {
@@ -67,7 +69,8 @@ export class ChartModel extends BeanStub {
         return this.dimensionColState;
     }
 
-    public resetColumnState(allColsFromRanges: Column[]): void {
+    public resetColumnState(): void {
+        const allColsFromRanges = this.getAllColumnsFromRanges();
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
         if (valueCols.length === 0) {
@@ -130,7 +133,6 @@ export class ChartModel extends BeanStub {
             this.valueColState.forEach(cs => cs.selected = idsMatch(cs) ? updatedCol.selected : cs.selected);
         }
     }
-
 
     public getCellRanges(): CellRange[] {
         return this.cellRanges;
