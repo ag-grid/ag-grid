@@ -33,8 +33,11 @@ export class ChartController extends BeanStub {
     }
 
     public updateForGridChange() {
+
+        // update the model with changes to the cell ranges from the grid before updating the column state
         this.model.updateCellRanges();
         this.model.resetColumnState();
+
         this.model.updateData();
 
         // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
@@ -44,6 +47,8 @@ export class ChartController extends BeanStub {
     }
 
     public updateForMenuChange(updatedCol: ColState): void {
+
+        // update the column state before updating the cell ranges to be sent to the grid
         this.model.updateColumnState(updatedCol);
         this.model.updateCellRanges(updatedCol);
         this.model.updateData();
