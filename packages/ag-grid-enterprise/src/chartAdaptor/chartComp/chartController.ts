@@ -9,7 +9,6 @@ import {
     PostConstruct,
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
-import {ChartDatasource} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 import {ChartRangeModel} from "./model/chartRangeModel";
 import {ChartColumnModel, ColState} from "./model/chartColumnModel";
@@ -33,8 +32,6 @@ export class ChartController extends BeanStub {
     private rangeModel: ChartRangeModel;
     private columnModel: ChartColumnModel;
 
-    private datasource: ChartDatasource;
-
     public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super();
         this.chartType = chartOptions.chartType;
@@ -54,6 +51,7 @@ export class ChartController extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onGridColumnChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
     }
 
     private setupRangeModel(): void {
@@ -79,7 +77,7 @@ export class ChartController extends BeanStub {
 
     public updateForColumnSelection(updatedCol: ColState): void {
         this.columnModel.updateColumnState(updatedCol);
-        this.rangeModel.updateCellRanges(this.columnModel.getDimensionColState(), updatedCol);
+        this.rangeModel.updateCellRanges(updatedCol);
         this.updateModel();
         this.setChartCellRangesInRangeController();
     }
@@ -88,6 +86,16 @@ export class ChartController extends BeanStub {
         const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
         this.columnModel.resetColumnState(allColsFromRanges);
         this.updateModel();
+    }
+
+    private onColumnMoved() {
+        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
+
+        this.rangeModel.updateCellRanges();
+
+        this.updateModel();
+        this.setChartCellRangesInRangeController();
     }
 
     private updateModel() {
