@@ -108,7 +108,9 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         const legendData: LegendDatum[] = [];
         this.series.forEach(series => {
             series.update(); // this has to happen after the `updateAxis` call
-            series.provideLegendData(legendData);
+            if (series.showInLegend) {
+                series.provideLegendData(legendData);
+            }
         });
 
         const legend = this.legend;

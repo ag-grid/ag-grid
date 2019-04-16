@@ -67,7 +67,9 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
             if (series.processData()) {
                 series.update();
             }
-            series.provideLegendData(legendData);
+            if (series.showInLegend) {
+                series.provideLegendData(legendData);
+            }
         });
 
         const legend = this.legend;

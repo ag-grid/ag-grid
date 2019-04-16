@@ -84,6 +84,17 @@ export abstract class Series<D, X, Y> {
 
     abstract provideLegendData(data: LegendDatum[]): void;
 
+    private _showInLegend: boolean = true;
+    set showInLegend(value: boolean) {
+        if (this._showInLegend !== value) {
+            this._showInLegend = value;
+            this.scheduleLayout();
+        }
+    }
+    get showInLegend(): boolean {
+        return this._showInLegend;
+    }
+
     scheduleLayout() {
         if (this.chart) {
             this.chart.layoutPending = true;
