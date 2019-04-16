@@ -6,6 +6,7 @@ import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {_} from "../../../utils";
 import {AbstractScalerFilter} from "../abstractScalerFilter";
+import {AbstractComparableFilter} from "../abstractComparableFilter";
 
 export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
@@ -60,7 +61,8 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [AbstractFilter.EQUALS, AbstractFilter.GREATER_THAN, AbstractFilter.LESS_THAN, AbstractFilter.NOT_EQUAL, AbstractFilter.IN_RANGE];
+        return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.GREATER_THAN,
+            AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.IN_RANGE];
     }
 
     public generateFilterValueTemplate(type:FilterConditionType): string {
@@ -164,14 +166,14 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
 
         // show / hide in-range filter
         if (panel) {
-            const visible = filterType === AbstractFilter.IN_RANGE;
+            const visible = filterType === AbstractComparableFilter.IN_RANGE;
             _.setVisible(panel, visible);
         }
 
         // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eDateFromPanel : this.eDateFromConditionPanel;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractFilter.EMPTY;
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractComparableFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }
@@ -204,14 +206,14 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         if (type === FilterConditionType.MAIN) {
             if (!this.dateFromComponent) { return null; }
 
-            return this.selectedFilter !== AbstractFilter.IN_RANGE ?
+            return this.selectedFilter !== AbstractComparableFilter.IN_RANGE ?
                 this.dateFromComponent.getDate() :
                 [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
         }
 
         if (!this.dateFromConditionComponent) { return null; }
 
-        return this.selectedFilterCondition !== AbstractFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== AbstractComparableFilter.IN_RANGE ?
             this.dateFromConditionComponent.getDate() :
             [this.dateFromConditionComponent.getDate(), this.dateToConditionComponent.getDate()];
     }

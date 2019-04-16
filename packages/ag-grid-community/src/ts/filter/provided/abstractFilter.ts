@@ -32,20 +32,6 @@ export interface CombinedFilter <T> {
  */
 export abstract class AbstractFilter<P extends IFilterParams, M> extends Component implements IFilterComp {
 
-    public static EMPTY = 'empty';
-    public static EQUALS = 'equals';
-    public static NOT_EQUAL = 'notEqual';
-    public static LESS_THAN = 'lessThan';
-    public static LESS_THAN_OR_EQUAL = 'lessThanOrEqual';
-    public static GREATER_THAN = 'greaterThan';
-    public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
-    public static IN_RANGE = 'inRange';
-
-    public static CONTAINS = 'contains'; //1;
-    public static NOT_CONTAINS = 'notContains'; //1;
-    public static STARTS_WITH = 'startsWith'; //4;
-    public static ENDS_WITH = 'endsWith'; //5;
-
     private newRowsActionKeep: boolean;
 
     filterParams: P;

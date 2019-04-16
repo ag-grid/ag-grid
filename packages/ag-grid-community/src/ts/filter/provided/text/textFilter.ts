@@ -35,14 +35,15 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
 
     private comparator: TextComparator;
     private formatter: TextFormatter;
+
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
-    }
+    };
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    }
+    };
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -67,7 +68,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
     }
 
     public getDefaultType(): string {
-        return AbstractFilter.CONTAINS;
+        return AbstractComparableFilter.CONTAINS;
     }
 
     public customInit(): void {
@@ -88,8 +89,8 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [AbstractFilter.EQUALS, AbstractFilter.NOT_EQUAL, AbstractFilter.STARTS_WITH, AbstractFilter.ENDS_WITH,
-            AbstractFilter.CONTAINS, AbstractFilter.NOT_CONTAINS];
+        return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.STARTS_WITH,
+            AbstractComparableFilter.ENDS_WITH, AbstractComparableFilter.CONTAINS, AbstractComparableFilter.NOT_CONTAINS];
     }
 
     public generateFilterValueTemplate(type:FilterConditionType): string {
@@ -126,7 +127,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractFilter.EMPTY;
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractComparableFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }
@@ -165,7 +166,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         const filterTextFormatted = this.formatter(filterText);
 
         if (cellValue == null || cellValue === undefined) {
-            return filterType === AbstractFilter.NOT_EQUAL || filterType === AbstractFilter.NOT_CONTAINS;
+            return filterType === AbstractComparableFilter.NOT_EQUAL || filterType === AbstractComparableFilter.NOT_CONTAINS;
         }
         const valueFormatted: string = this.formatter(cellValue);
         return this.comparator (filterType, valueFormatted, filterTextFormatted);

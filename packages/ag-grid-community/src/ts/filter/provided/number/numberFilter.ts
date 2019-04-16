@@ -3,6 +3,7 @@ import {QuerySelector} from "../../../widgets/componentAnnotations";
 import {AbstractFilter, Comparator, FilterConditionType, IScalarFilterParams} from "../abstractFilter";
 import {_} from "../../../utils";
 import {AbstractScalerFilter} from "../abstractScalerFilter";
+import {AbstractComparableFilter} from "../abstractComparableFilter";
 
 export interface NumberFilterModel extends FilterModel {
     filter: number;
@@ -49,8 +50,9 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [AbstractFilter.EQUALS, AbstractFilter.NOT_EQUAL, AbstractFilter.LESS_THAN,
-            AbstractFilter.LESS_THAN_OR_EQUAL, AbstractFilter.GREATER_THAN, AbstractFilter.GREATER_THAN_OR_EQUAL, AbstractFilter.IN_RANGE];
+        return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.LESS_THAN,
+            AbstractComparableFilter.LESS_THAN_OR_EQUAL, AbstractComparableFilter.GREATER_THAN,
+            AbstractComparableFilter.GREATER_THAN_OR_EQUAL, AbstractComparableFilter.IN_RANGE];
     }
 
     public generateFilterValueTemplate(type:FilterConditionType): string {
@@ -123,12 +125,12 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
 
     public filterValues(type:FilterConditionType): number | number[] {
         if (type === FilterConditionType.MAIN) {
-            return this.selectedFilter !== AbstractFilter.IN_RANGE ?
+            return this.selectedFilter !== AbstractComparableFilter.IN_RANGE ?
                 this.asNumber(this.filterNumber) :
                 [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
         }
 
-        return this.selectedFilterCondition !== AbstractFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== AbstractComparableFilter.IN_RANGE ?
             this.asNumber(this.filterNumberCondition) :
             [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     }
@@ -224,7 +226,7 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
         // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterTextConditionField;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractFilter.EMPTY;
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractComparableFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }

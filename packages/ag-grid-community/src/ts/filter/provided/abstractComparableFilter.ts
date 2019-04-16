@@ -31,6 +31,20 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
  */
 export abstract class AbstractComparableFilter<T, P extends IComparableFilterParams, M> extends AbstractFilter<P, M> {
 
+    public static EMPTY = 'empty';
+    public static EQUALS = 'equals';
+    public static NOT_EQUAL = 'notEqual';
+    public static LESS_THAN = 'lessThan';
+    public static LESS_THAN_OR_EQUAL = 'lessThanOrEqual';
+    public static GREATER_THAN = 'greaterThan';
+    public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
+    public static IN_RANGE = 'inRange';
+
+    public static CONTAINS = 'contains'; //1;
+    public static NOT_CONTAINS = 'notContains'; //1;
+    public static STARTS_WITH = 'startsWith'; //4;
+    public static ENDS_WITH = 'endsWith'; //5;
+
     @QuerySelector('#filterType')
     private eTypeSelector: HTMLSelectElement;
 
@@ -275,7 +289,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         if (this.isFilterActive() || prevSelectedFilterHadNoInput) {
 
             // reset when switching back to the empty filter to remove conditional filter
-            if (this.selectedFilter === AbstractFilter.EMPTY) {
+            if (this.selectedFilter === AbstractComparableFilter.EMPTY) {
                 this.resetState();
             }
 
@@ -296,7 +310,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         }
 
         const rawFilterValues = this.filterValues(FilterConditionType.MAIN);
-        if (rawFilterValues && this.selectedFilter === AbstractFilter.IN_RANGE) {
+        if (rawFilterValues && this.selectedFilter === AbstractComparableFilter.IN_RANGE) {
             const filterValueArray = (rawFilterValues as T[]);
             return filterValueArray[0] != null && filterValueArray[1] != null;
         } else {

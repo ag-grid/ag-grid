@@ -1,5 +1,5 @@
 import {IDoesFilterPassParams} from "../../interfaces/iFilter";
-import {AbstractFilter, Comparator, FilterConditionType, IScalarFilterParams, NullComparator} from "./abstractFilter";
+import {Comparator, FilterConditionType, IScalarFilterParams, NullComparator} from "./abstractFilter";
 import {AbstractComparableFilter} from "./abstractComparableFilter";
 
 /**
@@ -20,31 +20,31 @@ export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> 
             if (gridValue == null) {
                 const nullValue = this.translateNull (type);
 
-                if (this.selectedFilter === AbstractFilter.EMPTY) {
+                if (this.selectedFilter === AbstractComparableFilter.EMPTY) {
                     return 0;
                 }
 
-                if (this.selectedFilter === AbstractFilter.EQUALS) {
+                if (this.selectedFilter === AbstractComparableFilter.EQUALS) {
                     return nullValue ? 0 : 1;
                 }
 
-                if (this.selectedFilter === AbstractFilter.GREATER_THAN) {
+                if (this.selectedFilter === AbstractComparableFilter.GREATER_THAN) {
                     return nullValue ? 1 : -1;
                 }
 
-                if (this.selectedFilter === AbstractFilter.GREATER_THAN_OR_EQUAL) {
+                if (this.selectedFilter === AbstractComparableFilter.GREATER_THAN_OR_EQUAL) {
                     return nullValue ? 1 : -1;
                 }
 
-                if (this.selectedFilter === AbstractFilter.LESS_THAN_OR_EQUAL) {
+                if (this.selectedFilter === AbstractComparableFilter.LESS_THAN_OR_EQUAL) {
                     return nullValue ? -1 : 1;
                 }
 
-                if (this.selectedFilter === AbstractFilter.LESS_THAN) {
+                if (this.selectedFilter === AbstractComparableFilter.LESS_THAN) {
                     return nullValue ? -1 : 1;
                 }
 
-                if (this.selectedFilter === AbstractFilter.NOT_EQUAL) {
+                if (this.selectedFilter === AbstractComparableFilter.NOT_EQUAL) {
                     return nullValue ? 1 : 0;
                 }
             }
@@ -55,7 +55,7 @@ export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> 
     }
 
     public getDefaultType(): string {
-        return AbstractFilter.EQUALS;
+        return AbstractComparableFilter.EQUALS;
     }
 
     private translateNull(type: string): boolean {
@@ -96,37 +96,37 @@ export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> 
         const comparator: Comparator<T> = this.nullComparator (filter as string);
         const compareResult = comparator(filterValue, cellValue);
 
-        if (filter === AbstractFilter.EMPTY) {
+        if (filter === AbstractComparableFilter.EMPTY) {
             return false;
         }
 
-        if (filter === AbstractFilter.EQUALS) {
+        if (filter === AbstractComparableFilter.EQUALS) {
             return compareResult === 0;
         }
 
-        if (filter === AbstractFilter.GREATER_THAN) {
+        if (filter === AbstractComparableFilter.GREATER_THAN) {
             return compareResult > 0;
         }
 
-        if (filter === AbstractFilter.GREATER_THAN_OR_EQUAL) {
+        if (filter === AbstractComparableFilter.GREATER_THAN_OR_EQUAL) {
             return compareResult >= 0;
         }
 
-        if (filter === AbstractFilter.LESS_THAN_OR_EQUAL) {
+        if (filter === AbstractComparableFilter.LESS_THAN_OR_EQUAL) {
             return compareResult <= 0;
         }
 
-        if (filter === AbstractFilter.LESS_THAN) {
+        if (filter === AbstractComparableFilter.LESS_THAN) {
             return compareResult < 0;
         }
 
-        if (filter === AbstractFilter.NOT_EQUAL) {
+        if (filter === AbstractComparableFilter.NOT_EQUAL) {
             return compareResult != 0;
         }
 
         //From now on the type is a range and rawFilterValues must be an array!
         const compareToResult: number = comparator((rawFilterValues as T[])[1], cellValue);
-        if (filter === AbstractFilter.IN_RANGE) {
+        if (filter === AbstractComparableFilter.IN_RANGE) {
             if (!this.filterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
             } else {
