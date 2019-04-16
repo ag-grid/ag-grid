@@ -19,7 +19,7 @@ import {CartesianChart} from "../../charts/chart/cartesianChart";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
-import {ChartColumnModel} from "./model/chartColumnModel";
+import {ChartModel} from "./chartModel";
 
 export interface ChartOptions {
     chartType: ChartType;
@@ -144,7 +144,7 @@ export class GridChartComp extends Component {
 
         const categoryId = this.chartController.getSelectedCategory();
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
-        barChart.xAxis.labelRotation = categoryId === ChartColumnModel.DEFAULT_CATEGORY ? 0 : -90;
+        barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         barSeries.data = this.chartController.getData();
         barSeries.xField = categoryId;
@@ -158,7 +158,7 @@ export class GridChartComp extends Component {
         const fields = this.chartController.getFields();
 
         const lineChart = this.chart as CartesianChart<any, string, number>;
-        lineChart.xAxis.labelRotation = categoryId === ChartColumnModel.DEFAULT_CATEGORY ? 0 : -90;
+        lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         lineChart.removeAllSeries();
 

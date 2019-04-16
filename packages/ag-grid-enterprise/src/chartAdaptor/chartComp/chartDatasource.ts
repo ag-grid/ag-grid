@@ -1,6 +1,6 @@
 import { _, Autowired, BeanStub, Column, ColumnController, IRowModel, ValueService } from "ag-grid-community";
 import { AggregationStage } from "../../rowStages/aggregationStage";
-import { ChartColumnModel } from "./model/chartColumnModel";
+import { ChartModel } from "./chartModel";
 
 export interface ChartDatasourceParams {
     dimensionColIds: string[];
@@ -42,7 +42,7 @@ export class ChartDatasource extends BeanStub {
                     // force return type to be string or empty string (as value can be an object)
                     data[colId] = (part && part.toString) ? part.toString() : '';
                 } else {
-                    data[ChartColumnModel.DEFAULT_CATEGORY] = (i + 1).toString();
+                    data[ChartModel.DEFAULT_CATEGORY] = (i + 1).toString();
                 }
             });
 

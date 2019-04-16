@@ -10,9 +10,7 @@ import {
 } from "ag-grid-community";
 import {RangeController} from "../../rangeController";
 import {ChartOptions} from "./gridChartComp";
-import {ChartRangeModel} from "./model/chartRangeModel";
-import {ChartColumnModel, ColState} from "./model/chartColumnModel";
-import {ChartDataModel} from "./model/chartDataModel";
+import {ChartModel, ColState} from "./chartModel";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -28,9 +26,7 @@ export class ChartController extends BeanStub {
 
     private chartType: ChartType;
 
-    private dataModel: ChartDataModel;
-    private rangeModel: ChartRangeModel;
-    private columnModel: ChartColumnModel;
+    private columnModel: ChartModel;
 
     public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super();
@@ -41,10 +37,9 @@ export class ChartController extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.setupRangeModel();
+       
         this.setupColumnModel();
-        this.setupDataModel();
-
+       
         this.updateModel();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, this.updateModel.bind(this));
@@ -54,59 +49,46 @@ export class ChartController extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
     }
 
-    private setupRangeModel(): void {
-        this.rangeModel = new ChartRangeModel(this.startingCellRanges);
-        this.getContext().wireBean(this.rangeModel);
-
-        // update the range controller now that we have updated the cell ranges as 'value' or 'dimension'
-        this.setChartCellRangesInRangeController();
-    }
-
     private setupColumnModel(): void {
-        this.columnModel = new ChartColumnModel();
+        this.columnModel = new ChartModel(this.startingCellRanges, this.aggregate);
         this.getContext().wireBean(this.columnModel);
 
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
         this.columnModel.resetColumnState(allColsFromRanges);
-    }
-
-    private setupDataModel(): void {
-        this.dataModel = new ChartDataModel(this.aggregate);
-        this.getContext().wireBean(this.dataModel);
     }
 
     public updateForColumnSelection(updatedCol: ColState): void {
         this.columnModel.updateColumnState(updatedCol);
-        this.rangeModel.updateCellRanges(updatedCol);
+        this.columnModel.updateCellRanges(updatedCol);
         this.updateModel();
         this.setChartCellRangesInRangeController();
     }
 
     private onGridColumnChange() {
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
         this.columnModel.resetColumnState(allColsFromRanges);
         this.updateModel();
     }
 
     private onColumnMoved() {
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
         this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
 
-        this.rangeModel.updateCellRanges();
+        this.columnModel.updateCellRanges();
 
         this.updateModel();
         this.setChartCellRangesInRangeController();
     }
 
     private updateModel() {
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
+        const allColsFromRanges = this.columnModel.getAllColumnsFromRanges();
         this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
 
         const selectedDimension = this.columnModel.getSelectedDimensionId();
         const selectedValueCols = this.columnModel.getSelectedValueCols();
         const {startRow, endRow} = this.getRowIndexes();
 
-        this.dataModel.updateData(selectedDimension, selectedValueCols, startRow, endRow);
+        this.columnModel.updateData(selectedDimension, selectedValueCols, startRow, endRow);
 
         this.raiseChartUpdatedEvent();
     }
@@ -121,7 +103,7 @@ export class ChartController extends BeanStub {
     }
 
     public getData(): any[] {
-        return this.dataModel.getData();
+        return this.columnModel.getData();
     }
 
     public getSelectedCategory(): string {
@@ -142,7 +124,7 @@ export class ChartController extends BeanStub {
     }
 
     public setChartCellRangesInRangeController() {
-        this.rangeController.setCellRanges(this.rangeModel.getCellRanges());
+        this.rangeController.setCellRanges(this.columnModel.getCellRanges());
     }
 
     public removeChartCellRangesFromRangeController() {
@@ -158,7 +140,7 @@ export class ChartController extends BeanStub {
 
     private getRowIndexes(): {startRow: number, endRow: number} {
         let startRow = 0, endRow = 0;
-        const lastRange = this.rangeModel.getLastRange();
+        const lastRange = this.columnModel.getLastRange();
         if (lastRange) {
             startRow = this.rangeController.getRangeStartRow(lastRange).rowIndex;
             endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;

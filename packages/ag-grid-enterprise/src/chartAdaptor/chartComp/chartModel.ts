@@ -1,17 +1,16 @@
-import {
-    _,
-    Autowired,
-    BeanStub,
-    CellRange,
-    CellRangeType,
-    ColDef,
-    Column,
-    ColumnController,
-    PostConstruct,
-} from "ag-grid-community";
-import {ChartColumnModel, ColState} from "./chartColumnModel";
+import {_, Autowired, PostConstruct, BeanStub, Column, ColDef, ColumnController, CellRangeType, CellRange } from "ag-grid-community";
+import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 
-export class ChartRangeModel extends BeanStub {
+export interface ColState  {
+    column?: Column;
+    colId: string;
+    displayName: string;
+    selected: boolean;
+}
+
+export class ChartModel extends BeanStub {
+
+    public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('columnController') private columnController: ColumnController;
 
@@ -20,17 +19,118 @@ export class ChartRangeModel extends BeanStub {
     // this is used to restore cols after all have been removed via menu
     private referenceCellRange: CellRange;
 
-    public constructor(cellRanges: CellRange[]) {
+    private dimensionColState: ColState[] = [];
+    private valueColState: ColState[] = [];
+
+    private readonly aggregate: boolean;
+    private chartData: any[];
+
+    private datasource: ChartDatasource;
+
+    public constructor(cellRanges: CellRange[], aggregate: boolean) {
         super();
         this.cellRanges = cellRanges;
+        this.aggregate = aggregate;
     }
 
     @PostConstruct
     private init(): void {
+        this.datasource = new ChartDatasource();
+        this.getContext().wireBean(this.datasource);
+
         // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
         this.referenceCellRange = this.cellRanges[0];
         this.updateCellRanges();
     }
+
+    public updateData(dimension: string, valueCols: Column[], startRow: number, endRow: number): void {
+        const params: ChartDatasourceParams = {
+            dimensionColIds: [dimension],
+            valueCols: valueCols,
+            startRow: startRow,
+            endRow: endRow,
+            aggregate: this.aggregate
+        };
+
+        this.chartData = this.datasource.getData(params);
+    }
+
+    public getData(): any[] {
+        return this.chartData;
+    }
+
+    public getValueColState(): ColState[] {
+        return this.valueColState;
+    }
+
+    public getDimensionColState(): ColState[] {
+        return this.dimensionColState;
+    }
+
+    public resetColumnState(allColsFromRanges: Column[]): void {
+        const {dimensionCols, valueCols} = this.getAllChartColumns();
+
+        if (valueCols.length === 0) {
+            console.warn("ag-Grid - charts require at least one visible column set with 'enableValue=true'");
+            return;
+        }
+
+        this.valueColState = valueCols.map(column => {
+            return {
+                column,
+                colId: column.getColId(),
+                displayName: this.getFieldName(column),
+                selected: allColsFromRanges.indexOf(column) > -1
+            };
+        });
+
+        this.dimensionColState = dimensionCols.map(column => {
+            return {
+                column,
+                colId: column.getColId(),
+                displayName: this.getFieldName(column),
+                selected: false
+            };
+        });
+
+        const dimensionsInCellRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
+
+        if (dimensionsInCellRange.length > 0) {
+            // select the first dimension from the range
+            const selectedDimensionId = dimensionsInCellRange[0].getColId();
+            this.dimensionColState.forEach(cs => cs.selected = cs.colId === selectedDimensionId);
+        }
+
+        // if no dimensions in range select the default
+        const defaultCategory = {
+            colId: ChartModel.DEFAULT_CATEGORY,
+            displayName: '(None)',
+            selected: dimensionsInCellRange.length === 0
+        };
+        this.dimensionColState.unshift(defaultCategory);
+    }
+
+    public updateColumnStateFromRanges(allColsFromRanges: Column[]) {
+        this.valueColState.forEach(cs => {
+            cs.selected = allColsFromRanges.some(col => col.getColId() === cs.colId);
+        });
+    }
+
+    public updateColumnState(updatedCol: ColState) {
+        const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
+        const isDimensionCol = this.dimensionColState.filter(idsMatch).length > 0;
+        const isValueCol = this.valueColState.filter(idsMatch).length > 0;
+
+        if (isDimensionCol) {
+            // only one dimension should be selected
+            this.dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
+
+        } else if (isValueCol) {
+            // just update the selected value on the supplied value column
+            this.valueColState.forEach(cs => cs.selected = idsMatch(cs) ? updatedCol.selected : cs.selected);
+        }
+    }
+
 
     public getCellRanges(): CellRange[] {
         return this.cellRanges;
@@ -65,7 +165,7 @@ export class ChartRangeModel extends BeanStub {
         }
 
         if (updatedCol && dimensionCols.indexOf(updatedCol.column as Column) > -1) {
-            const isDefaultCategory = updatedCol.colId === ChartColumnModel.DEFAULT_CATEGORY;
+            const isDefaultCategory = updatedCol.colId === ChartModel.DEFAULT_CATEGORY;
             dimensionColsInRange = isDefaultCategory ? [] : [updatedCol.column as Column];
         }
 
@@ -151,6 +251,23 @@ export class ChartRangeModel extends BeanStub {
         };
 
         return this.getAllColumnsFromRanges().filter(col => isValueCol(col));
+    }
+
+
+    public getSelectedColState(): ColState[] {
+        return this.valueColState.filter(cs => cs.selected);
+    }
+
+    public getSelectedValueCols(): Column[] {
+        return this.getSelectedColState().map(cs => cs.column) as Column[];
+    }
+
+    public getSelectedDimensionId(): string {
+        return this.dimensionColState.filter(cs => cs.selected)[0].colId;
+    }
+
+    private getFieldName(col: Column): string {
+        return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
