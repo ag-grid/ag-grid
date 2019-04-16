@@ -134,7 +134,7 @@ export class ChartModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(updatedCol?: ColState) {
+    public updateCellRanges(movingCols: boolean, updatedCol?: ColState) {
         // update the reference range
         this.referenceCellRange = _.last(this.cellRanges) as CellRange;
 
@@ -187,7 +187,7 @@ export class ChartModel extends BeanStub {
 
                 const currentValCol = valueColsInRange[i];
 
-                const updateFromRangeDragging = !_.exists(updatedCol);
+                const updateFromRangeDragging = !movingCols && !_.exists(updatedCol);
                 const valueColNotInRange = this.referenceCellRange.columns.indexOf(currentValCol) < 0;
                 if (updateFromRangeDragging && valueColNotInRange) {
                     // skip column as it's being dragged out of range
