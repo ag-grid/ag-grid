@@ -46,7 +46,7 @@ $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !de
 $tooltip-background-color: $header-background-color !default;
 $tooltip-border-color: lighten($header-background-color, 10%) !default;
 
-$range-selection-chart-background-color: lighten(adjust-hue($range-selection-background-color, 45%), 10) !default;
-$range-selection-chart-category-background-color: lighten(adjust-hue($range-selection-background-color, -80%), 10%) !default;
+$range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
+$range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
 
 @import '../../ag-theme-balham/vars/ag-theme-balham-vars';
