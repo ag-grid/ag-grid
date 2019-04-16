@@ -64,7 +64,7 @@ export abstract class Series<D, X, Y> {
     set visible(value: boolean) {
         if (this._visible !== value) {
             this._visible = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get visible(): boolean {

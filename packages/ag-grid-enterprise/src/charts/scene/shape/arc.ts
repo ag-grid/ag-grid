@@ -1,6 +1,6 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
-import { BBox, isPointInBBox } from "../bbox";
+import { BBox } from "../bbox";
 import { normalizeAngle360 } from "../../util/angle";
 import { chainObjects } from "../../util/object";
 import { isEqual } from "../../util/number";
@@ -208,7 +208,7 @@ export class Arc extends Shape {
         const bbox = this.getBBox();
 
         return this.type !== ArcType.Open
-            && isPointInBBox(bbox, point.x, point.y)
+            && bbox.containsPoint(point.x, point.y)
             && this.path.isPointInPath(point.x, point.y);
     }
 

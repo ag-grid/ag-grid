@@ -1,5 +1,5 @@
 import { Node } from "./node";
-import { BBox, renderBBox } from "./bbox";
+import { BBox } from "./bbox";
 import { Matrix } from "./matrix";
 
 export class Group extends Node {
@@ -84,13 +84,10 @@ export class Group extends Node {
         }
 
         // debug
-        // renderBBox({
-        //     ctx,
-        //     bbox: this.getBBox(),
-        //     text: this.id,
+        // this.getBBox().render(ctx, {
+        //     label: this.id,
         //     resetTransform: true,
-        //     fillStyle: 'rgba(0, 0, 0, 0.5)',
-        //     strokeStyle: 'cyan'
+        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
         // });
     }
 }

@@ -26,37 +26,37 @@ export class BBox {
         this.width += value * 2;
         this.height += value * 2;
     }
-}
 
-export function isPointInBBox(bbox: BBox, x: number, y: number) {
-    return x >= bbox.x && x <= (bbox.x + bbox.width)
-        && y >= bbox.y && y <= (bbox.y + bbox.height);
-}
-
-export function renderBBox(params: {
-    ctx: CanvasRenderingContext2D,
-    bbox: BBox,
-    text?: string,
-    resetTransform?: boolean,
-    fillStyle?: string,
-    strokeStyle?: string,
-    lineWidth?: number
-}) {
-    const {ctx, bbox} = params;
-
-    ctx.save();
-
-    if (params.resetTransform) {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+    containsPoint(x: number, y: number): boolean {
+        return x >= this.x && x <= (this.x + this.width)
+            && y >= this.y && y <= (this.y + this.height);
     }
-    if (params.text) {
-        ctx.fillStyle = params.fillStyle || 'black';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(params.text, bbox.x, bbox.y);
-    }
-    ctx.strokeStyle = params.strokeStyle || 'red';
-    ctx.lineWidth = params.lineWidth || 1;
 
-    ctx.strokeRect(bbox.x, bbox.y, bbox.width, bbox.height);
-    ctx.restore();
+    private static emptyObject = {};
+
+    render(ctx: CanvasRenderingContext2D, params: {
+        resetTransform?: boolean,
+        label?: string,
+        fillStyle?: string,
+        lineWidth?: number,
+        strokeStyle?: string
+    } = BBox.emptyObject) {
+        ctx.save();
+
+        if (params.resetTransform) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+
+        ctx.strokeStyle = params.strokeStyle || 'cyan';
+        ctx.lineWidth = params.lineWidth || 1;
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+        if (params.label) {
+            ctx.fillStyle = params.fillStyle || 'black';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(params.label, this.x, this.y);
+        }
+
+        ctx.restore();
+    }
 }
