@@ -139,8 +139,6 @@ export class ChartModel extends BeanStub {
         const {dimensionCols, valueCols} = this.getAllChartColumns();
         const allColsFromRanges = this.getAllColumnsFromRanges();
 
-        console.log(dimensionCols, valueCols);
-
         let valueColsInRange = valueCols.filter(col => allColsFromRanges.indexOf(col) > -1);
         let dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
 
