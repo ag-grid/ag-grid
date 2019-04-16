@@ -144,7 +144,7 @@ function webpackTask(minify, styles) {
                         use: ['style-loader', {
                             loader:'css-loader',
                             options: {
-                                minimze: !!minify
+                                minimize: !!minify
                             }
                         }]
                     }
