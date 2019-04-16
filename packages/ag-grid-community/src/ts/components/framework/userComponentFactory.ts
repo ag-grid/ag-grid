@@ -219,12 +219,12 @@ export class UserComponentFactory {
         const deferredInit: void | Promise<void> = this.initComponent(componentInstance, paramsAfterCallback);
         if (deferredInit == null) {
 
-            const p = new Promise<A>(resolve => {
-                setTimeout( ()=> {
-                    resolve(componentInstance);
-                }, 1000);
-            });
-            return p;
+            // const p = new Promise<A>(resolve => {
+            //     setTimeout( ()=> {
+            //         resolve(componentInstance);
+            //     }, 1000);
+            // });
+            // return p;
 
             return Promise.resolve(componentInstance);
         } else {
