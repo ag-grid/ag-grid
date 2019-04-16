@@ -20,31 +20,31 @@ export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> 
             if (gridValue == null) {
                 const nullValue = this.translateNull (type);
 
-                if (this.selectedFilter === AbstractComparableFilter.EMPTY) {
+                if (this.selectedOption === AbstractComparableFilter.EMPTY) {
                     return 0;
                 }
 
-                if (this.selectedFilter === AbstractComparableFilter.EQUALS) {
+                if (this.selectedOption === AbstractComparableFilter.EQUALS) {
                     return nullValue ? 0 : 1;
                 }
 
-                if (this.selectedFilter === AbstractComparableFilter.GREATER_THAN) {
+                if (this.selectedOption === AbstractComparableFilter.GREATER_THAN) {
                     return nullValue ? 1 : -1;
                 }
 
-                if (this.selectedFilter === AbstractComparableFilter.GREATER_THAN_OR_EQUAL) {
+                if (this.selectedOption === AbstractComparableFilter.GREATER_THAN_OR_EQUAL) {
                     return nullValue ? 1 : -1;
                 }
 
-                if (this.selectedFilter === AbstractComparableFilter.LESS_THAN_OR_EQUAL) {
+                if (this.selectedOption === AbstractComparableFilter.LESS_THAN_OR_EQUAL) {
                     return nullValue ? -1 : 1;
                 }
 
-                if (this.selectedFilter === AbstractComparableFilter.LESS_THAN) {
+                if (this.selectedOption === AbstractComparableFilter.LESS_THAN) {
                     return nullValue ? -1 : 1;
                 }
 
-                if (this.selectedFilter === AbstractComparableFilter.NOT_EQUAL) {
+                if (this.selectedOption === AbstractComparableFilter.NOT_EQUAL) {
                     return nullValue ? 1 : 0;
                 }
             }
@@ -72,7 +72,7 @@ export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> 
     }
 
     individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType) {
-        return this.doIndividualFilterPasses(params, type, type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition);
+        return this.doIndividualFilterPasses(params, type, type === FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition);
     }
 
     private doIndividualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType, filter: string) {

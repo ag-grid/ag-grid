@@ -82,7 +82,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
 
     modelFromFloatingFilter(from: string): TextFilterModel {
         return {
-            type: this.selectedFilter,
+            type: this.selectedOption,
             filter: from,
             filterType: 'text'
         };
@@ -107,7 +107,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         super.initialiseFilterBodyUi(type);
         this.addFilterChangedListener(type);
         this.setFilter(this.filterConditionText, FilterConditionType.CONDITION);
-        this.setFilterType(this.selectedFilterCondition, FilterConditionType.CONDITION);
+        this.setFilterType(this.selectedOptionCondition, FilterConditionType.CONDITION);
     }
 
     private addFilterChangedListener(type:FilterConditionType) {
@@ -118,7 +118,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
     }
 
     public refreshFilterBodyUi(type:FilterConditionType) {
-        const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        const filterType = type === FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
 
         if (this.eFilterConditionTextField) {
             this.addFilterChangedListener(FilterConditionType.CONDITION);
@@ -142,7 +142,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
 
     public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
         const filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
-        const filter:string = type == FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        const filter:string = type == FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
 
         const customFilterOption = this.customFilterOptions[filter];
         if (customFilterOption) {
@@ -236,20 +236,20 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
 
     public resetState(resetConditionFilterOnly: boolean = false): void {
         if (!resetConditionFilterOnly) {
-            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+            this.setFilterType(this.defaultOption, FilterConditionType.MAIN);
             this.setFilter(null, FilterConditionType.MAIN);
         }
 
-        this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
+        this.setFilterType(this.defaultOption, FilterConditionType.CONDITION);
         this.setFilter(null, FilterConditionType.CONDITION);
     }
 
     public serialize(type:FilterConditionType): TextFilterModel {
-        const filter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        const filter = type === FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
         const filterText = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
 
         return {
-            type: filter ? filter : this.defaultFilter,
+            type: filter ? filter : this.defaultOption,
             filter: filterText,
             filterType: 'text'
         };

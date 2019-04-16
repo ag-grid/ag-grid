@@ -55,19 +55,19 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
     private eConditionWrapper: HTMLElement;
 
-    customFilterOptions: {[name: string]: IFilterOptionDef} = {};
+    protected customFilterOptions: {[name: string]: IFilterOptionDef} = {};
 
-    defaultFilter: string;
-    selectedFilter: string;
-    selectedFilterCondition: string;
+    protected defaultOption: string;
+    protected selectedOption: string;
+    protected selectedOptionCondition: string;
 
-    public abstract getApplicableFilterTypes(): string[];
-    public abstract filterValues(type:FilterConditionType): T | T[];
-    public abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
-    public abstract getDefaultType(): string;
+    protected abstract getApplicableFilterTypes(): string[];
+    protected abstract filterValues(type:FilterConditionType): T | T[];
+    protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
+    protected abstract getDefaultType(): string;
     protected abstract generateFilterValueTemplate(type: FilterConditionType): string;
 
-    doesFilterPass(params: IDoesFilterPassParams): boolean {
+    public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const mainFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
         if (this.eTypeConditionSelector == null) {
             return mainFilterResult;
@@ -81,7 +81,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
         this.filterParams = params;
 
-        this.defaultFilter = this.filterParams.defaultOption;
+        this.defaultOption = this.filterParams.defaultOption;
 
         // strip out incorrectly defined FilterOptionDefs
         if (params.filterOptions) {
@@ -104,23 +104,23 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
             });
         }
 
-        if (this.filterParams.filterOptions && !this.defaultFilter) {
+        if (this.filterParams.filterOptions && !this.defaultOption) {
             const firstFilterOption = this.filterParams.filterOptions[0];
             if (typeof firstFilterOption === 'string') {
-                this.defaultFilter = firstFilterOption;
+                this.defaultOption = firstFilterOption;
             } else if (firstFilterOption.displayKey) {
-                this.defaultFilter = firstFilterOption.displayKey;
+                this.defaultOption = firstFilterOption.displayKey;
             } else {
                 console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
             }
         }
 
-        if (!this.defaultFilter) {
-            this.defaultFilter = this.getDefaultType();
+        if (!this.defaultOption) {
+            this.defaultOption = this.getDefaultType();
         }
 
-        this.selectedFilter = this.defaultFilter;
-        this.selectedFilterCondition = this.defaultFilter;
+        this.selectedOption = this.defaultOption;
+        this.selectedOptionCondition = this.defaultOption;
 
         this.suppressAndOrCondition = params.suppressAndOrCondition;
 
@@ -264,21 +264,21 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
     public initialiseFilterBodyUi(type:FilterConditionType) {
         if (type === FilterConditionType.MAIN) {
-            this.setFilterType(this.selectedFilter, type);
+            this.setFilterType(this.selectedOption, type);
             this.addDestroyableEventListener(this.eTypeSelector, "change", () => this.onFilterTypeChanged (type));
         } else {
-            this.setFilterType(this.selectedFilterCondition, type);
+            this.setFilterType(this.selectedOptionCondition, type);
             this.addDestroyableEventListener(this.eTypeConditionSelector, "change", () => this.onFilterTypeChanged (type));
         }
     }
 
     private onFilterTypeChanged(type:FilterConditionType): void {
-        const prevSelectedFilter = this.selectedFilter;
+        const prevSelectedFilter = this.selectedOption;
 
         if (type === FilterConditionType.MAIN) {
-            this.selectedFilter = this.eTypeSelector.value;
+            this.selectedOption = this.eTypeSelector.value;
         } else {
-            this.selectedFilterCondition = this.eTypeConditionSelector.value;
+            this.selectedOptionCondition = this.eTypeConditionSelector.value;
         }
         this.refreshFilterBodyUi(type);
 
@@ -289,7 +289,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         if (this.isFilterActive() || prevSelectedFilterHadNoInput) {
 
             // reset when switching back to the empty filter to remove conditional filter
-            if (this.selectedFilter === AbstractComparableFilter.EMPTY) {
+            if (this.selectedOption === AbstractComparableFilter.EMPTY) {
                 this.resetState();
             }
 
@@ -305,12 +305,12 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     public isFilterActive(): boolean {
 
         // the main selected filter is always active when there is no input field
-        if (this.doesFilterHaveHiddenInput(this.selectedFilter)) {
+        if (this.doesFilterHaveHiddenInput(this.selectedOption)) {
             return true;
         }
 
         const rawFilterValues = this.filterValues(FilterConditionType.MAIN);
-        if (rawFilterValues && this.selectedFilter === AbstractComparableFilter.IN_RANGE) {
+        if (rawFilterValues && this.selectedOption === AbstractComparableFilter.IN_RANGE) {
             const filterValueArray = (rawFilterValues as T[]);
             return filterValueArray[0] != null && filterValueArray[1] != null;
         } else {
@@ -320,19 +320,19 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
     public setFilterType(filterType: string, type:FilterConditionType): void {
         if (type === FilterConditionType.MAIN) {
-            this.selectedFilter = filterType;
+            this.selectedOption = filterType;
 
             if (!this.eTypeSelector) { return; }
             this.eTypeSelector.value = filterType;
         } else {
-            this.selectedFilterCondition = filterType;
+            this.selectedOptionCondition = filterType;
 
             if (!this.eTypeConditionSelector) { return; }
             this.eTypeConditionSelector.value = filterType;
         }
     }
 
-    isFilterConditionActive(type: FilterConditionType): boolean {
+    protected isFilterConditionActive(type: FilterConditionType): boolean {
         return this.filterValues(type) != null;
     }
 }

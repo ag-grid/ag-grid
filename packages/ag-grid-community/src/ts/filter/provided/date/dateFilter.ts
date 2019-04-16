@@ -55,7 +55,7 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         return {
             dateFrom: from,
             dateTo: this.getDateTo(),
-            type: this.selectedFilter,
+            type: this.selectedOption,
             filterType: 'date'
         };
     }
@@ -84,11 +84,11 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         if (type === FilterConditionType.MAIN) {
             this.setDateFrom_date(this.dateFrom, FilterConditionType.MAIN);
             this.setDateTo_date(this.dateTo, FilterConditionType.MAIN);
-            this.setFilterType(this.selectedFilter, FilterConditionType.MAIN);
+            this.setFilterType(this.selectedOption, FilterConditionType.MAIN);
         } else {
             this.setDateFrom_date(this.dateFromCondition, FilterConditionType.CONDITION);
             this.setDateTo_date(this.dateToCondition, FilterConditionType.CONDITION);
-            this.setFilterType(this.selectedFilterCondition, FilterConditionType.CONDITION);
+            this.setFilterType(this.selectedOptionCondition, FilterConditionType.CONDITION);
         }
     }
 
@@ -158,10 +158,10 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         let filterType: string;
         if (type === FilterConditionType.MAIN) {
             panel = this.eDateToPanel;
-            filterType = this.selectedFilter;
+            filterType = this.selectedOption;
         } else {
             panel = this.eDateToConditionPanel;
-            filterType = this.selectedFilterCondition;
+            filterType = this.selectedOptionCondition;
         }
 
         // show / hide in-range filter
@@ -193,11 +193,11 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
     public serialize(type:FilterConditionType): DateFilterModel {
         const dateToComponent = type === FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
         const dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
-        const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        const filterType = type === FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
         return {
             dateTo: _.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
             dateFrom: _.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
-            type: filterType ? filterType : this.defaultFilter,
+            type: filterType ? filterType : this.defaultOption,
             filterType: 'date'
         };
     }
@@ -206,14 +206,14 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         if (type === FilterConditionType.MAIN) {
             if (!this.dateFromComponent) { return null; }
 
-            return this.selectedFilter !== AbstractComparableFilter.IN_RANGE ?
+            return this.selectedOption !== AbstractComparableFilter.IN_RANGE ?
                 this.dateFromComponent.getDate() :
                 [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
         }
 
         if (!this.dateFromConditionComponent) { return null; }
 
-        return this.selectedFilterCondition !== AbstractComparableFilter.IN_RANGE ?
+        return this.selectedOptionCondition !== AbstractComparableFilter.IN_RANGE ?
             this.dateFromConditionComponent.getDate() :
             [this.dateFromConditionComponent.getDate(), this.dateToConditionComponent.getDate()];
     }
@@ -230,7 +230,7 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getFilterType(): string {
-        return this.selectedFilter;
+        return this.selectedOption;
     }
 
     public setDateFrom(date: string, type:FilterConditionType): void {
@@ -275,10 +275,10 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         if (!resetConditionFilterOnly) {
             this.setDateFrom(null, FilterConditionType.MAIN);
             this.setDateTo(null, FilterConditionType.MAIN);
-            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+            this.setFilterType(this.defaultOption, FilterConditionType.MAIN);
         }
 
-        this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
+        this.setFilterType(this.defaultOption, FilterConditionType.CONDITION);
         this.setDateFrom(null, FilterConditionType.CONDITION);
         this.setDateTo(null, FilterConditionType.CONDITION);
     }

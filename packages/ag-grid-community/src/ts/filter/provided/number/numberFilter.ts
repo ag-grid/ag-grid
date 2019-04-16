@@ -42,7 +42,7 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
 
     modelFromFloatingFilter(from: string): NumberFilterModel {
         return {
-            type: this.selectedFilter,
+            type: this.selectedOption,
             filter: Number(from),
             filterTo: this.filterNumberTo,
             filterType: 'number'
@@ -81,7 +81,7 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
 
             this.setFilter(this.filterNumberCondition, FilterConditionType.CONDITION);
             this.setFilterTo(this.filterNumberConditionTo, FilterConditionType.CONDITION);
-            this.setFilterType(this.selectedFilterCondition, FilterConditionType.CONDITION);
+            this.setFilterType(this.selectedOptionCondition, FilterConditionType.CONDITION);
         }
     }
 
@@ -125,12 +125,12 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
 
     public filterValues(type:FilterConditionType): number | number[] {
         if (type === FilterConditionType.MAIN) {
-            return this.selectedFilter !== AbstractComparableFilter.IN_RANGE ?
+            return this.selectedOption !== AbstractComparableFilter.IN_RANGE ?
                 this.asNumber(this.filterNumber) :
                 [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
         }
 
-        return this.selectedFilterCondition !== AbstractComparableFilter.IN_RANGE ?
+        return this.selectedOptionCondition !== AbstractComparableFilter.IN_RANGE ?
             this.asNumber(this.filterNumberCondition) :
             [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     }
@@ -196,11 +196,11 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
     }
 
     public serialize(type:FilterConditionType): NumberFilterModel {
-        const selectedFilter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        const selectedFilter = type === FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
         const filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
         const filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
         return {
-            type: selectedFilter ? selectedFilter : this.defaultFilter,
+            type: selectedFilter ? selectedFilter : this.defaultOption,
             filter: filterNumber,
             filterTo: filterNumberTo,
             filterType: 'number'
@@ -214,7 +214,7 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
     }
 
     public refreshFilterBodyUi(type:FilterConditionType): void {
-        const filterType = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
+        const filterType = type === FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
 
         // show / hide in-range filter
         const panel = type === FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
@@ -233,12 +233,12 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
 
     public resetState(resetConditionFilterOnly: boolean = false): void {
         if (!resetConditionFilterOnly) {
-            this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+            this.setFilterType(this.defaultOption, FilterConditionType.MAIN);
             this.setFilter(null, FilterConditionType.MAIN);
             this.setFilterTo(null, FilterConditionType.MAIN);
         }
 
-        this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
+        this.setFilterType(this.defaultOption, FilterConditionType.CONDITION);
         this.setFilter(null, FilterConditionType.CONDITION);
         this.setFilterTo(null, FilterConditionType.CONDITION);
     }

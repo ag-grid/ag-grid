@@ -1,5 +1,5 @@
 import {Component} from "../../widgets/component";
-import {IDoesFilterPassParams, IFilterComp, IFilterOptionDef, IFilterParams} from "../../interfaces/iFilter";
+import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
 import {QuerySelector} from "../../widgets/componentAnnotations";
 import {Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
@@ -66,7 +66,7 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     public abstract parse(toParse: M, type: FilterConditionType): void;
     public abstract refreshFilterBodyUi(type: FilterConditionType): void;
     public abstract initialiseFilterBodyUi(type: FilterConditionType): void;
-    public abstract isFilterConditionActive(type: FilterConditionType): boolean;
+    protected abstract isFilterConditionActive(type: FilterConditionType): boolean;
     protected abstract bodyTemplate(): string;
 
     public init(params: P): void {
