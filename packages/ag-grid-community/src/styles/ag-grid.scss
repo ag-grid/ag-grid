@@ -982,10 +982,6 @@ $handleSize: 5px;
             justify-content: center;
         }
     }
-
-    &:not(.ag-dialog-closable) .ag-dialog-button-close {
-        display: none;
-    }
 }
 
 /**
@@ -1232,8 +1228,6 @@ $handleSize: 5px;
     flex-direction: row-reverse;
 
     .ag-side-buttons {
-        width: 20px;
-
         div {
             button {
                 display: block;

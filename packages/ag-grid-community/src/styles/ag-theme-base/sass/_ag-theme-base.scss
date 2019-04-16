@@ -1381,6 +1381,7 @@
             padding-top: $grid-size * 4;
             background: $background-color;
             border-bottom: 1px solid $border-color;
+            width: $icon-size + 4;
             position: relative;
 
             .ag-side-button {
