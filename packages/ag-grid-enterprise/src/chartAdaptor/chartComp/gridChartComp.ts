@@ -43,6 +43,8 @@ export class GridChartComp extends Component {
     private chart: Chart<any, string, number>;
     private chartMenu: ChartMenu;
     private chartDialog: Dialog;
+
+    private model: ChartModel;
     private chartController: ChartController;
 
     private currentChartType: ChartType;
@@ -58,7 +60,11 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
-        this.chartController = new ChartController(this.chartOptions, this.startingCellRanges);
+
+        this.model = new ChartModel(this.chartOptions, this.startingCellRanges);
+        this.getContext().wireBean(this.model);
+
+        this.chartController = new ChartController(this.model);
         this.getContext().wireBean(this.chartController);
 
         this.createChart();
@@ -85,7 +91,7 @@ export class GridChartComp extends Component {
         }
 
         const chartOptions = {
-            chartType: this.chartController.getChartType(),
+            chartType: this.model.getChartType(),
             parentElement: this.eChart,
             width: this.chartOptions.width,
             height: this.chartOptions.height,
@@ -93,7 +99,7 @@ export class GridChartComp extends Component {
         };
 
         this.chart = GridChartFactory.createChart(chartOptions);
-        this.currentChartType = this.chartController.getChartType();
+        this.currentChartType = this.model.getChartType();
     }
 
     private addDialog() {
@@ -119,44 +125,45 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        if (this.chartController.getChartType() !== this.currentChartType) {
+        if (this.model.getChartType() !== this.currentChartType) {
             this.createChart();
         }
         this.updateChart();
     }
 
     public updateChart() {
-        const chartType = this.chartController.getChartType();
+        const chartType = this.model.getChartType();
+
+        const data = this.model.getData();
+        const categoryId = this.model.getSelectedDimensionId();
+        const fields = this.model.getSelectedColState().map(cs => {
+            return {colId: cs.colId, displayName: cs.displayName};
+        });
 
         if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar) {
-            this.updateBarChart();
+            this.updateBarChart(categoryId, fields, data);
 
         } else if (chartType === ChartType.Line) {
-            this.updateLineChart();
+            this.updateLineChart(categoryId, fields, data);
 
         } else if (chartType === ChartType.Pie) {
-            this.updatePieChart();
+            this.updatePieChart(categoryId, fields, data);
         }
     }
 
-    private updateBarChart() {
+    private updateBarChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
 
-        const categoryId = this.chartController.getSelectedCategory();
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
         barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
-        barSeries.data = this.chartController.getData();
+        barSeries.data = data;
         barSeries.xField = categoryId;
-        barSeries.yFields = this.chartController.getFields().map(f => f.colId);
-        barSeries.yFieldNames = this.chartController.getFields().map(f => f.displayName);
+        barSeries.yFields = fields.map(f => f.colId);
+        barSeries.yFieldNames = fields.map(f => f.displayName);
     }
 
-    private updateLineChart() {
-        const data = this.chartController.getData();
-        const categoryId = this.chartController.getSelectedCategory();
-        const fields = this.chartController.getFields();
-
+    private updateLineChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
         const lineChart = this.chart as CartesianChart<any, string, number>;
         lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
@@ -172,7 +179,7 @@ export class GridChartComp extends Component {
             lineSeries.markerRadius = 3;
             lineSeries.color = colors[index % colors.length];
 
-            lineSeries.data = this.chartController.getData();
+            lineSeries.data = this.model.getData();
             lineSeries.xField = categoryId;
             lineSeries.yField = f.colId;
 
@@ -180,11 +187,7 @@ export class GridChartComp extends Component {
         });
     }
 
-    private updatePieChart() {
-        const data = this.chartController.getData();
-        const categoryId = this.chartController.getSelectedCategory();
-        const fields = this.chartController.getFields();
-
+    private updatePieChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
         const pieChart = this.chart as PolarChart<any, string, number>;
 
         const singleField = fields.length === 1;
