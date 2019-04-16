@@ -1,4 +1,4 @@
-import { IFrameworkOverrides } from "./interfaces/IFrameworkOverrides";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {

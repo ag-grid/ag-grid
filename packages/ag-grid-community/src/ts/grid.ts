@@ -40,7 +40,7 @@ import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
 import { AgRadioButton } from "./widgets/agRadioButton";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
-import { IFrameworkOverrides } from "./interfaces/IFrameworkOverrides";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
 import { Downloader } from "./exporter/downloader";
 import { XmlFactory } from "./exporter/xmlFactory";

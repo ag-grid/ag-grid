@@ -5,7 +5,7 @@ import { Constants } from "./constants";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { SuppressKeyboardEventParams } from "./entities/colDef";
 import { CellComp } from "./rendering/cellComp";
-import { IFrameworkOverrides } from "./interfaces/IFrameworkOverrides";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;

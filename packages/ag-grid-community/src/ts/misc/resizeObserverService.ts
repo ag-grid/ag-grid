@@ -1,6 +1,6 @@
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { IFrameworkOverrides } from "../interfaces/IFrameworkOverrides";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { _ } from "../utils";
 
 @Bean('resizeObserverService')

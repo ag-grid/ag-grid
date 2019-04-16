@@ -5,9 +5,6 @@ import { IComponent } from "../../interfaces/iComponent";
 import { DateFilter } from "../../filter/provided/date/dateFilter";
 import { HeaderComp } from "../../headerRendering/header/headerComp";
 import { HeaderGroupComp } from "../../headerRendering/headerGroup/headerGroupComp";
-import {
-    SetFloatingFilterComp,
-} from "../../filter/floating/floatingFilter";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
@@ -71,7 +68,6 @@ export class UserComponentRegistry {
         agColumnGroupHeader: HeaderGroupComp,
 
         //floating filters
-        agSetColumnFloatingFilter: SetFloatingFilterComp,
         agTextColumnFloatingFilter: TextFloatingFilterComp,
         agNumberColumnFloatingFilter: NumberFloatingFilterComp,
         agDateColumnFloatingFilter: DateFloatingFilterComp,
