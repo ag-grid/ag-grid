@@ -213,6 +213,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this.radiusScale.domain as [number, number];
     }
 
+    minRadius = 15;
+
     processData(): boolean {
         const data = this.data as any[];
         const centerX = this.centerX;
@@ -262,8 +264,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
             const radius = radiusField ? this.radiusScale.convert(radiusData[datumIndex]) : this.radius;
-            const outerRadius = Math.max(10, radius + this.outerRadiusOffset);
+            const outerRadius = radius + this.outerRadiusOffset;
             const innerRadius = Math.max(0, this.innerRadiusOffset ? radius + this.innerRadiusOffset : 0);
+            this.visible = outerRadius >= this.minRadius;
             const startAngle = angleScale.convert(start + rotation);
             const endAngle = angleScale.convert(end + rotation);
 
