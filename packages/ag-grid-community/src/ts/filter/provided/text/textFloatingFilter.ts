@@ -1,8 +1,8 @@
-import {AbstractTextFloatingFilterComp} from "../../floating/abstractTextFloatingFilter";
+import {AbstractTextfieldFloatingFilterComp} from "../../floating/abstractTextfieldFloatingFilter";
 import {TextFilterModel} from "./textFilter";
 import {BaseFloatingFilterChange, IFloatingFilterParams} from "../../floating/floatingFilter";
 
-export class TextFloatingFilterComp extends AbstractTextFloatingFilterComp<TextFilterModel, IFloatingFilterParams<TextFilterModel, BaseFloatingFilterChange<TextFilterModel>>> {
+export class TextFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<TextFilterModel, IFloatingFilterParams<TextFilterModel, BaseFloatingFilterChange<TextFilterModel>>> {
     asFloatingFilterText(parentModel: TextFilterModel): string {
         if (!parentModel) { return ''; }
         return parentModel.filter;

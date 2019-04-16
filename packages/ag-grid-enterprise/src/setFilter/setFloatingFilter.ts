@@ -1,7 +1,7 @@
-import {AbstractTextFloatingFilterComp, IFloatingFilterParams, BaseFloatingFilterChange} from "ag-grid-community";
+import {AbstractTextfieldFloatingFilterComp, IFloatingFilterParams, BaseFloatingFilterChange} from "ag-grid-community";
 import {SetFilterModel} from "./setFilterModel";
 
-export class SetFloatingFilterComp extends AbstractTextFloatingFilterComp<SetFilterModel, IFloatingFilterParams<SetFilterModel, BaseFloatingFilterChange<SetFilterModel>>> {
+export class SetFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<SetFilterModel, IFloatingFilterParams<SetFilterModel, BaseFloatingFilterChange<SetFilterModel>>> {
     init(params: IFloatingFilterParams<SetFilterModel, BaseFloatingFilterChange<SetFilterModel>>): void {
         super.init(params);
         this.eColumnFloatingFilter.disabled = true;

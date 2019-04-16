@@ -1,9 +1,9 @@
 import {NumberFilterModel} from "./numberFilter";
 import {_} from "../../../utils";
 import {BaseFloatingFilterChange, IFloatingFilterParams} from "../../floating/floatingFilter";
-import {AbstractTextFloatingFilterComp} from "../../floating/abstractTextFloatingFilter";
+import {AbstractTextfieldFloatingFilterComp} from "../../floating/abstractTextfieldFloatingFilter";
 
-export class NumberFloatingFilterComp extends AbstractTextFloatingFilterComp<NumberFilterModel, IFloatingFilterParams<NumberFilterModel, BaseFloatingFilterChange<NumberFilterModel>>> {
+export class NumberFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<NumberFilterModel, IFloatingFilterParams<NumberFilterModel, BaseFloatingFilterChange<NumberFilterModel>>> {
 
     asFloatingFilterText(toParse: NumberFilterModel): string {
         const currentParentModel = this.currentParentModel();

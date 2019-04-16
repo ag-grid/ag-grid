@@ -289,7 +289,7 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IFilter, IFilterComp } from "./interfaces/iFilter";
-export { AbstractTextFloatingFilterComp } from "./filter/floating/abstractTextFloatingFilter";
+export { AbstractTextfieldFloatingFilterComp } from "./filter/floating/abstractTextfieldFloatingFilter";
 export { BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams } from "./headerRendering/header/headerComp";

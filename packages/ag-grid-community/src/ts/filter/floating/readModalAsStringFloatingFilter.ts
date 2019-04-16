@@ -1,7 +1,7 @@
-import {AbstractTextFloatingFilterComp} from "./abstractTextFloatingFilter";
+import {AbstractTextfieldFloatingFilterComp} from "./abstractTextfieldFloatingFilter";
 import {BaseFloatingFilterChange, IFloatingFilterParams} from "./floatingFilter";
 
-export class ReadModelAsStringFloatingFilterComp extends AbstractTextFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>> {
+export class ReadModelAsStringFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>> {
     init(params: IFloatingFilterParams<string, BaseFloatingFilterChange<string>>): void {
         super.init(params);
         this.eColumnFloatingFilter.disabled = true;

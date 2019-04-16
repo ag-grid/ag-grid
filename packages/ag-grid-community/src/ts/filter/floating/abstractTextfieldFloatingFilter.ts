@@ -5,7 +5,7 @@ import {CombinedFilter} from "../provided/abstractFilter";
 import {_} from "../../utils";
 import {BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams} from "./floatingFilter";
 
-export abstract class AbstractTextFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {
+export abstract class AbstractTextfieldFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {
     @RefSelector('eColumnFloatingFilter')
     eColumnFloatingFilter: HTMLInputElement;
 
@@ -17,7 +17,12 @@ export abstract class AbstractTextFloatingFilterComp<M, P extends IFloatingFilte
         super(`<div class="ag-input-text-wrapper"><input ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
     }
 
-    init(params: P): void {
+    protected abstract asParentModel(): M;
+
+    protected abstract asFloatingFilterText(parentModel: M): string;
+    protected abstract parseAsText(model: M): string;
+
+    public init(params: P): void {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
         const debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
@@ -31,11 +36,6 @@ export abstract class AbstractTextFloatingFilterComp<M, P extends IFloatingFilte
         }
 
     }
-
-    abstract asParentModel(): M;
-
-    abstract asFloatingFilterText(parentModel: M): string;
-    abstract parseAsText(model: M): string;
 
     onParentModelChanged(parentModel: M, combinedFilter?: CombinedFilter<M>): void {
         if (combinedFilter != null) {
