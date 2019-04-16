@@ -1,5 +1,5 @@
-import { SerializedFilter } from "./iFilter";
+import { FilterModel } from "./iFilter";
 
-export interface SerializedSetFilter extends SerializedFilter {
+export interface SerializedSetFilter extends FilterModel {
     values: string[] | null;
 }

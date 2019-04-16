@@ -1,6 +1,5 @@
 import {
     Autowired,
-    BaseFilter,
     Component,
     IDoesFilterPassParams,
     ISetFilterParams,
@@ -8,17 +7,17 @@ import {
     RefSelector,
     SerializedSetFilter,
     ValueFormatterService,
-    _
+    _, AbstractFilter
 } from "ag-grid-community";
-import { SetFilterModel, SetFilterModelValuesType } from "./setFilterModel";
+import { SetValueModel, SetFilterModelValuesType } from "./setValueModel";
 import { SetFilterListItem } from "./setFilterListItem";
 import { VirtualList, VirtualListModel } from "../rendering/virtualList";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
-export class SetFilter extends BaseFilter <ISetFilterParams, string[] | SerializedSetFilter | null> {
+export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | SerializedSetFilter | null> {
 
-    private model: SetFilterModel;
+    private model: SetValueModel;
 
     @QuerySelector('#selectAll')
     private eSelectAll: HTMLInputElement;
@@ -95,7 +94,7 @@ export class SetFilter extends BaseFilter <ISetFilterParams, string[] | Serializ
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 
-        this.model = new SetFilterModel(
+        this.model = new SetValueModel(
             this.filterParams.colDef,
             this.filterParams.rowModel,
             this.filterParams.valueGetter,
@@ -394,7 +393,7 @@ export class SetFilter extends BaseFilter <ISetFilterParams, string[] | Serializ
 }
 
 class ModelWrapper implements VirtualListModel {
-    constructor(private model: SetFilterModel) {
+    constructor(private model: SetValueModel) {
     }
 
     public getRowCount(): number {

@@ -6,7 +6,7 @@ import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
-import { IFloatingFilterComp } from "../filter/floatingFilter";
+import { IFloatingFilterComp } from "../filter/floating/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";

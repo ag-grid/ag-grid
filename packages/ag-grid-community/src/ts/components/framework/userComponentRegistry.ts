@@ -2,15 +2,12 @@ import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
 
 import { Autowired, Bean, Context, PostConstruct } from "../../context/context";
 import { IComponent } from "../../interfaces/iComponent";
-import { DateFilter, DefaultDateComponent } from "../../filter/dateFilter";
+import { DateFilter } from "../../filter/provided/date/dateFilter";
 import { HeaderComp } from "../../headerRendering/header/headerComp";
 import { HeaderGroupComp } from "../../headerRendering/headerGroup/headerGroupComp";
 import {
-    DateFloatingFilterComp,
-    NumberFloatingFilterComp,
     SetFloatingFilterComp,
-    TextFloatingFilterComp
-} from "../../filter/floatingFilter";
+} from "../../filter/floating/floatingFilter";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
@@ -19,13 +16,17 @@ import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
 import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
 import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
 import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEditor";
-import { TextFilter } from "../../filter/textFilter";
-import { NumberFilter } from "../../filter/numberFilter";
+import { TextFilter } from "../../filter/provided/text/textFilter";
+import { NumberFilter } from "../../filter/provided/number/numberFilter";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { GridOptions } from "../../entities/gridOptions";
 import { _ } from "../../utils";
+import {DefaultDateComponent} from "../../filter/provided/date/defaultDateComponent";
+import {DateFloatingFilterComp} from "../../filter/provided/date/dateFloatingFilter";
+import {TextFloatingFilterComp} from "../../filter/provided/text/textFloatingFilter";
+import {NumberFloatingFilterComp} from "../../filter/provided/number/numberFloatingFilter";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED

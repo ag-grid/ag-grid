@@ -49,7 +49,7 @@ export interface IFilter {
     onFloatingFilterChanged ?(change: any): void;
 }
 
-export interface SerializedFilter {
+export interface FilterModel {
     filterType: string;
 }
 
@@ -85,4 +85,8 @@ export interface IFilterParams {
     filterOptions?: (IFilterOptionDef | string) [];
     defaultOption?: string;
     textFormatter?: (from: string) => string;
+}
+
+/** @deprecated, use iFilter */
+export interface Filter extends IFilter {
 }

@@ -24,7 +24,7 @@ export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CB, NOT_PROVIDED
 }
 
-export class SetFilterModel {
+export class SetValueModel {
 
     private colDef: ColDef;
     private filterParams: ISetFilterParams;

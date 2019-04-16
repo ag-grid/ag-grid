@@ -1,16 +1,17 @@
-import { SerializedFilter } from "../interfaces/iFilter";
-import { QuerySelector } from "../widgets/componentAnnotations";
-import { BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter } from "./baseFilter";
-import { INumberFilterParams } from "./textFilter";
-import { _ } from "../utils";
+import {FilterModel} from "../../../interfaces/iFilter";
+import {QuerySelector} from "../../../widgets/componentAnnotations";
+import {AbstractFilter, Comparator, FilterConditionType} from "../abstractFilter";
+import {INumberFilterParams} from "../text/textFilter";
+import {_} from "../../../utils";
+import {AbstractScalerFilter} from "../abstractScalerFilter";
 
-export interface SerializedNumberFilter extends SerializedFilter {
+export interface NumberFilterModel extends FilterModel {
     filter: number;
     filterTo: number;
     type: string;
 }
 
-export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, SerializedNumberFilter> {
+export class NumberFilter extends AbstractScalerFilter<number, INumberFilterParams, NumberFilterModel> {
 
     public static LESS_THAN = 'lessThan';
 
@@ -35,7 +36,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     filterNumberCondition: any;
     filterNumberConditionTo: any;
 
-    modelFromFloatingFilter(from: string): SerializedNumberFilter {
+    modelFromFloatingFilter(from: string): NumberFilterModel {
         return {
             type: this.selectedFilter,
             filter: Number(from),
@@ -45,8 +46,8 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN,
-            BaseFilter.LESS_THAN_OR_EQUAL, BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
+        return [AbstractFilter.EQUALS, AbstractFilter.NOT_EQUAL, AbstractFilter.LESS_THAN,
+            AbstractFilter.LESS_THAN_OR_EQUAL, AbstractFilter.GREATER_THAN, AbstractFilter.GREATER_THAN_OR_EQUAL, AbstractFilter.IN_RANGE];
     }
 
     public bodyTemplate(type:FilterConditionType): string {
@@ -119,12 +120,12 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
     public filterValues(type:FilterConditionType): number | number[] {
         if (type === FilterConditionType.MAIN) {
-            return this.selectedFilter !== BaseFilter.IN_RANGE ?
+            return this.selectedFilter !== AbstractFilter.IN_RANGE ?
                 this.asNumber(this.filterNumber) :
                 [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
         }
 
-        return this.selectedFilterCondition !== BaseFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== AbstractFilter.IN_RANGE ?
             this.asNumber(this.filterNumberCondition) :
             [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     }
@@ -189,7 +190,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         return type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
     }
 
-    public serialize(type:FilterConditionType): SerializedNumberFilter {
+    public serialize(type:FilterConditionType): NumberFilterModel {
         const selectedFilter = type === FilterConditionType.MAIN ? this.selectedFilter : this.selectedFilterCondition;
         const filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
         const filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
@@ -201,7 +202,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         };
     }
 
-    public parse(model: SerializedNumberFilter, type:FilterConditionType): void {
+    public parse(model: NumberFilterModel, type:FilterConditionType): void {
         this.setFilterType(model.type, type);
         this.setFilter(model.filter, type);
         this.setFilterTo(model.filterTo, type);
@@ -220,7 +221,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterTextConditionField;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }

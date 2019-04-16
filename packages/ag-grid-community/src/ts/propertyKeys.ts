@@ -47,7 +47,7 @@ export class PropertyKeys {
         'suppressColumnVirtualisation', 'suppressAggAtRootLevel', 'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',
         'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'enableRtl',
         'suppressClickEdit', 'rowDragManaged', 'suppressRowDrag', 'enableGroupEdit', 'embedFullWidthRows', 'deprecatedEmbedFullWidthRows',
-        'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter', 'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination',
+        'suppressTabbing', 'suppressPaginationPanel', 'ts.filter.floating.floatingFilter', 'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination',
         'stopEditingWhenGridLosesFocus', 'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
         'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires',
         'aggregateOnlyChangedColumns', 'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail',

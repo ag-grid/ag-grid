@@ -1,15 +1,10 @@
-import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
-import {
-    ComparableBaseFilter,
-    BaseFilter,
-    IScalarFilterParams,
-    FilterConditionType,
-    IComparableFilterParams
-} from "./baseFilter";
-import { QuerySelector } from "../widgets/componentAnnotations";
-import { _ } from "../utils";
+import {FilterModel, IDoesFilterPassParams} from "../../../interfaces/iFilter";
+import {AbstractFilter, FilterConditionType, IComparableFilterParams, IScalarFilterParams} from "../abstractFilter";
+import {QuerySelector} from "../../../widgets/componentAnnotations";
+import {_} from "../../../utils";
+import {AbstractComparableFilter} from "../abstractComparableFilter";
 
-export interface SerializedTextFilter extends SerializedFilter {
+export interface SerializedTextFilter extends FilterModel {
     filter: string;
     type: string;
 }
@@ -32,7 +27,7 @@ export interface ITextFilterParams extends IComparableFilterParams {
     caseSensitive?: boolean;
 }
 
-export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams, SerializedTextFilter> {
+export class TextFilter extends AbstractComparableFilter <string, ITextFilterParams, SerializedTextFilter> {
     @QuerySelector('#filterText')
     private eFilterTextField: HTMLInputElement;
 
@@ -76,7 +71,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public getDefaultType(): string {
-        return BaseFilter.CONTAINS;
+        return AbstractFilter.CONTAINS;
     }
 
     public customInit(): void {
@@ -97,8 +92,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.STARTS_WITH, BaseFilter.ENDS_WITH,
-            BaseFilter.CONTAINS, BaseFilter.NOT_CONTAINS];
+        return [AbstractFilter.EQUALS, AbstractFilter.NOT_EQUAL, AbstractFilter.STARTS_WITH, AbstractFilter.ENDS_WITH,
+            AbstractFilter.CONTAINS, AbstractFilter.NOT_CONTAINS];
     }
 
     public bodyTemplate(type:FilterConditionType): string {
@@ -135,7 +130,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eFilterTextField : this.eFilterConditionTextField;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }
@@ -174,7 +169,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         const filterTextFormatted = this.formatter(filterText);
 
         if (cellValue == null || cellValue === undefined) {
-            return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
+            return filterType === AbstractFilter.NOT_EQUAL || filterType === AbstractFilter.NOT_CONTAINS;
         }
         const valueFormatted: string = this.formatter(cellValue);
         return this.comparator (filterType, valueFormatted, filterTextFormatted);

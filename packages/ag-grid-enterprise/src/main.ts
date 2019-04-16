@@ -33,7 +33,7 @@ import { RangeHandle } from "./widgets/selection/rangeHandle";
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
 export { SetFilter } from "./setFilter/setFilter";
-export { SetFilterModel } from "./setFilter/setFilterModel";
+export { SetValueModel } from "./setFilter/setValueModel";
 export { StatusBar } from "./statusBar/statusBar";
 export { StatusBarService } from "./statusBar/statusBarService";
 export { ClipboardService } from "./clipboardService";

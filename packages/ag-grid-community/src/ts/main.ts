@@ -86,12 +86,12 @@ export { RowNode } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
-export { BaseFilter } from "./filter/baseFilter";
-export { DateFilter, DateFilterModel } from "./filter/dateFilter";
+export { AbstractFilter } from "./filter/provided/abstractFilter";
+export { DateFilter, DateFilterModel } from "./filter/provided/date/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
-export { NumberFilter } from "./filter/numberFilter";
-export { TextFilter, SerializedTextFilter } from "./filter/textFilter";
-export { IFloatingFilter, IFloatingFilterParams } from "./filter/floatingFilter";
+export { NumberFilter } from "./filter/provided/number/numberFilter";
+export { TextFilter, SerializedTextFilter } from "./filter/provided/text/textFilter";
+export { IFloatingFilter, IFloatingFilterParams } from "./filter/floating/floatingFilter";
 
 // gridPanel
 export { GridPanel } from "./gridPanel/gridPanel";
@@ -155,7 +155,7 @@ export { CellComp } from "./rendering/cellComp";
 export { RowComp } from "./rendering/rowComp";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
-export { TextFormatter } from "./filter/textFilter";
+export { TextFormatter } from "./filter/provided/text/textFilter";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 
 // rowControllers/inMemory
@@ -283,7 +283,7 @@ export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
-export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, SerializedFilter } from "./interfaces/iFilter";
+export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, FilterModel } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { SerializedSetFilter } from "./interfaces/iSerializedSetFilter";
 export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
@@ -294,7 +294,6 @@ export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams } from "./headerRendering/header/headerComp";
 export { GetQuickFilterTextParams } from "./entities/colDef";
 export { IHeaderGroupParams, IHeaderGroup } from "./headerRendering/headerGroup/headerGroupComp";
-export { TextAndNumberFilterParameters } from "./filter/textAndNumberFilterParameters";
 export { IsColumnFunc } from "./entities/colDef";
 export { ColumnApi } from "./columnController/columnApi";
 export { IHeader } from "./headerRendering/header/headerComp";
@@ -304,7 +303,7 @@ export { WrapableInterface } from "./components/framework/frameworkComponentWrap
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/IFrameworkOverrides";
-export { SerializedNumberFilter } from "./filter/numberFilter";
+export { NumberFilterModel } from "./filter/provided/number/numberFilter";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
 export { TooltipManager } from "./widgets/tooltipManager";

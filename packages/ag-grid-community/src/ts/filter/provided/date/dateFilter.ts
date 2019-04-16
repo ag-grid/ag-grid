@@ -1,11 +1,11 @@
-import { SerializedFilter } from "../interfaces/iFilter";
-import { Component } from "../widgets/component";
-import { IDateComp, IDateParams } from "../rendering/dateComponent";
-import { QuerySelector } from "../widgets/componentAnnotations";
-import { BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter } from "./baseFilter";
-import { Autowired } from "../context/context";
-import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { _ } from "../utils";
+import {FilterModel} from "../../../interfaces/iFilter";
+import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
+import {QuerySelector} from "../../../widgets/componentAnnotations";
+import {AbstractFilter, Comparator, FilterConditionType, IComparableFilterParams} from "../abstractFilter";
+import {Autowired} from "../../../context/context";
+import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
+import {_} from "../../../utils";
+import {AbstractScalerFilter} from "../abstractScalerFilter";
 
 export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
@@ -16,13 +16,13 @@ export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 
-export interface DateFilterModel extends SerializedFilter {
+export interface DateFilterModel extends FilterModel {
     dateFrom: string;
     dateTo: string;
     type: string;
 }
 
-export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, DateFilterModel> {
+export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, DateFilterModel> {
 
     private dateToComponent: IDateComp;
     private dateFromComponent: IDateComp;
@@ -60,7 +60,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, DateFi
     }
 
     public getApplicableFilterTypes(): string[] {
-        return [BaseFilter.EQUALS, BaseFilter.GREATER_THAN, BaseFilter.LESS_THAN, BaseFilter.NOT_EQUAL, BaseFilter.IN_RANGE];
+        return [AbstractFilter.EQUALS, AbstractFilter.GREATER_THAN, AbstractFilter.LESS_THAN, AbstractFilter.NOT_EQUAL, AbstractFilter.IN_RANGE];
     }
 
     public bodyTemplate(type:FilterConditionType): string {
@@ -164,14 +164,14 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, DateFi
 
         // show / hide in-range filter
         if (panel) {
-            const visible = filterType === BaseFilter.IN_RANGE;
+            const visible = filterType === AbstractFilter.IN_RANGE;
             _.setVisible(panel, visible);
         }
 
         // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
         const filterInput = type === FilterConditionType.MAIN ? this.eDateFromPanel : this.eDateFromConditionPanel;
         if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== BaseFilter.EMPTY;
+            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractFilter.EMPTY;
             _.setVisible(filterInput, showFilterInput);
         }
     }
@@ -204,14 +204,14 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, DateFi
         if (type === FilterConditionType.MAIN) {
             if (!this.dateFromComponent) { return null; }
 
-            return this.selectedFilter !== BaseFilter.IN_RANGE ?
+            return this.selectedFilter !== AbstractFilter.IN_RANGE ?
                 this.dateFromComponent.getDate() :
                 [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
         }
 
         if (!this.dateFromConditionComponent) { return null; }
 
-        return this.selectedFilterCondition !== BaseFilter.IN_RANGE ?
+        return this.selectedFilterCondition !== AbstractFilter.IN_RANGE ?
             this.dateFromConditionComponent.getDate() :
             [this.dateFromConditionComponent.getDate(), this.dateToConditionComponent.getDate()];
     }
@@ -297,37 +297,3 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, DateFi
     }
 }
 
-export class DefaultDateComponent extends Component implements IDateComp {
-
-    private eDateInput: HTMLInputElement;
-    private listener: () => void;
-
-    constructor() {
-        super(`<div class="ag-input-text-wrapper"><input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd"></div>`);
-    }
-
-    public init(params: IDateParams): void {
-        this.eDateInput = this.getGui().querySelector('input') as HTMLInputElement;
-
-        if (_.isBrowserChrome() || params.filterParams.browserDatePicker) {
-            if (_.isBrowserIE()) {
-                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
-            } else {
-                this.eDateInput.type = 'date';
-            }
-        }
-
-        this.listener = params.onDateChanged;
-
-        this.addGuiEventListener('input', this.listener);
-    }
-
-    public getDate(): Date {
-        return _.parseYyyyMmDdToDate(this.eDateInput.value, "-");
-    }
-
-    public setDate(date: Date): void {
-        this.eDateInput.value = _.serializeDateToYyyyMmDd(date, "-");
-    }
-
-}
