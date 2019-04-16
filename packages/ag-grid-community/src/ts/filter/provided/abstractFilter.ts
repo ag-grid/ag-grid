@@ -54,6 +54,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
  * get/setModel context wiring....
  */
 export abstract class AbstractFilter<P extends IFilterParams, M> extends Component implements IFilterComp {
+
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
     public static NOT_EQUAL = 'notEqual';
@@ -96,6 +97,18 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
 
     @Autowired('gridOptionsWrapper')
     gridOptionsWrapper: GridOptionsWrapper;
+
+    public abstract customInit(): void;
+    public abstract isFilterActive(): boolean;
+    public abstract modelFromFloatingFilter(from: string): M;
+    public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
+    public abstract bodyTemplate(type: FilterConditionType): string;
+    public abstract resetState(resetConditionFilterOnly?: boolean): void;
+    public abstract serialize(type: FilterConditionType): M;
+    public abstract parse(toParse: M, type: FilterConditionType): void;
+    public abstract refreshFilterBodyUi(type: FilterConditionType): void;
+    public abstract initialiseFilterBodyUi(type: FilterConditionType): void;
+    public abstract isFilterConditionActive(type: FilterConditionType): boolean;
 
     public init(params: P): void {
         this.filterParams = params;
@@ -142,7 +155,8 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         this.applyActive = ((params.applyButton === true) || ((params as any).apply === true));
         this.newRowsActionKeep = params.newRowsAction === 'keep';
 
-        this.setTemplate(this.generateTemplate());
+        const templateString = this.generateTemplate();
+        this.setTemplate(templateString);
 
         _.setVisible(this.eApplyButton, this.applyActive);
         if (this.applyActive) {
@@ -165,18 +179,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         this.setModel(null);
         this.onFilterChanged();
     }
-
-    public abstract customInit(): void;
-    public abstract isFilterActive(): boolean;
-    public abstract modelFromFloatingFilter(from: string): M;
-    public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
-    public abstract bodyTemplate(type: FilterConditionType): string;
-    public abstract resetState(resetConditionFilterOnly?: boolean): void;
-    public abstract serialize(type: FilterConditionType): M;
-    public abstract parse(toParse: M, type: FilterConditionType): void;
-    public abstract refreshFilterBodyUi(type: FilterConditionType): void;
-    public abstract initialiseFilterBodyUi(type: FilterConditionType): void;
-    public abstract isFilterConditionActive(type: FilterConditionType): boolean;
 
     public floatingFilter(from: string): void {
         if (from !== '') {
@@ -265,7 +267,7 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
 
     private redrawCondition() {
         const filterCondition: HTMLElement = this.eFilterBodyWrapper.querySelector('.ag-filter-condition') as HTMLElement;
-        if (!filterCondition && this.isFilterActive() && this.acceptsBooleanLogic()) {
+        if (!filterCondition && this.isFilterActive() && this.allowTwoConditions()) {
             this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
             this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
             this.wireQuerySelectors();
@@ -330,14 +332,17 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     }
 
     private generateTemplate(): string {
-        const translate = this.translate.bind(this);
         const mainConditionBody = this.createConditionBody(FilterConditionType.MAIN);
-        const bodyWithBooleanLogic: string = ! this.acceptsBooleanLogic() ?
-            mainConditionBody :
-            this.wrapCondition (mainConditionBody);
+        const showTwoConditions = this.allowTwoConditions();
+
+        const bodyWithTwoConditions = showTwoConditions ?
+            this.wrapCondition(mainConditionBody) :
+            mainConditionBody;
+
+        const translate = this.translate.bind(this);
 
         return `<div>
-                    <div class='ag-filter-body-wrapper'>${bodyWithBooleanLogic}</div>
+                    <div class='ag-filter-body-wrapper'>${bodyWithTwoConditions}</div>
                     <div class="ag-filter-apply-panel" id="applyPanel">
                         <button type="button" id="clearButton">${translate('clearFilter')}</button>
                         <button type="button" id="applyButton">${translate('applyFilter')}</button>
@@ -345,13 +350,17 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
                 </div>`;
     }
 
-    public acceptsBooleanLogic(): boolean {
+    public allowTwoConditions(): boolean {
         return false;
     }
 
     public wrapCondition(mainCondition:string): string {
-        if (!this.isFilterActive()) { return mainCondition; }
-        return  `${mainCondition}${this.createConditionTemplate(FilterConditionType.CONDITION)}`;
+        const filterNotActive = !this.isFilterActive();
+        if (filterNotActive) {
+            return mainCondition;
+        } else {
+            return  `${mainCondition}${this.createConditionTemplate(FilterConditionType.CONDITION)}`;
+        }
     }
 
     private createConditionTemplate(type:FilterConditionType): string {
@@ -365,8 +374,9 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     }
 
     private createConditionBody(type:FilterConditionType): string {
-        const body: string = this.bodyTemplate(type);
-        return this.generateFilterHeader(type) + body;
+        const bodyTemplate = this.bodyTemplate(type);
+        const headerTemplate = this.generateFilterHeader(type);
+        return headerTemplate + bodyTemplate;
     }
 
     public translate(toTranslate: string): string {

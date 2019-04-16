@@ -6,6 +6,7 @@ import {AbstractFilter, FilterConditionType, IComparableFilterParams} from "./ab
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
 export abstract class AbstractComparableFilter<T, P extends IComparableFilterParams, M> extends AbstractFilter<P, M> {
+
     @QuerySelector('#filterType')
     private eTypeSelector: HTMLSelectElement;
 
@@ -39,7 +40,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         }
     }
 
-    public acceptsBooleanLogic(): boolean {
+    public allowTwoConditions(): boolean {
         return this.suppressAndOrCondition !== true;
     }
 
