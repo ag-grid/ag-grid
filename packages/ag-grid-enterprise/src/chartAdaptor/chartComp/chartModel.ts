@@ -186,6 +186,14 @@ export class ChartModel extends BeanStub {
                 // dragging left or right works as the value cols are sorted by display order
 
                 const currentValCol = valueColsInRange[i];
+
+                const updateFromRangeDragging = !_.exists(updatedCol);
+                const valueColNotInRange = this.referenceCellRange.columns.indexOf(currentValCol) < 0;
+                if (updateFromRangeDragging && valueColNotInRange) {
+                    // skip column as it's being dragged out of range
+                    continue;
+                }
+
                 currentRange.push(currentValCol);
 
                 // if last value col, close out range
