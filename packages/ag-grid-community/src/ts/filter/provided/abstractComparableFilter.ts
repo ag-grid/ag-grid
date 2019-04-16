@@ -1,7 +1,30 @@
-import {IDoesFilterPassParams} from "../../interfaces/iFilter";
+import {IDoesFilterPassParams, IFilterOptionDef} from "../../interfaces/iFilter";
 import {QuerySelector} from "../../widgets/componentAnnotations";
 import {AbstractFilter, CombinedFilter, FilterConditionType, IComparableFilterParams} from "./abstractFilter";
 import {_} from "../../utils";
+
+const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
+    loadingOoo:'Loading...',
+    empty: 'Choose One',
+    equals:'Equals',
+    notEqual:'Not equal',
+    lessThan:'Less than',
+    greaterThan:'Greater than',
+    inRange:'In range',
+    lessThanOrEqual:'Less than or equals',
+    greaterThanOrEqual:'Greater than or equals',
+    filterOoo:'Filter...',
+    contains:'Contains',
+    notContains:'Not contains',
+    startsWith: 'Starts with',
+    endsWith: 'Ends with',
+    searchOoo: 'Search...',
+    selectAll: 'Select All',
+    applyFilter: 'Apply Filter',
+    clearFilter: 'Clear Filter',
+    andCondition: 'AND',
+    orCondition: 'OR'
+};
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -18,9 +41,17 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
     private eConditionWrapper: HTMLElement;
 
+    customFilterOptions: {[name: string]: IFilterOptionDef} = {};
+
+    defaultFilter: string;
+    selectedFilter: string;
+    selectedFilterCondition: string;
+
     public abstract getApplicableFilterTypes(): string[];
     public abstract filterValues(type:FilterConditionType): T | T[];
     public abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
+    public abstract getDefaultType(): string;
+    protected abstract generateFilterValueTemplate(type: FilterConditionType): string;
 
     doesFilterPass(params: IDoesFilterPassParams): boolean {
         const mainFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
@@ -33,21 +64,58 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     }
 
     public init(params: P) {
-        super.init(params);
-        this.suppressAndOrCondition = params.suppressAndOrCondition;
-    }
 
-    public customInit() {
+        this.filterParams = params;
+
+        this.defaultFilter = this.filterParams.defaultOption;
+
+        // strip out incorrectly defined FilterOptionDefs
+        if (params.filterOptions) {
+            params.filterOptions.forEach(filterOption => {
+                if (typeof filterOption === 'string') { return; }
+                if (!filterOption.displayKey) {
+                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
+                    return;
+                }
+                if (!filterOption.displayName) {
+                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayName'");
+                    return;
+                }
+                if (!filterOption.test) {
+                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'test'");
+                    return;
+                }
+
+                this.customFilterOptions[filterOption.displayKey] = filterOption;
+            });
+        }
+
+        if (this.filterParams.filterOptions && !this.defaultFilter) {
+            const firstFilterOption = this.filterParams.filterOptions[0];
+            if (typeof firstFilterOption === 'string') {
+                this.defaultFilter = firstFilterOption;
+            } else if (firstFilterOption.displayKey) {
+                this.defaultFilter = firstFilterOption.displayKey;
+            } else {
+                console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
+            }
+        }
+
         if (!this.defaultFilter) {
             this.defaultFilter = this.getDefaultType();
         }
+
+        this.selectedFilter = this.defaultFilter;
+        this.selectedFilterCondition = this.defaultFilter;
+
+        this.suppressAndOrCondition = params.suppressAndOrCondition;
+
+        super.init(params);
     }
 
     public allowTwoConditions(): boolean {
         return this.suppressAndOrCondition !== true;
     }
-
-    protected abstract generateFilterValueTemplate(type: FilterConditionType): string;
 
     protected bodyTemplate(): string {
         const optionsHtml = this.generateFilterOperatorTemplate(FilterConditionType.MAIN);
@@ -168,6 +236,18 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
             </div>`;
     }
 
+    public translate(toTranslate: string): string {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        let defaultTranslation = DEFAULT_TRANSLATIONS[toTranslate];
+
+        if (!defaultTranslation && this.customFilterOptions[toTranslate]) {
+            defaultTranslation = this.customFilterOptions[toTranslate].displayName;
+        }
+
+        return translate(toTranslate, defaultTranslation);
+    }
+
     public initialiseFilterBodyUi(type:FilterConditionType) {
         if (type === FilterConditionType.MAIN) {
             this.setFilterType(this.selectedFilter, type);
@@ -177,8 +257,6 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
             this.addDestroyableEventListener(this.eTypeConditionSelector, "change", () => this.onFilterTypeChanged (type));
         }
     }
-
-    public abstract getDefaultType(): string;
 
     private onFilterTypeChanged(type:FilterConditionType): void {
         const prevSelectedFilter = this.selectedFilter;
@@ -203,6 +281,11 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
             this.onFilterChanged();
         }
+    }
+
+    protected doesFilterHaveHiddenInput(filterType: string) {
+        const customFilterOption = this.customFilterOptions[filterType];
+        return customFilterOption && customFilterOption.hideFilterInput;
     }
 
     public isFilterActive(): boolean {

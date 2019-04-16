@@ -239,16 +239,16 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | SetF
     }
 
     public bodyTemplate(): string {
-        const translate = this.translate.bind(this);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo')}</div>
+        return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
                     <div class="ag-input-text-wrapper ag-filter-header-container" id="ag-mini-filter">
-                        <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo')}"/>
+                        <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
                     </div>
                     <div class="ag-filter-header-container">
                         <label id="selectAllContainer" class="ag-set-filter-item">
-                            <div id="selectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll')})</span>
+                            <div id="selectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll', 'Select All')})</span>
                         </label>
                     </div>
                     <div id="richList" class="ag-set-filter-list"></div>

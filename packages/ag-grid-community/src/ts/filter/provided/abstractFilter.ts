@@ -21,29 +21,6 @@ export interface CombinedFilter <T> {
     condition2: T;
 }
 
-const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
-    loadingOoo:'Loading...',
-    empty: 'Choose One',
-    equals:'Equals',
-    notEqual:'Not equal',
-    lessThan:'Less than',
-    greaterThan:'Greater than',
-    inRange:'In range',
-    lessThanOrEqual:'Less than or equals',
-    greaterThanOrEqual:'Greater than or equals',
-    filterOoo:'Filter...',
-    contains:'Contains',
-    notContains:'Not contains',
-    startsWith: 'Starts with',
-    endsWith: 'Ends with',
-    searchOoo: 'Search...',
-    selectAll: 'Select All',
-    applyFilter: 'Apply Filter',
-    clearFilter: 'Clear Filter',
-    andCondition: 'AND',
-    orCondition: 'OR'
-};
-
 /**
  * T(ype) The type of this filter. ie in DateFilter T=Date
  * P(arams) The params that this filter can take
@@ -71,14 +48,9 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
 
     private newRowsActionKeep: boolean;
 
-    customFilterOptions: {[name: string]: IFilterOptionDef} = {};
-
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
-    defaultFilter: string;
-    selectedFilter: string;
-    selectedFilterCondition: string;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -97,7 +69,9 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     @Autowired('gridOptionsWrapper')
     gridOptionsWrapper: GridOptionsWrapper;
 
-    public abstract customInit(): void;
+    // in time we should take this out, sub-classes should override init() and call super.init()
+    protected customInit(): void {}
+
     public abstract isFilterActive(): boolean;
     public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
@@ -112,43 +86,8 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     public init(params: P): void {
         this.filterParams = params;
 
-        this.defaultFilter = this.filterParams.defaultOption;
-
-        // strip out incorrectly defined FilterOptionDefs
-        if (params.filterOptions) {
-            params.filterOptions.forEach(filterOption => {
-                if (typeof filterOption === 'string') { return; }
-                if (!filterOption.displayKey) {
-                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
-                    return;
-                }
-                if (!filterOption.displayName) {
-                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayName'");
-                    return;
-                }
-                if (!filterOption.test) {
-                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'test'");
-                    return;
-                }
-
-                this.customFilterOptions[filterOption.displayKey] = filterOption;
-            });
-        }
-
-        if (this.filterParams.filterOptions && !this.defaultFilter) {
-            const firstFilterOption = this.filterParams.filterOptions[0];
-            if (typeof firstFilterOption === 'string') {
-                this.defaultFilter = firstFilterOption;
-            } else if (firstFilterOption.displayKey) {
-                this.defaultFilter = firstFilterOption.displayKey;
-            } else {
-                console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
-            }
-        }
-
         this.customInit();
-        this.selectedFilter = this.defaultFilter;
-        this.selectedFilterCondition = this.defaultFilter;
+
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
         this.applyActive = ((params.applyButton === true) || ((params as any).apply === true));
@@ -281,32 +220,19 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
 
         const body = this.bodyTemplate();
 
-        const translate = this.translate.bind(this);
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div>
                     <div class='ag-filter-body-wrapper'>${body}</div>
                     <div class="ag-filter-apply-panel" id="applyPanel">
-                        <button type="button" id="clearButton">${translate('clearFilter')}</button>
-                        <button type="button" id="applyButton">${translate('applyFilter')}</button>
+                        <button type="button" id="clearButton">${translate('clearFilter', 'Clear Filter')}</button>
+                        <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
                     </div>
                 </div>`;
     }
 
     public allowTwoConditions(): boolean {
         return false;
-    }
-
-
-    public translate(toTranslate: string): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        let defaultTranslation = DEFAULT_TRANSLATIONS[toTranslate];
-
-        if (!defaultTranslation && this.customFilterOptions[toTranslate]) {
-            defaultTranslation = this.customFilterOptions[toTranslate].displayName;
-        }
-
-        return translate(toTranslate, defaultTranslation);
     }
 
     public getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number {
@@ -319,10 +245,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
     }
 
-    public doesFilterHaveHiddenInput(filterType: string) {
-        const customFilterOption = this.customFilterOptions[filterType];
-        return customFilterOption && customFilterOption.hideFilterInput;
-    }
 }
 
 
