@@ -5,9 +5,11 @@ import {CombinedFilter} from "../provided/abstractFilter";
 import {_} from "../../utils";
 import {BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams} from "./floatingFilter";
 
+/** Floating Filter that renders into a single text field. Used by Text, Number, ReadModelAsString and Set floating filters. */
 export abstract class AbstractTextfieldFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {
+
     @RefSelector('eColumnFloatingFilter')
-    eColumnFloatingFilter: HTMLInputElement;
+    protected eColumnFloatingFilter: HTMLInputElement;
 
     onFloatingFilterChanged: (change: BaseFloatingFilterChange<M>) => boolean;
     currentParentModel: () => M;
