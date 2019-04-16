@@ -85,8 +85,8 @@ $ag-icons-filter: "initial" !default;
 
 /* icons are used outside of the grid root (in the ghost) */
 $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-    column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus radio-button-on radio-button-off
-    right small-left small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
+    column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading maximize minimize menu minus none not-allowed paste pin pivot plus 
+    radio-button-on radio-button-off right small-left small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
 
 @each $icon in $icons {
     .ag-icon-#{$icon} {
@@ -982,10 +982,6 @@ $handleSize: 5px;
             justify-content: center;
         }
     }
-
-    &:not(.ag-dialog-closable) .ag-dialog-button-close {
-        display: none;
-    }
 }
 
 /**
@@ -1232,8 +1228,6 @@ $handleSize: 5px;
     flex-direction: row-reverse;
 
     .ag-side-buttons {
-        width: 20px;
-
         div {
             button {
                 display: block;

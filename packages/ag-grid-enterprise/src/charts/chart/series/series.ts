@@ -64,6 +64,7 @@ export abstract class Series<D, X, Y> {
     set visible(value: boolean) {
         if (this._visible !== value) {
             this._visible = value;
+            this.group.visible = value;
             this.scheduleLayout();
         }
     }
@@ -82,6 +83,17 @@ export abstract class Series<D, X, Y> {
     tooltip: boolean = false;
 
     abstract provideLegendData(data: LegendDatum[]): void;
+
+    private _showInLegend: boolean = true;
+    set showInLegend(value: boolean) {
+        if (this._showInLegend !== value) {
+            this._showInLegend = value;
+            this.scheduleLayout();
+        }
+    }
+    get showInLegend(): boolean {
+        return this._showInLegend;
+    }
 
     scheduleLayout() {
         if (this.chart) {

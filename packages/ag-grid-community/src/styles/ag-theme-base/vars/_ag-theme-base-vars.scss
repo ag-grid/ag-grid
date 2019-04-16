@@ -59,7 +59,7 @@ $dialog-title-font-family: $secondary-font-family !default;
 $dialog-title-font-size: $secondary-font-size !default;
 $dialog-title-font-weight: $secondary-font-weight !default;
 $dialog-title-padding: 5px 10px !default;
-$dialog-title-icon-size: 20px !default;
+$dialog-title-icon-size: max(20px, $icon-size) !default;
 
 $range-selection-chart-background-color: adjust-hue($range-selection-background-color, 25%) !default;
 $range-selection-chart-category-background-color: adjust-hue($range-selection-background-color, -80%) !default;

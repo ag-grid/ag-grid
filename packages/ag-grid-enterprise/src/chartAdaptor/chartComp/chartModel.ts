@@ -1,6 +1,18 @@
-import {_, Autowired, PostConstruct, BeanStub, Column, ColDef, ColumnController, CellRangeType, CellRange, ChartType } from "ag-grid-community";
+import {
+    _,
+    Autowired,
+    BeanStub,
+    CellRange,
+    CellRangeType,
+    ChartType,
+    ColDef,
+    Column,
+    ColumnController,
+    PostConstruct
+} from "ag-grid-community";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
+import {RangeController} from "../../rangeController";
 
 export interface ColState  {
     column?: Column;
@@ -14,6 +26,7 @@ export class ChartModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rangeController') rangeController: RangeController;
 
     // model state
     private cellRanges: CellRange[];
@@ -22,8 +35,10 @@ export class ChartModel extends BeanStub {
     private valueColState: ColState[] = [];
     private chartData: any[];
 
-    private aggregate: boolean;
     private chartType: ChartType;
+    private readonly aggregate: boolean;
+
+    private initialising = true; //TODO remove
 
     private datasource: ChartDatasource;
 
@@ -42,33 +57,22 @@ export class ChartModel extends BeanStub {
 
         // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
         this.referenceCellRange = this.cellRanges[0];
-        this.updateCellRanges();
-
-        this.resetColumnState();
     }
 
-    public updateData(dimension: string, valueCols: Column[], startRow: number, endRow: number): void {
+    public updateData(): void {
+        const {startRow, endRow} = this.getRowIndexes();
+        const selectedDimension = this.getSelectedDimensionId();
+        const selectedValueCols = this.getSelectedValueCols();
+
         const params: ChartDatasourceParams = {
             aggregate: this.aggregate,
-            dimensionColIds: [dimension],
-            valueCols: valueCols,
+            dimensionColIds: [selectedDimension],
+            valueCols: selectedValueCols,
             startRow: startRow,
             endRow: endRow
         };
 
         this.chartData = this.datasource.getData(params);
-    }
-
-    public getData(): any[] {
-        return this.chartData;
-    }
-
-    public getValueColState(): ColState[] {
-        return this.valueColState;
-    }
-
-    public getDimensionColState(): ColState[] {
-        return this.dimensionColState;
     }
 
     public resetColumnState(): void {
@@ -115,12 +119,6 @@ export class ChartModel extends BeanStub {
         this.dimensionColState.unshift(defaultCategory);
     }
 
-    public updateColumnStateFromRanges(allColsFromRanges: Column[]) {
-        this.valueColState.forEach(cs => {
-            cs.selected = allColsFromRanges.some(col => col.getColId() === cs.colId);
-        });
-    }
-
     public updateColumnState(updatedCol: ColState) {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const isDimensionCol = this.dimensionColState.filter(idsMatch).length > 0;
@@ -136,37 +134,38 @@ export class ChartModel extends BeanStub {
         }
     }
 
-    public setChartType(chartType: ChartType) {
-        this.chartType = chartType;
-    }
-
-    public getChartType(): ChartType {
-        return this.chartType;
-    }
-
-    public getCellRanges(): CellRange[] {
-        return this.cellRanges;
-    }
-
-    public getAllColumnsFromRanges(): Column[] {
-        return _.flatten(this.cellRanges.map(range => range.columns));
-    }
-
-    public getLastRange(): CellRange {
-        return _.last(this.cellRanges) as CellRange;
-    }
-
     public updateCellRanges(updatedCol?: ColState) {
+        // update the reference range
+        this.referenceCellRange = _.last(this.cellRanges) as CellRange;
+
         const {dimensionCols, valueCols} = this.getAllChartColumns();
-
-        console.log(dimensionCols, valueCols);
-
-        let valueColsInRange = this.getValueColsFromRanges(valueCols);
-        let dimensionColsInRange = this.getDimensionsFromRanges(dimensionCols);
+        const allColsFromRanges = this.getAllColumnsFromRanges();
 
         // clear ranges
         this.cellRanges = [];
 
+        let dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
+        if (this.initialising) {
+            if (dimensionColsInRange.length > 0) {
+                this.addRange(CellRangeType.DIMENSION, [dimensionColsInRange[0]]);
+            }
+            this.initialising = false;
+        }
+
+        if (updatedCol && dimensionCols.indexOf(updatedCol.column as Column) > -1) {
+            // if updated col is dimension col and is not the default category
+            if (updatedCol!.colId !== ChartModel.DEFAULT_CATEGORY) {
+                this.addRange(CellRangeType.DIMENSION, [updatedCol!.column as Column]);
+            }
+        } else {
+            // otherwise use current selected dimension
+            const selectedDimension = this.dimensionColState.filter(cs => cs.selected)[0];
+            if (selectedDimension && selectedDimension.colId !== ChartModel.DEFAULT_CATEGORY) {
+                this.addRange(CellRangeType.DIMENSION, [selectedDimension.column!]);
+            }
+        }
+
+        let valueColsInRange = valueCols.filter(col => allColsFromRanges.indexOf(col) > -1);
         if (updatedCol && valueCols.indexOf(updatedCol.column as Column) > -1) {
             if (updatedCol.selected) {
                 valueColsInRange.push(updatedCol.column as Column);
@@ -175,19 +174,6 @@ export class ChartModel extends BeanStub {
                 valueColsInRange = valueColsInRange.filter(col => col.getColId() !== updatedCol.colId);
             }
         }
-
-        if (updatedCol && dimensionCols.indexOf(updatedCol.column as Column) > -1) {
-            const isDefaultCategory = updatedCol.colId === ChartModel.DEFAULT_CATEGORY;
-            dimensionColsInRange = isDefaultCategory ? [] : [updatedCol.column as Column];
-        }
-
-        if (dimensionColsInRange.length > 0) {
-            const firstDimensionInRange = dimensionColsInRange[0];
-            this.addRange(CellRangeType.DIMENSION, [firstDimensionInRange]);
-        }
-
-        console.log('valueColsInRange: ', valueColsInRange.map(col => col.getColId()).join(','));
-        console.log('dimensions: ', dimensionColsInRange.map(col => col.getColId()).join(','));
 
         if (valueColsInRange.length === 0) {
             // no range to add
@@ -215,55 +201,30 @@ export class ChartModel extends BeanStub {
                 }
             }
         }
-
-        console.log('ranges: ', this.cellRanges);
     }
 
-    private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]) {
-        const sortedList: Column[] = [];
-        allDisplayedColumns.forEach(col => {
-            if (listToSort.indexOf(col) > -1) {
-                sortedList.push(col);
-            }
-        });
-        return sortedList;
+    public getData(): any[] {
+        return this.chartData;
     }
 
-    private addRange(cellRangeType: CellRangeType, columns: Column[]) {
-        const valueRanges = this.cellRanges.filter(range => range.type === CellRangeType.VALUE);
-
-        if (valueRanges.length > 0) {
-            this.referenceCellRange = valueRanges[0];
-        }
-
-        const newRange = {
-            startRow: this.referenceCellRange.startRow,
-            endRow: this.referenceCellRange.endRow,
-            columns: columns,
-            startColumn: columns[0],
-            type: cellRangeType
-        };
-
-        cellRangeType === CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
+    public getValueColState(): ColState[] {
+        return this.valueColState;
     }
 
-    private getDimensionsFromRanges(allDisplayedColumns: Column[]) {
-        const isDimension = (col: Column) => {
-            const colDef = col.getColDef() as ColDef;
-            return allDisplayedColumns.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
-        };
-
-        return this.getAllColumnsFromRanges().filter(col => isDimension(col));
+    public getDimensionColState(): ColState[] {
+        return this.dimensionColState;
     }
 
+    public getCellRanges(): CellRange[] {
+        return this.cellRanges;
+    }
 
-    private getValueColsFromRanges(allDisplayedColumns: Column[]) {
-        const isValueCol = (col: Column) => {
-            const colDef = col.getColDef() as ColDef;
-            return allDisplayedColumns.indexOf(col) > -1 && (!!colDef.enableValue);
-        };
+    public setChartType(chartType: ChartType) {
+        this.chartType = chartType;
+    }
 
-        return this.getAllColumnsFromRanges().filter(col => isValueCol(col));
+    public getChartType(): ChartType {
+        return this.chartType;
     }
 
     public getSelectedColState(): ColState[] {
@@ -278,8 +239,44 @@ export class ChartModel extends BeanStub {
         return this.dimensionColState.filter(cs => cs.selected)[0].colId;
     }
 
+    private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]) {
+        const sortedList: Column[] = [];
+        allDisplayedColumns.forEach(col => {
+            if (listToSort.indexOf(col) > -1) {
+                sortedList.push(col);
+            }
+        });
+        return sortedList;
+    }
+
+    private addRange(cellRangeType: CellRangeType, columns: Column[]) {
+        const newRange = {
+            startRow: this.referenceCellRange.startRow,
+            endRow: this.referenceCellRange.endRow,
+            columns: columns,
+            startColumn: this.referenceCellRange.startColumn,
+            type: cellRangeType
+        };
+
+        cellRangeType === CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
+    }
+
+    private getAllColumnsFromRanges(): Column[] {
+        return _.flatten(this.cellRanges.map(range => range.columns));
+    }
+
     private getFieldName(col: Column): string {
         return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
+    }
+
+    private getRowIndexes(): {startRow: number, endRow: number} {
+        let startRow = 0, endRow = 0;
+        const range = _.last(this.cellRanges) as CellRange;
+        if (range) {
+            startRow = this.rangeController.getRangeStartRow(range).rowIndex;
+            endRow = this.rangeController.getRangeEndRow(range).rowIndex;
+        }
+        return {startRow, endRow}
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
@@ -312,5 +309,9 @@ export class ChartModel extends BeanStub {
 
     public destroy() {
         super.destroy();
+
+        if (this.datasource) {
+            this.datasource.destroy();
+        }
     }
 }

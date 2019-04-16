@@ -40,8 +40,6 @@ export class RangeHandle extends AbstractSelectionHandle {
                 }
             });
         }
-
-        if (!rowChanged && _.last(lastRange.columns) === lastCellHovered.column) { return; }
         
         this.endPosition = {
             ...newEndRow,
@@ -52,11 +50,11 @@ export class RangeHandle extends AbstractSelectionHandle {
     }
 
     protected onDragEnd(e: MouseEvent) {
-        const cellRange = this.getCellRange();
+        const cellRange = _.last(this.rangeController.getCellRanges())!;
 
         const startRow = this.rangeController.getRangeStartRow(cellRange);
         const endRow = this.rangeController.getRangeEndRow(cellRange);
-        const column = this.getCellRange().columns[0];
+        const column = cellRange.columns[0];
 
         cellRange.startRow = startRow;
         cellRange.endRow = endRow;

@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>not-allowed</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="not-allowed" fill-rule="nonzero" fill="#000000">
-            <path d="M9,1.5 C4.86,1.5 1.5,4.86 1.5,9 C1.5,13.14 4.86,16.5 9,16.5 C13.14,16.5 16.5,13.14 16.5,9 C16.5,4.86 13.14,1.5 9,1.5 Z M3,9 C3,5.685 5.685,3 9,3 C10.3875,3 11.6625,3.4725 12.675,4.2675 L4.2675,12.675 C3.4725,11.6625 3,10.3875 3,9 Z M9,15 C7.6125,15 6.3375,14.5275 5.325,13.7325 L13.7325,5.325 C14.5275,6.3375 15,7.6125 15,9 C15,12.315 12.315,15 9,15 Z" id="Shape"></path>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="#000000" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM4 12c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L5.69 16.9C4.63 15.55 4 13.85 4 12zm8 8c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1C19.37 8.45 20 10.15 20 12c0 4.42-3.58 8-8 8z"/></svg>

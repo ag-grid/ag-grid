@@ -432,8 +432,8 @@
     ////////////////////////////////////////
     $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked
             checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-            column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu
-            minus none not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right 
+            column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading maximize
+            minimize menu minus none not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right 
             small-up small-down tick cross tree-open tree-closed tree-indeterminate;
 
     @each $icon in $icons {
@@ -1381,6 +1381,7 @@
             padding-top: $grid-size * 4;
             background: $background-color;
             border-bottom: 1px solid $border-color;
+            width: $icon-size + 4;
             position: relative;
 
             .ag-side-button {

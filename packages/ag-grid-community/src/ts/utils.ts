@@ -1192,6 +1192,8 @@ export class Utils {
         menu: 'menu',
         filter: 'filter',
         columns: 'columns',
+        maximze: 'maximize',
+        minimize: 'minimize',
         menuPin: 'pin',
         menuValue: 'aggregation',
         menuAddRowGroup: 'group',

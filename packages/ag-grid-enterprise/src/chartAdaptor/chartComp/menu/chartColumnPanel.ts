@@ -33,11 +33,11 @@ export class ChartColumnPanel extends Component {
 
     private getColumnStateMapper(dimension: boolean) {
 
-        const checkboxChanged = (updatedColState: ColState) => this.chartController.updateForColumnSelection(updatedColState);
+        const checkboxChanged = (updatedColState: ColState) => this.chartController.updateForMenuChange(updatedColState);
 
         const radioButtonChanged = (radioComp: ChartPanelRadioComp, updatedColState: ColState) => {
             this.dimensionComps.forEach(comp => comp.select(false));
-            this.chartController.updateForColumnSelection(updatedColState);
+            this.chartController.updateForMenuChange(updatedColState);
             radioComp.select(true);
         };
 

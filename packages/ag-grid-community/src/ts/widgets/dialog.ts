@@ -24,6 +24,7 @@ export interface DialogOptions {
     component?: Component;
     movable?: boolean;
     resizable?: boolean | ResizableStructure;
+    maximizable?: boolean;
     closable?: boolean;
     title?: string;
     width?: number;
@@ -60,12 +61,24 @@ export class Dialog extends PopupComponent {
         </div>
         `;
 
+    private static MAXIMIZE_BTN_TEMPLATE =
+        `<div class="ag-dialog-button">
+            <span class="ag-icon-maximize"></span>
+            <span class="ag-icon-minimize ag-hidden"></span>
+        </span>
+        `;
+
     private config: DialogOptions | undefined;
     private resizable: ResizableStructure = {};
+    private isResizable: boolean = false;
+    private isMaximizable: boolean = false;
+    private isMaximized: boolean = false;
+    private maximizeListeners: (() => void)[] = [];
     private movable = false;
     private closable = true;
     private isMoving = false;
     private isResizing = false;
+
     private dragStartPosition = {
         x: 0,
         y: 0
@@ -77,6 +90,13 @@ export class Dialog extends PopupComponent {
     };
 
     private size = {
+        width: 0,
+        height: 0
+    };
+
+    private lastPosition = {
+        x: 0,
+        y: 0,
         width: 0,
         height: 0
     };
@@ -100,6 +120,7 @@ export class Dialog extends PopupComponent {
     @RefSelector('eLeftResizer') private eLeftResizer: HTMLElement;
 
     private closeButtonComp: Component;
+    private maximizeButtonComp: Component;
 
     public close: () => void;
 
@@ -115,6 +136,7 @@ export class Dialog extends PopupComponent {
             centered,
             resizable,
             movable,
+            maximizable,
             closable,
             title,
             width,
@@ -128,6 +150,7 @@ export class Dialog extends PopupComponent {
         if (component) { this.setBodyComponent(component); }
         if (resizable) { this.setResizable(resizable); }
         if (title) { this.setTitle(title); }
+        if (this.isResizable && maximizable) { this.setMaximizable(maximizable); }
 
         this.setMovable(!!movable);
 
@@ -198,6 +221,7 @@ export class Dialog extends PopupComponent {
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {
+        let isResizable = false;
         if (typeof resizable === 'boolean') {
             resizable = {
                 topLeft: resizable,
@@ -228,12 +252,15 @@ export class Dialog extends PopupComponent {
                 if (val) {
                     this.dragService.addDragSource(params);
                     el.style.pointerEvents = 'all';
+                    isResizable = true;
                 } else {
-                    this.dragService.addDragSource(params);
+                    this.dragService.removeDragSource(params);
                     el.style.pointerEvents = 'none';
                 }
             }
         });
+
+        this.isResizable = isResizable;
     }
 
     private onDialogResizeStart(e: MouseEvent) {
@@ -286,6 +313,8 @@ export class Dialog extends PopupComponent {
                 this.position.y + offsetTop
             );
         }
+
+        this.isMaximized = false;
     }
 
     private onDialogResizeEnd() {
@@ -365,6 +394,60 @@ export class Dialog extends PopupComponent {
         } else if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
+        }
+    }
+
+    public setMaximizable(maximizable: boolean) {
+        if (maximizable === false) {
+            this.clearMaximizebleListeners();
+            if (this.maximizeButtonComp) {
+                this.maximizeButtonComp.destroy();
+                this.maximizeButtonComp = undefined;
+            }
+            return;
+        }
+
+        const eTitleBar = this.eTitleBar;
+        if (!this.isResizable || !eTitleBar || maximizable === this.isMaximizable) { return; }
+
+        const maximizeButtonComp = this.maximizeButtonComp = new Component(Dialog.MAXIMIZE_BTN_TEMPLATE);
+        maximizeButtonComp.addDestroyableEventListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
+        this.addTitleBarButton(maximizeButtonComp, 0);
+
+        this.maximizeListeners.push(
+            this.addDestroyableEventListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
+        );
+    }
+
+    private toggleMaximize() {
+        const maximizeButton = this.maximizeButtonComp.getGui();
+        const maximizeEl = maximizeButton.querySelector('.ag-icon-maximize') as HTMLElement;
+        const minimizeEl = maximizeButton.querySelector('.ag-icon-minimize') as HTMLElement;
+        if (this.isMaximized) {
+            const {x, y, width, height } = this.lastPosition;
+
+            this.setWidth(width);
+            this.setHeight(height);
+            this.offsetDialog(x, y);
+        } else {
+            this.lastPosition.width = this.getWidth();
+            this.lastPosition.height = this.getHeight();
+            this.lastPosition.x = this.position.x;
+            this.lastPosition.y = this.position.y;
+            this.offsetDialog(0, 0);
+            this.setHeight(Infinity);
+            this.setWidth(Infinity);
+        }
+
+        this.isMaximized = !this.isMaximized;
+        _.addOrRemoveCssClass(maximizeEl, 'ag-hidden', this.isMaximized);
+        _.addOrRemoveCssClass(minimizeEl, 'ag-hidden', !this.isMaximized);
+    }
+
+    private clearMaximizebleListeners() {
+        if (this.maximizeListeners.length) {
+            this.maximizeListeners.forEach(destroyListener => destroyListener());
+            this.maximizeListeners.length = 0;
         }
     }
 
@@ -455,10 +538,18 @@ export class Dialog extends PopupComponent {
 
     public destroy(): void {
         super.destroy();
+
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
         }
+
+        if (this.maximizeButtonComp) {
+            this.maximizeButtonComp.destroy();
+            this.maximizeButtonComp = undefined;
+        }
+
+        this.clearMaximizebleListeners();
 
         const eGui = this.getGui();
 

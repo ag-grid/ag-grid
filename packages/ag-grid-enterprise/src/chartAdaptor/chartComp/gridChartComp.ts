@@ -106,6 +106,7 @@ export class GridChartComp extends Component {
         this.chartDialog = new Dialog({
             resizable: true,
             movable: true,
+            maximizable: true,
             title: '',
             component: this,
             centered: true,
@@ -197,12 +198,13 @@ export class GridChartComp extends Component {
 
         pieChart.removeAllSeries();
 
-        pieChart.series = fields.map((f: {colId: string, displayName: string}) => {
+        pieChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
             pieSeries.name = f.displayName;
 
             pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.showInLegend = index === 0;
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
             pieChart.addSeries(pieSeries);

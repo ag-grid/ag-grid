@@ -2,19 +2,16 @@ import { Group } from "../scene/group";
 import { Selection } from "../scene/selection";
 import { Text } from "../scene/shape/text";
 import { Arc } from "../scene/shape/arc";
+import { MarkerLabel } from "./markerLabel";
 
-interface GroupSelectionDatum {
+interface ItemSelectionDatum {
     marker: {
-        x: number,
-        y: number,
-        radius: number,
+        size: number,
         fillStyle: string,
         strokeStyle: string,
         lineWidth: number
     },
     label: {
-        x: number,
-        y: number,
         text: string,
         font: string,
         fillStyle: string
@@ -39,62 +36,66 @@ enum LegendNodeTag {
     Label
 }
 
+export enum Orientation {
+    Vertical,
+    Horizontal
+}
+
 export class Legend {
 
     readonly group: Group = new Group();
 
-    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+    private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
+
+    private itemSelectionData: ItemSelectionDatum[] = [];
 
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
         this._data = data;
+        this.performLayout();
         this.update();
     }
     get data(): LegendDatum[] {
         return this._data;
     }
 
-    private _vertical: boolean = true;
-    set vertical(value: boolean) {
-        if (this._vertical !== value) {
-            this._vertical = value;
+    private _orientation: Orientation = Orientation.Vertical;
+    set orientation(value: Orientation) {
+        if (this._orientation !== value) {
+            this._orientation = value;
         }
     }
-    get vertical(): boolean {
-        return this._vertical;
+    get vertical(): Orientation {
+        return this._orientation;
     }
 
-    update() {
-        const data = this.data;
-        const groupSelectionData: GroupSelectionDatum[] = data.map(datum => {
+    performLayout() {
+        this.itemSelectionData = this.data.map(datum => {
             return {
                 marker: {
-                    x: 0,
-                    y: 10,
-                    radius: 6,
+                    size: 14,
                     fillStyle: datum.marker.fillStyle,
                     strokeStyle: datum.marker.strokeStyle,
                     lineWidth: 2
                 },
                 label: {
-                    x: 14,
-                    y: 10,
                     text: datum.name,
                     font: '12px Verdana',
                     fillStyle: 'black'
                 }
             };
         });
+    }
 
-        const updateGroups = this.groupSelection.setData(groupSelectionData);
+    update() {
+        const updateGroups = this.itemSelection.setData(this.itemSelectionData);
         updateGroups.exit.remove();
 
-        const enterGroups = updateGroups.enter.append(Group);
+        const enterGroups = updateGroups.enter.append(MarkerLabel);
         enterGroups.append(Arc).each(arc => {
             arc.tag = LegendNodeTag.Marker;
             arc.radiusX = 8;
             arc.radiusY = 8;
-            arc.centerY = 10;
         });
         enterGroups.append(Text).each(text => {
             text.tag = LegendNodeTag.Label;
@@ -102,28 +103,24 @@ export class Legend {
             text.textAlign = 'start';
         });
 
-        const groupSelection = updateGroups.merge(enterGroups);
+        const itemSelection = updateGroups.merge(enterGroups);
 
-        groupSelection.attrFn('translationY', (_, datum, index) => {
+        itemSelection.attrFn('translationY', (_, datum, index) => {
             return index * 20;
         });
-        groupSelection.selectByClass(Arc).each((arc, datum) => {
+        itemSelection.each((markerLabel, datum) => {
             const marker = datum.marker;
-            arc.radiusX = marker.radius;
-            arc.radiusY = marker.radius;
-            arc.fillStyle = marker.fillStyle;
-            arc.strokeStyle = marker.strokeStyle;
-            arc.lineWidth = marker.lineWidth;
-        });
-        groupSelection.selectByClass(Text).each((text, datum) => {
+            markerLabel.markerSize = marker.size;
+            markerLabel.markerFill = marker.fillStyle;
+            markerLabel.markerStroke = marker.strokeStyle;
+            markerLabel.markerLineWidth = marker.lineWidth;
+
             const label = datum.label;
-            text.text = label.text;
-            text.font = label.font;
-            text.fillStyle = label.fillStyle;
-            text.x = label.x;
-            text.y = label.y;
+            markerLabel.label = label.text;
+            markerLabel.labelFont = label.font;
+            markerLabel.labelFill = label.fillStyle;
         });
 
-        this.groupSelection = groupSelection;
+        this.itemSelection = itemSelection;
     }
 }
