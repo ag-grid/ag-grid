@@ -254,7 +254,7 @@ export class ChartModel extends BeanStub {
             startRow: this.referenceCellRange.startRow,
             endRow: this.referenceCellRange.endRow,
             columns: columns,
-            startColumn: columns[0],
+            startColumn: this.referenceCellRange.startColumn,
             type: cellRangeType
         };
 
