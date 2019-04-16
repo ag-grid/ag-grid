@@ -1,7 +1,7 @@
 $icons-path: './ag-theme-base/icons/' !default;
 
 .ag-theme-custom {
-    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus radio-button-on radio-button-off right small-left small-right small-up small-down tick cross tree-open tree-closed;
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading maximize minimze menu minus none not-allowed paste pin pivot plus radio-button-on radio-button-off right small-left small-right small-up small-down tick cross tree-open tree-closed;
     @each $icon in $icons {
         .ag-icon-#{$icon} {
             display: inline-block;

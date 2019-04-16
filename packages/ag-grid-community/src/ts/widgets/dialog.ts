@@ -61,6 +61,13 @@ export class Dialog extends PopupComponent {
         </div>
         `;
 
+    private static MAXIMIZE_BTN_TEMPLATE =
+        `<div class="ag-dialog-button">
+            <span class="ag-icon-maximize"></span>
+            <span class="ag-icon-minimize ag-hidden"></span>
+        </span>
+        `;
+
     private config: DialogOptions | undefined;
     private resizable: ResizableStructure = {};
     private isResizable: boolean = false;
@@ -113,6 +120,7 @@ export class Dialog extends PopupComponent {
     @RefSelector('eLeftResizer') private eLeftResizer: HTMLElement;
 
     private closeButtonComp: Component;
+    private maximizeButtonComp: Component;
 
     public close: () => void;
 
@@ -392,32 +400,48 @@ export class Dialog extends PopupComponent {
     public setMaximizable(maximizable: boolean) {
         if (maximizable === false) {
             this.clearMaximizebleListeners();
+            if (this.maximizeButtonComp) {
+                this.maximizeButtonComp.destroy();
+                this.maximizeButtonComp = undefined;
+            }
             return;
         }
 
         const eTitleBar = this.eTitleBar;
         if (!this.isResizable || !eTitleBar || maximizable === this.isMaximizable) { return; }
 
-        this.maximizeListeners.push(
-            this.addDestroyableEventListener(eTitleBar, 'dblclick', () => {
-                if (this.isMaximized) {
-                    const {x, y, width, height } = this.lastPosition;
+        const maximizeButtonComp = this.maximizeButtonComp = new Component(Dialog.MAXIMIZE_BTN_TEMPLATE);
+        maximizeButtonComp.addDestroyableEventListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
+        this.addTitleBarButton(maximizeButtonComp, 0);
 
-                    this.setWidth(width);
-                    this.setHeight(height);
-                    this.offsetDialog(x, y);
-                } else {
-                    this.lastPosition.width = this.getWidth();
-                    this.lastPosition.height = this.getHeight();
-                    this.lastPosition.x = this.position.x;
-                    this.lastPosition.y = this.position.y;
-                    this.offsetDialog(0, 0);
-                    this.setHeight(Infinity);
-                    this.setWidth(Infinity);
-                }
-                this.isMaximized = !this.isMaximized;
-            })
+        this.maximizeListeners.push(
+            this.addDestroyableEventListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
         );
+    }
+
+    private toggleMaximize() {
+        const maximizeButton = this.maximizeButtonComp.getGui();
+        const maximizeEl = maximizeButton.querySelector('.ag-icon-maximize') as HTMLElement;
+        const minimizeEl = maximizeButton.querySelector('.ag-icon-minimize') as HTMLElement;
+        if (this.isMaximized) {
+            const {x, y, width, height } = this.lastPosition;
+
+            this.setWidth(width);
+            this.setHeight(height);
+            this.offsetDialog(x, y);
+        } else {
+            this.lastPosition.width = this.getWidth();
+            this.lastPosition.height = this.getHeight();
+            this.lastPosition.x = this.position.x;
+            this.lastPosition.y = this.position.y;
+            this.offsetDialog(0, 0);
+            this.setHeight(Infinity);
+            this.setWidth(Infinity);
+        }
+
+        this.isMaximized = !this.isMaximized;
+        _.addOrRemoveCssClass(maximizeEl, 'ag-hidden', this.isMaximized);
+        _.addOrRemoveCssClass(minimizeEl, 'ag-hidden', !this.isMaximized);
     }
 
     private clearMaximizebleListeners() {
@@ -518,6 +542,11 @@ export class Dialog extends PopupComponent {
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
+        }
+
+        if (this.maximizeButtonComp) {
+            this.maximizeButtonComp.destroy();
+            this.maximizeButtonComp = undefined;
         }
 
         this.clearMaximizebleListeners();

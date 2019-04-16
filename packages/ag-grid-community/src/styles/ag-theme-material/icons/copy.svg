@@ -1,13 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>copy</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="copy" fill="#000000">
-            <path d="M11,2 L4,2 L4,2 C3.44771525,2 3,2.44771525 3,3 L3,12 L4,12 L4,3 L11,3 L11,2 Z" id="Shape" fill-rule="nonzero"></path>
-            <path d="M6,4 L12,4 C12.5522847,4 13,4.44771525 13,5 L13,14 C13,14.5522847 12.5522847,15 12,15 L6,15 C5.44771525,15 5,14.5522847 5,14 L5,5 L5,5 C5,4.44771525 5.44771525,4 6,4 L6,4 Z M6,5 L6,14 L12,14 L12,5 L6,5 Z" id="Combined-Shape"></path>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0z"/><path fill="#000000" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4l6 6v10c0 1.1-.9 2-2 2H7.99C6.89 23 6 22.1 6 21l.01-14c0-1.1.89-2 1.99-2h7zm-1 7h5.5L14 6.5V12z"/></svg>
