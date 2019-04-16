@@ -106,6 +106,7 @@ export class GridChartComp extends Component {
         this.chartDialog = new Dialog({
             resizable: true,
             movable: true,
+            maximizable: true,
             title: '',
             component: this,
             centered: true,
