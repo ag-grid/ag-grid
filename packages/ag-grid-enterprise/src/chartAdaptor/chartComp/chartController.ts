@@ -1,19 +1,6 @@
-import {
-    AgEvent,
-    Autowired,
-    BeanStub,
-    CellRange,
-    ChartType,
-    Events,
-    EventService,
-    PostConstruct,
-} from "ag-grid-community";
+import {AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct,} from "ag-grid-community";
 import {RangeController} from "../../rangeController";
-import {ChartDatasource} from "./chartDatasource";
-import {ChartOptions} from "./gridChartComp";
-import {ChartRangeModel} from "./model/chartRangeModel";
-import {ChartColumnModel, ColState} from "./model/chartColumnModel";
-import {ChartDataModel} from "./model/chartDataModel";
+import {ChartModel, ColState} from "./chartModel";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -24,117 +11,72 @@ export class ChartController extends BeanStub {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') rangeController: RangeController;
 
-    private readonly aggregate: boolean;
-    private readonly startingCellRanges: CellRange[];
+    private model: ChartModel;
 
-    private chartType: ChartType;
-
-    private dataModel: ChartDataModel;
-    private rangeModel: ChartRangeModel;
-    private columnModel: ChartColumnModel;
-
-    private datasource: ChartDatasource;
-
-    public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
+    public constructor(chartModel: ChartModel) {
         super();
-        this.chartType = chartOptions.chartType;
-        this.aggregate = chartOptions.aggregate;
-        this.startingCellRanges = cellRanges;
+        this.model = chartModel;
     }
 
     @PostConstruct
     private init(): void {
-        this.setupRangeModel();
-        this.setupColumnModel();
-        this.setupDataModel();
-
         this.updateModel();
+
+        this.setChartCellRangesInRangeController();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateModel.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onGridColumnChange.bind(this));
-    }
-
-    private setupRangeModel(): void {
-        this.rangeModel = new ChartRangeModel(this.startingCellRanges);
-        this.getContext().wireBean(this.rangeModel);
-
-        // update the range controller now that we have updated the cell ranges as 'value' or 'dimension'
-        this.setChartCellRangesInRangeController();
-    }
-
-    private setupColumnModel(): void {
-        this.columnModel = new ChartColumnModel();
-        this.getContext().wireBean(this.columnModel);
-
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
-        this.columnModel.resetColumnState(allColsFromRanges);
-    }
-
-    private setupDataModel(): void {
-        this.dataModel = new ChartDataModel(this.aggregate);
-        this.getContext().wireBean(this.dataModel);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
     }
 
     public updateForColumnSelection(updatedCol: ColState): void {
-        this.columnModel.updateColumnState(updatedCol);
-        this.rangeModel.updateCellRanges(this.columnModel.getDimensionColState(), updatedCol);
+        this.model.updateColumnState(updatedCol);
+        this.model.updateCellRanges(updatedCol);
         this.updateModel();
         this.setChartCellRangesInRangeController();
     }
 
     private onGridColumnChange() {
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
-        this.columnModel.resetColumnState(allColsFromRanges);
+        this.model.resetColumnState();
         this.updateModel();
     }
 
-    private updateModel() {
-        const allColsFromRanges = this.rangeModel.getAllColumnsFromRanges();
-        this.columnModel.updateColumnStateFromRanges(allColsFromRanges);
+    private onColumnMoved() {
+        const allColsFromRanges = this.model.getAllColumnsFromRanges();
+        this.model.updateColumnStateFromRanges(allColsFromRanges);
 
-        const selectedDimension = this.columnModel.getSelectedDimensionId();
-        const selectedValueCols = this.columnModel.getSelectedValueCols();
+        this.model.updateCellRanges();
+
+        this.updateModel();
+        this.setChartCellRangesInRangeController();
+    }
+
+    private updateModel() {
+        const allColsFromRanges = this.model.getAllColumnsFromRanges();
+        this.model.updateColumnStateFromRanges(allColsFromRanges);
+
+        const selectedDimension = this.model.getSelectedDimensionId();
+        const selectedValueCols = this.model.getSelectedValueCols();
         const {startRow, endRow} = this.getRowIndexes();
 
-        this.dataModel.updateData(selectedDimension, selectedValueCols, startRow, endRow);
+        this.model.updateData(selectedDimension, selectedValueCols, startRow, endRow);
 
         this.raiseChartUpdatedEvent();
     }
 
     public setChartType(chartType: ChartType): void {
-        this.chartType = chartType;
+        this.model.setChartType(chartType);
         this.raiseChartUpdatedEvent();
     }
 
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
-        return {dimensionCols: this.columnModel.getDimensionColState(), valueCols: this.columnModel.getValueColState()}
-    }
-
-    public getData(): any[] {
-        return this.dataModel.getData();
-    }
-
-    public getSelectedCategory(): string {
-        return this.columnModel.getSelectedDimensionId();
-    }
-
-    public getFields(): { colId: string, displayName: string }[] {
-        return this.columnModel.getSelectedColState().map(cs => {
-            return {
-                colId: cs.colId,
-                displayName: cs.displayName
-            };
-        });
-    };
-
-    public getChartType(): ChartType {
-        return this.chartType;
+        return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
     }
 
     public setChartCellRangesInRangeController() {
-        this.rangeController.setCellRanges(this.rangeModel.getCellRanges());
+        this.rangeController.setCellRanges(this.model.getCellRanges());
     }
 
     public removeChartCellRangesFromRangeController() {
@@ -150,7 +92,7 @@ export class ChartController extends BeanStub {
 
     private getRowIndexes(): {startRow: number, endRow: number} {
         let startRow = 0, endRow = 0;
-        const lastRange = this.rangeModel.getLastRange();
+        const lastRange = this.model.getLastRange();
         if (lastRange) {
             startRow = this.rangeController.getRangeStartRow(lastRange).rowIndex;
             endRow = this.rangeController.getRangeEndRow(lastRange).rowIndex;

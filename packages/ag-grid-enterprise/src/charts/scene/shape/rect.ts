@@ -1,6 +1,6 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
-import { BBox, isPointInBBox } from "../bbox";
+import { BBox } from "../bbox";
 import { pixelSnap as _pixelSnap } from "../../canvas/canvas";
 
 // _pixelSnap(3) compiles to Object(_canvas_canvas__WEBPACK_IMPORTED_MODULE_3__["pixelSnap"])(3)
@@ -173,7 +173,7 @@ export class Rect extends Shape {
         const point = this.transformPoint(x, y);
         const bbox = this.getBBox();
 
-        return isPointInBBox(bbox, point.x, point.y);
+        return bbox.containsPoint(point.x, point.y);
     }
 
     isPointInStroke(x: number, y: number): boolean {

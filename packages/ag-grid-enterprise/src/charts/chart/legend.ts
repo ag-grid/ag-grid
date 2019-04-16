@@ -54,6 +54,16 @@ export class Legend {
         return this._data;
     }
 
+    private _vertical: boolean = true;
+    set vertical(value: boolean) {
+        if (this._vertical !== value) {
+            this._vertical = value;
+        }
+    }
+    get vertical(): boolean {
+        return this._vertical;
+    }
+
     update() {
         const data = this.data;
         const groupSelectionData: GroupSelectionDatum[] = data.map(datum => {

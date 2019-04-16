@@ -1,7 +1,7 @@
 import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { HdpiCanvas } from "../../canvas/hdpiCanvas";
-import { BBox, isPointInBBox, renderBBox } from "../bbox";
+import { BBox } from "../bbox";
 
 export class Text extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -135,7 +135,7 @@ export class Text extends Shape {
         const point = this.transformPoint(x, y);
         const bbox = this.getBBox();
 
-        return isPointInBBox(bbox, point.x, point.y);
+        return bbox.containsPoint(point.x, point.y);
     }
 
     isPointInStroke(x: number, y: number): boolean {
@@ -180,10 +180,7 @@ export class Text extends Shape {
         }
 
         // // debug
-        // renderBBox({
-        //     ctx,
-        //     bbox: this.matrix.transformBBox(this.getBBox!())
-        // });
+        // this.matrix.transformBBox(this.getBBox!()).render(ctx);
 
         this.dirty = false;
     }

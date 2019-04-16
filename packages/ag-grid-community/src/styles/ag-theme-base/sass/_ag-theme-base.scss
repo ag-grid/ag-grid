@@ -412,11 +412,11 @@
     ////////////////////////////////////////
 
     .ag-ltr, .ag-rtl {
-        .ag-has-focus .ag-cell-focus {
-            &:not(.ag-cell-range-selected), &.ag-cell-range-single-cell {
-                border: 1px solid $primary-color;
-                outline: initial;
-            }
+        .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell, 
+        .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
+            border: 1px solid $primary-color;
+            outline: initial;
         }
     }
 

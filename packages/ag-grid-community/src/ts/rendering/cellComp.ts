@@ -1742,6 +1742,10 @@ export class CellComp extends Component {
             if (borders.left) { res.push('ag-cell-range-left'); }
         }
 
+        if(!!this.selectionHandle) {
+            res.push('ag-cell-range-handle');
+        }
+
         return res;
     }
 
@@ -1797,6 +1801,8 @@ export class CellComp extends Component {
         if (shouldHaveSelectionHandle) {
             this.addSelectionHandle();
         }
+
+        _.addOrRemoveCssClass(element, 'ag-cell-range-handle', !!this.selectionHandle);
     }
 
     private shouldHaveSelectionHandle(): boolean {
