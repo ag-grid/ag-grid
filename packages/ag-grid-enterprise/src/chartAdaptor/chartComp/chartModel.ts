@@ -169,8 +169,7 @@ export class ChartModel extends BeanStub {
         if (updatedCol && valueCols.indexOf(updatedCol.column as Column) > -1) {
             if (updatedCol.selected) {
                 valueColsInRange.push(updatedCol.column as Column);
-                // TODO fix
-                //valueColsInRange = this.getColumnInDisplayOrder(valueCols, valueColsInRange);
+                valueColsInRange = this.getColumnInDisplayOrder(valueCols, valueColsInRange);
             } else {
                 valueColsInRange = valueColsInRange.filter(col => col.getColId() !== updatedCol.colId);
             }
