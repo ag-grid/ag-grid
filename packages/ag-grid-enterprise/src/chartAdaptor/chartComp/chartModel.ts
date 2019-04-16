@@ -154,17 +154,6 @@ export class ChartModel extends BeanStub {
             }
         }
 
-        if (updatedCol && dimensionCols.indexOf(updatedCol.column as Column) > -1) {
-            const isDefaultCategory = updatedCol.colId === ChartModel.DEFAULT_CATEGORY;
-            dimensionColsInRange = isDefaultCategory ? [] : [updatedCol.column as Column];
-        }
-
-        if (dimensionColsInRange.length > 0) {
-            // add first dimension in range
-            const firstDimensionInRange = dimensionColsInRange[0];
-            this.addRange(CellRangeType.DIMENSION, [firstDimensionInRange]);
-        }
-
         if (valueColsInRange.length === 0) {
             // no range to add
         } else if (valueColsInRange.length === 1) {
