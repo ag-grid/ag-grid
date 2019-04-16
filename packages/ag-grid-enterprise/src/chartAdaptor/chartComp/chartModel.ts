@@ -73,18 +73,6 @@ export class ChartModel extends BeanStub {
         this.chartData = this.datasource.getData(params);
     }
 
-    public getData(): any[] {
-        return this.chartData;
-    }
-
-    public getValueColState(): ColState[] {
-        return this.valueColState;
-    }
-
-    public getDimensionColState(): ColState[] {
-        return this.dimensionColState;
-    }
-
     public resetColumnState(): void {
         const allColsFromRanges = this.getAllColumnsFromRanges();
         const {dimensionCols, valueCols} = this.getAllChartColumns();
@@ -142,22 +130,6 @@ export class ChartModel extends BeanStub {
             // just update the selected value on the supplied value column
             this.valueColState.forEach(cs => cs.selected = idsMatch(cs) ? updatedCol.selected : cs.selected);
         }
-    }
-
-    public setChartType(chartType: ChartType) {
-        this.chartType = chartType;
-    }
-
-    public getChartType(): ChartType {
-        return this.chartType;
-    }
-
-    public getCellRanges(): CellRange[] {
-        return this.cellRanges;
-    }
-
-    public getAllColumnsFromRanges(): Column[] {
-        return _.flatten(this.cellRanges.map(range => range.columns));
     }
 
     public updateCellRanges(updatedCol?: ColState) {
@@ -226,6 +198,42 @@ export class ChartModel extends BeanStub {
         console.log('ranges: ', this.cellRanges);
     }
 
+    public getData(): any[] {
+        return this.chartData;
+    }
+
+    public getValueColState(): ColState[] {
+        return this.valueColState;
+    }
+
+    public getDimensionColState(): ColState[] {
+        return this.dimensionColState;
+    }
+
+    public getCellRanges(): CellRange[] {
+        return this.cellRanges;
+    }
+
+    public setChartType(chartType: ChartType) {
+        this.chartType = chartType;
+    }
+
+    public getChartType(): ChartType {
+        return this.chartType;
+    }
+
+    public getSelectedColState(): ColState[] {
+        return this.valueColState.filter(cs => cs.selected);
+    }
+
+    public getSelectedValueCols(): Column[] {
+        return this.getSelectedColState().map(cs => cs.column) as Column[];
+    }
+
+    public getSelectedDimensionId(): string {
+        return this.dimensionColState.filter(cs => cs.selected)[0].colId;
+    }
+
     private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]) {
         const sortedList: Column[] = [];
         allDisplayedColumns.forEach(col => {
@@ -248,6 +256,10 @@ export class ChartModel extends BeanStub {
         cellRangeType === CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
     }
 
+    private getAllColumnsFromRanges(): Column[] {
+        return _.flatten(this.cellRanges.map(range => range.columns));
+    }
+
     private getDimensionsFromRanges(allDisplayedColumns: Column[]) {
         const isDimension = (col: Column) => {
             const colDef = col.getColDef() as ColDef;
@@ -257,7 +269,6 @@ export class ChartModel extends BeanStub {
         return this.getAllColumnsFromRanges().filter(col => isDimension(col));
     }
 
-
     private getValueColsFromRanges(allDisplayedColumns: Column[]) {
         const isValueCol = (col: Column) => {
             const colDef = col.getColDef() as ColDef;
@@ -265,18 +276,6 @@ export class ChartModel extends BeanStub {
         };
 
         return this.getAllColumnsFromRanges().filter(col => isValueCol(col));
-    }
-
-    public getSelectedColState(): ColState[] {
-        return this.valueColState.filter(cs => cs.selected);
-    }
-
-    public getSelectedValueCols(): Column[] {
-        return this.getSelectedColState().map(cs => cs.column) as Column[];
-    }
-
-    public getSelectedDimensionId(): string {
-        return this.dimensionColState.filter(cs => cs.selected)[0].colId;
     }
 
     private getFieldName(col: Column): string {
