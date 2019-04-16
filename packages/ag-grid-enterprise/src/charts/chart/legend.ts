@@ -47,9 +47,12 @@ export class Legend {
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
+    private itemSelectionData: ItemSelectionDatum[] = [];
+
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
         this._data = data;
+        this.performLayout();
         this.update();
     }
     get data(): LegendDatum[] {
@@ -66,9 +69,8 @@ export class Legend {
         return this._orientation;
     }
 
-    update() {
-        const data = this.data;
-        const itemSelectionData: ItemSelectionDatum[] = data.map(datum => {
+    performLayout() {
+        this.itemSelectionData = this.data.map(datum => {
             return {
                 marker: {
                     size: 14,
@@ -83,8 +85,10 @@ export class Legend {
                 }
             };
         });
+    }
 
-        const updateGroups = this.itemSelection.setData(itemSelectionData);
+    update() {
+        const updateGroups = this.itemSelection.setData(this.itemSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(MarkerLabel);
