@@ -197,7 +197,7 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         return {
             dateTo: _.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
             dateFrom: _.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
-            type: filterType ? filterType : this.defaultOption,
+            type: filterType ? filterType : this.optionsFactory.getDefaultOption(),
             filterType: 'date'
         };
     }
@@ -275,10 +275,10 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         if (!resetConditionFilterOnly) {
             this.setDateFrom(null, FilterConditionType.MAIN);
             this.setDateTo(null, FilterConditionType.MAIN);
-            this.setFilterType(this.defaultOption, FilterConditionType.MAIN);
+            this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.MAIN);
         }
 
-        this.setFilterType(this.defaultOption, FilterConditionType.CONDITION);
+        this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.CONDITION);
         this.setDateFrom(null, FilterConditionType.CONDITION);
         this.setDateTo(null, FilterConditionType.CONDITION);
     }

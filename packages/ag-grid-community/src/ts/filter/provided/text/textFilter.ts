@@ -67,7 +67,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         }
     }
 
-    public getDefaultType(): string {
+    public getDefaultFilterOption(): string {
         return AbstractComparableFilter.CONTAINS;
     }
 
@@ -144,7 +144,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         const filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
         const filter:string = type == FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
 
-        const customFilterOption = this.customFilterOptions[filter];
+        const customFilterOption = this.optionsFactory.getCustomOption(filter);
         if (customFilterOption) {
             // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
             if (filterText != null || customFilterOption.hideFilterInput) {
@@ -236,11 +236,11 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
 
     public resetState(resetConditionFilterOnly: boolean = false): void {
         if (!resetConditionFilterOnly) {
-            this.setFilterType(this.defaultOption, FilterConditionType.MAIN);
+            this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.MAIN);
             this.setFilter(null, FilterConditionType.MAIN);
         }
 
-        this.setFilterType(this.defaultOption, FilterConditionType.CONDITION);
+        this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.CONDITION);
         this.setFilter(null, FilterConditionType.CONDITION);
     }
 
@@ -249,7 +249,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         const filterText = type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
 
         return {
-            type: filter ? filter : this.defaultOption,
+            type: filter ? filter : this.optionsFactory.getDefaultOption(),
             filter: filterText,
             filterType: 'text'
         };

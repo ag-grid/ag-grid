@@ -200,7 +200,7 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
         const filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
         const filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
         return {
-            type: selectedFilter ? selectedFilter : this.defaultOption,
+            type: selectedFilter ? selectedFilter : this.optionsFactory.getDefaultOption(),
             filter: filterNumber,
             filterTo: filterNumberTo,
             filterType: 'number'
@@ -233,12 +233,12 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
 
     public resetState(resetConditionFilterOnly: boolean = false): void {
         if (!resetConditionFilterOnly) {
-            this.setFilterType(this.defaultOption, FilterConditionType.MAIN);
+            this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.MAIN);
             this.setFilter(null, FilterConditionType.MAIN);
             this.setFilterTo(null, FilterConditionType.MAIN);
         }
 
-        this.setFilterType(this.defaultOption, FilterConditionType.CONDITION);
+        this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.CONDITION);
         this.setFilter(null, FilterConditionType.CONDITION);
         this.setFilterTo(null, FilterConditionType.CONDITION);
     }

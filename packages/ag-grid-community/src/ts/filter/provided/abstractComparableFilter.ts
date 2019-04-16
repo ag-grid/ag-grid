@@ -2,6 +2,7 @@ import {IDoesFilterPassParams, IFilterOptionDef} from "../../interfaces/iFilter"
 import {QuerySelector} from "../../widgets/componentAnnotations";
 import {AbstractFilter, CombinedFilter, FilterConditionType, IComparableFilterParams} from "./abstractFilter";
 import {_} from "../../utils";
+import {OptionsFactory} from "./optionsFactory";
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     loadingOoo:'Loading...',
@@ -55,16 +56,15 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
     private eConditionWrapper: HTMLElement;
 
-    protected customFilterOptions: {[name: string]: IFilterOptionDef} = {};
+    protected optionsFactory: OptionsFactory;
 
-    protected defaultOption: string;
     protected selectedOption: string;
     protected selectedOptionCondition: string;
 
     protected abstract getApplicableFilterTypes(): string[];
     protected abstract filterValues(type:FilterConditionType): T | T[];
     protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
-    protected abstract getDefaultType(): string;
+    protected abstract getDefaultFilterOption(): string;
     protected abstract generateFilterValueTemplate(type: FilterConditionType): string;
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -81,46 +81,11 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
         this.filterParams = params;
 
-        this.defaultOption = this.filterParams.defaultOption;
+        this.optionsFactory = new OptionsFactory();
+        this.optionsFactory.init(params, this.getDefaultFilterOption());
 
-        // strip out incorrectly defined FilterOptionDefs
-        if (params.filterOptions) {
-            params.filterOptions.forEach(filterOption => {
-                if (typeof filterOption === 'string') { return; }
-                if (!filterOption.displayKey) {
-                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
-                    return;
-                }
-                if (!filterOption.displayName) {
-                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayName'");
-                    return;
-                }
-                if (!filterOption.test) {
-                    console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'test'");
-                    return;
-                }
-
-                this.customFilterOptions[filterOption.displayKey] = filterOption;
-            });
-        }
-
-        if (this.filterParams.filterOptions && !this.defaultOption) {
-            const firstFilterOption = this.filterParams.filterOptions[0];
-            if (typeof firstFilterOption === 'string') {
-                this.defaultOption = firstFilterOption;
-            } else if (firstFilterOption.displayKey) {
-                this.defaultOption = firstFilterOption.displayKey;
-            } else {
-                console.warn("ag-Grid: invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'");
-            }
-        }
-
-        if (!this.defaultOption) {
-            this.defaultOption = this.getDefaultType();
-        }
-
-        this.selectedOption = this.defaultOption;
-        this.selectedOptionCondition = this.defaultOption;
+        this.selectedOption = this.optionsFactory.getDefaultOption();
+        this.selectedOptionCondition = this.optionsFactory.getDefaultOption();
 
         this.suppressAndOrCondition = params.suppressAndOrCondition;
 
@@ -255,8 +220,8 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
         let defaultTranslation = DEFAULT_TRANSLATIONS[toTranslate];
 
-        if (!defaultTranslation && this.customFilterOptions[toTranslate]) {
-            defaultTranslation = this.customFilterOptions[toTranslate].displayName;
+        if (!defaultTranslation && this.optionsFactory.getCustomOption(toTranslate)) {
+            defaultTranslation = this.optionsFactory.getCustomOption(toTranslate).displayName;
         }
 
         return translate(toTranslate, defaultTranslation);
@@ -298,7 +263,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     }
 
     protected doesFilterHaveHiddenInput(filterType: string) {
-        const customFilterOption = this.customFilterOptions[filterType];
+        const customFilterOption = this.optionsFactory.getCustomOption(filterType);
         return customFilterOption && customFilterOption.hideFilterInput;
     }
 

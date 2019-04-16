@@ -54,7 +54,7 @@ export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> 
         };
     }
 
-    public getDefaultType(): string {
+    public getDefaultFilterOption(): string {
         return AbstractComparableFilter.EQUALS;
     }
 
@@ -81,7 +81,7 @@ export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> 
         const rawFilterValues: T[] | T = this.filterValues(type);
         const filterValue: T = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
 
-        const customFilterOption = this.customFilterOptions[filter];
+        const customFilterOption = this.optionsFactory.getCustomOption(filter);
         if (customFilterOption) {
             // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
             if (filterValue != null || customFilterOption.hideFilterInput) {

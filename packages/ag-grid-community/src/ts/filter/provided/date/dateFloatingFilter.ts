@@ -5,6 +5,8 @@ import {UserComponentFactory} from "../../../components/framework/userComponentF
 import {_, Promise} from "../../../utils";
 import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
 import {BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams} from "../../floating/floatingFilter";
+import {OptionsFactory} from "../optionsFactory";
+import {AbstractComparableFilter} from "../abstractComparableFilter";
 
 export class DateFloatingFilterComp extends Component
     implements IFloatingFilter
@@ -89,7 +91,10 @@ export class DateFloatingFilterComp extends Component
         const filterValueText: string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(filterValueDate), "-");
 
         return {
-            type: currentParentModel ? currentParentModel.type : null,
+            // if the parent filter model has not gotten set yet, we default to EQUALS. this is a bug if the developer
+            // has configured this filter to not have equals - however at time of writing, the floating filter doesn't
+            // have access to the filter params, which it would need to work out the default filter option.
+            type: currentParentModel ? currentParentModel.type : AbstractComparableFilter.EQUALS,
             dateFrom: filterValueText,
             dateTo: currentParentModel ? currentParentModel.dateTo : null,
             filterType: 'date'
