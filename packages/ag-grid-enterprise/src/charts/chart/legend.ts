@@ -2,19 +2,16 @@ import { Group } from "../scene/group";
 import { Selection } from "../scene/selection";
 import { Text } from "../scene/shape/text";
 import { Arc } from "../scene/shape/arc";
+import { MarkerLabel } from "./markerLabel";
 
-interface GroupSelectionDatum {
+interface ItemSelectionDatum {
     marker: {
-        x: number,
-        y: number,
-        radius: number,
+        size: number,
         fillStyle: string,
         strokeStyle: string,
         lineWidth: number
     },
     label: {
-        x: number,
-        y: number,
         text: string,
         font: string,
         fillStyle: string
@@ -48,7 +45,7 @@ export class Legend {
 
     readonly group: Group = new Group();
 
-    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+    private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
@@ -71,19 +68,15 @@ export class Legend {
 
     update() {
         const data = this.data;
-        const groupSelectionData: GroupSelectionDatum[] = data.map(datum => {
+        const itemSelectionData: ItemSelectionDatum[] = data.map(datum => {
             return {
                 marker: {
-                    x: 0,
-                    y: 0,
-                    radius: 6,
+                    size: 14,
                     fillStyle: datum.marker.fillStyle,
                     strokeStyle: datum.marker.strokeStyle,
                     lineWidth: 2
                 },
                 label: {
-                    x: 14,
-                    y: 0,
                     text: datum.name,
                     font: '12px Verdana',
                     fillStyle: 'black'
@@ -91,10 +84,10 @@ export class Legend {
             };
         });
 
-        const updateGroups = this.groupSelection.setData(groupSelectionData);
+        const updateGroups = this.itemSelection.setData(itemSelectionData);
         updateGroups.exit.remove();
 
-        const enterGroups = updateGroups.enter.append(Group);
+        const enterGroups = updateGroups.enter.append(MarkerLabel);
         enterGroups.append(Arc).each(arc => {
             arc.tag = LegendNodeTag.Marker;
             arc.radiusX = 8;
@@ -106,28 +99,24 @@ export class Legend {
             text.textAlign = 'start';
         });
 
-        const groupSelection = updateGroups.merge(enterGroups);
+        const itemSelection = updateGroups.merge(enterGroups);
 
-        groupSelection.attrFn('translationY', (_, datum, index) => {
+        itemSelection.attrFn('translationY', (_, datum, index) => {
             return index * 20;
         });
-        groupSelection.selectByClass(Arc).each((arc, datum) => {
+        itemSelection.each((markerLabel, datum) => {
             const marker = datum.marker;
-            arc.radiusX = marker.radius;
-            arc.radiusY = marker.radius;
-            arc.fillStyle = marker.fillStyle;
-            arc.strokeStyle = marker.strokeStyle;
-            arc.lineWidth = marker.lineWidth;
-        });
-        groupSelection.selectByClass(Text).each((text, datum) => {
+            markerLabel.markerSize = marker.size;
+            markerLabel.markerFill = marker.fillStyle;
+            markerLabel.markerStroke = marker.strokeStyle;
+            markerLabel.markerLineWidth = marker.lineWidth;
+
             const label = datum.label;
-            text.text = label.text;
-            text.font = label.font;
-            text.fillStyle = label.fillStyle;
-            text.x = label.x;
-            text.y = label.y;
+            markerLabel.label = label.text;
+            markerLabel.labelFont = label.font;
+            markerLabel.labelFill = label.fillStyle;
         });
 
-        this.groupSelection = groupSelection;
+        this.itemSelection = itemSelection;
     }
 }
