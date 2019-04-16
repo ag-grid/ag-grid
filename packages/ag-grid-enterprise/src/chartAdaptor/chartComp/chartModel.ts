@@ -146,6 +146,7 @@ export class ChartModel extends BeanStub {
 
         let dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
         if (this.initialising) {
+            // first time in just take the first dimension from the range as the column state hasn't been updated yet
             if (dimensionColsInRange.length > 0) {
                 this.addRange(CellRangeType.DIMENSION, [dimensionColsInRange[0]]);
             }
@@ -182,6 +183,8 @@ export class ChartModel extends BeanStub {
         } else {
             let currentRange = [];
             for (let i = 0; i < valueColsInRange.length; i++) {
+                // dragging left or right works as the value cols are sorted by display order
+
                 const currentValCol = valueColsInRange[i];
                 currentRange.push(currentValCol);
 

@@ -50,18 +50,18 @@ export class GridChartComp extends Component {
     private currentChartType: ChartType;
 
     private readonly chartOptions: ChartOptions;
-    private readonly startingCellRanges: CellRange[];
+    private readonly initialCellRanges: CellRange[];
 
     constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
         super(GridChartComp.TEMPLATE);
         this.chartOptions = chartOptions;
-        this.startingCellRanges = cellRanges;
+        this.initialCellRanges = cellRanges;
     }
 
     @PostConstruct
     public init(): void {
 
-        this.model = new ChartModel(this.chartOptions, this.startingCellRanges);
+        this.model = new ChartModel(this.chartOptions, this.initialCellRanges);
         this.getContext().wireBean(this.model);
 
         this.chartController = new ChartController(this.model);
