@@ -144,15 +144,31 @@ export class HdpiCanvas {
         this._pixelRatio = pixelRatio;
     }
 
+    /**
+     * The canvas flickers on size changes in Safari.
+     * A temporary canvas is used (during resize only) to prevent that.
+     */
+    private tempCanvas = document.createElement('canvas');
+
     resize(width: number, height: number) {
         const canvas = this.canvas;
+        const context = this.context;
+        const tempCanvas = this.tempCanvas;
+
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempContext = tempCanvas.getContext('2d')!;
+
+        tempContext.drawImage(context.canvas, 0, 0);
 
         canvas.width = Math.round(width * this.pixelRatio);
         canvas.height = Math.round(height * this.pixelRatio);
         canvas.style.width = Math.round(width) + 'px';
         canvas.style.height = Math.round(height) + 'px';
 
-        this.context.resetTransform();
+        context.drawImage(tempContext.canvas, 0, 0);
+
+        context.resetTransform();
     }
 
     // 2D canvas context used for measuring text.
@@ -204,18 +220,20 @@ export class HdpiCanvas {
         return svgText;
     };
 
-    private static _supports?: Readonly<{
+    private static _has?: Readonly<{
         textMetrics: boolean,
-        getTransform: boolean
+        getTransform: boolean,
+        flicker: boolean
     }>;
-    static get supports() {
-        if (HdpiCanvas._supports) {
-            return HdpiCanvas._supports;
+    static get has() {
+        if (HdpiCanvas._has) {
+            return HdpiCanvas._has;
         }
-        return HdpiCanvas._supports = Object.freeze({
+        return HdpiCanvas._has = Object.freeze({
             textMetrics: HdpiCanvas.textMeasuringContext.measureText('test')
                 .actualBoundingBoxDescent !== undefined,
-            getTransform: HdpiCanvas.textMeasuringContext.getTransform !== undefined
+            getTransform: HdpiCanvas.textMeasuringContext.getTransform !== undefined,
+            flicker: !!(window as any).safari
         });
     };
 
@@ -235,7 +253,7 @@ export class HdpiCanvas {
      * @param font The font shorthand string.
      */
     static getTextSize(text: string, font: string): Size {
-        if (HdpiCanvas.supports.textMetrics) {
+        if (HdpiCanvas.has.textMetrics) {
             const ctx = HdpiCanvas.textMeasuringContext;
             ctx.font = font;
             const metrics = ctx.measureText(text);
