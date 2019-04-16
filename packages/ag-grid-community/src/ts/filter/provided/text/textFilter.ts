@@ -92,7 +92,7 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
             AbstractFilter.CONTAINS, AbstractFilter.NOT_CONTAINS];
     }
 
-    public bodyTemplate(type:FilterConditionType): string {
+    public generateFilterValueTemplate(type:FilterConditionType): string {
         const translate = this.translate.bind(this);
         const fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
         return `<div class="ag-filter-body">

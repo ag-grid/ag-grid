@@ -1,6 +1,7 @@
 import {IDoesFilterPassParams} from "../../interfaces/iFilter";
 import {QuerySelector} from "../../widgets/componentAnnotations";
-import {AbstractFilter, FilterConditionType, IComparableFilterParams} from "./abstractFilter";
+import {AbstractFilter, CombinedFilter, FilterConditionType, IComparableFilterParams} from "./abstractFilter";
+import {_} from "../../utils";
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -14,6 +15,8 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     private eTypeConditionSelector: HTMLSelectElement;
 
     private suppressAndOrCondition: boolean;
+
+    private eConditionWrapper: HTMLElement;
 
     public abstract getApplicableFilterTypes(): string[];
     public abstract filterValues(type:FilterConditionType): T | T[];
@@ -44,7 +47,104 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         return this.suppressAndOrCondition !== true;
     }
 
-    public generateFilterHeader(type:FilterConditionType): string {
+    protected abstract generateFilterValueTemplate(type: FilterConditionType): string;
+
+    protected bodyTemplate(): string {
+        const optionsHtml = this.generateFilterOperatorTemplate(FilterConditionType.MAIN);
+        const centerHtml = this.generateFilterValueTemplate(FilterConditionType.MAIN);
+        const template = optionsHtml + centerHtml;
+
+        const showTwoConditions = this.allowTwoConditions();
+
+        const bodyWithTwoConditions = showTwoConditions ?
+            this.wrapCondition(template) :
+            template;
+
+        return bodyWithTwoConditions;
+    }
+
+    public onFilterChanged(applyNow: boolean = false): void {
+        super.onFilterChanged(applyNow);
+        this.redrawCondition();
+        this.refreshFilterBodyUi(FilterConditionType.MAIN);
+        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
+    }
+
+    public setModel(model: M | CombinedFilter<M>): void {
+        super.setModel(model);
+        this.redrawCondition();
+        this.refreshFilterBodyUi(FilterConditionType.MAIN);
+        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
+    }
+
+    private refreshOperatorUi() {
+        const andButton: HTMLInputElement = this.eConditionWrapper.querySelector('.and') as HTMLInputElement;
+        const orButton: HTMLInputElement = this.eConditionWrapper.querySelector('.or') as HTMLInputElement;
+        this.conditionValue = this.conditionValue == null ? 'AND' : this.conditionValue;
+
+        andButton.checked = this.conditionValue === 'AND';
+        orButton.checked = this.conditionValue === 'OR';
+        return {andButton, orButton};
+    }
+
+    private redrawCondition() {
+        const filterCondition: HTMLElement = this.eFilterBodyWrapper.querySelector('.ag-filter-condition') as HTMLElement;
+        if (!filterCondition && this.isFilterActive() && this.allowTwoConditions()) {
+            this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
+            this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
+            this.wireQuerySelectors();
+            const {andButton, orButton} = this.refreshOperatorUi();
+
+            this.addDestroyableEventListener(andButton, 'change', () => {
+                this.conditionValue = 'AND';
+                this.onFilterChanged();
+            });
+            this.addDestroyableEventListener(orButton, 'change', () => {
+                this.conditionValue = 'OR';
+                this.onFilterChanged();
+            });
+            this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
+        } else if (filterCondition && !this.isFilterActive()) {
+
+            // reset condition filter state
+            this.conditionValue = 'AND';
+            this.resetState(true);
+
+            this.eFilterBodyWrapper.removeChild(this.eConditionWrapper);
+            this.eConditionWrapper = null;
+        } else {
+            this.refreshFilterBodyUi(FilterConditionType.CONDITION);
+            if (this.eConditionWrapper) {
+                this.refreshOperatorUi();
+            }
+        }
+    }
+
+    public wrapCondition(mainCondition:string): string {
+        const filterNotActive = !this.isFilterActive();
+        if (filterNotActive) {
+            return mainCondition;
+        } else {
+            return  `${mainCondition}${this.createConditionTemplate(FilterConditionType.CONDITION)}`;
+        }
+    }
+
+    private createConditionTemplate(type:FilterConditionType): string {
+
+        const optionsHtml = this.generateFilterOperatorTemplate(type);
+        const centerHtml = this.generateFilterValueTemplate(type);
+        const template = optionsHtml + centerHtml;
+
+        return `<div class="ag-filter-condition">
+            <input id="andId" type="radio" class="and" name="booleanLogic" value=${this.translate('AND')}
+                   checked="checked" /><label style="display: inline" for="andId">${this.translate('andCondition')}</label>
+            <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline"
+                   for="orId">${this.translate('orCondition')}</label>
+            <div>${template}</div>
+        </div>`;
+    }
+
+    private generateFilterOperatorTemplate(type:FilterConditionType): string {
         const defaultFilterTypes = this.getApplicableFilterTypes();
         const restrictedFilterTypes = this.filterParams.filterOptions;
 

@@ -238,7 +238,7 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | SetF
         this.virtualList.refresh();
     }
 
-    public bodyTemplate() {
+    public bodyTemplate(): string {
         const translate = this.translate.bind(this);
 
         return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo')}</div>

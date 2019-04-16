@@ -63,7 +63,7 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         return [AbstractFilter.EQUALS, AbstractFilter.GREATER_THAN, AbstractFilter.LESS_THAN, AbstractFilter.NOT_EQUAL, AbstractFilter.IN_RANGE];
     }
 
-    public bodyTemplate(type:FilterConditionType): string {
+    public generateFilterValueTemplate(type:FilterConditionType): string {
         const fromPanelId = type == FilterConditionType.MAIN ? "filterDateFromPanel" : "filterDateFromConditionPanel";
         const toPanelId = type == FilterConditionType.MAIN ? "filterDateToPanel" : "filterDateToConditionPanel";
 

@@ -53,7 +53,7 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
             AbstractFilter.LESS_THAN_OR_EQUAL, AbstractFilter.GREATER_THAN, AbstractFilter.GREATER_THAN_OR_EQUAL, AbstractFilter.IN_RANGE];
     }
 
-    public bodyTemplate(type:FilterConditionType): string {
+    public generateFilterValueTemplate(type:FilterConditionType): string {
         const translate = this.translate.bind(this);
         const fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
         const filterNumberToPanelId = type == FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";

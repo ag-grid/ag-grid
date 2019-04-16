@@ -84,7 +84,7 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     private eButtonsPanel: HTMLElement;
 
     @QuerySelector('.ag-filter-body-wrapper')
-    private eFilterBodyWrapper: HTMLElement;
+    protected eFilterBodyWrapper: HTMLElement;
 
     @QuerySelector('#applyButton')
     private eApplyButton: HTMLElement;
@@ -92,7 +92,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     @QuerySelector('#clearButton')
     private eClearButton: HTMLElement;
 
-    private eConditionWrapper: HTMLElement;
     conditionValue: string;
 
     @Autowired('gridOptionsWrapper')
@@ -102,13 +101,13 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     public abstract isFilterActive(): boolean;
     public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
-    public abstract bodyTemplate(type: FilterConditionType): string;
     public abstract resetState(resetConditionFilterOnly?: boolean): void;
     public abstract serialize(type: FilterConditionType): M;
     public abstract parse(toParse: M, type: FilterConditionType): void;
     public abstract refreshFilterBodyUi(type: FilterConditionType): void;
     public abstract initialiseFilterBodyUi(type: FilterConditionType): void;
     public abstract isFilterConditionActive(type: FilterConditionType): boolean;
+    protected abstract bodyTemplate(): string;
 
     public init(params: P): void {
         this.filterParams = params;
@@ -239,9 +238,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         } else {
             this.resetState();
         }
-        this.redrawCondition();
-        this.refreshFilterBodyUi(FilterConditionType.MAIN);
-        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
     }
 
     private doOnFilterChanged(applyNow: boolean = false): boolean {
@@ -260,52 +256,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
 
     public onFilterChanged(applyNow: boolean = false): void {
         this.doOnFilterChanged(applyNow);
-        this.redrawCondition();
-        this.refreshFilterBodyUi(FilterConditionType.MAIN);
-        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
-    }
-
-    private redrawCondition() {
-        const filterCondition: HTMLElement = this.eFilterBodyWrapper.querySelector('.ag-filter-condition') as HTMLElement;
-        if (!filterCondition && this.isFilterActive() && this.allowTwoConditions()) {
-            this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
-            this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
-            this.wireQuerySelectors();
-            const {andButton, orButton} = this.refreshOperatorUi();
-
-            this.addDestroyableEventListener(andButton, 'change', () => {
-                this.conditionValue = 'AND';
-                this.onFilterChanged();
-            });
-            this.addDestroyableEventListener(orButton, 'change', () => {
-                this.conditionValue = 'OR';
-                this.onFilterChanged();
-            });
-            this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
-        } else if (filterCondition && !this.isFilterActive()) {
-
-            // reset condition filter state
-            this.conditionValue = 'AND';
-            this.resetState(true);
-
-            this.eFilterBodyWrapper.removeChild(this.eConditionWrapper);
-            this.eConditionWrapper = null;
-        } else {
-            this.refreshFilterBodyUi(FilterConditionType.CONDITION);
-            if (this.eConditionWrapper) {
-                this.refreshOperatorUi();
-            }
-        }
-    }
-
-    private refreshOperatorUi() {
-        const andButton: HTMLInputElement = this.eConditionWrapper.querySelector('.and') as HTMLInputElement;
-        const orButton: HTMLInputElement = this.eConditionWrapper.querySelector('.or') as HTMLInputElement;
-        this.conditionValue = this.conditionValue == null ? 'AND' : this.conditionValue;
-
-        andButton.checked = this.conditionValue === 'AND';
-        orButton.checked = this.conditionValue === 'OR';
-        return {andButton, orButton};
     }
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
@@ -327,22 +277,14 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         return this.doOnFilterChanged(casted ? casted.apply : false);
     }
 
-    public generateFilterHeader(type:FilterConditionType): string {
-        return '';
-    }
-
     private generateTemplate(): string {
-        const mainConditionBody = this.createConditionBody(FilterConditionType.MAIN);
-        const showTwoConditions = this.allowTwoConditions();
 
-        const bodyWithTwoConditions = showTwoConditions ?
-            this.wrapCondition(mainConditionBody) :
-            mainConditionBody;
+        const body = this.bodyTemplate();
 
         const translate = this.translate.bind(this);
 
         return `<div>
-                    <div class='ag-filter-body-wrapper'>${bodyWithTwoConditions}</div>
+                    <div class='ag-filter-body-wrapper'>${body}</div>
                     <div class="ag-filter-apply-panel" id="applyPanel">
                         <button type="button" id="clearButton">${translate('clearFilter')}</button>
                         <button type="button" id="applyButton">${translate('applyFilter')}</button>
@@ -354,30 +296,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         return false;
     }
 
-    public wrapCondition(mainCondition:string): string {
-        const filterNotActive = !this.isFilterActive();
-        if (filterNotActive) {
-            return mainCondition;
-        } else {
-            return  `${mainCondition}${this.createConditionTemplate(FilterConditionType.CONDITION)}`;
-        }
-    }
-
-    private createConditionTemplate(type:FilterConditionType): string {
-        return `<div class="ag-filter-condition">
-            <input id="andId" type="radio" class="and" name="booleanLogic" value=${this.translate('AND')}
-                   checked="checked" /><label style="display: inline" for="andId">${this.translate('andCondition')}</label>
-            <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline"
-                   for="orId">${this.translate('orCondition')}</label>
-            <div>${this.createConditionBody(type)}</div>
-        </div>`;
-    }
-
-    private createConditionBody(type:FilterConditionType): string {
-        const bodyTemplate = this.bodyTemplate(type);
-        const headerTemplate = this.generateFilterHeader(type);
-        return headerTemplate + bodyTemplate;
-    }
 
     public translate(toTranslate: string): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
