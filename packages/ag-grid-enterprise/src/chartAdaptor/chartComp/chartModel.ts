@@ -38,6 +38,8 @@ export class ChartModel extends BeanStub {
     private chartType: ChartType;
     private readonly aggregate: boolean;
 
+    private initialising = true; //TODO remove
+
     private datasource: ChartDatasource;
 
     public constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
@@ -139,12 +141,31 @@ export class ChartModel extends BeanStub {
         const {dimensionCols, valueCols} = this.getAllChartColumns();
         const allColsFromRanges = this.getAllColumnsFromRanges();
 
-        let valueColsInRange = valueCols.filter(col => allColsFromRanges.indexOf(col) > -1);
-        let dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
-
         // clear ranges
         this.cellRanges = [];
 
+        let dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
+        if (this.initialising) {
+            if (dimensionColsInRange.length > 0) {
+                this.addRange(CellRangeType.DIMENSION, [dimensionColsInRange[0]]);
+            }
+            this.initialising = false;
+        }
+
+        if (updatedCol && dimensionCols.indexOf(updatedCol.column as Column) > -1) {
+            // if updated col is dimension col and is not the default category
+            if (updatedCol!.colId !== ChartModel.DEFAULT_CATEGORY) {
+                this.addRange(CellRangeType.DIMENSION, [updatedCol!.column as Column]);
+            }
+        } else {
+            // otherwise use current selected dimension
+            const selectedDimension = this.dimensionColState.filter(cs => cs.selected)[0];
+            if (selectedDimension && selectedDimension.colId !== ChartModel.DEFAULT_CATEGORY) {
+                this.addRange(CellRangeType.DIMENSION, [selectedDimension.column!]);
+            }
+        }
+
+        let valueColsInRange = valueCols.filter(col => allColsFromRanges.indexOf(col) > -1);
         if (updatedCol && valueCols.indexOf(updatedCol.column as Column) > -1) {
             if (updatedCol.selected) {
                 valueColsInRange.push(updatedCol.column as Column);

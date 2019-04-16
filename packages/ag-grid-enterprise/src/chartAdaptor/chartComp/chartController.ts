@@ -40,9 +40,6 @@ export class ChartController extends BeanStub {
         this.setChartCellRangesInRangeController();
 
         this.raiseChartUpdatedEvent();
-
-
-        console.log(this.model.getCellRanges());
     }
 
     public updateForMenuChange(updatedCol: ColState): void {
