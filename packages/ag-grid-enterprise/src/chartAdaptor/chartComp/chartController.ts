@@ -74,10 +74,6 @@ export class ChartController extends BeanStub {
         this.rangeController.setCellRanges(this.model.getCellRanges());
     }
 
-    public removeChartCellRangesFromRangeController() {
-        this.rangeController.setCellRanges([]);
-    }
-
     private raiseChartUpdatedEvent() {
         const event: ChartModelUpdatedEvent = {
             type: ChartController.EVENT_CHART_MODEL_UPDATED
@@ -87,5 +83,9 @@ export class ChartController extends BeanStub {
 
     public destroy() {
         super.destroy();
+
+        if (this.rangeController) {
+            this.rangeController.setCellRanges([]);
+        }
     }
 }

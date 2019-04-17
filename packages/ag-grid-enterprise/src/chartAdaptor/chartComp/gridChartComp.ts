@@ -253,7 +253,6 @@ export class GridChartComp extends Component {
         super.destroy();
 
         if (this.chartController) {
-            this.chartController.removeChartCellRangesFromRangeController();
             this.chartController.destroy();
         }
         if (this.chart) {
