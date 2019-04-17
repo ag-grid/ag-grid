@@ -14,7 +14,7 @@ import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 import {RangeController} from "../../rangeController";
 
-export interface ColState  {
+export interface ColState {
     column?: Column;
     colId: string;
     displayName: string;
@@ -135,8 +135,11 @@ export class ChartModel extends BeanStub {
     }
 
     public updateCellRanges(movingCols: boolean, updatedCol?: ColState) {
-        // update the reference range
-        this.referenceCellRange = _.last(this.cellRanges) as CellRange;
+        const lastRange = _.last(this.cellRanges) as CellRange;
+        if (lastRange) {
+            // update the reference range
+            this.referenceCellRange = lastRange
+        }
 
         const {dimensionCols, valueCols} = this.getAllChartColumns();
         const allColsFromRanges = this.getAllColumnsFromRanges();
@@ -280,7 +283,7 @@ export class ChartModel extends BeanStub {
         return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 
-    private getRowIndexes(): {startRow: number, endRow: number} {
+    private getRowIndexes(): { startRow: number, endRow: number } {
         let startRow = 0, endRow = 0;
         const range = _.last(this.cellRanges) as CellRange;
         if (range) {
