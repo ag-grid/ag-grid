@@ -390,9 +390,29 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | SetF
         this.selectEverything();
     }
 
-    isFilterConditionActive(): boolean {
-        return false;
+    public getModel(): SetFilterModel | null  {
+        if (this.isFilterActive()) {
+            return this.getNullableModel();
+        } else {
+            return null;
+        }
     }
+
+    public setModel(model: SetFilterModel): void {
+        if (model) {
+            this.resetState();
+            this.parse(model);
+        } else {
+            this.resetState();
+        }
+    }
+
+    public getNullableModel(): SetFilterModel | null  {
+        // we cast to SetFilterModel to cover the case where use
+        const model = this.serialize();
+        return <SetFilterModel> <any> model;
+    }
+
 }
 
 class ModelWrapper implements VirtualListModel {

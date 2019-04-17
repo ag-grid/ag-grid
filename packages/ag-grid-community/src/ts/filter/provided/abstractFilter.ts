@@ -66,8 +66,11 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     public abstract parse(toParse: M, type: FilterConditionType): void;
     public abstract refreshFilterBodyUi(type: FilterConditionType): void;
     public abstract initialiseFilterBodyUi(type: FilterConditionType): void;
-    protected abstract isFilterConditionActive(type: FilterConditionType): boolean;
+
     protected abstract bodyTemplate(): string;
+
+    public abstract getModel(): any;
+    public abstract setModel(model: any): void;
 
     public init(params: P): void {
         this.filterParams = params;
@@ -120,51 +123,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         }
     }
 
-    public getModel(): M | CombinedFilter<M> {
-        if (this.isFilterActive()) {
-            if (!this.isFilterConditionActive (FilterConditionType.CONDITION)) {
-                return this.serialize(FilterConditionType.MAIN);
-            } else {
-                return {
-                    condition1: this.serialize(FilterConditionType.MAIN),
-                    condition2: this.serialize(FilterConditionType.CONDITION),
-                    operator: this.conditionValue
-                };
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public getNullableModel(): M | CombinedFilter<M> {
-        if (!this.isFilterConditionActive (FilterConditionType.CONDITION)) {
-            return this.serialize(FilterConditionType.MAIN);
-        } else {
-            return {
-                condition1: this.serialize(FilterConditionType.MAIN),
-                condition2: this.serialize(FilterConditionType.CONDITION),
-                operator: this.conditionValue
-            };
-        }
-    }
-
-    public setModel(model: M | CombinedFilter<M>): void {
-        if (model) {
-            if (!(model as CombinedFilter<M>).operator) {
-                this.resetState();
-                this.parse (model as M, FilterConditionType.MAIN);
-            } else {
-                const asCombinedFilter = model as CombinedFilter<M>;
-                this.parse ((asCombinedFilter).condition1, FilterConditionType.MAIN);
-                this.parse ((asCombinedFilter).condition2, FilterConditionType.CONDITION);
-
-                this.conditionValue = asCombinedFilter.operator;
-            }
-        } else {
-            this.resetState();
-        }
-    }
-
     private doOnFilterChanged(applyNow: boolean = false): boolean {
         this.filterParams.filterModifiedCallback();
         const requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
@@ -181,6 +139,10 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
 
     public onFilterChanged(applyNow: boolean = false): void {
         this.doOnFilterChanged(applyNow);
+    }
+
+    protected isFilterConditionActive(type: FilterConditionType): boolean {
+        return false;
     }
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {

@@ -5,7 +5,6 @@ import {UserComponentFactory} from "../../../components/framework/userComponentF
 import {_, Promise} from "../../../utils";
 import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
 import {BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams} from "../../floating/floatingFilter";
-import {OptionsFactory} from "../optionsFactory";
 import {AbstractComparableFilter} from "../abstractComparableFilter";
 
 export class DateFloatingFilterComp extends Component

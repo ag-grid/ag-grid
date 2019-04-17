@@ -247,15 +247,15 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private currentParentModel(): any {
-        const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI') as any;
-        const wholeParentFilter: CombinedFilter<any> | any = filterComponentPromise.resolveNow(null, (filter: any) =>
+        const filterPromise = this.filterManager.getFilterComponent(this.column, 'NO_UI');
+        const filterModel: CombinedFilter<any> | any = filterPromise.resolveNow(null, (filter: any) =>
             (filter.getNullableModel) ?
                 filter.getNullableModel() :
                 filter.getModel()
         );
-        return (wholeParentFilter && (wholeParentFilter as CombinedFilter<any>).operator != null) ?
-            (wholeParentFilter as CombinedFilter<any>).condition1
-            : wholeParentFilter as any;
+        return (filterModel && (filterModel as CombinedFilter<any>).operator != null) ?
+            (filterModel as CombinedFilter<any>).condition1
+            : filterModel as any;
     }
 
     private onFloatingFilterChanged(change: any): boolean {

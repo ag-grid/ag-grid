@@ -67,6 +67,26 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     protected abstract getDefaultFilterOption(): string;
     protected abstract generateFilterValueTemplate(type: FilterConditionType): string;
 
+    public getModel(): M | CombinedFilter<M> {
+        if (this.isFilterActive()) {
+            return this.getNullableModel();
+        } else {
+            return null;
+        }
+    }
+
+    public getNullableModel(): M | CombinedFilter<M> {
+        if (!this.isFilterConditionActive (FilterConditionType.CONDITION)) {
+            return this.serialize(FilterConditionType.MAIN);
+        } else {
+            return {
+                condition1: this.serialize(FilterConditionType.MAIN),
+                condition2: this.serialize(FilterConditionType.CONDITION),
+                operator: this.conditionValue
+            };
+        }
+    }
+
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const mainFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
         if (this.eTypeConditionSelector == null) {
@@ -118,7 +138,21 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     }
 
     public setModel(model: M | CombinedFilter<M>): void {
-        super.setModel(model);
+        if (model) {
+            if (!(model as CombinedFilter<M>).operator) {
+                this.resetState();
+                this.parse (model as M, FilterConditionType.MAIN);
+            } else {
+                const asCombinedFilter = model as CombinedFilter<M>;
+                this.parse ((asCombinedFilter).condition1, FilterConditionType.MAIN);
+                this.parse ((asCombinedFilter).condition2, FilterConditionType.CONDITION);
+
+                this.conditionValue = asCombinedFilter.operator;
+            }
+        } else {
+            this.resetState();
+        }
+
         this.redrawCondition();
         this.refreshFilterBodyUi(FilterConditionType.MAIN);
         this.refreshFilterBodyUi(FilterConditionType.CONDITION);
