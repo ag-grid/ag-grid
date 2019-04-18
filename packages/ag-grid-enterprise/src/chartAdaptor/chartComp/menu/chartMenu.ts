@@ -38,9 +38,9 @@ export class ChartMenu extends Component {
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
 
-    constructor(chartModel: ChartController) {
+    constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
-        this.chartController = chartModel;
+        this.chartController = chartController;
     }
 
     @PostConstruct
