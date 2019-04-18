@@ -116,7 +116,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         super.init(params);
     }
 
-    public allowTwoConditions(): boolean {
+    public isAllowTwoConditions(): boolean {
         return this.suppressAndOrCondition !== true;
     }
 
@@ -125,7 +125,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         const centerHtml = this.createValueTemplate(FilterConditionType.MAIN);
         const template = optionsHtml + centerHtml;
 
-        const showTwoConditions = this.allowTwoConditions();
+        const showTwoConditions = this.isAllowTwoConditions();
 
         const bodyWithTwoConditions = showTwoConditions ?
             this.wrapCondition(template) :
@@ -174,7 +174,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
     private redrawCondition() {
         const filterCondition: HTMLElement = this.eFilterBodyWrapper.querySelector('.ag-filter-condition') as HTMLElement;
-        if (!filterCondition && this.isFilterActive() && this.allowTwoConditions()) {
+        if (!filterCondition && this.isFilterActive() && this.isAllowTwoConditions()) {
             this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
             this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
             this.wireQuerySelectors();

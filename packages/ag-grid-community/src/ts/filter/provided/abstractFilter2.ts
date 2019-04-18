@@ -7,19 +7,7 @@ import {BaseFloatingFilterChange, FloatingFilterChange} from "../floating/floati
 import {ITextFilterParams} from "./text/textFilter";
 import {_} from "../../utils";
 import {INumberFilterParams} from "./number/numberFilter";
-
-export interface Comparator<T> {
-    (left: T, right: T): number;
-}
-export enum FilterConditionType {
-    MAIN, CONDITION
-}
-
-export interface CombinedFilter <T> {
-    operator: string;
-    condition1: T;
-    condition2: T;
-}
+import {CombinedFilter, FilterConditionType} from "./abstractFilter";
 
 /**
  * T(ype) The type of this filter. ie in DateFilter T=Date
@@ -30,13 +18,13 @@ export interface CombinedFilter <T> {
  * Contains common logic to ALL filters.. Translation, apply and clear button
  * get/setModel context wiring....
  */
-export abstract class AbstractFilter<P extends IFilterParams, M> extends Component implements IFilterComp {
+export abstract class AbstractFilter2<P extends IFilterParams, M> extends Component implements IFilterComp {
 
     private newRowsActionKeep: boolean;
 
     filterParams: P;
-    clearActive: boolean;
-    applyActive: boolean;
+    private clearActive: boolean;
+    private applyActive: boolean;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -55,75 +43,56 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     @Autowired('gridOptionsWrapper')
     gridOptionsWrapper: GridOptionsWrapper;
 
-    // take this out also
-    private doTemplateInPostConstruct: boolean;
-
-    // in time we should take this out, sub-classes should override init() and call super.init()
-    protected customInit(): void {}
-
     public abstract isFilterActive(): boolean;
     public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     public abstract resetState(resetConditionFilterOnly?: boolean): void;
     public abstract serialize(type: FilterConditionType): M;
     public abstract parse(toParse: M, type: FilterConditionType): void;
-
-    protected refreshFilterBodyUi(type: FilterConditionType): void {};
-    protected initialiseFilterBodyUi(type: FilterConditionType): void {};
+    protected abstract updateVisibilityOfComponents(): void;
 
     protected abstract bodyTemplate(): string;
 
-    public abstract getModel(): any;
-    public abstract setModel(model: any): void;
+    public abstract getModel(): M;
+    public abstract setModel(model: M): void;
 
-    constructor(doTemplateInPostCreate = false) {
-        super();
-        this.doTemplateInPostConstruct = doTemplateInPostCreate;
-    }
+    protected abstract doApply(): void;
 
     @PostConstruct
     protected postConstruct(): void {
-        if (this.doTemplateInPostConstruct) {
-            const templateString = this.generateTemplate();
-            this.setTemplate(templateString);
-        }
+        const templateString = this.generateTemplate();
+        this.setTemplate(templateString);
     }
 
     public init(params: P): void {
         this.filterParams = params;
 
-        this.customInit();
-
         this.clearActive = params.clearButton === true;
-        //Allowing for old param property apply, even though is not advertised through the interface
-        this.applyActive = ((params.applyButton === true) || ((params as any).apply === true));
+        // Allowing for old param property apply, even though is not advertised through the interface
+        const deprecatedApply = (params as any).apply === true;
+        this.applyActive = (params.applyButton===true) || deprecatedApply;
         this.newRowsActionKeep = params.newRowsAction === 'keep';
 
-        if (!this.doTemplateInPostConstruct) {
-            const templateString = this.generateTemplate();
-            this.setTemplate(templateString);
-        }
-
         _.setVisible(this.eApplyButton, this.applyActive);
-        if (this.applyActive) {
-            this.addDestroyableEventListener(this.eApplyButton, "click", this.filterParams.filterChangedCallback);
-        }
+        this.addDestroyableEventListener(this.eApplyButton, "click", this.onBtApply.bind(this));
 
         _.setVisible(this.eClearButton, this.clearActive);
-        if (this.clearActive) {
-            this.addDestroyableEventListener(this.eClearButton, "click", this.onClearButton.bind(this));
-        }
+        this.addDestroyableEventListener(this.eClearButton, "click", this.onBtClear.bind(this));
 
         const anyButtonVisible: boolean = this.applyActive || this.clearActive;
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
 
-        this.initialiseFilterBodyUi(FilterConditionType.MAIN);
-        this.refreshFilterBodyUi(FilterConditionType.MAIN);
+        this.updateVisibilityOfComponents();
     }
 
-    public onClearButton() {
+    private onBtClear() {
         this.setModel(null);
         this.onFilterChanged();
+    }
+
+    private onBtApply() {
+        this.doApply();
+        this.filterParams.filterChangedCallback();
     }
 
     public floatingFilter(from: string): void {
@@ -142,30 +111,23 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
         }
     }
 
-    private doOnFilterChanged(applyNow: boolean = false): boolean {
+    protected onFilterChanged(): void {
+        this.updateVisibilityOfComponents();
         this.filterParams.filterModifiedCallback();
-        const requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
-        const notRequiresApply: boolean = !this.applyActive;
-
-        const shouldFilter: boolean = notRequiresApply || requiresApplyAndIsApplying;
-        if (shouldFilter) {
-            this.filterParams.filterChangedCallback();
+        if (!this.applyActive) {
+            this.onBtApply();
         }
-        this.refreshFilterBodyUi(FilterConditionType.MAIN);
-        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
-        return shouldFilter;
     }
 
-    public onFilterChanged(applyNow: boolean = false): void {
-        this.doOnFilterChanged(applyNow);
-    }
-
+/*
     protected isFilterConditionActive(type: FilterConditionType): boolean {
         return false;
     }
+*/
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
-        //It has to be of the type FloatingFilterWithApplyChange if it gets here
+        return false;
+/*        //It has to be of the type FloatingFilterWithApplyChange if it gets here
         const casted: BaseFloatingFilterChange<M> = change as BaseFloatingFilterChange<M>;
         if (casted == null) {
             this.setModel(null);
@@ -180,7 +142,7 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
             this.setModel(combinedFilter);
         }
 
-        return this.doOnFilterChanged(casted ? casted.apply : false);
+        return this.doOnFilterChanged(casted ? casted.apply : false);*/
     }
 
     private generateTemplate(): string {
@@ -196,10 +158,6 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
                         <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
                     </div>
                 </div>`;
-    }
-
-    public isAllowTwoConditions(): boolean {
-        return false;
     }
 
     public getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number {

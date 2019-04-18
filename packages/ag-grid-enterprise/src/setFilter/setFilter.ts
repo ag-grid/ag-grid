@@ -129,10 +129,6 @@ export class SetFilter extends AbstractFilter <ISetFilterParams, string[] | SetF
         }
     }
 
-    public refreshFilterBodyUi(): void {
-
-    }
-
     private createSetListItem(value: any): Component {
 
         const listItem = new SetFilterListItem(value, this.filterParams.column);
