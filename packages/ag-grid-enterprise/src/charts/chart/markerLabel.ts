@@ -1,5 +1,5 @@
 import { Group } from "../scene/group";
-import { Arc } from "../scene/shape/arc";
+import { Rect } from "../scene/shape/rect";
 import { Text } from "../scene/shape/text";
 
 export class MarkerLabel extends Group {
@@ -9,23 +9,21 @@ export class MarkerLabel extends Group {
         markerSize: 14
     };
 
-    private markerNode = new Arc();
+    private markerNode = new Rect();
     private labelNode = new Text();
 
     constructor() {
         super();
 
-        const markerNode = this.markerNode;
-        const labelNode = this.labelNode;
-
         this.markerSize = MarkerLabel.defaults.markerSize;
 
+        const labelNode = this.labelNode;
         labelNode.textBaseline = 'middle';
         labelNode.textAlign = 'start';
 
         this.padding = MarkerLabel.defaults.padding;
 
-        this.append([markerNode, labelNode]);
+        this.append([this.markerNode, labelNode]);
     }
 
     set label(value: string) {
@@ -53,8 +51,10 @@ export class MarkerLabel extends Group {
     set markerSize(value: number) {
         if (this._markerSize !== value) {
             this._markerSize = value;
-            this.markerNode.radiusX = value / 2;
-            this.markerNode.radiusY = value / 2;
+            this.markerNode.x = -value / 2;
+            this.markerNode.y = -value / 2;
+            this.markerNode.width = value;
+            this.markerNode.height = value;
         }
     }
     get markerSize(): number {

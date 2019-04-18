@@ -191,7 +191,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     update(): void {
         const chart = this.chart;
 
-        if (!chart || chart && chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        if (!chart || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
             return;
         }
 

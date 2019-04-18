@@ -510,7 +510,7 @@ export class GridPanel extends Component {
             switch (eventName) {
                 case 'keydown':
                     // first see if it's a scroll key, page up / down, home / end etc
-                    const wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+                    const wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
 
                     // if not a scroll key, then we pass onto cell
                     if (!wasScrollKey) {

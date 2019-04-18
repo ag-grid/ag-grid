@@ -74,7 +74,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set chart(chart: CartesianChart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get chart(): CartesianChart<D, X, Y> | null {
@@ -84,7 +84,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set xField(value: Extract<keyof D, string> | undefined) {
         if (this._xField !== value) {
             this._xField = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get xField(): Extract<keyof D, string> | undefined {
@@ -105,7 +105,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         groupScale.padding = 0.1;
         groupScale.round = true;
 
-        this.scheduleLayout();
+        this.scheduleData();
     }
     get yFields(): Extract<keyof D, string>[] {
         return this._yFields;
@@ -123,7 +123,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set grouped(value: boolean) {
         if (this._grouped !== value) {
             this._grouped = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get grouped(): boolean {
@@ -317,7 +317,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     update(): void {
         const chart = this.chart;
 
-        if (!chart || chart && chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        if (!chart || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
             return;
         }
 

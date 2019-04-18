@@ -88,7 +88,7 @@ export class ChartModel extends BeanStub {
             return {
                 column,
                 colId: column.getColId(),
-                displayName: this.getFieldName(column),
+                displayName: this.getColDisplayName(column),
                 selected: allColsFromRanges.indexOf(column) > -1
             };
         });
@@ -97,7 +97,7 @@ export class ChartModel extends BeanStub {
             return {
                 column,
                 colId: column.getColId(),
-                displayName: this.getFieldName(column),
+                displayName: this.getColDisplayName(column),
                 selected: false
             };
         });
@@ -279,7 +279,7 @@ export class ChartModel extends BeanStub {
         return _.flatten(this.cellRanges.map(range => range.columns));
     }
 
-    private getFieldName(col: Column): string {
+    private getColDisplayName(col: Column): string {
         return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
     }
 

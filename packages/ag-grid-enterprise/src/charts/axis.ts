@@ -9,7 +9,7 @@ import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
-import { Rect } from "./scene/shape/rect";
+// import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
     Tick,

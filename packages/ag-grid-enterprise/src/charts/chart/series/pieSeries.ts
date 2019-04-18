@@ -16,11 +16,14 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
-    innerRadius: number,
-    outerRadius: number,
+    // innerRadius: number,
+    // outerRadius: number,
+    radius: number, // in the [0, 1] range
     startAngle: number,
     endAngle: number,
     midAngle: number,
+    midCos: number,
+    midSin: number,
 
     fillStyle: string | null,
     strokeStyle: string | null,
@@ -31,19 +34,11 @@ interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
         text: string,
         font: string,
         fillStyle: string,
-        x: number,
-        y: number
+        textAlign: CanvasTextAlign,
+        textBaseline: CanvasTextBaseline
     },
 
     callout?: {
-        start: {
-            x: number,
-            y: number
-        },
-        end: {
-            x: number,
-            y: number
-        },
         strokeStyle: string
     }
 }
@@ -81,7 +76,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set angleField(value: Extract<keyof D, string> | undefined) {
         if (this._angleField !== value) {
             this._angleField = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get angleField(): Extract<keyof D, string> | undefined {
@@ -90,12 +85,14 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     /**
      * The name of the numeric field to use to determine the radii of pie slices.
+     * The largest value will correspond to the full radius and smaller values to
+     * proportionally smaller radii.
      */
     private _radiusField: Extract<keyof D, string> | undefined = undefined;
     set radiusField(value: Extract<keyof D, string> | undefined) {
         if (this._radiusField !== value) {
             this._radiusField = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get radiusField(): Extract<keyof D, string> | undefined {
@@ -110,7 +107,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set labelField(value: Extract<keyof D, string> | undefined) {
         if (this._labelField !== value) {
             this._labelField = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get labelField(): Extract<keyof D, string> | undefined {
@@ -143,6 +140,16 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     colors: string[] = colors;
     private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
+
+    set visible(value: boolean) {
+        if (this._visible !== value) {
+            this._visible = value;
+            this.group.visible = value;
+        }
+    }
+    get visible(): boolean {
+        return this._visible;
+    }
 
     set rotation(value: number) {
         if (this._rotation !== value) {
@@ -213,15 +220,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this.radiusScale.domain as [number, number];
     }
 
-    minRadius = 15;
+    minOuterRadius = 15;
 
     processData(): boolean {
         const data = this.data as any[];
-        const centerX = this.centerX;
-        const centerY = this.centerY;
-
-        this.group.translationX = centerX;
-        this.group.translationY = centerY;
 
         const angleData: number[] = data.map(datum => +datum[this.angleField] || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
@@ -241,9 +243,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         const radiusField = this.radiusField;
         let radiusData: number[] = [];
         if (radiusField) {
-            radiusData = data.map(datum => datum[radiusField]);
-            this.radiusScale.domain = [0, Math.max(...radiusData, 1)];
-            this.radiusScale.range = [0, this.radius];
+            radiusData = data.map(datum => Math.abs(datum[radiusField]));
+            const maxDatum = Math.max(...radiusData);
+            radiusData.forEach((value, index, array) => array[index] = value / maxDatum);
         }
 
         const angleScale = this.angleScale;
@@ -259,14 +261,12 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         const strokeColor = this.strokeStyle;
         const strokeColors = this.strokeColors;
         const calloutColor = this.calloutColor;
+        const halfPi = Math.PI / 2;
 
         let datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
-            const radius = radiusField ? this.radiusScale.convert(radiusData[datumIndex]) : this.radius;
-            const outerRadius = radius + this.outerRadiusOffset;
-            const innerRadius = Math.max(0, this.innerRadiusOffset ? radius + this.innerRadiusOffset : 0);
-            this.visible = outerRadius >= this.minRadius;
+            const radius = radiusField ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start + rotation);
             const endAngle = angleScale.convert(end + rotation);
 
@@ -274,20 +274,40 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
             const span = Math.abs(endAngle - startAngle);
             const midCos = Math.cos(midAngle);
             const midSin = Math.sin(midAngle);
-            const calloutLength = this.calloutLength;
 
             const labelMinAngle = toRadians(this.labelMinAngle);
             const labelVisible = labelField && span > labelMinAngle;
             const strokeStyle = strokeColor ? strokeColor : strokeColors[datumIndex % strokeColors.length];
             const calloutStrokeStyle = calloutColor ? calloutColor : strokeStyle;
 
+            const midAngle180 = normalizeAngle180(midAngle);
+            // Split the circle into quadrants like so: ⊗
+            let quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
+            let textAlign: CanvasTextAlign;
+            let textBaseline: CanvasTextBaseline;
+
+            if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
+                textAlign = 'center';
+                textBaseline = 'bottom';
+            } else if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
+                textAlign = 'left';
+                textBaseline = 'middle';
+            } else if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
+                textAlign = 'center';
+                textBaseline = 'hanging';
+            } else {
+                textAlign = 'right';
+                textBaseline = 'middle';
+            }
+
             groupSelectionData.push({
                 seriesDatum: data[datumIndex],
-                innerRadius,
-                outerRadius,
+                radius,
                 startAngle,
                 endAngle,
                 midAngle: normalizeAngle180(midAngle),
+                midCos,
+                midSin,
 
                 fillStyle: colors[datumIndex % colors.length],
                 strokeStyle,
@@ -298,19 +318,11 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                     text: labelData[datumIndex],
                     font: labelFont,
                     fillStyle: labelColor,
-                    x: midCos * (outerRadius + calloutLength + this.calloutPadding),
-                    y: midSin * (outerRadius + calloutLength + this.calloutPadding)
+                    textAlign,
+                    textBaseline
                 } : undefined,
 
                 callout: labelVisible ? {
-                    start: {
-                        x: midCos * outerRadius,
-                        y: midSin * outerRadius
-                    },
-                    end: {
-                        x: midCos * (outerRadius + calloutLength),
-                        y: midSin * (outerRadius + calloutLength)
-                    },
                     strokeStyle: calloutStrokeStyle
                 } : undefined
             });
@@ -326,9 +338,17 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     update(): void {
         const chart = this.chart;
 
-        if (!chart || chart && chart.layoutPending) {
+        if (!chart || chart.dataPending || chart.layoutPending) {
             return;
         }
+
+        const outerRadiusOffset = this.outerRadiusOffset;
+        const innerRadiusOffset = this.innerRadiusOffset;
+        const radiusScale = this.radiusScale;
+        radiusScale.range = [0, this.radius];
+
+        this.group.translationX = this.centerX;
+        this.group.translationY = this.centerY;
 
         const updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
@@ -346,10 +366,19 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         const groupSelection = updateGroups.merge(enterGroups);
 
+        let minOuterRadius = Infinity;
+        const outerRadii: number[] = [];
         groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector)
             .each((sector, datum) => {
-                sector.innerRadius = datum.innerRadius;
-                sector.outerRadius = datum.outerRadius;
+                const radius = radiusScale.convert(datum.radius);
+                const outerRadius = radius + outerRadiusOffset;
+                if (minOuterRadius > outerRadius) {
+                    minOuterRadius = outerRadius;
+                }
+                outerRadii.push(outerRadius);
+
+                sector.outerRadius = outerRadius;
+                sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
                 sector.startAngle = datum.startAngle;
                 sector.endAngle = datum.endAngle;
                 sector.fillStyle = datum.fillStyle;
@@ -359,50 +388,43 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 sector.lineJoin = 'round';
             });
 
+        this.visible = minOuterRadius >= this.minOuterRadius;
+
+        const calloutLength = this.calloutLength;
         groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout)
-            .each((line, datum) => {
+            .each((line, datum, i) => {
                 const callout = datum.callout;
+
                 if (callout) {
+                    const outerRadius = outerRadii[i];
+
                     line.lineWidth = this.calloutWidth;
                     line.strokeStyle = callout.strokeStyle;
-                    line.x1 = callout.start.x;
-                    line.y1 = callout.start.y;
-                    line.x2 = callout.end.x;
-                    line.y2 = callout.end.y;
+                    line.x1 = datum.midCos * outerRadius;
+                    line.y1 = datum.midSin * outerRadius;
+                    line.x2 = datum.midCos * (outerRadius + calloutLength);
+                    line.y2 = datum.midSin * (outerRadius + calloutLength);
                 } else {
                     line.strokeStyle = null;
                 }
             });
 
-        const halfPi = Math.PI / 2;
-
+        const calloutPadding = this.calloutPadding;
         groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label)
-            .each((text, datum) => {
-                const angle = datum.midAngle;
-                // Split the circle into quadrants like so: ⊗
-                let quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
-
-                if (angle >= quadrantStart && angle < (quadrantStart += halfPi)) {
-                    text.textAlign = 'center';
-                    text.textBaseline = 'bottom';
-                } else if (angle >= quadrantStart && angle < (quadrantStart += halfPi)) {
-                    text.textAlign = 'left';
-                    text.textBaseline = 'middle';
-                } else if (angle >= quadrantStart && angle < (quadrantStart += halfPi)) {
-                    text.textAlign = 'center';
-                    text.textBaseline = 'hanging';
-                } else {
-                    text.textAlign = 'right';
-                    text.textBaseline = 'middle';
-                }
-
+            .each((text, datum, i) => {
                 const label = datum.label;
+
                 if (label) {
+                    const outerRadius = outerRadii[i];
+                    const labelRadius = outerRadius + calloutLength + calloutPadding;
+
                     text.font = label.font;
                     text.text = label.text;
-                    text.x = label.x;
-                    text.y = label.y;
+                    text.x = datum.midCos * labelRadius;
+                    text.y = datum.midSin * labelRadius;
                     text.fillStyle = label.fillStyle;
+                    text.textAlign = label.textAlign;
+                    text.textBaseline = label.textBaseline;
                 } else {
                     text.fillStyle = null;
                 }
