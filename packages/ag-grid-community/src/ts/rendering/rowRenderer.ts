@@ -1012,11 +1012,6 @@ export class RowRenderer extends BeanStub {
             if (!rowNode.group) { break; }
         }
 
-        if (nextCell) {
-            const cellComp = this.getComponentForCell(nextCell);
-            nextCell = cellComp.getCellPosition();
-        }
-
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
@@ -1051,6 +1046,12 @@ export class RowRenderer extends BeanStub {
         }
 
         this.ensureCellVisible(nextCell);
+
+        // in case we have col spanning we get the cellComp and use it to
+        // get the position. This was we always focus the first cell inside
+        // the spanning.
+        const cellComp = this.getComponentForCell(nextCell);
+        nextCell = cellComp.getCellPosition();
 
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
 
