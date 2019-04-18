@@ -1,12 +1,12 @@
 import {FilterModel} from "../../../interfaces/iFilter";
 import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
 import {QuerySelector} from "../../../widgets/componentAnnotations";
-import {AbstractFilter, Comparator, FilterConditionType, IComparableFilterParams} from "../abstractFilter";
+import {Comparator, FilterConditionType} from "../abstractFilter";
 import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {_} from "../../../utils";
 import {AbstractScalerFilter} from "../abstractScalerFilter";
-import {AbstractComparableFilter} from "../abstractComparableFilter";
+import {AbstractComparableFilter, IComparableFilterParams} from "../abstractComparableFilter";
 
 export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
@@ -60,12 +60,13 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         };
     }
 
-    public getApplicableFilterTypes(): string[] {
+    public getDefaultFilterOptions(): string[] {
         return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.GREATER_THAN,
             AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.IN_RANGE];
     }
 
-    public generateFilterValueTemplate(type:FilterConditionType): string {
+    public createValueTemplate(type:FilterConditionType): string {
+
         const fromPanelId = type == FilterConditionType.MAIN ? "filterDateFromPanel" : "filterDateFromConditionPanel";
         const toPanelId = type == FilterConditionType.MAIN ? "filterDateToPanel" : "filterDateToConditionPanel";
 

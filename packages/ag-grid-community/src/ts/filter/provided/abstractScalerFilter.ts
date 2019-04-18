@@ -1,6 +1,17 @@
 import {IDoesFilterPassParams} from "../../interfaces/iFilter";
-import {Comparator, FilterConditionType, IScalarFilterParams, NullComparator} from "./abstractFilter";
-import {AbstractComparableFilter} from "./abstractComparableFilter";
+import {Comparator, FilterConditionType } from "./abstractFilter";
+import {AbstractComparableFilter, IComparableFilterParams} from "./abstractComparableFilter";
+
+export interface NullComparator {
+    equals?: boolean;
+    lessThan?: boolean;
+    greaterThan?: boolean;
+}
+
+export interface IScalarFilterParams extends IComparableFilterParams {
+    inRangeInclusive?: boolean;
+    nullComparator?: NullComparator;
+}
 
 /**
  * Comparable filter with scalar underlying values (ie numbers and dates. Strings are not scalar so have to extend

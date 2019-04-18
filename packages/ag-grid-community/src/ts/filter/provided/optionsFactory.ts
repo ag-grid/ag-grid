@@ -1,5 +1,5 @@
 import {IFilterOptionDef} from "../../interfaces/iFilter";
-import {IComparableFilterParams} from "./abstractFilter";
+import {IComparableFilterParams} from "./abstractComparableFilter";
 
 export class OptionsFactory {
 

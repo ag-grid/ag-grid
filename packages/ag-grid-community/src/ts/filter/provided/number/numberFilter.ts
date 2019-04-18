@@ -1,8 +1,8 @@
 import {FilterModel} from "../../../interfaces/iFilter";
 import {QuerySelector} from "../../../widgets/componentAnnotations";
-import {AbstractFilter, Comparator, FilterConditionType, IScalarFilterParams} from "../abstractFilter";
+import {Comparator, FilterConditionType} from "../abstractFilter";
 import {_} from "../../../utils";
-import {AbstractScalerFilter} from "../abstractScalerFilter";
+import {AbstractScalerFilter, IScalarFilterParams} from "../abstractScalerFilter";
 import {AbstractComparableFilter} from "../abstractComparableFilter";
 
 export interface NumberFilterModel extends FilterModel {
@@ -49,17 +49,19 @@ export class NumberFilter extends AbstractScalerFilter<number, INumberFilterPara
         };
     }
 
-    public getApplicableFilterTypes(): string[] {
+    public getDefaultFilterOptions(): string[] {
         return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.LESS_THAN,
             AbstractComparableFilter.LESS_THAN_OR_EQUAL, AbstractComparableFilter.GREATER_THAN,
             AbstractComparableFilter.GREATER_THAN_OR_EQUAL, AbstractComparableFilter.IN_RANGE];
     }
 
-    public generateFilterValueTemplate(type:FilterConditionType): string {
+    public createValueTemplate(type:FilterConditionType): string {
         const translate = this.translate.bind(this);
+
         const fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
-        const filterNumberToPanelId = type == FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";
         const fieldToId = type == FilterConditionType.MAIN ? "filterToText" : "filterToConditionText";
+        const filterNumberToPanelId = type == FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";
+
         return `<div class="ag-filter-body">
             <div class="ag-input-text-wrapper">
                 <input class="ag-filter-filter" id="${fieldId}" type="text" placeholder="${translate('filterOoo')}"/>

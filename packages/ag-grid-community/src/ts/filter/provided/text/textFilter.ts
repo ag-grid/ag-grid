@@ -1,8 +1,8 @@
 import {FilterModel, IDoesFilterPassParams} from "../../../interfaces/iFilter";
-import {AbstractFilter, FilterConditionType, IComparableFilterParams} from "../abstractFilter";
+import {FilterConditionType} from "../abstractFilter";
 import {QuerySelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
-import {AbstractComparableFilter} from "../abstractComparableFilter";
+import {AbstractComparableFilter, IComparableFilterParams} from "../abstractComparableFilter";
 
 export interface TextFilterModel extends FilterModel {
     filter: string;
@@ -24,6 +24,7 @@ export interface ITextFilterParams extends IComparableFilterParams {
 }
 
 export class TextFilter extends AbstractComparableFilter <string, ITextFilterParams, TextFilterModel> {
+
     @QuerySelector('#filterText')
     private eFilterTextField: HTMLInputElement;
 
@@ -88,12 +89,12 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
         };
     }
 
-    public getApplicableFilterTypes(): string[] {
+    public getDefaultFilterOptions(): string[] {
         return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.STARTS_WITH,
             AbstractComparableFilter.ENDS_WITH, AbstractComparableFilter.CONTAINS, AbstractComparableFilter.NOT_CONTAINS];
     }
 
-    public generateFilterValueTemplate(type:FilterConditionType): string {
+    public createValueTemplate(type:FilterConditionType): string {
         const translate = this.translate.bind(this);
         const fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
         return `<div class="ag-filter-body">

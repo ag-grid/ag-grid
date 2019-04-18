@@ -194,20 +194,3 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     }
 
 }
-
-
-export interface NullComparator {
-    equals?: boolean;
-    lessThan?: boolean;
-    greaterThan?: boolean;
-}
-
-export interface IComparableFilterParams extends IFilterParams {
-    suppressAndOrCondition: boolean;
-}
-
-export interface IScalarFilterParams extends IComparableFilterParams {
-    inRangeInclusive?: boolean;
-    nullComparator?: NullComparator;
-}
-

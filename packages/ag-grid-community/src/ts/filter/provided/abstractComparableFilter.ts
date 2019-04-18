@@ -1,8 +1,12 @@
-import {IDoesFilterPassParams, IFilterOptionDef} from "../../interfaces/iFilter";
+import {IDoesFilterPassParams, IFilterParams} from "../../interfaces/iFilter";
 import {QuerySelector} from "../../widgets/componentAnnotations";
-import {AbstractFilter, CombinedFilter, FilterConditionType, IComparableFilterParams} from "./abstractFilter";
+import {AbstractFilter, CombinedFilter, FilterConditionType} from "./abstractFilter";
 import {_} from "../../utils";
 import {OptionsFactory} from "./optionsFactory";
+
+export interface IComparableFilterParams extends IFilterParams {
+    suppressAndOrCondition: boolean;
+}
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     loadingOoo:'Loading...',
@@ -61,11 +65,11 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     protected selectedOption: string;
     protected selectedOptionCondition: string;
 
-    protected abstract getApplicableFilterTypes(): string[];
+    protected abstract getDefaultFilterOptions(): string[];
     protected abstract filterValues(type:FilterConditionType): T | T[];
     protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
     protected abstract getDefaultFilterOption(): string;
-    protected abstract generateFilterValueTemplate(type: FilterConditionType): string;
+    protected abstract createValueTemplate(type: FilterConditionType): string;
 
     public getModel(): M | CombinedFilter<M> {
         if (this.isFilterActive()) {
@@ -117,8 +121,8 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
     }
 
     protected bodyTemplate(): string {
-        const optionsHtml = this.generateFilterOperatorTemplate(FilterConditionType.MAIN);
-        const centerHtml = this.generateFilterValueTemplate(FilterConditionType.MAIN);
+        const optionsHtml = this.createOptionsTemplate(FilterConditionType.MAIN);
+        const centerHtml = this.createValueTemplate(FilterConditionType.MAIN);
         const template = optionsHtml + centerHtml;
 
         const showTwoConditions = this.allowTwoConditions();
@@ -212,8 +216,9 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
 
     private createConditionTemplate(type:FilterConditionType): string {
 
-        const optionsHtml = this.generateFilterOperatorTemplate(type);
-        const centerHtml = this.generateFilterValueTemplate(type);
+        const optionsHtml = this.createOptionsTemplate(type);
+        const centerHtml = this.createValueTemplate(type);
+
         const template = optionsHtml + centerHtml;
 
         return `<div class="ag-filter-condition">
@@ -225,28 +230,31 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         </div>`;
     }
 
-    private generateFilterOperatorTemplate(type:FilterConditionType): string {
-        const defaultFilterTypes = this.getApplicableFilterTypes();
-        const restrictedFilterTypes = this.filterParams.filterOptions;
+    private createOptionsTemplate(type:FilterConditionType): string {
+        const filterOptions = this.filterParams.filterOptions ?
+            this.filterParams.filterOptions : this.getDefaultFilterOptions();
 
-        const actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
+        if (filterOptions.length===0) { return ''; }
 
-        const optionsHtml: string[] = actualFilterTypes.map(filter => {
-            const filterName = (typeof filter === 'string') ? filter : filter.displayKey;
-            const localeFilterName = this.translate(filterName);
-            return `<option value="${filterName}">${localeFilterName}</option>`;
+        const listItems: string[] = [];
+
+        filterOptions.forEach( option => {
+            const key = (typeof option === 'string') ? option : option.displayKey;
+            const localName = this.translate(key);
+            listItems.push(`<option value="${key}">${localName}</option>`);
         });
 
-        const readOnly = optionsHtml.length == 1 ? 'disabled' : '';
+        const readOnly = listItems.length == 1 ? 'disabled' : '';
         const id:string = type == FilterConditionType.MAIN ? 'filterType' : 'filterConditionType';
 
-        return optionsHtml.length <= 0 ?
-            '' :
+        const res =
             `<div>
                 <select class="ag-filter-select" id="${id}" ${readOnly}>
-                    ${optionsHtml.join('')}
+                    ${listItems.join('')}
                 </select>
             </div>`;
+
+        return res;
     }
 
     public translate(toTranslate: string): string {
