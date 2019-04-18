@@ -4,7 +4,6 @@ import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
-import { LegendDatum } from "./legend";
 
 export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
 
@@ -47,7 +46,7 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
     }
 
     performLayout(): void {
-        if (!(this.xAxis && this.yAxis)) {
+        if (this.dataPending || !(this.xAxis && this.yAxis)) {
             return;
         }
 
@@ -97,31 +96,30 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         yAxis.translationY = shrinkRect.y;
         yAxis.gridLength = shrinkRect.width;
 
+        this.updateAxes();
+
         this.series.forEach(series => {
             series.group.translationX = shrinkRect.x;
             series.group.translationY = shrinkRect.y;
-            series.processData();
-        });
-
-        this.updateAxes();
-
-        const legendData: LegendDatum[] = [];
-        this.series.forEach(series => {
             series.update(); // this has to happen after the `updateAxis` call
-            if (series.showInLegend) {
-                series.provideLegendData(legendData);
-            }
         });
 
         const legend = this.legend;
-        legend.data = legendData;
+        legend.size = [300, shrinkRect.height];
+        legend.performLayout();
         // We reset the `translationX` intentionally here to get `legendBBox.x`
         // which is the offset we need to apply to align the left edge of legend
         // with the right edge of the `seriesClipRect`.
         legend.group.translationX = 0;
         legend.group.translationY = 0;
+
         const legendBBox = legend.group.getBBox();
-        legendBBox.dilate(20);
+        // legendBBox.dilate(20);
+        legendBBox.x -= 20;
+        legendBBox.y -= 20;
+        legendBBox.width += 20;
+        legendBBox.height += 40;
+
         legend.group.translationX = seriesClipRect.x + seriesClipRect.width - legendBBox.x;
         legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
 

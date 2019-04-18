@@ -4,7 +4,7 @@ import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
-import { Legend } from "./legend";
+import { Legend, LegendDatum } from "./legend";
 
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
@@ -28,6 +28,7 @@ export abstract class Chart<D, X, Y> {
     protected constructor(parent: HTMLElement = document.body) {
         this.scene.parent = parent;
         this.scene.root = new Group();
+        this.legend.onSizeChange = this.onLegendSizeChange.bind(this);
         this.setupListeners(this.scene.hdpiCanvas.canvas);
     }
 
@@ -36,8 +37,13 @@ export abstract class Chart<D, X, Y> {
         if (tooltipParent) {
             tooltipParent.removeChild(this.tooltipElement);
         }
+        this.legend.onSizeChange = undefined;
         this.cleanupListeners(this.scene.hdpiCanvas.canvas);
         this.scene.parent = null;
+    }
+
+    onLegendSizeChange() {
+        this.layoutPending = true;
     }
 
     private _data: D[] = [];
@@ -91,7 +97,7 @@ export abstract class Chart<D, X, Y> {
     private layoutCallbackId: number = 0;
     set layoutPending(value: boolean) {
         if (value) {
-            if (!this.layoutCallbackId) {
+            if (!(this.layoutCallbackId || this.dataPending)) {
                 this.layoutCallbackId = requestAnimationFrame(this._performLayout);
             }
         } else if (this.layoutCallbackId) {
@@ -111,6 +117,41 @@ export abstract class Chart<D, X, Y> {
         this.layoutCallbackId = 0;
         this.performLayout();
     };
+
+    private dataCallbackId: number = 0;
+    set dataPending(value: boolean) {
+        if (value) {
+            if (!this.dataCallbackId) {
+                this.dataCallbackId = setTimeout(this._processData, 0); // run on next tick
+            }
+        } else if (this.dataCallbackId) {
+            clearTimeout(this.dataCallbackId);
+            this.dataCallbackId = 0;
+        }
+    }
+    get dataPending(): boolean {
+        return !!this.dataCallbackId;
+    }
+
+    private readonly _processData = () => {
+        this.dataCallbackId = 0;
+        this.processData();
+    };
+
+    processData(): void {
+        this.layoutPending = false;
+
+        const legendData: LegendDatum[] = [];
+        this.series.forEach(series => {
+            series.processData();
+            if (series.showInLegend) {
+                series.provideLegendData(legendData);
+            }
+        });
+        this.legend.data = legendData;
+
+        this.layoutPending = true;
+    }
 
     abstract performLayout(): void;
 

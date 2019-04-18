@@ -2,7 +2,6 @@ import { Chart } from "./chart";
 import { PolarSeries } from "./series/polarSeries";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
-import { LegendDatum } from "./legend";
 
 export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
     centerX: number = 0;
@@ -59,25 +58,29 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
         const centerY = this.centerY = shrinkRect.y + shrinkRect.height / 2;
         const radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;
 
-        const legendData: LegendDatum[] = [];
         this.series.forEach(series => {
             series.centerX = centerX;
             series.centerY = centerY;
             series.radius = radius;
-            if (series.processData()) {
-                series.update();
-            }
-            if (series.showInLegend) {
-                series.provideLegendData(legendData);
-            }
+            series.update();
         });
 
         const legend = this.legend;
-        legend.data = legendData;
+        if (!legend.data.length) {
+            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
+        }
+        legend.size = [300, shrinkRect.height];
+        legend.performLayout();
         legend.group.translationX = 0;
         legend.group.translationY = 0;
+
         const legendBBox = legend.group.getBBox();
-        legendBBox.dilate(30);
+        // legendBBox.dilate(30);
+        legendBBox.x -= 50;
+        legendBBox.y -= 20;
+        legendBBox.width += 50;
+        legendBBox.height += 40;
+
         legend.group.translationX = centerX + radius - legendBBox.x;
         legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
 
