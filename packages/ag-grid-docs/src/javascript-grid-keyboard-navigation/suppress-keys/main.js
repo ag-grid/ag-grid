@@ -57,9 +57,9 @@ var gridOptions = {
         var event = params.event;
         var key = event.which;
 
-        var keysToSuppress = [KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_TAB, KEY_F2, KEY_ESCAPE, KEY_PAGE_HOME, KEY_PAGE_END];
+        var keysToSuppress = [KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_TAB, KEY_F2, KEY_ESCAPE];
 
-        var editingKeys = [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_BACKSPACE, KEY_DELETE, KEY_SPACE];
+        var editingKeys = [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_BACKSPACE, KEY_DELETE, KEY_SPACE, KEY_PAGE_HOME, KEY_PAGE_END];
 
         if (event.ctrlKey || event.metaKey) {
             keysToSuppress.push(KEY_A);

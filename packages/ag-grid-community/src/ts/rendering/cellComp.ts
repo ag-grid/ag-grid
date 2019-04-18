@@ -1431,24 +1431,22 @@ export class CellComp extends Component {
         // in which cse we should not be listening for these key pressed
         const eventTarget = _.getTarget(event);
         const eventOnChildComponent = eventTarget !== this.getGui();
-        if (eventOnChildComponent) {
+        if (eventOnChildComponent || this.editingCell) {
             return;
         }
 
-        if (!this.editingCell) {
-            const pressedChar = String.fromCharCode(event.charCode);
-            if (pressedChar === ' ') {
-                this.onSpaceKeyPressed(event);
-            } else {
-                if (_.isEventFromPrintableCharacter(event)) {
-                    this.startRowOrCellEdit(null, pressedChar);
-                    // if we don't prevent default, then the keypress also gets applied to the text field
-                    // (at least when doing the default editor), but we need to allow the editor to decide
-                    // what it wants to do. we only do this IF editing was started - otherwise it messes
-                    // up when the use is not doing editing, but using rendering with text fields in cellRenderer
-                    // (as it would block the the user from typing into text fields).
-                    event.preventDefault();
-                }
+        const pressedChar = String.fromCharCode(event.charCode);
+        if (pressedChar === ' ') {
+            this.onSpaceKeyPressed(event);
+        } else {
+            if (_.isEventFromPrintableCharacter(event)) {
+                this.startRowOrCellEdit(null, pressedChar);
+                // if we don't prevent default, then the keypress also gets applied to the text field
+                // (at least when doing the default editor), but we need to allow the editor to decide
+                // what it wants to do. we only do this IF editing was started - otherwise it messes
+                // up when the use is not doing editing, but using rendering with text fields in cellRenderer
+                // (as it would block the the user from typing into text fields).
+                event.preventDefault();
             }
         }
     }
