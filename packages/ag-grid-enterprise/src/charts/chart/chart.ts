@@ -179,7 +179,7 @@ export abstract class Chart<D, X, Y> {
                 this.seriesRoot.append(series.group);
             }
             series.chart = this;
-            this.layoutPending = true;
+            this.dataPending = true;
             return true;
         }
 
