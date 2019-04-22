@@ -1,23 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>pivot</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="pivot" stroke="#000000">
-            <path d="M13.5,4.5 L4.5,4.5" id="Line" stroke-linecap="square"></path>
-            <path d="M4.5,4.5 L4.5,13.5" id="Line-2" stroke-linecap="square"></path>
-            <polyline id="Path-12" points="7.5 12.5 6.5 11.5 7.5 10.5"></polyline>
-            <polyline id="Path-13" points="12.5 7.5 11.5 6.5 10.5 7.5"></polyline>
-            <path d="M4.5,11.5 L2.5,11.5" id="Line-3-Copy" stroke-linecap="square"></path>
-            <path d="M8.5,2.5 L8.5,4.5" id="Line-3" stroke-linecap="square"></path>
-            <path d="M5.5,2.5 L5.5,4.5" id="Line-3-Copy-5" stroke-linecap="square"></path>
-            <path d="M11.5,2.5 L11.5,4.5" id="Line-3-Copy-3" stroke-linecap="square"></path>
-            <path d="M11.5,6.5 L11.5,9.5 C11.5,10.6045695 10.6045695,11.5 9.5,11.5 L6.5,11.5" id="Path-15"></path>
-            <path d="M4.5,8.5 L2.5,8.5" id="Line-3" stroke-linecap="square"></path>
-            <path d="M4.5,5.5 L2.5,5.5" id="Line-3-Copy-2" stroke-linecap="square"></path>
-            <rect id="Rectangle" x="1.5" y="1.5" width="13" height="13" rx="2"></rect>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="pivot">
+        <path fill="#000000" d="M12.564,1.001C13.844,1.049 14.95,2.147 14.999,3.436C15.038,6.478 15.038,9.522 14.999,12.564C14.951,13.844 13.853,14.95 12.564,14.999C9.522,15.038 6.478,15.038 3.436,14.999C2.157,14.951 1.05,13.854 1.001,12.564C0.962,9.522 0.962,6.478 1.001,3.436C1.049,2.156 2.147,1.05 3.436,1.001C6.478,0.962 9.522,0.962 12.564,1.001ZM3.503,2C2.718,2.01 2.03,2.674 2.001,3.461C1.962,6.5 1.886,9.541 2.002,12.578C2.049,13.32 2.679,13.951 3.422,13.998C6.472,14.114 9.528,14.114 12.578,13.998C13.318,13.951 13.951,13.323 13.998,12.578C14.114,9.528 14.114,6.472 13.998,3.422C13.951,2.682 13.323,2.049 12.578,2.002C9.555,1.887 6.528,2 3.503,2ZM6,4L8,4L8,2L9,2L9,4L11,4L11,2L12,2L12,4L14,4L14,5L5,5L5,14L4,14L4,12L2,12L2,11L4,11L4,9L2,9L2,8L4,8L4,6L2,6L2,5L4,5L4,4L5,4L5,2L6,2L6,4ZM11,7.707L10.854,7.854L10.146,7.146L11.5,5.793C11.951,6.244 12.402,6.695 12.854,7.146L12.146,7.854L12,7.707L12,9.503C11.984,10.805 10.877,11.949 9.564,11.999L7.707,12L7.854,12.146L7.146,12.854L5.793,11.5L7.146,10.146C7.382,10.382 7.618,10.618 7.854,10.854L7.693,11.014C9.379,11.029 10.982,10.932 11,9.497L11,7.707Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

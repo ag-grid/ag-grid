@@ -1,13 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>last</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="last" stroke="#000000">
-            <polyline id="Path-9" transform="translate(6.000000, 8.000000) rotate(180.000000) translate(-6.000000, -8.000000) " points="8 4 4 8 8 12"></polyline>
-            <path d="M11.5,4 L11.5,12" id="Path-10"></path>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="last">
+        <path fill="#000000" d="M8.707,8L4.354,12.354L3.646,11.646L7.293,8L3.646,4.354L4.354,3.646C5.805,5.098 7.256,6.549 8.707,8ZM12,12L11,12L11,4L12,4L12,12Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

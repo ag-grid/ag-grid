@@ -1,13 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>cross</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="cross" stroke="#000000">
-            <path d="M10.5,5.5 L4.5,11.5" id="Path-2"></path>
-            <path d="M4.5,5.5 L10.5,11.5" id="Path-2-Copy"></path>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="cross">
+        <path fill="#000000" d="M7.5,7.793L10.146,5.146C10.382,5.382 10.618,5.618 10.854,5.854L8.207,8.5L10.854,11.146L10.146,11.854L7.5,9.207L4.854,11.854L4.146,11.146L6.793,8.5L4.146,5.854L4.854,5.146L7.5,7.793Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

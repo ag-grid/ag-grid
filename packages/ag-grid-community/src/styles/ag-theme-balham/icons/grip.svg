@@ -1,23 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>grip</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
-        <g id="grip" stroke="#000000">
-            <path d="M3.5,2.5 L3.5,3.5" id="Line"></path>
-            <path d="M3.5,5.5 L3.5,6.5" id="Line-Copy"></path>
-            <path d="M3.5,8.5 L3.5,9.5" id="Line-Copy-2"></path>
-            <path d="M6.5,2.5 L6.5,3.5" id="Line-Copy-7"></path>
-            <path d="M6.5,5.5 L6.5,6.5" id="Line-Copy-6"></path>
-            <path d="M6.5,8.5 L6.5,9.5" id="Line-Copy-5"></path>
-            <path d="M9.5,2.5 L9.5,3.5" id="Line-Copy-11"></path>
-            <path d="M9.5,5.5 L9.5,6.5" id="Line-Copy-10"></path>
-            <path d="M9.5,8.5 L9.5,9.5" id="Line-Copy-9"></path>
-            <path d="M12.5,2.5 L12.5,3.5" id="Line-Copy-15"></path>
-            <path d="M12.5,5.5 L12.5,6.5" id="Line-Copy-14"></path>
-            <path d="M12.5,8.5 L12.5,9.5" id="Line-Copy-13"></path>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="grip">
+        <path fill="#000000" d="M4,10L3,10L3,8L4,8L4,10ZM7,10L6,10L6,8L7,8L7,10ZM10,10L9,10L9,8L10,8L10,10ZM13,10L12,10L12,8L13,8L13,10ZM4,7L3,7L3,5L4,5L4,7ZM7,7L6,7L6,5L7,5L7,7ZM10,7L9,7L9,5L10,5L10,7ZM13,7L12,7L12,5L13,5L13,7ZM4,4L3,4L3,2L4,2L4,4ZM7,4L6,4L6,2L7,2L7,4ZM10,4L9,4L9,2L10,2L10,4ZM13,4L12,4L12,2L13,2L13,4Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

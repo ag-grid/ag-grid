@@ -1,15 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>columns</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
-        <g id="columns" stroke="#000000">
-            <path d="M6.5,3.5 L6.5,11.5" id="Line-12-Copy"></path>
-            <path d="M9.5,3.5 L9.5,11.5" id="Line-12-Copy-2"></path>
-            <path d="M12.5,3.5 L12.5,11.5" id="Line-12-Copy-3"></path>
-            <path d="M3.5,3.5 L3.5,11.5" id="Line-12"></path>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="columns">
+        <path fill="#000000" d="M7,12L6,12L6,3L7,3L7,12ZM10,12L9,12L9,3L10,3L10,12ZM13,12L12,12L12,3L13,3L13,12ZM4,12L3,12L3,3L4,3L4,12Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

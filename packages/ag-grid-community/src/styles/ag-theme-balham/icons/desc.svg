@@ -1,13 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>asc</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="asc" stroke="#000000">
-            <path d="M7.5,11 L7.5,3" id="Path-8"></path>
-            <polyline id="Path-7" points="4.5 8.5 7.5 11.5 10.5 8.5"></polyline>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="desc">
+        <path fill="#000000" d="M8,10.293L10.146,8.146C10.382,8.382 10.618,8.618 10.854,8.854L7.5,12.207L4.146,8.854L4.854,8.146L7,10.293L7,3L8,3L8,10.293Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>
