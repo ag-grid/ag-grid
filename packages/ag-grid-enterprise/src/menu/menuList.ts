@@ -104,7 +104,7 @@ export class MenuList extends Component {
             if (shouldShow && !showingThisMenu) {
                 this.showChildMenu(menuItemDef, menuItemComp, null);
             }
-        }, 500);
+        }, 300);
     }
 
     public addSeparator(): void {
