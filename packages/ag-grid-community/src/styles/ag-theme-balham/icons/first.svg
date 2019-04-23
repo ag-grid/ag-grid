@@ -1,6 +1,7 @@
 <svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
-    <g id="first">
-        <path fill="#000000" d="M12.354,4.354L8.707,8L12.354,11.646L11.646,12.354L7.293,8L11.646,3.646C11.882,3.882 12.118,4.118 12.354,4.354Z" style="fill-rule:nonzero;"/>
-        <rect x="4" y="4" width="1" height="8" style="fill-rule:nonzero;"/>
+    <g transform="matrix(1,0,0,1,-0.177,8.88178e-16)">
+        <g id="first">
+            <path fill="#000000" d="M12.354,4.354L8.707,8L12.354,11.646L11.646,12.354L7.293,8L11.646,3.646C11.882,3.882 12.118,4.118 12.354,4.354ZM5,4L5,12L4,12L4,4L5,4Z" style="fill-rule:nonzero;"/>
+        </g>
     </g>
 </svg>

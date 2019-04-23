@@ -1,12 +1,12 @@
 <svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
-    <g id="loading">
-        <rect x="7" y="10" width="1" height="4" style="fill-opacity:0.8;fill-rule:nonzero;"/>
-        <rect x="10" y="7" width="4" height="1" style="fill-opacity:0.6;fill-rule:nonzero;"/>
-        <rect x="1" y="7" width="4" height="1" style="fill-rule:nonzero;"/>
-        <rect x="7" y="1" width="1" height="4" style="fill-opacity:0.4;fill-rule:nonzero;"/>
-        <path fill="#000000" d="M12.707,3L9.5,6.207L8.793,5.5L12,2.293C12.236,2.529 12.471,2.764 12.707,3Z" style="fill-opacity:0.501961;fill-rule:nonzero;"/>
-        <path fill="#000000" d="M12.707,12L12,12.707L8.793,9.5L9.5,8.793C10.569,9.862 11.638,10.931 12.707,12Z" style="fill-opacity:0.701961;fill-rule:nonzero;"/>
-        <path fill="#000000" d="M6.207,9.5L3,12.707L2.293,12L5.5,8.793C5.736,9.029 5.971,9.264 6.207,9.5Z" style="fill-opacity:0.901961;fill-rule:nonzero;"/>
-        <path fill="#000000" d="M6.207,5.5L5.5,6.207L2.293,3L3,2.293C4.069,3.362 5.138,4.431 6.207,5.5Z" style="fill-opacity:0.301961;fill-rule:nonzero;"/>
+    <g id="loading" transform="matrix(1,0,0,1,0.5,0.5)">
+        <rect x="7" y="10" width="1" height="4" style="fill-opacity:0.8;"/>
+        <rect x="10" y="7" width="4" height="1" style="fill-opacity:0.6;"/>
+        <rect x="1" y="7" width="4" height="1"/>
+        <rect x="7" y="1" width="1" height="4" style="fill-opacity:0.4;"/>
+        <path d="M12.707,3L9.5,6.207L8.793,5.5L12,2.293C12.236,2.529 12.471,2.764 12.707,3Z" style="fill-opacity:0.501961;fill-rule:nonzero;"/>
+        <path d="M12.707,12L12,12.707L8.793,9.5L9.5,8.793C10.569,9.862 11.638,10.931 12.707,12Z" style="fill-opacity:0.701961;fill-rule:nonzero;"/>
+        <path d="M6.207,9.5L3,12.707L2.293,12L5.5,8.793C5.736,9.029 5.971,9.264 6.207,9.5Z" style="fill-opacity:0.901961;fill-rule:nonzero;"/>
+        <path d="M6.207,5.5L5.5,6.207L2.293,3L3,2.293C4.069,3.362 5.138,4.431 6.207,5.5Z" style="fill-opacity:0.301961;fill-rule:nonzero;"/>
     </g>
 </svg>
