@@ -1,12 +1,5 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>copy</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="copy" stroke="#000000">
-            <rect id="Rectangle-16-Copy-2" x="4.5" y="4.5" width="5" height="5"></rect>
-            <path d="M7.5,2.5 L2.5,2.5 L2.5,7.5 L4.5,7.5 L4.5,9.5 L9.5,9.5 L9.5,4.5 L7.5,4.5 L7.5,2.5 Z" id="Rectangle-16-Copy"></path>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="copy">
+        <path fill="#000000" d="M8,4L10,4L10,10L4,10L4,8L2,8L2,2L8,2L8,4ZM9,5L5,5L5,9L9,9L9,5ZM7,4L7,3L3,3L3,7L4,7L4,4L7,4Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

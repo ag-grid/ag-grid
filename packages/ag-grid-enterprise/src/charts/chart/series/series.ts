@@ -15,21 +15,13 @@ export abstract class Series<D, X, Y> {
 
     readonly id: string = this.createId();
 
-    protected _name: string = '';
-    set name(value: string) {
-        if (this._name !== value) {
-            this._name = value;
+    protected _title: string = '';
+    set title(value: string) {
+        if (this._title !== value) {
+            this._title = value;
         }
     }
-    get name(): string {
-        return this._name;
-    }
-
-    protected _title: string | string[] = '';
-    set title(value: string | string[]) {
-        this._title = value;
-    }
-    get title(): string | string[] {
+    get title(): string {
         return this._title;
     }
 

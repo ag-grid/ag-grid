@@ -62,6 +62,23 @@ export class Legend {
         return this._orientation;
     }
 
+    // private _markerPosition: MarkerPosition = MarkerPosition.Left;
+    // set markerPosition(value: MarkerPosition) {
+    //     if (this._markerPosition !== value) {
+    //         this._markerPosition = value;
+    //         this.itemSelection.each(markerLabel => {
+    //             markerLabel.markerPosition = value;
+    //         });
+    //         // this.performLayout();
+    //         if (this.onSizeChange) {
+    //             this.onSizeChange();
+    //         }
+    //     }
+    // }
+    // get markerPosition(): MarkerPosition {
+    //     return this._markerPosition;
+    // }
+
     private _size: [number, number] = [0, 0];
     set size(value: [number, number]) {
         this._size = value;

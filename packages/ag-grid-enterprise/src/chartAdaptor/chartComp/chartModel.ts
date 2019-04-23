@@ -218,7 +218,16 @@ export class ChartModel extends BeanStub {
     }
 
     public getData(): any[] {
-        return this.chartData;
+        //TODO known issue added to be fixed on the charting library side
+        const selectedDimension = this.getSelectedDimensionId();
+        const res = this.chartData.map((d: any, index: number) => {
+            const dimensionValue = d[selectedDimension];
+            d[selectedDimension] = {toString: () => {return dimensionValue}, id: index};
+            return d;
+        });
+
+        console.log(res);
+        return res;
     }
 
     public getValueColState(): ColState[] {

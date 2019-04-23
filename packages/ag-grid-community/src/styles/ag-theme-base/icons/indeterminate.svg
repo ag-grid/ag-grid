@@ -1,13 +1,7 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>indeterminate</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(1,0,0,1,-8.88178e-16,0.0318537)">
         <g id="indeterminate">
-            <path d="M3.05624981,4.5811608 C3.32688669,5.95988017 4.54197684,7 6,7 C7.45802316,7 8.67311331,5.95988017 8.94375019,4.5811608 C8.05936026,4.19372027 7.0781102,4 6,4 C4.9218898,4 3.94063974,4.19372027 3.05624981,4.5811608 Z" id="Combined-Shape" fill="#000000"></path>
-            <path d="M4,5.5 C4.66666667,5.16666667 5.66666667,5 7,5" id="Path-7" stroke="#979797"></path>
-            <path d="M1,6 C2.33333333,4.66666667 4,4 6,4 C8,4 9.66666667,4.66666667 11,6 C9.66666667,7.33333333 8,8 6,8 C4,8 2.33333333,7.33333333 1,6 Z" id="Path-6-Copy" stroke="#000000"></path>
+            <path fill="#000000" d="M6.099,3.501C8.018,3.531 9.908,4.249 11.287,5.58L11.711,6C8.758,8.919 3.804,9.403 0.713,6.42L0.289,6C1.846,4.461 3.91,3.489 6.099,3.501ZM8.798,5.084C8.364,6.205 7.275,7 6,7C4.725,7 3.637,6.205 3.202,5.084C2.688,5.312 2.206,5.607 1.772,5.968L1.735,6C4.056,7.985 7.847,8.018 10.228,6.032L10.265,6C9.823,5.622 9.327,5.317 8.798,5.084ZM7.002,5.5C6.845,5.501 6.689,5.503 6.532,5.508C5.753,5.537 4.934,5.603 4.218,5.95L3.782,5.05C4.727,4.592 5.81,4.513 6.872,4.501L6.998,4.5C6.999,4.833 7.001,5.167 7.002,5.5Z"/>
         </g>
     </g>
 </svg>

@@ -1,3 +1,5 @@
 <svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
-    <path fill="#000000" d="M9.354,4.354L5.707,8L9.354,11.646L8.646,12.354L4.293,8L8.646,3.646C8.882,3.882 9.118,4.118 9.354,4.354Z" style="fill-rule:nonzero;"/>
+    <g id="contracted" transform="matrix(1,0,0,1,1.1765,8.88178e-16)">
+        <path fill="#000000" d="M9.354,4.354L5.707,8L9.354,11.646L8.646,12.354L4.293,8L8.646,3.646C8.882,3.882 9.118,4.118 9.354,4.354Z" style="fill-rule:nonzero;"/>
+    </g>
 </svg>

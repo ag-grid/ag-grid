@@ -46,11 +46,11 @@ colDef: {
     <li><code>inRangeInclusive:</code> Set to true so that when doing inRange date filters it will include
         the dates you specify as minimum and maximum, otherwise it selects only the dates in between.</li>
     <li><code>filterOptions:</code> If specified, limits the amount of options presented in the filter UI, it must be
-        a string array containing some of the following values  {equals, notEqual, lessThanOrEqual, greaterThan,
+        a string array containing some of the following values  {equals, notEqual, lessThan, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
     <li><code>defaultOption:</code> If specified, changes the default filter option to one of {equals, notEqual,
-        lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
-        if {equals} is not available because is removed using <code>filterOptions</code>, then the default
+        lessThan, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is
+        {equals}, if {equals} is not available because is removed using <code>filterOptions</code>, then the default
         is the first item in the filterOptions</li>
     <li><code>nullComparator:</code> If specified, it will be used to specify if null values should be included when filtering.
         See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>

@@ -1,13 +1,7 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>eye</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(1,0,0,1,-8.88178e-16,0.0294512)">
         <g id="eye">
-            <path d="M3.00137604,3.90825715 C3.00046086,3.9387261 3,3.96930923 3,4 C3,5.65685425 4.34314575,7 6,7 C7.65685425,7 9,5.65685425 9,4 C9,3.96930923 8.99953914,3.9387261 8.99862396,3.90825715 C8.1000001,3.30275238 7.10045878,3 6,3 C4.89954122,3 3.8999999,3.30275238 3.00137604,3.90825715 Z" id="Combined-Shape" fill="#000000"></path>
-            <path d="M4,4.5 C4.66666667,4.16666667 5.66666667,4 7,4" id="Path-7" stroke="#979797"></path>
-            <path d="M1,6 C2.33333333,4 4,3 6,3 C8,3 9.66666667,4 11,6 C9.66666667,8 8,9 6,9 C4,9 2.33333333,8 1,6 Z" id="Path-6-Copy" stroke="#000000"></path>
+            <path fill="#000000" d="M6.101,2.501C8.352,2.554 10.27,4.024 11.603,6C9.75,8.748 6.088,10.536 2.993,8.679C1.919,8.035 1.106,7.052 0.397,6C1.718,4.042 3.689,2.482 6.101,2.501ZM3.048,4.536C2.501,4.939 2.014,5.439 1.608,6C3.107,8.069 6.023,9.249 8.422,7.863C9.191,7.419 9.817,6.776 10.343,6.068C10.343,6.068 9.836,5.304 8.938,4.61C8.656,5.974 7.448,7 6,7C4.526,7 3.3,5.937 3.048,4.536ZM7.002,4.5C6.845,4.501 6.689,4.503 6.532,4.508C5.753,4.537 4.934,4.603 4.218,4.95L3.782,4.05C4.727,3.592 5.81,3.513 6.872,3.501L6.998,3.5C6.999,3.833 7.001,4.167 7.002,4.5Z"/>
         </g>
     </g>
 </svg>

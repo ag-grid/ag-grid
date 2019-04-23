@@ -1,14 +1,5 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>cross</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="cross" stroke="#000000" stroke-width="2">
-            <g id="Group" transform="translate(2.000000, 2.000000)">
-                <path d="M0,8 L8,0" id="Path-15"></path>
-                <path d="M0,8 L8,0" id="Path-15-Copy" transform="translate(4.000000, 4.000000) scale(-1, 1) translate(-4.000000, -4.000000) "></path>
-            </g>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="cross">
+        <path fill="#000000" d="M6,4.586L9.293,1.293C9.764,1.764 10.236,2.236 10.707,2.707L7.414,6L10.707,9.293L9.293,10.707L6,7.414L2.707,10.707L1.293,9.293L4.586,6L1.293,2.707L2.707,1.293L6,4.586Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

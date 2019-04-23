@@ -1,13 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>pin</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(1.33333,0,0,1.33333,-0.142557,1.43096)">
         <g id="pin">
-            <polygon id="Path-5" fill="#000000" transform="translate(9.697908, 7.369481) rotate(45.000000) translate(-9.697908, -7.369481) " points="5.87208243 3.60171356 13.5237329 3.60171356 13.5237329 4.36687861 12.7585678 4.36687861 11.2282377 8.95786886 12.7585678 8.95786886 12.7585678 11.1372475 6.63724747 11.1372475 6.63724747 8.95786886 8.16757755 8.95786886 6.63724747 4.36687861 5.87208243 4.36687861"></polygon>
-            <path d="M6,11 L3.5,13.5" id="Path-3" stroke="#000000"></path>
+            <path fill="#000000" d="M6.354,11.354L3.854,13.854L3.146,13.146L5.646,10.646C5.882,10.882 6.118,11.118 6.354,11.354ZM9.657,2L15.067,7.411L14.526,7.952L13.985,7.411L9.657,9.575L10.739,10.657L9.198,12.198L4.869,7.869L6.411,6.328L7.493,7.411L9.657,3.082L9.116,2.541L9.657,2Z"/>
         </g>
     </g>
 </svg>

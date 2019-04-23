@@ -1,21 +1,7 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>asc</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <rect id="path-1" x="5" y="3" width="2" height="9"></rect>
-        <path d="M8.99264069,5.19974747 L8.99264069,3.49264069 L2.99264069,3.49264069 L2.99264069,9.49264069 L4.69974747,9.49264069 L4.69974747,5.19974747 L8.99264069,5.19974747 Z" id="path-2"></path>
-    </defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(1,0,0,1,0.00735905,-1.14487)">
         <g id="asc">
-            <g id="Rectangle-8">
-                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
-                <rect stroke="#000000" stroke-width="1" x="5.5" y="3.5" width="1" height="8"></rect>
-            </g>
-            <g id="Combined-Shape" transform="translate(5.992641, 6.492641) rotate(45.000000) translate(-5.992641, -6.492641) ">
-                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-2"></use>
-                <path stroke="#000000" stroke-width="1" d="M8.49264069,4.69974747 L8.49264069,3.99264069 L3.49264069,3.99264069 L3.49264069,8.99264069 L4.19974747,8.99264069 L4.19974747,4.69974747 L8.49264069,4.69974747 Z"></path>
-            </g>
+            <path fill="#000000" d="M5.037,5.62L2.957,7.7L1.75,6.493L5.993,2.25C7.407,3.664 8.821,5.078 10.235,6.493L9.028,7.7L6.963,5.635L6.963,12.04L5.037,12.04L5.037,5.62Z" style="fill-rule:nonzero;"/>
         </g>
     </g>
 </svg>

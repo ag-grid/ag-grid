@@ -1,12 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>eye</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="eye" fill-rule="nonzero" fill="#000000">
-            <path d="M9,4.625 C6.08333333,4.625 3.5925,6.43916667 2.58333333,9 C3.5925,11.5608333 6.08333333,13.375 9,13.375 C11.9166667,13.375 14.4075,11.5608333 15.4166667,9 C14.4075,6.43916667 11.9166667,4.625 9,4.625 Z M9,11.9166667 C7.39,11.9166667 6.08333333,10.61 6.08333333,9 C6.08333333,7.39 7.39,6.08333333 9,6.08333333 C10.61,6.08333333 11.9166667,7.39 11.9166667,9 C11.9166667,10.61 10.61,11.9166667 9,11.9166667 Z M9,7.25 C8.03166667,7.25 7.25,8.03166667 7.25,9 C7.25,9.96833333 8.03166667,10.75 9,10.75 C9.96833333,10.75 10.75,9.96833333 10.75,9 C10.75,8.03166667 9.96833333,7.25 9,7.25 Z" id="Shape"></path>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="eye" transform="matrix(1.33333,0,0,1.33333,0,0)">
+        <path fill="#000000" d="M9,4.625C6.083,4.625 3.592,6.439 2.583,9C3.592,11.561 6.083,13.375 9,13.375C11.917,13.375 14.408,11.561 15.417,9C14.408,6.439 11.917,4.625 9,4.625ZM9,11.917C7.39,11.917 6.083,10.61 6.083,9C6.083,7.39 7.39,6.083 9,6.083C10.61,6.083 11.917,7.39 11.917,9C11.917,10.61 10.61,11.917 9,11.917ZM9,7.25C8.032,7.25 7.25,8.032 7.25,9C7.25,9.968 8.032,10.75 9,10.75C9.968,10.75 10.75,9.968 10.75,9C10.75,8.032 9.968,7.25 9,7.25Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

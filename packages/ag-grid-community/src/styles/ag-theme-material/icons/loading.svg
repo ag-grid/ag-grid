@@ -1,56 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>loading</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <rect id="path-1" x="4" y="0" width="2" height="3"></rect>
-        <rect id="path-2" x="4" y="7" width="2" height="3"></rect>
-        <rect id="path-3" x="0" y="4" width="3" height="2"></rect>
-        <rect id="path-4" x="7" y="4" width="3" height="2"></rect>
-        <rect id="path-5" x="4" y="0" width="2" height="3"></rect>
-        <rect id="path-6" x="4" y="7" width="2" height="3"></rect>
-        <rect id="path-7" x="0" y="4" width="3" height="2"></rect>
-        <rect id="path-8" x="7" y="4" width="3" height="2"></rect>
-    </defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="loading">
-            <g id="Group-2" transform="translate(3.000000, 4.000000)">
-                <g id="Rectangle-18">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
-                    <rect stroke="#979797" stroke-width="1" x="4.5" y="0.5" width="1" height="2"></rect>
-                </g>
-                <g id="Rectangle-18-Copy">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-2"></use>
-                    <rect stroke="#979797" stroke-width="1" x="4.5" y="7.5" width="1" height="2"></rect>
-                </g>
-                <g id="Rectangle-19">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-3"></use>
-                    <rect stroke="#979797" stroke-width="1" x="0.5" y="4.5" width="2" height="1"></rect>
-                </g>
-                <g id="Rectangle-19-Copy">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-4"></use>
-                    <rect stroke="#979797" stroke-width="1" x="7.5" y="4.5" width="2" height="1"></rect>
-                </g>
-            </g>
-            <g id="Group" opacity="0.71410779" transform="translate(8.000000, 9.000000) rotate(45.000000) translate(-8.000000, -9.000000) translate(3.000000, 4.000000)">
-                <g id="Rectangle-18-Copy-3">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-5"></use>
-                    <rect stroke="#979797" stroke-width="1" x="4.5" y="0.5" width="1" height="2"></rect>
-                </g>
-                <g id="Rectangle-18-Copy-2">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-6"></use>
-                    <rect stroke="#979797" stroke-width="1" x="4.5" y="7.5" width="1" height="2"></rect>
-                </g>
-                <g id="Rectangle-19-Copy-3">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-7"></use>
-                    <rect stroke="#979797" stroke-width="1" x="0.5" y="4.5" width="2" height="1"></rect>
-                </g>
-                <g id="Rectangle-19-Copy-2">
-                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-8"></use>
-                    <rect stroke="#979797" stroke-width="1" x="7.5" y="4.5" width="2" height="1"></rect>
-                </g>
-            </g>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="loading" transform="matrix(1.33333,0,0,1.33333,1.33333,0)">
+        <path d="M9,14L7,14L7,11L9,11L9,14ZM13,10L10,10L10,8L13,8L13,10ZM6,10L3,10L3,8L6,8L6,10ZM9,7L7,7L7,4L9,4L9,7Z" style="fill:rgb(151,151,151);fill-rule:nonzero;"/>
+        <path d="M12.243,11.828L10.828,13.243L8.707,11.121L10.121,9.707C10.828,10.414 11.536,11.121 12.243,11.828ZM7.293,11.121L5.172,13.243L3.757,11.828L5.879,9.707C6.35,10.179 6.821,10.65 7.293,11.121ZM7.293,6.879L5.879,8.293L3.757,6.172L5.172,4.757C5.879,5.464 6.586,6.172 7.293,6.879ZM12.243,6.172L10.121,8.293L8.707,6.879L10.828,4.757C11.3,5.229 11.771,5.7 12.243,6.172Z" style="fill:rgb(151,151,151);fill-opacity:0.647059;fill-rule:nonzero;"/>
     </g>
 </svg>

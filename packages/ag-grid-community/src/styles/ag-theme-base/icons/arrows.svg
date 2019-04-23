@@ -1,16 +1,5 @@
-<svg viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46 (44423) - http://www.bohemiancoding.com/sketch -->
-    <title>arrows</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Icon" transform="translate(-2.000000, -2.000000)" fill-rule="nonzero" fill="#000000">
-            <g id="arrows" transform="translate(2.000000, 2.000000)">
-                <polygon id="Shape" points="16 6 14.59 7.41 16.17 9 4 9 4 11 16.17 11 14.59 12.59 16 14 20 10"></polygon>
-                <polygon id="Shape" transform="translate(8.000000, 10.000000) scale(-1, 1) translate(-8.000000, -10.000000) " points="12 6 10.59 7.41 12.17 9 0 9 0 11 12.17 11 10.59 12.59 12 14 16 10"></polygon>
-                <polygon id="Shape" transform="translate(10.000000, 12.000000) scale(-1, 1) rotate(90.000000) translate(-10.000000, -12.000000) " points="14 8 12.59 9.41 14.17 11 2 11 2 13 14.17 13 12.59 14.59 14 16 18 12"></polygon>
-                <polygon id="Shape" transform="translate(10.000000, 8.000000) scale(-1, 1) rotate(-90.000000) translate(-10.000000, -8.000000) " points="14 4 12.59 5.41 14.17 7 2 7 2 9 14.17 9 12.59 10.59 14 12 18 8"></polygon>
-            </g>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="arrows" transform="matrix(0.6,0,0,0.6,0,0)">
+        <path fill="#000000" d="M9,4L9,3.83L7.41,5.41L6,4L10,0L14,4L12.59,5.41L11,3.83L11,9L16.17,9L14.59,7.41L16,6L20,10L16,14L14.59,12.59L16.17,11L11,11L11,16.17L12.59,14.59L14,16L10,20L6,16L7.41,14.59L9,16.17L9,16L9,11L3.83,11L5.41,12.59L4,14L0,10L4,6L5.41,7.41L3.83,9L9,9L9,4Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

@@ -1,3 +1,5 @@
 <svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
-    <path fill="#000000" d="M8.707,6L7.707,7L14,7L14,10L7.707,10L8.707,11L6.5,13.207L1.793,8.5L6.5,3.793C7.236,4.529 7.971,5.264 8.707,6ZM3.207,8.5L6.5,11.793L7.293,11L5.293,9L13,9L13,8L5.293,8L7.293,6L6.5,5.207C5.402,6.305 4.305,7.402 3.207,8.5Z" style="fill-rule:nonzero;"/>
+    <g id="left" transform="matrix(1,0,0,1,0.1035,-0.5)">
+        <path fill="#000000" d="M8.707,6L7.707,7L14,7L14,10L7.707,10L8.707,11L6.5,13.207L1.793,8.5L6.5,3.793C7.236,4.529 7.971,5.264 8.707,6ZM3.207,8.5L6.5,11.793L7.293,11L5.293,9L13,9L13,8L5.293,8L7.293,6L6.5,5.207C5.402,6.305 4.305,7.402 3.207,8.5Z" style="fill-rule:nonzero;"/>
+    </g>
 </svg>

@@ -77,9 +77,7 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
         const legendBBox = legend.group.getBBox();
         // legendBBox.dilate(30);
         legendBBox.x -= 50;
-        legendBBox.y -= 20;
         legendBBox.width += 50;
-        legendBBox.height += 40;
 
         legend.group.translationX = centerX + radius - legendBBox.x;
         legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;

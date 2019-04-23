@@ -159,10 +159,13 @@ export class Sector extends Shape {
         const midAngle = (startAngle + endAngle) * 0.5;
         const innerRadius = Math.min(this.innerRadius, this.outerRadius);
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
-        let centerX = this.centerX;
-        let centerY = this.centerY;
         const centerOffset = this.centerOffset;
         const fullPie = this.fullPie;
+        const radiiGap = outerRadius - innerRadius;
+        // const tipOffset = radiiGap / 3;
+        // const showTip = radiiGap < outerRadius / 2;
+        let centerX = this.centerX;
+        let centerY = this.centerY;
 
         path.clear();
 
@@ -176,6 +179,12 @@ export class Sector extends Shape {
                 centerX + innerRadius * Math.cos(startAngle),
                 centerY + innerRadius * Math.sin(startAngle)
             );
+            // if (showTip) {
+            //     path.lineTo(
+            //         centerX + 0.5 * (innerRadius + outerRadius) * Math.cos(startAngle) + tipOffset * Math.cos(startAngle + Math.PI / 2),
+            //         centerY + 0.5 * (innerRadius + outerRadius) * Math.sin(startAngle) + tipOffset * Math.sin(startAngle + Math.PI / 2)
+            //     );
+            // }
             path.lineTo(
                 centerX + outerRadius * Math.cos(startAngle),
                 centerY + outerRadius * Math.sin(startAngle)
@@ -183,10 +192,27 @@ export class Sector extends Shape {
         }
 
         path.cubicArc(centerX, centerY, outerRadius, outerRadius, 0, startAngle, endAngle, 0);
-        path[fullPie ? 'moveTo' : 'lineTo'](
-            centerX + innerRadius * Math.cos(endAngle),
-            centerY + innerRadius * Math.sin(endAngle)
-        );
+        // path[fullPie ? 'moveTo' : 'lineTo'](
+        //     centerX + innerRadius * Math.cos(endAngle),
+        //     centerY + innerRadius * Math.sin(endAngle)
+        // );
+        if (fullPie) {
+            path.moveTo(
+                centerX + innerRadius * Math.cos(endAngle),
+                centerY + innerRadius * Math.sin(endAngle)
+            );
+        } else {
+            // if (showTip) {
+            //     path.lineTo(
+            //         centerX + 0.5 * (innerRadius + outerRadius) * Math.cos(endAngle) + tipOffset * Math.cos(endAngle + Math.PI / 2),
+            //         centerY + 0.5 * (innerRadius + outerRadius) * Math.sin(endAngle) + tipOffset * Math.sin(endAngle + Math.PI / 2)
+            //     );
+            // }
+            path.lineTo(
+                centerX + innerRadius * Math.cos(endAngle),
+                centerY + innerRadius * Math.sin(endAngle)
+            );
+        }
         path.cubicArc(centerX, centerY, innerRadius, innerRadius, 0, endAngle, startAngle, 1);
 
         this.dirtyPath = false;
