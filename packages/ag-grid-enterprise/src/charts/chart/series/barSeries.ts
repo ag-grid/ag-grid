@@ -229,13 +229,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         //   yField3: 20
         // }]
         //
-        const xData: string[] = this.domainX = data.map(datum => {
-            const value = datum[xField];
-            if (typeof value !== 'string') {
-                throw new Error(`The ${xField} value is not a string.`);
-            }
-            return value;
-        });
+        const xData: string[] = this.domainX = data.map(datum => String(datum[xField]));
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
             yFields.forEach(field => {
