@@ -1,13 +1,7 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>pin</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="pin">
-            <polygon id="Path-5" fill="#000000" points="3 2 9 2 9 3 8 3 8 7 10 8 7 8 6 11 5 8 2 8 4 7 4 3 3 3"></polygon>
-            <rect id="Rectangle-11" fill-opacity="0.5" fill="#FFFFFF" x="5" y="3" width="1" height="4"></rect>
-            <rect id="Rectangle-11-Copy" fill-opacity="0.280000001" fill="#FFFFFF" x="4" y="3" width="1" height="3"></rect>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="pin">
+        <path id="Path-5" fill="#000000" d="M6,3L3,3L3,2L9,2L9,3L8,3L8,7L10,8L7,8L6,11L5,8L2,8L4,7L4,6L5,6L5,7L6,7L6,3Z"/>
+        <rect id="Rectangle-11" fill="#000000" x="5" y="3" width="1" height="4" style="fill-opacity:0.8;"/>
+        <rect id="Rectangle-11-Copy" fill="#000000" x="4" y="3" width="1" height="3" style="fill-opacity:0.494118;"/>
     </g>
 </svg>

@@ -1,16 +1,5 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>columns</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="columns" fill="#000000">
-            <rect id="Rectangle-10" x="1" y="1" width="4" height="2"></rect>
-            <rect id="Rectangle-10-Copy-2" x="7" y="1" width="4" height="2"></rect>
-            <rect id="Rectangle-10-Copy" x="1" y="5" width="4" height="2"></rect>
-            <rect id="Rectangle-10-Copy-3" x="7" y="5" width="4" height="2"></rect>
-            <rect id="Rectangle-10-Copy-5" x="1" y="9" width="4" height="2"></rect>
-            <rect id="Rectangle-10-Copy-4" x="7" y="9" width="4" height="2"></rect>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="columns">
+        <path fill="#000000" id="Rectangle-10" d="M5,9L5,11L1,11L1,9L5,9ZM11,9L11,11L7,11L7,9L11,9ZM5,5L5,7L1,7L1,5L5,5ZM11,5L11,7L7,7L7,5L11,5ZM5,1L5,3L1,3L1,1L5,1ZM11,1L11,3L7,3L7,1L11,1Z"/>
     </g>
 </svg>

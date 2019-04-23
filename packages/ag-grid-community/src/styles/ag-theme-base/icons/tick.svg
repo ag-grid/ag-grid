@@ -1,11 +1,5 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>tick</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="tick" stroke-width="2" stroke="#000000">
-            <polyline id="Path-15" points="1.5 5.5 4.5 8.5 10.5 2.5"></polyline>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(1,0,0,1,-1.34648e-07,0.146447)">
+        <path fill="#000000" d="M11.207,3.207L4.5,9.914L0.793,6.207L2.207,4.793L4.5,7.086L9.793,1.793C10.264,2.264 10.736,2.736 11.207,3.207Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

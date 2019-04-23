@@ -1,18 +1,3 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="0 0 12 12" focuable="false">
-    <defs>
-        <path d="M12 6C12 9.31 9.31 12 6 12C2.69 12 0 9.31 0 6C0 2.69 2.69 0 6 0C9.31 0 12 2.69 12 6Z" id="fpP3HL7xQ"></path>
-        <clipPath id="clipa4nDXMRVE">
-            <use xlink:href="#fpP3HL7xQ" opacity="1"></use>
-        </clipPath>
-    </defs>
-    <g>
-        <g>
-            <g>
-                <use xlink:href="#fpP3HL7xQ" opacity="1" fill="#f02861" fill-opacity="0"></use>
-                <g clip-path="url(#clipa4nDXMRVE)">
-                    <use xlink:href="#fpP3HL7xQ" opacity="1" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-opacity="1"></use>
-                </g>
-            </g>
-        </g>
-    </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <path fill="#000000" d="M6.002,-0.022C9.31,-0.022 11.996,2.673 11.996,5.992C11.996,9.311 9.31,12.006 6.002,12.006C2.693,12.006 0.007,9.311 0.007,5.992C0.007,2.673 2.693,-0.022 6.002,-0.022ZM6.002,0.992C8.761,0.992 11.002,3.232 11.002,5.992C11.002,8.752 8.761,10.992 6.002,10.992C3.242,10.992 1.002,8.752 1.002,5.992C1.002,3.232 3.242,0.992 6.002,0.992Z"/>
 </svg>

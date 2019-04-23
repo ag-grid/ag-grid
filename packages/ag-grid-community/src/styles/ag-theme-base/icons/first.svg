@@ -1,12 +1,5 @@
-<svg viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 47 (45396) - http://www.bohemiancoding.com/sketch -->
-    <title>first</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="first" fill="#000000">
-            <rect id="Rectangle" x="4.5" y="4.5" width="1.5" height="9"></rect>
-            <polygon id="Shape" fill-rule="nonzero" transform="translate(11.250000, 9.000000) rotate(90.000000) translate(-11.250000, -9.000000) " points="14.75 6.25 11.25 9.75 7.75 6.25 6.75 7.25 11.25 11.75 15.75 7.25"></polygon>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="first" transform="matrix(0.666667,0,0,0.666667,-0.166667,0)">
+        <path fill="#000000" d="M6,4.5L6,13.5L4.5,13.5L4.5,4.5L6,4.5ZM14,12.5L10.5,9L14,5.5L13,4.5L8.5,9L13,13.5L14,12.5Z"/>
     </g>
 </svg>

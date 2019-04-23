@@ -1,26 +1,7 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>none</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <rect id="path-1" x="5" y="3" width="2" height="6"></rect>
-        <path d="M8.14644661,8.18198052 L8.14644661,6.47487373 L3.14644661,6.47487373 L3.14644661,11.4748737 L4.85355339,11.4748737 L4.85355339,8.18198052 L8.14644661,8.18198052 Z" id="path-2"></path>
-        <path d="M8.5,2.91421356 L8.5,1.20710678 L3.5,1.20710678 L3.5,6.20710678 L5.20710678,6.20710678 L5.20710678,2.91421356 L8.5,2.91421356 Z" id="path-3"></path>
-    </defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(1,0,0,1,-3.63061e-07,0.0857859)">
         <g id="none">
-            <g id="Rectangle-8">
-                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
-                <rect stroke="#000000" stroke-width="1" x="5.5" y="3.5" width="1" height="5"></rect>
-            </g>
-            <g id="Combined-Shape" transform="translate(5.646447, 8.474874) rotate(-135.000000) translate(-5.646447, -8.474874) ">
-                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-2"></use>
-                <path stroke="#000000" stroke-width="1" d="M7.64644661,7.68198052 L7.64644661,6.97487373 L3.64644661,6.97487373 L3.64644661,10.9748737 L4.35355339,10.9748737 L4.35355339,7.68198052 L7.64644661,7.68198052 Z"></path>
-            </g>
-            <g id="Combined-Shape" transform="translate(6.000000, 3.707107) rotate(45.000000) translate(-6.000000, -3.707107) ">
-                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-3"></use>
-                <path stroke="#000000" stroke-width="1" d="M8,2.41421356 L8,1.70710678 L4,1.70710678 L4,5.70710678 L4.70710678,5.70710678 L4.70710678,2.41421356 L8,2.41421356 Z"></path>
-            </g>
+            <path fill="#000000" d="M4.935,3.651L3.672,4.914L2.464,3.707L6,0.172C7.179,1.35 8.357,2.529 9.536,3.707L8.328,4.914L7.065,3.651L7.065,8.178L8.328,6.914L9.536,8.121L6,11.657L2.464,8.121L3.672,6.914L4.935,8.178L4.935,3.651Z" style="fill-rule:nonzero;"/>
         </g>
     </g>
 </svg>

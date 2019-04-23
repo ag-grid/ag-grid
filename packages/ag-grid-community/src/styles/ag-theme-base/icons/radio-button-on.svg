@@ -1,22 +1,8 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet" viewBox="0 0 12 12" focusable="false">
-    <defs>
-        <path d="M12 6C12 9.31 9.31 12 6 12C2.69 12 0 9.31 0 6C0 2.69 2.69 0 6 0C9.31 0 12 2.69 12 6Z" id="fpP3HL7xQ"></path>
-        <clipPath id="clipa4nDXMRVE">
-            <use xlink:href="#fpP3HL7xQ" opacity="1"></use>
-        </clipPath>
-        <path d="M9 6C9 7.66 7.66 9 6 9C4.34 9 3 7.66 3 6C3 4.34 4.34 3 6 3C7.66 3 9 4.34 9 6Z" id="b1ggVpTfJz"></path>
-    </defs>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
     <g>
-        <g>
-            <g>
-                <use xlink:href="#fpP3HL7xQ" opacity="1" fill="#f02861" fill-opacity="0"></use>
-                <g clip-path="url(#clipa4nDXMRVE)">
-                    <use xlink:href="#fpP3HL7xQ" opacity="1" fill-opacity="0" stroke="#000000" stroke-width="2" stroke-opacity="1"></use>
-                </g>
-            </g>
-            <g>
-                <use xlink:href="#b1ggVpTfJz" opacity="1" fill="#000000" fill-opacity="1"></use>
-            </g>
+        <g id="b1ggVpTfJz" transform="matrix(1,0,0,1,0.00177394,-0.00803648)">
+            <path fill="#000000" d="M9,6C9,7.66 7.66,9 6,9C4.34,9 3,7.66 3,6C3,4.34 4.34,3 6,3C7.66,3 9,4.34 9,6Z" style="fill-rule:nonzero;"/>
         </g>
+        <path fill="#000000" d="M6.002,-0.022C9.31,-0.022 11.996,2.673 11.996,5.992C11.996,9.311 9.31,12.006 6.002,12.006C2.693,12.006 0.007,9.311 0.007,5.992C0.007,2.673 2.693,-0.022 6.002,-0.022ZM6.002,0.992C8.761,0.992 11.002,3.232 11.002,5.992C11.002,8.752 8.761,10.992 6.002,10.992C3.242,10.992 1.002,8.752 1.002,5.992C1.002,3.232 3.242,0.992 6.002,0.992Z"/>
     </g>
 </svg>

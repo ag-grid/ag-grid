@@ -1,21 +1,5 @@
-<svg viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>left</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <rect id="path-1" x="5.5" y="1.5" width="2" height="9"></rect>
-        <path d="M7.99264069,4.69974747 L7.99264069,2.99264069 L1.99264069,2.99264069 L1.99264069,8.99264069 L3.69974747,8.99264069 L3.69974747,4.69974747 L7.99264069,4.69974747 Z" id="path-2"></path>
-    </defs>
-    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="left">
-            <g id="Rectangle-8" transform="translate(6.500000, 6.000000) rotate(90.000000) translate(-6.500000, -6.000000) ">
-                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
-                <rect stroke="#000000" stroke-width="1" x="6" y="2" width="1" height="8"></rect>
-            </g>
-            <g id="Combined-Shape" transform="translate(4.992641, 5.992641) rotate(-45.000000) translate(-4.992641, -5.992641) ">
-                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-2"></use>
-                <path stroke="#000000" stroke-width="1" d="M7.49264069,4.19974747 L7.49264069,3.49264069 L2.49264069,3.49264069 L2.49264069,8.49264069 L3.19974747,8.49264069 L3.19974747,4.19974747 L7.49264069,4.19974747 Z"></path>
-            </g>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(1,0,0,1,0.125,0.00735905)">
+        <path fill="#000000" d="M4.172,7L6.2,9.028L4.993,10.235L0.75,5.993L4.993,1.75C5.395,2.152 5.797,2.555 6.2,2.957L4.157,5L11,5L11,7L4.172,7Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>
