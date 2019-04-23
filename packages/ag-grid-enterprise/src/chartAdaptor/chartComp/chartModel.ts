@@ -135,13 +135,23 @@ export class ChartModel extends BeanStub {
     }
 
     public updateCellRanges(movingCols: boolean, updatedCol?: ColState) {
+        const {dimensionCols, valueCols} = this.getAllChartColumns();
         const lastRange = _.last(this.cellRanges) as CellRange;
         if (lastRange) {
             // update the reference range
-            this.referenceCellRange = lastRange
+            this.referenceCellRange = lastRange;
+
+            if (movingCols) {
+                const colsInOrder = this.getColumnInDisplayOrder(valueCols, this.referenceCellRange.columns);
+                this.referenceCellRange.startColumn = colsInOrder[0];
+            }
+
+            if(updatedCol) {
+                const updatingStartCol = lastRange.columns[0] === updatedCol.column;
+                this.referenceCellRange.startColumn = updatingStartCol ? lastRange.columns[1] : lastRange.columns[0];
+            }
         }
 
-        const {dimensionCols, valueCols} = this.getAllChartColumns();
         const allColsFromRanges = this.getAllColumnsFromRanges();
 
         // clear ranges
