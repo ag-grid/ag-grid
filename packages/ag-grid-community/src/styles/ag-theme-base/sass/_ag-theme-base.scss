@@ -430,11 +430,11 @@
     ////////////////////////////////////////
     // Icons
     ////////////////////////////////////////
-    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked
-            checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-            column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading maximize
-            minimize menu minus none not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right 
-            small-up small-down tick cross tree-open tree-closed tree-indeterminate;
+    $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly 
+            checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut 
+            data desc expanded eye-slash eye filter group indeterminate left loading maximize minimize menu minus none 
+            not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right 
+            small-up small-down tick cross save tree-open tree-closed tree-indeterminate;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
@@ -1517,15 +1517,27 @@
     ////////////////////////////////////////
     // Chart Component
     ////////////////////////////////////////
-
-    .ag-chart-menu {
-        background: $background-color;
-        border: 1px solid darken($background-color, 5%);
-        border-radius: 5px;
-        padding: 2px;
-        cursor: pointer;
-        &:hover, &.ag-has-popup {
-            background-color: darken($background-color, 10%);
+    .ag-chart {
+        .ag-chart-menu {
+            opacity: 0;
+            background: $background-color;
+            > span {
+                opacity: 0.5;
+                &:hover {
+                    border-radius: 5px;
+                    background-color: darken($background-color, 10%);
+                }
+            }
+        }
+        &:hover {
+            .ag-chart-menu:not(.ag-has-popup) {
+                opacity: 1;
+                &:hover {
+                    > span {
+                        opacity: 1;
+                    }
+                }
+            }
         }
     }
 

@@ -1180,6 +1180,7 @@ export class Utils {
         dropNotAllowed: 'not-allowed',
         groupContracted: 'expanded',
         groupExpanded: 'contracted',
+        chart: 'chart',
         checkboxChecked: 'checkbox-checked',
         checkboxUnchecked: 'checkbox-unchecked',
         checkboxIndeterminate: 'checkbox-indeterminate',
@@ -1189,6 +1190,7 @@ export class Utils {
         radioButtonOn: 'radio-button-on',
         radioButtonOff: 'radio-button-off',
         groupLoading: 'loading',
+        data: 'data',
         menu: 'menu',
         filter: 'filter',
         columns: 'columns',
@@ -1206,6 +1208,7 @@ export class Utils {
         valuePanel: 'aggregation',
         columnDrag: 'column-drag',
         rowDrag: 'row-drag',
+        save: 'save',
         /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',

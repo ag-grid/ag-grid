@@ -4,7 +4,6 @@ import {
     Autowired,
     ChartType,
     Component,
-    EventService,
     GridOptionsWrapper,
     MenuItemDef,
     PopupComponent,
@@ -28,12 +27,16 @@ export class ChartMenu extends Component {
 
     private static TEMPLATE =
         `<div class="ag-chart-menu">
-            <span ref="eChartMenu" class="ag-icon-menu"></span>
+            <span ref="eChartButton" class="ag-icon-chart"></span>
+            <span ref="eDataButton" class="ag-icon-data"></span>
+            <span ref="eSaveButton" class="ag-icon-save"></span>
         </div>`;
 
     @Autowired('popupService') private popupService: PopupService;
 
-    @RefSelector('eChartMenu') private eChartMenu: HTMLElement;
+    @RefSelector('eChartButton') private eChartButton: HTMLElement;
+    @RefSelector('eDataButton') private eDataButton: HTMLElement;
+    @RefSelector('eSaveButton') private eSaveButton: HTMLElement;
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
@@ -45,11 +48,20 @@ export class ChartMenu extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eChartMenu, 'click', () => this.showMenu());
+        this.addDestroyableEventListener(this.eChartButton, 'click', () => this.showMenu());
+        this.addDestroyableEventListener(this.eDataButton, 'click', () => this.showMenu(1));
+        this.addDestroyableEventListener(this.eSaveButton, 'click', () => this.saveChart());
     }
 
-    private showMenu(): void {
-        this.tabbedMenu = new TabbedChartMenu(this, this.chartController);
+    private saveChart() {
+            const event: DownloadChartEvent = {
+                type: ChartMenu.EVENT_DOWNLOAD_CHART
+            };
+            this.dispatchEvent(event);
+    }
+
+    private showMenu(tab?: number): void {
+        this.tabbedMenu = new TabbedChartMenu(this.chartController);
         this.getContext().wireBean(this.tabbedMenu);
 
         this.tabbedMenu.setParentComponent(this);
@@ -65,14 +77,16 @@ export class ChartMenu extends Component {
             hidePopup: hidePopup
         });
 
-        this.popupService.positionPopupUnderComponent(
-            {
+        this.popupService.positionPopupUnderComponent({
                 type: 'chartMenu',
-                eventSource: this.eChartMenu,
+                eventSource: this.eChartButton,
                 ePopup: this.tabbedMenu.getGui(),
                 alignSide: 'right',
                 keepWithinBounds: true
-            });
+            }
+        );
+
+        this.tabbedMenu.showTab(tab);
     }
 
     public destroy() {
@@ -86,13 +100,11 @@ export class ChartMenu extends Component {
 class TabbedChartMenu extends PopupComponent {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
-
     public static TAB_MAIN = 'mainMenuTab';
     public static TAB_COLUMNS = 'columnsMenuTab';
     public static MENU_ITEM_SEPARATOR = 'separator';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -100,30 +112,26 @@ class TabbedChartMenu extends PopupComponent {
 
     private chartColumnPanel: ChartColumnPanel;
 
-    private mainTab: TabbedItem;
-    private columnsTab: TabbedItem;
-
-    private readonly chartMenu: ChartMenu;
+    private tabs: TabbedItem[];
     private readonly chartController: ChartController;
 
-    constructor(chartMenu: ChartMenu, chartController: ChartController) {
+    constructor(chartController: ChartController) {
         super();
-        this.chartMenu = chartMenu;
         this.chartController = chartController;
     }
 
     @PostConstruct
     public init(): void {
-        this.mainTab = this.createMainPanel();
-        this.columnsTab = this.createColumnsPanel();
+        const mainTab = this.createMainPanel();
+        const columnsTab = this.createColumnsPanel();
+
+        this.tabs = [mainTab, columnsTab];
 
         this.tabbedLayout = new TabbedLayout({
-            items: [this.mainTab, this.columnsTab],
+            items: this.tabs,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this)
         });
-
-        this.showTab(TabbedChartMenu.TAB_MAIN);
     }
 
     public getMinDimensions(): {width: number, height: number} {
@@ -189,24 +197,15 @@ class TabbedChartMenu extends PopupComponent {
                         action: () => this.chartController.setChartType(ChartType.Pie)
                     }
                 ]
-            },
-            {
-                name: localeTextFunc('downloadChart', 'Download'),
-                action: () => {
-                    const event: DownloadChartEvent = {
-                        type: ChartMenu.EVENT_DOWNLOAD_CHART
-                    };
-                    this.chartMenu.dispatchEvent(event);
-                }
             }
         ];
     }
 
-    public showTab(toShow?: string) {
-        if (this.mainTab && toShow === TabbedChartMenu.TAB_MAIN) {
-            this.tabbedLayout.showItem(this.mainTab);
-        } else {
+    public showTab(tab?: number) {
+        if (!tab) {
             this.tabbedLayout.showFirstItem();
+        } else {
+            this.tabbedLayout.showItem(this.tabs[tab]);
         }
     }
 
