@@ -148,8 +148,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
                 (domainY[1] as any) = 1;
             }
         }
-        this.domainX = domainX as [X, X];
-        this.domainY = domainY as [Y, Y];
+        this.domainX = domainX as X[];
+        this.domainY = domainY as Y[];
 
         return true;
     }

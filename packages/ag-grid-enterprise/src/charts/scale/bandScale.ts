@@ -25,14 +25,15 @@ export class BandScale<D> implements Scale<D, number> {
     private _domain: D[] = [];
     set domain(values: D[]) {
         const domain = this._domain;
-
         domain.length = 0;
-        this.index = {} as any;
+
+        this.index = {};
         const index = this.index;
 
         values.forEach(value => {
-            if (index[value] === undefined) {
-                index[value] = domain.push(value) - 1;
+            const key = typeof value === 'object' ? (value as any).id : value;
+            if (index[key] === undefined) {
+                index[key] = domain.push(value) - 1;
             }
         });
 
@@ -57,7 +58,8 @@ export class BandScale<D> implements Scale<D, number> {
     }
 
     convert(d: D): number {
-        const i = this.index[d];
+        const key = typeof d === 'object' ? (d as any).id : d;
+        const i = this.index[key];
         if (i === undefined) {
             return NaN;
         }
@@ -75,7 +77,6 @@ export class BandScale<D> implements Scale<D, number> {
         return this._bandwidth;
     }
 
-    private _padding = 0;
     set padding(value: number) {
         value = Math.max(0, Math.min(1, value));
         this._paddingInner = value;
