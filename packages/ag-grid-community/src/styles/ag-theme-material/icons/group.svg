@@ -1,14 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" focusable="false">
-    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>group</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="group" fill="#000000">
-            <path d="M14,14 L7,14 L7,12 L16,12 L16,12 C16,13.1045695 15.1045695,14 14,14 Z M9,12 L9,14 L11,14 L11,12 L9,12 Z" id="Combined-Shape" fill-rule="nonzero"></path>
-            <path d="M3,6 L3,6 C3,4.8954305 3.8954305,4 5,4 L5,4 L14,4 C15.1045695,4 16,4.8954305 16,6 L16,6 L3,6 Z M12,4 L12,6 L14,6 L14,4 L12,4 Z" id="Combined-Shape" transform="translate(9.500000, 5.000000) scale(-1, 1) translate(-9.500000, -5.000000) "></path>
-            <path d="M16,10 L7,10 L7,8 L16,8 L16,10 Z M9,8 L9,10 L11,10 L11,8 L9,8 Z" id="Combined-Shape"></path>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="group" transform="matrix(1.33333,0,0,1.33333,-0.666667,0)">
+        <path fill="#000000" d="M11,12L16,12C16,13.105 15.105,14 14,14L11,14L11,12ZM16,8L16,10L11,10L11,8L16,8ZM14,4C15.105,4 16,4.895 16,6L7,6L7,4L14,4ZM9,14L7,14L7,12L9,12L9,14ZM9,10L7,10L7,8L9,8L9,10ZM5,6L3,6C3,4.895 3.895,4 5,4L5,6Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>
