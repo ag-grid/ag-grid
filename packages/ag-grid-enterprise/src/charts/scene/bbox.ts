@@ -32,7 +32,7 @@ export class BBox {
             && y >= this.y && y <= (this.y + this.height);
     }
 
-    private static emptyObject = {};
+    private static noParams = {};
 
     render(ctx: CanvasRenderingContext2D, params: {
         resetTransform?: boolean,
@@ -40,7 +40,7 @@ export class BBox {
         fillStyle?: string,
         lineWidth?: number,
         strokeStyle?: string
-    } = BBox.emptyObject) {
+    } = BBox.noParams) {
         ctx.save();
 
         if (params.resetTransform) {

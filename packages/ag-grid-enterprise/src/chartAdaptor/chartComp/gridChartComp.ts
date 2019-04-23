@@ -180,7 +180,7 @@ export class GridChartComp extends Component {
         lineChart.series = fields.map((f: {colId: string, displayName: string}, index: number)  => {
             const lineSeries = new LineSeries<any, string, number>();
 
-            lineSeries.name = f.displayName;
+            lineSeries.title = f.displayName;
 
             lineSeries.tooltip = this.chartOptions.showTooltips;
             lineSeries.lineWidth = 2;
@@ -211,7 +211,7 @@ export class GridChartComp extends Component {
         pieChart.series = singleSeries.map((f: {colId: string, displayName: string}, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
-            pieSeries.name = f.displayName;
+            pieSeries.title = f.displayName;
 
             pieSeries.tooltip = this.chartOptions.showTooltips;
             pieSeries.showInLegend = index === 0;

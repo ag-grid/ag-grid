@@ -58,6 +58,41 @@ export interface PieTooltipRendererParams<D> {
 
 export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
+    private radiusScale: LinearScale<number> = scaleLinear();
+
+    private groupSelection: Selection<Group, Group, GroupSelectionDatum<D>, any> = Selection.select(this.group).selectAll<Group>();
+
+    /**
+     * The processed data that gets visualized.
+     */
+    private groupSelectionData: GroupSelectionDatum<D>[] = [];
+
+    /**
+     * `null` means make the callout color the same as {@link strokeStyle}.
+     */
+    calloutColor: string | null = null;
+    calloutWidth: number = 2;
+    calloutLength: number = 10;
+    calloutPadding: number = 3;
+
+    labelFont: string = '12px Tahoma';
+    labelColor: string = 'black';
+    labelRotation: number = 0;
+    labelMinAngle: number = 20; // in degrees
+
+    private titleNode = new Text();
+
+    constructor() {
+        super();
+
+        const title = this.titleNode;
+        title.pointerEvents = PointerEvents.None;
+        title.textAlign = 'center';
+        title.textBaseline = 'bottom';
+        title.font = 'bold 12px Tahoma';
+        this.group.appendChild(title);
+    }
+
     set chart(chart: Chart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
@@ -72,7 +107,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
      * The name of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    _angleField: Extract<keyof D, string> | undefined = undefined;
+    private _angleField: Extract<keyof D, string> | undefined = undefined;
     set angleField(value: Extract<keyof D, string> | undefined) {
         if (this._angleField !== value) {
             this._angleField = value;
@@ -103,7 +138,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
      * The value of the label field is supposed to be a string.
      * If it isn't, it will be coerced to a string value.
      */
-    _labelField: Extract<keyof D, string> | undefined = undefined;
+    private _labelField: Extract<keyof D, string> | undefined = undefined;
     set labelField(value: Extract<keyof D, string> | undefined) {
         if (this._labelField !== value) {
             this._labelField = value;
@@ -114,31 +149,27 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         return this._labelField;
     }
 
-    _label: boolean = true;
+    private _label: boolean = true;
     set label(value: boolean) {
         if (this._label !== value) {
             this._label = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get label(): boolean {
         return this._label;
     }
 
-    labelFont: string = '12px Tahoma';
-    labelColor: string = 'black';
-    labelRotation: number = 0;
-    labelMinAngle: number = 20; // in degrees
+    private _colors: string[] = colors;
+    set colors(values: string[]) {
+        this._colors = values;
+        this.strokeColors = values.map(color => Color.fromHexString(color).darker().toHexString());
+        this.scheduleData();
+    }
+    get colors(): string[] {
+        return this._colors;
+    }
 
-    /**
-     * `null` means make the callout color the same as {@link strokeStyle}.
-     */
-    calloutColor: string | null = null;
-    calloutWidth: number = 2;
-    calloutLength: number = 10;
-    calloutPadding: number = 3;
-
-    colors: string[] = colors;
     private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
 
     set visible(value: boolean) {
@@ -154,7 +185,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get rotation(): number {
@@ -202,15 +233,6 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         scale.range = [-Math.PI, Math.PI].map(angle => angle + Math.PI / 2);
         return scale;
     })();
-
-    private radiusScale: LinearScale<number> = scaleLinear();
-
-    private groupSelection: Selection<Group, Group, GroupSelectionDatum<D>, any> = Selection.select(this.group).selectAll<Group>();
-
-    /**
-     * The processed data that gets visualized.
-     */
-    private groupSelectionData: GroupSelectionDatum<D>[] = [];
 
     getDomainX(): [number, number] {
         return this.angleScale.domain as [number, number];
@@ -350,6 +372,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
 
+        this.titleNode.translationY = -this.radius - outerRadiusOffset - 2;
+        this.titleNode.text = this.title;
+
         const updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
 
@@ -449,7 +474,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 labelField: this.labelField
             });
         } else {
-            const name = this.name && `<strong>${this.name}</strong><br>`;
+            const name = this.title && `<strong>${this.title}</strong><br>`;
             const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
             const value = nodeDatum.seriesDatum[angleField];
             const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();

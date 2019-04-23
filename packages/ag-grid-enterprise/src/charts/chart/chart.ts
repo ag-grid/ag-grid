@@ -8,7 +8,7 @@ import { Legend, LegendDatum } from "./legend";
 
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
-    protected legend = new Legend();
+    legend = new Legend();
 
     tooltipElement = (() => {
         const div = document.createElement('div');
@@ -116,6 +116,9 @@ export abstract class Chart<D, X, Y> {
     private readonly _performLayout = () => {
         this.layoutCallbackId = 0;
         this.performLayout();
+        if (this.onLayoutDone) {
+            this.onLayoutDone();
+        }
     };
 
     private dataCallbackId: number = 0;
@@ -132,6 +135,8 @@ export abstract class Chart<D, X, Y> {
     get dataPending(): boolean {
         return !!this.dataCallbackId;
     }
+
+    onLayoutDone?: () => void;
 
     private readonly _processData = () => {
         this.dataCallbackId = 0;
