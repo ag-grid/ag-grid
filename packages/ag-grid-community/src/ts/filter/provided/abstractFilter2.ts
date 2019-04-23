@@ -8,6 +8,7 @@ import {ITextFilterParams} from "./text/textFilter";
 import {_} from "../../utils";
 import {INumberFilterParams} from "./number/numberFilter";
 import {CombinedFilter, FilterConditionType} from "./abstractFilter";
+import {TextFilterModel2} from "./text/textFilter2";
 
 /**
  * T(ype) The type of this filter. ie in DateFilter T=Date
@@ -22,7 +23,7 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
 
     private newRowsActionKeep: boolean;
 
-    filterParams: P;
+    private abstractFilterParams: P;
     private clearActive: boolean;
     private applyActive: boolean;
 
@@ -38,25 +39,32 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
     @QuerySelector('#clearButton')
     private eClearButton: HTMLElement;
 
-    conditionValue: string;
-
     @Autowired('gridOptionsWrapper')
     gridOptionsWrapper: GridOptionsWrapper;
 
-    public abstract isFilterActive(): boolean;
     public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     public abstract resetState(resetConditionFilterOnly?: boolean): void;
-    public abstract serialize(type: FilterConditionType): M;
-    public abstract parse(toParse: M, type: FilterConditionType): void;
     protected abstract updateVisibilityOfComponents(): void;
 
     protected abstract bodyTemplate(): string;
+    protected abstract reset(): void;
 
-    public abstract getModel(): M;
-    public abstract setModel(model: M): void;
+    protected abstract setModelIntoGui(model: M): void;
+    protected abstract getModelFromGui(): M;
+    protected abstract areModelsEqual(a: M, b: M): boolean;
+    protected abstract convertDeprecatedModelType(model: M): M;
 
-    protected abstract doApply(): void;
+    private appliedModel: M;
+
+    protected getAppliedModel(): M {
+        return this.appliedModel;
+    }
+
+    public isFilterActive(): boolean {
+        // filter is active if we have a valid applied model
+        return !!this.appliedModel;
+    }
 
     @PostConstruct
     protected postConstruct(): void {
@@ -65,7 +73,7 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
     }
 
     public init(params: P): void {
-        this.filterParams = params;
+        this.abstractFilterParams = params;
 
         this.clearActive = params.clearButton === true;
         // Allowing for old param property apply, even though is not advertised through the interface
@@ -82,17 +90,45 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
         const anyButtonVisible: boolean = this.applyActive || this.clearActive;
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
 
+        this.reset();
         this.updateVisibilityOfComponents();
     }
 
+    public getModel(): M {
+        return this.appliedModel;
+    }
+
+    public setModel(model: M): void {
+        if (model) {
+            const modelNotDeprecated = this.convertDeprecatedModelType(model);
+            this.setModelIntoGui(modelNotDeprecated);
+        } else {
+            this.reset();
+        }
+        this.updateVisibilityOfComponents();
+
+        // we set the model from the gui, rather than the provided model,
+        // so the model is consistent. eg handling of null/undefined will be the same,
+        // of if model is case insensitive, then casing is removed.
+        this.appliedModel = this.getModelFromGui();
+    }
+
     private onBtClear() {
-        this.setModel(null);
+        this.reset();
+        this.updateVisibilityOfComponents();
         this.onFilterChanged();
     }
 
     private onBtApply() {
-        this.doApply();
-        this.filterParams.filterChangedCallback();
+        const oldAppliedModel = this.appliedModel;
+        this.appliedModel = this.getModelFromGui();
+
+        // models can be same if user pasted same content into text field, or maybe just changed the case
+        // and it's a case insensitive filter
+        const newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
+        if (newModelDifferent) {
+            this.abstractFilterParams.filterChangedCallback();
+        }
     }
 
     public floatingFilter(from: string): void {
@@ -107,13 +143,14 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
 
     public onNewRowsLoaded() {
         if (!this.newRowsActionKeep) {
-            this.resetState();
+            this.reset();
+            this.appliedModel = null;
         }
     }
 
     protected onFilterChanged(): void {
         this.updateVisibilityOfComponents();
-        this.filterParams.filterModifiedCallback();
+        this.abstractFilterParams.filterModifiedCallback();
         if (!this.applyActive) {
             this.onBtApply();
         }

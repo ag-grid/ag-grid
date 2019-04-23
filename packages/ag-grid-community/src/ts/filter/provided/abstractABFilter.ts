@@ -79,72 +79,74 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
 
     protected optionsFactory: OptionsFactory;
 
-    protected appliedOptionA: string;
-    protected appliedOptionB: string;
-    protected appliedJoin: string;
+    private abFilterParams: IABFilterParams;
 
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract getDefaultFilterOption(): string;
 
-    protected abstract getFilterValueA(): T | T[];
     protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
     protected abstract createValueTemplate(type: FilterConditionType): string;
     protected abstract isFirstFilterGuiComplete(): boolean;
 
-    protected abstract getNullableModel(): M;
+    protected getOptionA(): string {
+        return this.eOptionsA.value;
+    }
 
-    public getModel(): M {
-        if (this.isFilterActive()) {
-            return this.getNullableModel();
+    protected getOptionB(): string {
+        return this.eOptionsB.value;
+    }
+
+    protected getJoin(): string {
+        return this.eOr.checked ? 'OR' : 'AND';
+    }
+
+    protected setModelIntoGui(model: M): void {
+        const orChecked = model.join === 'OR';
+        this.eAnd.checked = !orChecked;
+        this.eOr.checked = orChecked;
+
+        this.eOptionsA.value = model.filterOptionA;
+        if (model.filterOptionB) {
+            this.eOptionsB.value = model.filterOptionB;
         } else {
-            return null;
+            this.eOptionsB.value = this.getDefaultFilterOption();
         }
-    }
-
-    protected getAppliedOptionA(): string {
-        return this.appliedOptionA;
-    }
-
-    protected getAppliedOptionB(): string {
-        return this.appliedOptionB;
-    }
-
-    protected getAppliedJoin(): string {
-        return this.appliedJoin;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const mainFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
-        if (this.eOptionsB == null) {
-            return mainFilterResult;
+        const model = this.getAppliedModel();
+        const firstFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
+
+        if (model.join == null) {
+            return firstFilterResult;
         }
 
-        const auxFilterResult = this.individualFilterPasses(params, FilterConditionType.CONDITION);
-        return this.conditionValue === 'AND' ? mainFilterResult && auxFilterResult : mainFilterResult || auxFilterResult;
+        const secondFilterResult = this.individualFilterPasses(params, FilterConditionType.CONDITION);
+        if (model.join === 'AND') {
+            return firstFilterResult && secondFilterResult;
+        } else {
+            return firstFilterResult || secondFilterResult;
+        }
     }
 
     public init(params: P) {
 
-        this.filterParams = params;
+        this.abFilterParams = params;
 
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOption());
 
-        this.appliedOptionA = this.optionsFactory.getDefaultOption();
-        this.appliedOptionB = this.optionsFactory.getDefaultOption();
-
         this.allowTwoConditions = !params.suppressAndOrCondition;
 
         this.putOptionsIntoDropdown();
-        this.addOptionChangedListeners();
-        this.reset();
+        this.addChangedListeners();
 
         super.init(params);
     }
 
     private putOptionsIntoDropdown(): void {
-        const filterOptions = this.filterParams.filterOptions ?
-            this.filterParams.filterOptions : this.getDefaultFilterOptions();
+        const filterOptions = this.abFilterParams.filterOptions ?
+            this.abFilterParams.filterOptions : this.getDefaultFilterOptions();
 
         filterOptions.forEach( option => {
             const createOption = ()=> {
@@ -166,12 +168,6 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
         this.eOptionsB.disabled = readOnly;
     }
 
-    protected doApply(): void {
-        this.appliedJoin = this.eOr.checked ? 'OR' : 'AND';
-        this.appliedOptionA = this.eOptionsA.value;
-        this.appliedOptionB = this.eOptionsB.value;
-    }
-
     public isAllowTwoConditions(): boolean {
         return this.allowTwoConditions;
     }
@@ -183,15 +179,20 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
         const optionsTemplateB = `<select class="ag-filter-select" ref="eOptionsB"></select>`;
         const valueTemplateB = this.createValueTemplate(FilterConditionType.CONDITION);
 
-        const uniqueGroupId = Math.random();
+        const uniqueGroupId = 'ag-simple-filter-and-or-' + Math.random();
 
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        const andOrTemplate = `<div class="ag-filter-condition" ref="eJoin">
-                    <input ref="eAnd" type="radio" class="and" name="${uniqueGroupId}" value="AND")}
-                           checked="checked" /><label style="display: inline" for="andId">${translate('andCondition','AND')}</label>
-                    <input ref="eOr" type="radio" class="or" name="${uniqueGroupId}" value="OR" /><label style="display: inline"
-                           for="orId">${translate('orCondition', 'OR')}</label>
+        const andOrTemplate =
+            `<div class="ag-filter-condition" ref="eJoin">
+                    <label>
+                        <input ref="eAnd" type="radio" class="and" name="${uniqueGroupId}" value="AND")} checked="checked" />
+                        ${translate('andCondition','AND')}
+                    </label>
+                    <label>
+                        <input ref="eOr" type="radio" class="or" name="${uniqueGroupId}" value="OR" />
+                        ${translate('orCondition', 'OR')}
+                    </label>
                 </div>`;
 
         const template =
@@ -211,87 +212,13 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
         _.setVisible(this.eJoin, showSecondFilter);
     }
 
-    public setModel(model: M): void {
-        const orChecked = model.join === 'OR';
-        this.conditionValue = orChecked ? 'OR' : 'AND';
-        this.eAnd.checked = !orChecked;
-        this.eOr.checked = orChecked;
-
-        this.eOptionsA.value = model.filterOptionA;
-        if (model.filterOptionB) {
-            this.eOptionsB.value = model.filterOptionB;
-        } else {
-            this.eOptionsB.value = this.getDefaultFilterOption();
-        }
-    }
-
     protected reset(): void {
-        this.conditionValue = 'AND';
         this.eAnd.checked = true;
 
         const defaultOption = this.getDefaultFilterOption();
         this.eOptionsA.value = defaultOption;
         this.eOptionsB.value = defaultOption;
     }
-
-    private redrawCondition() {
-/*        const filterCondition: HTMLElement = this.eFilterBodyWrapper.querySelector('.ag-filter-condition') as HTMLElement;
-        if (!filterCondition && this.isFilterActive() && this.isAllowTwoConditions()) {
-            this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
-            this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
-            this.wireQuerySelectors();
-            const {andButton, orButton} = this.refreshOperatorUi();
-
-            this.addDestroyableEventListener(andButton, 'change', () => {
-                this.conditionValue = 'AND';
-                this.onFilterChanged();
-            });
-            this.addDestroyableEventListener(orButton, 'change', () => {
-                this.conditionValue = 'OR';
-                this.onFilterChanged();
-            });
-            this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
-        } else if (filterCondition && !this.isFilterActive()) {
-
-            // reset condition filter state
-            this.conditionValue = 'AND';
-            this.resetState(true);
-
-            this.eFilterBodyWrapper.removeChild(this.eConditionWrapper);
-            this.eConditionWrapper = null;
-        } else {
-            this.refreshFilterBodyUi(FilterConditionType.CONDITION);
-            if (this.eConditionWrapper) {
-                this.refreshOperatorUi();
-            }
-        }*/
-    }
-
-/*    public wrapCondition(mainCondition:string): string {
-        const filterNotActive = !this.isFilterActive();
-        if (filterNotActive) {
-            return mainCondition;
-        } else {
-            return  `${mainCondition}${this.createConditionTemplate(FilterConditionType.CONDITION)}`;
-        }
-    }*/
-
-/*    private createConditionTemplate(type:FilterConditionType): string {
-
-        const optionsHtml = this.createOptionsTemplate(type);
-
-        const centerHtml = this.createValueTemplate(type);
-
-        const template = `<div class="ag-filter-condition">
-                    <input id="andId" type="radio" class="and" name="booleanLogic" value=${this.translate('AND')}
-                           checked="checked" /><label style="display: inline" for="andId">${this.translate('andCondition')}</label>
-                    <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline"
-                           for="orId">${this.translate('orCondition')}</label>
-                    <div>${optionsHtml}${centerHtml}</div>
-                </div>`;
-
-        return template;
-    }*/
 
     public translate(toTranslate: string): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -305,42 +232,29 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
         return translate(toTranslate, defaultTranslation);
     }
 
-    public addOptionChangedListeners() {
-        this.addDestroyableEventListener(this.eOptionsA, "change", () => this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eOptionsB, "change", () => this.onFilterChanged.bind(this));
+    public addChangedListeners() {
+        this.addDestroyableEventListener(this.eOptionsA, "change", this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eOptionsB, "change", this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eOr, "change", this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eAnd, "change", this.onFilterChanged.bind(this));
+
+        // this.eOr.addEventListener('change', e => {
+        //     this.onFilterChanged();
+        //     console.log('eOr',e);
+        // });
+        // this.eAnd.addEventListener('change', e => {
+        //     this.onFilterChanged();
+        //     console.log('eAnd',e);
+        // });
     }
-
-/*    private onFilterOptionChanged(type:FilterConditionType): void {
-        const prevSelectedFilter = this.appliedOptionA;
-
-        if (type === FilterConditionType.MAIN) {
-            this.appliedOptionA = this.eOptionsA.value;
-        } else {
-            this.appliedOptionB = this.eOptionsB.value;
-        }
-
-        this.updateVisibilityOfComponents();
-
-        const prevSelectedFilterHadNoInput = this.doesFilterHaveHiddenInput(prevSelectedFilter);
-
-        // only fire 'onFilterChanged' event if filter is active, as in it contains a filter value, or if the previously
-        // selected filter didn't require a value, i.e. if custom filter has 'hideFilterInputField = true'
-        if (this.isFilterActive() || prevSelectedFilterHadNoInput) {
-
-            // reset when switching back to the empty filter to remove conditional filter
-            if (this.appliedOptionA === AbstractABFilter.EMPTY) {
-                this.resetState();
-            }
-
-            this.onFilterChanged();
-        }
-    }*/
 
     protected doesFilterHaveHiddenInput(filterType: string) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
         return customFilterOption && customFilterOption.hideFilterInput;
     }
 
+    /*** need to verify this logic isn't needed for the other filter types. I think not, it's covered by getModel() will be  null if filter not valid. */
+    /*
     public isFilterActive(): boolean {
 
         // the main selected filter is always active when there is no input field
@@ -356,6 +270,7 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
             return rawFilterValues != null;
         }
     }
+    */
 
 
 }

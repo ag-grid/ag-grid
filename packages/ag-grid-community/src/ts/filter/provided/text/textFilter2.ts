@@ -5,7 +5,7 @@ import {_} from "../../../utils";
 import {AbstractABFilter, IABFilterParams, ABFilterModel} from "../abstractABFilter";
 
 export interface TextFilterModel2 extends ABFilterModel {
-    filterValueA: string;
+    filterValueA?: string;
     filterValueB?: string;
 }
 
@@ -33,11 +33,10 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
     @RefSelector('eFilterTextB')
     private eFilterValueB: HTMLInputElement;
 
-    private appliedValueA: string;
-    private appliedValueB: string;
-
     private comparator: TextComparator2;
     private formatter: TextFormatter2;
+
+    private textFilterParams: ITextFilterParams2;
 
     static DEFAULT_FORMATTER: TextFormatter2 = (from: string) => {
         return from;
@@ -76,21 +75,14 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
         if (val && val.trim() === '') {
             val = null;
         }
-        if (val && !this.filterParams.caseSensitive) {
+        if (val && !this.textFilterParams.caseSensitive) {
             val = val.toLowerCase();
         }
         return val;
     }
 
-    protected doApply(): void {
-        super.doApply();
-
-        this.appliedValueA = this.getValue(this.eFilterValueA);
-        this.appliedValueB = this.getValue(this.eFilterValueB);
-    }
-
     protected addFilterValueChangedListeners(): void {
-        const debounceMs = this.getDebounceMs(this.filterParams);
+        const debounceMs = this.getDebounceMs(this.textFilterParams);
 
         const toDebounce: () => void = _.debounce(() => this.onFilterChanged(), debounceMs);
 
@@ -103,66 +95,81 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
     }
 
     public init(params: ITextFilterParams2): void {
-        super.init(params);
-
-        this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter2.DEFAULT_COMPARATOR;
+        this.textFilterParams = params;
+        this.comparator = this.textFilterParams.textCustomComparator ? this.textFilterParams.textCustomComparator : TextFilter2.DEFAULT_COMPARATOR;
         this.formatter =
-            this.filterParams.textFormatter ? this.filterParams.textFormatter :
-                this.filterParams.caseSensitive == true ? TextFilter2.DEFAULT_FORMATTER :
+            this.textFilterParams.textFormatter ? this.textFilterParams.textFormatter :
+                this.textFilterParams.caseSensitive == true ? TextFilter2.DEFAULT_FORMATTER :
                     TextFilter2.DEFAULT_LOWERCASE_FORMATTER;
 
         this.addFilterValueChangedListeners();
+
+        super.init(params);
     }
 
-    public getNullableModel(): TextFilterModel2 {
+    protected setModelIntoGui(model: TextFilterModel2): void {
+        super.setModelIntoGui(model);
+        this.eFilterValueA.value = model.filterValueA;
+        this.eFilterValueB.value = model.filterValueB;
+    }
+
+    protected getModelFromGui(): TextFilterModel2 {
+        if (!this.isFirstFilterGuiComplete()) { return null; }
+
         const model: TextFilterModel2 = {
             filterType: TextFilter2.FILTER_TYPE,
-            filterOptionA: this.getAppliedOptionA(),
-            filterValueA: this.appliedValueA
+            filterOptionA: this.getOptionA()
         };
 
-        if (this.isAllowTwoConditions() && this.appliedValueA && this.appliedValueB) {
-            model.join = this.getAppliedJoin();
-            model.filterValueB = this.appliedValueB;
-            model.filterOptionB = this.getAppliedOptionB();
+        const optionARequiresValue = !this.doesFilterHaveHiddenInput(model.filterOptionA);
+        if (optionARequiresValue) {
+            model.filterValueA = this.getValue(this.eFilterValueA);
+        }
+
+        if (this.isAllowTwoConditions()) {
+            const valueB = this.getValue(this.eFilterValueB);
+            const optionB = this.getOptionB();
+            const optionBRequiresValue = !this.doesFilterHaveHiddenInput(optionB);
+            if (!optionBRequiresValue || _.exists(valueB)) {
+                model.join = this.getJoin();
+                model.filterOptionB = optionB;
+                if (optionBRequiresValue) {
+                    model.filterValueB = valueB;
+                }
+            }
         }
 
         return model;
     }
 
-    public setModel(modelMightBeDeprecated: TextFilterModel2): void {
-        const model = this.convertDeprecatedModelType(modelMightBeDeprecated);
+    protected areModelsEqual(a: TextFilterModel2, b: TextFilterModel2): boolean {
+        // both are missing
+        if (!a && !b) { return true; }
 
-        if (!model) {
-            this.reset();
-            return;
-        }
+        // one is missing, other present
+        if ((!a && b) || (a && !b)) { return false; }
 
-        super.setModel(model);
+        // otherwise both present, so compare
+        const modelsEqual =
+            a.filterValueA === b.filterValueA
+            && a.filterValueB === b.filterValueB
+            && a.filterOptionA === b.filterOptionA
+            && a.filterOptionB === b.filterOptionB
+            && a.filterType === b.filterType
+            && a.join === b.join;
 
-        this.appliedValueA = this.formatter(model.filterValueA);
-        this.eFilterValueA.value = model.filterValueA;
-
-        if (model.join) {
-            this.appliedValueB = this.formatter(model.filterValueB);
-            this.eFilterValueB.value = model.filterValueB;
-        } else {
-            this.appliedValueB = null;
-            this.eFilterValueB.value = null;
-        }
+        return modelsEqual;
     }
 
     protected reset(): void {
         super.reset();
 
-        this.appliedValueA = null;
         this.eFilterValueA.value = null;
-        this.appliedValueB = null;
         this.eFilterValueB.value = null;
     }
 
     // for backwards compatibility after Niall's refactor Q2 2019
-    private convertDeprecatedModelType(model: TextFilterModel2): TextFilterModel2 {
+    protected convertDeprecatedModelType(model: TextFilterModel2): TextFilterModel2 {
         if (!model) { return model; }
 
         const modelAsAny = <any> model;
@@ -195,7 +202,7 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
     public modelFromFloatingFilter(from: string): TextFilterModel2 {
         return {
             filterType: TextFilter2.FILTER_TYPE,
-            filterOptionA: this.appliedOptionA,
+            filterOptionA: this.getOptionA(),
             filterValueA: from
         };
     }
@@ -219,11 +226,13 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
 
     protected updateVisibilityOfComponents(): void {
         super.updateVisibilityOfComponents();
-        
-        const showA = !this.doesFilterHaveHiddenInput(this.appliedOptionA) && this.appliedOptionA !== AbstractABFilter.EMPTY;
+
+        const optionA = this.getOptionA();
+        const showA = !this.doesFilterHaveHiddenInput(optionA) && optionA !== AbstractABFilter.EMPTY;
         _.setVisible(this.eFilterValueA, showA);
 
-        const showB = !this.doesFilterHaveHiddenInput(this.appliedOptionB) && this.appliedOptionB !== AbstractABFilter.EMPTY;
+        const optionB = this.getOptionB();
+        const showB = !this.doesFilterHaveHiddenInput(optionB) && optionB !== AbstractABFilter.EMPTY;
         _.setVisible(this.eFilterValueB, showB);
     }
 
@@ -231,12 +240,8 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
         this.eFilterValueA.focus();
     }
 
-    public getFilterValueA(): string {
-        return this.appliedValueA;
-    }
-
     protected isFirstFilterGuiComplete(): boolean {
-        if (this.doesFilterHaveHiddenInput(this.appliedOptionA)) {
+        if (this.doesFilterHaveHiddenInput(this.getOptionA())) {
             return true;
         }
         const firstFilterValue = this.getValue(this.eFilterValueA);
@@ -244,28 +249,26 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
     }
 
     public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
-        const filterText:string = type == FilterConditionType.MAIN ? this.appliedValueA : this.appliedValueB;
-        const filterOption:string = type == FilterConditionType.MAIN ? this.getAppliedOptionA() : this.getAppliedOptionB();
+        const model = this.getAppliedModel();
+
+        const filterText:string = type == FilterConditionType.MAIN ? model.filterValueA : model.filterValueB;
+        const filterOption:string = type == FilterConditionType.MAIN ? model.filterOptionA : model.filterOptionB;
 
         const customFilterOption = this.optionsFactory.getCustomOption(filterOption);
         if (customFilterOption) {
             // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
             if (filterText != null || customFilterOption.hideFilterInput) {
-                const cellValue = this.filterParams.valueGetter(params.node);
+                const cellValue = this.textFilterParams.valueGetter(params.node);
                 const formattedCellValue: string = this.formatter(cellValue);
                 return customFilterOption.test(filterText, formattedCellValue);
             }
         }
 
-        if (!filterText) {
-            return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
-        } else {
-            return this.checkIndividualFilter(params, filterOption, filterText);
-        }
+        return this.checkIndividualFilter(params, filterOption, filterText);
     }
 
-    private checkIndividualFilter(params: IDoesFilterPassParams, filterOption:string, filterText: string) {
-        const cellValue = this.filterParams.valueGetter(params.node);
+    private checkIndividualFilter(params: IDoesFilterPassParams, filterOption:string, filterText: string): boolean {
+        const cellValue = this.textFilterParams.valueGetter(params.node);
         const filterTextFormatted = this.formatter(filterText);
 
         if (cellValue == null || cellValue === undefined) {
@@ -273,7 +276,7 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
         }
 
         const valueFormatted: string = this.formatter(cellValue);
-        return this.comparator (filterOption, valueFormatted, filterTextFormatted);
+        return this.comparator(filterOption, valueFormatted, filterTextFormatted);
     }
 
 /*
@@ -307,12 +310,6 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
     }
 */
 
-    public setFilter(filter: string, type:FilterConditionType): void {
-    }
-
-    public getFilter(): string {
-        return this.appliedValueA;
-    }
 
     public resetState(resetConditionFilterOnly: boolean = false): void {
 /*
@@ -325,10 +322,4 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
         this.setFilter(null, FilterConditionType.CONDITION);
 */
     }
-
-    public serialize(type:FilterConditionType): TextFilterModel2 { return null; }
-
-    public parse(model: TextFilterModel2, type:FilterConditionType): void {}
-
-    public setType(filterType: string, type:FilterConditionType): void {}
 }
