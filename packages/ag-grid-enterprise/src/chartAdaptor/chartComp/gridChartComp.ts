@@ -131,9 +131,6 @@ export class GridChartComp extends Component {
 
     private refresh(): void {
         if (this.model.getChartType() !== this.currentChartType) {
-
-
-
             this.createChart();
         }
         this.updateChart();
@@ -205,10 +202,7 @@ export class GridChartComp extends Component {
 
         pieChart.removeAllSeries();
 
-        // TODO removing doughnut
-        const singleSeries = [fields[0]];
-
-        pieChart.series = singleSeries.map((f: {colId: string, displayName: string}, index: number) => {
+        pieChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
             pieSeries.title = f.displayName;
