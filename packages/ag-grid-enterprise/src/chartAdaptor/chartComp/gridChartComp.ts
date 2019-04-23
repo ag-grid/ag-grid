@@ -200,7 +200,7 @@ export class GridChartComp extends Component {
 
         const singleField = fields.length === 1;
         const thickness = singleField ? 0 : 20;
-        const padding = singleField ? 0 : 10;
+        const padding = singleField ? 0 : 20;
         let offset = 0;
 
         pieChart.removeAllSeries();
