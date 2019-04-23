@@ -84,8 +84,12 @@ export class GridChartComp extends Component {
     }
 
     private createChart() {
+        let {width, height} = this.chartOptions;
+
         // destroy chart and remove it from DOM
         if (this.chart) {
+            height = this.chart.height;
+            width = this.chart.width;
             this.chart.destroy();
             _.clearElement(this.eChart);
         }
@@ -93,8 +97,8 @@ export class GridChartComp extends Component {
         const chartOptions = {
             chartType: this.model.getChartType(),
             parentElement: this.eChart,
-            width: this.chartOptions.width,
-            height: this.chartOptions.height,
+            width: width,
+            height: height,
             showTooltips: this.chartOptions.showTooltips
         };
 
@@ -127,6 +131,9 @@ export class GridChartComp extends Component {
 
     private refresh(): void {
         if (this.model.getChartType() !== this.currentChartType) {
+
+
+
             this.createChart();
         }
         this.updateChart();
@@ -198,7 +205,10 @@ export class GridChartComp extends Component {
 
         pieChart.removeAllSeries();
 
-        pieChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
+        // TODO removing doughnut
+        const singleSeries = [fields[0]];
+
+        pieChart.series = singleSeries.map((f: {colId: string, displayName: string}, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
             pieSeries.name = f.displayName;
