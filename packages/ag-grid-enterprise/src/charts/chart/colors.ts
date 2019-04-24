@@ -42,6 +42,16 @@ export const scheme1: string[] = [
     '#df874d'
 ];
 
+export const nord: string[] = [
+    '#4b556a',
+    '#c16068',
+    '#a2bf8a',
+    '#ebcc87',
+    '#80a0c3',
+    '#b58dae',
+    '#85c0d1'
+];
+
 export const purple: string[] = [
     '#230b68',
     '#301299',
