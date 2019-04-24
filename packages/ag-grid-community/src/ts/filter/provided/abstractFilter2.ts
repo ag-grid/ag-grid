@@ -3,12 +3,10 @@ import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interface
 import {QuerySelector} from "../../widgets/componentAnnotations";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {BaseFloatingFilterChange, FloatingFilterChange} from "../floating/floatingFilter";
+import {FloatingFilterChange} from "../floating/floatingFilter";
 import {ITextFilterParams} from "./text/textFilter";
 import {_} from "../../utils";
 import {INumberFilterParams} from "./number/numberFilter";
-import {CombinedFilter, FilterConditionType} from "./abstractFilter";
-import {TextFilterModel2} from "./text/textFilter2";
 
 /**
  * T(ype) The type of this filter. ie in DateFilter T=Date
@@ -40,11 +38,10 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
     private eClearButton: HTMLElement;
 
     @Autowired('gridOptionsWrapper')
-    gridOptionsWrapper: GridOptionsWrapper;
+    protected gridOptionsWrapper: GridOptionsWrapper;
 
     public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
-    public abstract resetState(resetConditionFilterOnly?: boolean): void;
     protected abstract updateVisibilityOfComponents(): void;
 
     protected abstract bodyTemplate(): string;
@@ -136,7 +133,7 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
             const model: M = this.modelFromFloatingFilter(from);
             this.setModel(model);
         } else {
-            this.resetState();
+            // this.resetState();
         }
         this.onFilterChanged();
     }
@@ -155,12 +152,6 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
             this.onBtApply();
         }
     }
-
-/*
-    protected isFilterConditionActive(type: FilterConditionType): boolean {
-        return false;
-    }
-*/
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
         return false;

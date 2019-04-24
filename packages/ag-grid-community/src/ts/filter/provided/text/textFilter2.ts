@@ -279,47 +279,4 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
         return this.comparator(filterOption, valueFormatted, filterTextFormatted);
     }
 
-/*
-    private onFilterValueChanged(type:FilterConditionType) {
-
-        let newValue = type === FilterConditionType.MAIN ? this.eFilterValueA.value : this.eFilterValueB.value;
-        const lastValue = type === FilterConditionType.MAIN ? this.filterValueA : this.filterValueB;
-
-        newValue = _.makeNull(newValue);
-        if (newValue && newValue.trim() === '') {
-            newValue = null;
-        }
-
-        if (lastValue !== newValue) {
-            const newLowerCase =
-                newValue && this.filterParams.caseSensitive != true ? newValue.toLowerCase() :
-                    newValue;
-            const previousLowerCase = lastValue && this.filterParams.caseSensitive != true  ? lastValue.toLowerCase() :
-                lastValue;
-
-            if (type === FilterConditionType.MAIN) {
-                this.filterValueA = this.formatter(newValue);
-
-            } else {
-                this.filterValueB = this.formatter(newValue);
-            }
-            if (previousLowerCase !== newLowerCase) {
-                this.onFilterChanged();
-            }
-        }
-    }
-*/
-
-
-    public resetState(resetConditionFilterOnly: boolean = false): void {
-/*
-        if (!resetConditionFilterOnly) {
-            this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.MAIN);
-            this.setFilter(null, FilterConditionType.MAIN);
-        }
-
-        this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.CONDITION);
-        this.setFilter(null, FilterConditionType.CONDITION);
-*/
-    }
 }
