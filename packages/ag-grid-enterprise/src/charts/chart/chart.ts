@@ -14,7 +14,6 @@ export abstract class Chart<D, X, Y> {
         const div = document.createElement('div');
         div.style.border = '1px solid gray';
         div.style.font = '12px Verdana';
-        div.style.padding = '7px';
         div.style.whiteSpace = 'no-wrap';
         div.style.background = 'rgba(244, 244, 244, 0.9)';
         div.style.boxShadow = '3px 3px 5px rgba(0, 0, 0, 0.3)';

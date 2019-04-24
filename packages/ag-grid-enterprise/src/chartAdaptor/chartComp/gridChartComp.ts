@@ -97,15 +97,13 @@ export class GridChartComp extends Component {
             _.clearElement(this.eChart);
         }
 
-        const theme = this.environment.getTheme() as string;
-
         const chartOptions = {
             chartType: this.model.getChartType(),
             parentElement: this.eChart,
             width: width,
             height: height,
             showTooltips: this.chartOptions.showTooltips,
-            isDarkTheme: this.isDarkTheme(theme)
+            isDarkTheme: this.isDarkTheme()
         };
 
         this.chart = GridChartFactory.createChart(chartOptions);
@@ -176,13 +174,20 @@ export class GridChartComp extends Component {
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
 
         barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
+        barChart.xAxis.gridStyle;
 
         barSeries.data = data;
         barSeries.xField = categoryId;
         barSeries.yFields = fields.map(f => f.colId);
         barSeries.yFieldNames = fields.map(f => f.displayName);
 
-        barChart.xAxis.gridStyle
+        barSeries.tooltip = this.chartOptions.showTooltips;
+        barSeries.tooltipRenderer = params => {
+            const colDisplayName = fields.filter(f => f.colId === params.yField)[0].displayName;
+            return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
+                        ${colDisplayName}: ${params.datum[params.yField]}
+                    </div>`;
+        };
     }
 
     private updateLineChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
@@ -196,14 +201,22 @@ export class GridChartComp extends Component {
 
             lineSeries.title = f.displayName;
 
-            lineSeries.tooltip = this.chartOptions.showTooltips;
             lineSeries.lineWidth = 2;
             lineSeries.markerRadius = 3;
-            lineSeries.color = all[0][index % all[0].length];
+
+            const colors = this.isDarkTheme() ? all[2] : all[0];
+            lineSeries.color = colors[index % colors.length];
 
             lineSeries.data = this.model.getData();
             lineSeries.xField = categoryId;
             lineSeries.yField = f.colId;
+
+            lineSeries.tooltip = this.chartOptions.showTooltips;
+            lineSeries.tooltipRenderer = params => {
+                return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
+                            ${f.displayName}: ${params.datum[params.yField]}
+                        </div>`;
+            };
 
             return lineSeries;
         });
@@ -220,6 +233,12 @@ export class GridChartComp extends Component {
             pieSeries.title = fields[0].displayName;
 
             pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.tooltipRenderer = params => {
+                return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
+                            ${params.datum[params.labelField as string]}: ${params.datum[params.angleField]}
+                        </div>`;
+            };
+
             pieSeries.showInLegend = true;
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
@@ -229,31 +248,40 @@ export class GridChartComp extends Component {
             pieSeries.angleField = fields[0].colId;
 
             pieSeries.labelField = categoryId;
-            pieSeries.label = false;
+            pieSeries.label = true;
+
+            pieSeries.labelColor = this.isDarkTheme() ? GridChartFactory.darkLabelColour : GridChartFactory.lightLabelColour;
+            pieSeries.colors = this.isDarkTheme() ? all[2] : all[0];
 
             pieChart.series = [pieSeries];
         }
     }
 
     private updateDoughnutChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
-        const pieChart = this.chart as PolarChart<any, string, number>;
+        const doughnutChart = this.chart as PolarChart<any, string, number>;
 
-        pieChart.removeAllSeries();
+        doughnutChart.removeAllSeries();
 
         const thickness = 20;
         const padding = 20;
 
         let offset = 0;
-        pieChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
+        doughnutChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
             pieSeries.title = f.displayName;
 
             pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.tooltipRenderer = params => {
+                return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
+                            ${params.datum[params.labelField as string]}: ${params.datum[params.angleField]}
+                        </div>`;
+            };
+
             pieSeries.showInLegend = index === 0;
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
-            pieChart.addSeries(pieSeries);
+            doughnutChart.addSeries(pieSeries);
 
             pieSeries.outerRadiusOffset = offset;
             offset -= thickness;
@@ -265,6 +293,9 @@ export class GridChartComp extends Component {
 
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
+
+            pieSeries.labelColor = this.isDarkTheme() ? GridChartFactory.darkLabelColour : GridChartFactory.lightLabelColour;
+            pieSeries.colors = this.isDarkTheme() ? all[2] : all[0];
 
             return pieSeries;
         });
@@ -295,7 +326,12 @@ export class GridChartComp extends Component {
         this.chartController.setChartCellRangesInRangeController();
     }
 
-    private isDarkTheme(theme: string): boolean {
+    private tooltipBackgroundColor(): string {
+        return this.isDarkTheme() ? '#0b0b18' : 'rgba(244, 244, 244, 0.9)';
+    }
+
+    private isDarkTheme(): boolean {
+        const theme = this.environment.getTheme() as string;
         const el = document.querySelector(`.${theme}`);
         const background = window.getComputedStyle(el as HTMLElement).background;
         return Color.fromString(background as string).toHSB()[2] < 0.4;

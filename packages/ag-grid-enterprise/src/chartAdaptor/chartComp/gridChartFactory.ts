@@ -18,8 +18,8 @@ interface CreateChartOptions {
 
 export class GridChartFactory {
 
-    private static darkLabelColour = 'rgb(221, 221, 221)';
-    private static lightLabelColour = 'rgb(87, 87, 87)';
+    public static darkLabelColour = 'rgb(221, 221, 221)';
+    public static lightLabelColour = 'rgb(87, 87, 87)';
 
     private static darkAxisColour = 'rgb(100, 100, 100)';
     private static lightAxisColour = 'rgb(219, 219, 219)';
@@ -67,7 +67,7 @@ export class GridChartFactory {
         barSeries.grouped = grouped;
 
         barSeries.lineWidth = 1;
-        barSeries.colors = all[0];
+        barSeries.colors = options.isDarkTheme ? all[2] : all[0];
 
         barChart.addSeries(barSeries);
 
