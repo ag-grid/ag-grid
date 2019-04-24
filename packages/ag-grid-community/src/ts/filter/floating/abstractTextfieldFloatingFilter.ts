@@ -1,9 +1,9 @@
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {Component} from "../../widgets/component";
-import {Constants} from "../../constants";
-import {CombinedFilter} from "../provided/abstractFilter";
-import {_} from "../../utils";
-import {BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams} from "./floatingFilter";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { Component } from "../../widgets/component";
+import { Constants } from "../../constants";
+import { CombinedFilter } from "../provided/abstractFilter";
+import { _ } from "../../utils";
+import { BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams } from "./floatingFilter";
 
 /** Floating Filter that renders into a single text field. Used by Text, Number, ReadModelAsString and Set floating filters. */
 export abstract class AbstractTextfieldFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {

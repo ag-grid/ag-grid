@@ -1,9 +1,9 @@
-import {FilterModel} from "../../../interfaces/iFilter";
-import {QuerySelector} from "../../../widgets/componentAnnotations";
-import {Comparator, FilterConditionType} from "../abstractFilter";
-import {_} from "../../../utils";
-import {AbstractScalerFilter, IScalarFilterParams} from "../abstractScalerFilter";
-import {AbstractComparableFilter} from "../abstractComparableFilter";
+import { FilterModel } from "../../../interfaces/iFilter";
+import { QuerySelector } from "../../../widgets/componentAnnotations";
+import { Comparator, FilterConditionType } from "../abstractFilter";
+import { _ } from "../../../utils";
+import { AbstractScalerFilter, IScalarFilterParams } from "../abstractScalerFilter";
+import { AbstractComparableFilter } from "../abstractComparableFilter";
 
 export interface NumberFilterModel extends FilterModel {
     filter: number;

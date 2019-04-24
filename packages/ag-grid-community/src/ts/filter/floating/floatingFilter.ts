@@ -1,7 +1,7 @@
-import {IComponent} from "../../interfaces/iComponent";
-import {Column} from "../../entities/column";
-import {GridApi} from "../../gridApi";
-import {CombinedFilter} from "../provided/abstractFilter";
+import { IComponent } from "../../interfaces/iComponent";
+import { Column } from "../../entities/column";
+import { GridApi } from "../../gridApi";
+import { CombinedFilter } from "../provided/abstractFilter";
 
 export interface FloatingFilterChange {
 }

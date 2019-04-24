@@ -54,7 +54,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         if (this._colors !== values) {
             this._colors = values;
             this.strokeColors = values.map(color => Color.fromString(color).darker().toHexString());
-            this.update();
+            this.scheduleData();
         }
     }
     get colors(): string[] {

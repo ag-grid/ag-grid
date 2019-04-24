@@ -1,8 +1,8 @@
-import {FilterModel, IDoesFilterPassParams} from "../../../interfaces/iFilter";
-import {FilterConditionType} from "../abstractFilter";
-import {QuerySelector} from "../../../widgets/componentAnnotations";
-import {_} from "../../../utils";
-import {AbstractComparableFilter, IComparableFilterParams} from "../abstractComparableFilter";
+import { FilterModel, IDoesFilterPassParams } from "../../../interfaces/iFilter";
+import { FilterConditionType } from "../abstractFilter";
+import { QuerySelector } from "../../../widgets/componentAnnotations";
+import { _ } from "../../../utils";
+import { AbstractComparableFilter, IComparableFilterParams } from "../abstractComparableFilter";
 
 export interface TextFilterModel extends FilterModel {
     filter: string;
@@ -39,12 +39,12 @@ export class TextFilter extends AbstractComparableFilter <string, ITextFilterPar
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
-    };
+    }
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    };
+    }
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {

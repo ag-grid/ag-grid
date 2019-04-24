@@ -1,0 +1,13 @@
+<svg width="100%" height="100%" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="chart-pie">
+        <g transform="matrix(1.66453,0,0,1.66453,-29.8326,-15.7683)">
+            <path d="M50.253,19.236C47.302,14.124 41.848,10.975 35.946,10.975C29,10.975 22.796,15.319 20.421,21.846L35.946,27.496L50.253,19.236Z" style="fill:rgb(235,168,6);"/>
+        </g>
+        <g transform="matrix(1.66453,0,0,1.66453,-29.8326,-15.7683)">
+            <path d="M20.421,21.846C19.762,23.657 19.424,25.569 19.424,27.496C19.424,36.621 26.821,44.017 35.946,44.017L35.946,27.496L20.421,21.846Z" style="fill:rgb(195,32,69);"/>
+        </g>
+        <g transform="matrix(1.66453,0,0,1.66453,-29.8326,-15.7683)">
+            <path d="M35.946,44.017C45.07,44.017 52.467,36.621 52.467,27.496C52.467,24.596 51.703,21.747 50.253,19.236L35.946,27.496L35.946,44.017Z" style="fill:rgb(82,151,229);"/>
+        </g>
+    </g>
+</svg>

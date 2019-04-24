@@ -1,23 +1,21 @@
 import {
-    _,
     AgEvent,
     Autowired,
     ChartType,
     Component,
     GridOptionsWrapper,
     MenuItemDef,
-    PopupComponent,
-    PopupService,
     PostConstruct,
     Promise,
     RefSelector,
     TabbedItem,
-    TabbedLayout
+    TabbedLayout,
+    Dialog,
+    _
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
 import { MenuList } from "../../../menu/menuList";
 import { ChartColumnPanel } from "./chartColumnPanel";
-import { MenuItemComponent } from "../../../menu/menuItemComponent";
 
 export interface DownloadChartEvent extends AgEvent {}
 
@@ -32,14 +30,13 @@ export class ChartMenu extends Component {
             <span ref="eSaveButton" class="ag-icon-save"></span>
         </div>`;
 
-    @Autowired('popupService') private popupService: PopupService;
-
     @RefSelector('eChartButton') private eChartButton: HTMLElement;
     @RefSelector('eDataButton') private eDataButton: HTMLElement;
     @RefSelector('eSaveButton') private eSaveButton: HTMLElement;
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
+    private menuDialog: Dialog;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -48,8 +45,8 @@ export class ChartMenu extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eChartButton, 'click', () => this.showMenu());
-        this.addDestroyableEventListener(this.eDataButton, 'click', () => this.showMenu(1));
+        this.addDestroyableEventListener(this.eChartButton, 'click', (e: MouseEvent) => this.showMenu(0, e));
+        this.addDestroyableEventListener(this.eDataButton, 'click', (e: MouseEvent) => this.showMenu(1, e));
         this.addDestroyableEventListener(this.eSaveButton, 'click', () => this.saveChart());
     }
 
@@ -60,44 +57,47 @@ export class ChartMenu extends Component {
             this.dispatchEvent(event);
     }
 
-    private showMenu(tab?: number): void {
-        this.tabbedMenu = new TabbedChartMenu(this.chartController);
-        this.getContext().wireBean(this.tabbedMenu);
-
-        this.tabbedMenu.setParentComponent(this);
-        const eMenu = this.tabbedMenu.getGui();
-
-        const hidePopup = this.popupService.addAsModalPopup(
-            eMenu,
-            true,
-            () => this.tabbedMenu.destroy()
-        );
-
-        this.tabbedMenu.afterGuiAttached({
-            hidePopup: hidePopup
+    private showMenu(tab: number, e: MouseEvent): void {
+        this.menuDialog = new Dialog({
+            movable: true,
+            resizable: true,
+            maximizable: false,
+            width: 280,
+            height: 265,
+            x: e.clientX,
+            y: e.clientY + 10
         });
 
-        this.popupService.positionPopupUnderComponent({
-                type: 'chartMenu',
-                eventSource: this.eChartButton,
-                ePopup: this.tabbedMenu.getGui(),
-                alignSide: 'right',
-                keepWithinBounds: true
-            }
-        );
+        this.tabbedMenu = new TabbedChartMenu(this.chartController);
 
-        this.tabbedMenu.showTab(tab);
+        new Promise((res) => {
+            window.setTimeout(() => {
+                this.menuDialog.setBodyComponent(this.tabbedMenu);
+                this.tabbedMenu.showTab(tab);
+            }, 100);
+        });
+
+        this.menuDialog.addDestroyableEventListener(this.menuDialog, Component.EVENT_DESTROYED, () => {
+            this.tabbedMenu.destroy();
+        });
+
+        const context = this.getContext();
+
+        context.wireBean(this.menuDialog);
+        context.wireBean(this.tabbedMenu);
+
+        this.menuDialog.setParentComponent(this);
     }
 
     public destroy() {
         super.destroy();
         if (this.tabbedMenu) {
-            this.tabbedMenu.destroy();
+            this.menuDialog.destroy();
         }
     }
 }
 
-class TabbedChartMenu extends PopupComponent {
+class TabbedChartMenu extends Component {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
     public static TAB_MAIN = 'mainMenuTab';
@@ -107,8 +107,6 @@ class TabbedChartMenu extends PopupComponent {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private tabbedLayout: TabbedLayout;
-    private hidePopupFunc: Function;
-    private mainMenuList: MenuList;
 
     private chartColumnPanel: ChartColumnPanel;
 
@@ -129,8 +127,7 @@ class TabbedChartMenu extends PopupComponent {
 
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
-            cssClass: 'ag-menu',
-            onActiveItemClicked: this.onHidePopup.bind(this)
+            cssClass: 'ag-chart-tabbed-menu'
         });
     }
 
@@ -139,18 +136,28 @@ class TabbedChartMenu extends PopupComponent {
     }
 
     private createMainPanel(): TabbedItem {
-        this.mainMenuList = new MenuList();
-        this.getContext().wireBean(this.mainMenuList);
+        const chartTypes = new Component('<div class="ag-chart-types"></div>');
+        const eGui = chartTypes.getGui();
+        const menuItems = this.chartTypes();
 
-        const menuItems = this.getMenuItems();
-
-        this.mainMenuList.addMenuItems(menuItems);
-        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        menuItems.forEach(item => {
+            const el = document.createElement('div');
+            _.addCssClass(el, 'ag-chart-type');
+            el.appendChild((item.icon as HTMLElement));
+            el.setAttribute('title', item.name);
+            eGui.appendChild(el);
+            if (item.action) {
+                el.addEventListener('click', item.action);
+            }
+        });
 
         return {
-            title: _.createIconNoSpan('menu', this.gridOptionsWrapper, null),
-            bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
-            name: TabbedChartMenu.TAB_MAIN
+            title: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
+            bodyPromise: Promise.resolve(eGui),
+            name: TabbedChartMenu.TAB_MAIN,
+            afterAttachedCallback: () => {
+                (this.parentComponent as Dialog).setTitle('Chart Settings');
+            }
         };
     }
 
@@ -158,7 +165,6 @@ class TabbedChartMenu extends PopupComponent {
         //TODO refactor class to be chart menu specific
         const eWrapperDiv: HTMLElement = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-column-select-panel');
-        eWrapperDiv.style.height = '204px'; //TODO
 
         this.chartColumnPanel = new ChartColumnPanel(this.chartController);
         this.getContext().wireBean(this.chartColumnPanel);
@@ -167,69 +173,63 @@ class TabbedChartMenu extends PopupComponent {
         eWrapperDiv.appendChild(this.chartColumnPanel.getGui());
 
         return {
-            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, null),
+            title: _.createIconNoSpan('data', this.gridOptionsWrapper, null),
             bodyPromise: Promise.resolve(eWrapperDiv),
-            name: TabbedChartMenu.TAB_COLUMNS
+            name: TabbedChartMenu.TAB_COLUMNS,
+            afterAttachedCallback: () => {
+                (this.parentComponent as Dialog).setTitle('Chart Data');
+            }
         };
     }
 
-    private getMenuItems(): (string | MenuItemDef)[] {
+    private chartTypes(): MenuItemDef[] {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return [
             {
-                name: 'Chart Type',
-                subMenu: [
-                    {
-                        name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
-                        action: () => this.chartController.setChartType(ChartType.GroupedBar)
-                    },
-                    {
-                        name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
-                        action: () => this.chartController.setChartType(ChartType.StackedBar)
-                    },
-                    {
-                        name: localeTextFunc('lineRangeChart', 'Line'),
-                        action: () => this.chartController.setChartType(ChartType.Line)
-                    },
-                    {
-                        name: localeTextFunc('pieRangeChart', 'Pie'),
-                        action: () => this.chartController.setChartType(ChartType.Pie)
-                    }
-                ]
+                name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
+                icon: _.createIconNoSpan('chartBarGrouped', this.gridOptionsWrapper, null),
+                action: () => this.chartController.setChartType(ChartType.GroupedBar)
+            },
+            {
+                name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
+                icon: _.createIconNoSpan('chartBarStacked', this.gridOptionsWrapper, null),
+                action: () => this.chartController.setChartType(ChartType.StackedBar)
+            },
+            {
+                name: localeTextFunc('pieRangeChart', 'Pie'),
+                icon: _.createIconNoSpan('chartPie', this.gridOptionsWrapper, null),
+                action: () => this.chartController.setChartType(ChartType.Pie)
+            },
+            {
+                name: localeTextFunc('lineRangeChart', 'Line'),
+                icon: _.createIconNoSpan('chartLine', this.gridOptionsWrapper, null),
+                action: () => this.chartController.setChartType(ChartType.Line)
+            },
+            {
+                name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
+                icon: _.createIconNoSpan('chartDonut', this.gridOptionsWrapper, null),
+                action: () => this.chartController.setChartType(ChartType.Doughnut)
             }
         ];
     }
 
-    public showTab(tab?: number) {
-        if (!tab) {
-            this.tabbedLayout.showFirstItem();
-        } else {
-            this.tabbedLayout.showItem(this.tabs[tab]);
-        }
-    }
-
-    private onHidePopup(): void {
-        this.hidePopupFunc();
-    }
-
-    public afterGuiAttached(params: any): void {
-        this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
-        this.hidePopupFunc = params.hidePopup;
-        this.addDestroyFunc(params.hidePopup);
+    public showTab(tab: number) {
+        const tabItem = this.tabs[tab];
+        this.tabbedLayout.showItem(tabItem);
     }
 
     public getGui(): HTMLElement {
-        const layout = this.tabbedLayout;
-        return layout && layout.getGui();
+        return this.tabbedLayout && this.tabbedLayout.getGui();
     }
 
     public destroy(): void {
-        if (this.mainMenuList) {
-            this.mainMenuList.destroy();
-        }
         if (this.chartColumnPanel) {
             this.chartColumnPanel.destroy();
+        }
+
+        if (this.parentComponent && this.parentComponent.isAlive()) {
+            this.parentComponent.destroy();
         }
         super.destroy();
     }

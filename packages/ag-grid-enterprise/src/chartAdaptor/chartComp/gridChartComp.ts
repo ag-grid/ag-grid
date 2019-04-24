@@ -5,6 +5,7 @@ import {
     ChartType,
     Component,
     Dialog,
+    Environment,
     PostConstruct,
     RefSelector,
     ResizeObserverService
@@ -14,12 +15,13 @@ import {Chart} from "../../charts/chart/chart";
 import {BarSeries} from "../../charts/chart/series/barSeries";
 import {LineSeries} from "../../charts/chart/series/lineSeries";
 import {PieSeries} from "../../charts/chart/series/pieSeries";
-import colors from "../../charts/chart/colors";
+import {all} from "../../charts/chart/colors";
 import {CartesianChart} from "../../charts/chart/cartesianChart";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
 import {ChartModel} from "./chartModel";
+import {Color} from "../../charts/util/color";
 
 export interface ChartOptions {
     chartType: ChartType;
@@ -37,6 +39,7 @@ export class GridChartComp extends Component {
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('environment') private environment: Environment;
 
     @RefSelector('eChart') private eChart: HTMLElement;
 
@@ -94,12 +97,15 @@ export class GridChartComp extends Component {
             _.clearElement(this.eChart);
         }
 
+        const theme = this.environment.getTheme() as string;
+
         const chartOptions = {
             chartType: this.model.getChartType(),
             parentElement: this.eChart,
             width: width,
             height: height,
-            showTooltips: this.chartOptions.showTooltips
+            showTooltips: this.chartOptions.showTooltips,
+            isDarkTheme: this.isDarkTheme(theme)
         };
 
         this.chart = GridChartFactory.createChart(chartOptions);
@@ -153,6 +159,9 @@ export class GridChartComp extends Component {
 
         } else if (chartType === ChartType.Pie) {
             this.updatePieChart(categoryId, fields, data);
+
+        } else if (chartType === ChartType.Doughnut) {
+            this.updateDoughnutChart(categoryId, fields, data);
         }
     }
 
@@ -160,12 +169,15 @@ export class GridChartComp extends Component {
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
 
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
+
         barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         barSeries.data = data;
         barSeries.xField = categoryId;
         barSeries.yFields = fields.map(f => f.colId);
         barSeries.yFieldNames = fields.map(f => f.displayName);
+
+        barChart.xAxis.gridStyle
     }
 
     private updateLineChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
@@ -182,7 +194,7 @@ export class GridChartComp extends Component {
             lineSeries.tooltip = this.chartOptions.showTooltips;
             lineSeries.lineWidth = 2;
             lineSeries.markerRadius = 3;
-            lineSeries.color = colors[index % colors.length];
+            lineSeries.color = all[0][index % all[0].length];
 
             lineSeries.data = this.model.getData();
             lineSeries.xField = categoryId;
@@ -195,13 +207,38 @@ export class GridChartComp extends Component {
     private updatePieChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
         const pieChart = this.chart as PolarChart<any, string, number>;
 
-        const singleField = fields.length === 1;
-        const thickness = singleField ? 0 : 20;
-        const padding = singleField ? 0 : 20;
-        let offset = 0;
+        pieChart.removeAllSeries();
+
+        const pieSeries = new PieSeries<any, string, number>();
+
+        if (fields.length > 0) {
+            pieSeries.title = fields[0].displayName;
+
+            pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.showInLegend = true;
+            pieSeries.lineWidth = 1;
+            pieSeries.calloutWidth = 1;
+            pieChart.addSeries(pieSeries);
+
+            pieSeries.data = data;
+            pieSeries.angleField = fields[0].colId;
+
+            pieSeries.labelField = categoryId;
+            pieSeries.label = false;
+
+            pieChart.series = [pieSeries];
+        }
+    }
+
+    private updateDoughnutChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
+        const pieChart = this.chart as PolarChart<any, string, number>;
 
         pieChart.removeAllSeries();
 
+        const thickness = 20;
+        const padding = 20;
+
+        let offset = 0;
         pieChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
@@ -251,6 +288,12 @@ export class GridChartComp extends Component {
     private setGridChartEditMode(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) { return; }
         this.chartController.setChartCellRangesInRangeController();
+    }
+
+    private isDarkTheme(theme: string): boolean {
+        const el = document.querySelector(`.${theme}`);
+        const background = window.getComputedStyle(el as HTMLElement).background;
+        return Color.fromString(background as string).toHSB()[2] < 0.4;
     }
 
     public destroy(): void {

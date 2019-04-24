@@ -69,10 +69,7 @@ export class Legend {
     //         this.itemSelection.each(markerLabel => {
     //             markerLabel.markerPosition = value;
     //         });
-    //         // this.performLayout();
-    //         if (this.onSizeChange) {
-    //             this.onSizeChange();
-    //         }
+    //         this.layoutChanged();
     //     }
     // }
     // get markerPosition(): MarkerPosition {
@@ -82,14 +79,36 @@ export class Legend {
     private _size: [number, number] = [0, 0];
     set size(value: [number, number]) {
         this._size = value;
-        // this.processData();
-        // this.performLayout();
+        // this.layoutChanged();
     }
     get size(): [number, number] {
         return this._size;
     }
 
-    onSizeChange?: () => void;
+    onDataChange?: () => void;
+    onLayoutChange?: () => void;
+
+    private _labelColor: string = 'black';
+    set labelColor(value: string) {
+        if (this._labelColor !== value) {
+            this._labelColor = value;
+            this.dataChanged();
+        }
+    }
+    get labelColor(): string {
+        return this._labelColor;
+    }
+
+    private _labelFont: string = '12px Tahoma';
+    set labelFont(value: string) {
+        if (this._labelFont !== value) {
+            this._labelFont = value;
+            this.dataChanged();
+        }
+    }
+    get labelFont(): string {
+        return this._labelFont;
+    }
 
     processData() {
         this.itemSelectionData = this.data.map(datum => {
@@ -102,8 +121,8 @@ export class Legend {
                 },
                 label: {
                     text: datum.name,
-                    font: '12px Verdana',
-                    fillStyle: 'black'
+                    font: this.labelFont,
+                    fillStyle: this.labelColor
                 }
             };
         });
@@ -263,9 +282,19 @@ export class Legend {
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];
             oldSize[1] = size[1];
-            if (this.onSizeChange) {
-                this.onSizeChange();
-            }
+            this.layoutChanged();
+        }
+    }
+
+    private dataChanged() {
+        if (this.onDataChange) {
+            this.onDataChange();
+        }
+    }
+
+    private layoutChanged() {
+        if (this.onLayoutChange) {
+            this.onLayoutChange();
         }
     }
 }
