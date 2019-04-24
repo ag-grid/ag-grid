@@ -28,7 +28,8 @@ export abstract class Chart<D, X, Y> {
     protected constructor(parent: HTMLElement = document.body) {
         this.scene.parent = parent;
         this.scene.root = new Group();
-        this.legend.onSizeChange = this.onLegendSizeChange.bind(this);
+        this.legend.onDataChange = this.onLegendDataChange.bind(this);
+        this.legend.onLayoutChange = this.onLegendLayoutChange.bind(this);
         this.setupListeners(this.scene.hdpiCanvas.canvas);
     }
 
@@ -37,12 +38,17 @@ export abstract class Chart<D, X, Y> {
         if (tooltipParent) {
             tooltipParent.removeChild(this.tooltipElement);
         }
-        this.legend.onSizeChange = undefined;
+        this.legend.onDataChange = undefined;
+        this.legend.onLayoutChange = undefined;
         this.cleanupListeners(this.scene.hdpiCanvas.canvas);
         this.scene.parent = null;
     }
 
-    onLegendSizeChange() {
+    onLegendDataChange() {
+        this.dataPending = true;
+    }
+
+    onLegendLayoutChange() {
         this.layoutPending = true;
     }
 

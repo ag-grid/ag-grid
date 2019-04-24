@@ -30,6 +30,10 @@ export class BandScale<D> implements Scale<D, number> {
         this.index = {};
         const index = this.index;
 
+        // In case one wants to have duplicate domain values, for example, two 'Italy' categories,
+        // one should use objects rather than strings for domain values like so:
+        // { toString: () => 'Italy', id: '1' }
+        // { toString: () => 'Italy', id: '2' }
         values.forEach(value => {
             const key = typeof value === 'object' ? (value as any).id : value;
             if (index[key] === undefined) {
