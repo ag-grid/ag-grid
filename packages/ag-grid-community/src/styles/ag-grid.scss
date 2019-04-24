@@ -84,9 +84,10 @@ $ag-icons-filter: "initial" !default;
 }
 
 /* icons are used outside of the grid root (in the ghost) */
-$icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-    column columns contracted copy cross cut data desc expanded eye-slash eye filter group indeterminate left loading maximize minimize menu minus none not-allowed paste pin pivot plus 
-    radio-button-on radio-button-off right small-left small-right small-up small-down tick save tree-open tree-closed tree-indeterminate;
+$icons: aggregation arrows asc chart chart-bar-grouped chart-bar-stacked chart-line chart-pie chart-donut checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly 
+        checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cross cut data desc expanded eye-slash eye filter group indeterminate 
+        left loading maximize minimize menu minus none not-allowed paste pin pivot plus radio-button-on radio-button-off right small-left small-right small-up small-down tick save 
+        tree-open tree-closed tree-indeterminate;
 
 @each $icon in $icons {
     .ag-icon-#{$icon} {
@@ -964,6 +965,10 @@ $handleSize: 5px;
         display: flex;
         flex: 1 1 auto;
         position: relative;
+        > div {
+            width: 100%;
+            height: 100%;
+        }
     }
 
     .ag-message-box {
