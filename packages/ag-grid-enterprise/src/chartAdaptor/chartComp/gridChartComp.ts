@@ -248,9 +248,8 @@ export class GridChartComp extends Component {
             pieSeries.angleField = fields[0].colId;
 
             pieSeries.labelField = categoryId;
-            pieSeries.label = true;
+            pieSeries.label = false;
 
-            pieSeries.labelColor = this.isDarkTheme() ? GridChartFactory.darkLabelColour : GridChartFactory.lightLabelColour;
             pieSeries.colors = this.isDarkTheme() ? all[2] : all[0];
 
             pieChart.series = [pieSeries];
@@ -294,7 +293,6 @@ export class GridChartComp extends Component {
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
 
-            pieSeries.labelColor = this.isDarkTheme() ? GridChartFactory.darkLabelColour : GridChartFactory.lightLabelColour;
             pieSeries.colors = this.isDarkTheme() ? all[2] : all[0];
 
             return pieSeries;

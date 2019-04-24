@@ -18,8 +18,8 @@ interface CreateChartOptions {
 
 export class GridChartFactory {
 
-    public static darkLabelColour = 'rgb(221, 221, 221)';
-    public static lightLabelColour = 'rgb(87, 87, 87)';
+    private static darkLabelColour = 'rgb(221, 221, 221)';
+    private static lightLabelColour = 'rgb(87, 87, 87)';
 
     private static darkAxisColour = 'rgb(100, 100, 100)';
     private static lightAxisColour = 'rgb(219, 219, 219)';
