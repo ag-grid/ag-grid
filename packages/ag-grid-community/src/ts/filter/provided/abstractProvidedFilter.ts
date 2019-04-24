@@ -53,7 +53,6 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     protected abstract setModelIntoGui(model: FilterModel): void;
     protected abstract getModelFromGui(): FilterModel;
     protected abstract areModelsEqual(a: FilterModel, b: FilterModel): boolean;
-    protected abstract convertDeprecatedModelType(model: FilterModel): FilterModel;
 
     private appliedModel: FilterModel;
 
@@ -108,8 +107,7 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
 
     public setModel(model: FilterModel): void {
         if (model) {
-            const modelNotDeprecated = this.convertDeprecatedModelType(model);
-            this.setModelIntoGui(modelNotDeprecated);
+            this.setModelIntoGui(model);
         } else {
             this.reset();
         }

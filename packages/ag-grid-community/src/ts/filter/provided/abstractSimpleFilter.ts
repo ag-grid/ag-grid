@@ -4,15 +4,20 @@ import {FilterConditionType} from "./abstractFilter";
 import {OptionsFactory} from "./optionsFactory";
 import {AbstractProvidedFilter, IAbstractProvidedFilterParams} from "./abstractProvidedFilter";
 import {_} from "../../utils";
+import {TextFilterModel2} from "./text/textFilter2";
 
 export interface IAbstractSimpleFilterParams extends IAbstractProvidedFilterParams {
     suppressAndOrCondition: boolean;
 }
 
 export interface IAbstractSimpleModel extends FilterModel {
-    filterOptionA: string;
-    filterOptionB?: string;
-    join?: string;
+    type: string;
+}
+
+export interface ICombinedSimpleModel<M extends IAbstractSimpleModel> extends FilterModel {
+    operator: string;
+    condition1: M;
+    condition2: M;
 }
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
@@ -41,7 +46,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class AbstractSimpleFilter extends AbstractProvidedFilter {
+export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> extends AbstractProvidedFilter {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -84,9 +89,10 @@ export abstract class AbstractSimpleFilter extends AbstractProvidedFilter {
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract getDefaultFilterOption(): string;
 
-    protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean;
+    protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:IAbstractSimpleModel): boolean;
     protected abstract createValueTemplate(type: FilterConditionType): string;
-    protected abstract isFirstFilterGuiComplete(): boolean;
+    protected abstract isFilterGuiComplete(): boolean;
+    protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
 
     protected getOptionA(): string {
         return this.eOptionsA.value;
@@ -96,36 +102,90 @@ export abstract class AbstractSimpleFilter extends AbstractProvidedFilter {
         return this.eOptionsB.value;
     }
 
-    protected getJoin(): string {
+    protected getJoinOperator(): string {
         return this.eOr.checked ? 'OR' : 'AND';
     }
 
-    protected setModelIntoGui(model: IAbstractSimpleModel): void {
-        const orChecked = model.join === 'OR';
-        this.eAnd.checked = !orChecked;
-        this.eOr.checked = orChecked;
+    protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean {
+        // both are missing
+        if (!a && !b) { return true; }
 
-        this.eOptionsA.value = model.filterOptionA;
-        if (model.filterOptionB) {
-            this.eOptionsB.value = model.filterOptionB;
+        // one is missing, other present
+        if ((!a && b) || (a && !b)) { return false; }
+
+        // one is combined, the other is not
+        const aIsSimple = !(<any>a).operator;
+        const bIsSimple = !(<any>b).operator;
+        const oneSimpleOneCombined = (!aIsSimple && bIsSimple) || (aIsSimple && !bIsSimple);
+        if (oneSimpleOneCombined) { return false; }
+
+        let res: boolean;
+
+        // otherwise both present, so compare
+        if (aIsSimple) {
+            const aSimple = <M> a;
+            const bSimple = <M> b;
+
+            res = this.areSimpleModelsEqual(aSimple, bSimple);
         } else {
+            const aCombined = <ICombinedSimpleModel<M>> a;
+            const bCombined = <ICombinedSimpleModel<M>> b;
+
+            res = aCombined.operator === bCombined.operator
+                && this.areSimpleModelsEqual(aCombined.condition1, bCombined.condition1)
+                && this.areSimpleModelsEqual(aCombined.condition2, bCombined.condition2);
+        }
+
+        return res;
+    }
+
+    protected setModelIntoGui(model: IAbstractSimpleModel | ICombinedSimpleModel<M>): void {
+
+        const isCombined = (<any>model).operator;
+
+        if (isCombined) {
+            const combinedModel = <ICombinedSimpleModel<M>> model;
+
+            const orChecked = combinedModel.operator === 'OR';
+            this.eAnd.checked = !orChecked;
+            this.eOr.checked = orChecked;
+
+            this.eOptionsA.value = combinedModel.condition1.type;
+            this.eOptionsB.value = combinedModel.condition2.type;
+
+        } else {
+            const simpleModel = <IAbstractSimpleModel> model;
+
+            this.eAnd.checked = true;
+            this.eOr.checked = false;
+
+            this.eOptionsA.value = simpleModel.type;
             this.eOptionsB.value = this.getDefaultFilterOption();
         }
+
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const model = <IAbstractSimpleModel> this.getAppliedModel();
-        const firstFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
+        const model = this.getAppliedModel();
 
-        if (model.join == null) {
-            return firstFilterResult;
-        }
+        const isCombined = (<any>model).operator;
 
-        const secondFilterResult = this.individualFilterPasses(params, FilterConditionType.CONDITION);
-        if (model.join === 'AND') {
-            return firstFilterResult && secondFilterResult;
+        if (isCombined) {
+            const combinedModel = <ICombinedSimpleModel<M>> model;
+
+            const firstResult = this.individualFilterPasses(params, combinedModel.condition1);
+            const secondResult = this.individualFilterPasses(params, combinedModel.condition2);
+
+            if (combinedModel.operator === 'AND') {
+                return firstResult && secondResult;
+            } else {
+                return firstResult || secondResult;
+            }
+
         } else {
-            return firstFilterResult || secondFilterResult;
+            const simpleModel = <IAbstractSimpleModel> model;
+            const result = this.individualFilterPasses(params, simpleModel);
+            return result;
         }
     }
 
@@ -206,7 +266,7 @@ export abstract class AbstractSimpleFilter extends AbstractProvidedFilter {
     }
 
     protected updateVisibilityOfComponents(): void {
-        const showSecondFilter = this.isFirstFilterGuiComplete();
+        const showSecondFilter = this.isFilterGuiComplete();
         _.setVisible(this.eBodyB, showSecondFilter);
         _.setVisible(this.eOptionsB, showSecondFilter);
         _.setVisible(this.eJoin, showSecondFilter);

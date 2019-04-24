@@ -2,11 +2,15 @@ import {IDoesFilterPassParams} from "../../../interfaces/iFilter";
 import {FilterConditionType} from "../abstractFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
-import {AbstractSimpleFilter, IAbstractSimpleFilterParams, IAbstractSimpleModel} from "../abstractSimpleFilter";
+import {
+    AbstractSimpleFilter,
+    IAbstractSimpleFilterParams,
+    IAbstractSimpleModel,
+    ICombinedSimpleModel
+} from "../abstractSimpleFilter";
 
 export interface TextFilterModel2 extends IAbstractSimpleModel {
-    filterValueA?: string;
-    filterValueB?: string;
+    filter?: string;
 }
 
 export interface TextComparator2 {
@@ -22,7 +26,7 @@ export interface ITextFilterParams2 extends IAbstractSimpleFilterParams {
     caseSensitive?: boolean;
 }
 
-export class TextFilter2 extends AbstractSimpleFilter {
+export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
     private static readonly FILTER_TYPE = 'text';
 
@@ -102,58 +106,55 @@ export class TextFilter2 extends AbstractSimpleFilter {
         super.init(params);
     }
 
-    protected setModelIntoGui(model: TextFilterModel2): void {
+    protected setModelIntoGui(model: TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2>): void {
         super.setModelIntoGui(model);
-        this.eFilterValueA.value = model.filterValueA;
-        this.eFilterValueB.value = model.filterValueB;
+
+        const isCombined = (<any>model).operator;
+
+        if (isCombined) {
+            const combinedModel = <ICombinedSimpleModel<TextFilterModel2>> model;
+
+            this.eFilterValueA.value = combinedModel.condition1.filter;
+            this.eFilterValueB.value = combinedModel.condition2.filter;
+
+        } else {
+            const simpleModel = <TextFilterModel2> model;
+
+            this.eFilterValueA.value = simpleModel.filter;
+            this.eFilterValueB.value = null;
+        }
     }
 
-    protected getModelFromGui(): TextFilterModel2 {
-        if (!this.isFirstFilterGuiComplete()) { return null; }
+    protected getModelFromGui(): TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2> {
+        if (!this.isFilterGuiComplete()) { return null; }
 
-        const model: TextFilterModel2 = {
-            filterType: TextFilter2.FILTER_TYPE,
-            filterOptionA: this.getOptionA()
+        const createCondition = (type: string, value: string): TextFilterModel2 => {
+            const model: TextFilterModel2 =  {
+                filterType: TextFilter2.FILTER_TYPE,
+                type: type
+            };
+            if (!this.doesFilterHaveHiddenInput(type)) {
+                model.filter = value;
+            }
+            return model;
         };
 
-        const optionARequiresValue = !this.doesFilterHaveHiddenInput(model.filterOptionA);
-        if (optionARequiresValue) {
-            model.filterValueA = this.getValue(this.eFilterValueA);
+        if (this.isAllowTwoConditions() && this.isFilterGuiComplete(true)) {
+            const res: ICombinedSimpleModel<TextFilterModel2> = {
+                filterType: TextFilter2.FILTER_TYPE,
+                operator: this.getJoinOperator(),
+                condition1: createCondition(this.getOptionA(), this.getValue(this.eFilterValueA)),
+                condition2: createCondition(this.getOptionB(), this.getValue(this.eFilterValueB))
+            };
+            return res;
+        } else {
+            const res: TextFilterModel2 = createCondition(this.getOptionA(), this.getValue(this.eFilterValueA));
+            return res;
         }
-
-        if (this.isAllowTwoConditions()) {
-            const valueB = this.getValue(this.eFilterValueB);
-            const optionB = this.getOptionB();
-            const optionBRequiresValue = !this.doesFilterHaveHiddenInput(optionB);
-            if (!optionBRequiresValue || _.exists(valueB)) {
-                model.join = this.getJoin();
-                model.filterOptionB = optionB;
-                if (optionBRequiresValue) {
-                    model.filterValueB = valueB;
-                }
-            }
-        }
-
-        return model;
     }
 
-    protected areModelsEqual(a: TextFilterModel2, b: TextFilterModel2): boolean {
-        // both are missing
-        if (!a && !b) { return true; }
-
-        // one is missing, other present
-        if ((!a && b) || (a && !b)) { return false; }
-
-        // otherwise both present, so compare
-        const modelsEqual =
-            a.filterValueA === b.filterValueA
-            && a.filterValueB === b.filterValueB
-            && a.filterOptionA === b.filterOptionA
-            && a.filterOptionB === b.filterOptionB
-            && a.filterType === b.filterType
-            && a.join === b.join;
-
-        return modelsEqual;
+    protected areSimpleModelsEqual(aSimple: TextFilterModel2, bSimple: TextFilterModel2): boolean {
+        return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     }
 
     protected reset(): void {
@@ -163,42 +164,11 @@ export class TextFilter2 extends AbstractSimpleFilter {
         this.eFilterValueB.value = null;
     }
 
-    // for backwards compatibility after Niall's refactor Q2 2019
-    protected convertDeprecatedModelType(model: TextFilterModel2): TextFilterModel2 {
-        if (!model) { return model; }
-
-        const modelAsAny = <any> model;
-
-        const deprecatedModelTwoConditions = modelAsAny.condition1 && modelAsAny.condition2;
-        const deprecatedModelOneCondition = modelAsAny.type && modelAsAny.filter;
-
-        // converts the old type where A and B were in different embedded objects
-        if (deprecatedModelTwoConditions) {
-            return {
-                filterType: model.filterType,
-                filterOptionA: modelAsAny.condition1.type,
-                filterValueA: modelAsAny.condition1.filter,
-                filterOptionB: modelAsAny.condition2.type,
-                filterValueB: modelAsAny.condition2.filter,
-                join: modelAsAny.condition
-            };
-        } else if (deprecatedModelOneCondition) {
-            return {
-                filterType: model.filterType,
-                filterOptionA: modelAsAny.type,
-                filterValueA: modelAsAny.filter
-            };
-        } else {
-            // no conversion needed
-            return model;
-        }
-    }
-
     public modelFromFloatingFilter(from: string): TextFilterModel2 {
         return {
             filterType: TextFilter2.FILTER_TYPE,
-            filterOptionA: this.getOptionA(),
-            filterValueA: from
+            type: this.getOptionA(),
+            filter: from
         };
     }
 
@@ -235,19 +205,19 @@ export class TextFilter2 extends AbstractSimpleFilter {
         this.eFilterValueA.focus();
     }
 
-    protected isFirstFilterGuiComplete(): boolean {
-        if (this.doesFilterHaveHiddenInput(this.getOptionA())) {
+    protected isFilterGuiComplete(second = false): boolean {
+        const option = second ? this.getOptionB() : this.getOptionA();
+        const value = second ? this.getValue(this.eFilterValueB) : this.getValue(this.eFilterValueA);
+        if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
-        const firstFilterValue = this.getValue(this.eFilterValueA);
-        return firstFilterValue != null;
+        return value != null;
     }
 
-    public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
-        const model = <TextFilterModel2> this.getAppliedModel();
+    public individualFilterPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel2): boolean {
 
-        const filterText:string = type == FilterConditionType.MAIN ? model.filterValueA : model.filterValueB;
-        const filterOption:string = type == FilterConditionType.MAIN ? model.filterOptionA : model.filterOptionB;
+        const filterText:string =  filterModel.filter;
+        const filterOption:string = filterModel.type;
 
         const customFilterOption = this.optionsFactory.getCustomOption(filterOption);
         if (customFilterOption) {
