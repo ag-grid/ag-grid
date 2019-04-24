@@ -12,11 +12,11 @@
         overflow: hidden;
     }
 }
-.good-score {
+body:not(.dark) .good-score {
     background-color: rgba(0, 200, 0, 0.4);
 }
 
-.bad-score {
+body:not(.dark) .bad-score {
     background-color: rgba(200, 0, 0, 0.4);
 }
 
@@ -24,7 +24,7 @@
     filter: invert(100%);
 }
 
-.ag-theme-material, .ag-theme-balham { 
+body .ag-theme-material, body .ag-theme-balham { 
     .good-score {
         background-color: rgba(185, 246, 202, 0.4);
     }
@@ -37,11 +37,10 @@
     background-color:#222;
     color: white;
      .good-score {
-        background-color: lightgreen;
-        color: #000;
+        color: lightgreen;
     }
     .bad-score {
-        background-color: transparentize(#e84393, 0.3);
+        color: #e81079;
     }
 }
 

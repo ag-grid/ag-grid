@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
         var rowsCols = [
             [100, defaultColCount],
             [1000, defaultColCount]
-        ]
+        ];
 
         if (!isSmall) {
             rowsCols.push(
                 [10000, 100],
                 [50000, defaultColCount],
                 [100000, defaultColCount]
-            )
+            );
         }
 
         for (var i = 0; i < rowsCols.length; i++) {
