@@ -129,6 +129,7 @@ export class GridChartComp extends Component {
 
     private addMenu() {
         this.chartMenu = new ChartMenu(this.chartController);
+        this.chartMenu.setParentComponent(this);
         this.getContext().wireBean(this.chartMenu);
 
         const eChart: HTMLElement = this.getGui();
@@ -140,6 +141,10 @@ export class GridChartComp extends Component {
             this.createChart();
         }
         this.updateChart();
+    }
+
+    public getCurrentChartType(): ChartType {
+        return this.currentChartType;
     }
 
     public updateChart() {

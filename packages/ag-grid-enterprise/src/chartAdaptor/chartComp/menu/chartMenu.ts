@@ -14,8 +14,8 @@ import {
     _
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
-import { MenuList } from "../../../menu/menuList";
 import { ChartColumnPanel } from "./chartColumnPanel";
+import { GridChartComp } from "../gridChartComp";
 
 export interface DownloadChartEvent extends AgEvent {}
 
@@ -68,7 +68,9 @@ export class ChartMenu extends Component {
             y: e.clientY + 10
         });
 
-        this.tabbedMenu = new TabbedChartMenu(this.chartController);
+        const chartComp = this.parentComponent as GridChartComp;
+
+        this.tabbedMenu = new TabbedChartMenu(this.chartController, chartComp.getCurrentChartType());
 
         new Promise((res) => {
             window.setTimeout(() => {
@@ -107,15 +109,19 @@ class TabbedChartMenu extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private tabbedLayout: TabbedLayout;
+    private currentChartType: ChartType;
 
     private chartColumnPanel: ChartColumnPanel;
 
     private tabs: TabbedItem[];
     private readonly chartController: ChartController;
 
-    constructor(chartController: ChartController) {
+    private chartIcons: HTMLElement[] = [];
+
+    constructor(chartController: ChartController, currentChartType: ChartType) {
         super();
         this.chartController = chartController;
+        this.currentChartType = currentChartType;
     }
 
     @PostConstruct
@@ -140,15 +146,19 @@ class TabbedChartMenu extends Component {
         const eGui = chartTypes.getGui();
         const menuItems = this.chartTypes();
 
-        menuItems.forEach(item => {
+        menuItems.forEach((item, idx) => {
             const el = document.createElement('div');
             _.addCssClass(el, 'ag-chart-type');
+            if (idx === this.currentChartType) {
+                _.addCssClass(el, 'ag-selected');
+            }
             el.appendChild((item.icon as HTMLElement));
             el.setAttribute('title', item.name);
             eGui.appendChild(el);
             if (item.action) {
                 el.addEventListener('click', item.action);
             }
+            this.chartIcons.push(el);
         });
 
         return {
@@ -189,29 +199,50 @@ class TabbedChartMenu extends Component {
             {
                 name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
                 icon: _.createIconNoSpan('chartBarGrouped', this.gridOptionsWrapper, null),
-                action: () => this.chartController.setChartType(ChartType.GroupedBar)
+                action: () => {
+                    this.chartController.setChartType(ChartType.GroupedBar);
+                    this.updateCurrentChartType(ChartType.GroupedBar);
+                }
             },
             {
                 name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
                 icon: _.createIconNoSpan('chartBarStacked', this.gridOptionsWrapper, null),
-                action: () => this.chartController.setChartType(ChartType.StackedBar)
-            },
-            {
-                name: localeTextFunc('pieRangeChart', 'Pie'),
-                icon: _.createIconNoSpan('chartPie', this.gridOptionsWrapper, null),
-                action: () => this.chartController.setChartType(ChartType.Pie)
+                action: () => {
+                    this.chartController.setChartType(ChartType.StackedBar);
+                    this.updateCurrentChartType(ChartType.StackedBar);
+                }
             },
             {
                 name: localeTextFunc('lineRangeChart', 'Line'),
                 icon: _.createIconNoSpan('chartLine', this.gridOptionsWrapper, null),
-                action: () => this.chartController.setChartType(ChartType.Line)
+                action: () => {
+                    this.chartController.setChartType(ChartType.Line);
+                    this.updateCurrentChartType(ChartType.Line);
+                }
+            },
+            {
+                name: localeTextFunc('pieRangeChart', 'Pie'),
+                icon: _.createIconNoSpan('chartPie', this.gridOptionsWrapper, null),
+                action: () => {
+                    this.chartController.setChartType(ChartType.Pie);
+                    this.updateCurrentChartType(ChartType.Pie);
+                }
             },
             {
                 name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
                 icon: _.createIconNoSpan('chartDonut', this.gridOptionsWrapper, null),
-                action: () => this.chartController.setChartType(ChartType.Doughnut)
+                action: () => {
+                    this.chartController.setChartType(ChartType.Doughnut);
+                    this.updateCurrentChartType(ChartType.Doughnut);
+                }
             }
         ];
+    }
+
+    private updateCurrentChartType(chartType: ChartType) {
+        _.removeCssClass(this.chartIcons[this.currentChartType], 'ag-selected');
+        this.currentChartType = chartType;
+        _.addCssClass(this.chartIcons[chartType], 'ag-selected');
     }
 
     public showTab(tab: number) {
