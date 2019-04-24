@@ -1,11 +1,11 @@
-import {Component} from "../../../widgets/component";
-import {DateFilter, DateFilterModel} from "./dateFilter";
-import {Autowired} from "../../../context/context";
-import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
-import {_, Promise} from "../../../utils";
-import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
-import {BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams} from "../../floating/floatingFilter";
-import {AbstractComparableFilter} from "../abstractComparableFilter";
+import { Component } from "../../../widgets/component";
+import { DateFilter, DateFilterModel } from "./dateFilter";
+import { Autowired } from "../../../context/context";
+import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { _, Promise } from "../../../utils";
+import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
+import { BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams } from "../../floating/floatingFilter";
+import { AbstractComparableFilter } from "../abstractComparableFilter";
 
 export class DateFloatingFilterComp extends Component
     implements IFloatingFilter

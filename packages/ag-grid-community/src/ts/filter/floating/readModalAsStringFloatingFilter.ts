@@ -1,5 +1,5 @@
-import {AbstractTextfieldFloatingFilterComp} from "./abstractTextfieldFloatingFilter";
-import {BaseFloatingFilterChange, IFloatingFilterParams} from "./floatingFilter";
+import { AbstractTextfieldFloatingFilterComp } from "./abstractTextfieldFloatingFilter";
+import { BaseFloatingFilterChange, IFloatingFilterParams } from "./floatingFilter";
 
 export class ReadModelAsStringFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>> {
     init(params: IFloatingFilterParams<string, BaseFloatingFilterChange<string>>): void {

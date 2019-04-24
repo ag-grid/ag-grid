@@ -62,8 +62,8 @@ export class ChartMenu extends Component {
             movable: true,
             resizable: true,
             maximizable: false,
-            width: 250,
-            height: 250,
+            width: 280,
+            height: 265,
             x: e.clientX,
             y: e.clientY + 10
         });

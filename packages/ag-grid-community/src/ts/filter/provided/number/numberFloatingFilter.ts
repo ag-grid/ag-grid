@@ -1,7 +1,7 @@
-import {NumberFilterModel} from "./numberFilter";
-import {_} from "../../../utils";
-import {BaseFloatingFilterChange, IFloatingFilterParams} from "../../floating/floatingFilter";
-import {AbstractTextfieldFloatingFilterComp} from "../../floating/abstractTextfieldFloatingFilter";
+import { NumberFilterModel } from "./numberFilter";
+import { _ } from "../../../utils";
+import { BaseFloatingFilterChange, IFloatingFilterParams } from "../../floating/floatingFilter";
+import { AbstractTextfieldFloatingFilterComp } from "../../floating/abstractTextfieldFloatingFilter";
 
 export class NumberFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<NumberFilterModel, IFloatingFilterParams<NumberFilterModel, BaseFloatingFilterChange<NumberFilterModel>>> {
 

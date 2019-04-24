@@ -1,12 +1,12 @@
-import {Component} from "../../widgets/component";
-import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
-import {QuerySelector} from "../../widgets/componentAnnotations";
-import {Autowired, PostConstruct} from "../../context/context";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {BaseFloatingFilterChange, FloatingFilterChange} from "../floating/floatingFilter";
-import {ITextFilterParams} from "./text/textFilter";
-import {_} from "../../utils";
-import {INumberFilterParams} from "./number/numberFilter";
+import { Component } from "../../widgets/component";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { QuerySelector } from "../../widgets/componentAnnotations";
+import { Autowired, PostConstruct } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { BaseFloatingFilterChange, FloatingFilterChange } from "../floating/floatingFilter";
+import { ITextFilterParams } from "./text/textFilter";
+import { _ } from "../../utils";
+import { INumberFilterParams } from "./number/numberFilter";
 
 export interface Comparator<T> {
     (left: T, right: T): number;
@@ -68,8 +68,8 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
     public abstract serialize(type: FilterConditionType): M;
     public abstract parse(toParse: M, type: FilterConditionType): void;
 
-    protected refreshFilterBodyUi(type: FilterConditionType): void {};
-    protected initialiseFilterBodyUi(type: FilterConditionType): void {};
+    protected refreshFilterBodyUi(type: FilterConditionType): void {}
+    protected initialiseFilterBodyUi(type: FilterConditionType): void {}
 
     protected abstract bodyTemplate(): string;
 

@@ -1,25 +1,25 @@
-import {Autowired, PostConstruct} from "../context/context";
-import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {Column} from "../entities/column";
-import {SetLeftFeature} from "../rendering/features/setLeftFeature";
-import {IFloatingFilterComp, IFloatingFilterParams} from "./floating/floatingFilter";
-import {Component} from "../widgets/component";
-import {RefSelector} from "../widgets/componentAnnotations";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Beans} from "../rendering/beans";
-import {HoverFeature} from "../headerRendering/hoverFeature";
-import {Events} from "../events";
-import {EventService} from "../eventService";
-import {ColumnHoverService} from "../rendering/columnHoverService";
-import {CombinedFilter} from "./provided/abstractFilter";
-import {_, Promise} from "../utils";
-import {ColDef} from "../entities/colDef";
-import {IFilterComp} from "../interfaces/iFilter";
-import {UserComponentFactory} from "../components/framework/userComponentFactory";
-import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnApi";
-import {FilterManager} from "./filterManager";
-import {ReadModelAsStringFloatingFilterComp} from "./floating/readModalAsStringFloatingFilter";
+import { Autowired, PostConstruct } from "../context/context";
+import { IMenuFactory } from "../interfaces/iMenuFactory";
+import { Column } from "../entities/column";
+import { SetLeftFeature } from "../rendering/features/setLeftFeature";
+import { IFloatingFilterComp, IFloatingFilterParams } from "./floating/floatingFilter";
+import { Component } from "../widgets/component";
+import { RefSelector } from "../widgets/componentAnnotations";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Beans } from "../rendering/beans";
+import { HoverFeature } from "../headerRendering/hoverFeature";
+import { Events } from "../events";
+import { EventService } from "../eventService";
+import { ColumnHoverService } from "../rendering/columnHoverService";
+import { CombinedFilter } from "./provided/abstractFilter";
+import { _, Promise } from "../utils";
+import { ColDef } from "../entities/colDef";
+import { IFilterComp } from "../interfaces/iFilter";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
+import { FilterManager } from "./filterManager";
+import { ReadModelAsStringFloatingFilterComp } from "./floating/readModalAsStringFloatingFilter";
 
 export class FloatingFilterWrapper extends Component {
 

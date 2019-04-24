@@ -1,9 +1,9 @@
-import {FilterModel, IDoesFilterPassParams, IFilterParams} from "../../interfaces/iFilter";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {FilterConditionType} from "./abstractFilter";
-import {OptionsFactory} from "./optionsFactory";
-import {AbstractFilter2, IAbstractFilterParams} from "./abstractFilter2";
-import {_} from "../../utils";
+import { FilterModel, IDoesFilterPassParams, IFilterParams } from "../../interfaces/iFilter";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { FilterConditionType } from "./abstractFilter";
+import { OptionsFactory } from "./optionsFactory";
+import { AbstractFilter2, IAbstractFilterParams } from "./abstractFilter2";
+import { _ } from "../../utils";
 
 export interface IABFilterParams extends IAbstractFilterParams {
     suppressAndOrCondition: boolean;
@@ -114,7 +114,7 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const model = <ABFilterModel> this.getAppliedModel();
+        const model = this.getAppliedModel() as ABFilterModel;
         const firstFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
 
         if (model.join == null) {
@@ -148,8 +148,8 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
         const filterOptions = this.abFilterParams.filterOptions ?
             this.abFilterParams.filterOptions : this.getDefaultFilterOptions();
 
-        filterOptions.forEach( option => {
-            const createOption = ()=> {
+        filterOptions.forEach(option => {
+            const createOption = () => {
                 const key = (typeof option === 'string') ? option : option.displayKey;
                 const localName = this.translate(key);
 
@@ -187,7 +187,7 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
             `<div class="ag-filter-condition" ref="eJoin">
                     <label>
                         <input ref="eAnd" type="radio" class="and" name="${uniqueGroupId}" value="AND")} checked="checked" />
-                        ${translate('andCondition','AND')}
+                        ${translate('andCondition', 'AND')}
                     </label>
                     <label>
                         <input ref="eOr" type="radio" class="or" name="${uniqueGroupId}" value="OR" />
@@ -271,6 +271,5 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
         }
     }
     */
-
 
 }

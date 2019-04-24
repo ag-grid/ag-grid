@@ -1,6 +1,6 @@
-import {Component} from "../../../widgets/component";
-import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
-import {_} from "../../../utils";
+import { Component } from "../../../widgets/component";
+import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
+import { _ } from "../../../utils";
 
 export class DefaultDateComponent extends Component implements IDateComp {
 

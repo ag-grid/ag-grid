@@ -5,6 +5,7 @@ import {
     ChartType,
     Component,
     Dialog,
+    Environment,
     PostConstruct,
     RefSelector,
     ResizeObserverService
@@ -20,7 +21,6 @@ import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
 import {ChartModel} from "./chartModel";
-import {Environment} from "../../../../ag-grid-community/src/ts/environment";
 
 export interface ChartOptions {
     chartType: ChartType;

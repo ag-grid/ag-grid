@@ -53,8 +53,8 @@
     .ag-chart-types {
         display: flex;
         flex-wrap: wrap;
-        align-items: start;
-        align-content: start;
+        align-content: space-evenly;
+        justify-content: space-evenly;
         .ag-chart-type {
             margin: 5px;
             padding: 5px 5px 0px 5px;

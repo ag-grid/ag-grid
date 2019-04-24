@@ -1,10 +1,10 @@
-import {Component} from "../../widgets/component";
-import {FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
-import {QuerySelector} from "../../widgets/componentAnnotations";
-import {Autowired, PostConstruct} from "../../context/context";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {FloatingFilterChange} from "../floating/floatingFilter";
-import {_} from "../../utils";
+import { Component } from "../../widgets/component";
+import { FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { QuerySelector } from "../../widgets/componentAnnotations";
+import { Autowired, PostConstruct } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { FloatingFilterChange } from "../floating/floatingFilter";
+import { _ } from "../../utils";
 
 export interface IAbstractFilterParams extends IFilterParams {
     debounceMs?: number;
@@ -56,7 +56,7 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
 
     private appliedModel: FilterModel;
 
-    private onBtApplyDebounce: ()=>void;
+    private onBtApplyDebounce: () => void;
 
     protected getAppliedModel(): FilterModel {
         return this.appliedModel;
@@ -79,7 +79,7 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
         this.clearActive = params.clearButton === true;
         // Allowing for old param property apply, even though is not advertised through the interface
         const deprecatedApply = (params as any).apply === true;
-        this.applyActive = (params.applyButton===true) || deprecatedApply;
+        this.applyActive = (params.applyButton === true) || deprecatedApply;
         this.newRowsActionKeep = params.newRowsAction === 'keep';
 
         _.setVisible(this.eApplyButton, this.applyActive);

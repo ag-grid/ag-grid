@@ -1,8 +1,8 @@
-import {IDoesFilterPassParams, IFilterParams} from "../../interfaces/iFilter";
-import {QuerySelector} from "../../widgets/componentAnnotations";
-import {AbstractFilter, CombinedFilter, FilterConditionType} from "./abstractFilter";
-import {_} from "../../utils";
-import {OptionsFactory} from "./optionsFactory";
+import { IDoesFilterPassParams, IFilterParams } from "../../interfaces/iFilter";
+import { QuerySelector } from "../../widgets/componentAnnotations";
+import { AbstractFilter, CombinedFilter, FilterConditionType } from "./abstractFilter";
+import { _ } from "../../utils";
+import { OptionsFactory } from "./optionsFactory";
 
 export interface IComparableFilterParams extends IFilterParams {
     suppressAndOrCondition: boolean;
@@ -234,11 +234,11 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         const filterOptions = this.filterParams.filterOptions ?
             this.filterParams.filterOptions : this.getDefaultFilterOptions();
 
-        if (filterOptions.length===0) { return ''; }
+        if (filterOptions.length === 0) { return ''; }
 
         const listItems: string[] = [];
 
-        filterOptions.forEach( option => {
+        filterOptions.forEach(option => {
             const key = (typeof option === 'string') ? option : option.displayKey;
             const localName = this.translate(key);
             listItems.push(`<option value="${key}">${localName}</option>`);

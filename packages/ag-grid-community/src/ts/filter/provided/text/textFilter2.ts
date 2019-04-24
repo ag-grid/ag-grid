@@ -1,8 +1,8 @@
-import {IDoesFilterPassParams} from "../../../interfaces/iFilter";
-import {FilterConditionType} from "../abstractFilter";
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {_} from "../../../utils";
-import {AbstractABFilter, IABFilterParams, ABFilterModel} from "../abstractABFilter";
+import { IDoesFilterPassParams } from "../../../interfaces/iFilter";
+import { FilterConditionType } from "../abstractFilter";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { _ } from "../../../utils";
+import { AbstractABFilter, IABFilterParams, ABFilterModel } from "../abstractABFilter";
 
 export interface TextFilterModel2 extends ABFilterModel {
     filterValueA?: string;
@@ -39,12 +39,12 @@ export class TextFilter2 extends AbstractABFilter {
 
     static DEFAULT_FORMATTER: TextFormatter2 = (from: string) => {
         return from;
-    };
+    }
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter2 = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    };
+    }
 
     static DEFAULT_COMPARATOR: TextComparator2 = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -66,7 +66,7 @@ export class TextFilter2 extends AbstractABFilter {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    };
+    }
 
     private getValue(element: HTMLInputElement): string {
         let val = element.value;
@@ -167,7 +167,7 @@ export class TextFilter2 extends AbstractABFilter {
     protected convertDeprecatedModelType(model: TextFilterModel2): TextFilterModel2 {
         if (!model) { return model; }
 
-        const modelAsAny = <any> model;
+        const modelAsAny = model as any;
 
         const deprecatedModelTwoConditions = modelAsAny.condition1 && modelAsAny.condition2;
         const deprecatedModelOneCondition = modelAsAny.type && modelAsAny.filter;
@@ -209,7 +209,7 @@ export class TextFilter2 extends AbstractABFilter {
 
     public createValueTemplate(old:FilterConditionType): string {
 
-        const position = old===FilterConditionType.MAIN ? 'A' : 'B';
+        const position = old === FilterConditionType.MAIN ? 'A' : 'B';
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div class="ag-filter-body" ref="eBody${position}">
@@ -244,7 +244,7 @@ export class TextFilter2 extends AbstractABFilter {
     }
 
     public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
-        const model = <TextFilterModel2> this.getAppliedModel();
+        const model = this.getAppliedModel() as TextFilterModel2;
 
         const filterText:string = type == FilterConditionType.MAIN ? model.filterValueA : model.filterValueB;
         const filterOption:string = type == FilterConditionType.MAIN ? model.filterOptionA : model.filterOptionB;

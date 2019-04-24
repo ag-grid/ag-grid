@@ -1,6 +1,6 @@
-import {IDoesFilterPassParams} from "../../interfaces/iFilter";
-import {Comparator, FilterConditionType } from "./abstractFilter";
-import {AbstractComparableFilter, IComparableFilterParams} from "./abstractComparableFilter";
+import { IDoesFilterPassParams } from "../../interfaces/iFilter";
+import { Comparator, FilterConditionType } from "./abstractFilter";
+import { AbstractComparableFilter, IComparableFilterParams } from "./abstractComparableFilter";
 
 export interface NullComparator {
     equals?: boolean;

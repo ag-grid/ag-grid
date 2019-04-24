@@ -1740,7 +1740,7 @@ export class CellComp extends Component {
             if (borders.left) { res.push('ag-cell-range-left'); }
         }
 
-        if(!!this.selectionHandle) {
+        if (!!this.selectionHandle) {
             res.push('ag-cell-range-handle');
         }
 

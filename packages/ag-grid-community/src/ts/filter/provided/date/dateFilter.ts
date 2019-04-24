@@ -1,12 +1,12 @@
-import {FilterModel} from "../../../interfaces/iFilter";
-import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
-import {QuerySelector} from "../../../widgets/componentAnnotations";
-import {Comparator, FilterConditionType} from "../abstractFilter";
-import {Autowired} from "../../../context/context";
-import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
-import {_} from "../../../utils";
-import {AbstractScalerFilter} from "../abstractScalerFilter";
-import {AbstractComparableFilter, IComparableFilterParams} from "../abstractComparableFilter";
+import { FilterModel } from "../../../interfaces/iFilter";
+import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
+import { QuerySelector } from "../../../widgets/componentAnnotations";
+import { Comparator, FilterConditionType } from "../abstractFilter";
+import { Autowired } from "../../../context/context";
+import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { _ } from "../../../utils";
+import { AbstractScalerFilter } from "../abstractScalerFilter";
+import { AbstractComparableFilter, IComparableFilterParams } from "../abstractComparableFilter";
 
 export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
@@ -299,4 +299,3 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         return new Date (from.getFullYear(), from.getMonth(), from.getDate());
     }
 }
-
