@@ -1,10 +1,11 @@
-import { Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp } from 'ag-grid-community';
+import { Autowired, Events, EventService, GridApi, GridOptionsWrapper, PostConstruct, IStatusPanelComp } from 'ag-grid-community';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @PostConstruct
     protected postConstruct(): void {
@@ -30,7 +31,8 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         let displayValue:any = this.getTotalRowCountValue();
 
         if (filteredRowCount !== displayValue) {
-            displayValue = `${filteredRowCount} of ` + displayValue;
+            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            displayValue = `${filteredRowCount} ${localeTextFunc('of', 'of')} ` + displayValue;
         }
 
         this.setValue(displayValue)
