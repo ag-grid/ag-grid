@@ -41,7 +41,7 @@ export class Text extends Shape {
 
     private _text: string = '';
     set text(value: string) {
-        const str = value.toString(); // `value` can be an object here
+        const str = String(value); // `value` can be an object here
         if (this._text !== str) {
             this._text = str;
             this.splitText();
