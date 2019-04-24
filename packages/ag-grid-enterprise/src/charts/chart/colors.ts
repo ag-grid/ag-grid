@@ -1,4 +1,4 @@
-export default [
+export const java: string[] = [
     '#f3622d',
     '#fba71b',
     '#57b757',
@@ -7,7 +7,7 @@ export default [
     '#9a42c8',
     '#c84164',
     '#888888'
-] as string[];
+];
 
 export const material: string[] = [
     '#f44336',
@@ -31,17 +31,6 @@ export const material: string[] = [
     '#607d8b',
 ];
 
-export const scheme1: string[] = [
-    '#6d78ad',
-    '#51cda0',
-    '#df7970',
-    '#4c9ca0',
-    '#ae7d99',
-    '#c9d45c',
-    '#5592ad',
-    '#df874d'
-];
-
 export const nord: string[] = [
     '#4b556a',
     '#c16068',
@@ -50,6 +39,21 @@ export const nord: string[] = [
     '#80a0c3',
     '#b58dae',
     '#85c0d1'
+];
+
+export const office: string[] = [
+    '#a2282f',
+    '#c8501f',
+    '#8e6f39',
+    '#427756',
+    '#427756',
+    '#137ad1',
+    '#41597b',
+    '#4155a9',
+    '#844284',
+    '#8766b6',
+    '#737373',
+    '#867366'
 ];
 
 export const purple: string[] = [
@@ -78,20 +82,18 @@ export const teal: string[] = [
     '#cafff4'
 ];
 
-export const scheme2: string[] = [
-    '#7cb5ec',
-    '#434348',
-    '#90ed7d',
-    '#f7a35c',
-    '#8085e9',
-    '#f15c80',
-    '#e4d354',
-    '#2b908f',
-    '#f45b5b',
-    '#91e8e1'
+export const scheme1: string[] = [
+    '#6d78ad',
+    '#51cda0',
+    '#df7970',
+    '#4c9ca0',
+    '#ae7d99',
+    '#c9d45c',
+    '#5592ad',
+    '#df874d'
 ];
 
-export const scheme3: string[] = [
+export const scheme2: string[] = [
     '#5BC0EB',
     '#FDE74C',
     '#9BC53D',
@@ -100,7 +102,7 @@ export const scheme3: string[] = [
     '#fa3081'
 ];
 
-export const scheme4: string[] = [
+export const scheme3: string[] = [
     '#a9e200',
     '#22bad9',
     '#0181e2',
@@ -108,4 +110,18 @@ export const scheme4: string[] = [
     '#860061',
     '#c62b00',
     '#ff5700'
+];
+
+export default java;
+
+export const all: string[][] = [
+    java,
+    material,
+    nord,
+    office,
+    purple,
+    teal,
+    scheme1,
+    scheme2,
+    scheme3
 ];
