@@ -23,7 +23,7 @@ export interface ITextFilterParams2 extends IABFilterParams {
     caseSensitive?: boolean;
 }
 
-export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, TextFilterModel2> {
+export class TextFilter2 extends AbstractABFilter {
 
     private static readonly FILTER_TYPE = 'text';
 
@@ -249,7 +249,7 @@ export class TextFilter2 extends AbstractABFilter <string, ITextFilterParams2, T
     }
 
     public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
-        const model = this.getAppliedModel();
+        const model = <TextFilterModel2> this.getAppliedModel();
 
         const filterText:string = type == FilterConditionType.MAIN ? model.filterValueA : model.filterValueB;
         const filterOption:string = type == FilterConditionType.MAIN ? model.filterOptionA : model.filterOptionB;

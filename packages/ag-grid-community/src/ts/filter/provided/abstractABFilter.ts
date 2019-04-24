@@ -41,7 +41,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends ABFilterModel> extends AbstractFilter2<P, M> {
+export abstract class AbstractABFilter extends AbstractFilter2 {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -100,7 +100,7 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
         return this.eOr.checked ? 'OR' : 'AND';
     }
 
-    protected setModelIntoGui(model: M): void {
+    protected setModelIntoGui(model: ABFilterModel): void {
         const orChecked = model.join === 'OR';
         this.eAnd.checked = !orChecked;
         this.eOr.checked = orChecked;
@@ -114,7 +114,7 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const model = this.getAppliedModel();
+        const model = <ABFilterModel> this.getAppliedModel();
         const firstFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
 
         if (model.join == null) {
@@ -129,7 +129,7 @@ export abstract class AbstractABFilter<T, P extends IABFilterParams, M extends A
         }
     }
 
-    public init(params: P) {
+    public init(params: IABFilterParams) {
 
         this.abFilterParams = params;
 

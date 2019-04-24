@@ -1,5 +1,5 @@
 import {Component} from "../../widgets/component";
-import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
 import {QuerySelector} from "../../widgets/componentAnnotations";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
@@ -17,11 +17,11 @@ import {INumberFilterParams} from "./number/numberFilter";
  * Contains common logic to ALL filters.. Translation, apply and clear button
  * get/setModel context wiring....
  */
-export abstract class AbstractFilter2<P extends IFilterParams, M> extends Component implements IFilterComp {
+export abstract class AbstractFilter2 extends Component implements IFilterComp {
 
     private newRowsActionKeep: boolean;
 
-    private abstractFilterParams: P;
+    private abstractFilterParams: IFilterParams;
     private clearActive: boolean;
     private applyActive: boolean;
 
@@ -40,21 +40,21 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
     @Autowired('gridOptionsWrapper')
     protected gridOptionsWrapper: GridOptionsWrapper;
 
-    public abstract modelFromFloatingFilter(from: string): M;
+    public abstract modelFromFloatingFilter(from: string): FilterModel;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected abstract updateVisibilityOfComponents(): void;
 
     protected abstract bodyTemplate(): string;
     protected abstract reset(): void;
 
-    protected abstract setModelIntoGui(model: M): void;
-    protected abstract getModelFromGui(): M;
-    protected abstract areModelsEqual(a: M, b: M): boolean;
-    protected abstract convertDeprecatedModelType(model: M): M;
+    protected abstract setModelIntoGui(model: FilterModel): void;
+    protected abstract getModelFromGui(): FilterModel;
+    protected abstract areModelsEqual(a: FilterModel, b: FilterModel): boolean;
+    protected abstract convertDeprecatedModelType(model: FilterModel): FilterModel;
 
-    private appliedModel: M;
+    private appliedModel: FilterModel;
 
-    protected getAppliedModel(): M {
+    protected getAppliedModel(): FilterModel {
         return this.appliedModel;
     }
 
@@ -69,7 +69,7 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
         this.setTemplate(templateString);
     }
 
-    public init(params: P): void {
+    public init(params: IFilterParams): void {
         this.abstractFilterParams = params;
 
         this.clearActive = params.clearButton === true;
@@ -91,11 +91,11 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
         this.updateVisibilityOfComponents();
     }
 
-    public getModel(): M {
+    public getModel(): FilterModel {
         return this.appliedModel;
     }
 
-    public setModel(model: M): void {
+    public setModel(model: FilterModel): void {
         if (model) {
             const modelNotDeprecated = this.convertDeprecatedModelType(model);
             this.setModelIntoGui(modelNotDeprecated);
@@ -130,7 +130,7 @@ export abstract class AbstractFilter2<P extends IFilterParams, M> extends Compon
 
     public floatingFilter(from: string): void {
         if (from !== '') {
-            const model: M = this.modelFromFloatingFilter(from);
+            const model: FilterModel = this.modelFromFloatingFilter(from);
             this.setModel(model);
         } else {
             // this.resetState();
