@@ -224,9 +224,6 @@ class TabbedChartMenu extends Component {
     }
 
     public destroy(): void {
-        if (this.mainMenuList) {
-            this.mainMenuList.destroy();
-        }
         if (this.chartColumnPanel) {
             this.chartColumnPanel.destroy();
         }
