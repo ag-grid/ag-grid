@@ -39,7 +39,7 @@ test('test legacy key', () => {
 
 test('test v2 trial key', () => {
     // given
-    const keyV2Trial = 'My_Co_My_App_Single_5_Devs_1_Deployment_License_1_January_2001_[v2]_[TRIAL]_OTc4MzA3MjAwMDAwea7526307655032d39a27e0b6eac2f14';
+    const keyV2Trial = '[TRIAL]_1_January_2001_[v2]_OTc4MzA3MjAwMDAwefe07c505d1fc0a6ccc76126ec72f3f0';
     LicenseManager.setLicenseKey(keyV2Trial);
 
     // when
