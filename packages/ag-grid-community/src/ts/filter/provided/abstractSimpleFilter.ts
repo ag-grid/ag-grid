@@ -1,15 +1,15 @@
-import {FilterModel, IDoesFilterPassParams, IFilterParams} from "../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams} from "../../interfaces/iFilter";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {FilterConditionType} from "./abstractFilter";
 import {OptionsFactory} from "./optionsFactory";
-import {AbstractFilter2, IAbstractFilterParams} from "./abstractFilter2";
+import {AbstractProvidedFilter, IAbstractProvidedFilterParams} from "./abstractProvidedFilter";
 import {_} from "../../utils";
 
-export interface IABFilterParams extends IAbstractFilterParams {
+export interface IAbstractSimpleFilterParams extends IAbstractProvidedFilterParams {
     suppressAndOrCondition: boolean;
 }
 
-export interface ABFilterModel extends FilterModel {
+export interface IAbstractSimpleModel extends FilterModel {
     filterOptionA: string;
     filterOptionB?: string;
     join?: string;
@@ -41,7 +41,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class AbstractABFilter extends AbstractFilter2 {
+export abstract class AbstractSimpleFilter extends AbstractProvidedFilter {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -79,7 +79,7 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
 
     protected optionsFactory: OptionsFactory;
 
-    private abFilterParams: IABFilterParams;
+    private simpleFilterParams: IAbstractSimpleFilterParams;
 
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract getDefaultFilterOption(): string;
@@ -100,7 +100,7 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
         return this.eOr.checked ? 'OR' : 'AND';
     }
 
-    protected setModelIntoGui(model: ABFilterModel): void {
+    protected setModelIntoGui(model: IAbstractSimpleModel): void {
         const orChecked = model.join === 'OR';
         this.eAnd.checked = !orChecked;
         this.eOr.checked = orChecked;
@@ -114,7 +114,7 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const model = <ABFilterModel> this.getAppliedModel();
+        const model = <IAbstractSimpleModel> this.getAppliedModel();
         const firstFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
 
         if (model.join == null) {
@@ -129,9 +129,9 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
         }
     }
 
-    public init(params: IABFilterParams) {
+    public init(params: IAbstractSimpleFilterParams) {
 
-        this.abFilterParams = params;
+        this.simpleFilterParams = params;
 
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOption());
@@ -145,8 +145,8 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
     }
 
     private putOptionsIntoDropdown(): void {
-        const filterOptions = this.abFilterParams.filterOptions ?
-            this.abFilterParams.filterOptions : this.getDefaultFilterOptions();
+        const filterOptions = this.simpleFilterParams.filterOptions ?
+            this.simpleFilterParams.filterOptions : this.getDefaultFilterOptions();
 
         filterOptions.forEach( option => {
             const createOption = ()=> {
@@ -233,19 +233,11 @@ export abstract class AbstractABFilter extends AbstractFilter2 {
     }
 
     public addChangedListeners() {
-        this.addDestroyableEventListener(this.eOptionsA, "change", this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eOptionsB, "change", this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eOr, "change", this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eAnd, "change", this.onFilterChanged.bind(this));
-
-        // this.eOr.addEventListener('change', e => {
-        //     this.onFilterChanged();
-        //     console.log('eOr',e);
-        // });
-        // this.eAnd.addEventListener('change', e => {
-        //     this.onFilterChanged();
-        //     console.log('eAnd',e);
-        // });
+        const filterChanged = this.onFilterChanged.bind(this);
+        this.addDestroyableEventListener(this.eOptionsA, "change", filterChanged);
+        this.addDestroyableEventListener(this.eOptionsB, "change", filterChanged);
+        this.addDestroyableEventListener(this.eOr, "change", filterChanged);
+        this.addDestroyableEventListener(this.eAnd, "change", filterChanged);
     }
 
     protected doesFilterHaveHiddenInput(filterType: string) {

@@ -6,7 +6,7 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {FloatingFilterChange} from "../floating/floatingFilter";
 import {_} from "../../utils";
 
-export interface IAbstractFilterParams extends IFilterParams {
+export interface IAbstractProvidedFilterParams extends IFilterParams {
     debounceMs?: number;
 }
 
@@ -19,11 +19,11 @@ export interface IAbstractFilterParams extends IFilterParams {
  * Contains common logic to ALL filters.. Translation, apply and clear button
  * get/setModel context wiring....
  */
-export abstract class AbstractFilter2 extends Component implements IFilterComp {
+export abstract class AbstractProvidedFilter extends Component implements IFilterComp {
 
     private newRowsActionKeep: boolean;
 
-    private abstractFilterParams: IAbstractFilterParams;
+    private abstractProvidedFilterParams: IAbstractProvidedFilterParams;
     private clearActive: boolean;
     private applyActive: boolean;
 
@@ -42,9 +42,10 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
     @Autowired('gridOptionsWrapper')
     protected gridOptionsWrapper: GridOptionsWrapper;
 
-    public abstract modelFromFloatingFilter(from: string): FilterModel;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
+
     protected abstract updateVisibilityOfComponents(): void;
+    protected abstract modelFromFloatingFilter(from: string): FilterModel;
 
     protected abstract bodyTemplate(): string;
     protected abstract reset(): void;
@@ -74,7 +75,7 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
     }
 
     public init(params: IFilterParams): void {
-        this.abstractFilterParams = params;
+        this.abstractProvidedFilterParams = params;
 
         this.clearActive = params.clearButton === true;
         // Allowing for old param property apply, even though is not advertised through the interface
@@ -134,7 +135,7 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
         // and it's a case insensitive filter
         const newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
         if (newModelDifferent) {
-            this.abstractFilterParams.filterChangedCallback();
+            this.abstractProvidedFilterParams.filterChangedCallback();
         }
     }
 
@@ -157,7 +158,7 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
 
     protected onFilterChanged(): void {
         this.updateVisibilityOfComponents();
-        this.abstractFilterParams.filterModifiedCallback();
+        this.abstractProvidedFilterParams.filterModifiedCallback();
         if (!this.applyActive) {
             this.onBtApplyDebounce();
         }
@@ -200,12 +201,12 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
 
     private getDebounceMs(): number {
         if (this.applyActive) {
-            if (this.abstractFilterParams.debounceMs != null) {
+            if (this.abstractProvidedFilterParams.debounceMs != null) {
                 console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
             }
             return 0;
         }
-        return this.abstractFilterParams.debounceMs != null ? this.abstractFilterParams.debounceMs : 500;
+        return this.abstractProvidedFilterParams.debounceMs != null ? this.abstractProvidedFilterParams.debounceMs : 500;
     }
 
 }

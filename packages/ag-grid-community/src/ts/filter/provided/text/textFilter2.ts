@@ -2,9 +2,9 @@ import {IDoesFilterPassParams} from "../../../interfaces/iFilter";
 import {FilterConditionType} from "../abstractFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
-import {AbstractABFilter, IABFilterParams, ABFilterModel} from "../abstractABFilter";
+import {AbstractSimpleFilter, IAbstractSimpleFilterParams, IAbstractSimpleModel} from "../abstractSimpleFilter";
 
-export interface TextFilterModel2 extends ABFilterModel {
+export interface TextFilterModel2 extends IAbstractSimpleModel {
     filterValueA?: string;
     filterValueB?: string;
 }
@@ -17,12 +17,12 @@ export interface TextFormatter2 {
     (from: string): string;
 }
 
-export interface ITextFilterParams2 extends IABFilterParams {
+export interface ITextFilterParams2 extends IAbstractSimpleFilterParams {
     textCustomComparator?: TextComparator2;
     caseSensitive?: boolean;
 }
 
-export class TextFilter2 extends AbstractABFilter {
+export class TextFilter2 extends AbstractSimpleFilter {
 
     private static readonly FILTER_TYPE = 'text';
 
@@ -86,7 +86,7 @@ export class TextFilter2 extends AbstractABFilter {
     }
 
     public getDefaultFilterOption(): string {
-        return AbstractABFilter.CONTAINS;
+        return AbstractSimpleFilter.CONTAINS;
     }
 
     public init(params: ITextFilterParams2): void {
@@ -203,8 +203,8 @@ export class TextFilter2 extends AbstractABFilter {
     }
 
     public getDefaultFilterOptions(): string[] {
-        return [AbstractABFilter.EQUALS, AbstractABFilter.NOT_EQUAL, AbstractABFilter.STARTS_WITH,
-            AbstractABFilter.ENDS_WITH, AbstractABFilter.CONTAINS, AbstractABFilter.NOT_CONTAINS];
+        return [AbstractSimpleFilter.EQUALS, AbstractSimpleFilter.NOT_EQUAL, AbstractSimpleFilter.STARTS_WITH,
+            AbstractSimpleFilter.ENDS_WITH, AbstractSimpleFilter.CONTAINS, AbstractSimpleFilter.NOT_CONTAINS];
     }
 
     public createValueTemplate(old:FilterConditionType): string {
@@ -223,11 +223,11 @@ export class TextFilter2 extends AbstractABFilter {
         super.updateVisibilityOfComponents();
 
         const optionA = this.getOptionA();
-        const showA = !this.doesFilterHaveHiddenInput(optionA) && optionA !== AbstractABFilter.EMPTY;
+        const showA = !this.doesFilterHaveHiddenInput(optionA) && optionA !== AbstractSimpleFilter.EMPTY;
         _.setVisible(this.eFilterValueA, showA);
 
         const optionB = this.getOptionB();
-        const showB = !this.doesFilterHaveHiddenInput(optionB) && optionB !== AbstractABFilter.EMPTY;
+        const showB = !this.doesFilterHaveHiddenInput(optionB) && optionB !== AbstractSimpleFilter.EMPTY;
         _.setVisible(this.eFilterValueB, showB);
     }
 
@@ -267,7 +267,7 @@ export class TextFilter2 extends AbstractABFilter {
         const filterTextFormatted = this.formatter(filterText);
 
         if (cellValue == null || cellValue === undefined) {
-            return filterOption === AbstractABFilter.NOT_EQUAL || filterOption === AbstractABFilter.NOT_CONTAINS;
+            return filterOption === AbstractSimpleFilter.NOT_EQUAL || filterOption === AbstractSimpleFilter.NOT_CONTAINS;
         }
 
         const valueFormatted: string = this.formatter(cellValue);
