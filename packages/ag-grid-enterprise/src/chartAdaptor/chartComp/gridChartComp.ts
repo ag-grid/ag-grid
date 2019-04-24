@@ -156,6 +156,9 @@ export class GridChartComp extends Component {
 
         } else if (chartType === ChartType.Pie) {
             this.updatePieChart(categoryId, fields, data);
+
+        } else if (chartType === ChartType.Doughnut) {
+            this.updateDoughnutChart(categoryId, fields, data);
         }
     }
 
@@ -201,6 +204,32 @@ export class GridChartComp extends Component {
     private updatePieChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
         const pieChart = this.chart as PolarChart<any, string, number>;
 
+        pieChart.removeAllSeries();
+
+        pieChart.series = [fields[0]].map((f: {colId: string, displayName: string}, index: number) => {
+            const pieSeries = new PieSeries<any, string, number>();
+
+            pieSeries.title = f.displayName;
+
+            pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.showInLegend = index === 0;
+            pieSeries.lineWidth = 1;
+            pieSeries.calloutWidth = 1;
+            pieChart.addSeries(pieSeries);
+
+            pieSeries.data = data;
+            pieSeries.angleField = f.colId;
+
+            pieSeries.labelField = categoryId;
+            pieSeries.label = false;
+
+            return pieSeries;
+        });
+    }
+
+    private updateDoughnutChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
+        const pieChart = this.chart as PolarChart<any, string, number>;
+
         const singleField = fields.length === 1;
         const thickness = singleField ? 0 : 20;
         const padding = singleField ? 0 : 20;
@@ -233,6 +262,7 @@ export class GridChartComp extends Component {
             return pieSeries;
         });
     }
+
 
     private downloadChart() {
         // TODO use chart / dialog title for filename

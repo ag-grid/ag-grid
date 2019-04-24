@@ -29,6 +29,8 @@ export class GridChartFactory {
                 return GridChartFactory.createLineChart(options);
             case ChartType.Pie:
                 return GridChartFactory.createPieChart(options);
+            case ChartType.Doughnut:
+                return GridChartFactory.createDoughnutChart(options);
         }
     }
 
@@ -102,6 +104,15 @@ export class GridChartFactory {
     }
 
     private static createPieChart(options: CreateChartOptions): Chart<any, string, number> {
+        const pieChart = new PolarChart<any, string, number>(options.parentElement);
+
+        pieChart.width = options.width;
+        pieChart.height = options.height;
+
+        return pieChart;
+    }
+
+    private static createDoughnutChart(options: CreateChartOptions): Chart<any, string, number> {
         const pieChart = new PolarChart<any, string, number>(options.parentElement);
 
         pieChart.width = options.width;

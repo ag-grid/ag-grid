@@ -207,9 +207,9 @@ class TabbedChartMenu extends Component {
                 action: () => this.chartController.setChartType(ChartType.Line)
             },
             {
-                name: localeTextFunc('donutRangeChart', 'Donut'),
+                name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
                 icon: _.createIconNoSpan('chartDonut', this.gridOptionsWrapper, null),
-                action: () => this.chartController.setChartType(ChartType.Donut)
+                action: () => this.chartController.setChartType(ChartType.Doughnut)
             }
         ];
     }

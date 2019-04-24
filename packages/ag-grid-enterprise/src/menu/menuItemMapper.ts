@@ -185,7 +185,7 @@ export class MenuItemMapper {
                 chartRangeSubMenuItems.push('stackedBarRangeChart');
                 chartRangeSubMenuItems.push('lineRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
-                chartRangeSubMenuItems.push('donutRangeChart');
+                chartRangeSubMenuItems.push('doughnutRangeChart');
                 return {
                     name: 'Chart Range',
                     subMenu: chartRangeSubMenuItems
@@ -214,10 +214,10 @@ export class MenuItemMapper {
                     this.rangeChartService.chartCurrentRange(ChartType.Pie);
                 }
             };
-            case 'donutRangeChart': return {
-                name: localeTextFunc('donutRangeChart', 'Donut'),
+            case 'doughnutRangeChart': return {
+                name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Donut);
+                    this.rangeChartService.chartCurrentRange(ChartType.Doughnut);
                 }
             };
             default:
