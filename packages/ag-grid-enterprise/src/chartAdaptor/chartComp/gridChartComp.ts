@@ -21,6 +21,7 @@ import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
 import {ChartModel} from "./chartModel";
+import {Color} from "../../charts/util/color";
 
 export interface ChartOptions {
     chartType: ChartType;
@@ -96,13 +97,15 @@ export class GridChartComp extends Component {
             _.clearElement(this.eChart);
         }
 
+        const theme = this.environment.getTheme() as string;
+
         const chartOptions = {
             chartType: this.model.getChartType(),
             parentElement: this.eChart,
             width: width,
             height: height,
             showTooltips: this.chartOptions.showTooltips,
-            theme: this.environment.getTheme() as string
+            isDarkTheme: this.isDarkTheme(theme)
         };
 
         this.chart = GridChartFactory.createChart(chartOptions);
@@ -206,37 +209,36 @@ export class GridChartComp extends Component {
 
         pieChart.removeAllSeries();
 
-        pieChart.series = [fields[0]].map((f: {colId: string, displayName: string}, index: number) => {
-            const pieSeries = new PieSeries<any, string, number>();
+        const pieSeries = new PieSeries<any, string, number>();
 
-            pieSeries.title = f.displayName;
+        if (fields.length > 0) {
+            pieSeries.title = fields[0].displayName;
 
             pieSeries.tooltip = this.chartOptions.showTooltips;
-            pieSeries.showInLegend = index === 0;
+            pieSeries.showInLegend = true;
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
             pieChart.addSeries(pieSeries);
 
             pieSeries.data = data;
-            pieSeries.angleField = f.colId;
+            pieSeries.angleField = fields[0].colId;
 
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
 
-            return pieSeries;
-        });
+            pieChart.series = [pieSeries];
+        }
     }
 
     private updateDoughnutChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
         const pieChart = this.chart as PolarChart<any, string, number>;
 
-        const singleField = fields.length === 1;
-        const thickness = singleField ? 0 : 20;
-        const padding = singleField ? 0 : 20;
-        let offset = 0;
-
         pieChart.removeAllSeries();
 
+        const thickness = 20;
+        const padding = 20;
+
+        let offset = 0;
         pieChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
@@ -263,7 +265,6 @@ export class GridChartComp extends Component {
         });
     }
 
-
     private downloadChart() {
         // TODO use chart / dialog title for filename
         this.chart.scene.download("chart");
@@ -287,6 +288,12 @@ export class GridChartComp extends Component {
     private setGridChartEditMode(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) { return; }
         this.chartController.setChartCellRangesInRangeController();
+    }
+
+    private isDarkTheme(theme: string): boolean {
+        const el = document.querySelector(`.${theme}`);
+        const background = window.getComputedStyle(el as HTMLElement).background;
+        return Color.fromString(background as string).toHSB()[2] < 0.4;
     }
 
     public destroy(): void {

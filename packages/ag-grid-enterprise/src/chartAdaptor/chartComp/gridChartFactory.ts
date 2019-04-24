@@ -1,11 +1,10 @@
-import { ChartType } from "ag-grid-community";
-import { CartesianChart } from "../../charts/chart/cartesianChart";
-import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
-import { NumberAxis } from "../../charts/chart/axis/numberAxis";
-import { BarSeries } from "../../charts/chart/series/barSeries";
-import { PolarChart } from "../../charts/chart/polarChart";
-import { Chart } from "../../charts/chart/chart";
-import {Color} from "../../charts/util/color";
+import {ChartType} from "ag-grid-community";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
+import {NumberAxis} from "../../charts/chart/axis/numberAxis";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {PolarChart} from "../../charts/chart/polarChart";
+import {Chart} from "../../charts/chart/chart";
 import {all} from "../../charts/chart/colors";
 
 interface CreateChartOptions {
@@ -14,10 +13,16 @@ interface CreateChartOptions {
     height: number,
     showTooltips: boolean,
     parentElement: HTMLElement,
-    theme: string
+    isDarkTheme: boolean
 }
 
 export class GridChartFactory {
+
+    private static darkLabelColour = 'rgb(221, 221, 221)';
+    private static lightLabelColour = 'rgb(87, 87, 87)';
+
+    private static darkAxisColour = 'rgb(100, 100, 100)';
+    private static lightAxisColour = 'rgb(219, 219, 219)';
 
     static createChart(options: CreateChartOptions): Chart<any, string, number> {
         switch (options.chartType) {
@@ -28,9 +33,9 @@ export class GridChartFactory {
             case ChartType.Line:
                 return GridChartFactory.createLineChart(options);
             case ChartType.Pie:
-                return GridChartFactory.createPieChart(options);
+                return GridChartFactory.createPolarChart(options);
             case ChartType.Doughnut:
-                return GridChartFactory.createDoughnutChart(options);
+                return GridChartFactory.createPolarChart(options);
         }
     }
 
@@ -40,17 +45,13 @@ export class GridChartFactory {
         barChart.width = options.width;
         barChart.height = options.height;
 
-        const el = document.querySelector(`.${options.theme}`);
-        const background = window.getComputedStyle(el as HTMLElement).background;
-        const darkTheme = Color.fromString(background as string).toHSB()[2] < 0.4;
+        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
 
-        const axisLabelColor = darkTheme ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+        barChart.xAxis.labelColor = labelColor;
+        barChart.yAxis.labelColor = labelColor;
+        barChart.legend.labelColor = labelColor;
 
-        barChart.xAxis.labelColor = axisLabelColor;
-        barChart.yAxis.labelColor = axisLabelColor;
-        barChart.legend.labelColor = axisLabelColor;
-
-        const axisGridColor = darkTheme ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
+        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
         barChart.xAxis.gridStyle = [{
             strokeStyle: axisGridColor,
             lineDash: [4, 2]
@@ -79,17 +80,13 @@ export class GridChartFactory {
         lineChart.width = options.width;
         lineChart.height = options.height;
 
-        const el = document.querySelector(`.${options.theme}`);
-        const background = window.getComputedStyle(el as HTMLElement).background;
-        const darkTheme = Color.fromString(background as string).toHSB()[2] < 0.4;
+        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
 
-        const axisLabelColor = darkTheme ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+        lineChart.xAxis.labelColor = labelColor;
+        lineChart.yAxis.labelColor = labelColor;
+        lineChart.legend.labelColor = labelColor;
 
-        lineChart.xAxis.labelColor = axisLabelColor;
-        lineChart.yAxis.labelColor = axisLabelColor;
-        lineChart.legend.labelColor = axisLabelColor;
-
-        const axisGridColor = darkTheme ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
+        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
         lineChart.xAxis.gridStyle = [{
             strokeStyle: axisGridColor,
             lineDash: [4, 2]
@@ -103,20 +100,13 @@ export class GridChartFactory {
         return lineChart;
     }
 
-    private static createPieChart(options: CreateChartOptions): Chart<any, string, number> {
+    private static createPolarChart(options: CreateChartOptions): Chart<any, string, number> {
         const pieChart = new PolarChart<any, string, number>(options.parentElement);
 
         pieChart.width = options.width;
         pieChart.height = options.height;
 
-        return pieChart;
-    }
-
-    private static createDoughnutChart(options: CreateChartOptions): Chart<any, string, number> {
-        const pieChart = new PolarChart<any, string, number>(options.parentElement);
-
-        pieChart.width = options.width;
-        pieChart.height = options.height;
+        pieChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
 
         return pieChart;
     }
