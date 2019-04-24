@@ -14,12 +14,13 @@ import {Chart} from "../../charts/chart/chart";
 import {BarSeries} from "../../charts/chart/series/barSeries";
 import {LineSeries} from "../../charts/chart/series/lineSeries";
 import {PieSeries} from "../../charts/chart/series/pieSeries";
-import colors from "../../charts/chart/colors";
+import {all} from "../../charts/chart/colors";
 import {CartesianChart} from "../../charts/chart/cartesianChart";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
 import {ChartModel} from "./chartModel";
+import {Environment} from "../../../../ag-grid-community/src/ts/environment";
 
 export interface ChartOptions {
     chartType: ChartType;
@@ -37,6 +38,7 @@ export class GridChartComp extends Component {
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('environment') private environment: Environment;
 
     @RefSelector('eChart') private eChart: HTMLElement;
 
@@ -99,7 +101,8 @@ export class GridChartComp extends Component {
             parentElement: this.eChart,
             width: width,
             height: height,
-            showTooltips: this.chartOptions.showTooltips
+            showTooltips: this.chartOptions.showTooltips,
+            theme: this.environment.getTheme() as string
         };
 
         this.chart = GridChartFactory.createChart(chartOptions);
@@ -160,12 +163,15 @@ export class GridChartComp extends Component {
         const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
 
         const barChart = barSeries.chart as CartesianChart<any, string, number>;
+
         barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         barSeries.data = data;
         barSeries.xField = categoryId;
         barSeries.yFields = fields.map(f => f.colId);
         barSeries.yFieldNames = fields.map(f => f.displayName);
+
+        barChart.xAxis.gridStyle
     }
 
     private updateLineChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
@@ -182,7 +188,7 @@ export class GridChartComp extends Component {
             lineSeries.tooltip = this.chartOptions.showTooltips;
             lineSeries.lineWidth = 2;
             lineSeries.markerRadius = 3;
-            lineSeries.color = colors[index % colors.length];
+            lineSeries.color = all[0][index % all[0].length];
 
             lineSeries.data = this.model.getData();
             lineSeries.xField = categoryId;
