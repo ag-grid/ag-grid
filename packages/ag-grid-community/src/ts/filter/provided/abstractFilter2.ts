@@ -4,9 +4,11 @@ import {QuerySelector} from "../../widgets/componentAnnotations";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {FloatingFilterChange} from "../floating/floatingFilter";
-import {ITextFilterParams} from "./text/textFilter";
 import {_} from "../../utils";
-import {INumberFilterParams} from "./number/numberFilter";
+
+export interface IAbstractFilterParams extends IFilterParams {
+    debounceMs?: number;
+}
 
 /**
  * T(ype) The type of this filter. ie in DateFilter T=Date
@@ -21,7 +23,7 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
 
     private newRowsActionKeep: boolean;
 
-    private abstractFilterParams: IFilterParams;
+    private abstractFilterParams: IAbstractFilterParams;
     private clearActive: boolean;
     private applyActive: boolean;
 
@@ -53,6 +55,8 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
     protected abstract convertDeprecatedModelType(model: FilterModel): FilterModel;
 
     private appliedModel: FilterModel;
+
+    private onBtApplyDebounce: ()=>void;
 
     protected getAppliedModel(): FilterModel {
         return this.appliedModel;
@@ -89,6 +93,12 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
 
         this.reset();
         this.updateVisibilityOfComponents();
+        this.setupOnBtApplyDebounce();
+    }
+
+    private setupOnBtApplyDebounce(): void {
+        const debounceMs = this.getDebounceMs();
+        this.onBtApplyDebounce = _.debounce(this.onBtApply.bind(this), debounceMs);
     }
 
     public getModel(): FilterModel {
@@ -149,7 +159,7 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
         this.updateVisibilityOfComponents();
         this.abstractFilterParams.filterModifiedCallback();
         if (!this.applyActive) {
-            this.onBtApply();
+            this.onBtApplyDebounce();
         }
     }
 
@@ -188,14 +198,14 @@ export abstract class AbstractFilter2 extends Component implements IFilterComp {
                 </div>`;
     }
 
-    public getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number {
+    private getDebounceMs(): number {
         if (this.applyActive) {
-            if (filterParams.debounceMs != null) {
+            if (this.abstractFilterParams.debounceMs != null) {
                 console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
             }
             return 0;
         }
-        return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
+        return this.abstractFilterParams.debounceMs != null ? this.abstractFilterParams.debounceMs : 500;
     }
 
 }

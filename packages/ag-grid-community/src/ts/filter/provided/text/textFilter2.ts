@@ -19,7 +19,6 @@ export interface TextFormatter2 {
 
 export interface ITextFilterParams2 extends IABFilterParams {
     textCustomComparator?: TextComparator2;
-    debounceMs?: number;
     caseSensitive?: boolean;
 }
 
@@ -82,12 +81,8 @@ export class TextFilter2 extends AbstractABFilter {
     }
 
     protected addFilterValueChangedListeners(): void {
-        const debounceMs = this.getDebounceMs(this.textFilterParams);
-
-        const toDebounce: () => void = _.debounce(() => this.onFilterChanged(), debounceMs);
-
-        this.addDestroyableEventListener(this.eFilterValueA, 'input', toDebounce);
-        this.addDestroyableEventListener(this.eFilterValueB, 'input', toDebounce);
+        this.addDestroyableEventListener(this.eFilterValueA, 'input', this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eFilterValueB, 'input', this.onFilterChanged.bind(this));
     }
 
     public getDefaultFilterOption(): string {

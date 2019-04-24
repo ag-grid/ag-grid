@@ -2,10 +2,10 @@ import {FilterModel, IDoesFilterPassParams, IFilterParams} from "../../interface
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {FilterConditionType} from "./abstractFilter";
 import {OptionsFactory} from "./optionsFactory";
-import {AbstractFilter2} from "./abstractFilter2";
+import {AbstractFilter2, IAbstractFilterParams} from "./abstractFilter2";
 import {_} from "../../utils";
 
-export interface IABFilterParams extends IFilterParams {
+export interface IABFilterParams extends IAbstractFilterParams {
     suppressAndOrCondition: boolean;
 }
 
