@@ -172,9 +172,8 @@ class TabbedChartMenu extends Component {
     }
 
     private createColumnsPanel(): TabbedItem {
-        //TODO refactor class to be chart menu specific
         const eWrapperDiv: HTMLElement = document.createElement('div');
-        _.addCssClass(eWrapperDiv, 'ag-column-select-panel');
+        _.addCssClass(eWrapperDiv, 'ag-chart-data');
 
         this.chartColumnPanel = new ChartColumnPanel(this.chartController);
         this.getContext().wireBean(this.chartColumnPanel);

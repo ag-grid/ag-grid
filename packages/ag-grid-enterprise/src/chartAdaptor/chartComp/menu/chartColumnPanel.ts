@@ -1,7 +1,9 @@
 import {
+    Autowired,
     AgCheckbox,
     AgRadioButton,
     Component,
+    GridOptionsWrapper,
     PostConstruct,
     RefSelector,
     _
@@ -11,8 +13,9 @@ import { ColState } from "../chartModel";
 
 export class ChartColumnPanel extends Component {
 
-    //TODO refactor class to be chart menu specific
-    public static TEMPLATE = `<div class="ag-primary-cols-list-panel"></div>`;
+    public static TEMPLATE = `<div class="ag-chart-data-wrapper"></div>`;
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private columnComps: { [key: string]: ChartPanelRadioComp | ChartPanelCheckboxComp } = {};
     private dimensionComps: ChartPanelRadioComp[] = [];
@@ -25,13 +28,30 @@ export class ChartColumnPanel extends Component {
 
     public init(): void {
         const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const eGui = this.getGui();
 
-        // create ChartPanelRadioComps for dimensions and ChartPanelCheckboxComp for value cols
-        dimensionCols.forEach(this.getColumnStateMapper(true));
-        valueCols.forEach(this.getColumnStateMapper(false));
+        [dimensionCols, valueCols].forEach((group, idx) => {
+            const isCategory = idx === 0;
+            const currentEl = document.createElement('div');
+            const currentLabel = document.createElement('div');
+
+            _.addCssClass(currentEl, 'ag-chart-data-group');            
+            _.addCssClass(currentLabel, 'ag-chart-data-group-label');
+            if (isCategory) {
+                currentLabel.innerHTML = localeTextFunc('chartCategories', 'Categories');
+            } else {
+                currentLabel.innerHTML = localeTextFunc('chartValues', 'Values');
+            }
+
+            currentEl.appendChild(currentLabel);
+            eGui.appendChild(currentEl);
+
+            group.forEach(this.getColumnStateMapper(isCategory, currentEl));
+        });
     }
 
-    private getColumnStateMapper(dimension: boolean) {
+    private getColumnStateMapper(dimension: boolean, container: HTMLElement) {
 
         const checkboxChanged = (updatedColState: ColState) => this.chartController.updateForMenuChange(updatedColState);
 
@@ -42,12 +62,12 @@ export class ChartColumnPanel extends Component {
         };
 
         return (colState: ColState) => {
-            const comp = dimension ?
-                new ChartPanelRadioComp(colState, radioButtonChanged) :
-                new ChartPanelCheckboxComp(colState, checkboxChanged);
+            const comp = dimension
+                ? new ChartPanelRadioComp(colState, radioButtonChanged)
+                : new ChartPanelCheckboxComp(colState, checkboxChanged);
 
             this.getContext().wireBean(comp);
-            this.getGui().appendChild(comp.getGui());
+            container.appendChild(comp.getGui());
             this.columnComps[colState.colId] = comp;
 
             if (dimension) {
@@ -74,9 +94,9 @@ class ChartPanelRadioComp extends Component {
 
     //TODO refactor class to be chart menu specific
     private static TEMPLATE =
-        `<div class="ag-column-tool-panel-column">
-            <ag-radio-button ref="rbSelect" class="ag-column-select-checkbox"></ag-radio-button>
-            <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
+        `<div class="ag-chart-data-item">
+            <ag-radio-button ref="rbSelect"></ag-radio-button>
+            <span class="ag-chart-data-item-label" ref="eLabel"></span>
         </div>`;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;
@@ -125,9 +145,9 @@ class ChartPanelCheckboxComp extends Component {
 
     //TODO refactor class to be chart menu specific
     private static TEMPLATE =
-        `<div class="ag-column-tool-panel-column">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
+        `<div class="ag-chart-data-item">
+            <ag-checkbox ref="cbSelect"></ag-checkbox>
+            <span class="ag-chart-data-item-label" ref="eLabel"></span>
         </div>`;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;

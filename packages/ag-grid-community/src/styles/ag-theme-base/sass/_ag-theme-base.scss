@@ -1521,6 +1521,7 @@
     .ag-chart {
         .ag-chart-menu {
             opacity: 0;
+            pointer-events: none;
             background: $background-color;
             > span {
                 opacity: 0.5;
@@ -1533,10 +1534,50 @@
         &:hover {
             .ag-chart-menu:not(.ag-has-popup) {
                 opacity: 1;
+                pointer-events: all;
                 &:hover {
                     > span {
                         opacity: 1;
                     }
+                }
+            }
+        }
+    }
+
+    .ag-chart-tabbed-menu {
+        .ag-tab-body {
+            padding: 0;
+        }
+    
+        .ag-chart-types {
+            .ag-chart-type {
+                margin: 5px;
+                padding: 5px 5px 0px 5px;
+                border: 1px solid $border-color;
+                border-radius: 5px;
+                &.ag-selected {
+                    border-color: $primary-color;
+                }
+                .ag-icon {
+                    background-size: cover;
+                    height: 60px;
+                    width: 60px;
+                    cursor: pointer;
+                }
+            }
+        }
+    
+        .ag-chart-data-wrapper {
+            .ag-chart-data-group {
+                margin: 10px 5px;
+                padding: 10px 5px;
+                border: 1px solid $border-color;
+                border-radius: 3px;
+                .ag-chart-data-group-label {
+                    background-color: $background-color;
+                }
+                .ag-chart-data-item-label {
+                    margin: 2px;
                 }
             }
         }
