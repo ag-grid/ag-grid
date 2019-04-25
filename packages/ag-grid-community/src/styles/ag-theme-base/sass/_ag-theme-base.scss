@@ -1566,29 +1566,14 @@
             padding: 0;
         }
     
-        .ag-chart-types {
-            .ag-chart-type {
+        .ag-chart-settings {
+            .ag-chart-settings-mini-wrapper > div {
                 margin: 5px;
-                padding: 5px 5px 0px 5px;
                 border: 1px solid $border-color;
                 border-radius: 5px;
                 &.ag-selected {
                     border-color: $primary-color;
                 }
-                .ag-icon {
-                    background-size: cover;
-                    height: 60px;
-                    width: 60px;
-                    cursor: pointer;
-                }
-            }
-        }
-    
-        .ag-chart-data-wrapper {
-            .ag-chart-data-filter {
-                background-color: $background-color;
-                border-top: 1px solid $border-color;
-                padding: 2px;
             }
         }
     }

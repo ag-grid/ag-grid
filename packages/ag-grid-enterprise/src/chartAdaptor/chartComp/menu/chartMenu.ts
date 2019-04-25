@@ -64,7 +64,7 @@ export class ChartMenu extends Component {
             maximizable: false,
             minWidth: 220,
             width: 220,
-            height: 450,
+            height: Math.min(390, parentRect.height),
             x: parentRect.right - 225,
             y: parentRect.top + 5
         });

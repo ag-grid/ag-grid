@@ -43,7 +43,7 @@ abstract class MiniChart {
     protected root = new Group();
     element: HTMLElement;
 
-    protected size = 100;
+    protected size = 80;
     protected padding = 5;
 
     constructor(parent: HTMLElement, colors: string[]) {
@@ -181,8 +181,6 @@ class MiniPie extends MiniChart {
         [toRadians(210), toRadians(240)],
         [toRadians(240), toRadians(270)]
     ];
-
-    // protected sectors?: Sector[];
 
     init() {
         const radius = (this.size - this.padding * 2) / 2;
