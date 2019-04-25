@@ -260,10 +260,10 @@ class MiniLine extends MiniChart {
 
         const leftAxis = Line.create(padding, padding, padding, size);
         leftAxis.strokeStyle = 'gray';
-        leftAxis.lineWidth = 2;
+        leftAxis.lineWidth = 1;
         const bottomAxis = Line.create(0, size - padding, size - padding, size - padding);
         bottomAxis.strokeStyle = 'gray';
-        bottomAxis.lineWidth = 2;
+        bottomAxis.lineWidth = 1;
         (this as any).axes = [leftAxis, bottomAxis];
 
         (this as any).lines = data.map(series => {
