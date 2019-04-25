@@ -66,6 +66,12 @@ export class ChartController extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
+    public setChartWithPalette(chartType: ChartType, palette: number): void {
+        this.model.setChartType(chartType);
+        this.model.setPalette(palette);
+        this.raiseChartUpdatedEvent();
+    }
+
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
         return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
     }

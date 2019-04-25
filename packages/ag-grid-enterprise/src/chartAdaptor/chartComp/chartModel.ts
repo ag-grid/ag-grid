@@ -36,6 +36,8 @@ export class ChartModel extends BeanStub {
     private chartData: any[];
 
     private chartType: ChartType;
+    private palette: number;
+
     private readonly aggregate: boolean;
 
     private initialising = true; //TODO remove
@@ -255,6 +257,14 @@ export class ChartModel extends BeanStub {
 
     public getChartType(): ChartType {
         return this.chartType;
+    }
+
+    public setPalette(palette: number) {
+        this.palette = palette;
+    }
+
+    public getPalette(): number {
+        return this.palette;
     }
 
     public getSelectedColState(): ColState[] {
