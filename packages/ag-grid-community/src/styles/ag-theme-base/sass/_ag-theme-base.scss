@@ -289,7 +289,7 @@
         flex: 1 1 auto;
 
         .ag-header-icon {
-            background-position-y: $grid-size * 2.5;
+            background-position-y: center;
             background-size: $header-icon-size $header-icon-size;
             height: 100%;
             margin: 0;
@@ -412,7 +412,7 @@
         @include icon-background($params, "grip");
 
         background-position-x: left;
-        background-position-y: $grid-size !important;
+        background-position-y: center;
         height: 100%;
         min-width: $icon-size + $grid-size;
         cursor: grab;
@@ -455,8 +455,6 @@
     @each $icon in $icons {
         .ag-icon-#{$icon} {
             @include icon-background($params, "#{$icon}");
-
-            display: inline-block;
         }
     }
 
@@ -602,8 +600,6 @@
                 @each $icon in $icons {
                     .ag-icon-#{$icon} {
                         @include colorful-icon($icons-path, $icon, $primary-color, map-get($params, "alt-icon-color"));
-
-                        display: inline-block;
                     }
                 }
             }
@@ -1075,7 +1071,7 @@
         background-color: $editor-background-color-color;
         background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor($icon-color)}");
         background-position-x: calc(100% - #{$grid-size});
-        background-position-y: $grid-size * 2;
+        background-position-y: center;
         background-repeat: no-repeat;
 
         .ag-rich-select-list {
@@ -1391,7 +1387,7 @@
                     border-width: 1px 0 1px 0;
                     border-style: solid;
                     border-color: transparent;
-                    background-position-y: $grid-size;
+                    background-position-y: center;
                     background-position-x: center;
                     background-repeat: no-repeat;
 
@@ -1566,12 +1562,13 @@
 
         .ag-chart-menu-group {
             margin: 10px 5px;
-            padding: 10px 8px;
+            padding: 10px 2px;
             border: 0px solid transparentize($border-color, 0.5);
             border-top-width: 4px;
             border-radius: 3px;
             .ag-chart-menu-group-label {
                 background-color: $background-color;
+                margin-left: 8px;
                 padding: 0 2px;
                 font-size: $font-size - 2px;
                 font-weight: 500;

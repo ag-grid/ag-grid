@@ -184,9 +184,9 @@ class ChartPanelCheckboxComp extends Component {
 
     //TODO refactor class to be chart menu specific
     private static TEMPLATE =
-        `<div class="ag-chart-data-item">
+        `<div class="ag-chart-menu-item">
             <ag-checkbox ref="cbSelect"></ag-checkbox>
-            <span class="ag-chart-data-item-label" ref="eLabel"></span>
+            <span class="ag-chart-menu-item-label" ref="eLabel"></span>
         </div>`;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;

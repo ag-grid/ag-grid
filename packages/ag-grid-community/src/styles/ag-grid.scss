@@ -92,7 +92,7 @@ $icons: aggregation arrows asc chart chart-bar-grouped chart-bar-stacked chart-l
 
 @each $icon in $icons {
     .ag-icon-#{$icon} {
-        display: inline-block;
+        display: block;
 
         @include icon-background("#{$icon}");
     }

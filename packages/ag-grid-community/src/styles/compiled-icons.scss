@@ -10,7 +10,7 @@ $icons-path: './ag-theme-base/icons/' !default;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
-            display: inline-block;
+            display: block;
             width: 12px;
             height: 12px;
             background: transparent url('#{$icons-path}#{$icon}.svg') center no-repeat;
