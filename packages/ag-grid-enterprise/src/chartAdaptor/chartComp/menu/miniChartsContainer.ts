@@ -155,8 +155,6 @@ class MiniStackedBar extends MiniChart {
             });
         });
 
-        console.log(that.bars);
-
         this.root.append(_.flatten(that.bars));
         this.root.append(that.axes);
     }
