@@ -143,6 +143,15 @@
         vertical-align: middle;
     }
 
+    .ag-radio-button-label, .ag-checkbox-label {
+        cursor: default;
+        
+    }
+
+    .ag-radio-button-label, .ag-checkbox-label {
+        margin-left: $grid-size;
+    }
+
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-ltr {
         .ag-row-group-leaf-indent {
@@ -1149,10 +1158,6 @@
         }
     }
 
-    .ag-radio-button-label, .ag-checkbox-label {
-        margin-left: $grid-size;
-    }
-
     .ag-group-child-count {
         margin-left: 2px;
     }
@@ -1600,6 +1605,7 @@
 
         .ag-radio-button-label, .ag-checkbox-label {
             margin-right: $grid-size;
+            margin-left: 0;
         }
 
         .ag-header-cell-menu-button {
