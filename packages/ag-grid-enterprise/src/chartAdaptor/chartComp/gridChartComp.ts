@@ -15,7 +15,7 @@ import {Chart} from "../../charts/chart/chart";
 import {BarSeries} from "../../charts/chart/series/barSeries";
 import {LineSeries} from "../../charts/chart/series/lineSeries";
 import {PieSeries} from "../../charts/chart/series/pieSeries";
-import {all} from "../../charts/chart/colors";
+import {palettes} from "../../charts/chart/palettes";
 import {CartesianChart} from "../../charts/chart/cartesianChart";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {ChartMenu} from "./menu/chartMenu";
@@ -202,7 +202,7 @@ export class GridChartComp extends Component {
             lineSeries.lineWidth = 3;
             lineSeries.markerRadius = 3;
 
-            const colors = this.isDarkTheme() ? all[2] : all[0];
+            const colors = this.isDarkTheme() ? palettes[2] : palettes[0];
             lineSeries.color = colors[index % colors.length];
 
             lineSeries.data = this.model.getData();
@@ -244,7 +244,7 @@ export class GridChartComp extends Component {
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
 
-            pieSeries.colors = this.isDarkTheme() ? all[2] : all[0];
+            pieSeries.colors = this.isDarkTheme() ? palettes[2] : palettes[0];
 
             pieChart.series = [pieSeries];
         }
@@ -285,7 +285,7 @@ export class GridChartComp extends Component {
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
 
-            pieSeries.colors = this.isDarkTheme() ? all[2] : all[0];
+            pieSeries.colors = this.isDarkTheme() ? palettes[2] : palettes[0];
 
             return pieSeries;
         });

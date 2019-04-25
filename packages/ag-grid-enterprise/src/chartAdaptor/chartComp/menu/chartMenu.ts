@@ -16,7 +16,7 @@ import {
 import { ChartController } from "../chartController";
 import { ChartColumnPanel } from "./chartColumnPanel";
 import { GridChartComp } from "../gridChartComp";
-import { all as allColorSchemes } from "../../../charts/chart/colors";
+import { palettes } from "../../../charts/chart/palettes";
 
 export interface DownloadChartEvent extends AgEvent {}
 
@@ -203,7 +203,7 @@ class TabbedChartMenu extends Component {
         groupLabel.innerHTML = localeTextFunc('chartColorScheme', 'Colour Palette');
         groupEl.appendChild(groupLabel);
         
-        allColorSchemes.forEach(scheme => {
+        palettes.forEach(scheme => {
             const itemEl = document.createElement('div');
             _.addCssClass(itemEl, 'ag-chart-menu-item');
             
