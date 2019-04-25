@@ -24,7 +24,7 @@ export class ChartSettingsPanel extends Component {
 
     @PostConstruct
     private init() {
-        const miniChartsContainer = new MiniChartsContainer(this.chartController.getPalette());
+        const miniChartsContainer = new MiniChartsContainer(this.chartController.getPalette(), this.chartController);
         this.getContext().wireBean(miniChartsContainer);
 
         this.getGui().appendChild(miniChartsContainer.getGui());

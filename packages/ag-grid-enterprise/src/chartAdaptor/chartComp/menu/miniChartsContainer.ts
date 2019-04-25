@@ -15,25 +15,46 @@ import { Line } from "../../../charts/scene/shape/line";
 import linearScale from "../../../charts/scale/linearScale";
 import { BandScale } from "../../../charts/scale/bandScale";
 import { Rect } from "../../../charts/scene/shape/rect";
+import { ChartController } from "../chartController";
 
 export class MiniChartsContainer extends Component {
     static TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
 
     private colors: string[];
+    private wrappers: HTMLElement[] = [];
+    private chartController: ChartController;
 
-    constructor(palette: number) {
+    constructor(palette: number, chartController: ChartController) {
         super(MiniChartsContainer.TEMPLATE);
         this.colors = palettes[palette];
+        this.chartController = chartController;
     }
 
     @PostConstruct
     private init() {
         const classes = [MiniBar, MiniStackedBar, MiniLine, MiniPie, MiniDonut];
         const eGui = this.getGui();
-        classes.forEach((MiniClass: new (parent: HTMLElement, colors: string[]) => MiniChart) => {
+        classes.forEach((MiniClass: new (parent: HTMLElement, colors: string[]) => MiniChart, idx: number) => {
             const miniWrapper = document.createElement('div');
+            _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
+
+            this.addDestroyableEventListener(miniWrapper, 'click', () => {
+                this.chartController.setChartType(idx);
+                this.refreshSelected();
+            });
+
+            this.wrappers.push(miniWrapper);
+
             new MiniClass(miniWrapper, this.colors);
             eGui.appendChild(miniWrapper);
+        });
+
+        this.refreshSelected();
+    }
+
+    public refreshSelected() {
+        this.wrappers.forEach((wrapper, idx) => {
+            _.addOrRemoveCssClass(wrapper, 'ag-selected', idx === this.chartController.getChartType());
         });
     }
 }
