@@ -462,12 +462,11 @@
     ////////////////////////////////////////
     // Icons
     ////////////////////////////////////////
-    $icons: aggregation arrows asc chart chart-bar-grouped chart-bar-stacked chart-line chart-pie chart-donut 
-            checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate
-            checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut data desc 
-            expanded eye-slash eye filter group indeterminate left loading maximize minimize menu minus none 
-            not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right 
-            small-up small-down tick cross save tree-open tree-closed tree-indeterminate;
+    $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly
+            checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut
+            data desc expanded eye-slash eye filter group indeterminate left loading maximize minimize menu minus none
+            not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right small-up
+            small-down tick cross save tree-open tree-closed tree-indeterminate;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
