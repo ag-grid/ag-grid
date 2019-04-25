@@ -3,7 +3,6 @@ import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { _ } from "../utils";
 import { Component } from "./component";
 
@@ -21,13 +20,16 @@ export type ResizableStructure = {
 };
 
 export interface DialogOptions {
+    alwaysOnTop: boolean;
     component?: Component;
     movable?: boolean;
     resizable?: boolean | ResizableStructure;
     maximizable?: boolean;
     closable?: boolean;
     title?: string;
+    minWidth?: number;
     width?: number;
+    minHeight?: number;
     height?: number;
     x?: number;
     y?: number;
@@ -78,6 +80,8 @@ export class Dialog extends PopupComponent {
     private closable = true;
     private isMoving = false;
     private isResizing = false;
+    private minWidth: number;
+    private minHeight: number;
 
     private dragStartPosition = {
         x: 0,
@@ -101,7 +105,6 @@ export class Dialog extends PopupComponent {
         height: 0
     };
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('popupService') private popupService: PopupService;
 
@@ -132,6 +135,7 @@ export class Dialog extends PopupComponent {
     @PostConstruct
     protected postConstruct() {
         const {
+            alwaysOnTop,
             component,
             centered,
             resizable,
@@ -139,7 +143,9 @@ export class Dialog extends PopupComponent {
             maximizable,
             closable,
             title,
+            minWidth,
             width,
+            minHeight,
             height
         } = this.config;
 
@@ -147,13 +153,15 @@ export class Dialog extends PopupComponent {
 
         const eGui = this.getGui();
 
+        this.minHeight = minHeight != null ? minHeight : 250;
+        this.minWidth = minWidth != null ? minWidth : 250;
+
         if (component) { this.setBodyComponent(component); }
         if (resizable) { this.setResizable(resizable); }
         if (title) { this.setTitle(title); }
         if (this.isResizable && maximizable) { this.setMaximizable(maximizable); }
 
         this.setMovable(!!movable);
-
         this.setClosable(closable != null ? closable : this.closable);
 
         if (width) {
@@ -172,6 +180,10 @@ export class Dialog extends PopupComponent {
             true,
             this.destroy.bind(this)
         );
+
+        if (alwaysOnTop) {
+            eGui.style.zIndex = '6';
+        }
 
         this.refreshSize();
 
@@ -499,7 +511,7 @@ export class Dialog extends PopupComponent {
     }
 
     public setHeight(height: number) {
-        let newHeight = Math.max(250, height);
+        let newHeight = Math.max(this.minHeight, height);
         const eGui = this.getGui();
 
         if (newHeight + this.position.y > eGui.offsetParent.clientHeight) {
@@ -518,7 +530,7 @@ export class Dialog extends PopupComponent {
     }
 
     public setWidth(width: number) {
-        let newWidth = Math.max(250, width);
+        let newWidth = Math.max(this.minWidth, width);
         const eGui = this.getGui();
 
         if (newWidth + this.position.x > eGui.offsetParent.clientWidth) {
