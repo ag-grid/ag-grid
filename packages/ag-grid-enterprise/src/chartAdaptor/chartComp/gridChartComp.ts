@@ -181,6 +181,8 @@ export class GridChartComp extends Component {
         barSeries.yFields = fields.map(f => f.colId);
         barSeries.yFieldNames = fields.map(f => f.displayName);
 
+        barSeries.colors = palettes[this.getPalette()];
+
         barSeries.tooltip = this.chartOptions.showTooltips;
         barSeries.tooltipRenderer = params => {
             const colDisplayName = fields.filter(f => f.colId === params.yField)[0].displayName;
@@ -202,7 +204,7 @@ export class GridChartComp extends Component {
             lineSeries.lineWidth = 3;
             lineSeries.markerRadius = 3;
 
-            const colors = this.isDarkTheme() ? palettes[2] : palettes[0];
+            const colors = palettes[this.getPalette()];
             lineSeries.color = colors[index % colors.length];
 
             lineSeries.data = this.model.getData();
@@ -244,7 +246,7 @@ export class GridChartComp extends Component {
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
 
-            pieSeries.colors = this.isDarkTheme() ? palettes[2] : palettes[0];
+            pieSeries.colors = palettes[this.getPalette()];
 
             pieChart.series = [pieSeries];
         }
@@ -285,7 +287,7 @@ export class GridChartComp extends Component {
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
 
-            pieSeries.colors = this.isDarkTheme() ? palettes[2] : palettes[0];
+            pieSeries.colors = palettes[this.getPalette()];
 
             return pieSeries;
         });
@@ -314,6 +316,11 @@ export class GridChartComp extends Component {
     private setGridChartEditMode(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) { return; }
         this.chartController.setChartCellRangesInRangeController();
+    }
+
+    private getPalette(): number {
+        const palette = this.model.getPalette();
+        return palette ? palette : this.isDarkTheme() ? 2 : 0;
     }
 
     private isDarkTheme(): boolean {

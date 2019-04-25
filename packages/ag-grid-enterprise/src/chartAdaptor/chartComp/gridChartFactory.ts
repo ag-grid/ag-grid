@@ -5,7 +5,6 @@ import {NumberAxis} from "../../charts/chart/axis/numberAxis";
 import {BarSeries} from "../../charts/chart/series/barSeries";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {Chart} from "../../charts/chart/chart";
-import {palettes} from "../../charts/chart/palettes";
 
 interface CreateChartOptions {
     chartType: ChartType,
@@ -67,7 +66,6 @@ export class GridChartFactory {
         barSeries.grouped = grouped;
 
         barSeries.lineWidth = 1;
-        barSeries.colors = options.isDarkTheme ? palettes[2] : palettes[0];
 
         barChart.addSeries(barSeries);
 
