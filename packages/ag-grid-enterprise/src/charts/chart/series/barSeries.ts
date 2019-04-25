@@ -6,7 +6,7 @@ import { Rect } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
-import colors from "../colors";
+import colors from "../palettes";
 import { Color } from "../../util/color";
 import { SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";

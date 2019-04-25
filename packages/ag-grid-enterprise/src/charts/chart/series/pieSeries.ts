@@ -7,7 +7,7 @@ import { Selection } from "../../scene/selection";
 import { DropShadow } from "../../scene/dropShadow";
 import scaleLinear, { LinearScale } from "../../scale/linearScale";
 import { normalizeAngle180, toRadians } from "../../util/angle";
-import colors from "../colors";
+import colors from "../palettes";
 import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
 import { SeriesNodeDatum } from "./series";

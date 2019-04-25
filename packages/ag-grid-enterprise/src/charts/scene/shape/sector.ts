@@ -231,7 +231,7 @@ export class Sector extends Shape {
         if (this.fillStyle) {
             ctx.fill();
         }
-        if (this.strokeStyle) {
+        if (this.lineWidth && this.strokeStyle) {
             ctx.stroke();
         }
 

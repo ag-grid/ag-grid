@@ -122,9 +122,45 @@ export const scheme3: string[] = [
     '#ff5700'
 ];
 
+export const deep: string[] = [
+    'rgb(113,1,98)',
+    'rgb(161,42,94)',
+    'rgb(237,3,69)',
+    'rgb(239,106,50)',
+    'rgb(251,191,69)',
+    'rgb(170,217,98)',
+    'rgb(3,195,131)',
+    'rgb(1,115,81)',
+    'rgb(1,84,90)'
+];
+
+export const flat: string[] = [
+    '#febe76',
+    '#ff7979',
+    '#badc58',
+    '#f9ca23',
+    '#f0932b',
+    '#eb4c4b',
+    '#6ab04c',
+    '#7ed6df',
+    '#e056fd',
+    '#686de0'
+];
+
+export const flat2: string[] = [
+    '#1abc9c',
+    '#2ecc71',
+    '#3498db',
+    '#af7ac4',
+    '#f1c40f',
+    '#e67e22',
+    '#e74c3c',
+    '#aab7b7'
+];
+
 export default java;
 
-export const all: string[][] = [
+export const palettes: string[][] = [
     java,
     material,
     robski,
@@ -134,5 +170,8 @@ export const all: string[][] = [
     teal,
     scheme1,
     scheme2,
-    scheme3
+    scheme3,
+    deep,
+    flat,
+    flat2
 ];
