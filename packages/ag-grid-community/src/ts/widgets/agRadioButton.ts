@@ -14,11 +14,11 @@ export class AgRadioButton extends Component {
     public static EVENT_CHANGED = 'change';
 
     private static TEMPLATE =
-        '<span class="ag-radio-button" role="presentation">' +
+        '<div class="ag-radio-button" role="presentation">' +
         '  <span class="ag-radio-button-on" role="presentation"></span>' +
         '  <span class="ag-radio-button-off" role="presentation"></span>' +
         '  <span class="ag-radio-button-label" role="presentation"></span>' +
-        '</span>';
+        '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 

@@ -1617,6 +1617,10 @@ export class Utils {
         return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
     }
 
+    static capitalise(str: string): string {
+        return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    }
+
     // pas in an object eg: {color: 'black', top: '25px'} and it returns "color: black; top: 25px;" for html
     static cssStyleObjectToMarkup(stylesToUse: any): string {
         if (!stylesToUse) {

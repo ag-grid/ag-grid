@@ -66,25 +66,5 @@
         height: 100%;
         overflow: auto;
         position: relative;
-        .ag-chart-data-filter {
-            position: sticky;
-            bottom: 0;
-        }
-    }
-
-    .ag-chart-menu-group {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        .ag-chart-menu-group-label {
-            position: absolute;
-            top: -10px;
-        }
-
-        .ag-chart-menu-item {
-            display: flex;
-            align-items: center;
-            flex: 1 1 auto;
-        }
     }
 }

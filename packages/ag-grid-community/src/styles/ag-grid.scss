@@ -1226,6 +1226,29 @@ $handleSize: 5px;
 
 /**
  ****************************
+ * Group Component
+ ****************************
+ */
+
+ .ag-group-component {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    .ag-group-component-label {
+        position: absolute;
+        top: -10px;
+    }
+
+    .ag-group-item {
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+    }
+}
+
+/**
+ ****************************
  * Side Bar
  ****************************
 */
