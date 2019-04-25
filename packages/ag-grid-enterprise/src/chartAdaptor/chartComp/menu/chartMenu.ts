@@ -46,8 +46,8 @@ export class ChartMenu extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eChartButton, 'click', (e: MouseEvent) => this.showMenu(0, e));
-        this.addDestroyableEventListener(this.eDataButton, 'click', (e: MouseEvent) => this.showMenu(1, e));
+        this.addDestroyableEventListener(this.eChartButton, 'click', () => this.showMenu(0));
+        this.addDestroyableEventListener(this.eDataButton, 'click', () => this.showMenu(1));
         this.addDestroyableEventListener(this.eSaveButton, 'click', () => this.saveChart());
     }
 
@@ -58,7 +58,11 @@ export class ChartMenu extends Component {
             this.dispatchEvent(event);
     }
 
-    private showMenu(tab: number, e: MouseEvent): void {
+    private showMenu(tab: number): void {
+        const chartComp = this.parentComponent as GridChartComp;
+        const parentGui = chartComp.getGui();
+        const parentRect = parentGui.getBoundingClientRect();
+
         this.menuDialog = new Dialog({
             alwaysOnTop: true,
             movable: true,
@@ -70,11 +74,9 @@ export class ChartMenu extends Component {
             minWidth: 220,
             width: 220,
             height: 450,
-            x: e.clientX - 220,
-            y: e.clientY + 10
+            x: parentRect.right - 225,
+            y: parentRect.top + 5
         });
-
-        const chartComp = this.parentComponent as GridChartComp;
 
         this.tabbedMenu = new TabbedChartMenu(this.chartController, chartComp.getCurrentChartType());
 
