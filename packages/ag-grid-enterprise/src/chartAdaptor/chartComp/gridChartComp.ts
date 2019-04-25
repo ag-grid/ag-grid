@@ -30,6 +30,7 @@ export interface ChartOptions {
     aggregate: boolean;
     height: number;
     width: number;
+    palette: number;
 }
 
 export class GridChartComp extends Component {
@@ -63,6 +64,10 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
+
+        if (!this.chartOptions.palette) {
+            this.chartOptions.palette = this.getPalette();
+        }
 
         this.model = new ChartModel(this.chartOptions, this.initialCellRanges);
         this.getContext().wireBean(this.model);

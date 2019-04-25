@@ -66,6 +66,14 @@ export class ChartController extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
+    public getChartType(): ChartType {
+        return this.model.getChartType();
+    }
+
+    public getPalette(): number {
+        return this.model.getPalette();
+    }
+
     public setChartWithPalette(chartType: ChartType, palette: number): void {
         this.model.setChartType(chartType);
         this.model.setPalette(palette);
