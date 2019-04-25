@@ -20,7 +20,7 @@ export type ResizableStructure = {
 };
 
 export interface DialogOptions {
-    alwaysOnTop: boolean;
+    alwaysOnTop?: boolean;
     component?: Component;
     movable?: boolean;
     resizable?: boolean | ResizableStructure;

@@ -199,6 +199,21 @@
     ////////////////////////////////////////
     // Basic layout
     ////////////////////////////////////////
+    .ag-input-text-wrapper {
+        input:not([type]),
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="datetime-local"] {
+            @include textbox($params);
+            width: 100%;
+        }
+    
+        textarea {
+            @include textbox($params);
+        }
+    }
+
     .ag-header {
         @if $header-background-color {
             background-color: $header-background-color;
@@ -641,7 +656,6 @@
 
         input[type="text"],
         input[type="date"] {
-            @include textbox($params);
             padding-left: $grid-size;
         }
 
@@ -737,12 +751,11 @@
     .ag-primary-cols-header-panel {
         border-bottom: 1px solid $border-color;
         height: $header-height;
-        padding-top: $grid-size;
+        align-items: center;
 
         > div {
             cursor: pointer;
             margin: 0 $grid-size;
-            padding-top: $grid-size / 2;
         }
 
         .ag-filter-body {
@@ -1045,20 +1058,11 @@
         @include card($params);
 
         background-color: $editor-background-color-color;
-
-        input[type="text"],
-        input[type="tel"],
-        input[type="date"],
-        input[type="datetime-local"] {
-            @include textbox($params);
-        }
     }
 
     .ag-popup-editor {
         padding: 0;
         .ag-large-textarea textarea {
-            @include textbox($params);
-
             height: auto;
             padding: $cell-horizontal-padding;
         }
@@ -1111,16 +1115,6 @@
         height: 100%;
         margin-right: 0;
         width: calc(100% - #{$icon-size + $grid-size * 2});
-
-        input {
-            @include textbox($params);
-        }
-    }
-
-    .ag-floating-filter-full-body {
-        input {
-            @include textbox($params);
-        }
     }
 
     .ag-floating-filter-button {
@@ -1429,11 +1423,6 @@
         }
     }
 
-    .ag-primary-cols-filter {
-        @include textbox($params);
-        width: 100%;
-    }
-
     .ag-primary-cols-filter-wrapper {
         margin-left: $grid-size;
         margin-right: $grid-size;
@@ -1584,6 +1573,11 @@
                 .ag-chart-data-item-label {
                     margin: 2px;
                 }
+            }
+            .ag-chart-data-filter {
+                background-color: $background-color;
+                border-top: 1px solid $border-color;
+                padding: 2px;
             }
         }
     }

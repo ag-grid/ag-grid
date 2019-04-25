@@ -19,6 +19,7 @@ export class ChartColumnPanel extends Component {
 
     private columnComps: { [key: string]: ChartPanelRadioComp | ChartPanelCheckboxComp } = {};
     private dimensionComps: ChartPanelRadioComp[] = [];
+    private allEls: HTMLElement[] = [];
     private chartController: ChartController;
 
     constructor(chartModel: ChartController) {
@@ -27,11 +28,17 @@ export class ChartColumnPanel extends Component {
     }
 
     public init(): void {
-        const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
+
+        this.createDataGroupElements([dimensionCols, valueCols], localeTextFunc);
+        this.createFilterElement(localeTextFunc);
+    }
+
+    private createDataGroupElements(groups: ColState[][], localeTextFunc: Function) {
         const eGui = this.getGui();
 
-        [dimensionCols, valueCols].forEach((group, idx) => {
+        groups.forEach((group, idx) => {
             const isCategory = idx === 0;
             const currentEl = document.createElement('div');
             const currentLabel = document.createElement('div');
@@ -51,6 +58,36 @@ export class ChartColumnPanel extends Component {
         });
     }
 
+    private createFilterElement(localeTextFunc: Function) {
+        const filterEl = document.createElement('div');
+        const inputWrapper = document.createElement('div');
+        const filterInput = document.createElement('input');
+        
+        _.addCssClass(filterEl, 'ag-chart-data-filter');
+        _.addCssClass(inputWrapper, 'ag-input-text-wrapper');
+
+        inputWrapper.appendChild(filterInput);
+        filterEl.appendChild(inputWrapper);
+
+        filterInput.setAttribute('placeholder', localeTextFunc('filterOoo', 'Filter...'));
+
+        const filterFunction = _.debounce(this.filterDisplayedElements.bind(this), 500);
+        
+        this.addDestroyableEventListener(filterInput as HTMLInputElement, 'input', filterFunction);
+
+        this.getGui().appendChild(filterEl);
+    }
+
+    private filterDisplayedElements(e: Event) {
+        const val = (e.target as HTMLInputElement).value;
+
+        
+        this.allEls.forEach(el => {
+            const matches = _.exists(val) && el.innerText.toLowerCase().indexOf(val) === -1;
+            _.addOrRemoveCssClass(el, 'ag-hidden', matches);
+        });
+    }
+
     private getColumnStateMapper(dimension: boolean, container: HTMLElement) {
 
         const checkboxChanged = (updatedColState: ColState) => this.chartController.updateForMenuChange(updatedColState);
@@ -65,10 +102,12 @@ export class ChartColumnPanel extends Component {
             const comp = dimension
                 ? new ChartPanelRadioComp(colState, radioButtonChanged)
                 : new ChartPanelCheckboxComp(colState, checkboxChanged);
-
+            
             this.getContext().wireBean(comp);
-            container.appendChild(comp.getGui());
+            const eGui = comp.getGui();
+            container.appendChild(eGui);
             this.columnComps[colState.colId] = comp;
+            this.allEls.push(eGui);
 
             if (dimension) {
                 this.dimensionComps.push(comp as ChartPanelRadioComp);

@@ -89,7 +89,6 @@
             @if $focused-border {
                 border-bottom: $focused-border;
                 outline: none;
-                padding-bottom: $grid-size - 1;
             }
         }
 

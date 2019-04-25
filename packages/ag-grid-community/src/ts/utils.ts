@@ -1823,7 +1823,7 @@ export class Utils {
     /**
      * https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
      */
-    static debounce(func: () => void, wait: number, immediate: boolean = false) {
+    static debounce(func: (...args: any[]) => void, wait: number, immediate: boolean = false) {
         // 'private' variable for instance
         // The returned function will be able to reference this due to closure.
         // Each call to the returned function will share this common timer.
