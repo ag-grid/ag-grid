@@ -28,11 +28,8 @@ var columnDefs = [
         ]}
     ];
 
-function numberCellFormatter(params) {
-    return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-}
-
 var gridOptions = {
+    getRowNodeId: function(data) { return data.trade; },
     columnTypes: {
         dimension: {
             enableRowGroup: true,
@@ -47,51 +44,26 @@ var gridOptions = {
             cellRenderer:'agAnimateShowChangeCellRenderer'
         }
     },
-    autoGroupColumnDef: {
-        width: 200
-    },
-    columnDefs: columnDefs,
-    statusBar: {
-        items: [
-            { component: 'agAggregationComponent' }
-        ]
-    },
-    animateRows: true,
-    enableRangeSelection: true,
-    rowGroupPanelShow: 'always',
-    pivotPanelShow: 'always',
-    suppressAggFuncInHeader: true,
-    enableCharts: true,
-    getRowNodeId: function(data) { return data.trade; },
     defaultColDef: {
         width: 120,
         sortable: true,
         resizable: true
     },
+    autoGroupColumnDef: {
+        width: 200
+    },
+    columnDefs: columnDefs,
+    animateRows: true,
+    enableRangeSelection: true,
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
+    suppressAggFuncInHeader: true,
     sideBar: {
-        toolPanels: [
-            {
-                id: 'columns',
-                labelDefault: 'Columns',
-                labelKey: 'columns',
-                iconKey: 'columns',
-                toolPanel: 'agColumnsToolPanel'
-            },
-            {
-                id: 'filters',
-                labelDefault: 'Filters',
-                labelKey: 'filters',
-                iconKey: 'filter',
-                toolPanel: 'agFiltersToolPanel'
-            }
-        ],
+        toolPanels: ['columns','filters'],
         defaultToolPanel: ''
-    }
+    },
+    enableCharts: true
 };
-
-function onStartStress() {
-    worker.postMessage('startStress');
-}
 
 function onStartLoad() {
     worker.postMessage('startLoad');
@@ -99,16 +71,6 @@ function onStartLoad() {
 
 function onStopMessages() {
     worker.postMessage('stop');
-    // logMessage('Test stopped');
-    // console.log('Test stopped');
-}
-
-function onShowToolPanel() {
-    gridOptions.api.setSideBarVisible(true);
-}
-
-function onHideToolPanel() {
-    gridOptions.api.setSideBarVisible(false);
 }
 
 function onColumnsGroup() {
@@ -126,7 +88,6 @@ function onColumnsFlat() {
     gridOptions.columnApi.setColumnState([{"colId": "product", "width": 120}, {"colId": "portfolio", "width": 120}, {"colId": "book", "width": 120}, {"colId": "trade", "width": 100}, {"colId": "dealType", "width": 120}, {"colId": "bidFlag", "width": 100}, {"colId": "current", "width": 150}, {"colId": "previous", "width": 150}, {"colId": "pl1", "width": 150}, {"colId": "pl2", "width": 150}, {"colId": "gainDx", "width": 150}, {"colId": "sxPx", "width": 150}, {"colId": "_99Out", "width": 150}, {"colId": "submitterID", "width": 150}, {"colId": "submitterDealID", "width": 150}]);
 }
 
-var testStartTime;
 var worker;
 
 function startWorker() {
@@ -135,13 +96,6 @@ function startWorker() {
 
     worker.onmessage = function(e) {
         switch (e.data.type) {
-            // case 'start':
-            //     testStartTime = new Date().getTime();
-            //     logTestStart(e.data.messageCount, e.data.updateCount, e.data.interval);
-            //     break;
-            // case 'end':
-            //     logStressResults(e.data.messageCount, e.data.updateCount);
-            //     break;
             case 'setRowData':
                 gridOptions.api.setRowData(e.data.records);
                 break;
@@ -154,34 +108,8 @@ function startWorker() {
     };
 }
 
-// function logTestStart(messageCount, updateCount, interval) {
-//     var message = messageCount ?
-//         'Sending '+messageCount+' messages at once with '+updateCount+' record updates each.' :
-//         'Sending 1 message with '+updateCount+' updates every '+interval+' milliseconds, that\'s ' +(1000/interval*updateCount).toLocaleString()+ ' updates per second.';
-//
-//     console.log(message);
-//     logMessage(message);
-// }
-
-// function logStressResults(messageCount, updateCount) {
-//
-//     var testEndTime = new Date().getTime();
-//     var duration = testEndTime - testStartTime;
-//     var totalUpdates = messageCount * updateCount;
-//
-//     var updatesPerSecond = Math.floor((totalUpdates / duration) * 1000);
-//
-//     logMessage('Processed ' + totalUpdates.toLocaleString() + ' updates in ' + duration.toLocaleString() + 'ms, that\'s ' + updatesPerSecond.toLocaleString() + ' updates per second.');
-//
-//     console.log('####################');
-//     console.log('# -- Stress test results --');
-//     console.log('# The grid was pumped with ' + messageCount.toLocaleString() + ' messages. Each message had ' + updateCount.toLocaleString() + ' record updates which gives a total number of updates of ' + totalUpdates.toLocaleString() + '.');
-//     console.log('# Time taken to execute the test was ' + duration.toLocaleString() + ' milliseconds which gives ' + updatesPerSecond.toLocaleString() + ' updates per second.');
-//     console.log('####################')
-// }
-
-function logMessage(message) {
-    document.querySelector('#eMessage').innerHTML = message;
+function numberCellFormatter(params) {
+    return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
 // after page is loaded, create the grid.
