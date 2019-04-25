@@ -19,7 +19,6 @@ export class TabbedChartMenu extends Component {
     public static EVENT_TAB_SELECTED = 'tabSelected';
     public static TAB_MAIN = 'settings';
     public static TAB_DATA = 'data';
-    public static MENU_ITEM_SEPARATOR = 'separator';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 

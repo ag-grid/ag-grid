@@ -2,8 +2,11 @@ import {
     Autowired,
     Component,
     GridOptionsWrapper,
-    _
+    _,
+    PostConstruct
 } from "ag-grid-community";
+import { MiniChartsContainer } from "./miniChartsContainer";
+import { ChartController } from "../chartController";
 
 
 export class ChartSettingsPanel extends Component {
@@ -12,8 +15,18 @@ export class ChartSettingsPanel extends Component {
 
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
-    constructor() {
+    private chartController: ChartController;
+
+    constructor(chartModel: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
+        this.chartController = chartModel;
     }
 
+    @PostConstruct
+    private init() {
+        const miniChartsContainer = new MiniChartsContainer(this.chartController.getPalette());
+        this.getContext().wireBean(miniChartsContainer);
+
+        this.getGui().appendChild(miniChartsContainer.getGui());
+    }
 }

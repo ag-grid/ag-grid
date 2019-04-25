@@ -52,14 +52,27 @@
 
     .ag-chart-settings {
         overflow-x: hidden;
+        position: relative;
+        .ag-chart-settings-wrapper {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            .ag-chart-settings-mini-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-evenly;
+                > div {
+                    cursor: pointer;
+                    canvas {
+                        display: block;
+                    }
+                }
+            }
+        }
     }
 
-    .ag-chart-types {
-        display: flex;
-        flex-wrap: wrap;
-        align-content: start;
-        justify-content: space-evenly;
-    }
 
     .ag-chart-data-wrapper {
         width: 100%;
@@ -67,4 +80,5 @@
         overflow: auto;
         position: relative;
     }
+
 }
