@@ -50,6 +50,10 @@
         overflow: hidden;
     }
 
+    .ag-chart-settings {
+        overflow-x: hidden;
+    }
+
     .ag-chart-types {
         display: flex;
         flex-wrap: wrap;
@@ -62,24 +66,25 @@
         height: 100%;
         overflow: auto;
         position: relative;
-        .ag-chart-data-group {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            .ag-chart-data-group-label {
-                position: absolute;
-                top: -10px;
-            }
-
-            .ag-chart-data-item {
-                display: flex;
-                align-items: center;
-                flex: 1 1 auto;
-            }
-        }
         .ag-chart-data-filter {
             position: sticky;
             bottom: 0;
+        }
+    }
+
+    .ag-chart-menu-group {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        .ag-chart-menu-group-label {
+            position: absolute;
+            top: -10px;
+        }
+
+        .ag-chart-menu-item {
+            display: flex;
+            align-items: center;
+            flex: 1 1 auto;
         }
     }
 }

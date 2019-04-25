@@ -16,6 +16,7 @@ import {
 import { ChartController } from "../chartController";
 import { ChartColumnPanel } from "./chartColumnPanel";
 import { GridChartComp } from "../gridChartComp";
+import { all as allColorSchemes } from "../../../charts/chart/colors";
 
 export interface DownloadChartEvent extends AgEvent {}
 
@@ -147,33 +148,74 @@ class TabbedChartMenu extends Component {
     }
 
     private createMainPanel(): TabbedItem {
-        const chartTypes = new Component('<div class="ag-chart-types"></div>');
-        const eGui = chartTypes.getGui();
-        const menuItems = this.chartTypes();
+        const mainPanel = document.createElement('div');
+        _.addCssClass(mainPanel, 'ag-chart-settings');
 
-        menuItems.forEach((item, idx) => {
-            const el = document.createElement('div');
-            _.addCssClass(el, 'ag-chart-type');
-            if (idx === this.currentChartType) {
-                _.addCssClass(el, 'ag-selected');
-            }
-            el.appendChild((item.icon as HTMLElement));
-            el.setAttribute('title', item.name);
-            eGui.appendChild(el);
-            if (item.action) {
-                el.addEventListener('click', item.action);
-            }
-            this.chartIcons.push(el);
-        });
+        this.addThumbnails(mainPanel);
+        this.addColorSchemes(mainPanel);
 
         return {
             title: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
-            bodyPromise: Promise.resolve(eGui),
+            bodyPromise: Promise.resolve(mainPanel),
             name: TabbedChartMenu.TAB_MAIN,
             afterAttachedCallback: () => {
                 (this.parentComponent as Dialog).setTitle('Chart Settings');
             }
         };
+    }
+
+    private addThumbnails(el: HTMLElement) {
+        const chartTypesEl = document.createElement('div');
+        _.addCssClass(chartTypesEl, 'ag-chart-types');
+
+        const menuItems = this.chartTypes();
+
+        menuItems.forEach((item, idx) => {
+            const thumbEl = document.createElement('div');
+            _.addCssClass(thumbEl, 'ag-chart-type');
+            if (idx === this.currentChartType) {
+                _.addCssClass(thumbEl, 'ag-selected');
+            }
+            thumbEl.appendChild((item.icon as HTMLElement));
+            thumbEl.setAttribute('title', item.name);
+
+            if (item.action) {
+                thumbEl.addEventListener('click', item.action);
+            }
+            this.chartIcons.push(thumbEl);
+
+            chartTypesEl.appendChild(thumbEl);
+        });
+
+        el.appendChild(chartTypesEl);
+    }
+
+    private addColorSchemes(el: HTMLElement) {
+        const groupEl = document.createElement('div');
+        const groupLabel = document.createElement('div');
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc()
+
+        _.addCssClass(groupEl, 'ag-chart-menu-group');
+        _.addCssClass(groupLabel, 'ag-chart-menu-group-label');
+
+        groupLabel.innerHTML = localeTextFunc('chartColorScheme', 'Colour Palette');
+        groupEl.appendChild(groupLabel);
+        
+        allColorSchemes.forEach(scheme => {
+            const itemEl = document.createElement('div');
+            _.addCssClass(itemEl, 'ag-chart-menu-item');
+            
+            scheme.forEach((color: string) => {
+                const colorEl = document.createElement('div');
+                _.addCssClass(colorEl, 'ag-chart-menu-item-child');
+                colorEl.style.backgroundColor = color;
+                itemEl.appendChild(colorEl);
+            });
+
+            groupEl.appendChild(itemEl);
+        });
+
+        el.appendChild(groupEl);
     }
 
     private createColumnsPanel(): TabbedItem {

@@ -32,7 +32,7 @@ export class ChartColumnPanel extends Component {
         const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
 
         this.createDataGroupElements([dimensionCols, valueCols], localeTextFunc);
-        this.createFilterElement(localeTextFunc);
+        // this.createFilterElement(localeTextFunc);
     }
 
     private createDataGroupElements(groups: ColState[][], localeTextFunc: Function) {
@@ -43,8 +43,8 @@ export class ChartColumnPanel extends Component {
             const currentEl = document.createElement('div');
             const currentLabel = document.createElement('div');
 
-            _.addCssClass(currentEl, 'ag-chart-data-group');            
-            _.addCssClass(currentLabel, 'ag-chart-data-group-label');
+            _.addCssClass(currentEl, 'ag-chart-menu-group');            
+            _.addCssClass(currentLabel, 'ag-chart-menu-group-label');
             if (isCategory) {
                 currentLabel.innerHTML = localeTextFunc('chartCategories', 'Categories');
             } else {
@@ -133,9 +133,9 @@ class ChartPanelRadioComp extends Component {
 
     //TODO refactor class to be chart menu specific
     private static TEMPLATE =
-        `<div class="ag-chart-data-item">
+        `<div class="ag-chart-menu-item">
             <ag-radio-button ref="rbSelect"></ag-radio-button>
-            <span class="ag-chart-data-item-label" ref="eLabel"></span>
+            <span class="ag-chart-menu-item-label" ref="eLabel"></span>
         </div>`;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;
