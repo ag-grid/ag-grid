@@ -16,7 +16,7 @@ import {
 import { ChartController } from "../chartController";
 import { ChartColumnPanel } from "./chartColumnPanel";
 import { GridChartComp } from "../gridChartComp";
-import { all as allColorSchemes } from "../../../charts/chart/colors";
+import { palettes as allColorSchemes } from "../../../charts/chart/palettes";
 
 export interface DownloadChartEvent extends AgEvent {}
 
