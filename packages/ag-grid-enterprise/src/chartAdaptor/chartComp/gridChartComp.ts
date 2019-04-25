@@ -324,8 +324,8 @@ export class GridChartComp extends Component {
     }
 
     private getPalette(): number {
-        const palette = this.model.getPalette();
-        return palette ? palette : this.isDarkTheme() ? 2 : 0;
+        const palette = this.model && this.model.getPalette();
+        return palette ? this.model.getPalette() : this.isDarkTheme() ? 2 : 0;
     }
 
     private isDarkTheme(): boolean {
