@@ -135,6 +135,11 @@
         }
     }
 
+    .ag-cell .ag-icon {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-ltr {
         .ag-row-group-leaf-indent {
@@ -575,21 +580,20 @@
         background: $panel-background-color;
         min-width: 220px;
         width: 100%;
-
-        @if $full-width-tabs {
-            display: table;
-        }
+        display: flex;
 
         .ag-tab {
             @extend %tab !optional;
-
+            
+            display: flex;
             border-bottom: 2px solid transparent;
             height: $grid-size * 4;
-            text-align: center;
-            vertical-align: middle;
+            flex: none;
+            align-items: center;
+            justify-content: center;
 
             @if $full-width-tabs {
-                display: table-cell;
+                flex: 1 1 auto;
             }
 
             &.ag-tab-selected {
