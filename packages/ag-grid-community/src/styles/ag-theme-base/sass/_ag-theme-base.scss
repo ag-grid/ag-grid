@@ -1570,11 +1570,16 @@
         .ag-chart-data-wrapper {
             .ag-chart-data-group {
                 margin: 10px 5px;
-                padding: 10px 5px;
-                border: 1px solid $border-color;
+                padding: 10px 8px;
+                border: 0px solid transparentize($border-color, 0.5);
+                border-top-width: 4px;
                 border-radius: 3px;
                 .ag-chart-data-group-label {
                     background-color: $background-color;
+                    padding: 0 2px;
+                    font-size: $font-size - 2px;
+                    font-weight: 500;
+                    text-transform: uppercase;
                 }
                 .ag-chart-data-item-label {
                     margin: 2px;

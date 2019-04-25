@@ -59,12 +59,17 @@ export class ChartMenu extends Component {
 
     private showMenu(tab: number, e: MouseEvent): void {
         this.menuDialog = new Dialog({
+            alwaysOnTop: true,
             movable: true,
-            resizable: true,
+            resizable: {
+                bottom: true,
+                top: true
+            },
             maximizable: false,
-            width: 280,
-            height: 265,
-            x: e.clientX,
+            minWidth: 220,
+            width: 220,
+            height: 450,
+            x: e.clientX - 220,
             y: e.clientY + 10
         });
 

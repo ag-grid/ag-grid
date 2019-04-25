@@ -53,7 +53,7 @@
     .ag-chart-types {
         display: flex;
         flex-wrap: wrap;
-        align-content: space-evenly;
+        align-content: start;
         justify-content: space-evenly;
     }
 
@@ -64,7 +64,7 @@
         .ag-chart-data-group {
             position: relative;
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             .ag-chart-data-group-label {
                 position: absolute;
                 top: -10px;
@@ -73,7 +73,7 @@
             .ag-chart-data-item {
                 display: flex;
                 align-items: center;
-                flex: 1 1 50%;
+                flex: 1 1 auto;
             }
         }
     }
