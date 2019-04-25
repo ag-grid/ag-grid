@@ -258,7 +258,7 @@ class MiniLine extends MiniChart {
             [1, 3, 4, 8, 7]
         ];
 
-        const leftAxis = Line.create(padding, padding, padding, size);
+        const leftAxis = Line.create(padding - 1, padding, padding - 1, size);
         leftAxis.strokeStyle = 'gray';
         leftAxis.lineWidth = 1;
         const bottomAxis = Line.create(0, size - padding, size - padding, size - padding);
