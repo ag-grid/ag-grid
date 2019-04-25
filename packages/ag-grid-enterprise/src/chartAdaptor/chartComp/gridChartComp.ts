@@ -30,7 +30,7 @@ export interface ChartOptions {
     aggregate: boolean;
     height: number;
     width: number;
-    palette: number;
+    palette?: number;
 }
 
 export class GridChartComp extends Component {
