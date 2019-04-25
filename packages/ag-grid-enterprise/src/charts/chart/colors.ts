@@ -31,7 +31,7 @@ export const material: string[] = [
     '#607d8b',
 ];
 
-export const nord: string[] = [
+export const robski: string[] = [
     '#c16068',
     '#4b556a',
     '#a2bf8a',
@@ -117,7 +117,7 @@ export default java;
 export const all: string[][] = [
     java,
     material,
-    nord,
+    robski,
     office,
     purple,
     teal,
