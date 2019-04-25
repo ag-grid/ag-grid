@@ -1,4 +1,5 @@
 import {
+    _,
     Component,
     PostConstruct
 } from "ag-grid-community";
@@ -27,7 +28,7 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
-        const classes = [MiniBar, MiniLine, MiniPie, MiniDonut];
+        const classes = [MiniBar, MiniStackedBar, MiniLine, MiniPie, MiniDonut];
         const eGui = this.getGui();
         classes.forEach((MiniClass: new (parent: HTMLElement, colors: string[]) => MiniChart) => {
             const miniWrapper = document.createElement('div');
@@ -154,7 +155,9 @@ class MiniStackedBar extends MiniChart {
             });
         });
 
-        that.root.append(Array.prototype.concat.apply(null, that.bars));
+        console.log(that.bars);
+
+        this.root.append(_.flatten(that.bars));
         this.root.append(that.axes);
     }
 
