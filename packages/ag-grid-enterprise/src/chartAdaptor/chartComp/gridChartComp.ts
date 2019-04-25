@@ -184,9 +184,7 @@ export class GridChartComp extends Component {
         barSeries.tooltip = this.chartOptions.showTooltips;
         barSeries.tooltipRenderer = params => {
             const colDisplayName = fields.filter(f => f.colId === params.yField)[0].displayName;
-            return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
-                        ${colDisplayName}: ${params.datum[params.yField]}
-                    </div>`;
+            return `<div><b>${colDisplayName}</b>: ${params.datum[params.yField]}</div>`;
         };
     }
 
@@ -201,7 +199,7 @@ export class GridChartComp extends Component {
 
             lineSeries.title = f.displayName;
 
-            lineSeries.lineWidth = 2;
+            lineSeries.lineWidth = 3;
             lineSeries.markerRadius = 3;
 
             const colors = this.isDarkTheme() ? all[2] : all[0];
@@ -213,9 +211,7 @@ export class GridChartComp extends Component {
 
             lineSeries.tooltip = this.chartOptions.showTooltips;
             lineSeries.tooltipRenderer = params => {
-                return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
-                            ${f.displayName}: ${params.datum[params.yField]}
-                        </div>`;
+                return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
             };
 
             return lineSeries;
@@ -234,9 +230,7 @@ export class GridChartComp extends Component {
 
             pieSeries.tooltip = this.chartOptions.showTooltips;
             pieSeries.tooltipRenderer = params => {
-                return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
-                            ${params.datum[params.labelField as string]}: ${params.datum[params.angleField]}
-                        </div>`;
+                return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
             };
 
             pieSeries.showInLegend = true;
@@ -272,9 +266,7 @@ export class GridChartComp extends Component {
 
             pieSeries.tooltip = this.chartOptions.showTooltips;
             pieSeries.tooltipRenderer = params => {
-                return `<div style="background-color: ${this.tooltipBackgroundColor()}; padding: 5px;">
-                            ${params.datum[params.labelField as string]}: ${params.datum[params.angleField]}
-                        </div>`;
+                return `<div><b>${params.datum[params.labelField as string]}:</b> ${params.datum[params.angleField]}</div>`;
             };
 
             pieSeries.showInLegend = index === 0;
@@ -322,10 +314,6 @@ export class GridChartComp extends Component {
     private setGridChartEditMode(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) { return; }
         this.chartController.setChartCellRangesInRangeController();
-    }
-
-    private tooltipBackgroundColor(): string {
-        return this.isDarkTheme() ? '#0b0b18' : 'rgba(244, 244, 244, 0.9)';
     }
 
     private isDarkTheme(): boolean {
