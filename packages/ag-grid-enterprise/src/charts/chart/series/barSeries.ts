@@ -105,6 +105,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         groupScale.padding = 0.1;
         groupScale.round = true;
 
+        this.yData = [];
         this.scheduleData();
     }
     get yFields(): Extract<keyof D, string>[] {
@@ -207,12 +208,12 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
 
     processData(): boolean {
-        const data = this.data as any[];
+        let data = this.data as any[];
         const xField = this.xField;
         const yFields = this.yFields;
 
         if (!(xField && yFields.length)) {
-            return false;
+            this._data = data = [];
         }
 
         // If the data is an array of rows like so:
