@@ -82,7 +82,7 @@
                 left: 0;
                 display: flex;
                 flex-wrap: wrap;
-                justify-content: space-evenly;
+                justify-content: space-around;
                 width: 100%;
                 &.ag-animating, &.ag-animating {
                     transition: left 0.3s;
