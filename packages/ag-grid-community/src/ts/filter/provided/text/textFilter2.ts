@@ -4,6 +4,7 @@ import {RefSelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
 import {
     AbstractSimpleFilter,
+    FilterPosition,
     IAbstractSimpleFilterParams,
     IAbstractSimpleModel,
     ICombinedSimpleModel
@@ -30,11 +31,11 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
     private static readonly FILTER_TYPE = 'text';
 
-    @RefSelector('eFilterTextA')
-    private eFilterValueA: HTMLInputElement;
+    @RefSelector('eFilterValue1')
+    private eFilterValue1: HTMLInputElement;
 
-    @RefSelector('eFilterTextB')
-    private eFilterValueB: HTMLInputElement;
+    @RefSelector('eFilterValue2')
+    private eFilterValue2: HTMLInputElement;
 
     private comparator: TextComparator2;
     private formatter: TextFormatter2;
@@ -84,16 +85,19 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
         return val;
     }
 
-    protected addFilterValueChangedListeners(): void {
-        this.addDestroyableEventListener(this.eFilterValueA, 'input', this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eFilterValueB, 'input', this.onFilterChanged.bind(this));
+    private addValueChangedListeners(): void {
+        const listener = this.onUiChangedListener.bind(this);
+        this.addDestroyableEventListener(this.eFilterValue1, 'input', listener);
+        this.addDestroyableEventListener(this.eFilterValue2, 'input', listener);
     }
 
     public getDefaultFilterOption(): string {
         return AbstractSimpleFilter.CONTAINS;
     }
 
-    public init(params: ITextFilterParams2): void {
+    protected setParams(params: ITextFilterParams2): void {
+        super.setParams(params);
+
         this.textFilterParams = params;
         this.comparator = this.textFilterParams.textCustomComparator ? this.textFilterParams.textCustomComparator : TextFilter2.DEFAULT_COMPARATOR;
         this.formatter =
@@ -101,54 +105,56 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
                 this.textFilterParams.caseSensitive == true ? TextFilter2.DEFAULT_FORMATTER :
                     TextFilter2.DEFAULT_LOWERCASE_FORMATTER;
 
-        this.addFilterValueChangedListeners();
-
-        super.init(params);
+        this.addValueChangedListeners();
     }
 
-    protected setModelIntoGui(model: TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2>): void {
-        super.setModelIntoGui(model);
+    protected setModelIntoUi(model: TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2>): void {
+        super.setModelIntoUi(model);
 
         const isCombined = (<any>model).operator;
 
         if (isCombined) {
             const combinedModel = <ICombinedSimpleModel<TextFilterModel2>> model;
 
-            this.eFilterValueA.value = combinedModel.condition1.filter;
-            this.eFilterValueB.value = combinedModel.condition2.filter;
+            this.eFilterValue1.value = combinedModel.condition1.filter;
+            this.eFilterValue2.value = combinedModel.condition2.filter;
 
         } else {
             const simpleModel = <TextFilterModel2> model;
 
-            this.eFilterValueA.value = simpleModel.filter;
-            this.eFilterValueB.value = null;
+            this.eFilterValue1.value = simpleModel.filter;
+            this.eFilterValue2.value = null;
         }
     }
 
-    protected getModelFromGui(): TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2> {
-        if (!this.isFilterGuiComplete()) { return null; }
+    protected createCondition(position: FilterPosition): TextFilterModel2 {
+        const type = position===FilterPosition.One ? this.getOption1() : this.getOption2();
+        const eValue = position===FilterPosition.One ? this.eFilterValue1 : this.eFilterValue2;
+        const value = this.getValue(eValue);
 
-        const createCondition = (type: string, value: string): TextFilterModel2 => {
-            const model: TextFilterModel2 =  {
-                filterType: TextFilter2.FILTER_TYPE,
-                type: type
-            };
-            if (!this.doesFilterHaveHiddenInput(type)) {
-                model.filter = value;
-            }
-            return model;
+        const model: TextFilterModel2 =  {
+            filterType: TextFilter2.FILTER_TYPE,
+            type: type
         };
+        if (!this.doesFilterHaveHiddenInput(type)) {
+            model.filter = value;
+        }
+        return model;
+    }
+
+    protected getModelFromUi(): TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2> {
+        if (!this.isFilterGuiComplete()) { return null; }
 
         if (this.isAllowTwoConditions() && this.isFilterGuiComplete(true)) {
             const res: ICombinedSimpleModel<TextFilterModel2> = {
                 filterType: TextFilter2.FILTER_TYPE,
                 operator: this.getJoinOperator(),
-                condition1: createCondition(this.getOptionA(), this.getValue(this.eFilterValueA)),
-                condition2: createCondition(this.getOptionB(), this.getValue(this.eFilterValueB))
+                condition1: this.createCondition(FilterPosition.One),
+                condition2: this.createCondition(FilterPosition.Two)
             };
             return res;
         } else {
-            const res: TextFilterModel2 = createCondition(this.getOptionA(), this.getValue(this.eFilterValueA));
+            const res: TextFilterModel2 = this.createCondition(FilterPosition.One);
             return res;
         }
     }
@@ -157,17 +163,17 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     }
 
-    protected reset(): void {
-        super.reset();
+    protected resetUiToDefaults(): void {
+        super.resetUiToDefaults();
 
-        this.eFilterValueA.value = null;
-        this.eFilterValueB.value = null;
+        this.eFilterValue1.value = null;
+        this.eFilterValue2.value = null;
     }
 
     public modelFromFloatingFilter(from: string): TextFilterModel2 {
         return {
             filterType: TextFilter2.FILTER_TYPE,
-            type: this.getOptionA(),
+            type: this.getOption1(),
             filter: from
         };
     }
@@ -179,35 +185,35 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
     public createValueTemplate(old:FilterConditionType): string {
 
-        const position = old===FilterConditionType.MAIN ? 'A' : 'B';
+        const position = old===FilterConditionType.MAIN ? '1' : '2';
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        return `<div class="ag-filter-body" ref="eBody${position}">
+        return `<div class="ag-filter-body" ref="eCondition${position}Body">
             <div class="ag-input-text-wrapper">
-                <input class="ag-filter-filter" ref="eFilterText${position}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+                <input class="ag-filter-filter" ref="eFilterValue${position}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
             </div>
         </div>`;
     }
 
-    protected updateVisibilityOfComponents(): void {
-        super.updateVisibilityOfComponents();
+    protected updateUiVisibility(): void {
+        super.updateUiVisibility();
 
-        const optionA = this.getOptionA();
+        const optionA = this.getOption1();
         const showA = !this.doesFilterHaveHiddenInput(optionA) && optionA !== AbstractSimpleFilter.EMPTY;
-        _.setVisible(this.eFilterValueA, showA);
+        _.setVisible(this.eFilterValue1, showA);
 
-        const optionB = this.getOptionB();
+        const optionB = this.getOption2();
         const showB = !this.doesFilterHaveHiddenInput(optionB) && optionB !== AbstractSimpleFilter.EMPTY;
-        _.setVisible(this.eFilterValueB, showB);
+        _.setVisible(this.eFilterValue2, showB);
     }
 
     public afterGuiAttached() {
-        this.eFilterValueA.focus();
+        this.eFilterValue1.focus();
     }
 
     protected isFilterGuiComplete(second = false): boolean {
-        const option = second ? this.getOptionB() : this.getOptionA();
-        const value = second ? this.getValue(this.eFilterValueB) : this.getValue(this.eFilterValueA);
+        const option = second ? this.getOption2() : this.getOption1();
+        const value = second ? this.getValue(this.eFilterValue2) : this.getValue(this.eFilterValue1);
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }

@@ -1,10 +1,9 @@
-import {FilterModel, IDoesFilterPassParams} from "../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams, IFilterParams} from "../../interfaces/iFilter";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {FilterConditionType} from "./abstractFilter";
 import {OptionsFactory} from "./optionsFactory";
 import {AbstractProvidedFilter, IAbstractProvidedFilterParams} from "./abstractProvidedFilter";
 import {_} from "../../utils";
-import {TextFilterModel2} from "./text/textFilter2";
 
 export interface IAbstractSimpleFilterParams extends IAbstractProvidedFilterParams {
     suppressAndOrCondition: boolean;
@@ -19,6 +18,8 @@ export interface ICombinedSimpleModel<M extends IAbstractSimpleModel> extends Fi
     condition1: M;
     condition2: M;
 }
+
+export enum FilterPosition {One, Two};
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     loadingOoo:'Loading...',
@@ -62,23 +63,23 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     public static STARTS_WITH = 'startsWith'; //4;
     public static ENDS_WITH = 'endsWith'; //5;
 
-    @RefSelector('eOptionsA')
-    private eOptionsA: HTMLSelectElement;
+    @RefSelector('eOptions1')
+    private eOptions1: HTMLSelectElement;
 
-    @RefSelector('eOptionsB')
-    private eOptionsB: HTMLSelectElement;
+    @RefSelector('eOptions2')
+    private eOptions2: HTMLSelectElement;
 
-    @RefSelector('eAnd')
-    private eAnd: HTMLInputElement;
+    @RefSelector('eJoinOperatorAnd')
+    private eJoinOperatorAnd: HTMLInputElement;
 
-    @RefSelector('eOr')
-    private eOr: HTMLInputElement;
+    @RefSelector('eJoinOperatorOr')
+    private eJoinOperatorOr: HTMLInputElement;
 
-    @RefSelector('eBodyB')
-    private eBodyB: HTMLElement;
+    @RefSelector('eCondition2Body')
+    private eCondition2Body: HTMLElement;
 
-    @RefSelector('eJoin')
-    private eJoin: HTMLElement;
+    @RefSelector('eJoinOperatorPanel')
+    private eJoinOperatorPanel: HTMLElement;
 
     private allowTwoConditions: boolean;
 
@@ -94,16 +95,16 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     protected abstract isFilterGuiComplete(): boolean;
     protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
 
-    protected getOptionA(): string {
-        return this.eOptionsA.value;
+    protected getOption1(): string {
+        return this.eOptions1.value;
     }
 
-    protected getOptionB(): string {
-        return this.eOptionsB.value;
+    protected getOption2(): string {
+        return this.eOptions2.value;
     }
 
     protected getJoinOperator(): string {
-        return this.eOr.checked ? 'OR' : 'AND';
+        return this.eJoinOperatorOr.checked ? 'OR' : 'AND';
     }
 
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean {
@@ -139,7 +140,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
         return res;
     }
 
-    protected setModelIntoGui(model: IAbstractSimpleModel | ICombinedSimpleModel<M>): void {
+    protected setModelIntoUi(model: IAbstractSimpleModel | ICombinedSimpleModel<M>): void {
 
         const isCombined = (<any>model).operator;
 
@@ -147,26 +148,26 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
             const combinedModel = <ICombinedSimpleModel<M>> model;
 
             const orChecked = combinedModel.operator === 'OR';
-            this.eAnd.checked = !orChecked;
-            this.eOr.checked = orChecked;
+            this.eJoinOperatorAnd.checked = !orChecked;
+            this.eJoinOperatorOr.checked = orChecked;
 
-            this.eOptionsA.value = combinedModel.condition1.type;
-            this.eOptionsB.value = combinedModel.condition2.type;
+            this.eOptions1.value = combinedModel.condition1.type;
+            this.eOptions2.value = combinedModel.condition2.type;
 
         } else {
             const simpleModel = <IAbstractSimpleModel> model;
 
-            this.eAnd.checked = true;
-            this.eOr.checked = false;
+            this.eJoinOperatorAnd.checked = true;
+            this.eJoinOperatorOr.checked = false;
 
-            this.eOptionsA.value = simpleModel.type;
-            this.eOptionsB.value = this.getDefaultFilterOption();
+            this.eOptions1.value = simpleModel.type;
+            this.eOptions2.value = this.getDefaultFilterOption();
         }
 
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const model = this.getAppliedModel();
+        const model = this.getModel();
 
         const isCombined = (<any>model).operator;
 
@@ -189,7 +190,8 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
         }
     }
 
-    public init(params: IAbstractSimpleFilterParams) {
+    protected setParams(params: IAbstractSimpleFilterParams): void {
+        super.setParams(params);
 
         this.simpleFilterParams = params;
 
@@ -200,8 +202,6 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
-
-        super.init(params);
     }
 
     private putOptionsIntoDropdown(): void {
@@ -219,65 +219,65 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
                 return eOption;
             };
-            this.eOptionsA.add(createOption());
-            this.eOptionsB.add(createOption());
+            this.eOptions1.add(createOption());
+            this.eOptions2.add(createOption());
         });
 
         const readOnly = filterOptions.length <= 1;
-        this.eOptionsA.disabled = readOnly;
-        this.eOptionsB.disabled = readOnly;
+        this.eOptions1.disabled = readOnly;
+        this.eOptions2.disabled = readOnly;
     }
 
     public isAllowTwoConditions(): boolean {
         return this.allowTwoConditions;
     }
 
-    protected bodyTemplate(): string {
-        const optionsTemplateA = `<select class="ag-filter-select" ref="eOptionsA"></select>`;
-        const valueTemplateA = this.createValueTemplate(FilterConditionType.MAIN);
+    protected createBodyTemplate(): string {
+        const optionsTemplate1 = `<select class="ag-filter-select" ref="eOptions1"></select>`;
+        const valueTemplate1 = this.createValueTemplate(FilterConditionType.MAIN);
 
-        const optionsTemplateB = `<select class="ag-filter-select" ref="eOptionsB"></select>`;
-        const valueTemplateB = this.createValueTemplate(FilterConditionType.CONDITION);
+        const optionsTemplate2 = `<select class="ag-filter-select" ref="eOptions2"></select>`;
+        const valueTemplate2 = this.createValueTemplate(FilterConditionType.CONDITION);
 
-        const uniqueGroupId = 'ag-simple-filter-and-or-' + Math.random();
+        const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
 
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         const andOrTemplate =
-            `<div class="ag-filter-condition" ref="eJoin">
+            `<div class="ag-filter-condition" ref="eJoinOperatorPanel">
                     <label>
-                        <input ref="eAnd" type="radio" class="and" name="${uniqueGroupId}" value="AND")} checked="checked" />
+                        <input ref="eJoinOperatorAnd" type="radio" class="and" name="${uniqueGroupId}" value="AND")} checked="checked" />
                         ${translate('andCondition','AND')}
                     </label>
                     <label>
-                        <input ref="eOr" type="radio" class="or" name="${uniqueGroupId}" value="OR" />
+                        <input ref="eJoinOperatorOr" type="radio" class="or" name="${uniqueGroupId}" value="OR" />
                         ${translate('orCondition', 'OR')}
                     </label>
                 </div>`;
 
         const template =
-               `${optionsTemplateA}
-                ${valueTemplateA}
+               `${optionsTemplate1}
+                ${valueTemplate1}
                 ${andOrTemplate}
-                ${optionsTemplateB}
-                ${valueTemplateB}`;
+                ${optionsTemplate2}
+                ${valueTemplate2}`;
 
         return template;
     }
 
-    protected updateVisibilityOfComponents(): void {
+    protected updateUiVisibility(): void {
         const showSecondFilter = this.isFilterGuiComplete();
-        _.setVisible(this.eBodyB, showSecondFilter);
-        _.setVisible(this.eOptionsB, showSecondFilter);
-        _.setVisible(this.eJoin, showSecondFilter);
+        _.setVisible(this.eCondition2Body, showSecondFilter);
+        _.setVisible(this.eOptions2, showSecondFilter);
+        _.setVisible(this.eJoinOperatorPanel, showSecondFilter);
     }
 
-    protected reset(): void {
-        this.eAnd.checked = true;
+    protected resetUiToDefaults(): void {
+        this.eJoinOperatorAnd.checked = true;
 
         const defaultOption = this.getDefaultFilterOption();
-        this.eOptionsA.value = defaultOption;
-        this.eOptionsB.value = defaultOption;
+        this.eOptions1.value = defaultOption;
+        this.eOptions2.value = defaultOption;
     }
 
     public translate(toTranslate: string): string {
@@ -293,36 +293,16 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     }
 
     public addChangedListeners() {
-        const filterChanged = this.onFilterChanged.bind(this);
-        this.addDestroyableEventListener(this.eOptionsA, "change", filterChanged);
-        this.addDestroyableEventListener(this.eOptionsB, "change", filterChanged);
-        this.addDestroyableEventListener(this.eOr, "change", filterChanged);
-        this.addDestroyableEventListener(this.eAnd, "change", filterChanged);
+        const listener = this.onUiChangedListener.bind(this);
+        this.addDestroyableEventListener(this.eOptions1, "change", listener);
+        this.addDestroyableEventListener(this.eOptions2, "change", listener);
+        this.addDestroyableEventListener(this.eJoinOperatorOr, "change", listener);
+        this.addDestroyableEventListener(this.eJoinOperatorAnd, "change", listener);
     }
 
     protected doesFilterHaveHiddenInput(filterType: string) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
         return customFilterOption && customFilterOption.hideFilterInput;
     }
-
-    /*** need to verify this logic isn't needed for the other filter types. I think not, it's covered by getModel() will be  null if filter not valid. */
-    /*
-    public isFilterActive(): boolean {
-
-        // the main selected filter is always active when there is no input field
-        if (this.doesFilterHaveHiddenInput(this.appliedOptionA)) {
-            return true;
-        }
-
-        const rawFilterValues = this.getFilterValueA();
-        if (rawFilterValues && this.appliedOptionA === AbstractABFilter.IN_RANGE) {
-            const filterValueArray = (rawFilterValues as T[]);
-            return filterValueArray[0] != null && filterValueArray[1] != null;
-        } else {
-            return rawFilterValues != null;
-        }
-    }
-    */
-
 
 }

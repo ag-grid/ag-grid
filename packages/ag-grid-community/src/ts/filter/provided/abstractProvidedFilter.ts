@@ -1,6 +1,6 @@
 import { Component } from "../../widgets/component";
 import { FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { QuerySelector } from "../../widgets/componentAnnotations";
+import {QuerySelector, RefSelector} from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { FloatingFilterChange } from "../floating/floatingFilter";
@@ -11,56 +11,58 @@ export interface IAbstractProvidedFilterParams extends IFilterParams {
 }
 
 /**
- * T(ype) The type of this filter. ie in DateFilter T=Date
- * P(arams) The params that this filter can take
- * M(model getModel/setModel) The object that this filter serializes to
- * F Floating filter params
- *
- * Contains common logic to ALL filters.. Translation, apply and clear button
- * get/setModel context wiring....
+ * Contains common logic to all provided filters (apply button, clear button, etc).
+ * All the filters that come with ag-Grid extend this class. User filters do not
+ * extend this class.
  */
 export abstract class AbstractProvidedFilter extends Component implements IFilterComp {
 
     private newRowsActionKeep: boolean;
 
+    // each level in the hierarchy will save params with the appropriate type for that level.
     private abstractProvidedFilterParams: IAbstractProvidedFilterParams;
+
     private clearActive: boolean;
     private applyActive: boolean;
 
-    @QuerySelector('#applyPanel')
+    @RefSelector('eButtonsPanel')
     private eButtonsPanel: HTMLElement;
 
-    @QuerySelector('.ag-filter-body-wrapper')
+    @RefSelector('eFilterBodyWrapper')
     protected eFilterBodyWrapper: HTMLElement;
 
-    @QuerySelector('#applyButton')
+    @RefSelector('eApplyButton')
     private eApplyButton: HTMLElement;
 
-    @QuerySelector('#clearButton')
+    @RefSelector('eClearButton')
     private eClearButton: HTMLElement;
 
     @Autowired('gridOptionsWrapper')
     protected gridOptionsWrapper: GridOptionsWrapper;
 
+    // part if IFilter interface, hence public
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
 
-    protected abstract updateVisibilityOfComponents(): void;
+    protected abstract updateUiVisibility(): void;
     protected abstract modelFromFloatingFilter(from: string): FilterModel;
 
-    protected abstract bodyTemplate(): string;
-    protected abstract reset(): void;
+    protected abstract createBodyTemplate(): string;
+    protected abstract resetUiToDefaults(): void;
 
-    protected abstract setModelIntoGui(model: FilterModel): void;
-    protected abstract getModelFromGui(): FilterModel;
+    protected abstract setModelIntoUi(model: FilterModel): void;
+    protected abstract getModelFromUi(): FilterModel;
     protected abstract areModelsEqual(a: FilterModel, b: FilterModel): boolean;
 
+    // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
+    // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
+    // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
+    // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
+    // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
+    // not active) then this appliedModel will be null/undefined.
     private appliedModel: FilterModel;
 
+    // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
-
-    protected getAppliedModel(): FilterModel {
-        return this.appliedModel;
-    }
 
     public isFilterActive(): boolean {
         // filter is active if we have a valid applied model
@@ -69,11 +71,18 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
 
     @PostConstruct
     protected postConstruct(): void {
-        const templateString = this.generateTemplate();
+        const templateString = this.createTemplate();
         this.setTemplate(templateString);
     }
 
     public init(params: IFilterParams): void {
+        this.setParams(params);
+        this.resetUiToDefaults();
+        this.updateUiVisibility();
+        this.setupOnBtApplyDebounce();
+    }
+
+    protected setParams(params: IFilterParams): void {
         this.abstractProvidedFilterParams = params;
 
         this.clearActive = params.clearButton === true;
@@ -90,10 +99,6 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
 
         const anyButtonVisible: boolean = this.applyActive || this.clearActive;
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
-
-        this.reset();
-        this.updateVisibilityOfComponents();
-        this.setupOnBtApplyDebounce();
     }
 
     private setupOnBtApplyDebounce(): void {
@@ -107,27 +112,27 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
 
     public setModel(model: FilterModel): void {
         if (model) {
-            this.setModelIntoGui(model);
+            this.setModelIntoUi(model);
         } else {
-            this.reset();
+            this.resetUiToDefaults();
         }
-        this.updateVisibilityOfComponents();
+        this.updateUiVisibility();
 
         // we set the model from the gui, rather than the provided model,
         // so the model is consistent. eg handling of null/undefined will be the same,
         // of if model is case insensitive, then casing is removed.
-        this.appliedModel = this.getModelFromGui();
+        this.appliedModel = this.getModelFromUi();
     }
 
     private onBtClear() {
-        this.reset();
-        this.updateVisibilityOfComponents();
-        this.onFilterChanged();
+        this.resetUiToDefaults();
+        this.updateUiVisibility();
+        this.onUiChangedListener();
     }
 
     private onBtApply() {
         const oldAppliedModel = this.appliedModel;
-        this.appliedModel = this.getModelFromGui();
+        this.appliedModel = this.getModelFromUi();
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
@@ -144,18 +149,18 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         } else {
             // this.resetState();
         }
-        this.onFilterChanged();
+        this.onUiChangedListener();
     }
 
     public onNewRowsLoaded() {
         if (!this.newRowsActionKeep) {
-            this.reset();
+            this.resetUiToDefaults();
             this.appliedModel = null;
         }
     }
 
-    protected onFilterChanged(): void {
-        this.updateVisibilityOfComponents();
+    protected onUiChangedListener(): void {
+        this.updateUiVisibility();
         this.abstractProvidedFilterParams.filterModifiedCallback();
         if (!this.applyActive) {
             this.onBtApplyDebounce();
@@ -182,17 +187,17 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         return this.doOnFilterChanged(casted ? casted.apply : false);*/
     }
 
-    private generateTemplate(): string {
+    private createTemplate(): string {
 
-        const body = this.bodyTemplate();
+        const body = this.createBodyTemplate();
 
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div>
-                    <div class='ag-filter-body-wrapper'>${body}</div>
-                    <div class="ag-filter-apply-panel" id="applyPanel">
-                        <button type="button" id="clearButton">${translate('clearFilter', 'Clear Filter')}</button>
-                        <button type="button" id="applyButton">${translate('applyFilter', 'Apply Filter')}</button>
+                    <div class='ag-filter-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
+                    <div class="ag-filter-apply-panel" ref="eButtonsPanel">
+                        <button type="button" ref="eClearButton">${translate('clearFilter', 'Clear Filter')}</button>
+                        <button type="button" ref="eApplyButton">${translate('applyFilter', 'Apply Filter')}</button>
                     </div>
                 </div>`;
     }
