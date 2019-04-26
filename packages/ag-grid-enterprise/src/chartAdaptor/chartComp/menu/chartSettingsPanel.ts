@@ -1,32 +1,131 @@
 import {
-    Autowired,
     Component,
-    GridOptionsWrapper,
-    _,
-    PostConstruct
+    PostConstruct,
+    RefSelector,
+    _
 } from "ag-grid-community";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { ChartController } from "../chartController";
-
+import { palettes } from "../../../charts/chart/palettes";
 
 export class ChartSettingsPanel extends Component {
 
-    public static TEMPLATE = `<div class="ag-chart-settings-wrapper"></div>`;
+    public static TEMPLATE =
+        `<div class="ag-chart-settings-wrapper">
+            <div class="ag-chart-settings-nav-bar">
+                <div ref="ePrevBtn" class="ag-char-settings-prev-btn ag-icon-small-left">
+                    <button type="button"></button>
+                </div>
+                <div class="ag-spacer"></div>
+                <div ref="eNextBtn" class="ag-char-settings-next-btn ag-icon-small-right">
+                    <button type="button"></button>
+                </div>
+            </div>
+        </div>`;
 
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
+    @RefSelector("ePrevBtn") private ePrevBtn: HTMLElement;
+    @RefSelector("eNextBtn") private eNextBtn: HTMLElement;
+
+    private miniCharts: MiniChartsContainer[] = [];
 
     private chartController: ChartController;
+    private activePalette: number;
+    private isAnimating: boolean;
 
     constructor(chartModel: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
         this.chartController = chartModel;
+        this.activePalette = this.chartController.getPalette();
     }
 
     @PostConstruct
     private init() {
-        const miniChartsContainer = new MiniChartsContainer(this.chartController.getPalette(), this.chartController);
-        this.getContext().wireBean(miniChartsContainer);
+        palettes.forEach((palette, idx) => {
+            const miniChartsContainer = new MiniChartsContainer(idx, this.chartController);
+            this.getContext().wireBean(miniChartsContainer);
 
-        this.getGui().appendChild(miniChartsContainer.getGui());
+            this.miniCharts.push(miniChartsContainer);
+            this.getGui().appendChild(miniChartsContainer.getGui());
+        });
+
+        this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
+        this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
+
+        this.setActivePalette(this.activePalette, 0);
+    }
+
+    private getPrev(): number {
+        let prev = this.activePalette - 1;
+
+        if (prev < 0) {
+            prev = palettes.length -1;
+        }
+
+        return prev;
+    }
+
+    private prev() {
+        if (this.isAnimating) { return; }
+        const prev = this.getPrev();
+        this.setActivePalette(prev, 1);
+    }
+
+    private getNext(): number {
+        let next = this.activePalette + 1;
+
+        if (next === palettes.length) {
+            next = 0;
+        }
+        return next;
+    }
+
+    private next() {
+        if (this.isAnimating) { return; }
+        const next = this.getNext();
+        this.setActivePalette(next, 2);
+    }
+
+    private setActivePalette(palette: number, animate?: number) {
+        if (!animate) {
+            this.miniCharts.forEach((miniChart, idx) => {
+                _.addOrRemoveCssClass(miniChart.getGui(), 'ag-hidden', idx !== palette);
+            });
+            this.miniCharts[this.activePalette].refreshSelected();
+            this.activePalette = palette;
+        } else {
+            const currentPalette = this.miniCharts[this.activePalette];
+            const currentGui = currentPalette.getGui();
+            const futurePalette = this.miniCharts[palette];
+            const futureGui = futurePalette.getGui();
+
+            currentPalette.refreshSelected();
+            futurePalette.refreshSelected();
+
+            const multiplier = animate === 1 ? -1 : 1;
+            const final = futureGui.style.left = `${(_.getAbsoluteWidth(this.getGui()) * multiplier)}px`;
+            _.removeCssClass(futureGui, 'ag-hidden');
+
+            _.addCssClass(currentGui, 'ag-animating');
+            _.addCssClass(futureGui, 'ag-animating');
+
+            this.isAnimating = true;
+
+            window.setTimeout(() => {
+                currentGui.style.left = `${parseFloat(final) * -1}px`;
+                futureGui.style.left = '0px';
+            },1);
+
+            window.setTimeout(() => {
+                this.isAnimating = false;
+                _.removeCssClass(currentGui, 'ag-animating');
+                _.removeCssClass(futureGui, 'ag-animating');
+                _.addCssClass(currentGui, 'ag-hidden');
+                this.activePalette = palette;
+                this.chartController.setChartWithPalette(
+                    this.chartController.getChartType(),
+                    this.activePalette
+                );
+            }, 800);
+        }
     }
 }
