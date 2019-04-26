@@ -1,6 +1,5 @@
-import {FilterModel, IDoesFilterPassParams, IFilterParams} from "../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams} from "../../interfaces/iFilter";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {FilterConditionType} from "./abstractFilter";
 import {OptionsFactory} from "./optionsFactory";
 import {AbstractProvidedFilter, IAbstractProvidedFilterParams} from "./abstractProvidedFilter";
 import {_} from "../../utils";
@@ -64,10 +63,10 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     public static ENDS_WITH = 'endsWith'; //5;
 
     @RefSelector('eOptions1')
-    private eOptions1: HTMLSelectElement;
+    private eType1: HTMLSelectElement;
 
     @RefSelector('eOptions2')
-    private eOptions2: HTMLSelectElement;
+    private eType2: HTMLSelectElement;
 
     @RefSelector('eJoinOperatorAnd')
     private eJoinOperatorAnd: HTMLInputElement;
@@ -91,16 +90,37 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     protected abstract getDefaultFilterOption(): string;
 
     protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:IAbstractSimpleModel): boolean;
-    protected abstract createValueTemplate(type: FilterConditionType): string;
-    protected abstract isFilterGuiComplete(): boolean;
+    protected abstract createValueTemplate(position: FilterPosition): string;
+    protected abstract isFilterUiComplete(position: FilterPosition): boolean;
     protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
+    // needed for creating filter model
+    protected abstract getFilterType(): string;
 
-    protected getOption1(): string {
-        return this.eOptions1.value;
+    protected abstract createCondition(position: FilterPosition): M;
+
+    protected getModelFromUi(): M | ICombinedSimpleModel<M> {
+        if (!this.isFilterUiComplete(FilterPosition.One)) { return null; }
+
+        if (this.isAllowTwoConditions() && this.isFilterUiComplete(FilterPosition.Two)) {
+            const res: ICombinedSimpleModel<M> = {
+                filterType: this.getFilterType(),
+                operator: this.getJoinOperator(),
+                condition1: this.createCondition(FilterPosition.One),
+                condition2: this.createCondition(FilterPosition.Two)
+            };
+            return res;
+        } else {
+            const res: M = this.createCondition(FilterPosition.One);
+            return res;
+        }
     }
 
-    protected getOption2(): string {
-        return this.eOptions2.value;
+    protected getType1(): string {
+        return this.eType1.value;
+    }
+
+    protected getType2(): string {
+        return this.eType2.value;
     }
 
     protected getJoinOperator(): string {
@@ -151,8 +171,8 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
             this.eJoinOperatorAnd.checked = !orChecked;
             this.eJoinOperatorOr.checked = orChecked;
 
-            this.eOptions1.value = combinedModel.condition1.type;
-            this.eOptions2.value = combinedModel.condition2.type;
+            this.eType1.value = combinedModel.condition1.type;
+            this.eType2.value = combinedModel.condition2.type;
 
         } else {
             const simpleModel = <IAbstractSimpleModel> model;
@@ -160,8 +180,8 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
             this.eJoinOperatorAnd.checked = true;
             this.eJoinOperatorOr.checked = false;
 
-            this.eOptions1.value = simpleModel.type;
-            this.eOptions2.value = this.getDefaultFilterOption();
+            this.eType1.value = simpleModel.type;
+            this.eType2.value = this.getDefaultFilterOption();
         }
 
     }
@@ -219,13 +239,13 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
                 return eOption;
             };
-            this.eOptions1.add(createOption());
-            this.eOptions2.add(createOption());
+            this.eType1.add(createOption());
+            this.eType2.add(createOption());
         });
 
         const readOnly = filterOptions.length <= 1;
-        this.eOptions1.disabled = readOnly;
-        this.eOptions2.disabled = readOnly;
+        this.eType1.disabled = readOnly;
+        this.eType2.disabled = readOnly;
     }
 
     public isAllowTwoConditions(): boolean {
@@ -234,10 +254,10 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
     protected createBodyTemplate(): string {
         const optionsTemplate1 = `<select class="ag-filter-select" ref="eOptions1"></select>`;
-        const valueTemplate1 = this.createValueTemplate(FilterConditionType.MAIN);
+        const valueTemplate1 = this.createValueTemplate(FilterPosition.One);
 
         const optionsTemplate2 = `<select class="ag-filter-select" ref="eOptions2"></select>`;
-        const valueTemplate2 = this.createValueTemplate(FilterConditionType.CONDITION);
+        const valueTemplate2 = this.createValueTemplate(FilterPosition.Two);
 
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
 
@@ -266,9 +286,9 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     }
 
     protected updateUiVisibility(): void {
-        const showSecondFilter = this.isFilterGuiComplete();
+        const showSecondFilter = this.isFilterUiComplete(FilterPosition.One);
         _.setVisible(this.eCondition2Body, showSecondFilter);
-        _.setVisible(this.eOptions2, showSecondFilter);
+        _.setVisible(this.eType2, showSecondFilter);
         _.setVisible(this.eJoinOperatorPanel, showSecondFilter);
     }
 
@@ -276,8 +296,8 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
         this.eJoinOperatorAnd.checked = true;
 
         const defaultOption = this.getDefaultFilterOption();
-        this.eOptions1.value = defaultOption;
-        this.eOptions2.value = defaultOption;
+        this.eType1.value = defaultOption;
+        this.eType2.value = defaultOption;
     }
 
     public translate(toTranslate: string): string {
@@ -294,8 +314,8 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
     public addChangedListeners() {
         const listener = this.onUiChangedListener.bind(this);
-        this.addDestroyableEventListener(this.eOptions1, "change", listener);
-        this.addDestroyableEventListener(this.eOptions2, "change", listener);
+        this.addDestroyableEventListener(this.eType1, "change", listener);
+        this.addDestroyableEventListener(this.eType2, "change", listener);
         this.addDestroyableEventListener(this.eJoinOperatorOr, "change", listener);
         this.addDestroyableEventListener(this.eJoinOperatorAnd, "change", listener);
     }
