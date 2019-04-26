@@ -361,7 +361,7 @@ export class GridChartComp extends Component {
     private isDarkTheme(): boolean {
         const theme = this.environment.getTheme() as string;
         const el = document.querySelector(`.${theme}`);
-        const background = window.getComputedStyle(el as HTMLElement).background;
+        const background = window.getComputedStyle(el as HTMLElement).backgroundColor;
         return Color.fromString(background as string).toHSB()[2] < 0.4;
     }
 
