@@ -196,7 +196,13 @@ export class GridChartComp extends Component {
     }
 
     private updateLineChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
+        if (fields.length === 0) {
+            this.chart.removeAllSeries();
+            return;
+        }
+
         const lineChart = this.chart as CartesianChart<any, string, number>;
+
         lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         const fieldIds = fields.map(f => f.colId);
@@ -211,7 +217,7 @@ export class GridChartComp extends Component {
         fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
-            let lineSeries = existingSeries ? existingSeries : new LineSeries<any, string, number>();
+            const lineSeries = existingSeries ? existingSeries : new LineSeries<any, string, number>();
 
             lineSeries.title = f.displayName;
 
@@ -237,34 +243,45 @@ export class GridChartComp extends Component {
     }
 
     private updatePieChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
+        if (fields.length === 0) {
+            this.chart.removeAllSeries();
+            return;
+        }
+
         const pieChart = this.chart as PolarChart<any, string, number>;
 
-        pieChart.removeAllSeries();
+        const existingSeries = pieChart.series[0] as PieSeries<any, string, number>;
+        const existingSeriesId = existingSeries && existingSeries.angleField as string;
 
-        const pieSeries = new PieSeries<any, string, number>();
+        const pieSeriesId = fields[0].colId;
+        const pieSeriesName = fields[0].displayName;
 
-        if (fields.length > 0) {
-            pieSeries.title = fields[0].displayName;
+        let pieSeries = existingSeries;
+        if (existingSeriesId !== pieSeriesId) {
+            pieChart.removeSeries(existingSeries);
+            pieSeries = new PieSeries<any, string, number>();
+        }
 
-            pieSeries.tooltip = this.chartOptions.showTooltips;
-            pieSeries.tooltipRenderer = params => {
-                return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
-            };
+        pieSeries.title = pieSeriesName;
+        pieSeries.tooltip = this.chartOptions.showTooltips;
+        pieSeries.tooltipRenderer = params => {
+            return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
+        };
 
-            pieSeries.showInLegend = true;
-            pieSeries.lineWidth = 1;
-            pieSeries.calloutWidth = 1;
-            pieChart.addSeries(pieSeries);
+        pieSeries.showInLegend = true;
+        pieSeries.lineWidth = 1;
+        pieSeries.calloutWidth = 1;
 
-            pieSeries.data = data;
-            pieSeries.angleField = fields[0].colId;
+        pieSeries.data = data;
+        pieSeries.angleField = pieSeriesId;
 
-            pieSeries.labelField = categoryId;
-            pieSeries.label = false;
+        pieSeries.labelField = categoryId;
+        pieSeries.label = false;
 
-            pieSeries.colors = palettes[this.getPalette()];
+        pieSeries.colors = palettes[this.getPalette()];
 
-            pieChart.series = [pieSeries];
+        if (!existingSeries) {
+            pieChart.addSeries(pieSeries)
         }
     }
 
