@@ -199,10 +199,19 @@ export class GridChartComp extends Component {
         const lineChart = this.chart as CartesianChart<any, string, number>;
         lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
-        lineChart.removeAllSeries();
+        const fieldIds = fields.map(f => f.colId);
 
-        lineChart.series = fields.map((f: {colId: string, displayName: string}, index: number)  => {
-            const lineSeries = new LineSeries<any, string, number>();
+        const existingSeriesMap: { [id: string]: LineSeries<any, string, number> } = {};
+        lineChart.series.forEach(series => {
+            const lineSeries = (series as LineSeries<any, string, number>);
+            const id = lineSeries.yField as string;
+            fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
+        });
+
+        fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+            const existingSeries = existingSeriesMap[f.colId];
+
+            let lineSeries = existingSeries ? existingSeries : new LineSeries<any, string, number>();
 
             lineSeries.title = f.displayName;
 
@@ -221,7 +230,9 @@ export class GridChartComp extends Component {
                 return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
             };
 
-            return lineSeries;
+            if (!existingSeries) {
+                lineChart.addSeries(lineSeries);
+            }
         });
     }
 
@@ -266,7 +277,7 @@ export class GridChartComp extends Component {
         const padding = 20;
 
         let offset = 0;
-        doughnutChart.series = fields.map((f: {colId: string, displayName: string}, index: number) => {
+        doughnutChart.series = fields.map((f: { colId: string, displayName: string }, index: number) => {
             const pieSeries = new PieSeries<any, string, number>();
 
             pieSeries.title = f.displayName;
@@ -319,7 +330,9 @@ export class GridChartComp extends Component {
     }
 
     private setGridChartEditMode(focusEvent: FocusEvent) {
-        if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) { return; }
+        if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
+            return;
+        }
         this.chartController.setChartCellRangesInRangeController();
     }
 
