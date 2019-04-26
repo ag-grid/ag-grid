@@ -165,13 +165,9 @@ export const palettes: string[][] = [
     material,
     robski,
     nord,
-    // office,
-    // purple,
-    // teal,
     scheme1,
     scheme2,
     scheme3,
     deep,
-    flat,
-    // flat2
+    flat
 ];

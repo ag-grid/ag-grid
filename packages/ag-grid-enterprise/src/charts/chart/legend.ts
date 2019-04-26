@@ -46,7 +46,13 @@ export class Legend {
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
         this._data = data;
-        this.processData();
+
+        const hasData = data.length > 0;
+
+        if (hasData) {
+            this.processData();
+        }
+        this.group.visible = hasData;
     }
     get data(): LegendDatum[] {
         return this._data;

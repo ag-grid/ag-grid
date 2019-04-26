@@ -70,10 +70,12 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
 
         const legendAutoPadding = this.legendAutoPadding;
-        shrinkRect.x += legendAutoPadding.left;
-        shrinkRect.y += legendAutoPadding.top;
-        shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
-        shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+        if (this.legend.data.length) {
+            shrinkRect.x += legendAutoPadding.left;
+            shrinkRect.y += legendAutoPadding.top;
+            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
+            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+        }
 
         const seriesClipRect = this.seriesClipRect;
         seriesClipRect.x = shrinkRect.x;
@@ -104,28 +106,30 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
             series.update(); // this has to happen after the `updateAxis` call
         });
 
-        const legend = this.legend;
-        legend.size = [300, shrinkRect.height];
-        legend.performLayout();
-        // We reset the `translationX` intentionally here to get `legendBBox.x`
-        // which is the offset we need to apply to align the left edge of legend
-        // with the right edge of the `seriesClipRect`.
-        legend.group.translationX = 0;
-        legend.group.translationY = 0;
+        if (this.legend.data.length) {
+            const legend = this.legend;
+            legend.size = [300, shrinkRect.height];
+            legend.performLayout();
+            // We reset the `translationX` intentionally here to get `legendBBox.x`
+            // which is the offset we need to apply to align the left edge of legend
+            // with the right edge of the `seriesClipRect`.
+            legend.group.translationX = 0;
+            legend.group.translationY = 0;
 
-        const legendBBox = legend.group.getBBox();
-        // legendBBox.dilate(20);
-        legendBBox.x -= 20;
-        legendBBox.y -= 20;
-        legendBBox.width += 20;
-        legendBBox.height += 40;
+            const legendBBox = legend.group.getBBox();
+            // legendBBox.dilate(20);
+            legendBBox.x -= 20;
+            legendBBox.y -= 20;
+            legendBBox.width += 20;
+            legendBBox.height += 40;
 
-        legend.group.translationX = seriesClipRect.x + seriesClipRect.width - legendBBox.x;
-        legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
+            legend.group.translationX = seriesClipRect.x + seriesClipRect.width - legendBBox.x;
+            legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
 
-        if (this.legendAutoPadding.right !== legendBBox.width) {
-            this.legendAutoPadding.right = legendBBox.width;
-            this.layoutPending = true;
+            if (this.legendAutoPadding.right !== legendBBox.width) {
+                this.legendAutoPadding.right = legendBBox.width;
+                this.layoutPending = true;
+            }
         }
     }
 
@@ -154,18 +158,18 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
         if (typeof xDomain[0] === 'number') {
             xAxis.domain = checkExtent(extent(xDomain));
         } else {
-            if (!xDomain.length) {
-                return;
-            }
-            xAxis.domain = xDomain; // categories (strings), duplicates will be removed by the axis' scale
+            // if (!xDomain.length) {
+            //     return;
+            // }
+            xAxis.domain = xDomain;
         }
 
         if (typeof yDomain[0] === 'number') {
             yAxis.domain = checkExtent(extent(yDomain));
         } else {
-            if (!yDomain.length) {
-                return;
-            }
+            // if (!yDomain.length) {
+            //     return;
+            // }
             yAxis.domain = yDomain;
         }
 
