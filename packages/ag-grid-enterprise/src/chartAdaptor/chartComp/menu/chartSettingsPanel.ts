@@ -119,7 +119,7 @@ export class ChartSettingsPanel extends Component {
             window.setTimeout(() => {
                 currentGui.style.left = `${parseFloat(final) * -1}px`;
                 futureGui.style.left = '0px';
-            },1);
+            }, 50);
 
             window.setTimeout(() => {
                 this.isAnimating = false;

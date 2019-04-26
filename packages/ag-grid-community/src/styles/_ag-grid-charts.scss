@@ -98,11 +98,19 @@
         }
     }
 
-
     .ag-chart-data-wrapper {
         width: 100%;
         height: 100%;
         overflow: auto;
         position: relative;
+    }
+}
+
+/* targets IE11 only */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .ag-chart-tabbed-menu {
+        .ag-chart-settings-mini-wrapper {
+            justify-content: center;
+        }
     }
 }
