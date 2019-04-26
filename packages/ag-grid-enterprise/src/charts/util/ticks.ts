@@ -49,7 +49,7 @@ function range(a: number, b: number, step: number = 1): NumericTicks {
         ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10))
         : 0;
     const f = Math.pow(10, decimalDigits);
-    const n = Math.max(0, Math.ceil((b - a) / step));
+    const n = Math.max(0, Math.ceil((b - a) / step)) || 0;
     const values = new NumericTicks(decimalDigits, n);
 
     for (let i = 0; i < n; i++) {
