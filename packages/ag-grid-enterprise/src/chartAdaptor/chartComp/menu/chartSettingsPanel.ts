@@ -108,6 +108,12 @@ export class ChartSettingsPanel extends Component {
             _.addCssClass(currentGui, 'ag-animating');
             _.addCssClass(futureGui, 'ag-animating');
 
+            this.activePalette = palette;
+            this.chartController.setChartWithPalette(
+                this.chartController.getChartType(),
+                this.activePalette
+            );
+
             this.isAnimating = true;
 
             window.setTimeout(() => {
@@ -120,12 +126,7 @@ export class ChartSettingsPanel extends Component {
                 _.removeCssClass(currentGui, 'ag-animating');
                 _.removeCssClass(futureGui, 'ag-animating');
                 _.addCssClass(currentGui, 'ag-hidden');
-                this.activePalette = palette;
-                this.chartController.setChartWithPalette(
-                    this.chartController.getChartType(),
-                    this.activePalette
-                );
-            }, 800);
+            }, 500);
         }
     }
 }
