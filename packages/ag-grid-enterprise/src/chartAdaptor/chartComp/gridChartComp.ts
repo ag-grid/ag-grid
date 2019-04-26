@@ -317,7 +317,6 @@ export class GridChartComp extends Component {
             pieSeries.showInLegend = index === 0;
             pieSeries.lineWidth = 1;
             pieSeries.calloutWidth = 1;
-            doughnutChart.addSeries(pieSeries);
 
             pieSeries.outerRadiusOffset = offset;
             offset -= 20;
