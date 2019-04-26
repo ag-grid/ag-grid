@@ -174,12 +174,12 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
     protected createValueTemplate(position: FilterPosition): string {
 
-        const positionNumber = position===FilterPosition.One ? '1' : '2';
+        const pos = position===FilterPosition.One ? '1' : '2';
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        return `<div class="ag-filter-body" ref="eCondition${positionNumber}Body">
+        return `<div class="ag-filter-body" ref="eCondition${pos}Body">
             <div class="ag-input-text-wrapper">
-                <input class="ag-filter-filter" ref="eFilterValue${positionNumber}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+                <input class="ag-filter-filter" ref="eFilterValue${pos}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
             </div>
         </div>`;
     }
@@ -187,13 +187,13 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
-        const optionA = this.getType1();
-        const showA = !this.doesFilterHaveHiddenInput(optionA) && optionA !== AbstractSimpleFilter.EMPTY;
-        _.setVisible(this.eFilterValue1, showA);
+        const show = (type: string, eValue: HTMLElement) => {
+            const showValue = !this.doesFilterHaveHiddenInput(type) && type !== AbstractSimpleFilter.EMPTY;
+            _.setVisible(eValue, showValue);
+        };
 
-        const optionB = this.getType2();
-        const showB = !this.doesFilterHaveHiddenInput(optionB) && optionB !== AbstractSimpleFilter.EMPTY;
-        _.setVisible(this.eFilterValue2, showB);
+        show(this.getType1(), this.eFilterValue1);
+        show(this.getType2(), this.eFilterValue2);
     }
 
     public afterGuiAttached() {
