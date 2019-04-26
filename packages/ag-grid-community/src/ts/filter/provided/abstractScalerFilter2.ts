@@ -14,11 +14,6 @@ export interface IScalarFilterParams2 extends IAbstractSimpleFilterParams {
     nullComparator?: NullComparator2;
 }
 
-export interface AbstractScalerFilterModel2<T> extends IAbstractSimpleModel {
-    filter?: T;
-    filterTo?: T;
-}
-
 export abstract class AbstractScalerFilter2<M extends IAbstractSimpleModel, T> extends AbstractSimpleFilter<M> {
 
     static readonly DEFAULT_NULL_COMPARATOR: NullComparator2 = {
@@ -30,6 +25,9 @@ export abstract class AbstractScalerFilter2<M extends IAbstractSimpleModel, T> e
     private scalarFilterParams: IScalarFilterParams2;
 
     protected abstract comparator(): Comparator<T>;
+
+    // because the date and number filter models have different attribute names, we have to map
+    protected abstract mapRangeFromModel(filterModel: IAbstractSimpleModel): {from: T, to: T};
 
     protected setParams(params: IScalarFilterParams2): void {
         super.setParams(params);
@@ -90,12 +88,14 @@ export abstract class AbstractScalerFilter2<M extends IAbstractSimpleModel, T> e
         return (AbstractScalerFilter2.DEFAULT_NULL_COMPARATOR as any)[reducedType];
     }
 
-    protected individualFilterPasses(params: IDoesFilterPassParams, filterModel: AbstractScalerFilterModel2<T>) {
+    protected individualFilterPasses(params: IDoesFilterPassParams, filterModel: IAbstractSimpleModel) {
 
         const cellValue: any = this.scalarFilterParams.valueGetter(params.node);
 
-        const filterValue = filterModel.filter;
-        const filterValueTo = filterModel.filterTo;
+        const range = this.mapRangeFromModel(filterModel);
+
+        const filterValue = range.from;
+        const filterValueTo = range.to;
         const filterType = filterModel.type;
 
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);

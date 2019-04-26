@@ -1,12 +1,19 @@
-import {AbstractSimpleFilter, FilterPosition, IAbstractSimpleFilterParams} from "../abstractSimpleFilter";
+import {
+    AbstractSimpleFilter,
+    FilterPosition,
+    IAbstractSimpleFilterParams,
+    IAbstractSimpleModel
+} from "../abstractSimpleFilter";
 import {FilterModel} from "../../../interfaces/iFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {AbstractComparableFilter} from "../abstractComparableFilter";
 import {_} from "../../../utils";
-import {AbstractScalerFilter2, AbstractScalerFilterModel2} from "../abstractScalerFilter2";
+import {AbstractScalerFilter2} from "../abstractScalerFilter2";
 import {Comparator} from "../abstractFilter";
 
-export interface NumberFilter2Model extends AbstractScalerFilterModel2<number> {
+export interface NumberFilter2Model extends IAbstractSimpleModel {
+    filter?: number;
+    filterTo?: number;
 }
 
 export interface INumberFilterParams2 extends IAbstractSimpleFilterParams {
@@ -26,10 +33,12 @@ export class NumberFilter2 extends AbstractScalerFilter2<NumberFilter2Model, num
     @RefSelector('eValueTo2')
     private eValueTo2: HTMLInputElement;
 
-    @RefSelector('ePanel1')
-    private ePanel1: HTMLElement;
-    @RefSelector('ePanel1')
-    private ePanel2: HTMLElement;
+    protected mapRangeFromModel(filterModel: NumberFilter2Model): {from: number, to: number} {
+        return {
+            from: filterModel.filter,
+            to: filterModel.filterTo
+        };
+    }
 
     protected comparator(): Comparator<number> {
         return (left: number, right: number): number => {
