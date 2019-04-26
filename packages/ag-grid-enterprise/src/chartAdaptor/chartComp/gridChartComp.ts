@@ -286,16 +286,26 @@ export class GridChartComp extends Component {
     }
 
     private updateDoughnutChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
+        if (fields.length === 0) {
+            this.chart.removeAllSeries();
+            return;
+        }
+
         const doughnutChart = this.chart as PolarChart<any, string, number>;
+        const fieldIds = fields.map(f => f.colId);
 
-        doughnutChart.removeAllSeries();
-
-        const thickness = 20;
-        const padding = 20;
+        const existingSeriesMap: { [id: string]: PieSeries<any, string, number> } = {};
+        doughnutChart.series.forEach(series => {
+            const pieSeries = (series as PieSeries<any, string, number>);
+            const id = pieSeries.angleField as string;
+            fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
+        });
 
         let offset = 0;
-        doughnutChart.series = fields.map((f: { colId: string, displayName: string }, index: number) => {
-            const pieSeries = new PieSeries<any, string, number>();
+        fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+            const existingSeries = existingSeriesMap[f.colId];
+
+            const pieSeries = existingSeries ? existingSeries : new PieSeries<any, string, number>();
 
             pieSeries.title = f.displayName;
 
@@ -310,9 +320,9 @@ export class GridChartComp extends Component {
             doughnutChart.addSeries(pieSeries);
 
             pieSeries.outerRadiusOffset = offset;
-            offset -= thickness;
+            offset -= 20;
             pieSeries.innerRadiusOffset = offset;
-            offset -= padding;
+            offset -= 20;
 
             pieSeries.data = data;
             pieSeries.angleField = f.colId;
@@ -322,7 +332,9 @@ export class GridChartComp extends Component {
 
             pieSeries.colors = palettes[this.getPalette()];
 
-            return pieSeries;
+            if (!existingSeries) {
+                doughnutChart.addSeries(pieSeries)
+            }
         });
     }
 
