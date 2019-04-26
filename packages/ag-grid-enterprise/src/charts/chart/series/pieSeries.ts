@@ -163,14 +163,14 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     private _colors: string[] = colors;
     set colors(values: string[]) {
         this._colors = values;
-        this.strokeColors = values.map(color => Color.fromHexString(color).darker().toHexString());
+        this.strokeColors = values.map(color => Color.fromString(color).darker().toHexString());
         this.scheduleData();
     }
     get colors(): string[] {
         return this._colors;
     }
 
-    private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
+    private strokeColors = colors.map(color => Color.fromString(color).darker().toHexString());
 
     set visible(value: boolean) {
         if (this._visible !== value) {
