@@ -5,8 +5,7 @@ import {
     AbstractSimpleFilter,
     FilterPosition,
     IAbstractSimpleFilterParams,
-    IAbstractSimpleModel,
-    ICombinedSimpleModel
+    IAbstractSimpleModel
 } from "../abstractSimpleFilter";
 
 export interface TextFilterModel2 extends IAbstractSimpleModel {
@@ -30,11 +29,11 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
     private static readonly FILTER_TYPE = 'text';
 
-    @RefSelector('eFilterValue1')
-    private eFilterValue1: HTMLInputElement;
+    @RefSelector('eValue1')
+    private eValue1: HTMLInputElement;
 
-    @RefSelector('eFilterValue2')
-    private eFilterValue2: HTMLInputElement;
+    @RefSelector('eValue2')
+    private eValue2: HTMLInputElement;
 
     private comparator: TextComparator2;
     private formatter: TextFormatter2;
@@ -86,8 +85,8 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
     private addValueChangedListeners(): void {
         const listener = this.onUiChangedListener.bind(this);
-        this.addDestroyableEventListener(this.eFilterValue1, 'input', listener);
-        this.addDestroyableEventListener(this.eFilterValue2, 'input', listener);
+        this.addDestroyableEventListener(this.eValue1, 'input', listener);
+        this.addDestroyableEventListener(this.eValue2, 'input', listener);
     }
 
     public getDefaultFilterOption(): string {
@@ -110,38 +109,17 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
     protected setConditionIntoUi(model: TextFilterModel2, position: FilterPosition): void {
         const positionOne = position===FilterPosition.One;
 
-        const eValue = positionOne ? this.eFilterValue1 : this.eFilterValue2;
+        const eValue = positionOne ? this.eValue1 : this.eValue2;
 
         eValue.value = model ? model.filter : null;
     }
-
-/*
-    protected setModelIntoUi(model: TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2>): void {
-        super.setModelIntoUi(model);
-
-        const isCombined = (<any>model).operator;
-
-        if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<TextFilterModel2>> model;
-
-            this.eFilterValue1.value = combinedModel.condition1.filter;
-            this.eFilterValue2.value = combinedModel.condition2.filter;
-
-        } else {
-            const simpleModel = <TextFilterModel2> model;
-
-            this.eFilterValue1.value = simpleModel.filter;
-            this.eFilterValue2.value = null;
-        }
-    }
-*/
 
     protected createCondition(position: FilterPosition): TextFilterModel2 {
 
         const positionOne = position===FilterPosition.One;
 
         const type = positionOne ? this.getType1() : this.getType2();
-        const eValue = positionOne ? this.eFilterValue1 : this.eFilterValue2;
+        const eValue = positionOne ? this.eValue1 : this.eValue2;
         const value = this.getValue(eValue);
 
         const model: TextFilterModel2 =  {
@@ -165,8 +143,8 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
     protected resetUiToDefaults(): void {
         super.resetUiToDefaults();
 
-        this.eFilterValue1.value = null;
-        this.eFilterValue2.value = null;
+        this.eValue1.value = null;
+        this.eValue2.value = null;
     }
 
     public modelFromFloatingFilter(from: string): TextFilterModel2 {
@@ -189,7 +167,7 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body">
             <div class="ag-input-text-wrapper">
-                <input class="ag-filter-filter" ref="eFilterValue${pos}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+                <input class="ag-filter-filter" ref="eValue${pos}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
             </div>
         </div>`;
     }
@@ -202,19 +180,19 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
             _.setVisible(eValue, showValue);
         };
 
-        show(this.getType1(), this.eFilterValue1);
-        show(this.getType2(), this.eFilterValue2);
+        show(this.getType1(), this.eValue1);
+        show(this.getType2(), this.eValue2);
     }
 
     public afterGuiAttached() {
-        this.eFilterValue1.focus();
+        this.eValue1.focus();
     }
 
     protected isFilterUiComplete(position: FilterPosition): boolean {
         const positionOne = position===FilterPosition.One;
 
         const option = positionOne ? this.getType1() : this.getType2();
-        const eFilterValue = positionOne ? this.eFilterValue1 : this.eFilterValue2;
+        const eFilterValue = positionOne ? this.eValue1 : this.eValue2;
 
         const value = this.getValue(eFilterValue);
         if (this.doesFilterHaveHiddenInput(option)) {

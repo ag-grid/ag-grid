@@ -14,7 +14,6 @@ import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
 import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {IDateComparatorFunc} from "./dateFilter";
-import {NumberFilter2Model} from "../number/numberFilter2";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert
@@ -28,6 +27,68 @@ export interface DateFilter2Model extends IAbstractSimpleModel {
 export interface IDateFilterParams2 extends IAbstractSimpleFilterParams {
     comparator?: IDateComparatorFunc;
     browserDatePicker?: boolean;
+}
+
+// removes the complexity of async component creation from the date panel. while the component does not
+// exist, the wrapper keeps the value that was set and returns this value when queried. when the component
+// is finally created, it gets the temp value if set.
+class DateCompWrapper {
+
+    private dateComp: IDateComp;
+
+    private tempValue: Date;
+
+    private alive = true;
+
+    constructor(userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
+
+        userComponentFactory.newDateComponent(dateComponentParams).then (dateComp => {
+
+            // because async, check the filter still exists after component comes back
+            if (!this.alive) {
+                if (dateComp.destroy) {
+                    dateComp.destroy();
+                }
+                return;
+            }
+
+            this.dateComp = dateComp;
+            eParent.appendChild(dateComp.getGui());
+
+            if (dateComp.afterGuiAttached) {
+                dateComp.afterGuiAttached();
+            }
+
+            if (this.tempValue) {
+                dateComp.setDate(this.tempValue);
+            }
+        });
+
+    }
+
+    public destroy(): void {
+        this.alive = false;
+        if (this.dateComp && this.dateComp.destroy) {
+            this.dateComp.destroy();
+        }
+    }
+
+    public getDate(): Date {
+        if (this.dateComp) {
+            return this.dateComp.getDate();
+        } else {
+            return this.tempValue;
+        }
+    }
+
+    public setDate(value: Date): void {
+        if (this.dateComp) {
+            this.dateComp.setDate(value);
+        } else {
+            this.tempValue = value;
+        }
+    }
+
 }
 
 export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
@@ -44,10 +105,10 @@ export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
     @RefSelector('ePanelTo2')
     private ePanelTo2: HTMLElement;
 
-    private dateCompFrom1: IDateComp;
-    private dateCompFrom2: IDateComp;
-    private dateCompTo1: IDateComp;
-    private dateCompTo2: IDateComp;
+    private dateCompFrom1: DateCompWrapper;
+    private dateCompFrom2: DateCompWrapper;
+    private dateCompTo1: DateCompWrapper;
+    private dateCompTo2: DateCompWrapper;
 
     @Autowired('userComponentFactory')
     private userComponentFactory: UserComponentFactory;
@@ -72,14 +133,14 @@ export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
     protected setConditionIntoUi(model: DateFilter2Model, position: FilterPosition): void {
         const positionOne = position===FilterPosition.One;
 
-        const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
-        const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
-
         const dateFromString = model ? model.dateFrom : null;
         const dateToString = model ? model.dateTo : null;
 
         const dateFrom = _.parseYyyyMmDdToDate(dateFromString, "-");
         const dateTo = _.parseYyyyMmDdToDate(dateToString, "-");
+
+        const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
 
         compFrom.setDate(dateFrom);
         compTo.setDate(dateTo);
@@ -122,49 +183,16 @@ export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
             filterParams: this.dateFilterParams
         };
 
-        // 4 date comps created in identical way - this method holds common creation logic
-        const createComp = (callback: (comp: IDateComp)=>void): void => {
+        this.dateCompFrom1 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelFrom1);
+        this.dateCompFrom2 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelFrom2);
+        this.dateCompTo1 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelTo1);
+        this.dateCompTo2 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelTo2);
 
-            this.userComponentFactory.newDateComponent(dateComponentParams).then (dateComp => {
-
-                // because async, check the filter still exists after component comes back
-                if (!this.isAlive()) {
-                    if (dateComp.destroy) {
-                        dateComp.destroy();
-                    }
-                    return;
-                }
-
-                callback(dateComp);
-
-                if (dateComp.afterGuiAttached) {
-                    dateComp.afterGuiAttached();
-                }
-
-                this.addDestroyFunc( ()=> {
-                    if (dateComp.destroy) {
-                        dateComp.destroy();
-                    }
-                });
-            });
-        };
-
-        // only thing that differs is where we put the comp
-        createComp( dateComp => {
-            this.dateCompFrom1 = dateComp;
-            this.ePanelFrom1.appendChild(dateComp.getGui());
-        });
-        createComp( dateComp => {
-            this.dateCompFrom2 = dateComp;
-            this.ePanelFrom2.appendChild(dateComp.getGui());
-        });
-        createComp( dateComp => {
-            this.dateCompTo1 = dateComp;
-            this.ePanelTo1.appendChild(dateComp.getGui());
-        });
-        createComp( dateComp => {
-            this.dateCompTo2 = dateComp;
-            this.ePanelTo2.appendChild(dateComp.getGui());
+        this.addDestroyFunc( () => {
+            this.dateCompFrom1.destroy();
+            this.dateCompFrom2.destroy();
+            this.dateCompTo1.destroy();
+            this.dateCompTo2.destroy();
         });
     }
 
