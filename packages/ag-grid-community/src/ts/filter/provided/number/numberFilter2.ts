@@ -2,7 +2,7 @@ import {
     AbstractSimpleFilter,
     FilterPosition,
     IAbstractSimpleFilterParams,
-    IAbstractSimpleModel
+    IAbstractSimpleModel, ICombinedSimpleModel
 } from "../abstractSimpleFilter";
 import {FilterModel} from "../../../interfaces/iFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
@@ -10,6 +10,7 @@ import {AbstractComparableFilter} from "../abstractComparableFilter";
 import {_} from "../../../utils";
 import {AbstractScalerFilter2} from "../abstractScalerFilter2";
 import {Comparator} from "../abstractFilter";
+import {TextFilterModel2} from "../text/textFilter2";
 
 export interface NumberFilter2Model extends IAbstractSimpleModel {
     filter?: number;
@@ -38,6 +39,25 @@ export class NumberFilter2 extends AbstractScalerFilter2<NumberFilter2Model, num
             from: filterModel.filter,
             to: filterModel.filterTo
         };
+    }
+
+    protected resetUiToDefaults(): void {
+        super.resetUiToDefaults();
+
+        this.eValue1.value = null;
+        this.eValue2.value = null;
+        this.eValueTo1.value = null;
+        this.eValueTo2.value = null;
+    }
+
+    protected setConditionIntoUi(model: NumberFilter2Model, position: FilterPosition): void {
+        const positionOne = position===FilterPosition.One;
+
+        const eValueFrom = positionOne ? this.eValue1 : this.eValue2;
+        const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
+
+        eValueFrom.value = model ? (''+model.filter) : null;
+        eValueTo.value = model ? (''+model.filterTo) : null;
     }
 
     protected comparator(): Comparator<number> {

@@ -107,6 +107,15 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
         this.addValueChangedListeners();
     }
 
+    protected setConditionIntoUi(model: TextFilterModel2, position: FilterPosition): void {
+        const positionOne = position===FilterPosition.One;
+
+        const eValue = positionOne ? this.eFilterValue1 : this.eFilterValue2;
+
+        eValue.value = model ? model.filter : null;
+    }
+
+/*
     protected setModelIntoUi(model: TextFilterModel2 | ICombinedSimpleModel<TextFilterModel2>): void {
         super.setModelIntoUi(model);
 
@@ -125,6 +134,7 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
             this.eFilterValue2.value = null;
         }
     }
+*/
 
     protected createCondition(position: FilterPosition): TextFilterModel2 {
 

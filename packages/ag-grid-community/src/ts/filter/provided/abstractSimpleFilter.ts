@@ -98,6 +98,8 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
     protected abstract createCondition(position: FilterPosition): M;
 
+    protected abstract setConditionIntoUi(model: M, position: FilterPosition): void;
+
     protected getModelFromUi(): M | ICombinedSimpleModel<M> {
         if (!this.isFilterUiComplete(FilterPosition.One)) { return null; }
 
@@ -174,6 +176,9 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
             this.eType1.value = combinedModel.condition1.type;
             this.eType2.value = combinedModel.condition2.type;
 
+            this.setConditionIntoUi(combinedModel.condition1, FilterPosition.One);
+            this.setConditionIntoUi(combinedModel.condition2, FilterPosition.Two);
+
         } else {
             const simpleModel = <IAbstractSimpleModel> model;
 
@@ -182,6 +187,9 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
             this.eType1.value = simpleModel.type;
             this.eType2.value = this.getDefaultFilterOption();
+
+            this.setConditionIntoUi(<M>simpleModel, FilterPosition.One);
+            this.setConditionIntoUi(null, FilterPosition.Two);
         }
 
     }

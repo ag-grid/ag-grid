@@ -14,7 +14,12 @@ import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
 import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {IDateComparatorFunc} from "./dateFilter";
+import {NumberFilter2Model} from "../number/numberFilter2";
 
+// the date filter model is a bit different, it takes strings, although the
+// filter actually works with dates. this is because a Date object won't convert
+// easily to JSON. so when the model is used for doing the filtering, it's converted
+// to Date objects.
 export interface DateFilter2Model extends IAbstractSimpleModel {
     dateFrom: string;
     dateTo: string;
@@ -50,10 +55,43 @@ export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
     private dateFilterParams: IDateFilterParams2;
 
     protected mapRangeFromModel(filterModel: DateFilter2Model): {from: Date, to: Date} {
+        // unlike the other filters, we do two things here:
+        // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
+        //    are in different locations in Date and Number filter models)
+        // 2) convert the type (cos Date filter uses Dates, however model is 'string')
+        //
+        // NOTE: The conversion of string to date also removes the timezone - ie when user picks
+        //       a date form the UI, it will have timezone info in it. This is lost when creating
+        //       the model. Then when we recreate the date again here, it's without timezone.
         return {
             from: _.parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
             to: _.parseYyyyMmDdToDate(filterModel.dateTo, "-")
         };
+    }
+
+    protected setConditionIntoUi(model: DateFilter2Model, position: FilterPosition): void {
+        const positionOne = position===FilterPosition.One;
+
+        const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+
+        const dateFromString = model ? model.dateFrom : null;
+        const dateToString = model ? model.dateTo : null;
+
+        const dateFrom = _.parseYyyyMmDdToDate(dateFromString, "-");
+        const dateTo = _.parseYyyyMmDdToDate(dateToString, "-");
+
+        compFrom.setDate(dateFrom);
+        compTo.setDate(dateTo);
+    }
+
+    protected resetUiToDefaults(): void {
+        super.resetUiToDefaults();
+
+        this.dateCompTo1.setDate(null);
+        this.dateCompTo2.setDate(null);
+        this.dateCompFrom1.setDate(null);
+        this.dateCompFrom2.setDate(null);
     }
 
     protected comparator(): Comparator<Date> {
