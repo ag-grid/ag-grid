@@ -14,6 +14,7 @@ import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
 import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {IDateComparatorFunc} from "./dateFilter";
+import {NumberFilter2Model} from "../number/numberFilter2";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert
@@ -128,6 +129,15 @@ export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
             from: _.parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
             to: _.parseYyyyMmDdToDate(filterModel.dateTo, "-")
         };
+    }
+
+    protected setFloatingFilter(model: DateFilter2Model): void {
+        if (model.dateFrom == null) {
+            this.dateCompFrom1.setDate(null);
+        } else {
+            const dateFrom = _.parseYyyyMmDdToDate(model.dateFrom, "-");
+            this.dateCompFrom1.setDate(dateFrom);
+        }
     }
 
     protected setConditionIntoUi(model: DateFilter2Model, position: FilterPosition): void {

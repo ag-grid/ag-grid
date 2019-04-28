@@ -1,4 +1,4 @@
-import {IDoesFilterPassParams} from "../../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams} from "../../../interfaces/iFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
 import {
@@ -145,6 +145,10 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
         this.eValue1.value = null;
         this.eValue2.value = null;
+    }
+
+    protected setFloatingFilter(model: TextFilterModel2): void {
+        this.eValue1.value = model.filter;
     }
 
     public modelFromFloatingFilter(from: string): TextFilterModel2 {

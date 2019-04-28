@@ -1,5 +1,5 @@
 import { Component } from "../../widgets/component";
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
 import { QuerySelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -30,7 +30,7 @@ export interface CombinedFilter <T> {
  * Contains common logic to ALL filters.. Translation, apply and clear button
  * get/setModel context wiring....
  */
-export abstract class AbstractFilter<P extends IFilterParams, M> extends Component implements IFilterComp {
+export abstract class AbstractFilter<P extends IFilterParams, M extends FilterModel> extends Component implements IFilterComp {
 
     private newRowsActionKeep: boolean;
 
@@ -166,18 +166,18 @@ export abstract class AbstractFilter<P extends IFilterParams, M> extends Compone
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
-        const casted: BaseFloatingFilterChange<M> = change as BaseFloatingFilterChange<M>;
+        const casted: BaseFloatingFilterChange = change as BaseFloatingFilterChange;
         if (casted == null) {
             this.setModel(null);
         } else if (! this.isFilterConditionActive(FilterConditionType.CONDITION)) {
             this.setModel(casted ? casted.model : null);
         } else {
-            const combinedFilter :CombinedFilter<M> = {
-                condition1: casted.model,
-                condition2: this.serialize(FilterConditionType.CONDITION),
-                operator: this.conditionValue
-            };
-            this.setModel(combinedFilter);
+            // const combinedFilter :CombinedFilter<M> = {
+            //     condition1: casted.model,
+            //     condition2: this.serialize(FilterConditionType.CONDITION),
+            //     operator: this.conditionValue
+            // };
+            // this.setModel(combinedFilter);
         }
 
         return this.doOnFilterChanged(casted ? casted.apply : false);

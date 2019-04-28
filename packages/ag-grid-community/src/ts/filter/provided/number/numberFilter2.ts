@@ -10,6 +10,8 @@ import {AbstractComparableFilter} from "../abstractComparableFilter";
 import {_} from "../../../utils";
 import {AbstractScalerFilter2} from "../abstractScalerFilter2";
 import {Comparator} from "../abstractFilter";
+import {TextFilterModel2} from "../text/textFilter2";
+import {NumberFilter} from "./numberFilter";
 
 export interface NumberFilter2Model extends IAbstractSimpleModel {
     filter?: number;
@@ -57,6 +59,14 @@ export class NumberFilter2 extends AbstractScalerFilter2<NumberFilter2Model, num
 
         eValueFrom.value = model ? (''+model.filter) : null;
         eValueTo.value = model ? (''+model.filterTo) : null;
+    }
+
+    protected setFloatingFilter(model: NumberFilter2Model): void {
+        if (model.filter == null) {
+            this.eValueFrom1.value = null;
+        } else {
+            this.eValueFrom1.value = '' + model.filter;
+        }
     }
 
     protected comparator(): Comparator<number> {

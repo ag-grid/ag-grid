@@ -10,19 +10,19 @@ import { AbstractComparableFilter } from "../abstractComparableFilter";
 export class DateFloatingFilterComp extends Component
     implements IFloatingFilter
         <DateFilterModel,
-            BaseFloatingFilterChange<DateFilterModel>,
-            IFloatingFilterParams<DateFilterModel, BaseFloatingFilterChange<DateFilterModel>>
+            BaseFloatingFilterChange,
+            IFloatingFilterParams<DateFilterModel, BaseFloatingFilterChange>
             > {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private dateComponentPromise: Promise<IDateComp>;
 
-    private onFloatingFilterChangedFunc: (change: BaseFloatingFilterChange<DateFilterModel>) => void;
+    private onFloatingFilterChangedFunc: (change: BaseFloatingFilterChange) => void;
     private currentParentModelFunc: () => DateFilterModel;
     private lastKnownModel: DateFilterModel = null;
 
-    private init(params: IFloatingFilterParams<DateFilterModel, BaseFloatingFilterChange<DateFilterModel>>) {
+    private init(params: IFloatingFilterParams<DateFilterModel, BaseFloatingFilterChange>) {
 
         this.onFloatingFilterChangedFunc = params.onFloatingFilterChanged;
         this.currentParentModelFunc = params.currentParentModel;
@@ -57,10 +57,7 @@ export class DateFloatingFilterComp extends Component
     }
 
     private onDateChanged(): void {
-        const parentModel: DateFilterModel = this.currentParentModelFunc();
         const model = this.asParentModel();
-
-        if (this.equalModels(parentModel, model)) { return; }
 
         this.onFloatingFilterChangedFunc({
             model: model,
@@ -85,17 +82,13 @@ export class DateFloatingFilterComp extends Component
     }
 
     asParentModel(): DateFilterModel {
-        const currentParentModel = this.currentParentModelFunc();
         const filterValueDate: Date = this.dateComponentPromise.resolveNow(null, dateComponent => dateComponent.getDate());
         const filterValueText: string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(filterValueDate), "-");
 
         return {
-            // if the parent filter model has not gotten set yet, we default to EQUALS. this is a bug if the developer
-            // has configured this filter to not have equals - however at time of writing, the floating filter doesn't
-            // have access to the filter params, which it would need to work out the default filter option.
-            type: currentParentModel ? currentParentModel.type : AbstractComparableFilter.EQUALS,
+            type: null,
             dateFrom: filterValueText,
-            dateTo: currentParentModel ? currentParentModel.dateTo : null,
+            dateTo: null,
             filterType: 'date'
         };
     }

@@ -2,6 +2,7 @@ import { IComponent } from "../../interfaces/iComponent";
 import { Column } from "../../entities/column";
 import { GridApi } from "../../gridApi";
 import { CombinedFilter } from "../provided/abstractFilter";
+import {FilterModel} from "../../interfaces/iFilter";
 
 export interface FloatingFilterChange {
 }
@@ -22,7 +23,7 @@ export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IF
 export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
 }
 
-export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
-    model: M;
+export interface BaseFloatingFilterChange extends FloatingFilterChange {
+    model: FilterModel;
     apply: boolean;
 }

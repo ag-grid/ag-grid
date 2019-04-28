@@ -3,7 +3,7 @@ import { _ } from "../../../utils";
 import { BaseFloatingFilterChange, IFloatingFilterParams } from "../../floating/floatingFilter";
 import { AbstractTextfieldFloatingFilterComp } from "../../floating/abstractTextfieldFloatingFilter";
 
-export class NumberFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<NumberFilterModel, IFloatingFilterParams<NumberFilterModel, BaseFloatingFilterChange<NumberFilterModel>>> {
+export class NumberFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<NumberFilterModel, IFloatingFilterParams<NumberFilterModel, BaseFloatingFilterChange>> {
 
     asFloatingFilterText(toParse: NumberFilterModel): string {
         const currentParentModel = this.currentParentModel();
@@ -37,23 +37,12 @@ export class NumberFloatingFilterComp extends AbstractTextfieldFloatingFilterCom
     }
 
     asParentModel(): NumberFilterModel {
-        const currentParentModel = this.currentParentModel();
         const filterValueNumber = this.asNumber(this.eColumnFloatingFilter.value);
-        const filterValueText: string = this.eColumnFloatingFilter.value;
-
-        let modelFilterValue: number = null;
-        if (filterValueNumber == null && filterValueText === '') {
-            modelFilterValue = null;
-        } else if (filterValueNumber == null) {
-            modelFilterValue = currentParentModel.filter;
-        } else {
-            modelFilterValue = filterValueNumber;
-        }
 
         return {
-            type: currentParentModel.type,
-            filter: modelFilterValue,
-            filterTo: !currentParentModel ? null : currentParentModel.filterTo,
+            type: null,
+            filter: filterValueNumber,
+            filterTo: null,
             filterType: 'number'
         };
     }

@@ -4,14 +4,15 @@ import { Constants } from "../../constants";
 import { CombinedFilter } from "../provided/abstractFilter";
 import { _ } from "../../utils";
 import { BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams } from "./floatingFilter";
+import {FilterModel} from "../../interfaces/iFilter";
 
 /** Floating Filter that renders into a single text field. Used by Text, Number, ReadModelAsString and Set floating filters. */
-export abstract class AbstractTextfieldFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {
+export abstract class AbstractTextfieldFloatingFilterComp<M extends FilterModel, P extends IFloatingFilterParams<M, BaseFloatingFilterChange>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange, P> {
 
     @RefSelector('eColumnFloatingFilter')
     protected eColumnFloatingFilter: HTMLInputElement;
 
-    onFloatingFilterChanged: (change: BaseFloatingFilterChange<M>) => boolean;
+    onFloatingFilterChanged: (change: BaseFloatingFilterChange) => boolean;
     currentParentModel: () => M;
     lastKnownModel: M = null;
 

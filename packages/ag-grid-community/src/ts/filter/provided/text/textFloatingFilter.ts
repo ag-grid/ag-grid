@@ -3,15 +3,16 @@ import { TextFilterModel } from "./textFilter";
 import { BaseFloatingFilterChange, IFloatingFilterParams } from "../../floating/floatingFilter";
 
 export class TextFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<TextFilterModel, IFloatingFilterParams<TextFilterModel, BaseFloatingFilterChange<TextFilterModel>>> {
+
     asFloatingFilterText(parentModel: TextFilterModel): string {
         if (!parentModel) { return ''; }
         return parentModel.filter;
     }
 
     asParentModel(): TextFilterModel {
-        const currentParentModel = this.currentParentModel();
+        // const currentParentModel = this.currentParentModel();
         return {
-            type: currentParentModel.type,
+            type: null,
             filter: this.eColumnFloatingFilter.value,
             filterType: 'text'
         };

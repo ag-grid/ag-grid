@@ -90,6 +90,7 @@ export class FloatingFilterWrapper extends Component {
                 this.floatingFilterCompPromise.then(compInstance => {
                     if (compInstance) {
                         this.setupWithFloatingFilter(compInstance);
+                        this.setupSyncWithFilter();
                     } else {
                         this.setupEmpty();
                     }
@@ -97,7 +98,6 @@ export class FloatingFilterWrapper extends Component {
             } else {
                 this.setupEmpty();
             }
-            this.setupSyncWithFilter();
         } else {
             this.setupEmpty();
         }
@@ -117,8 +117,7 @@ export class FloatingFilterWrapper extends Component {
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
 
-        const cachedFilter = this.filterManager.cachedFilter(this.column);
-        if (cachedFilter) {
+        if (this.filterManager.isFilterActive(this.column)) {
             syncWithFilter();
         }
     }

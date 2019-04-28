@@ -3,7 +3,7 @@ import { FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "
 import {QuerySelector, RefSelector} from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { FloatingFilterChange } from "../floating/floatingFilter";
+import {BaseFloatingFilterChange, FloatingFilterChange} from "../floating/floatingFilter";
 import { _ } from "../../utils";
 
 export interface IAbstractProvidedFilterParams extends IFilterParams {
@@ -52,6 +52,9 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     protected abstract setModelIntoUi(model: FilterModel): void;
     protected abstract getModelFromUi(): FilterModel;
     protected abstract areModelsEqual(a: FilterModel, b: FilterModel): boolean;
+
+    // should be abstract
+    protected setFloatingFilter(model: FilterModel): void {}
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
@@ -167,24 +170,20 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         }
     }
 
-    public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
-        return false;
-/*        //It has to be of the type FloatingFilterWithApplyChange if it gets here
-        const casted: BaseFloatingFilterChange<M> = change as BaseFloatingFilterChange<M>;
-        if (casted == null) {
-            this.setModel(null);
-        } else if (! this.isFilterConditionActive(FilterConditionType.CONDITION)) {
-            this.setModel(casted ? casted.model : null);
+    public onFloatingFilterChanged(change: BaseFloatingFilterChange): boolean {
+        if (change == null) {
+            this.setFloatingFilter(null);
         } else {
-            const combinedFilter :CombinedFilter<M> = {
-                condition1: casted.model,
-                condition2: this.serialize(FilterConditionType.CONDITION),
-                operator: this.conditionValue
-            };
-            this.setModel(combinedFilter);
+            this.setFloatingFilter(change.model);
         }
 
-        return this.doOnFilterChanged(casted ? casted.apply : false);*/
+        this.onUiChangedListener();
+
+        if (!this.applyActive || change.apply) {
+            this.onBtApply();
+        }
+
+        return false;
     }
 
     private createTemplate(): string {
