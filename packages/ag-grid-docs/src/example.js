@@ -366,7 +366,7 @@ var gridOptions = {
     },
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
-        
+
         if (docEl.clientWidth <= 1024) {
             event.api.closeToolPanel();
         }
@@ -662,7 +662,7 @@ var desktopDefaultCols = [
         children: [
             {
                 headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
-                filter: 'winningsFilter', 
+                filter: 'winningsFilter',
                 valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 cellClassRules: {
@@ -999,6 +999,8 @@ function onThemeChanged(newTheme) {
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
 
     document.body.classList.toggle('dark', isDark);
+
+    document.body.style.scrollbarColor = isDark ? '#6B6B6B #2B3436' : 'inherit';
 }
 
 var filterCount = 0;

@@ -60,8 +60,10 @@ function randomBetween(min,max) {
 }
 
 function createTradeRecord(product, portfolio, book, batch) {
-    var current = Math.floor(Math.random()*100000) + 100;
-    var previous = current + Math.floor(Math.random()*10000) - 2000;
+    var current = Math.floor(Math.random()*100000) + 10000;
+
+    var previous = current + Math.floor(Math.random()*10000) - (Math.random()<.5 ? 200000 : -200000);
+
     var trade = {
         product: product,
         portfolio: portfolio,
@@ -113,9 +115,12 @@ function updateSomeItems(updateCount) {
         // similar to how the
         var field = VALUE_FIELDS[Math.floor(Math.random() * VALUE_FIELDS.length)];
         itemToUpdate[field] = Math.floor(Math.random()*100000);
-
         itemsToUpdate.push(itemToUpdate);
     }
+
+    // var previous = current + Math.floor(Math.random()*10000) - (Math.random()<.5 ? 200000 : -200000);
+    itemToUpdate['previous'] = itemToUpdate['current'] + Math.floor(Math.random()*10000) - (Math.random()<.5 ? 300000 : -200000);
+
     return itemsToUpdate;
 }
 
