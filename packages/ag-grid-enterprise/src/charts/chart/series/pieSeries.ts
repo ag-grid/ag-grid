@@ -88,6 +88,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         const title = this.titleNode;
         title.pointerEvents = PointerEvents.None;
         title.textAlign = 'center';
+        title.fillStyle = this.labelColor;
         title.textBaseline = 'bottom';
         title.font = 'bold 12px Tahoma';
         this.group.appendChild(title);
@@ -374,6 +375,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         this.titleNode.translationY = -this.radius - outerRadiusOffset - 2;
         this.titleNode.text = this.title;
+        this.titleNode.fillStyle = this.labelColor;
 
         const updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();

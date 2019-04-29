@@ -277,6 +277,7 @@ export class GridChartComp extends Component {
 
         pieSeries.labelField = categoryId;
         pieSeries.label = false;
+        pieSeries.labelColor = this.isDarkTheme ? 'rgb(221, 221, 221)' : 'black';
 
         pieSeries.colors = palettes[this.getPalette()];
 
