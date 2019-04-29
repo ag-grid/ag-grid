@@ -51,7 +51,7 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     set chart(chart: CartesianChart<D, X, Y> | null) {
         if (this._chart !== chart) {
             this._chart = chart;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get chart(): CartesianChart<D, X, Y> | null {
@@ -61,7 +61,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     set xField(value: Extract<keyof D, string> | undefined) {
         if (this._xField !== value) {
             this._xField = value;
-            this.scheduleLayout();
+            this.xData = [];
+            this.scheduleData();
         }
     }
     get xField(): Extract<keyof D, string> | undefined {
@@ -71,7 +72,8 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     set yField(value: Extract<keyof D, string> | undefined) {
         if (this._yField !== value) {
             this._yField = value;
-            this.scheduleLayout();
+            this.yData = [];
+            this.scheduleData();
         }
     }
     get yField(): Extract<keyof D, string> | undefined {
@@ -101,13 +103,17 @@ export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
     }
 
     processData(): boolean {
-        const data = this.data as any[];
+        const chart = this.chart;
         const xField = this.xField;
         const yField = this.yField;
-        const chart = this.chart;
+        let data = this.data as any[];
 
-        if (!(xField && yField && chart && chart.xAxis && chart.yAxis)) {
+        if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
+        }
+
+        if (!(xField && yField)) {
+            this._data = data = [];
         }
 
         this.xData = data.map(datum => datum[xField]);
