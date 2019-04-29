@@ -277,7 +277,7 @@ export class GridChartComp extends Component {
 
         pieSeries.labelField = categoryId;
         pieSeries.label = false;
-        pieSeries.labelColor = this.isDarkTheme ? 'rgb(221, 221, 221)' : 'black';
+        pieSeries.labelColor = this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black';
 
         pieSeries.colors = palettes[this.getPalette()];
 
@@ -329,7 +329,11 @@ export class GridChartComp extends Component {
 
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
-            pieSeries.labelColor = this.isDarkTheme ? 'rgb(221, 221, 221)' : 'black';
+
+
+            pieSeries.labelColor = this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black';
+
+            console.log(pieSeries.labelColor);
 
             pieSeries.colors = palettes[this.getPalette()];
 
