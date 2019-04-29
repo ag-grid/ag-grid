@@ -29,16 +29,9 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
 
     private static readonly FILTER_TYPE = 'text';
 
-    @RefSelector('eValue1')
-    private eValue1: HTMLInputElement;
-
-    @RefSelector('eValue2')
-    private eValue2: HTMLInputElement;
-
-    private comparator: TextComparator2;
-    private formatter: TextFormatter2;
-
-    private textFilterParams: ITextFilterParams2;
+    public static DEFAULT_FILTER_OPTIONS = [AbstractSimpleFilter.EQUALS, AbstractSimpleFilter.NOT_EQUAL,
+        AbstractSimpleFilter.STARTS_WITH, AbstractSimpleFilter.ENDS_WITH, AbstractSimpleFilter.CONTAINS,
+        AbstractSimpleFilter.NOT_CONTAINS];
 
     static DEFAULT_FORMATTER: TextFormatter2 = (from: string) => {
         return from;
@@ -71,6 +64,17 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
         }
     };
 
+    @RefSelector('eValue1')
+    private eValue1: HTMLInputElement;
+
+    @RefSelector('eValue2')
+    private eValue2: HTMLInputElement;
+
+    private comparator: TextComparator2;
+    private formatter: TextFormatter2;
+
+    private textFilterParams: ITextFilterParams2;
+
     private getValue(element: HTMLInputElement): string {
         let val = element.value;
         val = _.makeNull(val);
@@ -87,10 +91,6 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
         const listener = this.onUiChangedListener.bind(this);
         this.addDestroyableEventListener(this.eValue1, 'input', listener);
         this.addDestroyableEventListener(this.eValue2, 'input', listener);
-    }
-
-    public getDefaultFilterOption(): string {
-        return AbstractSimpleFilter.CONTAINS;
     }
 
     protected setParams(params: ITextFilterParams2): void {
@@ -148,20 +148,15 @@ export class TextFilter2 extends AbstractSimpleFilter<TextFilterModel2> {
     }
 
     protected setFloatingFilter(model: TextFilterModel2): void {
-        this.eValue1.value = model.filter;
-    }
-
-    public modelFromFloatingFilter(from: string): TextFilterModel2 {
-        return {
-            filterType: TextFilter2.FILTER_TYPE,
-            type: this.getType1(),
-            filter: from
-        };
+        if (model) {
+            this.eValue1.value = model.filter;
+        } else {
+            this.eValue1.value = null;
+        }
     }
 
     public getDefaultFilterOptions(): string[] {
-        return [AbstractSimpleFilter.EQUALS, AbstractSimpleFilter.NOT_EQUAL, AbstractSimpleFilter.STARTS_WITH,
-            AbstractSimpleFilter.ENDS_WITH, AbstractSimpleFilter.CONTAINS, AbstractSimpleFilter.NOT_CONTAINS];
+        return TextFilter2.DEFAULT_FILTER_OPTIONS;
     }
 
     protected createValueTemplate(position: FilterPosition): string {

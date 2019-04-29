@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams } from "../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams} from "../../interfaces/iFilter";
 import { Comparator, FilterConditionType } from "./abstractFilter";
 import { AbstractComparableFilter, IComparableFilterParams } from "./abstractComparableFilter";
 
@@ -17,7 +17,7 @@ export interface IScalarFilterParams extends IComparableFilterParams {
  * Comparable filter with scalar underlying values (ie numbers and dates. Strings are not scalar so have to extend
  * ComparableBaseFilter)
  */
-export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M> extends AbstractComparableFilter<T, P, M> {
+export abstract class AbstractScalerFilter<T, P extends IScalarFilterParams, M extends FilterModel> extends AbstractComparableFilter<T, P, M> {
     static readonly DEFAULT_NULL_COMPARATOR: NullComparator = {
         equals: false,
         lessThan: false,

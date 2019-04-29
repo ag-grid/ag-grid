@@ -87,11 +87,12 @@ export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
 export { AbstractFilter } from "./filter/provided/abstractFilter";
+export { AbstractProvidedFilter } from "./filter/provided/abstractProvidedFilter";
 export { DateFilter, DateFilterModel } from "./filter/provided/date/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { NumberFilter } from "./filter/provided/number/numberFilter";
 export { TextFilter, TextFilterModel } from "./filter/provided/text/textFilter";
-export { IFloatingFilter, IFloatingFilterParams } from "./filter/floating/floatingFilter";
+export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp } from "./filter/floating/floatingFilter";
 
 // gridPanel
 export { GridPanel } from "./gridPanel/gridPanel";

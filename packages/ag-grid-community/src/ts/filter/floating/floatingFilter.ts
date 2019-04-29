@@ -1,26 +1,27 @@
-import { IComponent } from "../../interfaces/iComponent";
-import { Column } from "../../entities/column";
-import { GridApi } from "../../gridApi";
-import { CombinedFilter } from "../provided/abstractFilter";
-import {FilterModel} from "../../interfaces/iFilter";
+import {IComponent} from "../../interfaces/iComponent";
+import {Column} from "../../entities/column";
+import {GridApi} from "../../gridApi";
+import {FilterModel, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
 
 export interface FloatingFilterChange {
 }
 
-export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
+export interface IFloatingFilterParams {
     column: Column;
-    onFloatingFilterChanged: (change: F | M) => boolean;
-    currentParentModel: () => M;
+    filterParams: IFilterParams,
+    onFloatingFilterChanged: (change: any) => boolean;
+    currentParentModel: () => any;
+    parentFilterInstance: ( callback: (filterInstance: IFilterComp)=>void ) => void;
     suppressFilterButton: boolean;
     debounceMs?: number;
     api: GridApi;
 }
 
-export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
-    onParentModelChanged(parentModel: M, combinedModel?:CombinedFilter<M>): void;
+export interface IFloatingFilter {
+    onParentModelChanged(parentModel: any): void;
 }
 
-export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
+export interface IFloatingFilterComp extends IFloatingFilter, IComponent<IFloatingFilterParams> {
 }
 
 export interface BaseFloatingFilterChange extends FloatingFilterChange {

@@ -1,43 +1,38 @@
-import {AbstractTextfieldFloatingFilterComp, IFloatingFilterParams, BaseFloatingFilterChange} from "ag-grid-community";
+import {Component, IFloatingFilter, RefSelector} from "ag-grid-community";
 import {SetFilterModel} from "./setFilterModel";
 
-export class SetFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<SetFilterModel, IFloatingFilterParams<SetFilterModel, BaseFloatingFilterChange<SetFilterModel>>> {
-    init(params: IFloatingFilterParams<SetFilterModel, BaseFloatingFilterChange<SetFilterModel>>): void {
-        super.init(params);
-        this.eColumnFloatingFilter.disabled = true;
+
+export class SetFloatingFilterComp extends Component implements IFloatingFilter {
+
+    @RefSelector('eFloatingFilterText')
+    private eFloatingFilterText: HTMLInputElement;
+
+    constructor() {
+        super(`<div class="ag-input-text-wrapper"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
     }
 
-    asFloatingFilterText(parentModel: string[] | SetFilterModel): string {
-        this.eColumnFloatingFilter.disabled = true;
-        if (!parentModel) { return ''; }
+    public init(): void {
+        this.eFloatingFilterText.disabled = true;
+    }
+
+    public onParentModelChanged(parentModel: SetFilterModel): void {
+        if (!parentModel) {
+            this.eFloatingFilterText.value = '';
+            return;
+        }
 
         // also supporting old filter model for backwards compatibility
         const values: string[] | null = (parentModel instanceof Array) ? parentModel : parentModel.values;
 
-        if (!values || values.length === 0) { return ''; }
+        if (!values || values.length === 0) {
+            this.eFloatingFilterText.value = '';
+            return;
+        }
 
         const arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
-        return `(${values.length}) ${arrayToDisplay.join(",")}`;
+        const valuesString = `(${values.length}) ${arrayToDisplay.join(",")}`;
+
+        this.eFloatingFilterText.value = valuesString;
     }
 
-    parseAsText(model: SetFilterModel): string {
-        return this.asFloatingFilterText(model);
-    }
-
-    asParentModel(): SetFilterModel {
-        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
-            return {
-                values: [],
-                filterType: 'set'
-            };
-        }
-        return {
-            values: this.eColumnFloatingFilter.value.split(","),
-            filterType: 'set'
-        };
-    }
-
-    equalModels(left: SetFilterModel, right: SetFilterModel): boolean {
-        return false;
-    }
 }

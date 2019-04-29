@@ -430,7 +430,6 @@ export class FilterManager {
         if (this.gridOptionsWrapper.isEnterprise()) {
             defaultFilter = 'agSetColumnFilter';
         }
-        const sanitisedColDef: ColDef = _.cloneObject(column.getColDef());
 
         const event: FilterModifiedEvent = {
             type: Events.EVENT_FILTER_MODIFIED,
@@ -438,21 +437,11 @@ export class FilterManager {
             columnApi: this.columnApi
         };
 
-        const filterChangedCallback = this.onFilterChanged.bind(this);
-        const filterModifiedCallback = () => this.eventService.dispatchEvent(event);
+        const sanitisedColDef: ColDef = _.cloneObject(column.getColDef());
 
-        const params: IFilterParams = {
-            api: this.gridOptionsWrapper.getApi(),
-            column: column,
-            colDef: sanitisedColDef,
-            rowModel: this.rowModel,
-            filterChangedCallback: filterChangedCallback,
-            filterModifiedCallback: filterModifiedCallback,
-            valueGetter: this.createValueGetter(column),
-            context: this.gridOptionsWrapper.getContext(),
-            doesRowPassOtherFilter: null,
-            $scope: $scope
-        };
+        const params = this.createFilterParams(column, sanitisedColDef, $scope);
+        params.filterChangedCallback = this.onFilterChanged.bind(this);
+        params.filterModifiedCallback = () => this.eventService.dispatchEvent(event);
 
         // we modify params in a callback as we need the filter instance, and this isn't available
         // when creating the params above
@@ -461,6 +450,22 @@ export class FilterManager {
         });
 
         return this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
+    }
+
+    public createFilterParams(column: Column, colDef: ColDef, $scope: any = null): IFilterParams {
+        const params: IFilterParams = {
+            api: this.gridOptionsWrapper.getApi(),
+            column: column,
+            colDef: colDef,
+            rowModel: this.rowModel,
+            filterChangedCallback: null,
+            filterModifiedCallback: null,
+            valueGetter: this.createValueGetter(column),
+            context: this.gridOptionsWrapper.getContext(),
+            doesRowPassOtherFilter: null,
+            $scope: $scope
+        };
+        return params;
     }
 
     private createFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {

@@ -3,7 +3,7 @@ import { _ } from "../../../utils";
 import { BaseFloatingFilterChange, IFloatingFilterParams } from "../../floating/floatingFilter";
 import { AbstractTextfieldFloatingFilterComp } from "../../floating/abstractTextfieldFloatingFilter";
 
-export class NumberFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<NumberFilterModel, IFloatingFilterParams<NumberFilterModel, BaseFloatingFilterChange>> {
+export class NumberFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<NumberFilterModel, IFloatingFilterParams> {
 
     asFloatingFilterText(toParse: NumberFilterModel): string {
         const currentParentModel = this.currentParentModel();

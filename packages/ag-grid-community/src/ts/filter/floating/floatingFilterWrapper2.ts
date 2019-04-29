@@ -1,27 +1,26 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { Column } from "../entities/column";
-import { SetLeftFeature } from "../rendering/features/setLeftFeature";
-import { IFloatingFilterComp, IFloatingFilterParams } from "./floating/floatingFilter";
-import { Component } from "../widgets/component";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Beans } from "../rendering/beans";
-import { HoverFeature } from "../headerRendering/hoverFeature";
-import { Events } from "../events";
-import { EventService } from "../eventService";
-import { ColumnHoverService } from "../rendering/columnHoverService";
-import { CombinedFilter } from "./provided/abstractFilter";
-import { _, Promise } from "../utils";
-import { ColDef } from "../entities/colDef";
-import { IFilterComp } from "../interfaces/iFilter";
-import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
-import { FilterManager } from "./filterManager";
-import { ReadModelAsStringFloatingFilterComp } from "./floating/readModalAsStringFloatingFilter";
+import { Autowired, PostConstruct } from "../../context/context";
+import { IMenuFactory } from "../../interfaces/iMenuFactory";
+import { Column } from "../../entities/column";
+import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
+import { IFloatingFilterComp, IFloatingFilterParams } from "./../floating/floatingFilter";
+import { Component } from "../../widgets/component";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Beans } from "../../rendering/beans";
+import { HoverFeature } from "../../headerRendering/hoverFeature";
+import { Events } from "../../events";
+import { EventService } from "../../eventService";
+import { ColumnHoverService } from "../../rendering/columnHoverService";
+import { _, Promise } from "../../utils";
+import { ColDef } from "../../entities/colDef";
+import {IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
+import { FilterManager } from "./../filterManager";
+import { ReadModelAsStringFloatingFilterComp } from "../floating/readModalAsStringFloatingFilter";
 
-export class FloatingFilterWrapper extends Component {
+export class FloatingFilterWrapper2 extends Component {
 
     private static filterToFloatingFilterNames: {[p:string]:string} = {
         set:'agSetColumnFloatingFilter',
@@ -66,7 +65,7 @@ export class FloatingFilterWrapper extends Component {
     private floatingFilterCompPromise: Promise<IFloatingFilterComp>;
 
     constructor(column: Column) {
-        super(FloatingFilterWrapper.TEMPLATE);
+        super(FloatingFilterWrapper2.TEMPLATE);
         this.column = column;
     }
 
@@ -176,8 +175,11 @@ export class FloatingFilterWrapper extends Component {
         if (floatingFilterComp.afterGuiAttached) {
             floatingFilterComp.afterGuiAttached();
         }
+    }
 
-        this.wireQuerySelectors();
+    private parentFilterInstance( callback: (filterInstance: IFilterComp)=>void ): void {
+        const promise = this.filterManager.getFilterComponent(this.column, 'NO_UI');
+        promise.then(callback);
     }
 
     private getFloatingFilterInstance(): Promise<IFloatingFilterComp> {
@@ -186,21 +188,23 @@ export class FloatingFilterWrapper extends Component {
 
         if (typeof colDef.filter === 'string') {
             // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
+            defaultFloatingFilterType = FloatingFilterWrapper2.filterToFloatingFilterNames[colDef.filter];
         } else if (colDef.filter === true) {
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
 
+        const filterParams = this.filterManager.createFilterParams(this.column, this.column.getColDef());
+        const finalFilterParams: IFilterParams = this.userComponentFactory.createFinalParams(colDef, 'filter', filterParams);
+
         const params: IFloatingFilterParams = {
             api: this.gridApi,
             column: this.column,
+            filterParams: finalFilterParams,
             currentParentModel: this.currentParentModel.bind(this),
-            parentFilterInstance: null,
+            parentFilterInstance: this.parentFilterInstance.bind(this),
             onFloatingFilterChanged: this.onFloatingFilterChanged.bind(this),
             suppressFilterButton: false // This one might be overridden from the colDef
         };
-
-        const filterParams: any;
 
         // this is unusual - we need a params value OUTSIDE the component the params are for.
         // the params are for the floating filter component, but this property is actually for the wrapper.
@@ -214,11 +218,6 @@ export class FloatingFilterWrapper extends Component {
             const getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
 
             if (getModelAsStringExists) {
-                const rawModelFn = params.currentParentModel;
-                params.currentParentModel = () => {
-                    const parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI');
-                    return parentPromise.resolveNow(null, parent => parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null) as any;
-                };
                 const compInstance = this.userComponentFactory.createUserComponentFromConcreteClass<any, IFloatingFilterComp>(
                     ReadModelAsStringFloatingFilterComp,
                     params
@@ -250,56 +249,20 @@ export class FloatingFilterWrapper extends Component {
 
     private currentParentModel(): any {
         const filterPromise = this.filterManager.getFilterComponent(this.column, 'NO_UI');
-        const filterModel: CombinedFilter<any> | any = filterPromise.resolveNow(null, (filter: any) =>
-            (filter.getNullableModel) ?
-                filter.getNullableModel() :
-                filter.getModel()
-        );
-        return (filterModel && (filterModel as CombinedFilter<any>).operator != null) ?
-            (filterModel as CombinedFilter<any>).condition1
-            : filterModel as any;
+        return filterPromise.resolveNow(null, filter => filter.getModel() );
     }
 
-    private onFloatingFilterChanged(change: any): boolean {
-        let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
-        const modelChanged: Promise<boolean> = new Promise((resolve) => {
-            captureModelChangedResolveFunc = resolve;
-        });
-        const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI') as any;
-        filterComponentPromise.then(filterComponent => {
-            if (filterComponent.onFloatingFilterChanged) {
-                //If going through this branch of code the user MUST
-                //be passing an object of type change that contains
-                //a model property inside and some other stuff
-                const result: boolean = filterComponent.onFloatingFilterChanged(change as any);
-                captureModelChangedResolveFunc(result);
-            } else {
-                //If going through this branch of code the user MUST
-                //be passing the plain model and delegating to ag-Grid
-                //the responsibility to set the parent model and refresh
-                //the filters
-                filterComponent.setModel(change as any);
-                this.filterManager.onFilterChanged();
-                captureModelChangedResolveFunc(true);
-            }
-        });
-        return modelChanged.resolveNow(true, changed => changed);
-    }
-
-    private onParentModelChanged(parentModel: any | CombinedFilter<any>): void {
+    private onParentModelChanged(model: any): void {
         if (!this.floatingFilterCompPromise) { return; }
 
-        let combinedFilter: CombinedFilter<any>;
-        let mainModel: any = null;
-        if (parentModel && (parentModel as CombinedFilter<any>).operator) {
-            combinedFilter = (parentModel as CombinedFilter<any>);
-            mainModel = combinedFilter.condition1;
-        } else {
-            mainModel = parentModel;
-        }
-
         this.floatingFilterCompPromise.then(floatingFilterComp => {
-            floatingFilterComp.onParentModelChanged(mainModel, combinedFilter);
+            floatingFilterComp.onParentModelChanged(model);
         });
+    }
+
+    private onFloatingFilterChanged(): void {
+        console.warn('ag-Grid: since version 21.x, how floating filters are implemented has changed. ' +
+            'Instead of calling params.onFloatingFilterChanged(), get a reference to the main filter via ' +
+            'params.parentFilterInstance() and then set a value on the parent filter directly.')
     }
 }

@@ -87,7 +87,6 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     private simpleFilterParams: IAbstractSimpleFilterParams;
 
     protected abstract getDefaultFilterOptions(): string[];
-    protected abstract getDefaultFilterOption(): string;
 
     protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:IAbstractSimpleModel): boolean;
     protected abstract createValueTemplate(position: FilterPosition): string;
@@ -186,7 +185,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
             this.eJoinOperatorOr.checked = false;
 
             this.eType1.value = simpleModel.type;
-            this.eType2.value = this.getDefaultFilterOption();
+            this.eType2.value = this.optionsFactory.getDefaultOption();
 
             this.setConditionIntoUi(<M>simpleModel, FilterPosition.One);
             this.setConditionIntoUi(null, FilterPosition.Two);
@@ -224,7 +223,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
         this.simpleFilterParams = params;
 
         this.optionsFactory = new OptionsFactory();
-        this.optionsFactory.init(params, this.getDefaultFilterOption());
+        this.optionsFactory.init(params, this.getDefaultFilterOptions());
 
         this.allowTwoConditions = !params.suppressAndOrCondition;
 
@@ -233,15 +232,14 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     }
 
     private putOptionsIntoDropdown(): void {
-        const filterOptions = this.simpleFilterParams.filterOptions ?
-            this.simpleFilterParams.filterOptions : this.getDefaultFilterOptions();
+        const filterOptions = this.optionsFactory.getFilterOptions();
 
         filterOptions.forEach( option => {
             const createOption = ()=> {
                 const key = (typeof option === 'string') ? option : option.displayKey;
                 const localName = this.translate(key);
 
-                const eOption = document.createElement("option");
+                const eOption = document.createElement(`option`);
                 eOption.text = localName;
                 eOption.value = key;
 
@@ -303,7 +301,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     protected resetUiToDefaults(): void {
         this.eJoinOperatorAnd.checked = true;
 
-        const defaultOption = this.getDefaultFilterOption();
+        const defaultOption = this.optionsFactory.getDefaultOption();
         this.eType1.value = defaultOption;
         this.eType2.value = defaultOption;
     }

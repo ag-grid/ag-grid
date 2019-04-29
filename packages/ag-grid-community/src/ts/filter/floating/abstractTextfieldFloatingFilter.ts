@@ -4,15 +4,17 @@ import { Constants } from "../../constants";
 import { CombinedFilter } from "../provided/abstractFilter";
 import { _ } from "../../utils";
 import { BaseFloatingFilterChange, IFloatingFilter, IFloatingFilterParams } from "./floatingFilter";
-import {FilterModel} from "../../interfaces/iFilter";
+import {FilterModel, IFilterComp} from "../../interfaces/iFilter";
+import {AbstractProvidedFilter} from "../provided/abstractProvidedFilter";
 
 /** Floating Filter that renders into a single text field. Used by Text, Number, ReadModelAsString and Set floating filters. */
-export abstract class AbstractTextfieldFloatingFilterComp<M extends FilterModel, P extends IFloatingFilterParams<M, BaseFloatingFilterChange>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange, P> {
+export abstract class AbstractTextfieldFloatingFilterComp<M extends FilterModel, P extends IFloatingFilterParams> extends Component implements IFloatingFilter {
 
     @RefSelector('eColumnFloatingFilter')
     protected eColumnFloatingFilter: HTMLInputElement;
 
-    onFloatingFilterChanged: (change: BaseFloatingFilterChange) => boolean;
+    private floatingFilterParams: P;
+
     currentParentModel: () => M;
     lastKnownModel: M = null;
 
@@ -26,7 +28,7 @@ export abstract class AbstractTextfieldFloatingFilterComp<M extends FilterModel,
     protected abstract parseAsText(model: M): string;
 
     public init(params: P): void {
-        this.onFloatingFilterChanged = params.onFloatingFilterChanged;
+        this.floatingFilterParams = params;
         this.currentParentModel = params.currentParentModel;
         const debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
         const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
@@ -68,6 +70,21 @@ export abstract class AbstractTextfieldFloatingFilterComp<M extends FilterModel,
     }
 
     syncUpWithParentFilter(e: KeyboardEvent): void {
+
+        const model = this.asParentModel();
+        const enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
+
+        this.floatingFilterParams.parentFilterInstance( filterInstance => {
+            if (filterInstance) {
+                const providedFilter = <AbstractProvidedFilter> filterInstance;
+                providedFilter.onFloatingFilterChanged({
+                    model: model,
+                    apply: enterKeyPressed
+                })
+            }
+        });
+
+/*
         const model = this.asParentModel();
         if (this.equalModels(this.lastKnownModel, model)) { return; }
 
@@ -87,6 +104,7 @@ export abstract class AbstractTextfieldFloatingFilterComp<M extends FilterModel,
         if (modelUpdated) {
             this.lastKnownModel = model;
         }
+*/
     }
 
     equalModels(left: any, right: any): boolean {

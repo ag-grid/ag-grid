@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterParams } from "../../interfaces/iFilter";
+import {FilterModel, IDoesFilterPassParams, IFilterParams} from "../../interfaces/iFilter";
 import { QuerySelector } from "../../widgets/componentAnnotations";
 import { AbstractFilter, CombinedFilter, FilterConditionType } from "./abstractFilter";
 import { _ } from "../../utils";
@@ -34,7 +34,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class AbstractComparableFilter<T, P extends IComparableFilterParams, M> extends AbstractFilter<P, M> {
+export abstract class AbstractComparableFilter<T, P extends IComparableFilterParams, M extends FilterModel> extends AbstractFilter<P, M> {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -106,7 +106,7 @@ export abstract class AbstractComparableFilter<T, P extends IComparableFilterPar
         this.filterParams = params;
 
         this.optionsFactory = new OptionsFactory();
-        this.optionsFactory.init(params, this.getDefaultFilterOption());
+        this.optionsFactory.init(params, this.getDefaultFilterOptions());
 
         this.selectedOption = this.optionsFactory.getDefaultOption();
         this.selectedOptionCondition = this.optionsFactory.getDefaultOption();

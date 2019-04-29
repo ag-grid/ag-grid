@@ -2,7 +2,7 @@ import { AbstractTextfieldFloatingFilterComp } from "../../floating/abstractText
 import { TextFilterModel } from "./textFilter";
 import { BaseFloatingFilterChange, IFloatingFilterParams } from "../../floating/floatingFilter";
 
-export class TextFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<TextFilterModel, IFloatingFilterParams<TextFilterModel, BaseFloatingFilterChange<TextFilterModel>>> {
+export class TextFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<TextFilterModel, IFloatingFilterParams> {
 
     asFloatingFilterText(parentModel: TextFilterModel): string {
         if (!parentModel) { return ''; }

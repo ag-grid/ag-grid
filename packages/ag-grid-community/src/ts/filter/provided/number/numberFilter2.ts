@@ -4,14 +4,11 @@ import {
     IAbstractSimpleFilterParams,
     IAbstractSimpleModel
 } from "../abstractSimpleFilter";
-import {FilterModel} from "../../../interfaces/iFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {AbstractComparableFilter} from "../abstractComparableFilter";
 import {_} from "../../../utils";
 import {AbstractScalerFilter2} from "../abstractScalerFilter2";
 import {Comparator} from "../abstractFilter";
-import {TextFilterModel2} from "../text/textFilter2";
-import {NumberFilter} from "./numberFilter";
 
 export interface NumberFilter2Model extends IAbstractSimpleModel {
     filter?: number;
@@ -24,6 +21,11 @@ export interface INumberFilterParams2 extends IAbstractSimpleFilterParams {
 export class NumberFilter2 extends AbstractScalerFilter2<NumberFilter2Model, number> {
 
     private static readonly FILTER_TYPE = 'number';
+
+    public static DEFAULT_FILTER_OPTIONS = [AbstractComparableFilter.EQUALS, AbstractComparableFilter.NOT_EQUAL,
+        AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.LESS_THAN_OR_EQUAL,
+        AbstractComparableFilter.GREATER_THAN, AbstractComparableFilter.GREATER_THAN_OR_EQUAL,
+        AbstractComparableFilter.IN_RANGE];
 
     @RefSelector('eValueFrom1')
     private eValueFrom1: HTMLInputElement;
@@ -62,7 +64,7 @@ export class NumberFilter2 extends AbstractScalerFilter2<NumberFilter2Model, num
     }
 
     protected setFloatingFilter(model: NumberFilter2Model): void {
-        if (model.filter == null) {
+        if (!model || model.filter == null) {
             this.eValueFrom1.value = null;
         } else {
             this.eValueFrom1.value = '' + model.filter;
@@ -95,14 +97,8 @@ export class NumberFilter2 extends AbstractScalerFilter2<NumberFilter2Model, num
         this.eValueFrom1.focus();
     }
 
-    protected modelFromFloatingFilter(from: string): FilterModel {
-        return null;
-    }
-
     protected getDefaultFilterOptions(): string[] {
-        return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.LESS_THAN,
-            AbstractComparableFilter.LESS_THAN_OR_EQUAL, AbstractComparableFilter.GREATER_THAN,
-            AbstractComparableFilter.GREATER_THAN_OR_EQUAL, AbstractComparableFilter.IN_RANGE];
+        return NumberFilter2.DEFAULT_FILTER_OPTIONS;
     }
 
     protected createValueTemplate(position: FilterPosition): string {

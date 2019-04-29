@@ -1,25 +1,37 @@
-import { AbstractTextfieldFloatingFilterComp } from "./abstractTextfieldFloatingFilter";
-import { BaseFloatingFilterChange, IFloatingFilterParams } from "./floatingFilter";
+import {IFloatingFilterComp, IFloatingFilterParams} from "./floatingFilter";
+import {Component} from "../../widgets/component";
+import {SetFilterModel} from "../../../../../ag-grid-enterprise/src/setFilter/setFilterModel";
+import {RefSelector} from "../../widgets/componentAnnotations";
 
-export class ReadModelAsStringFloatingFilterComp extends AbstractTextfieldFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>> {
-    init(params: IFloatingFilterParams<string, BaseFloatingFilterChange<string>>): void {
-        super.init(params);
-        this.eColumnFloatingFilter.disabled = true;
+export class ReadModelAsStringFloatingFilterComp extends Component implements IFloatingFilterComp {
+
+    @RefSelector('eFloatingFilterText')
+    private eFloatingFilterText: HTMLInputElement;
+
+    private params: IFloatingFilterParams;
+
+    constructor() {
+        super(`<div class="ag-input-text-wrapper"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
     }
 
-    onParentModelChanged(parentModel: any): void {
-        this.eColumnFloatingFilter.value = this.asFloatingFilterText(this.currentParentModel());
+    public init(params: IFloatingFilterParams): void {
+        this.params = params;
+        this.eFloatingFilterText.disabled = true;
     }
 
-    asFloatingFilterText(parentModel: string): string {
-        return parentModel;
-    }
+    public onParentModelChanged(parentModel: SetFilterModel): void {
+        if (!parentModel) {
+            this.eFloatingFilterText.value = '';
+            return;
+        }
 
-    parseAsText(model: string): string {
-        return model;
-    }
-
-    asParentModel(): string {
-        return null;
+        this.params.parentFilterInstance( filterInstance => {
+            // getModelAsString should be present, as we check this
+            // in floatingFilterWrapper
+            if (filterInstance.getModelAsString) {
+                const modelAsString = filterInstance.getModelAsString(parentModel);
+                this.eFloatingFilterText.value = modelAsString;
+            }
+        });
     }
 }

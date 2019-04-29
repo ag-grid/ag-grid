@@ -44,13 +44,12 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     protected abstract updateUiVisibility(): void;
-    protected abstract modelFromFloatingFilter(from: string): FilterModel;
 
     protected abstract createBodyTemplate(): string;
     protected abstract resetUiToDefaults(): void;
 
     protected abstract setModelIntoUi(model: FilterModel): void;
-    protected abstract getModelFromUi(): FilterModel;
+    protected abstract getModelFromUi(): FilterModel | null;
     protected abstract areModelsEqual(a: FilterModel, b: FilterModel): boolean;
 
     // should be abstract
@@ -143,16 +142,6 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         if (newModelDifferent) {
             this.abstractProvidedFilterParams.filterChangedCallback();
         }
-    }
-
-    public floatingFilter(from: string): void {
-        if (from !== '') {
-            const model: FilterModel = this.modelFromFloatingFilter(from);
-            this.setModel(model);
-        } else {
-            // this.resetState();
-        }
-        this.onUiChangedListener();
     }
 
     public onNewRowsLoaded() {

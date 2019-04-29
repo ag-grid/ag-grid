@@ -71,10 +71,6 @@ export abstract class AbstractScalerFilter2<M extends IAbstractSimpleModel, T> e
         return actualComparator(filterValue, gridValue);
     }
 
-    public getDefaultFilterOption(): string {
-        return AbstractComparableFilter.EQUALS;
-    }
-
     private canNullsPassFilter(type: string): boolean {
         const reducedType: string =
             type.indexOf('greater') > -1 ? 'greaterThan' :

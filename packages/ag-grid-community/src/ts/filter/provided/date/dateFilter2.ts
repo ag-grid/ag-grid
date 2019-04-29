@@ -4,17 +4,16 @@ import {
     IAbstractSimpleFilterParams,
     IAbstractSimpleModel
 } from "../abstractSimpleFilter";
-import {FilterModel} from "../../../interfaces/iFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {AbstractComparableFilter} from "../abstractComparableFilter";
 import {_} from "../../../utils";
 import {AbstractScalerFilter2} from "../abstractScalerFilter2";
 import {Comparator} from "../abstractFilter";
-import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
+import {IDateParams} from "../../../rendering/dateComponent";
 import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {IDateComparatorFunc} from "./dateFilter";
-import {NumberFilter2Model} from "../number/numberFilter2";
+import {DateCompWrapper} from "./dateCompWrapper";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert
@@ -30,71 +29,12 @@ export interface IDateFilterParams2 extends IAbstractSimpleFilterParams {
     browserDatePicker?: boolean;
 }
 
-// removes the complexity of async component creation from the date panel. while the component does not
-// exist, the wrapper keeps the value that was set and returns this value when queried. when the component
-// is finally created, it gets the temp value if set.
-class DateCompWrapper {
-
-    private dateComp: IDateComp;
-
-    private tempValue: Date;
-
-    private alive = true;
-
-    constructor(userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
-
-        userComponentFactory.newDateComponent(dateComponentParams).then (dateComp => {
-
-            // because async, check the filter still exists after component comes back
-            if (!this.alive) {
-                if (dateComp.destroy) {
-                    dateComp.destroy();
-                }
-                return;
-            }
-
-            this.dateComp = dateComp;
-            eParent.appendChild(dateComp.getGui());
-
-            if (dateComp.afterGuiAttached) {
-                dateComp.afterGuiAttached();
-            }
-
-            if (this.tempValue) {
-                dateComp.setDate(this.tempValue);
-            }
-        });
-
-    }
-
-    public destroy(): void {
-        this.alive = false;
-        if (this.dateComp && this.dateComp.destroy) {
-            this.dateComp.destroy();
-        }
-    }
-
-    public getDate(): Date {
-        if (this.dateComp) {
-            return this.dateComp.getDate();
-        } else {
-            return this.tempValue;
-        }
-    }
-
-    public setDate(value: Date): void {
-        if (this.dateComp) {
-            this.dateComp.setDate(value);
-        } else {
-            this.tempValue = value;
-        }
-    }
-
-}
-
 export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
 
     private static readonly FILTER_TYPE = 'date';
+
+    public static DEFAULT_FILTER_OPTIONS = [AbstractComparableFilter.EQUALS, AbstractComparableFilter.GREATER_THAN,
+        AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.IN_RANGE];
 
     @RefSelector('ePanelFrom1')
     private ePanelFrom1: HTMLElement;
@@ -132,7 +72,7 @@ export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
     }
 
     protected setFloatingFilter(model: DateFilter2Model): void {
-        if (model.dateFrom == null) {
+        if (!model || model.dateFrom == null) {
             this.dateCompFrom1.setDate(null);
         } else {
             const dateFrom = _.parseYyyyMmDdToDate(model.dateFrom, "-");
@@ -206,13 +146,8 @@ export class DateFilter2 extends AbstractScalerFilter2<DateFilter2Model, Date> {
         });
     }
 
-    protected modelFromFloatingFilter(from: string): FilterModel {
-        return null;
-    }
-
     protected getDefaultFilterOptions(): string[] {
-        return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.GREATER_THAN,
-            AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.IN_RANGE];
+        return DateFilter2.DEFAULT_FILTER_OPTIONS;
     }
 
     protected createValueTemplate(position: FilterPosition): string {
