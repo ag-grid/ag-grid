@@ -62,9 +62,9 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
     private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
 
-    private domainX: string[] = [];
-    private domainY: number[] = [];
+    private xData: string[] = [];
     private yData: number[][] = [];
+    private domainY: number[] = [];
 
     /**
      * Used to get the position of bars within each group.
@@ -84,6 +84,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set xField(value: Extract<keyof D, string> | undefined) {
         if (this._xField !== value) {
             this._xField = value;
+            this.xData = [];
             this.scheduleData();
         }
     }
@@ -230,7 +231,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         //   yField3: 20
         // }]
         //
-        const xData: string[] = this.domainX = data.map(datum => datum[xField]);
+        const xData: string[] = this.xData = data.map(datum => datum[xField]);
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
             yFields.forEach(field => {
@@ -290,7 +291,6 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             // console.warn('Zero or infinite y-range.');
         }
 
-        this.domainX = xData;
         this.domainY = [yMin, yMax];
 
         const chart = this.chart;
@@ -302,7 +302,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
 
     getDomainX(): string[] {
-        return this.domainX;
+        return this.xData;
     }
 
     getDomainY(): number[] {
@@ -332,7 +332,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const labelColor = this.labelColor;
         const labelPadding = this.labelPadding;
         const data = this.data;
-        const xData = this.domainX;
+        const xData = this.xData;
         const yData = this.yData;
 
         groupScale.range = [0, xScale.bandwidth!];
