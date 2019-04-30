@@ -10,7 +10,7 @@ import {RefSelector} from "../../../widgets/componentAnnotations";
 import {AbstractSimpleFloatingFilter} from "../../floating/abstractTextInputFloatingFilter";
 import {AbstractSimpleFilter, IAbstractSimpleModel} from "../abstractSimpleFilter";
 
-export class DateFloatingFilterComp extends AbstractSimpleFloatingFilter {
+export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 

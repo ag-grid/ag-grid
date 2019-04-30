@@ -20,7 +20,7 @@ import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { GridOptions } from "../../entities/gridOptions";
 import { _ } from "../../utils";
 import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
-import { DateFloatingFilterComp } from "../../filter/provided/date/dateFloatingFilter";
+import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
 import { TextFilter } from "../../filter/provided/text/textFilter";
 import {NumberFloatingFilter} from "../../filter/provided/number/numberFloatingFilter";
 import {TextFloatingFilter} from "../../filter/provided/text/textFloatingFilter";
@@ -70,7 +70,7 @@ export class UserComponentRegistry {
         //floating filters
         agTextColumnFloatingFilter: TextFloatingFilter,
         agNumberColumnFloatingFilter: NumberFloatingFilter,
-        agDateColumnFloatingFilter: DateFloatingFilterComp,
+        agDateColumnFloatingFilter: DateFloatingFilter,
 
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
