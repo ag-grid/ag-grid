@@ -4,6 +4,8 @@
 import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 
+/** Provides sync access to async component. Date component can be lazy created - this class encapsulates
+ * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
 
     private dateComp: IDateComp;

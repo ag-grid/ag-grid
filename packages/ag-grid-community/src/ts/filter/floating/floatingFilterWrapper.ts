@@ -18,7 +18,7 @@ import { UserComponentFactory } from "../../components/framework/userComponentFa
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { FilterManager } from "./../filterManager";
-import { ReadModelAsStringFloatingFilterComp } from "../floating/readModalAsStringFloatingFilter";
+import { ReadOnlyFloatingFilter } from "./provided/readOnlyFloatingFilter";
 
 export class FloatingFilterWrapper extends Component {
 
@@ -219,7 +219,7 @@ export class FloatingFilterWrapper extends Component {
 
             if (getModelAsStringExists) {
                 const compInstance = this.userComponentFactory.createUserComponentFromConcreteClass<any, IFloatingFilterComp>(
-                    ReadModelAsStringFloatingFilterComp,
+                    ReadOnlyFloatingFilter,
                     params
                 );
                 promise = Promise.resolve(compInstance);

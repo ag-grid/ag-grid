@@ -1,8 +1,11 @@
-import {IFloatingFilterComp, IFloatingFilterParams} from "./floatingFilter";
-import {Component} from "../../widgets/component";
-import {RefSelector} from "../../widgets/componentAnnotations";
+import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
+import {Component} from "../../../widgets/component";
+import {RefSelector} from "../../../widgets/componentAnnotations";
 
-export class ReadModelAsStringFloatingFilterComp extends Component implements IFloatingFilterComp {
+// optional floating filter for user provided filters - instead of providing a floating filter,
+// they can provide a getModelAsString() method on the filter instead. this class just displays
+// the string returned from getModelAsString()
+export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
 
     @RefSelector('eFloatingFilterText')
     private eFloatingFilterText: HTMLInputElement;

@@ -1,5 +1,5 @@
 import {TextFilter, TextFilterModel} from "./textFilter";
-import {AbstractTextInputFloatingFilter} from "../../floating/abstractTextInputFloatingFilter";
+import {AbstractTextInputFloatingFilter} from "../../floating/provided/abstractTextInputFloatingFilter";
 
 export class TextFloatingFilter extends AbstractTextInputFloatingFilter {
 

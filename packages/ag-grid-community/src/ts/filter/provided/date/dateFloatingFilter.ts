@@ -7,8 +7,8 @@ import {IFloatingFilterParams} from "../../floating/floatingFilter";
 import {AbstractProvidedFilter} from "../abstractProvidedFilter";
 import {DateCompWrapper} from "./dateCompWrapper";
 import {RefSelector} from "../../../widgets/componentAnnotations";
-import {AbstractSimpleFloatingFilter} from "../../floating/abstractTextInputFloatingFilter";
 import {AbstractSimpleFilter, IAbstractSimpleModel} from "../abstractSimpleFilter";
+import {AbstractSimpleFloatingFilter} from "../../floating/provided/abstractSimpleFloatingFilter";
 
 export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 

@@ -29,9 +29,9 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
 
     private static readonly FILTER_TYPE = 'text';
 
-    public static DEFAULT_FILTER_OPTIONS = [AbstractSimpleFilter.EQUALS, AbstractSimpleFilter.NOT_EQUAL,
-        AbstractSimpleFilter.STARTS_WITH, AbstractSimpleFilter.ENDS_WITH, AbstractSimpleFilter.CONTAINS,
-        AbstractSimpleFilter.NOT_CONTAINS];
+    public static DEFAULT_FILTER_OPTIONS = [AbstractSimpleFilter.CONTAINS, AbstractSimpleFilter.NOT_CONTAINS,
+        AbstractSimpleFilter.EQUALS, AbstractSimpleFilter.NOT_EQUAL,
+        AbstractSimpleFilter.STARTS_WITH, AbstractSimpleFilter.ENDS_WITH];
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;

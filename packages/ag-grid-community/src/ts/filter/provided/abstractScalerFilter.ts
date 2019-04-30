@@ -1,34 +1,37 @@
 import {AbstractSimpleFilter, IAbstractSimpleFilterParams, IAbstractSimpleModel} from "./abstractSimpleFilter";
-import {Comparator} from "./abstractFilter";
 import {IDoesFilterPassParams} from "../../interfaces/iFilter";
 
-export interface NullComparator2 {
+export interface NullComparator {
     equals?: boolean;
     lessThan?: boolean;
     greaterThan?: boolean;
 }
 
-export interface IScalarFilterParams2 extends IAbstractSimpleFilterParams {
+export interface IScalarFilterParams extends IAbstractSimpleFilterParams {
     inRangeInclusive?: boolean;
-    nullComparator?: NullComparator2;
+    nullComparator?: NullComparator;
+}
+
+export interface Comparator<T> {
+    (left: T, right: T): number;
 }
 
 export abstract class AbstractScalerFilter<M extends IAbstractSimpleModel, T> extends AbstractSimpleFilter<M> {
 
-    static readonly DEFAULT_NULL_COMPARATOR: NullComparator2 = {
+    static readonly DEFAULT_NULL_COMPARATOR: NullComparator = {
         equals: false,
         lessThan: false,
         greaterThan: false
     };
 
-    private scalarFilterParams: IScalarFilterParams2;
+    private scalarFilterParams: IScalarFilterParams;
 
     protected abstract comparator(): Comparator<T>;
 
     // because the date and number filter models have different attribute names, we have to map
     protected abstract mapRangeFromModel(filterModel: IAbstractSimpleModel): {from: T, to: T};
 
-    protected setParams(params: IScalarFilterParams2): void {
+    protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);
         this.scalarFilterParams = params;
     }

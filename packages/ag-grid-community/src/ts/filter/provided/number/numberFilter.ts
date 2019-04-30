@@ -1,5 +1,4 @@
 import {RefSelector} from "../../../widgets/componentAnnotations";
-import {Comparator} from "../abstractFilter";
 import {_} from "../../../utils";
 
 import {
@@ -8,7 +7,7 @@ import {
     IAbstractSimpleFilterParams,
     IAbstractSimpleModel
 } from "../abstractSimpleFilter";
-import {AbstractScalerFilter} from "../abstractScalerFilter";
+import {AbstractScalerFilter, Comparator} from "../abstractScalerFilter";
 
 export interface NumberFilterModel extends IAbstractSimpleModel {
     filter?: number;

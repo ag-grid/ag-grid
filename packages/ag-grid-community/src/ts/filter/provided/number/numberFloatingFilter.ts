@@ -1,7 +1,7 @@
 import {NumberFilter, NumberFilterModel} from "./numberFilter";
 import {AbstractSimpleFilter} from "../abstractSimpleFilter";
 import {_} from "../../../utils";
-import {AbstractTextInputFloatingFilter} from "../../floating/abstractTextInputFloatingFilter";
+import {AbstractTextInputFloatingFilter} from "../../floating/provided/abstractTextInputFloatingFilter";
 
 export class NumberFloatingFilter extends AbstractTextInputFloatingFilter {
 

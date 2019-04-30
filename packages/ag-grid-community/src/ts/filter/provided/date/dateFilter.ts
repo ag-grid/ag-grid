@@ -1,6 +1,5 @@
 import {IDateParams} from "../../../rendering/dateComponent";
 import {RefSelector} from "../../../widgets/componentAnnotations";
-import {Comparator} from "../abstractFilter";
 import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {_} from "../../../utils";
@@ -12,7 +11,7 @@ import {
     IAbstractSimpleModel
 } from "../abstractSimpleFilter";
 import {IDateComparatorFunc} from "./dateFilter";
-import {AbstractScalerFilter} from "../abstractScalerFilter";
+import {AbstractScalerFilter, Comparator} from "../abstractScalerFilter";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert

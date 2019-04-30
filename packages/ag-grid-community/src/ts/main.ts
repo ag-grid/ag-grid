@@ -86,7 +86,6 @@ export { RowNode } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
-export { AbstractFilter } from "./filter/provided/abstractFilter";
 export { AbstractProvidedFilter } from "./filter/provided/abstractProvidedFilter";
 export { DateFilter, DateFilterModel } from "./filter/provided/date/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
@@ -291,7 +290,6 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IFilter, IFilterComp } from "./interfaces/iFilter";
-export { AbstractTextfieldFloatingFilterComp } from "./filter/floating/abstractTextfieldFloatingFilter";
 export { BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams } from "./headerRendering/header/headerComp";

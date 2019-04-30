@@ -1,6 +1,7 @@
 import {IFilterOptionDef, IFilterParams} from "../../interfaces/iFilter";
-import {IScalarFilterParams2} from "./abstractScalerFilter";
+import {IScalarFilterParams} from "./abstractScalerFilter";
 
+/* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
 
     protected customFilterOptions: {[name: string]: IFilterOptionDef} = {};
@@ -9,7 +10,7 @@ export class OptionsFactory {
 
     protected defaultOption: string;
 
-    public init(params: IScalarFilterParams2, defaultOptions: string[]): void {
+    public init(params: IScalarFilterParams, defaultOptions: string[]): void {
         this.filterOptions = params.filterOptions ? params.filterOptions : defaultOptions;
         this.mapCustomOptions();
         this.selectDefaultItem(params);

@@ -1,10 +1,10 @@
-import { Component } from "../../widgets/component";
-import { FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import {QuerySelector, RefSelector} from "../../widgets/componentAnnotations";
-import { Autowired, PostConstruct } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import {BaseFloatingFilterChange, FloatingFilterChange} from "../floating/floatingFilter";
-import { _ } from "../../utils";
+import {Component} from "../../widgets/component";
+import {FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import {RefSelector} from "../../widgets/componentAnnotations";
+import {Autowired, PostConstruct} from "../../context/context";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {BaseFloatingFilterChange} from "../floating/floatingFilter";
+import {_} from "../../utils";
 
 export interface IAbstractProvidedFilterParams extends IFilterParams {
     debounceMs?: number;

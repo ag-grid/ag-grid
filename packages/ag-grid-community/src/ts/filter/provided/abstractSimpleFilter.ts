@@ -18,7 +18,7 @@ export interface ICombinedSimpleModel<M extends IAbstractSimpleModel> extends Fi
     condition2: M;
 }
 
-export enum FilterPosition {One, Two};
+export enum FilterPosition {One, Two}
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     loadingOoo:'Loading...',
@@ -92,7 +92,6 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     protected abstract createValueTemplate(position: FilterPosition): string;
     protected abstract isFilterUiComplete(position: FilterPosition): boolean;
     protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
-    // needed for creating filter model
     protected abstract getFilterType(): string;
 
     protected abstract createCondition(position: FilterPosition): M;
