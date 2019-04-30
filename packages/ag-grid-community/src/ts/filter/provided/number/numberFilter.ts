@@ -1,8 +1,6 @@
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {Comparator} from "../abstractFilter";
 import {_} from "../../../utils";
-import {AbstractComparableFilter} from "../abstractComparableFilter";
-
 
 import {
     AbstractSimpleFilter,
@@ -10,7 +8,7 @@ import {
     IAbstractSimpleFilterParams,
     IAbstractSimpleModel
 } from "../abstractSimpleFilter";
-import {AbstractScalerFilter2} from "../abstractScalerFilter2";
+import {AbstractScalerFilter} from "../abstractScalerFilter";
 
 export interface NumberFilterModel extends IAbstractSimpleModel {
     filter?: number;
@@ -20,14 +18,14 @@ export interface NumberFilterModel extends IAbstractSimpleModel {
 export interface INumberFilterParams extends IAbstractSimpleFilterParams {
 }
 
-export class NumberFilter extends AbstractScalerFilter2<NumberFilterModel, number> {
+export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number> {
 
     private static readonly FILTER_TYPE = 'number';
 
-    public static DEFAULT_FILTER_OPTIONS = [AbstractComparableFilter.EQUALS, AbstractComparableFilter.NOT_EQUAL,
-        AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.LESS_THAN_OR_EQUAL,
-        AbstractComparableFilter.GREATER_THAN, AbstractComparableFilter.GREATER_THAN_OR_EQUAL,
-        AbstractComparableFilter.IN_RANGE];
+    public static DEFAULT_FILTER_OPTIONS = [AbstractScalerFilter.EQUALS, AbstractScalerFilter.NOT_EQUAL,
+        AbstractScalerFilter.LESS_THAN, AbstractScalerFilter.LESS_THAN_OR_EQUAL,
+        AbstractScalerFilter.GREATER_THAN, AbstractScalerFilter.GREATER_THAN_OR_EQUAL,
+        AbstractScalerFilter.IN_RANGE];
 
     @RefSelector('eValueFrom1')
     private eValueFrom1: HTMLInputElement;

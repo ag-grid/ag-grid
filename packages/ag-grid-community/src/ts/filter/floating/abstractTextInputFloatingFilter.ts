@@ -9,8 +9,7 @@ import {AbstractProvidedFilter} from "../provided/abstractProvidedFilter";
 import {NumberFilterModel} from "../provided/number/numberFilter";
 import {PostConstruct} from "../../context/context";
 import {OptionsFactory} from "../provided/optionsFactory";
-import {IComparableFilterParams} from "../provided/abstractComparableFilter";
-import {TextFilter, TextFilterModel} from "../provided/text/textFilter";
+import {IScalarFilterParams2} from "../provided/abstractScalerFilter";
 
 export abstract class AbstractSimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
@@ -59,7 +58,7 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
 
     public init(params: IFloatingFilterParams): void {
         const optionsFactory = new OptionsFactory();
-        optionsFactory.init(params.filterParams as IComparableFilterParams, this.getDefaultFilterOptions());
+        optionsFactory.init(params.filterParams as IScalarFilterParams2, this.getDefaultFilterOptions());
         this.lastType = optionsFactory.getDefaultOption();
 
         // const columnDef = (params.column.getDefinition() as any);

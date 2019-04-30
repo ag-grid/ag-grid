@@ -4,8 +4,6 @@ import {Comparator} from "../abstractFilter";
 import {Autowired} from "../../../context/context";
 import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
 import {_} from "../../../utils";
-import {AbstractComparableFilter} from "../abstractComparableFilter";
-import {AbstractScalerFilter2} from "../abstractScalerFilter2";
 import {DateCompWrapper} from "./dateCompWrapper";
 import {
     AbstractSimpleFilter,
@@ -14,6 +12,7 @@ import {
     IAbstractSimpleModel
 } from "../abstractSimpleFilter";
 import {IDateComparatorFunc} from "./dateFilter";
+import {AbstractScalerFilter} from "../abstractScalerFilter";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert
@@ -35,12 +34,12 @@ export interface IDateComparatorFunc {
 }
 
 
-export class DateFilter extends AbstractScalerFilter2<DateFilterModel, Date> {
+export class DateFilter extends AbstractScalerFilter<DateFilterModel, Date> {
 
     private static readonly FILTER_TYPE = 'date';
 
-    public static DEFAULT_FILTER_OPTIONS = [AbstractComparableFilter.EQUALS, AbstractComparableFilter.GREATER_THAN,
-        AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.IN_RANGE];
+    public static DEFAULT_FILTER_OPTIONS = [AbstractScalerFilter.EQUALS, AbstractScalerFilter.GREATER_THAN,
+        AbstractScalerFilter.LESS_THAN, AbstractScalerFilter.NOT_EQUAL, AbstractScalerFilter.IN_RANGE];
 
     @RefSelector('ePanelFrom1')
     private ePanelFrom1: HTMLElement;

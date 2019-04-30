@@ -1,5 +1,5 @@
 import {IFilterOptionDef, IFilterParams} from "../../interfaces/iFilter";
-import { IComparableFilterParams } from "./abstractComparableFilter";
+import {IScalarFilterParams2} from "./abstractScalerFilter";
 
 export class OptionsFactory {
 
@@ -9,7 +9,7 @@ export class OptionsFactory {
 
     protected defaultOption: string;
 
-    public init(params: IComparableFilterParams, defaultOptions: string[]): void {
+    public init(params: IScalarFilterParams2, defaultOptions: string[]): void {
         this.filterOptions = params.filterOptions ? params.filterOptions : defaultOptions;
         this.mapCustomOptions();
         this.selectDefaultItem(params);
