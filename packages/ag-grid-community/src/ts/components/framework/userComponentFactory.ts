@@ -155,8 +155,8 @@ export class UserComponentFactory {
             colDef, params, 'filter', defaultFilter, false, modifyParamsCallback);
     }
 
-    public newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp<any, any, any>> {
-        return this.createAndInitUserComponent<IFloatingFilterComp<any, any, any>>(
+    public newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
+        return this.createAndInitUserComponent<IFloatingFilterComp>(
             colDef, params, "floatingFilterComponent", defaultFloatingFilter, true);
     }
 

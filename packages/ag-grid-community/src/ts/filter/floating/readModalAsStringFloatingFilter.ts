@@ -1,6 +1,5 @@
 import {IFloatingFilterComp, IFloatingFilterParams} from "./floatingFilter";
 import {Component} from "../../widgets/component";
-import {SetFilterModel} from "../../../../../ag-grid-enterprise/src/setFilter/setFilterModel";
 import {RefSelector} from "../../widgets/componentAnnotations";
 
 export class ReadModelAsStringFloatingFilterComp extends Component implements IFloatingFilterComp {
@@ -19,7 +18,7 @@ export class ReadModelAsStringFloatingFilterComp extends Component implements IF
         this.eFloatingFilterText.disabled = true;
     }
 
-    public onParentModelChanged(parentModel: SetFilterModel): void {
+    public onParentModelChanged(parentModel: any): void {
         if (!parentModel) {
             this.eFloatingFilterText.value = '';
             return;

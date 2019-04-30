@@ -1,186 +1,118 @@
-import { FilterModel } from "../../../interfaces/iFilter";
-import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
-import { QuerySelector } from "../../../widgets/componentAnnotations";
-import { Comparator, FilterConditionType } from "../abstractFilter";
-import { Autowired } from "../../../context/context";
-import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { _ } from "../../../utils";
-import { AbstractScalerFilter } from "../abstractScalerFilter";
-import { AbstractComparableFilter, IComparableFilterParams } from "../abstractComparableFilter";
+import {IDateParams} from "../../../rendering/dateComponent";
+import {RefSelector} from "../../../widgets/componentAnnotations";
+import {Comparator} from "../abstractFilter";
+import {Autowired} from "../../../context/context";
+import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
+import {_} from "../../../utils";
+import {AbstractComparableFilter} from "../abstractComparableFilter";
+import {AbstractScalerFilter2} from "../abstractScalerFilter2";
+import {DateCompWrapper} from "./dateCompWrapper";
+import {
+    AbstractSimpleFilter,
+    FilterPosition,
+    IAbstractSimpleFilterParams,
+    IAbstractSimpleModel
+} from "../abstractSimpleFilter";
+import {IDateComparatorFunc} from "./dateFilter";
 
-export interface IDateFilterParams extends IComparableFilterParams {
+// the date filter model is a bit different, it takes strings, although the
+// filter actually works with dates. this is because a Date object won't convert
+// easily to JSON. so when the model is used for doing the filtering, it's converted
+// to Date objects.
+export interface DateFilterModel extends IAbstractSimpleModel {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export interface IDateFilterParams extends IAbstractSimpleFilterParams {
     comparator?: IDateComparatorFunc;
     browserDatePicker?: boolean;
 }
+
 
 export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 
-export interface DateFilterModel extends FilterModel {
-    dateFrom: string;
-    dateTo: string;
-    type: string;
-}
 
-export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, DateFilterModel> {
+export class DateFilter extends AbstractScalerFilter2<DateFilterModel, Date> {
 
-    private dateToComponent: IDateComp;
-    private dateFromComponent: IDateComp;
+    private static readonly FILTER_TYPE = 'date';
 
-    private dateToConditionComponent: IDateComp;
-    private dateFromConditionComponent: IDateComp;
+    public static DEFAULT_FILTER_OPTIONS = [AbstractComparableFilter.EQUALS, AbstractComparableFilter.GREATER_THAN,
+        AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.IN_RANGE];
+
+    @RefSelector('ePanelFrom1')
+    private ePanelFrom1: HTMLElement;
+    @RefSelector('ePanelFrom2')
+    private ePanelFrom2: HTMLElement;
+
+    @RefSelector('ePanelTo1')
+    private ePanelTo1: HTMLElement;
+    @RefSelector('ePanelTo2')
+    private ePanelTo2: HTMLElement;
+
+    private dateCompFrom1: DateCompWrapper;
+    private dateCompFrom2: DateCompWrapper;
+    private dateCompTo1: DateCompWrapper;
+    private dateCompTo2: DateCompWrapper;
 
     @Autowired('userComponentFactory')
     private userComponentFactory: UserComponentFactory;
 
-    @QuerySelector('#filterDateFromPanel')
-    private eDateFromPanel: HTMLElement;
+    private dateFilterParams: IDateFilterParams;
 
-    @QuerySelector('#filterDateFromConditionPanel')
-    private eDateFromConditionPanel: HTMLElement;
-
-    @QuerySelector('#filterDateToPanel')
-    private eDateToPanel: HTMLElement;
-
-    @QuerySelector('#filterDateToConditionPanel')
-    private eDateToConditionPanel: HTMLElement;
-
-    private dateFrom: Date;
-    private dateTo: Date;
-    private dateFromCondition: Date;
-    private dateToCondition: Date;
-
-    public modelFromFloatingFilter(from: string): DateFilterModel {
+    protected mapRangeFromModel(filterModel: DateFilterModel): {from: Date, to: Date} {
+        // unlike the other filters, we do two things here:
+        // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
+        //    are in different locations in Date and Number filter models)
+        // 2) convert the type (cos Date filter uses Dates, however model is 'string')
+        //
+        // NOTE: The conversion of string to date also removes the timezone - ie when user picks
+        //       a date form the UI, it will have timezone info in it. This is lost when creating
+        //       the model. Then when we recreate the date again here, it's without timezone.
         return {
-            dateFrom: from,
-            dateTo: this.getDateTo(),
-            type: this.selectedOption,
-            filterType: 'date'
+            from: _.parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
+            to: _.parseYyyyMmDdToDate(filterModel.dateTo, "-")
         };
     }
 
-    public getDefaultFilterOptions(): string[] {
-        return [AbstractComparableFilter.EQUALS, AbstractComparableFilter.GREATER_THAN,
-            AbstractComparableFilter.LESS_THAN, AbstractComparableFilter.NOT_EQUAL, AbstractComparableFilter.IN_RANGE];
-    }
-
-    public createValueTemplate(type:FilterConditionType): string {
-
-        const fromPanelId = type == FilterConditionType.MAIN ? "filterDateFromPanel" : "filterDateFromConditionPanel";
-        const toPanelId = type == FilterConditionType.MAIN ? "filterDateToPanel" : "filterDateToConditionPanel";
-
-        return `<div class="ag-filter-body">
-                    <div class="ag-filter-date-from" id="${fromPanelId}">
-                    </div>
-                    <div class="ag-filter-date-to" id="${toPanelId}">
-                    </div>
-                </div>`;
-    }
-
-    public initialiseFilterBodyUi(type:FilterConditionType): void {
-        super.initialiseFilterBodyUi(type);
-        this.createComponents(type);
-
-        if (type === FilterConditionType.MAIN) {
-            this.setDateFrom_date(this.dateFrom, FilterConditionType.MAIN);
-            this.setDateTo_date(this.dateTo, FilterConditionType.MAIN);
-            this.setFilterType(this.selectedOption, FilterConditionType.MAIN);
+    protected setFloatingFilter(model: DateFilterModel): void {
+        if (!model || model.dateFrom == null) {
+            this.dateCompFrom1.setDate(null);
         } else {
-            this.setDateFrom_date(this.dateFromCondition, FilterConditionType.CONDITION);
-            this.setDateTo_date(this.dateToCondition, FilterConditionType.CONDITION);
-            this.setFilterType(this.selectedOptionCondition, FilterConditionType.CONDITION);
+            const dateFrom = _.parseYyyyMmDdToDate(model.dateFrom, "-");
+            this.dateCompFrom1.setDate(dateFrom);
         }
     }
 
-    private createComponents(type:FilterConditionType) {
-        const dateComponentParams: IDateParams = {
-            onDateChanged: () => { this.onDateChanged (type); },
-            filterParams: this.filterParams
-        };
+    protected setConditionIntoUi(model: DateFilterModel, position: FilterPosition): void {
+        const positionOne = position===FilterPosition.One;
 
-        this.userComponentFactory.newDateComponent(dateComponentParams).then (dateToComponent => {
-            if (type === FilterConditionType.MAIN) {
-                this.dateToComponent = dateToComponent;
-            } else {
-                this.dateToConditionComponent = dateToComponent;
-            }
+        const dateFromString = model ? model.dateFrom : null;
+        const dateToString = model ? model.dateTo : null;
 
-            const dateToElement = dateToComponent.getGui();
+        const dateFrom = _.parseYyyyMmDdToDate(dateFromString, "-");
+        const dateTo = _.parseYyyyMmDdToDate(dateToString, "-");
 
-            if (type === FilterConditionType.MAIN) {
-                this.eDateToPanel.appendChild(dateToElement);
-                if (this.dateToComponent.afterGuiAttached) {
-                    this.dateToComponent.afterGuiAttached();
-                }
-            } else {
-                this.eDateToConditionPanel.appendChild(dateToElement);
-                if (this.dateToConditionComponent.afterGuiAttached) {
-                    this.dateToConditionComponent.afterGuiAttached();
-                }
-            }
-        });
-        this.userComponentFactory.newDateComponent(dateComponentParams).then(dateComponent => {
-            if (type === FilterConditionType.MAIN) {
-                this.dateFromComponent = dateComponent;
-            } else {
-                this.dateFromConditionComponent = dateComponent;
-            }
+        const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
 
-            const dateFromElement = dateComponent.getGui();
-
-            if (type === FilterConditionType.MAIN) {
-                this.eDateFromPanel.appendChild(dateFromElement);
-                if (this.dateFromComponent.afterGuiAttached) {
-                    this.dateFromComponent.afterGuiAttached();
-                }
-            } else {
-                this.eDateFromConditionPanel.appendChild(dateFromElement);
-                if (this.dateFromConditionComponent.afterGuiAttached) {
-                    this.dateFromConditionComponent.afterGuiAttached();
-                }
-            }
-        });
+        compFrom.setDate(dateFrom);
+        compTo.setDate(dateTo);
     }
 
-    private onDateChanged(type:FilterConditionType): void {
-        if (type === FilterConditionType.MAIN) {
-            this.dateFrom = DateFilter.removeTimezone(this.dateFromComponent.getDate());
-            this.dateTo = DateFilter.removeTimezone(this.dateToComponent.getDate());
-        } else {
-            this.dateFromCondition = DateFilter.removeTimezone(this.dateFromComponent.getDate());
-            this.dateToCondition = DateFilter.removeTimezone(this.dateToComponent.getDate());
-        }
-        this.onFilterChanged();
+    protected resetUiToDefaults(): void {
+        super.resetUiToDefaults();
+
+        this.dateCompTo1.setDate(null);
+        this.dateCompTo2.setDate(null);
+        this.dateCompFrom1.setDate(null);
+        this.dateCompFrom2.setDate(null);
     }
 
-    public refreshFilterBodyUi(type:FilterConditionType): void {
-        let panel: HTMLElement;
-        let filterType: string;
-        if (type === FilterConditionType.MAIN) {
-            panel = this.eDateToPanel;
-            filterType = this.selectedOption;
-        } else {
-            panel = this.eDateToConditionPanel;
-            filterType = this.selectedOptionCondition;
-        }
-
-        // show / hide in-range filter
-        if (panel) {
-            const visible = filterType === AbstractComparableFilter.IN_RANGE;
-            _.setVisible(panel, visible);
-        }
-
-        // show / hide filter input, i.e. if custom filter has 'hideFilterInputField = true' or an empty filter
-        const filterInput = type === FilterConditionType.MAIN ? this.eDateFromPanel : this.eDateFromConditionPanel;
-        if (filterInput) {
-            const showFilterInput = !this.doesFilterHaveHiddenInput(filterType) && filterType !== AbstractComparableFilter.EMPTY;
-            _.setVisible(filterInput, showFilterInput);
-        }
-    }
-
-    public comparator(): Comparator<Date> {
-        return this.filterParams.comparator ? this.filterParams.comparator : this.defaultComparator.bind(this);
+    protected comparator(): Comparator<Date> {
+        return this.dateFilterParams.comparator ? this.dateFilterParams.comparator : this.defaultComparator.bind(this);
     }
 
     private defaultComparator(filterDate: Date, cellValue: any): number {
@@ -191,111 +123,117 @@ export class DateFilter extends AbstractScalerFilter<Date, IDateFilterParams, Da
         return cellValue != null ? 0 : -1;
     }
 
-    public serialize(type:FilterConditionType): DateFilterModel {
-        const dateToComponent = type === FilterConditionType.MAIN ? this.dateToComponent : this.dateToConditionComponent;
-        const dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
-        const filterType = type === FilterConditionType.MAIN ? this.selectedOption : this.selectedOptionCondition;
+    protected setParams(params: IDateFilterParams): void {
+        super.setParams(params);
+
+        this.dateFilterParams = params;
+
+        this.createDateComponents();
+    }
+
+    private createDateComponents(): void {
+
+        // params to pass to all four date comps
+        const dateComponentParams: IDateParams = {
+            onDateChanged: this.onUiChangedListener.bind(this),
+            filterParams: this.dateFilterParams
+        };
+
+        this.dateCompFrom1 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelFrom1);
+        this.dateCompFrom2 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelFrom2);
+        this.dateCompTo1 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelTo1);
+        this.dateCompTo2 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelTo2);
+
+        this.addDestroyFunc( () => {
+            this.dateCompFrom1.destroy();
+            this.dateCompFrom2.destroy();
+            this.dateCompTo1.destroy();
+            this.dateCompTo2.destroy();
+        });
+    }
+
+    protected getDefaultFilterOptions(): string[] {
+        return DateFilter.DEFAULT_FILTER_OPTIONS;
+    }
+
+    protected createValueTemplate(position: FilterPosition): string {
+
+        const positionOne = position===FilterPosition.One;
+
+        const pos = positionOne ? '1' : '2';
+
+        return `<div class="ag-filter-body" ref="eCondition${pos}Body">
+                    <div class="ag-filter-date-from" ref="ePanelFrom${pos}">
+                    </div>
+                    <div class="ag-filter-date-to" ref="ePanelTo${pos}"">
+                    </div>
+                </div>`;
+    }
+
+    protected isFilterUiComplete(position: FilterPosition): boolean {
+        const positionOne = position===FilterPosition.One;
+
+        const option = positionOne ? this.getType1() : this.getType2();
+        const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+
+        const valueFrom = compFrom.getDate();
+        const valueTo = compTo.getDate();
+
+        if (this.doesFilterHaveHiddenInput(option)) {
+            return true;
+        }
+
+        if (option===AbstractSimpleFilter.IN_RANGE) {
+            return valueFrom != null && valueTo != null;
+        } else {
+            return valueFrom != null;
+        }
+    }
+
+    protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
+        return aSimple.dateFrom === bSimple.dateFrom
+            && aSimple.dateTo === bSimple.dateTo
+            && aSimple.type === bSimple.type;
+    }
+
+    // needed for creating filter model
+    protected getFilterType(): string {
+        return DateFilter.FILTER_TYPE;
+    }
+
+    protected createCondition(position: FilterPosition): DateFilterModel {
+
+        const positionOne = position===FilterPosition.One;
+
+        const type = positionOne ? this.getType1() : this.getType2();
+
+        const dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+        const dateCompFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+
         return {
-            dateTo: _.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
-            dateFrom: _.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
-            type: filterType ? filterType : this.optionsFactory.getDefaultOption(),
-            filterType: 'date'
+            dateTo: _.serializeDateToYyyyMmDd(dateCompTo.getDate(), "-"),
+            dateFrom: _.serializeDateToYyyyMmDd(dateCompFrom.getDate(), "-"),
+            type: type,
+            filterType: DateFilter.FILTER_TYPE
         };
     }
 
-    public filterValues(type:FilterConditionType): Date | Date[] {
-        if (type === FilterConditionType.MAIN) {
-            if (!this.dateFromComponent) { return null; }
+    protected updateUiVisibility(): void {
 
-            return this.selectedOption !== AbstractComparableFilter.IN_RANGE ?
-                this.dateFromComponent.getDate() :
-                [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
-        }
+        super.updateUiVisibility();
 
-        if (!this.dateFromConditionComponent) { return null; }
+        const show = (type: string, eValue: HTMLElement, eValueTo: HTMLElement) => {
+            const showValue = !this.doesFilterHaveHiddenInput(type) && type !== AbstractSimpleFilter.EMPTY;
+            _.setVisible(eValue, showValue);
+            const showValueTo = type === AbstractSimpleFilter.IN_RANGE;
+            _.setVisible(eValueTo, showValueTo);
+        };
 
-        return this.selectedOptionCondition !== AbstractComparableFilter.IN_RANGE ?
-            this.dateFromConditionComponent.getDate() :
-            [this.dateFromConditionComponent.getDate(), this.dateToConditionComponent.getDate()];
+        show(this.getType1(), this.ePanelFrom1, this.ePanelTo1);
+        show(this.getType2(), this.ePanelFrom2, this.ePanelTo2);
+
     }
 
-    // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getDateFrom(): string {
-        return _.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
-    }
 
-    // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getDateTo(): string {
-        return _.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
-    }
-
-    // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getFilterType(): string {
-        return this.selectedOption;
-    }
-
-    public setDateFrom(date: string, type:FilterConditionType): void {
-        const parsedDate = _.parseYyyyMmDdToDate(date, "-");
-        this.setDateFrom_date(parsedDate, type);
-    }
-
-    private setDateFrom_date(parsedDate:Date, type: FilterConditionType) {
-        if (type === FilterConditionType.MAIN) {
-            this.dateFrom = parsedDate;
-
-            if (!this.dateFromComponent) { return; }
-            this.dateFromComponent.setDate(this.dateFrom);
-        } else {
-            this.dateFromCondition = parsedDate;
-
-            if (!this.dateFromConditionComponent) { return; }
-            this.dateFromConditionComponent.setDate(this.dateFromCondition);
-        }
-    }
-
-    public setDateTo(date: string, type:FilterConditionType): void {
-        const parsedDate = _.parseYyyyMmDdToDate(date, "-");
-        this.setDateTo_date(parsedDate, type);
-    }
-
-    private setDateTo_date(parsedDate:Date, type: FilterConditionType) {
-        if (type === FilterConditionType.MAIN) {
-            this.dateTo = parsedDate;
-
-            if (!this.dateToComponent) { return; }
-            this.dateToComponent.setDate(this.dateTo);
-        } else {
-            this.dateToCondition = parsedDate;
-
-            if (!this.dateToConditionComponent) { return; }
-            this.dateToConditionComponent.setDate(this.dateToCondition);
-        }
-    }
-
-    public resetState(resetConditionFilterOnly: boolean = false): void {
-        if (!resetConditionFilterOnly) {
-            this.setDateFrom(null, FilterConditionType.MAIN);
-            this.setDateTo(null, FilterConditionType.MAIN);
-            this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.MAIN);
-        }
-
-        this.setFilterType(this.optionsFactory.getDefaultOption(), FilterConditionType.CONDITION);
-        this.setDateFrom(null, FilterConditionType.CONDITION);
-        this.setDateTo(null, FilterConditionType.CONDITION);
-    }
-
-    public parse(model: DateFilterModel, type:FilterConditionType): void {
-        this.setDateFrom(model.dateFrom, type);
-        this.setDateTo(model.dateTo, type);
-        this.setFilterType(model.type, type);
-    }
-
-    public setType(filterType: string, type:FilterConditionType): void {
-        this.setFilterType(filterType, type);
-    }
-
-    public static removeTimezone(from: Date): Date {
-        if (!from) { return null; }
-        return new Date (from.getFullYear(), from.getMonth(), from.getDate());
-    }
 }

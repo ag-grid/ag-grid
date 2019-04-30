@@ -15,7 +15,7 @@ import { IComponent } from "../interfaces/iComponent";
 import { GridApi } from "../gridApi";
 import { Constants } from "../constants";
 import { _ } from "../utils";
-import {FloatingFilterWrapper2} from "../filter/floating/floatingFilterWrapper2";
+import {FloatingFilterWrapper} from "../filter/floating/floatingFilterWrapper";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -254,7 +254,7 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
-                result = new FloatingFilterWrapper2(columnGroupChild as Column);
+                result = new FloatingFilterWrapper(columnGroupChild as Column);
                 break;
         }
 

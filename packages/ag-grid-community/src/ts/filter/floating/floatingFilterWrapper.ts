@@ -20,7 +20,7 @@ import { ColumnApi } from "../../columnController/columnApi";
 import { FilterManager } from "./../filterManager";
 import { ReadModelAsStringFloatingFilterComp } from "../floating/readModalAsStringFloatingFilter";
 
-export class FloatingFilterWrapper2 extends Component {
+export class FloatingFilterWrapper extends Component {
 
     private static filterToFloatingFilterNames: {[p:string]:string} = {
         set:'agSetColumnFloatingFilter',
@@ -65,7 +65,7 @@ export class FloatingFilterWrapper2 extends Component {
     private floatingFilterCompPromise: Promise<IFloatingFilterComp>;
 
     constructor(column: Column) {
-        super(FloatingFilterWrapper2.TEMPLATE);
+        super(FloatingFilterWrapper.TEMPLATE);
         this.column = column;
     }
 
@@ -188,7 +188,7 @@ export class FloatingFilterWrapper2 extends Component {
 
         if (typeof colDef.filter === 'string') {
             // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterWrapper2.filterToFloatingFilterNames[colDef.filter];
+            defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
         } else if (colDef.filter === true) {
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
