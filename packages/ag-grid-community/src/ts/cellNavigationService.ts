@@ -256,7 +256,10 @@ export class CellNavigationService {
         let newFloating: string | null = gridCell.floating;
 
         // move along to the next cell
-        let newColumn = this.columnController.getDisplayedColAfter(gridCell.column);
+        let newColumn = this.columnController.getDisplayedColAfter(
+            gridCell.column,
+            gridCell.column.getColSpan(this.rowModel.getRow(gridCell.rowIndex))
+        );
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {

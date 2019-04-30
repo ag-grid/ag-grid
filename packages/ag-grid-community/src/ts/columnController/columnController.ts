@@ -1500,11 +1500,11 @@ export class ColumnController {
 
     // used by:
     // + rowRenderer -> for navigation
-    public getDisplayedColAfter(col: Column): Column | null {
+    public getDisplayedColAfter(col: Column, colSpan = 1): Column | null {
         const allDisplayedColumns = this.getAllDisplayedColumns();
         const oldIndex = allDisplayedColumns.indexOf(col);
-        if (oldIndex < (allDisplayedColumns.length - 1)) {
-            return allDisplayedColumns[oldIndex + 1];
+        if (oldIndex < (allDisplayedColumns.length - colSpan)) {
+            return allDisplayedColumns[oldIndex + colSpan];
         } else {
             return null;
         }
