@@ -19,6 +19,7 @@ export abstract class Series<D, X, Y> {
     set title(value: string) {
         if (this._title !== value) {
             this._title = value;
+            this.update();
         }
     }
     get title(): string {
