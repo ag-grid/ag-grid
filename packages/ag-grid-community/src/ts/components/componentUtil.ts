@@ -164,8 +164,8 @@ export class ComponentUtil {
             api.setColumnDefs(changes.columnDefs.currentValue, "gridOptionsChanged");
         }
 
-        if (changes.datasource) {
-            api.setDatasource(changes.datasource.currentValue);
+        if (changes.serverSideDatasource) {
+            api.setServerSideDatasource(changes.serverSideDatasource.currentValue);
         }
 
         if (changes.headerHeight) {
