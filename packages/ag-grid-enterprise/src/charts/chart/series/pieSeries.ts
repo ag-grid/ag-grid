@@ -16,8 +16,6 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 
 interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
-    // innerRadius: number,
-    // outerRadius: number,
     radius: number, // in the [0, 1] range
     startAngle: number,
     endAngle: number,
@@ -25,21 +23,10 @@ interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     midCos: number,
     midSin: number,
 
-    fillStyle: string | null,
-    strokeStyle: string | null,
-    lineWidth: number,
-    shadow: DropShadow | null,
-
     label?: {
         text: string,
-        font: string,
-        fillStyle: string,
         textAlign: CanvasTextAlign,
         textBaseline: CanvasTextBaseline
-    },
-
-    callout?: {
-        strokeStyle: string
     }
 }
 
@@ -58,8 +45,8 @@ export interface PieTooltipRendererParams<D> {
 
 export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
+    private titleNode = new Text();
     private radiusScale: LinearScale<number> = scaleLinear();
-
     private groupSelection: Selection<Group, Group, GroupSelectionDatum<D>, any> = Selection.select(this.group).selectAll<Group>();
 
     /**
@@ -70,17 +57,82 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     /**
      * `null` means make the callout color the same as {@link strokeStyle}.
      */
-    calloutColor: string | null = null;
-    calloutWidth: number = 2;
-    calloutLength: number = 10;
-    calloutPadding: number = 3;
+    private _calloutColor: string | null = null;
+    set calloutColor(value: string | null) {
+        if (this._calloutColor !== value) {
+            this._calloutColor = value;
+            this.update();
+        }
+    }
+    get calloutColor(): string | null {
+        return this._calloutColor;
+    }
 
-    labelFont: string = '12px Tahoma';
-    labelColor: string = 'black';
-    labelRotation: number = 0;
-    labelMinAngle: number = 20; // in degrees
+    private _calloutWidth: number = 2;
+    set calloutWidth(value: number) {
+        if (this._calloutWidth !== value) {
+            this._calloutWidth = value;
+            this.update();
+        }
+    }
+    get calloutWidth(): number {
+        return this._calloutWidth;
+    }
 
-    private titleNode = new Text();
+    private _calloutLength: number = 10;
+    set calloutLength(value: number) {
+        if (this._calloutLength !== value) {
+            this._calloutLength = value;
+            this.update();
+        }
+    }
+    get calloutLength(): number {
+        return this._calloutLength;
+    }
+
+    private _calloutPadding: number = 3;
+    set calloutPadding(value: number) {
+        if (this._calloutPadding !== value) {
+            this._calloutPadding = value;
+            this.update();
+        }
+    }
+    get calloutPadding(): number {
+        return this._calloutPadding;
+    }
+
+    private _labelFont: string = '12px Tahoma';
+    set labelFont(value: string) {
+        if (this._labelFont !== value) {
+            this._labelFont = value;
+            this.update();
+        }
+    }
+    get labelFont(): string {
+        return this._labelFont;
+    }
+
+    private _labelColor: string = 'black';
+    set labelColor(value: string) {
+        if (this._labelColor !== value) {
+            this._labelColor = value;
+            this.update();
+        }
+    }
+    get labelColor(): string {
+        return this._labelColor;
+    }
+
+    private _labelMinAngle: number = 20; // in degrees
+    set labelMinAngle(value: number) {
+        if (this._labelMinAngle !== value) {
+            this._labelMinAngle = value;
+            this.scheduleData();
+        }
+    }
+    get labelMinAngle(): number {
+        return this._labelMinAngle;
+    }
 
     constructor() {
         super();
@@ -91,6 +143,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         title.fillStyle = this.labelColor;
         title.textBaseline = 'bottom';
         title.font = 'bold 12px Tahoma';
+
         this.group.appendChild(title);
     }
 
@@ -122,7 +175,8 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     /**
      * The name of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
-     * proportionally smaller radii.
+     * proportionally smaller radii. To prevent confusing visuals, this config only works
+     * if {@link innerRadiusOffset} is zero.
      */
     private _radiusField: Extract<keyof D, string> | undefined = undefined;
     set radiusField(value: Extract<keyof D, string> | undefined) {
@@ -208,7 +262,7 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
     set innerRadiusOffset(value: number) {
         if (this._innerRadiusOffset !== value) {
             this._innerRadiusOffset = value;
-            this.scheduleLayout();
+            this.scheduleData();
         }
     }
     get innerRadiusOffset(): number {
@@ -264,32 +318,25 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         }
 
         const radiusField = this.radiusField;
+        const useRadiusField = !!radiusField && !this.innerRadiusOffset;
         let radiusData: number[] = [];
-        if (radiusField) {
+        if (useRadiusField) {
             radiusData = data.map(datum => Math.abs(datum[radiusField]));
             const maxDatum = Math.max(...radiusData);
             radiusData.forEach((value, index, array) => array[index] = value / maxDatum);
         }
 
         const angleScale = this.angleScale;
-
-        const labelFont = this.labelFont;
-        const labelColor = this.labelColor;
-
         const groupSelectionData = this.groupSelectionData;
         groupSelectionData.length = 0;
 
         const rotation = toRadians(this.rotation);
-        const colors = this.colors;
-        const strokeColor = this.strokeStyle;
-        const strokeColors = this.strokeColors;
-        const calloutColor = this.calloutColor;
         const halfPi = Math.PI / 2;
 
         let datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
-            const radius = radiusField ? radiusData[datumIndex] : 1;
+            const radius = useRadiusField ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start + rotation);
             const endAngle = angleScale.convert(end + rotation);
 
@@ -300,8 +347,6 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
             const labelMinAngle = toRadians(this.labelMinAngle);
             const labelVisible = labelField && span > labelMinAngle;
-            const strokeStyle = strokeColor ? strokeColor : strokeColors[datumIndex % strokeColors.length];
-            const calloutStrokeStyle = calloutColor ? calloutColor : strokeStyle;
 
             const midAngle180 = normalizeAngle180(midAngle);
             // Split the circle into quadrants like so: ⊗
@@ -332,21 +377,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 midCos,
                 midSin,
 
-                fillStyle: colors[datumIndex % colors.length],
-                strokeStyle,
-                lineWidth: this.lineWidth,
-                shadow: this.shadow,
-
                 label: labelVisible ? {
                     text: labelData[datumIndex],
-                    font: labelFont,
-                    fillStyle: labelColor,
                     textAlign,
                     textBaseline
-                } : undefined,
-
-                callout: labelVisible ? {
-                    strokeStyle: calloutStrokeStyle
                 } : undefined
             });
 
@@ -364,6 +398,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         if (!chart || chart.dataPending || chart.layoutPending) {
             return;
         }
+
+        const colors = this.colors;
+        const strokeColors = this.strokeStyle ? [this.strokeStyle] : this.strokeColors;
+        const calloutColors = this.calloutColor ? [this.calloutColor] : this.strokeColors;
 
         const outerRadiusOffset = this.outerRadiusOffset;
         const innerRadiusOffset = this.innerRadiusOffset;
@@ -395,8 +433,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         let minOuterRadius = Infinity;
         const outerRadii: number[] = [];
+
         groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector)
-            .each((sector, datum) => {
+            .each((sector, datum, index) => {
                 const radius = radiusScale.convert(datum.radius);
                 const outerRadius = radius + outerRadiusOffset;
                 if (minOuterRadius > outerRadius) {
@@ -408,10 +447,10 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                 sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
                 sector.startAngle = datum.startAngle;
                 sector.endAngle = datum.endAngle;
-                sector.fillStyle = datum.fillStyle;
-                sector.strokeStyle = datum.strokeStyle;
-                sector.shadow = datum.shadow;
-                sector.lineWidth = datum.lineWidth;
+                sector.fillStyle = colors[index % colors.length];
+                sector.strokeStyle = strokeColors[index % strokeColors.length];
+                sector.shadow = this.shadow;
+                sector.lineWidth = this.lineWidth;
                 sector.lineJoin = 'round';
             });
 
@@ -419,14 +458,12 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         const calloutLength = this.calloutLength;
         groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout)
-            .each((line, datum, i) => {
-                const callout = datum.callout;
-
-                if (callout) {
-                    const outerRadius = outerRadii[i];
+            .each((line, datum, index) => {
+                if (datum.label) {
+                    const outerRadius = outerRadii[index];
 
                     line.lineWidth = this.calloutWidth;
-                    line.strokeStyle = callout.strokeStyle;
+                    line.strokeStyle = calloutColors[index % calloutColors.length];
                     line.x1 = datum.midCos * outerRadius;
                     line.y1 = datum.midSin * outerRadius;
                     line.x2 = datum.midCos * (outerRadius + calloutLength);
@@ -445,11 +482,11 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
                     const outerRadius = outerRadii[i];
                     const labelRadius = outerRadius + calloutLength + calloutPadding;
 
-                    text.font = label.font;
+                    text.font = this.labelFont;
                     text.text = label.text;
                     text.x = datum.midCos * labelRadius;
                     text.y = datum.midSin * labelRadius;
-                    text.fillStyle = label.fillStyle;
+                    text.fillStyle = this.labelColor;
                     text.textAlign = label.textAlign;
                     text.textBaseline = label.textBaseline;
                 } else {

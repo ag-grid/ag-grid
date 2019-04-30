@@ -42,17 +42,19 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
             height: this.height
         };
 
+        const legendAutoPadding = this.legendAutoPadding;
+        if (this.legend.data.length) {
+            shrinkRect.x += legendAutoPadding.left;
+            shrinkRect.y += legendAutoPadding.top;
+            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
+            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+        }
+
         const padding = this.padding;
         shrinkRect.x += padding.left;
         shrinkRect.y += padding.top;
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
-
-        const legendAutoPadding = this.legendAutoPadding;
-        shrinkRect.x += legendAutoPadding.left;
-        shrinkRect.y += legendAutoPadding.top;
-        shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
-        shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
 
         const centerX = this.centerX = shrinkRect.x + shrinkRect.width / 2;
         const centerY = this.centerY = shrinkRect.y + shrinkRect.height / 2;
@@ -69,17 +71,14 @@ export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
         if (!legend.data.length) {
             return; // TODO: figure out why we ever arrive here (data should be processed before layout)
         }
-        legend.size = [300, shrinkRect.height];
+        legend.size = [300, this.height - 40];
         legend.performLayout();
         legend.group.translationX = 0;
         legend.group.translationY = 0;
 
         const legendBBox = legend.group.getBBox();
-        // legendBBox.dilate(30);
-        legendBBox.x -= 50;
-        legendBBox.width += 50;
 
-        legend.group.translationX = centerX + radius - legendBBox.x;
+        legend.group.translationX = this.width - legendBBox.width - legendBBox.x - 20;
         legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
 
         if (this.legendAutoPadding.right !== legendBBox.width) {
