@@ -21,9 +21,9 @@ import { GridOptions } from "../../entities/gridOptions";
 import { _ } from "../../utils";
 import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
 import { DateFloatingFilterComp } from "../../filter/provided/date/dateFloatingFilter";
-import { TextFloatingFilterComp } from "../../filter/provided/text/textFloatingFilter";
-import { NumberFloatingFilterComp } from "../../filter/provided/number/numberFloatingFilter";
 import { TextFilter } from "../../filter/provided/text/textFilter";
+import {NumberFloatingFilter} from "../../filter/provided/number/numberFloatingFilter";
+import {TextFloatingFilter} from "../../filter/provided/text/textFloatingFilter";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -68,8 +68,8 @@ export class UserComponentRegistry {
         agColumnGroupHeader: HeaderGroupComp,
 
         //floating filters
-        agTextColumnFloatingFilter: TextFloatingFilterComp,
-        agNumberColumnFloatingFilter: NumberFloatingFilterComp,
+        agTextColumnFloatingFilter: TextFloatingFilter,
+        agNumberColumnFloatingFilter: NumberFloatingFilter,
         agDateColumnFloatingFilter: DateFloatingFilterComp,
 
         // renderers

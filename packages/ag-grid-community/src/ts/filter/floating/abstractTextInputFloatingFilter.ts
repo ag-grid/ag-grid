@@ -1,17 +1,16 @@
 import {Component} from "../../widgets/component";
 import {IFloatingFilterComp, IFloatingFilterParams} from "./floatingFilter";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {TextFilter2, TextFilterModel2} from "../provided/text/textFilter2";
 import {FilterModel} from "../../interfaces/iFilter";
 import {AbstractSimpleFilter, IAbstractSimpleModel, ICombinedSimpleModel} from "../provided/abstractSimpleFilter";
 import {_} from "../../utils";
 import {Constants} from "../../constants";
 import {AbstractProvidedFilter} from "../provided/abstractProvidedFilter";
-import {TextFilterModel} from "../provided/text/textFilter";
-import {NumberFilter2, NumberFilter2Model} from "../provided/number/numberFilter2";
+import {NumberFilterModel} from "../provided/number/numberFilter";
 import {PostConstruct} from "../../context/context";
 import {OptionsFactory} from "../provided/optionsFactory";
 import {IComparableFilterParams} from "../provided/abstractComparableFilter";
+import {TextFilter, TextFilterModel} from "../provided/text/textFilter";
 
 export abstract class AbstractSimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
@@ -30,14 +29,14 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
         const isCombined = (<any>model).operator;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<NumberFilter2Model>>model;
+            const combinedModel = <ICombinedSimpleModel<NumberFilterModel>>model;
 
             const con1Str = this.conditionToString(combinedModel.condition1);
             const con2Str = this.conditionToString(combinedModel.condition2);
 
             return `${con1Str} ${combinedModel.operator} ${con2Str}`;
         } else {
-            const condition = <NumberFilter2Model>model;
+            const condition = <NumberFilterModel>model;
             return this.conditionToString(condition);
         }
     }
@@ -132,81 +131,4 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
     }
 }
 
-export class TextFloatingFilter2 extends AbstractTextInputFloatingFilter {
 
-    protected conditionToString(condition: TextFilterModel2): string {
-        // it's not possible to have 'in range' for string, so no need to check for it.
-        // also cater for when the type doesn't need a value
-        if (condition.filter!=null) {
-            return `${condition.filter}`;
-        } else {
-            return `${condition.type}`;
-        }
-    }
-
-    protected getModelFromText(value: string): TextFilterModel {
-        if (!value) {
-            return null;
-        } else {
-            return {
-                type: null,
-                filter: value,
-                filterType: 'text'
-            };
-        }
-    }
-
-    protected getDefaultFilterOptions(): string[] {
-        return TextFilter2.DEFAULT_FILTER_OPTIONS;
-    }
-
-}
-
-export class NumberFloatingFilter2 extends AbstractTextInputFloatingFilter {
-
-    protected getDefaultFilterOptions(): string[] {
-        return NumberFilter2.DEFAULT_FILTER_OPTIONS;
-    }
-
-    protected conditionToString(condition: NumberFilter2Model): string {
-
-        const isRange = condition.type == AbstractSimpleFilter.IN_RANGE;
-
-        if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
-        } else {
-            // cater for when the type doesn't need a value
-            if (condition.filter!=null) {
-                return `${condition.filter}`;
-            } else {
-                return `${condition.type}`;
-            }
-        }
-    }
-
-    protected getModelFromText(value: string): NumberFilter2Model {
-        if (!value) {
-            return null;
-        } else {
-            return {
-                type: null,
-                filter: this.stringToFloat(value),
-                filterType: 'text'
-            };
-        }
-    }
-
-    private stringToFloat(value: string): number {
-        let filterText = _.makeNull(value);
-        if (filterText && filterText.trim() === '') {
-            filterText = null;
-        }
-        let newFilter: number;
-        if (filterText !== null && filterText !== undefined) {
-            newFilter = parseFloat(filterText);
-        } else {
-            newFilter = null;
-        }
-        return newFilter;
-    }
-}
