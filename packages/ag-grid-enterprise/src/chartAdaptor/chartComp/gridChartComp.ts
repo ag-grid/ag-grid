@@ -345,7 +345,7 @@ export class GridChartComp extends Component {
 
     private downloadChart() {
         // TODO use chart / dialog title for filename
-        this.chart.scene.download("chart");
+        this.chart.scene.download({fileName: "chart"});
     }
 
     private addResizeListener() {
