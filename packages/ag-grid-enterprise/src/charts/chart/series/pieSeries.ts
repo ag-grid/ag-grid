@@ -43,7 +43,7 @@ export interface PieTooltipRendererParams<D> {
     labelField?: Extract<keyof D, string>
 }
 
-export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
+export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
     private titleNode = new Text();
     private radiusScale: LinearScale<number> = scaleLinear();

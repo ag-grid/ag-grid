@@ -42,7 +42,7 @@ export interface BarTooltipRendererParams<D> {
     yField: Extract<keyof D, string>
 }
 
-export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries<D, X, Y> {
+export class BarSeries<D = any, X = string, Y = number> extends StackedCartesianSeries<D, X, Y> {
 
     /**
      * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.

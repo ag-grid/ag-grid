@@ -5,7 +5,7 @@ import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
 
-export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
+export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
 
     private axisAutoPadding = new Padding();
     private legendAutoPadding = new Padding();

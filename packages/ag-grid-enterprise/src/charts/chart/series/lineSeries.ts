@@ -29,7 +29,7 @@ export interface LineTooltipRendererParams<D> {
     yField: Extract<keyof D, string>
 }
 
-export class LineSeries<D, X, Y> extends CartesianSeries<D, X, Y> {
+export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries<D, X, Y> {
 
     private domainX: X[] = [];
     private domainY: Y[] = [];

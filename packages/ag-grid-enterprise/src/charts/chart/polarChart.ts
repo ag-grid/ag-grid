@@ -3,7 +3,7 @@ import { PolarSeries } from "./series/polarSeries";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
 
-export class PolarChart<D, X, Y> extends Chart<D, X, Y> {
+export class PolarChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
     centerX: number = 0;
     centerY: number = 0;
 
