@@ -139,10 +139,9 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
 
         const title = this.titleNode;
         title.pointerEvents = PointerEvents.None;
-        title.textAlign = 'center';
         title.fillStyle = this.labelColor;
+        title.textAlign = 'center';
         title.textBaseline = 'bottom';
-        title.font = 'bold 12px Tahoma';
 
         this.group.appendChild(title);
     }
@@ -411,9 +410,11 @@ export class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
 
-        this.titleNode.translationY = -this.radius - outerRadiusOffset - 2;
-        this.titleNode.text = this.title;
-        this.titleNode.fillStyle = this.labelColor;
+        const title = this.titleNode;
+        title.translationY = -this.radius - outerRadiusOffset - 2;
+        title.text = this.title;
+        title.fillStyle = this.labelColor;
+        title.font = this.titleFont;
 
         const updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();

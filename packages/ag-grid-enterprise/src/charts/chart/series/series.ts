@@ -26,6 +26,17 @@ export abstract class Series<D, X, Y> {
         return this._title;
     }
 
+    private _titleFont: string = 'bold 12px Tahoma';
+    set titleFont(value: string) {
+        if (this._titleFont !== value) {
+            this._titleFont = value;
+            this.update();
+        }
+    }
+    get titleFont(): string {
+        return this._titleFont;
+    }
+
     /**
      * The group node that contains all the nodes used to render this series.
      */
