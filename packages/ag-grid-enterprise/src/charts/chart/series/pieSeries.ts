@@ -531,7 +531,9 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
                 data.push({
                     id: this.id,
                     tag: index,
-                    name: String(datum[labelField]),
+                    label: {
+                        text: String(datum[labelField])
+                    },
                     marker: {
                         fillStyle: this.colors[index % this.colors.length],
                         strokeStyle: this.strokeColors[index % this.strokeColors.length]

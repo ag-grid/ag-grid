@@ -308,7 +308,9 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         if (this.data.length && this.xField && this.yField) {
             data.push({
                 id: this.id,
-                name: this.title || this.yField,
+                label: {
+                    text: this.title || this.yField
+                },
                 marker: {
                     fillStyle: this.color,
                     strokeStyle: this.strokeColor

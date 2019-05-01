@@ -5,28 +5,19 @@ import { BBox } from "../scene/bbox";
 
 interface ItemSelectionDatum {
     marker: {
-        size: number,
         fillStyle: string,
-        strokeStyle: string,
-        lineWidth: number
+        strokeStyle: string
     },
     label: {
-        text: string,
-        font: string,
-        fillStyle: string
+        text: string
     }
 }
 
-export interface LegendDatum {
+export interface LegendDatum extends ItemSelectionDatum {
     id: string,    // for example, series ID
     tag?: number,  // optional field, used to provide auxiliary info, for example:
                    // - yField index for stacked series
                    // - slice index for pie series
-    name: string,  // name to render, for example, series name
-    marker: {
-        fillStyle: string,
-        strokeStyle: string
-    },
     enabled: boolean
 }
 
@@ -45,14 +36,8 @@ export class Legend {
 
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
-        this._data = data;
-
-        const hasData = data.length > 0;
-
-        if (hasData) {
-            this.processData();
-        }
-        this.group.visible = hasData;
+        this.itemSelectionData = this._data = data;
+        this.group.visible = data.length > 0;
     }
     get data(): LegendDatum[] {
         return this._data;
@@ -116,22 +101,26 @@ export class Legend {
         return this._labelFont;
     }
 
-    processData() {
-        this.itemSelectionData = this.data.map(datum => {
-            return {
-                marker: {
-                    size: 14,
-                    fillStyle: datum.marker.fillStyle,
-                    strokeStyle: datum.marker.strokeStyle,
-                    lineWidth: 2
-                },
-                label: {
-                    text: datum.name,
-                    font: this.labelFont,
-                    fillStyle: this.labelColor
-                }
-            };
-        });
+    private _markerSize: number = 14;
+    set markerSize(value: number) {
+        if (this._markerSize !== value) {
+            this._markerSize = value;
+            this.layoutChanged();
+        }
+    }
+    get markerSize(): number {
+        return this._markerSize;
+    }
+
+    private _markerLineWidth: number = 2;
+    set markerLineWidth(value: number) {
+        if (this._markerLineWidth !== value) {
+            this._markerLineWidth = value;
+            this.layoutChanged();
+        }
+    }
+    get markerLineWidth(): number {
+        return this._markerLineWidth;
     }
 
     private oldSize: [number, number] = [0, 0];
@@ -141,8 +130,7 @@ export class Legend {
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel);
-        const itemSelection = updateSelection.merge(enterSelection);
-        this.itemSelection = itemSelection;
+        const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
         const [width, height] = this.size;
         const itemCount = itemSelection.size;
         const gap = 4;
@@ -254,15 +242,15 @@ export class Legend {
 
         itemSelection.each((markerLabel, datum, i) => {
             const marker = datum.marker;
-            markerLabel.markerSize = marker.size;
+            markerLabel.markerSize = this.markerSize;
             markerLabel.markerFill = marker.fillStyle;
             markerLabel.markerStroke = marker.strokeStyle;
-            markerLabel.markerLineWidth = marker.lineWidth;
+            markerLabel.markerLineWidth = this.markerLineWidth;
 
             const label = datum.label;
             markerLabel.label = label.text;
-            markerLabel.labelFont = label.font;
-            markerLabel.labelFill = label.fillStyle;
+            markerLabel.labelFont = this.labelFont;
+            markerLabel.labelFill =  this.labelColor;
 
             markerLabel.translationX = startX + x;
             markerLabel.translationY = startY + y;
