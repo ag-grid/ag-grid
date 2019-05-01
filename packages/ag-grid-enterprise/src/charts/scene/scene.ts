@@ -1,4 +1,4 @@
-import { HdpiCanvas } from "../canvas/hdpiCanvas";
+import { HdpiCanvas, DownloadOptions } from "../canvas/hdpiCanvas";
 import { Node, PointerEvents } from "./node";
 import { Path2D } from "./path2D";
 import { Shape } from "./shape/shape";
@@ -26,8 +26,8 @@ export class Scene {
         return this.hdpiCanvas.parent;
     }
 
-    download(fileName: string) {
-        this.hdpiCanvas.download(fileName);
+    download(options?: DownloadOptions) {
+        this.hdpiCanvas.download(options);
     }
 
     /**

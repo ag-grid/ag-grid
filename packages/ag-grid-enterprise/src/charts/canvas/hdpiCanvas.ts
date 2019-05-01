@@ -1,5 +1,9 @@
 type Size = { width: number, height: number };
 
+export interface DownloadOptions {
+    fileName?: string, background?: string
+}
+
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
@@ -52,9 +56,10 @@ export class HdpiCanvas {
     }
 
     /**
-     * @param fileName The `.png` extension is going to be added automatically.
+     * @param options.fileName The `.png` extension is going to be added automatically.
+     * @param [options.background] Defaults to `white`.
      */
-    download(fileName: string) {
+    download(options: DownloadOptions = {}) {
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
         const type = 'image/png';
@@ -64,11 +69,12 @@ export class HdpiCanvas {
         canvas.width = this.canvas.width;
         canvas.height = this.canvas.height;
         const ctx = canvas.getContext('2d')!;
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = options.background || 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(this.canvas, 0, 0);
 
         const dataUrl = canvas.toDataURL(type);
+        const fileName = ((options.fileName || '').trim() || 'image') + '.png';
 
         if (navigator.msSaveOrOpenBlob) { // IE11
             const binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
@@ -78,11 +84,11 @@ export class HdpiCanvas {
             }
             const blob = new Blob([new Uint8Array(array)], {type});
 
-            navigator.msSaveOrOpenBlob(blob, fileName + '.png');
+            navigator.msSaveOrOpenBlob(blob, fileName);
         } else {
             const a = document.createElement('a');
             a.href = dataUrl;
-            a.download = fileName + '.png';
+            a.download = fileName;
             a.style.display = 'none';
             document.body.appendChild(a); // required for the `click` to work in Firefox
             a.click();
