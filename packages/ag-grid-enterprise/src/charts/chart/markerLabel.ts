@@ -2,11 +2,6 @@ import { Group } from "../scene/group";
 import { Rect } from "../scene/shape/rect";
 import { Text } from "../scene/shape/text";
 
-// export enum MarkerPosition {
-//     Left,
-//     Right
-// }
-
 export class MarkerLabel extends Group {
 
     static defaults = Object.freeze({
@@ -93,29 +88,6 @@ export class MarkerLabel extends Group {
     get padding(): number {
         return this._padding;
     }
-
-    // private _markerPosition: MarkerPosition = MarkerPosition.Left;
-    // set markerPosition(value: MarkerPosition) {
-    //     if (this._markerPosition !== value) {
-    //         this._markerPosition = value;
-    //         this.update();
-    //     }
-    // }
-    // get markerPosition(): MarkerPosition {
-    //     return this._markerPosition;
-    // }
-    //
-    // private update() {
-    //     const label = this.labelNode;
-    //
-    //     if (this.markerPosition === MarkerPosition.Left) {
-    //         label.x = this.markerSize / 2 + this.padding;
-    //         label.textAlign = 'start';
-    //     } else {
-    //         label.x = -this.markerSize / 2 - this.padding;
-    //         label.textAlign = 'end';
-    //     }
-    // }
 
     private update() {
         const marker = this.marker;
