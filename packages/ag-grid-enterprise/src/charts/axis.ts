@@ -111,7 +111,7 @@ export class Axis<D> {
      * The font to be used by the labels. The given font string should use the
      * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
      */
-    labelFont: string = '12px Tahoma';
+    labelFont: string = '12px Verdana';
 
     /**
      * The color of the labels.

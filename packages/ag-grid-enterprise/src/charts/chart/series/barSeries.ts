@@ -172,7 +172,7 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         return this._shadow;
     }
 
-    private _labelFont: string = '12px Tahoma';
+    private _labelFont: string = '12px Verdana';
     set labelFont(value: string) {
         if (this._labelFont !== value) {
             this._labelFont = value;

@@ -26,7 +26,7 @@ export abstract class Series<D, X, Y> {
         return this._title;
     }
 
-    private _titleFont: string = 'bold 12px Tahoma';
+    private _titleFont: string = 'bold 12px Verdana';
     set titleFont(value: string) {
         if (this._titleFont !== value) {
             this._titleFont = value;
