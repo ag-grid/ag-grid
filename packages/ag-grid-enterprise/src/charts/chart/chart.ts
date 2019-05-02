@@ -13,7 +13,7 @@ export abstract class Chart<D, X, Y> {
     tooltipElement = (() => {
         const div = document.createElement('div');
         div.style.border = '1px solid gray';
-        div.style.font = '12px Verdana';
+        div.style.font = '12px Verdana, sans-serif';
         div.style.padding = '7px';
         div.style.whiteSpace = 'no-wrap';
         div.style.color = 'black';

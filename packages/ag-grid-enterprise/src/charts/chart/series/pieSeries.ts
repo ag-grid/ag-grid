@@ -101,7 +101,7 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
         return this._calloutPadding;
     }
 
-    private _labelFont: string = '12px Verdana';
+    private _labelFont: string = '12px Verdana, sans-serif';
     set labelFont(value: string) {
         if (this._labelFont !== value) {
             this._labelFont = value;
