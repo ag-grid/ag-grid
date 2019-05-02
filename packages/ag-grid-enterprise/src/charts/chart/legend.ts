@@ -3,7 +3,12 @@ import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 
-interface ItemSelectionDatum {
+export interface LegendDatum {
+    id: string,    // for example, series ID
+    tag?: number,  // optional field, used to provide auxiliary info, for example:
+                   // - yField index for stacked series
+                   // - slice index for pie series
+    enabled: boolean,
     marker: {
         fillStyle: string,
         strokeStyle: string
@@ -11,14 +16,6 @@ interface ItemSelectionDatum {
     label: {
         text: string
     }
-}
-
-export interface LegendDatum extends ItemSelectionDatum {
-    id: string,    // for example, series ID
-    tag?: number,  // optional field, used to provide auxiliary info, for example:
-                   // - yField index for stacked series
-                   // - slice index for pie series
-    enabled: boolean
 }
 
 export enum Orientation {
@@ -34,8 +31,6 @@ export class Legend {
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
-    private itemSelectionData: ItemSelectionDatum[] = [];
-
     private oldSize: [number, number] = [0, 0];
 
     private _size: [number, number] = [0, 0];
@@ -48,7 +43,7 @@ export class Legend {
 
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
-        this.itemSelectionData = this._data = data;
+        this._data = data;
         this.group.visible = data.length > 0;
     }
     get data(): LegendDatum[] {
@@ -90,20 +85,6 @@ export class Legend {
     get markerPadding(): number {
         return this._markerPadding;
     }
-
-    // private _markerPosition: MarkerPosition = MarkerPosition.Left;
-    // set markerPosition(value: MarkerPosition) {
-    //     if (this._markerPosition !== value) {
-    //         this._markerPosition = value;
-    //         this.itemSelection.each(markerLabel => {
-    //             markerLabel.markerPosition = value;
-    //         });
-    //         this.layoutChanged();
-    //     }
-    // }
-    // get markerPosition(): MarkerPosition {
-    //     return this._markerPosition;
-    // }
 
     private _labelColor: string = MarkerLabel.defaults.labelColor;
     set labelColor(value: string) {
@@ -154,7 +135,7 @@ export class Legend {
     }
 
     performLayout() {
-        const updateSelection = this.itemSelection.setData(this.itemSelectionData);
+        const updateSelection = this.itemSelection.setData(this.data);
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel);
