@@ -9,89 +9,85 @@ import { Text } from "../scene/shape/text";
 
 export class MarkerLabel extends Group {
 
-    private static defaults = {
+    static defaults = Object.freeze({
         padding: 8,
-        markerSize: 14
-    };
+        markerSize: 14,
+        labelFont: '12px Tahoma',
+        labelColor: 'black'
+    });
 
-    private markerNode = new Rect();
-    private labelNode = new Text();
+    private marker = new Rect();
+    private label = new Text();
 
     constructor() {
         super();
 
-        this.markerSize = MarkerLabel.defaults.markerSize;
+        this.label.textBaseline = 'middle';
+        this.label.font = MarkerLabel.defaults.labelFont;
+        this.label.fillStyle = MarkerLabel.defaults.labelColor;
 
-        const labelNode = this.labelNode;
-        labelNode.textBaseline = 'middle';
-
-        this.padding = MarkerLabel.defaults.padding;
-
-        this.append([this.markerNode, labelNode]);
+        this.append([this.marker, this.label]);
+        this.update();
     }
 
-    set label(value: string) {
-        this.labelNode.text = value;
+    set labelText(value: string) {
+        this.label.text = value;
     }
-    get label(): string {
-        return this.labelNode.text;
+    get labelText(): string {
+        return this.label.text;
     }
 
     set labelFont(value: string) {
-        this.labelNode.font = value;
+        this.label.font = value;
     }
     get labelFont(): string {
-        return this.labelNode.font;
+        return this.label.font;
     }
 
-    set labelFill(value: string | null) {
-        this.labelNode.fillStyle = value;
+    set labelColor(value: string | null) {
+        this.label.fillStyle = value;
     }
-    get labelFill(): string | null {
-        return this.labelNode.fillStyle;
+    get labelColor(): string | null {
+        return this.label.fillStyle;
     }
 
-    private _markerSize: number = 0;
+    private _markerSize: number = MarkerLabel.defaults.markerSize;
     set markerSize(value: number) {
         if (this._markerSize !== value) {
             this._markerSize = value;
-            this.markerNode.x = -value / 2;
-            this.markerNode.y = -value / 2;
-            this.markerNode.width = value;
-            this.markerNode.height = value;
+            this.update();
         }
     }
     get markerSize(): number {
         return this._markerSize;
     }
 
-    set markerFill(value: string | null) {
-        this.markerNode.fillStyle = value;
+    set markerFillStyle(value: string | null) {
+        this.marker.fillStyle = value;
     }
-    get markerFill(): string | null {
-        return this.markerNode.fillStyle;
+    get markerFillStyle(): string | null {
+        return this.marker.fillStyle;
     }
 
-    set markerStroke(value: string | null) {
-        this.markerNode.strokeStyle = value;
+    set markerStrokeStyle(value: string | null) {
+        this.marker.strokeStyle = value;
     }
-    get markerStroke(): string | null {
-        return this.markerNode.strokeStyle;
+    get markerStrokeStyle(): string | null {
+        return this.marker.strokeStyle;
     }
 
     set markerLineWidth(value: number) {
-        this.markerNode.lineWidth = value;
+        this.marker.lineWidth = value;
     }
     get markerLineWidth(): number {
-        return this.markerNode.lineWidth;
+        return this.marker.lineWidth;
     }
 
-    private _padding: number = 0;
+    private _padding: number = MarkerLabel.defaults.padding;
     set padding(value: number) {
         if (this._padding !== value) {
             this._padding = value;
-            this.labelNode.x = this.markerSize / 2 + value;
-            // this.update();
+            this.update();
         }
     }
     get padding(): number {
@@ -120,4 +116,16 @@ export class MarkerLabel extends Group {
     //         label.textAlign = 'end';
     //     }
     // }
+
+    private update() {
+        const marker = this.marker;
+        const markerSize = this.markerSize;
+
+        marker.x = -markerSize / 2;
+        marker.y = -markerSize / 2;
+        marker.width = markerSize;
+        marker.height = markerSize;
+
+        this.label.x = markerSize / 2 + this.padding;
+    }
 }

@@ -28,11 +28,23 @@ export enum Orientation {
 
 export class Legend {
 
+    onLayoutChange?: () => void;
+
     readonly group: Group = new Group();
 
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
     private itemSelectionData: ItemSelectionDatum[] = [];
+
+    private oldSize: [number, number] = [0, 0];
+
+    private _size: [number, number] = [0, 0];
+    set size(value: [number, number]) {
+        this._size = value;
+    }
+    get size(): [number, number] {
+        return this._size;
+    }
 
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
@@ -53,6 +65,32 @@ export class Legend {
         return this._orientation;
     }
 
+    private _itemPadding: number = 4;
+    set itemPadding(value: number) {
+        if (this._itemPadding !== value) {
+            this._itemPadding = value;
+            if (this.onLayoutChange) {
+                this.onLayoutChange();
+            }
+        }
+    }
+    get itemPadding(): number {
+        return this._itemPadding;
+    }
+
+    private _markerPadding: number = MarkerLabel.defaults.padding;
+    set markerPadding(value: number) {
+        if (this._markerPadding !== value) {
+            this._markerPadding = value;
+            if (this.onLayoutChange) {
+                this.onLayoutChange();
+            }
+        }
+    }
+    get markerPadding(): number {
+        return this._markerPadding;
+    }
+
     // private _markerPosition: MarkerPosition = MarkerPosition.Left;
     // set markerPosition(value: MarkerPosition) {
     //     if (this._markerPosition !== value) {
@@ -67,34 +105,24 @@ export class Legend {
     //     return this._markerPosition;
     // }
 
-    private _size: [number, number] = [0, 0];
-    set size(value: [number, number]) {
-        this._size = value;
-        // this.layoutChanged();
-    }
-    get size(): [number, number] {
-        return this._size;
-    }
-
-    onDataChange?: () => void;
-    onLayoutChange?: () => void;
-
-    private _labelColor: string = 'black';
+    private _labelColor: string = MarkerLabel.defaults.labelColor;
     set labelColor(value: string) {
         if (this._labelColor !== value) {
             this._labelColor = value;
-            this.dataChanged();
+            this.update();
         }
     }
     get labelColor(): string {
         return this._labelColor;
     }
 
-    private _labelFont: string = '12px Tahoma';
+    private _labelFont: string = MarkerLabel.defaults.labelFont;
     set labelFont(value: string) {
         if (this._labelFont !== value) {
             this._labelFont = value;
-            this.dataChanged();
+            if (this.onLayoutChange) {
+                this.onLayoutChange();
+            }
         }
     }
     get labelFont(): string {
@@ -105,7 +133,9 @@ export class Legend {
     set markerSize(value: number) {
         if (this._markerSize !== value) {
             this._markerSize = value;
-            this.layoutChanged();
+            if (this.onLayoutChange) {
+                this.onLayoutChange();
+            }
         }
     }
     get markerSize(): number {
@@ -116,14 +146,12 @@ export class Legend {
     set markerLineWidth(value: number) {
         if (this._markerLineWidth !== value) {
             this._markerLineWidth = value;
-            this.layoutChanged();
+            this.update();
         }
     }
     get markerLineWidth(): number {
         return this._markerLineWidth;
     }
-
-    private oldSize: [number, number] = [0, 0];
 
     performLayout() {
         const updateSelection = this.itemSelection.setData(this.itemSelectionData);
@@ -131,12 +159,19 @@ export class Legend {
 
         const enterSelection = updateSelection.enter.append(MarkerLabel);
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
+
         const [width, height] = this.size;
         const itemCount = itemSelection.size;
-        const gap = 4;
+        const itemPadding = this.itemPadding;
 
         const bboxes: BBox[] = [];
-        itemSelection.each(item => bboxes.push(item.getBBox()));
+        itemSelection.each((markerLabel, datum) => {
+            markerLabel.markerSize = this.markerSize;
+            markerLabel.labelFont = this.labelFont;
+            markerLabel.labelText = datum.label.text;
+
+            bboxes.push(markerLabel.getBBox());
+        });
 
         const itemHeight = bboxes.length && bboxes[0].height;
         let rowCount = 0;
@@ -179,11 +214,11 @@ export class Legend {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * gap;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPadding;
 
-                } while (paddedItemsWidth + gap * 2 > width && rowCount > 1);
+                } while (paddedItemsWidth + itemPadding * 2 > width && rowCount > 1);
 
-                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * gap;
+                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * itemPadding;
 
                 break;
 
@@ -224,8 +259,8 @@ export class Legend {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * gap;
-                    paddedItemsHeight = itemsHeight + (rowCount - 1) * gap;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPadding;
+                    paddedItemsHeight = itemsHeight + (rowCount - 1) * itemPadding;
 
                 } while (paddedItemsHeight > height && rowCount > 1);
 
@@ -241,16 +276,18 @@ export class Legend {
         columnWidth = 0;
 
         itemSelection.each((markerLabel, datum, i) => {
-            const marker = datum.marker;
-            markerLabel.markerSize = this.markerSize;
-            markerLabel.markerFill = marker.fillStyle;
-            markerLabel.markerStroke = marker.strokeStyle;
-            markerLabel.markerLineWidth = this.markerLineWidth;
+            // const marker = datum.marker;
+            // markerLabel.markerSize = this.markerSize;
+            // markerLabel.markerFill = marker.fillStyle;
+            // markerLabel.markerStroke = marker.strokeStyle;
+            // markerLabel.markerLineWidth = this.markerLineWidth;
+            //
+            // const label = datum.label;
+            // markerLabel.label = label.text;
+            // markerLabel.labelFont = this.labelFont;
+            // markerLabel.labelFill =  this.labelColor;
 
-            const label = datum.label;
-            markerLabel.label = label.text;
-            markerLabel.labelFont = this.labelFont;
-            markerLabel.labelFill =  this.labelColor;
+            markerLabel.padding = this.markerPadding;
 
             markerLabel.translationX = startX + x;
             markerLabel.translationY = startY + y;
@@ -260,35 +297,38 @@ export class Legend {
                 columnWidth = bbox.width;
             }
             if ((i + 1) % rowCount === 0) {
-                x += columnWidth + gap;
+                x += columnWidth + itemPadding;
                 y = 0;
                 columnWidth = 0;
             } else {
-                y += bbox.height + gap;
+                y += bbox.height + itemPadding;
             }
         });
 
+        this.update();
+
         const size = this.size;
         const oldSize = this.oldSize;
-        size[0] = paddedItemsWidth + gap * 2;
-        size[1] = paddedItemsHeight + gap * 2;
+        size[0] = paddedItemsWidth + itemPadding * 2;
+        size[1] = paddedItemsHeight + itemPadding * 2;
 
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];
             oldSize[1] = size[1];
-            this.layoutChanged();
+            if (this.onLayoutChange) {
+                this.onLayoutChange();
+            }
         }
     }
 
-    private dataChanged() {
-        if (this.onDataChange) {
-            this.onDataChange();
-        }
-    }
+    update() {
+        this.itemSelection.each((markerLabel, datum) => {
+            const marker = datum.marker;
+            markerLabel.markerFillStyle = marker.fillStyle;
+            markerLabel.markerStrokeStyle = marker.strokeStyle;
+            markerLabel.markerLineWidth = this.markerLineWidth;
 
-    private layoutChanged() {
-        if (this.onLayoutChange) {
-            this.onLayoutChange();
-        }
+            markerLabel.labelColor =  this.labelColor;
+        });
     }
 }
