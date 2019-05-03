@@ -11,8 +11,6 @@ export class PolarChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
 
     protected _padding = new Padding(50);
 
-    private legendAutoPadding = new Padding();
-
     constructor(parent: HTMLElement = document.body) {
         super(parent);
 
@@ -67,23 +65,6 @@ export class PolarChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
             series.update();
         });
 
-        const legend = this.legend;
-        if (!legend.data.length) {
-            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
-        }
-        legend.size = [300, this.height - 40];
-        legend.performLayout();
-        legend.group.translationX = 0;
-        legend.group.translationY = 0;
-
-        const legendBBox = legend.group.getBBox();
-
-        legend.group.translationX = this.width - legendBBox.width - legendBBox.x - 20;
-        legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
-
-        if (this.legendAutoPadding.right !== legendBBox.width) {
-            this.legendAutoPadding.right = legendBBox.width;
-            this.layoutPending = true;
-        }
+        this.positionLegend();
     }
 }

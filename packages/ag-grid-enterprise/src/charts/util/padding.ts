@@ -10,4 +10,11 @@ export class Padding {
         this.bottom = bottom;
         this.left = left;
     }
+
+    clear() {
+        this.top = 0;
+        this.right = 0;
+        this.bottom = 0;
+        this.left = 0;
+    }
 }

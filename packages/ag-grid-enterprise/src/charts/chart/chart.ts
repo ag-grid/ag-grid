@@ -4,11 +4,21 @@ import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
-import { Legend, LegendDatum } from "./legend";
+import { Legend, LegendDatum, Orientation } from "./legend";
+import { BBox } from "../scene/bbox";
+
+export enum LegendPosition {
+    Top,
+    Right,
+    Bottom,
+    Left
+}
 
 export abstract class Chart<D, X, Y> {
     readonly scene: Scene = new Scene();
     legend = new Legend();
+
+    protected legendAutoPadding = new Padding();
 
     tooltipElement = (() => {
         const div = document.createElement('div');
@@ -43,12 +53,41 @@ export abstract class Chart<D, X, Y> {
         this.scene.parent = null;
     }
 
-    onLegendDataChange() {
-        this.dataPending = true;
-    }
-
     onLegendLayoutChange() {
         this.layoutPending = true;
+    }
+
+    private _legendPosition: LegendPosition = LegendPosition.Right;
+    set legendPosition(value: LegendPosition) {
+        if (this._legendPosition !== value) {
+            this._legendPosition = value;
+            this.legendAutoPadding.clear();
+            switch (value) {
+                case LegendPosition.Right:
+                case LegendPosition.Left:
+                    this.legend.orientation = Orientation.Vertical;
+                    break;
+                case LegendPosition.Bottom:
+                case LegendPosition.Top:
+                    this.legend.orientation = Orientation.Horizontal;
+                    break;
+            }
+            this.layoutPending = true;
+        }
+    }
+    get legendPosition(): LegendPosition {
+        return this._legendPosition;
+    }
+
+    private _legendPadding: number = 20;
+    set legendPadding(value: number) {
+        if (this._legendPadding !== value) {
+            this._legendPadding = value;
+            this.layoutPending = true;
+        }
+    }
+    get legendPadding(): number {
+        return this._legendPadding;
     }
 
     private _data: D[] = [];
@@ -164,6 +203,72 @@ export abstract class Chart<D, X, Y> {
     }
 
     abstract performLayout(): void;
+
+    protected positionLegend() {
+        if (!this.legend.data.length) {
+            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
+        }
+
+        const width = this.width;
+        const height = this.height;
+        const legend = this.legend;
+        const legendPadding = this.legendPadding;
+
+        legend.group.translationX = 0;
+        legend.group.translationY = 0;
+
+        let legendBBox: BBox;
+        switch (this.legendPosition) {
+            case LegendPosition.Right:
+                legend.performLayout(0, height - legendPadding * 2);
+                legendBBox = legend.group.getBBox();
+
+                legend.group.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
+                legend.group.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+
+                if (this.legendAutoPadding.right !== legendBBox.width) {
+                    this.legendAutoPadding.right = legendBBox.width;
+                    this.layoutPending = true;
+                }
+                break;
+            case LegendPosition.Left:
+                legend.performLayout(0, height - legendPadding * 2);
+                legendBBox = legend.group.getBBox();
+
+                legend.group.translationX = legendPadding - legendBBox.x;
+                legend.group.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+
+                if (this.legendAutoPadding.left !== legendBBox.width) {
+                    this.legendAutoPadding.left = legendBBox.width;
+                    this.layoutPending = true;
+                }
+                break;
+            case LegendPosition.Bottom:
+                legend.performLayout(width - legendPadding * 2, 0);
+                legendBBox = legend.group.getBBox();
+
+                legend.group.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                legend.group.translationY = height - legendBBox.height - legendBBox.y - legendPadding;
+
+                if (this.legendAutoPadding.bottom !== legendBBox.height) {
+                    this.legendAutoPadding.bottom = legendBBox.height;
+                    this.layoutPending = true;
+                }
+                break;
+            case LegendPosition.Top:
+                legend.performLayout(width - legendPadding * 2, 0);
+                legendBBox = legend.group.getBBox();
+
+                legend.group.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                legend.group.translationY = legendPadding - legendBBox.y;
+
+                if (this.legendAutoPadding.top !== legendBBox.height) {
+                    this.legendAutoPadding.top = legendBBox.height;
+                    this.layoutPending = true;
+                }
+                break;
+        }
+    }
 
     abstract get seriesRoot(): Node;
 

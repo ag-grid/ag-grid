@@ -34,10 +34,7 @@ export class Legend {
     private oldSize: [number, number] = [0, 0];
 
     private _size: [number, number] = [0, 0];
-    set size(value: [number, number]) {
-        this._size = value;
-    }
-    get size(): [number, number] {
+    get size(): Readonly<[number, number]> {
         return this._size;
     }
 
@@ -54,6 +51,9 @@ export class Legend {
     set orientation(value: Orientation) {
         if (this._orientation !== value) {
             this._orientation = value;
+            if (this.onLayoutChange) {
+                this.onLayoutChange();
+            }
         }
     }
     get orientation(): Orientation {
@@ -134,22 +134,35 @@ export class Legend {
         return this._markerLineWidth;
     }
 
-    performLayout() {
+    /**
+     * The method is given the desired size of the legend, which only serves as a hint.
+     * The vertically oriented legend will take as much horizontal space as needed, but will
+     * respect the height constraints, and the horizontal legend will take as much vertical
+     * space as needed in an attempt not to exceed the given width.
+     * After the layout is done, the {@link size} will contain the actual size of the legend.
+     * If the actual size is not the same as the previous actual size, the legend will notify
+     * the parent component via the {@link onLayoutChange} callback that another layout is needed,
+     * and the above process should be repeated.
+     * @param width
+     * @param height
+     */
+    performLayout(width: number, height: number) {
         const updateSelection = this.itemSelection.setData(this.data);
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel);
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
 
-        const [width, height] = this.size;
         const itemCount = itemSelection.size;
         const itemPadding = this.itemPadding;
 
+        // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
         itemSelection.each((markerLabel, datum) => {
             markerLabel.markerSize = this.markerSize;
             markerLabel.labelFont = this.labelFont;
             markerLabel.labelText = datum.label.text;
+            markerLabel.padding = this.markerPadding;
 
             bboxes.push(markerLabel.getBBox());
         });
@@ -164,7 +177,7 @@ export class Legend {
         switch (this.orientation) {
             case Orientation.Horizontal:
 
-                if (!width) {
+                if (!(isFinite(width) && width > 0)) {
                     return false;
                 }
 
@@ -197,7 +210,7 @@ export class Legend {
                     }
                     paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPadding;
 
-                } while (paddedItemsWidth + itemPadding * 2 > width && rowCount > 1);
+                } while (paddedItemsWidth > width);
 
                 paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * itemPadding;
 
@@ -205,7 +218,7 @@ export class Legend {
 
             case Orientation.Vertical:
 
-                if (!height) {
+                if (!(isFinite(height) && height > 0)) {
                     return false;
                 }
 
@@ -256,20 +269,8 @@ export class Legend {
         let y = 0;
         columnWidth = 0;
 
+        // Position legend items using the layout computed above.
         itemSelection.each((markerLabel, datum, i) => {
-            // const marker = datum.marker;
-            // markerLabel.markerSize = this.markerSize;
-            // markerLabel.markerFill = marker.fillStyle;
-            // markerLabel.markerStroke = marker.strokeStyle;
-            // markerLabel.markerLineWidth = this.markerLineWidth;
-            //
-            // const label = datum.label;
-            // markerLabel.label = label.text;
-            // markerLabel.labelFont = this.labelFont;
-            // markerLabel.labelFill =  this.labelColor;
-
-            markerLabel.padding = this.markerPadding;
-
             markerLabel.translationX = startX + x;
             markerLabel.translationY = startY + y;
 
@@ -286,12 +287,13 @@ export class Legend {
             }
         });
 
+        // Update legend item properties that don't affect the layout.
         this.update();
 
-        const size = this.size;
+        const size = this._size;
         const oldSize = this.oldSize;
-        size[0] = paddedItemsWidth + itemPadding * 2;
-        size[1] = paddedItemsHeight + itemPadding * 2;
+        size[0] = paddedItemsWidth;
+        size[1] = paddedItemsHeight;
 
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];

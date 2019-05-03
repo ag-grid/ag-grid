@@ -8,7 +8,6 @@ import { Padding } from "../util/padding";
 export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
 
     private axisAutoPadding = new Padding();
-    private legendAutoPadding = new Padding();
 
     constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent: HTMLElement = document.body) {
         super(parent);
@@ -57,6 +56,14 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
             height: this.height
         };
 
+        const legendAutoPadding = this.legendAutoPadding;
+        if (this.legend.data.length) {
+            shrinkRect.x += legendAutoPadding.left;
+            shrinkRect.y += legendAutoPadding.top;
+            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
+            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+        }
+
         const padding = this.padding;
         shrinkRect.x += padding.left;
         shrinkRect.y += padding.top;
@@ -68,14 +75,6 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
         shrinkRect.y += axisAutoPadding.top;
         shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
-
-        const legendAutoPadding = this.legendAutoPadding;
-        if (this.legend.data.length) {
-            shrinkRect.x += legendAutoPadding.left;
-            shrinkRect.y += legendAutoPadding.top;
-            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
-            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
-        }
 
         const seriesClipRect = this.seriesClipRect;
         seriesClipRect.x = shrinkRect.x;
@@ -106,31 +105,7 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
             series.update(); // this has to happen after the `updateAxis` call
         });
 
-        if (this.legend.data.length) {
-            const legend = this.legend;
-            legend.size = [300, shrinkRect.height];
-            legend.performLayout();
-            // We reset the `translationX` intentionally here to get `legendBBox.x`
-            // which is the offset we need to apply to align the left edge of legend
-            // with the right edge of the `seriesClipRect`.
-            legend.group.translationX = 0;
-            legend.group.translationY = 0;
-
-            const legendBBox = legend.group.getBBox();
-            // legendBBox.dilate(20);
-            legendBBox.x -= 20;
-            legendBBox.y -= 20;
-            legendBBox.width += 20;
-            legendBBox.height += 40;
-
-            legend.group.translationX = seriesClipRect.x + seriesClipRect.width - legendBBox.x;
-            legend.group.translationY = (this.height - legendBBox.height) / 2 - legendBBox.y;
-
-            if (this.legendAutoPadding.right !== legendBBox.width) {
-                this.legendAutoPadding.right = legendBBox.width;
-                this.layoutPending = true;
-            }
-        }
+        this.positionLegend();
     }
 
     updateAxes() {
