@@ -13,7 +13,11 @@ export class Downloader {
             element.setAttribute("download", fileName);
             element.style.display = "none";
             document.body.appendChild(element);
-            element.click();
+            const event = new MouseEvent('click', {
+                view: window,
+                bubbles: false
+            });
+            element.dispatchEvent(event);
             window.URL.revokeObjectURL(url);
             document.body.removeChild(element);
         }
