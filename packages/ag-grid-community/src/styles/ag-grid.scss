@@ -246,6 +246,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         min-height: 100%;
     }
     &.ag-layout-auto-height {
+        height: auto;
         .ag-center-cols-clipper, .ag-center-cols-container {
             min-height: 50px;
         }
