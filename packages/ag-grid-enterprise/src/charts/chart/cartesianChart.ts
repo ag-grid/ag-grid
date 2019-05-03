@@ -1,4 +1,4 @@
-import { Chart } from "./chart";
+import { Chart, LegendPosition } from "./chart";
 import { Axis } from "../axis";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
@@ -62,6 +62,24 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
             shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+
+            const legendPadding = this.legendPadding;
+            switch (this.legendPosition) {
+                case LegendPosition.Right:
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case LegendPosition.Bottom:
+                    shrinkRect.height -= legendPadding;
+                    break;
+                case LegendPosition.Left:
+                    shrinkRect.x += legendPadding;
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case LegendPosition.Top:
+                    shrinkRect.y += legendPadding;
+                    shrinkRect.height -= legendPadding;
+                    break;
+            }
         }
 
         const padding = this.padding;
