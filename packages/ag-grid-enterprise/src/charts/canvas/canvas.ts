@@ -99,7 +99,7 @@ export function resizeCanvas(canvas: HTMLCanvasElement, width: number, height: n
  * @param bias If alignment is necessary, which side to prefer.
  */
 export function pixelSnap(value: number, bias = PixelSnapBias.Positive): number {
-    return bias * Math.round(value) % 2 / 2;
+    return bias * Math.floor(value) % 2 / 2;
 }
 
 export enum PixelSnapBias {

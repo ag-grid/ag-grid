@@ -143,10 +143,10 @@ export class Rect extends Shape {
         if (!radius) {
             if (this.crisp) {
                 path.rect(
-                    Math.round(this.x) + pixelSnap(this.lineWidth),
-                    Math.round(this.y) + pixelSnap(this.lineWidth),
-                    Math.round(this.width) + Math.round(this.x % 1 + this.width % 1),
-                    Math.round(this.height) + Math.round(this.y % 1 + this.height % 1)
+                    Math.floor(this.x) + pixelSnap(this.lineWidth),
+                    Math.floor(this.y) + pixelSnap(this.lineWidth),
+                    Math.floor(this.width) + Math.floor(this.x % 1 + this.width % 1),
+                    Math.floor(this.height) + Math.floor(this.y % 1 + this.height % 1)
                 );
             } else {
                 path.rect(this.x, this.y, this.width, this.height);
