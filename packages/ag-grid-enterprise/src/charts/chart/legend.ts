@@ -159,6 +159,7 @@ export class Legend {
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
         itemSelection.each((markerLabel, datum) => {
+            // TODO: measure only when one of these properties or data change (in a separate routine)
             markerLabel.markerSize = this.markerSize;
             markerLabel.labelFont = this.labelFont;
             markerLabel.labelText = datum.label.text;

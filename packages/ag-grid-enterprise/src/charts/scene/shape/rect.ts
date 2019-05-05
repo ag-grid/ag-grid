@@ -1,15 +1,6 @@
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
-import { pixelSnap as _pixelSnap } from "../../canvas/canvas";
-
-// _pixelSnap(3) compiles to Object(_canvas_canvas__WEBPACK_IMPORTED_MODULE_3__["pixelSnap"])(3)
-// This has some performance hit and is not nice for readability nor debugging.
-// For example, it shows up as `pixelSnap` in the Sources tab, but can't
-// be called from console like that.
-// See https://github.com/webpack/webpack/issues/5600
-// The suggested `concatenateModules: true` config made no difference.
-const pixelSnap = _pixelSnap;
 
 export class Rect extends Shape {
 
@@ -142,9 +133,10 @@ export class Rect extends Shape {
 
         if (!radius) {
             if (this.crisp) {
+                const alignment = Math.floor(this.lineWidth) % 2 / 2;
                 path.rect(
-                    Math.floor(this.x) + pixelSnap(this.lineWidth),
-                    Math.floor(this.y) + pixelSnap(this.lineWidth),
+                    Math.floor(this.x) + alignment,
+                    Math.floor(this.y) + alignment,
                     Math.floor(this.width) + Math.floor(this.x % 1 + this.width % 1),
                     Math.floor(this.height) + Math.floor(this.y % 1 + this.height % 1)
                 );

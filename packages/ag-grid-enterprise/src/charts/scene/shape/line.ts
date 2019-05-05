@@ -1,6 +1,5 @@
 import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
-import { pixelSnap, PixelSnapBias } from "../../canvas/canvas";
 import { BBox } from "../bbox";
 
 export class Line extends Shape {
@@ -90,17 +89,6 @@ export class Line extends Shape {
         );
     };
 
-    private _pixelSnapBias = PixelSnapBias.Positive;
-    set pixelSnapBias(value: PixelSnapBias) {
-        if (this._pixelSnapBias !== value) {
-            this._pixelSnapBias = value;
-            this.dirty = true;
-        }
-    }
-    get pixelSnapBias(): PixelSnapBias {
-        return this._pixelSnapBias;
-    }
-
     isPointInPath(x: number, y: number): boolean {
         return false;
     }
@@ -125,11 +113,11 @@ export class Line extends Shape {
         // Align to the pixel grid if the line is strictly vertical
         // or horizontal (but not both, i.e. a dot).
         if (x1 === x2) {
-            const delta = pixelSnap(this.lineWidth, this.pixelSnapBias);
+            const delta = Math.floor(this.lineWidth) % 2 / 2;
             x1 += delta;
             x2 += delta;
         } else if (y1 === y2) {
-            const delta = pixelSnap(this.lineWidth, this.pixelSnapBias);
+            const delta = Math.floor(this.lineWidth) % 2 / 2;
             y1 += delta;
             y2 += delta;
         }
