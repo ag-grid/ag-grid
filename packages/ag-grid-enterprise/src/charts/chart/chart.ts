@@ -226,31 +226,6 @@ export abstract class Chart<D, X, Y> {
 
         let legendBBox: BBox;
         switch (this.legendPosition) {
-            default:
-            case LegendPosition.Right:
-                legend.performLayout(0, height - legendPadding * 2);
-                legendBBox = legendGroup.getBBox();
-
-                legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
-                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
-
-                if (legendAutoPadding.right !== legendBBox.width) {
-                    legendAutoPadding.right = legendBBox.width;
-                    this.layoutPending = true;
-                }
-                break;
-            case LegendPosition.Left:
-                legend.performLayout(0, height - legendPadding * 2);
-                legendBBox = legendGroup.getBBox();
-
-                legendGroup.translationX = legendPadding - legendBBox.x;
-                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
-
-                if (legendAutoPadding.left !== legendBBox.width) {
-                    legendAutoPadding.left = legendBBox.width;
-                    this.layoutPending = true;
-                }
-                break;
             case LegendPosition.Bottom:
                 legend.performLayout(width - legendPadding * 2, 0);
                 legendBBox = legendGroup.getBBox();
@@ -263,6 +238,7 @@ export abstract class Chart<D, X, Y> {
                     this.layoutPending = true;
                 }
                 break;
+
             case LegendPosition.Top:
                 legend.performLayout(width - legendPadding * 2, 0);
                 legendBBox = legendGroup.getBBox();
@@ -272,6 +248,32 @@ export abstract class Chart<D, X, Y> {
 
                 if (legendAutoPadding.top !== legendBBox.height) {
                     legendAutoPadding.top = legendBBox.height;
+                    this.layoutPending = true;
+                }
+                break;
+
+            case LegendPosition.Left:
+                legend.performLayout(0, height - legendPadding * 2);
+                legendBBox = legendGroup.getBBox();
+
+                legendGroup.translationX = legendPadding - legendBBox.x;
+                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+
+                if (legendAutoPadding.left !== legendBBox.width) {
+                    legendAutoPadding.left = legendBBox.width;
+                    this.layoutPending = true;
+                }
+                break;
+
+            default: // case LegendPosition.Right:
+                legend.performLayout(0, height - legendPadding * 2);
+                legendBBox = legendGroup.getBBox();
+
+                legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
+                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+
+                if (legendAutoPadding.right !== legendBBox.width) {
+                    legendAutoPadding.right = legendBBox.width;
                     this.layoutPending = true;
                 }
                 break;
@@ -348,13 +350,12 @@ export abstract class Chart<D, X, Y> {
         series: Series<D, X, Y>,
         node: Node
     } | undefined {
-        const scene = this.scene;
         const allSeries = this.series;
 
         let node: Node | undefined = undefined;
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
-            node = scene.pickNode(series.group, x, y);
+            node = series.group.pickNode(x, y);
             if (node) {
                 return {
                     series,
@@ -451,7 +452,7 @@ export abstract class Chart<D, X, Y> {
         el.style.top = `${top}px`;
     }
 
-    hideTooltip() {
+    private hideTooltip() {
         const el = this.tooltipElement;
 
         el.style.display = 'none';

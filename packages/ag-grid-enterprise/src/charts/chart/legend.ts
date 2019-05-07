@@ -2,6 +2,8 @@ import { Group } from "../scene/group";
 import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
+import { Series } from "./series/series";
+import { Node } from "../scene/node";
 
 export interface LegendDatum {
     id: string,    // for example, series ID

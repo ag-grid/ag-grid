@@ -1,6 +1,7 @@
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
+import { Shape } from "./shape/shape";
 
 export enum PointerEvents {
     All,
@@ -391,6 +392,35 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     isPointInNode(x: number, y: number): boolean {
         return false;
+    }
+
+    /**
+     * Hit testing method.
+     * Recursively checks if the given point is inside this node or any of its children.
+     * Returns the first matching node or `undefined`.
+     * Nodes that render later (show on top) are hit tested first.
+     * @param x
+     * @param y
+     */
+    pickNode(x: number, y: number): Node | undefined {
+        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.isPointInNode(x, y)) {
+            return;
+        }
+
+        const children = this.children;
+
+        if (children.length) {
+            // Nodes added later should be hit-tested first,
+            // as they are rendered on top of the previously added nodes.
+            for (let i = children.length - 1; i >= 0; i--) {
+                const hit = children[i].pickNode(x, y);
+                if (hit) {
+                    return hit;
+                }
+            }
+        } else if (this instanceof Shape) { // TODO: find a better way to identify leaf non-container nodes
+            return this;
+        }
     }
 
     readonly getBBox?: () => BBox; // we use this signature to be able to conditionally set

@@ -1,7 +1,6 @@
 import { HdpiCanvas, DownloadOptions } from "../canvas/hdpiCanvas";
-import { Node, PointerEvents } from "./node";
+import { Node } from "./node";
 import { Path2D } from "./path2D";
-import { Shape } from "./shape/shape";
 
 export class Scene {
 
@@ -28,36 +27,6 @@ export class Scene {
 
     download(options?: DownloadOptions) {
         this.hdpiCanvas.download(options);
-    }
-
-    /**
-     * Hit testing method.
-     * Recursively checks if the given point is inside any of the given node's children.
-     * Returns the first matching node or `undefined`.
-     * Nodes that render later (show on top) are hit tested first.
-     * @param node
-     * @param x
-     * @param y
-     */
-    pickNode(node: Node, x: number, y: number): Node | undefined {
-        if (!node.visible || node.pointerEvents === PointerEvents.None || !node.isPointInNode(x, y)) {
-            return;
-        }
-
-        const children = node.children;
-
-        if (children.length) {
-            // Nodes added later should be hit-tested first,
-            // as they are rendered on top of the previously added nodes.
-            for (let i = children.length - 1; i >= 0; i--) {
-                const hit = this.pickNode(children[i], x, y);
-                if (hit) {
-                    return hit;
-                }
-            }
-        } else if (node instanceof Shape) {
-            return node;
-        }
     }
 
     private _width: number;
