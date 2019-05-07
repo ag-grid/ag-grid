@@ -52,9 +52,6 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     protected abstract getModelFromUi(): FilterModel | null;
     protected abstract areModelsEqual(a: FilterModel, b: FilterModel): boolean;
 
-    // should be abstract
-    protected setFloatingFilter(model: FilterModel): void {}
-
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
     // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
@@ -129,7 +126,7 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     private onBtClear() {
         this.resetUiToDefaults();
         this.updateUiVisibility();
-        this.onUiChangedListener();
+        this.onUiChanged();
     }
 
     private onBtApply() {
@@ -151,28 +148,17 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         }
     }
 
-    protected onUiChangedListener(): void {
+    protected onUiChanged(applyNow = false): void {
         this.updateUiVisibility();
         this.abstractProvidedFilterParams.filterModifiedCallback();
-        if (!this.applyActive) {
+
+        // applyNow=true for floating filter changes, we always act on these immediately
+        if (applyNow) {
+            this.onBtApply();
+        // otherwise if no apply button, we apply (but debounce for time delay)
+        } else if (!this.applyActive) {
             this.onBtApplyDebounce();
         }
-    }
-
-    public onFloatingFilterChanged(change: BaseFloatingFilterChange): boolean {
-        if (change == null) {
-            this.setFloatingFilter(null);
-        } else {
-            this.setFloatingFilter(change.model);
-        }
-
-        this.onUiChangedListener();
-
-        if (!this.applyActive || change.apply) {
-            this.onBtApply();
-        }
-
-        return false;
     }
 
     private createTemplate(): string {

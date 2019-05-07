@@ -62,12 +62,11 @@ export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number
         eValueTo.value = model ? (''+model.filterTo) : null;
     }
 
-    protected setFloatingFilter(model: NumberFilterModel): void {
-        if (!model || model.filter == null) {
-            this.eValueFrom1.value = null;
-        } else {
-            this.eValueFrom1.value = '' + model.filter;
-        }
+    protected setFirstValueFromFloatingFilter(value: string): void {
+        this.eValueFrom1.value = value;
+        this.eValueFrom2.value = null;
+        this.eValueTo1.value = null;
+        this.eValueTo2.value = null;
     }
 
     protected comparator(): Comparator<number> {
@@ -85,7 +84,7 @@ export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number
     }
 
     private addValueChangedListeners(): void {
-        const listener = this.onUiChangedListener.bind(this);
+        const listener = ()=> this.onUiChanged();
         this.addDestroyableEventListener(this.eValueFrom1, 'input', listener);
         this.addDestroyableEventListener(this.eValueFrom2, 'input', listener);
         this.addDestroyableEventListener(this.eValueTo1, 'input', listener);

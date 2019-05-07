@@ -75,13 +75,17 @@ export class DateFilter extends AbstractScalerFilter<DateFilterModel, Date> {
         };
     }
 
-    protected setFloatingFilter(model: DateFilterModel): void {
-        if (!model || model.dateFrom == null) {
+    protected setFirstValueFromFloatingFilter(value: string): void {
+        if (value!=null) {
             this.dateCompFrom1.setDate(null);
         } else {
-            const dateFrom = _.parseYyyyMmDdToDate(model.dateFrom, "-");
+            const dateFrom = _.parseYyyyMmDdToDate(value, "-");
             this.dateCompFrom1.setDate(dateFrom);
         }
+
+        this.dateCompTo1.setDate(null);
+        this.dateCompFrom2.setDate(null);
+        this.dateCompTo2.setDate(null);
     }
 
     protected setConditionIntoUi(model: DateFilterModel, position: FilterPosition): void {
@@ -133,7 +137,7 @@ export class DateFilter extends AbstractScalerFilter<DateFilterModel, Date> {
 
         // params to pass to all four date comps
         const dateComponentParams: IDateParams = {
-            onDateChanged: this.onUiChangedListener.bind(this),
+            onDateChanged: ()=> this.onUiChanged(),
             filterParams: this.dateFilterParams
         };
 

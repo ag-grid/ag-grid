@@ -3,9 +3,6 @@ import {Column} from "../../entities/column";
 import {GridApi} from "../../gridApi";
 import {FilterModel, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
 
-export interface FloatingFilterChange {
-}
-
 export interface IFloatingFilterParams {
     column: Column;
     filterParams: IFilterParams,
@@ -24,7 +21,7 @@ export interface IFloatingFilter {
 export interface IFloatingFilterComp extends IFloatingFilter, IComponent<IFloatingFilterParams> {
 }
 
-export interface BaseFloatingFilterChange extends FloatingFilterChange {
+export interface BaseFloatingFilterChange {
     model: FilterModel;
     apply: boolean;
 }

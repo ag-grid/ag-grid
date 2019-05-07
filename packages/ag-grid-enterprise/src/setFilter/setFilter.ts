@@ -269,7 +269,7 @@ export class SetFilter extends AbstractProvidedFilter {
             this.virtualList.refresh();
             if (notify) {
                 // this.onUiChangedListener(true);
-                this.onUiChangedListener();
+                this.onUiChanged();
             }
         });
     }
@@ -326,7 +326,7 @@ export class SetFilter extends AbstractProvidedFilter {
             this.valueModel.selectNothing();
         }
         this.virtualList.refresh();
-        this.onUiChangedListener();
+        this.onUiChanged();
         this.updateSelectAll();
     }
 
@@ -339,7 +339,7 @@ export class SetFilter extends AbstractProvidedFilter {
 
         this.updateSelectAll();
 
-        this.onUiChangedListener();
+        this.onUiChanged();
     }
 
     public setMiniFilter(newMiniFilter: any): void {

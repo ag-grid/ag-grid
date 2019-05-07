@@ -9,6 +9,7 @@ import {DateCompWrapper} from "./dateCompWrapper";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {AbstractSimpleFilter, IAbstractSimpleModel} from "../abstractSimpleFilter";
 import {AbstractSimpleFloatingFilter} from "../../floating/provided/abstractSimpleFloatingFilter";
+import {Constants} from "../../../constants";
 
 export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 
@@ -89,20 +90,14 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
         const filterValueDate: Date = this.dateComp.getDate();
         const filterValueText: string = _.serializeDateToYyyyMmDd(filterValueDate, "-");
 
-        const model: DateFilterModel = {
-            type: null,
-            dateFrom: filterValueText,
-            dateTo: null,
-            filterType: 'date'
-        };
-
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
-                const providedFilter = <AbstractProvidedFilter> filterInstance;
-                providedFilter.onFloatingFilterChanged({
-                    model: model,
-                    apply: true
-                })
+                this.params.parentFilterInstance( filterInstance => {
+                    if (filterInstance) {
+                        const simpleFilter = <AbstractSimpleFilter<IAbstractSimpleModel>> filterInstance;
+                        simpleFilter.onFloatingFilterChanged(this.lastType, filterValueText);
+                    }
+                });
             }
         });
     }

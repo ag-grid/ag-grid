@@ -93,10 +93,24 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     protected abstract isFilterUiComplete(position: FilterPosition): boolean;
     protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
     protected abstract getFilterType(): string;
+    protected abstract setFirstValueFromFloatingFilter(value: string): void;
 
     protected abstract createCondition(position: FilterPosition): M;
 
     protected abstract setConditionIntoUi(model: M, position: FilterPosition): void;
+
+    public onFloatingFilterChanged(type: string, value: any): void {
+        this.setFirstValueFromFloatingFilter(value);
+        this.setFloatingFilterValue(type, value);
+        this.onUiChanged(true);
+    }
+
+    // base classes override this and set the value, this class sets the type
+    protected setFloatingFilterValue(type: string, value: any): void {
+        this.eType1.value = type;
+        this.eType2.value = null;
+        this.eJoinOperatorAnd.checked = true;
+    }
 
     protected getModelFromUi(): M | ICombinedSimpleModel<M> {
         if (!this.isFilterUiComplete(FilterPosition.One)) { return null; }
@@ -318,7 +332,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     }
 
     public addChangedListeners() {
-        const listener = this.onUiChangedListener.bind(this);
+        const listener = ()=> this.onUiChanged();
         this.addDestroyableEventListener(this.eType1, "change", listener);
         this.addDestroyableEventListener(this.eType2, "change", listener);
         this.addDestroyableEventListener(this.eJoinOperatorOr, "change", listener);

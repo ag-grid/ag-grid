@@ -31,22 +31,6 @@ export interface IFilter {
      * filter.
      */
     getModelAsString?(model: any): string;
-
-    /**
-     * Optional method used by ag-Grid when rendering floating filters.
-     *
-     * If this method IS NOT IMPLEMENTED, when the floating filter changes, ag-Grid will automatically call
-     * IFilterParams.filterChangedCallback,  triggering the filtering of the data based on the changes from
-     * the floating filter. For the simplest cases this is enough.
-     *
-     * IF IT IS IMPLEMENTED. ag-Grid will delegate into this method the responsibility of calling
-     * IFilterParams.filterChangedCallback. This is useful if additional logic is necessary, for instance
-     * ag-Grid uses this in addition with the applyNow flag to handle the apply button logic in the default
-     * ag-Grid filters.
-     *
-     *     change: The exact same object passed on FloatingFilter.onFloatingFilterChanged
-     */
-    onFloatingFilterChanged ?(change: any): void;
 }
 
 export interface FilterModel {

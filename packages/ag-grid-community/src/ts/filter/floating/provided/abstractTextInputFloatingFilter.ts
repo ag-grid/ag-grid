@@ -6,6 +6,7 @@ import {Constants} from "../../../constants";
 import {AbstractProvidedFilter} from "../../provided/abstractProvidedFilter";
 import {PostConstruct} from "../../../context/context";
 import {AbstractSimpleFloatingFilter} from "./abstractSimpleFloatingFilter";
+import {AbstractSimpleFilter, IAbstractSimpleModel} from "../../provided/abstractSimpleFilter";
 
 export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloatingFilter {
 
@@ -49,16 +50,14 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
-        const model = this.getModelFromText(this.eFloatingFilterText.value);
+        const value = this.eFloatingFilterText.value;
+        ////////////// FIX - how to handle enter key??
         const enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
 
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
-                const providedFilter = <AbstractProvidedFilter> filterInstance;
-                providedFilter.onFloatingFilterChanged({
-                    model: model,
-                    apply: enterKeyPressed
-                })
+                const simpleFilter = <AbstractSimpleFilter<IAbstractSimpleModel>> filterInstance;
+                simpleFilter.onFloatingFilterChanged(this.lastType, value);
             }
         });
     }

@@ -88,7 +88,7 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
     }
 
     private addValueChangedListeners(): void {
-        const listener = this.onUiChangedListener.bind(this);
+        const listener = ()=> this.onUiChanged();
         this.addDestroyableEventListener(this.eValue1, 'input', listener);
         this.addDestroyableEventListener(this.eValue2, 'input', listener);
     }
@@ -147,12 +147,9 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
         this.eValue2.value = null;
     }
 
-    protected setFloatingFilter(model: TextFilterModel): void {
-        if (model) {
-            this.eValue1.value = model.filter;
-        } else {
-            this.eValue1.value = null;
-        }
+    protected setFirstValueFromFloatingFilter(value: string): void {
+        this.eValue1.value = value;
+        this.eValue2.value = null;
     }
 
     public getDefaultFilterOptions(): string[] {
