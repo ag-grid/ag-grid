@@ -17,11 +17,12 @@ export class MarkerLabel extends Group {
     constructor() {
         super();
 
-        this.label.textBaseline = 'middle';
-        this.label.font = MarkerLabel.defaults.labelFont;
-        this.label.fillStyle = MarkerLabel.defaults.labelColor;
+        const label = this.label;
+        label.textBaseline = 'middle';
+        label.font = MarkerLabel.defaults.labelFont;
+        label.fillStyle = MarkerLabel.defaults.labelColor;
 
-        this.append([this.marker, this.label]);
+        this.append([this.marker, label]);
         this.update();
     }
 

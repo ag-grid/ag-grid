@@ -20,26 +20,28 @@ export abstract class Chart<D, X, Y> {
 
     protected legendAutoPadding = new Padding();
 
-    tooltipElement = (() => {
-        const div = document.createElement('div');
-        div.style.border = '1px solid gray';
-        div.style.font = '12px Verdana, sans-serif';
-        div.style.padding = '7px';
-        div.style.whiteSpace = 'no-wrap';
-        div.style.color = 'black';
-        div.style.background = 'rgba(244, 244, 244, 0.9)';
-        div.style.boxShadow = '3px 3px 5px rgba(0, 0, 0, 0.3)';
-        div.style.position = 'absolute';
-        div.style.zIndex = '100';
-        div.style.display = 'none';
-        document.body.appendChild(div);
-        return div;
-    })();
+    private tooltipElement: HTMLDivElement = document.createElement('div');
+
+    private _tooltipClass: string = '';
+    set tooltipClass(value: string) {
+        if (this._tooltipClass !== value) {
+            this._tooltipClass = value;
+            this.tooltipElement.setAttribute('class', value);
+        }
+    }
+    get tooltipClass(): string {
+        return this._tooltipClass;
+    }
 
     protected constructor(parent: HTMLElement = document.body) {
         this.scene.parent = parent;
         this.scene.root = new Group();
         this.legend.onLayoutChange = this.onLegendLayoutChange.bind(this);
+
+        this.tooltipElement.style.display = 'none';
+        this.tooltipClass = 'ag-theme-balham ag-chart-tooltip';
+        document.body.appendChild(this.tooltipElement);
+
         this.setupListeners(this.scene.hdpiCanvas.canvas);
     }
 
@@ -48,6 +50,7 @@ export abstract class Chart<D, X, Y> {
         if (tooltipParent) {
             tooltipParent.removeChild(this.tooltipElement);
         }
+
         this.legend.onLayoutChange = undefined;
         this.cleanupListeners(this.scene.hdpiCanvas.canvas);
         this.scene.parent = null;
@@ -204,6 +207,8 @@ export abstract class Chart<D, X, Y> {
 
     abstract performLayout(): void;
 
+    private legendBBox?: BBox;
+
     protected positionLegend() {
         if (!this.legend.data.length) {
             return; // TODO: figure out why we ever arrive here (data should be processed before layout)
@@ -212,62 +217,67 @@ export abstract class Chart<D, X, Y> {
         const width = this.width;
         const height = this.height;
         const legend = this.legend;
+        const legendGroup = legend.group;
         const legendPadding = this.legendPadding;
+        const legendAutoPadding = this.legendAutoPadding;
 
         legend.group.translationX = 0;
         legend.group.translationY = 0;
 
         let legendBBox: BBox;
         switch (this.legendPosition) {
+            default:
             case LegendPosition.Right:
                 legend.performLayout(0, height - legendPadding * 2);
-                legendBBox = legend.group.getBBox();
+                legendBBox = legendGroup.getBBox();
 
-                legend.group.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
-                legend.group.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+                legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
+                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
 
-                if (this.legendAutoPadding.right !== legendBBox.width) {
-                    this.legendAutoPadding.right = legendBBox.width;
+                if (legendAutoPadding.right !== legendBBox.width) {
+                    legendAutoPadding.right = legendBBox.width;
                     this.layoutPending = true;
                 }
                 break;
             case LegendPosition.Left:
                 legend.performLayout(0, height - legendPadding * 2);
-                legendBBox = legend.group.getBBox();
+                legendBBox = legendGroup.getBBox();
 
-                legend.group.translationX = legendPadding - legendBBox.x;
-                legend.group.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+                legendGroup.translationX = legendPadding - legendBBox.x;
+                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
 
-                if (this.legendAutoPadding.left !== legendBBox.width) {
-                    this.legendAutoPadding.left = legendBBox.width;
+                if (legendAutoPadding.left !== legendBBox.width) {
+                    legendAutoPadding.left = legendBBox.width;
                     this.layoutPending = true;
                 }
                 break;
             case LegendPosition.Bottom:
                 legend.performLayout(width - legendPadding * 2, 0);
-                legendBBox = legend.group.getBBox();
+                legendBBox = legendGroup.getBBox();
 
-                legend.group.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legend.group.translationY = height - legendBBox.height - legendBBox.y - legendPadding;
+                legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                legendGroup.translationY = height - legendBBox.height - legendBBox.y - legendPadding;
 
-                if (this.legendAutoPadding.bottom !== legendBBox.height) {
-                    this.legendAutoPadding.bottom = legendBBox.height;
+                if (legendAutoPadding.bottom !== legendBBox.height) {
+                    legendAutoPadding.bottom = legendBBox.height;
                     this.layoutPending = true;
                 }
                 break;
             case LegendPosition.Top:
                 legend.performLayout(width - legendPadding * 2, 0);
-                legendBBox = legend.group.getBBox();
+                legendBBox = legendGroup.getBBox();
 
-                legend.group.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legend.group.translationY = legendPadding - legendBBox.y;
+                legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                legendGroup.translationY = legendPadding - legendBBox.y;
 
-                if (this.legendAutoPadding.top !== legendBBox.height) {
-                    this.legendAutoPadding.top = legendBBox.height;
+                if (legendAutoPadding.top !== legendBBox.height) {
+                    legendAutoPadding.top = legendBBox.height;
                     this.layoutPending = true;
                 }
                 break;
         }
+
+        this.legendBBox = legendBBox;
     }
 
     abstract get seriesRoot(): Node;

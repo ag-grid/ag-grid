@@ -145,7 +145,7 @@
 
     .ag-radio-button-label, .ag-checkbox-label {
         cursor: default;
-        
+
     }
 
     .ag-radio-button-label, .ag-checkbox-label {
@@ -225,7 +225,7 @@
             @include textbox($params);
             width: 100%;
         }
-    
+
         textarea {
             @include textbox($params);
         }
@@ -284,7 +284,7 @@
         &.ag-scroller-corner {
             border-right: none;
         }
-    } 
+    }
     .ag-horizontal-right-spacer  {
         border-left: $scroll-spacer-border;
         &.ag-scroller-corner {
@@ -445,7 +445,7 @@
 
     .ag-ltr, .ag-rtl {
         .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell, 
+        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
         .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
             border: 1px solid $primary-color;
             outline: initial;
@@ -482,7 +482,7 @@
     .ag-icon-checkbox-checked:empty {
         @include colorful-icon($icons-path, "checkbox-checked", $accent-color, map-get($params, "alt-icon-color"));
     }
-    
+
     .ag-icon-radio-button-on:empty {
         @include colorful-icon($icons-path, "radio-button-on", $accent-color, map-get($params, "alt-icon-color"));
     }
@@ -511,7 +511,7 @@
                 vertical-align: middle;
             }
         }
-        
+
         @if $hover-color {
             .ag-menu-option-active {
                 background-color: $hover-color;
@@ -595,7 +595,7 @@
 
         .ag-tab {
             @extend %tab !optional;
-            
+
             display: flex;
             border-bottom: 2px solid transparent;
             height: $grid-size * 4;
@@ -674,7 +674,7 @@
             margin: 0;
         }
 
-        
+
         .ag-set-filter-list {
             height: $virtual-item-height * 6;
         }
@@ -690,7 +690,7 @@
                 }
             }
         }
- 
+
         .ag-filter-header-container:nth-child(2) {
             border-bottom: 1px solid $border-color;
         }
@@ -1011,21 +1011,21 @@
                 border-top: 1px dashed darken($border-color, 20%);
             }
         }
-    
+
         .ag-selection-fill-right {
             border-right: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
                 border-right: 1px dashed darken($border-color, 20%);
             }
         }
-    
+
         .ag-selection-fill-bottom {
             border-bottom: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
                 border-bottom: 1px dashed darken($border-color, 20%);
             }
         }
-    
+
         .ag-selection-fill-left {
             border-left: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
@@ -1522,7 +1522,7 @@
         border-radius: $tooltip-border-radius;
         padding: $tooltip-padding;
         border-width: $tooltip-border-width;
-        border-style: $tooltip-border-style; 
+        border-style: $tooltip-border-style;
         border-color: $tooltip-border-color;
         transition: opacity 1s;
 
@@ -1564,7 +1564,7 @@
         .ag-tab-body {
             padding: 0;
         }
-    
+
         .ag-chart-settings {
             .ag-chart-settings-mini-wrapper > div {
                 margin: 5px;
@@ -1751,7 +1751,7 @@
                 border-left: 1px solid $border-color;
                 border-right: 0;
             }
-    
+
             &.full-width .ag-panel-container {
                 border-left: 0;
             }
