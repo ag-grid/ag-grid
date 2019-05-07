@@ -6,6 +6,7 @@ import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
 import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
+import { find } from "../util/array";
 
 export enum LegendPosition {
     Top,
@@ -195,7 +196,9 @@ export abstract class Chart<D, X, Y> {
 
         const legendData: LegendDatum[] = [];
         this.series.forEach(series => {
-            series.processData();
+            if (series.visible) {
+                series.processData();
+            }
             if (series.showInLegend) {
                 series.provideLegendData(legendData);
             }
@@ -339,11 +342,13 @@ export abstract class Chart<D, X, Y> {
     private setupListeners(chartElement: HTMLCanvasElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
+        chartElement.addEventListener('click', this.onClick);
     }
 
     private cleanupListeners(chartElement: HTMLCanvasElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
         chartElement.removeEventListener('mouseout', this.onMouseMove);
+        chartElement.removeEventListener('click', this.onClick);
     }
 
     private pickSeriesNode(x: number, y: number): {
@@ -402,6 +407,21 @@ export abstract class Chart<D, X, Y> {
 
     private readonly onMouseOut = (event: MouseEvent) => {
         this.tooltipElement.style.display = 'none';
+    };
+
+    private readonly onClick = (event: MouseEvent) => {
+        const x = event.offsetX;
+        const y = event.offsetY;
+
+        const datum = this.legend.datumForPoint(x, y);
+        if (datum) {
+            const {id, tag, enabled} = datum;
+            const series = find(this.series, series => series.id === id);
+
+            if (series) {
+                series.visible = !enabled;
+            }
+        }
     };
 
     private onSeriesNodePick(event: MouseEvent, series: Series<D, X, Y>, node: Shape) {

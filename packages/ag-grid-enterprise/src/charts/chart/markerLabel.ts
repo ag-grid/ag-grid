@@ -79,6 +79,13 @@ export class MarkerLabel extends Group {
         return this.marker.lineWidth;
     }
 
+    set opacity(value: number) {
+        this.marker.opacity = value;
+    }
+    get opacity(): number {
+        return this.marker.opacity;
+    }
+
     private _padding: number = MarkerLabel.defaults.padding;
     set padding(value: number) {
         if (this._padding !== value) {

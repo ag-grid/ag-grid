@@ -2,8 +2,6 @@ import { Group } from "../scene/group";
 import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
-import { Series } from "./series/series";
-import { Node } from "../scene/node";
 
 export interface LegendDatum {
     id: string,    // for example, series ID
@@ -313,8 +311,17 @@ export class Legend {
             markerLabel.markerFillStyle = marker.fillStyle;
             markerLabel.markerStrokeStyle = marker.strokeStyle;
             markerLabel.markerLineWidth = this.markerLineWidth;
+            markerLabel.opacity = datum.enabled ? 1 : 0.5;
 
             markerLabel.labelColor =  this.labelColor;
         });
+    }
+
+    datumForPoint(x: number, y: number): LegendDatum | undefined {
+        const node = this.group.pickNode(x, y);
+
+        if (node && node.parent) {
+            return node.parent.datum;
+        }
     }
 }
