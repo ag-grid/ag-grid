@@ -29,6 +29,15 @@ export function extent<T>(values: T[]): [T | undefined, T | undefined] {
     return [min, max];
 }
 
+export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined {
+    for (let i = 0, ln = arr.length; i < ln; i++) {
+        const value = arr[i];
+        if (predicate(value, i, arr)) {
+            return value;
+        }
+    }
+}
+
 export function checkExtent<T>(values: [T | undefined, T | undefined]): [T, T] {
     if (values[0] !== undefined && values[1] !== undefined) {
         return values as [T, T];
