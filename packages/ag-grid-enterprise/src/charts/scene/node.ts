@@ -1,7 +1,6 @@
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
-import { Shape } from "./shape/shape";
 
 export enum PointerEvents {
     All,
@@ -46,9 +45,21 @@ export abstract class Node { // Don't confuse with `window.Node`.
      */
     tag: number = NaN;
 
+    /**
+     * This is meaningfully faster than `instanceof` and should be the preferred way
+     * of checking inside loops.
+     * @param node
+     */
     static isNode(node: any): node is Node {
         return node ? (node as Node).matrix !== undefined : false;
     }
+
+    /**
+     * To simplify the type system (especially in Selections) we don't have the `Parent` node
+     * (one that has children). Instead, we mimic HTML DOM, where any node can have children.
+     * But we still need to distinguish regular leaf nodes from leaf containers somehow.
+     */
+    protected isContainerNode: boolean = false;
 
     protected _scene: Scene | null = null;
     _setScene(value: Scene | null) {
@@ -418,7 +429,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
                     return hit;
                 }
             }
-        } else if (this instanceof Shape) { // TODO: find a better way to identify leaf non-container nodes
+        } else if (!this.isContainerNode) { // a leaf node, but not a container leaf
             return this;
         }
     }

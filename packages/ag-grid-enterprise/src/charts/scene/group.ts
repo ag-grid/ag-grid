@@ -4,6 +4,8 @@ import { Matrix } from "./matrix";
 
 export class Group extends Node {
 
+    protected isContainerNode: boolean = true;
+
     // We consider a group to be boundless, thus any point belongs to it.
     isPointInNode(x: number, y: number): boolean {
         return true;
