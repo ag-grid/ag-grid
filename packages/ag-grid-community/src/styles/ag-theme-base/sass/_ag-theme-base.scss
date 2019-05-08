@@ -1029,7 +1029,7 @@
 
         .ag-rich-select-value {
             background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor($icon-color)}");
-            background-position: center right 4px;
+            background-position: center right $grid-size;
             background-repeat: no-repeat;
             background-size: $icon-size $icon-size;
             height: $row-height;
