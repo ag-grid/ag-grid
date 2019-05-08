@@ -465,9 +465,14 @@ export class FilterManager {
             filterModifiedCallback: null,
             valueGetter: this.createValueGetter(column),
             context: this.gridOptionsWrapper.getContext(),
-            doesRowPassOtherFilter: null,
-            $scope: $scope
+            doesRowPassOtherFilter: null
         };
+
+        // hack in scope if using AngularJS
+        if ($scope) {
+            (<any>params).$scope = $scope;
+        }
+
         return params;
     }
 

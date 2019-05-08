@@ -1,6 +1,6 @@
 import {
     _,
-    AbstractProvidedFilter,
+    ProvidedFilter,
     Autowired,
     Component,
     IDoesFilterPassParams,
@@ -16,7 +16,7 @@ import {SetFilterModel} from "./setFilterModel";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
-export class SetFilter extends AbstractProvidedFilter {
+export class SetFilter extends ProvidedFilter {
 
     private valueModel: SetValueModel;
 
@@ -106,12 +106,6 @@ export class SetFilter extends AbstractProvidedFilter {
         super.setParams(params);
 
         this.setFilterParams = params;
-
-        // NOTE: what's applyNow for???
-
-        // const changeFilter: (applyNow?: boolean) => void = (applyNow: boolean = false) => {
-        //     this.onUiChangedListener(applyNow);
-        // };
 
         this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.setFilterParams.column);
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.setFilterParams.column);

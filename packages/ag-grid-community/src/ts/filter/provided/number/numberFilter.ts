@@ -2,29 +2,29 @@ import {RefSelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
 
 import {
-    AbstractSimpleFilter,
+    SimpleFilter,
     FilterPosition,
-    IAbstractSimpleFilterParams,
-    IAbstractSimpleModel
-} from "../abstractSimpleFilter";
-import {AbstractScalerFilter, Comparator} from "../abstractScalerFilter";
+    ISimpleFilterParams,
+    ISimpleModel
+} from "../simpleFilter";
+import {ScalerFilter, Comparator} from "../scalerFilter";
 
-export interface NumberFilterModel extends IAbstractSimpleModel {
+export interface NumberFilterModel extends ISimpleModel {
     filter?: number;
     filterTo?: number;
 }
 
-export interface INumberFilterParams extends IAbstractSimpleFilterParams {
+export interface INumberFilterParams extends ISimpleFilterParams {
 }
 
-export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number> {
+export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
 
     private static readonly FILTER_TYPE = 'number';
 
-    public static DEFAULT_FILTER_OPTIONS = [AbstractScalerFilter.EQUALS, AbstractScalerFilter.NOT_EQUAL,
-        AbstractScalerFilter.LESS_THAN, AbstractScalerFilter.LESS_THAN_OR_EQUAL,
-        AbstractScalerFilter.GREATER_THAN, AbstractScalerFilter.GREATER_THAN_OR_EQUAL,
-        AbstractScalerFilter.IN_RANGE];
+    public static DEFAULT_FILTER_OPTIONS = [ScalerFilter.EQUALS, ScalerFilter.NOT_EQUAL,
+        ScalerFilter.LESS_THAN, ScalerFilter.LESS_THAN_OR_EQUAL,
+        ScalerFilter.GREATER_THAN, ScalerFilter.GREATER_THAN_OR_EQUAL,
+        ScalerFilter.IN_RANGE];
 
     @RefSelector('eValueFrom1')
     private eValueFrom1: HTMLInputElement;
@@ -127,13 +127,13 @@ export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number
         const value = this.stringToFloat(eValue.value);
         const valueTo = this.stringToFloat(eValueTo.value);
 
-        if (option===AbstractSimpleFilter.EMPTY) { return false; }
+        if (option===SimpleFilter.EMPTY) { return false; }
 
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
 
-        if (option===AbstractSimpleFilter.IN_RANGE) {
+        if (option===SimpleFilter.IN_RANGE) {
             return value != null && valueTo != null;
         } else {
             return value != null;

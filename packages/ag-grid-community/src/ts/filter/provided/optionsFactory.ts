@@ -1,5 +1,6 @@
 import {IFilterOptionDef, IFilterParams} from "../../interfaces/iFilter";
-import {IScalarFilterParams} from "./abstractScalerFilter";
+import {IScalarFilterParams} from "./scalerFilter";
+import {ISimpleFilterParams} from "./simpleFilter";
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
@@ -42,7 +43,7 @@ export class OptionsFactory {
         });
     }
 
-    private selectDefaultItem(params: IFilterParams): void {
+    private selectDefaultItem(params: ISimpleFilterParams): void {
         if (params.defaultOption) {
             this.defaultOption = params.defaultOption;
         } else if (this.filterOptions.length >= 1) {

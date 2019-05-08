@@ -33,7 +33,7 @@ export interface IFilter {
     getModelAsString?(model: any): string;
 }
 
-export interface FilterModel {
+export interface ProvidedFilterModel {
     filterType: string;
 }
 
@@ -53,9 +53,6 @@ export interface IFilterOptionDef {
 }
 
 export interface IFilterParams {
-    clearButton?: boolean;
-    applyButton?: boolean;
-    newRowsAction?: string;
     api: GridApi;
     column: Column;
     colDef: ColDef;
@@ -65,10 +62,6 @@ export interface IFilterParams {
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
-    $scope: any;
-    filterOptions?: (IFilterOptionDef | string) [];
-    defaultOption?: string;
-    textFormatter?: (from: string) => string;
 }
 
 /** @deprecated, use iFilter */

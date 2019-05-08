@@ -1,4 +1,4 @@
-import {AbstractSimpleFilter, IAbstractSimpleFilterParams, IAbstractSimpleModel} from "./abstractSimpleFilter";
+import {SimpleFilter, ISimpleFilterParams, ISimpleModel} from "./simpleFilter";
 import {IDoesFilterPassParams} from "../../interfaces/iFilter";
 
 export interface NullComparator {
@@ -7,7 +7,7 @@ export interface NullComparator {
     greaterThan?: boolean;
 }
 
-export interface IScalarFilterParams extends IAbstractSimpleFilterParams {
+export interface IScalarFilterParams extends ISimpleFilterParams {
     inRangeInclusive?: boolean;
     nullComparator?: NullComparator;
 }
@@ -16,7 +16,7 @@ export interface Comparator<T> {
     (left: T, right: T): number;
 }
 
-export abstract class AbstractScalerFilter<M extends IAbstractSimpleModel, T> extends AbstractSimpleFilter<M> {
+export abstract class ScalerFilter<M extends ISimpleModel, T> extends SimpleFilter<M> {
 
     static readonly DEFAULT_NULL_COMPARATOR: NullComparator = {
         equals: false,
@@ -29,7 +29,7 @@ export abstract class AbstractScalerFilter<M extends IAbstractSimpleModel, T> ex
     protected abstract comparator(): Comparator<T>;
 
     // because the date and number filter models have different attribute names, we have to map
-    protected abstract mapRangeFromModel(filterModel: IAbstractSimpleModel): {from: T, to: T};
+    protected abstract mapRangeFromModel(filterModel: ISimpleModel): {from: T, to: T};
 
     protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);
@@ -40,31 +40,31 @@ export abstract class AbstractScalerFilter<M extends IAbstractSimpleModel, T> ex
         if (gridValue == null) {
             const nullValue = this.canNullsPassFilter(selectedOption);
 
-            if (selectedOption === AbstractScalerFilter.EMPTY) {
+            if (selectedOption === ScalerFilter.EMPTY) {
                 return 0;
             }
 
-            if (selectedOption === AbstractScalerFilter.EQUALS) {
+            if (selectedOption === ScalerFilter.EQUALS) {
                 return nullValue ? 0 : 1;
             }
 
-            if (selectedOption === AbstractScalerFilter.GREATER_THAN) {
+            if (selectedOption === ScalerFilter.GREATER_THAN) {
                 return nullValue ? 1 : -1;
             }
 
-            if (selectedOption === AbstractScalerFilter.GREATER_THAN_OR_EQUAL) {
+            if (selectedOption === ScalerFilter.GREATER_THAN_OR_EQUAL) {
                 return nullValue ? 1 : -1;
             }
 
-            if (selectedOption === AbstractScalerFilter.LESS_THAN_OR_EQUAL) {
+            if (selectedOption === ScalerFilter.LESS_THAN_OR_EQUAL) {
                 return nullValue ? -1 : 1;
             }
 
-            if (selectedOption === AbstractScalerFilter.LESS_THAN) {
+            if (selectedOption === ScalerFilter.LESS_THAN) {
                 return nullValue ? -1 : 1;
             }
 
-            if (selectedOption === AbstractScalerFilter.NOT_EQUAL) {
+            if (selectedOption === ScalerFilter.NOT_EQUAL) {
                 return nullValue ? 1 : 0;
             }
         }
@@ -83,10 +83,10 @@ export abstract class AbstractScalerFilter<M extends IAbstractSimpleModel, T> ex
             return (this.scalarFilterParams.nullComparator as any)[reducedType];
         }
 
-        return (AbstractScalerFilter.DEFAULT_NULL_COMPARATOR as any)[reducedType];
+        return (ScalerFilter.DEFAULT_NULL_COMPARATOR as any)[reducedType];
     }
 
-    protected individualFilterPasses(params: IDoesFilterPassParams, filterModel: IAbstractSimpleModel) {
+    protected individualFilterPasses(params: IDoesFilterPassParams, filterModel: ISimpleModel) {
 
         const cellValue: any = this.scalarFilterParams.valueGetter(params.node);
 
@@ -111,37 +111,37 @@ export abstract class AbstractScalerFilter<M extends IAbstractSimpleModel, T> ex
 
         const compareResult = this.nullComparator(filterType, filterValue, cellValue);
 
-        if (filterType === AbstractScalerFilter.EMPTY) {
+        if (filterType === ScalerFilter.EMPTY) {
             return false;
         }
 
-        if (filterType === AbstractScalerFilter.EQUALS) {
+        if (filterType === ScalerFilter.EQUALS) {
             return compareResult === 0;
         }
 
-        if (filterType === AbstractScalerFilter.GREATER_THAN) {
+        if (filterType === ScalerFilter.GREATER_THAN) {
             return compareResult > 0;
         }
 
-        if (filterType === AbstractScalerFilter.GREATER_THAN_OR_EQUAL) {
+        if (filterType === ScalerFilter.GREATER_THAN_OR_EQUAL) {
             return compareResult >= 0;
         }
 
-        if (filterType === AbstractScalerFilter.LESS_THAN_OR_EQUAL) {
+        if (filterType === ScalerFilter.LESS_THAN_OR_EQUAL) {
             return compareResult <= 0;
         }
 
-        if (filterType === AbstractScalerFilter.LESS_THAN) {
+        if (filterType === ScalerFilter.LESS_THAN) {
             return compareResult < 0;
         }
 
-        if (filterType === AbstractScalerFilter.NOT_EQUAL) {
+        if (filterType === ScalerFilter.NOT_EQUAL) {
             return compareResult != 0;
         }
 
         // From now on the type is a range and rawFilterValues must be an array!
         const compareToResult = this.nullComparator(filterType, filterValueTo, cellValue);
-        if (filterType === AbstractScalerFilter.IN_RANGE) {
+        if (filterType === ScalerFilter.IN_RANGE) {
             if (!this.scalarFilterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
             } else {

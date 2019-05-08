@@ -1,8 +1,8 @@
 import {NumberFilter, NumberFilterModel} from "./numberFilter";
-import {AbstractSimpleFilter} from "../abstractSimpleFilter";
-import {AbstractTextInputFloatingFilter} from "../../floating/provided/abstractTextInputFloatingFilter";
+import {SimpleFilter} from "../simpleFilter";
+import {TextInputFloatingFilter} from "../../floating/provided/textInputFloatingFilter";
 
-export class NumberFloatingFilter extends AbstractTextInputFloatingFilter {
+export class NumberFloatingFilter extends TextInputFloatingFilter {
 
     protected getDefaultFilterOptions(): string[] {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
@@ -10,7 +10,7 @@ export class NumberFloatingFilter extends AbstractTextInputFloatingFilter {
 
     protected conditionToString(condition: NumberFilterModel): string {
 
-        const isRange = condition.type == AbstractSimpleFilter.IN_RANGE;
+        const isRange = condition.type == SimpleFilter.IN_RANGE;
 
         if (isRange) {
             return `${condition.filter}-${condition.filterTo}`;

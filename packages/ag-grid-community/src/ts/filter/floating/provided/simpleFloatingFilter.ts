@@ -1,19 +1,19 @@
 import {Component} from "../../../widgets/component";
 import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
-import {FilterModel} from "../../../interfaces/iFilter";
-import {AbstractSimpleFilter, IAbstractSimpleModel, ICombinedSimpleModel} from "../../provided/abstractSimpleFilter";
+import {ProvidedFilterModel} from "../../../interfaces/iFilter";
+import {SimpleFilter, ISimpleModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
 import {OptionsFactory} from "../../provided/optionsFactory";
-import {IScalarFilterParams} from "../../provided/abstractScalerFilter";
+import {IScalarFilterParams} from "../../provided/scalerFilter";
 import {FilterChangedEvent} from "../../../events";
 
-export abstract class AbstractSimpleFloatingFilter extends Component implements IFloatingFilterComp {
+export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.
-    public abstract onParentModelChanged(model: FilterModel, event: FilterChangedEvent): void;
+    public abstract onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void;
 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
-    protected abstract conditionToString(condition: FilterModel): string;
+    protected abstract conditionToString(condition: ProvidedFilterModel): string;
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract setEditable(editable: boolean): void;
 
@@ -22,7 +22,7 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
     // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
-    protected getTextFromModel(model: FilterModel): string {
+    protected getTextFromModel(model: ProvidedFilterModel): string {
         if (!model) {
             return null;
         }
@@ -30,14 +30,14 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
         const isCombined = (<any>model).operator;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<IAbstractSimpleModel>>model;
+            const combinedModel = <ICombinedSimpleModel<ISimpleModel>>model;
 
             const con1Str = this.conditionToString(combinedModel.condition1);
             const con2Str = this.conditionToString(combinedModel.condition2);
 
             return `${con1Str} ${combinedModel.operator} ${con2Str}`;
         } else {
-            const condition = <IAbstractSimpleModel>model;
+            const condition = <ISimpleModel>model;
             return this.conditionToString(condition);
         }
     }
@@ -50,7 +50,7 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
         return this.lastType;
     }
 
-    protected setLastTypeFromModel(model: FilterModel): void {
+    protected setLastTypeFromModel(model: ProvidedFilterModel): void {
         // if no model provided by the parent filter, we continue to use the last type used
         if (!model) {
             return;
@@ -58,19 +58,19 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
 
         const isCombined = (<any>model).operator;
 
-        let condition: IAbstractSimpleModel;
+        let condition: ISimpleModel;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<IAbstractSimpleModel>>model;
+            const combinedModel = <ICombinedSimpleModel<ISimpleModel>>model;
             condition = combinedModel.condition1;
         } else {
-            condition = <IAbstractSimpleModel>model;
+            condition = <ISimpleModel>model;
         }
 
         this.lastType = condition.type;
     }
 
-    protected canWeEditAfterModelFromParentFilter(model: FilterModel): boolean {
+    protected canWeEditAfterModelFromParentFilter(model: ProvidedFilterModel): boolean {
 
         if (!model) {
             // if no model, then we can edit as long as the lastType is something we can edit, as this
@@ -84,7 +84,7 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
             return false;
         }
 
-        const simpleModel = <IAbstractSimpleModel>model;
+        const simpleModel = <ISimpleModel>model;
 
         const typeIsEditable = this.isTypeEditable(simpleModel.type);
         return typeIsEditable;
@@ -105,7 +105,7 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
 
     private isTypeEditable(type: string): boolean {
         return type
-            && (type != AbstractSimpleFilter.IN_RANGE)
-            && (type != AbstractSimpleFilter.EMPTY);
+            && (type != SimpleFilter.IN_RANGE)
+            && (type != SimpleFilter.EMPTY);
     }
 }

@@ -1,7 +1,7 @@
 import {TextFilter, TextFilterModel} from "./textFilter";
-import {AbstractTextInputFloatingFilter} from "../../floating/provided/abstractTextInputFloatingFilter";
+import {TextInputFloatingFilter} from "../../floating/provided/textInputFloatingFilter";
 
-export class TextFloatingFilter extends AbstractTextInputFloatingFilter {
+export class TextFloatingFilter extends TextInputFloatingFilter {
 
     protected conditionToString(condition: TextFilterModel): string {
         // it's not possible to have 'in range' for string, so no need to check for it.

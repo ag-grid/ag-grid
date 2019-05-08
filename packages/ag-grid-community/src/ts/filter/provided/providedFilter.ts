@@ -1,11 +1,14 @@
 import {Component} from "../../widgets/component";
-import {FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import {ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {_} from "../../utils";
 
-export interface IAbstractProvidedFilterParams extends IFilterParams {
+export interface IProvidedFilterParams extends IFilterParams {
+    clearButton?: boolean;
+    applyButton?: boolean;
+    newRowsAction?: string;
     debounceMs?: number;
 }
 
@@ -14,12 +17,12 @@ export interface IAbstractProvidedFilterParams extends IFilterParams {
  * All the filters that come with ag-Grid extend this class. User filters do not
  * extend this class.
  */
-export abstract class AbstractProvidedFilter extends Component implements IFilterComp {
+export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
-    private abstractProvidedFilterParams: IAbstractProvidedFilterParams;
+    private abstractProvidedFilterParams: IProvidedFilterParams;
 
     private clearActive: boolean;
     private applyActive: boolean;
@@ -47,9 +50,9 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     protected abstract createBodyTemplate(): string;
     protected abstract resetUiToDefaults(): void;
 
-    protected abstract setModelIntoUi(model: FilterModel): void;
-    protected abstract getModelFromUi(): FilterModel | null;
-    protected abstract areModelsEqual(a: FilterModel, b: FilterModel): boolean;
+    protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
+    protected abstract getModelFromUi(): ProvidedFilterModel | null;
+    protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
@@ -57,7 +60,7 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
     // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
-    private appliedModel: FilterModel;
+    private appliedModel: ProvidedFilterModel;
 
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
@@ -81,12 +84,12 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     }
 
 
-    protected setParams(params: IFilterParams): void {
+    protected setParams(params: IProvidedFilterParams): void {
         this.abstractProvidedFilterParams = params;
 
 
         this.clearActive = params.clearButton === true;
-        this.applyActive = AbstractProvidedFilter.isUseApplyButton(params);
+        this.applyActive = ProvidedFilter.isUseApplyButton(params);
         this.newRowsActionKeep = params.newRowsAction === 'keep';
 
         _.setVisible(this.eApplyButton, this.applyActive);
@@ -100,15 +103,15 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     }
 
     private setupOnBtApplyDebounce(): void {
-        const debounceMs = AbstractProvidedFilter.getDebounceMs(this.abstractProvidedFilterParams);
+        const debounceMs = ProvidedFilter.getDebounceMs(this.abstractProvidedFilterParams);
         this.onBtApplyDebounce = _.debounce(this.onBtApply.bind(this), debounceMs);
     }
 
-    public getModel(): FilterModel {
+    public getModel(): ProvidedFilterModel {
         return this.appliedModel;
     }
 
-    public setModel(model: FilterModel): void {
+    public setModel(model: ProvidedFilterModel): void {
         if (model) {
             this.setModelIntoUi(model);
         } else {
@@ -179,8 +182,8 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     }
 
     // static, as used by floating filter also
-    public static getDebounceMs(params: IAbstractProvidedFilterParams): number {
-        const applyActive = AbstractProvidedFilter.isUseApplyButton(params);
+    public static getDebounceMs(params: IProvidedFilterParams): number {
+        const applyActive = ProvidedFilter.isUseApplyButton(params);
         if (applyActive) {
             if (params.debounceMs != null) {
                 console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
@@ -191,7 +194,7 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     }
 
     // static, as used by floating filter also
-    public static isUseApplyButton(params: IFilterParams): boolean {
+    public static isUseApplyButton(params: IProvidedFilterParams): boolean {
         if ((params as any).apply && !params.applyButton) {
             console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is now filterParams.applyButton, please change to applyButton')
             params.applyButton = true;

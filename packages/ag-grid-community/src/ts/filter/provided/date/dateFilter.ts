@@ -5,24 +5,24 @@ import {UserComponentFactory} from "../../../components/framework/userComponentF
 import {_} from "../../../utils";
 import {DateCompWrapper} from "./dateCompWrapper";
 import {
-    AbstractSimpleFilter,
+    SimpleFilter,
     FilterPosition,
-    IAbstractSimpleFilterParams,
-    IAbstractSimpleModel
-} from "../abstractSimpleFilter";
+    ISimpleFilterParams,
+    ISimpleModel
+} from "../simpleFilter";
 import {IDateComparatorFunc} from "./dateFilter";
-import {AbstractScalerFilter, Comparator} from "../abstractScalerFilter";
+import {ScalerFilter, Comparator} from "../scalerFilter";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert
 // easily to JSON. so when the model is used for doing the filtering, it's converted
 // to Date objects.
-export interface DateFilterModel extends IAbstractSimpleModel {
+export interface DateFilterModel extends ISimpleModel {
     dateFrom: string;
     dateTo: string;
 }
 
-export interface IDateFilterParams extends IAbstractSimpleFilterParams {
+export interface IDateFilterParams extends ISimpleFilterParams {
     comparator?: IDateComparatorFunc;
     browserDatePicker?: boolean;
 }
@@ -33,12 +33,12 @@ export interface IDateComparatorFunc {
 }
 
 
-export class DateFilter extends AbstractScalerFilter<DateFilterModel, Date> {
+export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     private static readonly FILTER_TYPE = 'date';
 
-    public static DEFAULT_FILTER_OPTIONS = [AbstractScalerFilter.EQUALS, AbstractScalerFilter.GREATER_THAN,
-        AbstractScalerFilter.LESS_THAN, AbstractScalerFilter.NOT_EQUAL, AbstractScalerFilter.IN_RANGE];
+    public static DEFAULT_FILTER_OPTIONS = [ScalerFilter.EQUALS, ScalerFilter.GREATER_THAN,
+        ScalerFilter.LESS_THAN, ScalerFilter.NOT_EQUAL, ScalerFilter.IN_RANGE];
 
     @RefSelector('ePanelFrom1')
     private ePanelFrom1: HTMLElement;
@@ -182,13 +182,13 @@ export class DateFilter extends AbstractScalerFilter<DateFilterModel, Date> {
         const valueFrom = compFrom.getDate();
         const valueTo = compTo.getDate();
 
-        if (option===AbstractSimpleFilter.EMPTY) { return false; }
+        if (option===SimpleFilter.EMPTY) { return false; }
 
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
 
-        if (option===AbstractSimpleFilter.IN_RANGE) {
+        if (option===SimpleFilter.IN_RANGE) {
             return valueFrom != null && valueTo != null;
         } else {
             return valueFrom != null;

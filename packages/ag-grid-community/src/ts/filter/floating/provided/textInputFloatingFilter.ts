@@ -1,16 +1,16 @@
 import {IFloatingFilterParams} from "../floatingFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
-import {FilterModel} from "../../../interfaces/iFilter";
+import {ProvidedFilterModel} from "../../../interfaces/iFilter";
 import {_} from "../../../utils";
 import {Constants} from "../../../constants";
-import {AbstractProvidedFilter} from "../../provided/abstractProvidedFilter";
+import {ProvidedFilter} from "../../provided/providedFilter";
 import {PostConstruct} from "../../../context/context";
-import {AbstractSimpleFloatingFilter} from "./abstractSimpleFloatingFilter";
-import {AbstractSimpleFilter, IAbstractSimpleModel, ICombinedSimpleModel} from "../../provided/abstractSimpleFilter";
+import {SimpleFloatingFilter} from "./simpleFloatingFilter";
+import {SimpleFilter, ISimpleModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
 import {NumberFilterModel} from "../../provided/number/numberFilter";
 import {FilterChangedEvent} from "../../../events";
 
-export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloatingFilter {
+export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
     @RefSelector('eFloatingFilterText')
     private eFloatingFilterText: HTMLInputElement;
@@ -27,7 +27,7 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
             </div>`);
     }
 
-    public onParentModelChanged(model: FilterModel, event: FilterChangedEvent): void {
+    public onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void {
         // we don't want to update the floating filter if the floating filter caused the change.
         // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
         // would behave strange as it would be updating as the user is typing
@@ -44,8 +44,8 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
         super.init(params);
         this.params = params;
 
-        this.applyActive = AbstractProvidedFilter.isUseApplyButton(this.params.filterParams);
-        const debounceMs = AbstractProvidedFilter.getDebounceMs(this.params.filterParams);
+        this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
+        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams);
 
         const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 
@@ -67,7 +67,7 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
 
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
-                const simpleFilter = <AbstractSimpleFilter<IAbstractSimpleModel>> filterInstance;
+                const simpleFilter = <SimpleFilter<ISimpleModel>> filterInstance;
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), value);
             }
         });

@@ -2,13 +2,13 @@ import {IDoesFilterPassParams} from "../../../interfaces/iFilter";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
 import {
-    AbstractSimpleFilter,
+    SimpleFilter,
     FilterPosition,
-    IAbstractSimpleFilterParams,
-    IAbstractSimpleModel
-} from "../abstractSimpleFilter";
+    ISimpleFilterParams,
+    ISimpleModel
+} from "../simpleFilter";
 
-export interface TextFilterModel extends IAbstractSimpleModel {
+export interface TextFilterModel extends ISimpleModel {
     filter?: string;
 }
 
@@ -20,18 +20,19 @@ export interface TextFormatter {
     (from: string): string;
 }
 
-export interface ITextFilterParams extends IAbstractSimpleFilterParams {
+export interface ITextFilterParams extends ISimpleFilterParams {
     textCustomComparator?: TextComparator;
     caseSensitive?: boolean;
+    textFormatter?: (from: string) => string;
 }
 
-export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
+export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     private static readonly FILTER_TYPE = 'text';
 
-    public static DEFAULT_FILTER_OPTIONS = [AbstractSimpleFilter.CONTAINS, AbstractSimpleFilter.NOT_CONTAINS,
-        AbstractSimpleFilter.EQUALS, AbstractSimpleFilter.NOT_EQUAL,
-        AbstractSimpleFilter.STARTS_WITH, AbstractSimpleFilter.ENDS_WITH];
+    public static DEFAULT_FILTER_OPTIONS = [SimpleFilter.CONTAINS, SimpleFilter.NOT_CONTAINS,
+        SimpleFilter.EQUALS, SimpleFilter.NOT_EQUAL,
+        SimpleFilter.STARTS_WITH, SimpleFilter.ENDS_WITH];
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
@@ -187,7 +188,7 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
         const option = positionOne ? this.getType1() : this.getType2();
         const eFilterValue = positionOne ? this.eValue1 : this.eValue2;
 
-        if (option===AbstractSimpleFilter.EMPTY) { return false; }
+        if (option===SimpleFilter.EMPTY) { return false; }
 
         const value = this.getValue(eFilterValue);
         if (this.doesFilterHaveHiddenInput(option)) {
@@ -213,7 +214,7 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
         }
 
         if (cellValue == null || cellValue === undefined) {
-            return filterOption === AbstractSimpleFilter.NOT_EQUAL || filterOption === AbstractSimpleFilter.NOT_CONTAINS;
+            return filterOption === SimpleFilter.NOT_EQUAL || filterOption === SimpleFilter.NOT_CONTAINS;
         }
 
         const valueFormatted: string = this.formatter(cellValue);

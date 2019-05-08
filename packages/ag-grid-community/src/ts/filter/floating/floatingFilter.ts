@@ -1,7 +1,7 @@
 import {IComponent} from "../../interfaces/iComponent";
 import {Column} from "../../entities/column";
 import {GridApi} from "../../gridApi";
-import {FilterModel, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import {ProvidedFilterModel, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
 import {FilterChangedEvent} from "../../events";
 
 export interface IFloatingFilterParams {
@@ -11,7 +11,6 @@ export interface IFloatingFilterParams {
     currentParentModel: () => any;
     parentFilterInstance: ( callback: (filterInstance: IFilterComp)=>void ) => void;
     suppressFilterButton: boolean;
-    debounceMs?: number;
     api: GridApi;
 }
 
@@ -23,6 +22,6 @@ export interface IFloatingFilterComp extends IFloatingFilter, IComponent<IFloati
 }
 
 export interface BaseFloatingFilterChange {
-    model: FilterModel;
+    model: ProvidedFilterModel;
     apply: boolean;
 }

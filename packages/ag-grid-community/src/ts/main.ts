@@ -86,7 +86,7 @@ export { RowNode } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
-export { AbstractProvidedFilter } from "./filter/provided/abstractProvidedFilter";
+export { ProvidedFilter } from "./filter/provided/providedFilter";
 export { DateFilter, DateFilterModel } from "./filter/provided/date/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { NumberFilter } from "./filter/provided/number/numberFilter";
@@ -284,7 +284,7 @@ export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
-export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, FilterModel } from "./interfaces/iFilter";
+export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams } from "./interfaces/iAfterGuiAttachedParams";

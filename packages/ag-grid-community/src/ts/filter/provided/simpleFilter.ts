@@ -1,18 +1,20 @@
-import {FilterModel, IDoesFilterPassParams} from "../../interfaces/iFilter";
+import {ProvidedFilterModel, IDoesFilterPassParams, IFilterOptionDef} from "../../interfaces/iFilter";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {OptionsFactory} from "./optionsFactory";
-import {AbstractProvidedFilter, IAbstractProvidedFilterParams} from "./abstractProvidedFilter";
+import {ProvidedFilter, IProvidedFilterParams} from "./providedFilter";
 import {_} from "../../utils";
 
-export interface IAbstractSimpleFilterParams extends IAbstractProvidedFilterParams {
-    suppressAndOrCondition: boolean;
+export interface ISimpleFilterParams extends IProvidedFilterParams {
+    filterOptions?: (IFilterOptionDef | string) [];
+    defaultOption?: string;
+    suppressAndOrCondition?: boolean;
 }
 
-export interface IAbstractSimpleModel extends FilterModel {
+export interface ISimpleModel extends ProvidedFilterModel {
     type: string;
 }
 
-export interface ICombinedSimpleModel<M extends IAbstractSimpleModel> extends FilterModel {
+export interface ICombinedSimpleModel<M extends ISimpleModel> extends ProvidedFilterModel {
     operator: string;
     condition1: M;
     condition2: M;
@@ -46,7 +48,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> extends AbstractProvidedFilter {
+export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilter {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -84,11 +86,11 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
     protected optionsFactory: OptionsFactory;
 
-    private simpleFilterParams: IAbstractSimpleFilterParams;
+    private simpleFilterParams: ISimpleFilterParams;
 
     protected abstract getDefaultFilterOptions(): string[];
 
-    protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:IAbstractSimpleModel): boolean;
+    protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:ISimpleModel): boolean;
     protected abstract createValueTemplate(position: FilterPosition): string;
     protected abstract isFilterUiComplete(position: FilterPosition): boolean;
     protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
@@ -100,11 +102,11 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     protected abstract setConditionIntoUi(model: M, position: FilterPosition): void;
 
     protected showValueFrom(type: string): boolean {
-        return !this.doesFilterHaveHiddenInput(type) && type !== AbstractSimpleFilter.EMPTY;
+        return !this.doesFilterHaveHiddenInput(type) && type !== SimpleFilter.EMPTY;
     }
 
     protected showValueTo(type: string): boolean {
-        return type === AbstractSimpleFilter.IN_RANGE;
+        return type === SimpleFilter.IN_RANGE;
     }
 
     public onFloatingFilterChanged(type: string, value: any): void {
@@ -181,7 +183,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
         return res;
     }
 
-    protected setModelIntoUi(model: IAbstractSimpleModel | ICombinedSimpleModel<M>): void {
+    protected setModelIntoUi(model: ISimpleModel | ICombinedSimpleModel<M>): void {
 
         const isCombined = (<any>model).operator;
 
@@ -199,7 +201,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
             this.setConditionIntoUi(combinedModel.condition2, FilterPosition.Two);
 
         } else {
-            const simpleModel = <IAbstractSimpleModel> model;
+            const simpleModel = <ISimpleModel> model;
 
             this.eJoinOperatorAnd.checked = true;
             this.eJoinOperatorOr.checked = false;
@@ -231,13 +233,13 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
             }
 
         } else {
-            const simpleModel = <IAbstractSimpleModel> model;
+            const simpleModel = <ISimpleModel> model;
             const result = this.individualFilterPasses(params, simpleModel);
             return result;
         }
     }
 
-    protected setParams(params: IAbstractSimpleFilterParams): void {
+    protected setParams(params: ISimpleFilterParams): void {
         super.setParams(params);
 
         this.simpleFilterParams = params;

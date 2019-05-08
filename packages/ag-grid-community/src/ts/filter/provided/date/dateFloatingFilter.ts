@@ -6,11 +6,12 @@ import {IDateParams} from "../../../rendering/dateComponent";
 import {IFloatingFilterParams} from "../../floating/floatingFilter";
 import {DateCompWrapper} from "./dateCompWrapper";
 import {RefSelector} from "../../../widgets/componentAnnotations";
-import {AbstractSimpleFilter, IAbstractSimpleModel} from "../abstractSimpleFilter";
-import {AbstractSimpleFloatingFilter} from "../../floating/provided/abstractSimpleFloatingFilter";
+import {SimpleFilter, ISimpleModel} from "../simpleFilter";
+import {SimpleFloatingFilter} from "../../floating/provided/simpleFloatingFilter";
 import {FilterChangedEvent} from "../../../events";
+import {ProvidedFilter} from "../providedFilter";
 
-export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
+export class DateFloatingFilter extends SimpleFloatingFilter {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
@@ -35,7 +36,7 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 
     protected conditionToString(condition: DateFilterModel): string {
 
-        const isRange = condition.type == AbstractSimpleFilter.IN_RANGE;
+        const isRange = condition.type == SimpleFilter.IN_RANGE;
 
         if (isRange) {
             return `${condition.dateFrom}-${condition.dateTo}`;
@@ -60,7 +61,7 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
         _.setVisible(this.eReadOnlyText, !editable);
     }
 
-    public onParentModelChanged(model: IAbstractSimpleModel, event: FilterChangedEvent): void {
+    public onParentModelChanged(model: ISimpleModel, event: FilterChangedEvent): void {
         // we don't want to update the floating filter if the floating filter caused the change.
         // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
         // would behave strange as it would be updating as the user is typing
@@ -93,7 +94,7 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
-                const simpleFilter = <AbstractSimpleFilter<IAbstractSimpleModel>> filterInstance;
+                const simpleFilter = <SimpleFilter<ISimpleModel>> filterInstance;
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), filterValueText);
             }
         });
@@ -101,7 +102,7 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 
     private createDateComponent(): void {
 
-        const debounceMs: number = this.params.debounceMs != null ? this.params.debounceMs : 500;
+        const debounceMs: number = ProvidedFilter.getDebounceMs(this.params.filterParams);
         const toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         const dateComponentParams: IDateParams = {
             onDateChanged: toDebounce,
