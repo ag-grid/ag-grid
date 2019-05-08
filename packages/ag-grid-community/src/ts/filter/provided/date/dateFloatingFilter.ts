@@ -23,7 +23,7 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
     constructor() {
         super(
             `<div class="ag-input-text-wrapper">
-                <input ref="eReadOnlyText" class="ag-floating-filter-input">
+                <input ref="eReadOnlyText" disabled="true" class="ag-floating-filter-input">
                 <span ref="eDateWrapper" style="width: 100%; height: 100%;"></span>
             </div>`);
     }
@@ -49,35 +49,33 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
     }
 
     public init(params: IFloatingFilterParams) {
+        super.init(params);
         this.params = params;
         this.createDateComponent();
         this.checkInRangeOnlyOption();
-        this.showReadOnly(false);
-        this.eReadOnlyText.disabled = true;
     }
 
-    private showReadOnly(show: boolean): void {
-        _.setVisible(this.eReadOnlyText, show);
-        _.setVisible(this.eDateWrapper, !show);
+    protected setEditable(editable: boolean): void {
+        _.setVisible(this.eDateWrapper, editable);
+        _.setVisible(this.eReadOnlyText, !editable);
     }
 
     public onParentModelChanged(model: IAbstractSimpleModel): void {
-        if (!model) {
-            this.dateComp.setDate(null);
-            this.showReadOnly(false);
-            this.eReadOnlyText.value = '';
-            return;
-        }
+        super.setLastTypeFromModel(model);
 
-        const allowEditing = this.allowEditing(model);
+        const allowEditing = this.canWeEditAfterModelFromParentFilter(model);
+
+        this.setEditable(allowEditing);
 
         if (allowEditing) {
-            this.showReadOnly(false);
-            const dateModel = model as DateFilterModel;
-            this.dateComp.setDate(_.parseYyyyMmDdToDate(dateModel.dateFrom, '-'));
+            if (model) {
+                const dateModel = model as DateFilterModel;
+                this.dateComp.setDate(_.parseYyyyMmDdToDate(dateModel.dateFrom, '-'));
+            } else {
+                this.dateComp.setDate(null);
+            }
             this.eReadOnlyText.value = '';
         } else {
-            this.showReadOnly(true);
             this.eReadOnlyText.value = this.getTextFromModel(model);
             this.dateComp.setDate(null);
         }
@@ -90,12 +88,8 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
-                this.params.parentFilterInstance( filterInstance => {
-                    if (filterInstance) {
-                        const simpleFilter = <AbstractSimpleFilter<IAbstractSimpleModel>> filterInstance;
-                        simpleFilter.onFloatingFilterChanged(this.lastType, filterValueText);
-                    }
-                });
+                const simpleFilter = <AbstractSimpleFilter<IAbstractSimpleModel>> filterInstance;
+                simpleFilter.onFloatingFilterChanged(this.getLastType(), filterValueText);
             }
         });
     }

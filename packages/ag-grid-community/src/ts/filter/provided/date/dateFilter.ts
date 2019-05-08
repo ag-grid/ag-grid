@@ -75,12 +75,12 @@ export class DateFilter extends AbstractScalerFilter<DateFilterModel, Date> {
         };
     }
 
-    protected setFirstValueFromFloatingFilter(value: string): void {
+    protected setValueFromFloatingFilter(value: string): void {
         if (value!=null) {
-            this.dateCompFrom1.setDate(null);
-        } else {
             const dateFrom = _.parseYyyyMmDdToDate(value, "-");
             this.dateCompFrom1.setDate(dateFrom);
+        } else {
+            this.dateCompFrom1.setDate(null);
         }
 
         this.dateCompTo1.setDate(null);

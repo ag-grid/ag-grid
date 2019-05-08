@@ -14,8 +14,9 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
     protected abstract conditionToString(condition: FilterModel): string;
     protected abstract getDefaultFilterOptions(): string[];
+    protected abstract setEditable(editable: boolean): void;
 
-    protected lastType: string;
+    private lastType: string;
 
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
@@ -40,12 +41,39 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
         }
     }
 
-    protected allowEditing(model: FilterModel): boolean {
+    protected getLastType(): string {
+        return this.lastType;
+    }
 
+    protected setLastTypeFromModel(model: FilterModel): void {
+        // if no model provided by the parent filter, we continue to use the last type used
         if (!model) {
-            return true;
+            return;
         }
 
+        const isCombined = (<any>model).operator;
+
+        let condition: IAbstractSimpleModel;
+
+        if (isCombined) {
+            const combinedModel = <ICombinedSimpleModel<IAbstractSimpleModel>>model;
+            condition = combinedModel.condition1;
+        } else {
+            condition = <IAbstractSimpleModel>model;
+        }
+
+        this.lastType = condition.type;
+    }
+
+    protected canWeEditAfterModelFromParentFilter(model: FilterModel): boolean {
+
+        if (!model) {
+            // if no model, then we can edit as long as the lastType is something we can edit, as this
+            // is the type we will provide to the parent filter if the user decides to use the floating filter.
+            return this.isTypeEditable(this.lastType);
+        }
+
+        // never allow editing if the filter is combined (ie has two parts)
         const isCombined = (<any>model).operator;
         if (isCombined) {
             return false;
@@ -53,7 +81,8 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
 
         const simpleModel = <IAbstractSimpleModel>model;
 
-        return (simpleModel.type != AbstractSimpleFilter.IN_RANGE);
+        const typeIsEditable = this.isTypeEditable(simpleModel.type);
+        return typeIsEditable;
     }
 
     public init(params: IFloatingFilterParams): void {
@@ -61,9 +90,15 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
         optionsFactory.init(params.filterParams as IScalarFilterParams, this.getDefaultFilterOptions());
         this.lastType = optionsFactory.getDefaultOption();
 
-        // const columnDef = (params.column.getDefinition() as any);
-        // if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions[0] === 'inRange') {
-        //     this.eFloatingFilterText.disabled = true;
-        // }
+        // we are editable if:
+        // 1) there is a type (user has configured filter wrong if not type)
+        //  AND
+        // 2) the default type is not 'in range'
+        const editable = this.isTypeEditable(this.lastType);
+        this.setEditable(editable);
+    }
+
+    private isTypeEditable(type: string): boolean {
+        return type && (type != AbstractSimpleFilter.IN_RANGE)
     }
 }

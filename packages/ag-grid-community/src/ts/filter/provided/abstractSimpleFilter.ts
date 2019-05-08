@@ -93,20 +93,19 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     protected abstract isFilterUiComplete(position: FilterPosition): boolean;
     protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
     protected abstract getFilterType(): string;
-    protected abstract setFirstValueFromFloatingFilter(value: string): void;
+    protected abstract setValueFromFloatingFilter(value: string): void;
 
     protected abstract createCondition(position: FilterPosition): M;
 
     protected abstract setConditionIntoUi(model: M, position: FilterPosition): void;
 
     public onFloatingFilterChanged(type: string, value: any): void {
-        this.setFirstValueFromFloatingFilter(value);
-        this.setFloatingFilterValue(type, value);
+        this.setValueFromFloatingFilter(value);
+        this.setTypeFromFloatingFilter(type);
         this.onUiChanged(true);
     }
 
-    // base classes override this and set the value, this class sets the type
-    protected setFloatingFilterValue(type: string, value: any): void {
+    protected setTypeFromFloatingFilter(type: string): void {
         this.eType1.value = type;
         this.eType2.value = null;
         this.eJoinOperatorAnd.checked = true;

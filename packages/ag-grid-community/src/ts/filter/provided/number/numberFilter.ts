@@ -62,7 +62,7 @@ export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number
         eValueTo.value = model ? (''+model.filterTo) : null;
     }
 
-    protected setFirstValueFromFloatingFilter(value: string): void {
+    protected setValueFromFloatingFilter(value: string): void {
         this.eValueFrom1.value = value;
         this.eValueFrom2.value = null;
         this.eValueTo1.value = null;

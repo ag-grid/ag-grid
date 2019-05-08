@@ -25,15 +25,16 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
     }
 
     public onParentModelChanged(model: FilterModel): void {
+        this.setLastTypeFromModel(model);
         const modelString = this.getTextFromModel(model);
         this.eFloatingFilterText.value = modelString;
-        this.checkDisabled(model);
+        const editable = this.canWeEditAfterModelFromParentFilter(model);
+        this.setEditable(editable);
     }
 
     public init(params: IFloatingFilterParams): void {
         super.init(params);
         this.params = params;
-        this.checkDisabled(null);
 
         const debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
         const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
@@ -56,15 +57,12 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
                 const simpleFilter = <AbstractSimpleFilter<IAbstractSimpleModel>> filterInstance;
-                simpleFilter.onFloatingFilterChanged(this.lastType, value);
+                simpleFilter.onFloatingFilterChanged(this.getLastType(), value);
             }
         });
     }
 
-    private checkDisabled(model: FilterModel): void {
-        const disabled = !this.allowEditing(model);
-        this.eFloatingFilterText.disabled = disabled;
+    protected setEditable(editable: boolean): void {
+        this.eFloatingFilterText.disabled = !editable;
     }
 }
-
-

@@ -147,7 +147,7 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
         this.eValue2.value = null;
     }
 
-    protected setFirstValueFromFloatingFilter(value: string): void {
+    protected setValueFromFloatingFilter(value: string): void {
         this.eValue1.value = value;
         this.eValue2.value = null;
     }
