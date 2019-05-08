@@ -127,6 +127,8 @@ export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number
         const value = this.stringToFloat(eValue.value);
         const valueTo = this.stringToFloat(eValueTo.value);
 
+        if (option===AbstractSimpleFilter.EMPTY) { return false; }
+
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }

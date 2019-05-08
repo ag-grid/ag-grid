@@ -187,10 +187,13 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
         const option = positionOne ? this.getType1() : this.getType2();
         const eFilterValue = positionOne ? this.eValue1 : this.eValue2;
 
+        if (option===AbstractSimpleFilter.EMPTY) { return false; }
+
         const value = this.getValue(eFilterValue);
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
+
         return value != null;
     }
 

@@ -182,6 +182,8 @@ export class DateFilter extends AbstractScalerFilter<DateFilterModel, Date> {
         const valueFrom = compFrom.getDate();
         const valueTo = compTo.getDate();
 
+        if (option===AbstractSimpleFilter.EMPTY) { return false; }
+
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }

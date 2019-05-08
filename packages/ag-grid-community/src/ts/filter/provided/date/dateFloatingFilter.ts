@@ -53,7 +53,6 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
         super.init(params);
         this.params = params;
         this.createDateComponent();
-        this.checkInRangeOnlyOption();
     }
 
     protected setEditable(editable: boolean): void {
@@ -98,19 +97,6 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), filterValueText);
             }
         });
-    }
-
-    private checkInRangeOnlyOption(): void {
-        // disable the filter if inRange is the only configured option
-        const columnDef = (this.params.column.getDefinition() as any);
-        const inRangeIsOnlyOption = (columnDef.filterParams &&
-            columnDef.filterParams.filterOptions &&
-            columnDef.filterParams.filterOptions.length === 1 &&
-            columnDef.filterParams.filterOptions[0] === 'inRange');
-
-        if (inRangeIsOnlyOption) {
-            // disable the component somehow
-        }
     }
 
     private createDateComponent(): void {
