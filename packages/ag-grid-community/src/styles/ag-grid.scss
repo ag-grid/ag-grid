@@ -1174,7 +1174,7 @@ $handleSize: 5px;
 
 .ag-column-tool-panel-column,
 .ag-column-tool-panel-column-group {
-    align-items: stretch;
+    align-items: center;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -1203,6 +1203,10 @@ $handleSize: 5px;
 
 .ag-side-bar .ag-column-select-panel {
     flex-grow: 4;
+}
+
+.ag-column-select-checkbox {
+    display: flex;
 }
 
 .ag-tool-panel-horizontal-resize {
