@@ -653,11 +653,11 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     .ag-filter-checkbox {
         pointer-events: none;
     }
-}
 
-.ag-filter-select {
-    margin: 4px 4px 0 4px;
-    width: 110px;
+    .ag-filter-body-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 /**

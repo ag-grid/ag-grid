@@ -121,7 +121,6 @@
         min-height: $grid-size * 4.5;
 
         .ag-column-drop-cell-button {
-            height: calc(100% - #{$grid-size});
             margin-bottom: $grid-size / 2;
             margin-top: $grid-size / 2;
         }

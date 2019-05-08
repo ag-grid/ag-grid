@@ -586,8 +586,7 @@
 
         // string filter type
         .ag-filter-select {
-            margin: $grid-size;
-            width: calc(100% - #{$grid-size * 2});
+            margin: $grid-size; 
         }
 
         .ag-menu-list {
@@ -611,7 +610,6 @@
     // string filter type
     .ag-filter-select {
         margin: $grid-size;
-        width: calc(100% - #{$grid-size * 2});
     }
 
     ////////////////////////////////////////
@@ -799,7 +797,6 @@
             .ag-column-drop-title {
                 height: $group-height;
                 line-height: $group-height;
-                width: calc(100% - #{$icon-size + $grid-size * 2});
             }
 
             .ag-column-drop-empty-message {
@@ -1032,8 +1029,7 @@
 
         .ag-rich-select-value {
             background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor($icon-color)}");
-            background-position-x: calc(100% - #{$grid-size});
-            background-position-y: center;
+            background-position: center right 4px;
             background-repeat: no-repeat;
             background-size: $icon-size $icon-size;
             height: $row-height;
@@ -1329,7 +1325,6 @@
                 background-color: $tool-panel-background-color;
                 margin-left: -1px;
                 padding-left: 1px;
-                width: calc(100% + 1px);
                 border-color: $border-color;
               }
             }
