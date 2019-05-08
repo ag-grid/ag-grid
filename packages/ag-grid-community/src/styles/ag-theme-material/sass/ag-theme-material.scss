@@ -10,7 +10,9 @@
 
     .ag-icon-checkbox-checked,
     .ag-icon-checkbox-unchecked,
-    .ag-icon-checkbox-indeterminate {
+    .ag-icon-checkbox-indeterminate,
+    .ag-icon-radio-button-on,
+    .ag-icon-radio-button-off {
         height: $icon-size + 6;
         width: $icon-size + 6;
         background-size: cover;
