@@ -2,6 +2,7 @@ import {IComponent} from "../../interfaces/iComponent";
 import {Column} from "../../entities/column";
 import {GridApi} from "../../gridApi";
 import {FilterModel, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import {FilterChangedEvent} from "../../events";
 
 export interface IFloatingFilterParams {
     column: Column;
@@ -15,7 +16,7 @@ export interface IFloatingFilterParams {
 }
 
 export interface IFloatingFilter {
-    onParentModelChanged(parentModel: any): void;
+    onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent): void;
 }
 
 export interface IFloatingFilterComp extends IFloatingFilter, IComponent<IFloatingFilterParams> {

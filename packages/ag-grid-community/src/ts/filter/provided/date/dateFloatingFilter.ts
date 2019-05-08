@@ -8,6 +8,7 @@ import {DateCompWrapper} from "./dateCompWrapper";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {AbstractSimpleFilter, IAbstractSimpleModel} from "../abstractSimpleFilter";
 import {AbstractSimpleFloatingFilter} from "../../floating/provided/abstractSimpleFloatingFilter";
+import {FilterChangedEvent} from "../../../events";
 
 export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 
@@ -60,7 +61,12 @@ export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
         _.setVisible(this.eReadOnlyText, !editable);
     }
 
-    public onParentModelChanged(model: IAbstractSimpleModel): void {
+    public onParentModelChanged(model: IAbstractSimpleModel, event: FilterChangedEvent): void {
+        // we don't want to update the floating filter if the floating filter caused the change.
+        // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
+        // would behave strange as it would be updating as the user is typing
+        if (this.isEventFromFloatingFilter(event)) { return; }
+
         super.setLastTypeFromModel(model);
 
         const allowEditing = this.canWeEditAfterModelFromParentFilter(model);

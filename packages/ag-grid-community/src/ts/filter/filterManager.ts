@@ -235,7 +235,7 @@ export class FilterManager {
         this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
-    public onFilterChanged(): void {
+    public onFilterChanged(additionalEventAttributes?: any): void {
         this.setAdvancedFilterPresent();
         this.updateFilterFlagInColumns("filterChanged");
         this.checkExternalFilter();
@@ -253,6 +253,9 @@ export class FilterManager {
             api: this.gridApi,
             columnApi: this.columnApi
         };
+        if (additionalEventAttributes) {
+            _.mergeDeep(event, additionalEventAttributes);
+        }
         this.eventService.dispatchEvent(event);
     }
 

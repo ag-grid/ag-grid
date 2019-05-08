@@ -4,12 +4,13 @@ import {FilterModel} from "../../../interfaces/iFilter";
 import {AbstractSimpleFilter, IAbstractSimpleModel, ICombinedSimpleModel} from "../../provided/abstractSimpleFilter";
 import {OptionsFactory} from "../../provided/optionsFactory";
 import {IScalarFilterParams} from "../../provided/abstractScalerFilter";
+import {FilterChangedEvent} from "../../../events";
 
 export abstract class AbstractSimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.
-    public abstract onParentModelChanged(model: FilterModel): void;
+    public abstract onParentModelChanged(model: FilterModel, event: FilterChangedEvent): void;
 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
     protected abstract conditionToString(condition: FilterModel): string;
@@ -39,6 +40,10 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
             const condition = <IAbstractSimpleModel>model;
             return this.conditionToString(condition);
         }
+    }
+
+    protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean {
+        return (event && (<any>event).source==='floating');
     }
 
     protected getLastType(): string {

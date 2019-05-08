@@ -8,6 +8,7 @@ import {PostConstruct} from "../../../context/context";
 import {AbstractSimpleFloatingFilter} from "./abstractSimpleFloatingFilter";
 import {AbstractSimpleFilter, IAbstractSimpleModel, ICombinedSimpleModel} from "../../provided/abstractSimpleFilter";
 import {NumberFilterModel} from "../../provided/number/numberFilter";
+import {FilterChangedEvent} from "../../../events";
 
 export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloatingFilter {
 
@@ -24,7 +25,12 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
             </div>`);
     }
 
-    public onParentModelChanged(model: FilterModel): void {
+    public onParentModelChanged(model: FilterModel, event: FilterChangedEvent): void {
+        // we don't want to update the floating filter if the floating filter caused the change.
+        // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
+        // would behave strange as it would be updating as the user is typing
+        if (this.isEventFromFloatingFilter(event)) { return; }
+
         this.setLastTypeFromModel(model);
         const modelString = this.getTextFromModel(model);
         this.eFloatingFilterText.value = modelString;

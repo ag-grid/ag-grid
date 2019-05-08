@@ -60,7 +60,7 @@ export interface IFilterParams {
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;
-    filterChangedCallback: () => void;
+    filterChangedCallback: (additionalEventAttributes?: any) => void;
     filterModifiedCallback: () => void;
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;

@@ -129,7 +129,7 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         this.onUiChanged();
     }
 
-    private onBtApply() {
+    private onBtApply(afterFloatingFilter = false) {
         const oldAppliedModel = this.appliedModel;
         this.appliedModel = this.getModelFromUi();
 
@@ -137,7 +137,10 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         // and it's a case insensitive filter
         const newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
         if (newModelDifferent) {
-            this.abstractProvidedFilterParams.filterChangedCallback();
+            // the floating filter uses this info, so it doesn't refresh after filter changed if change
+            // came from floating filter
+            const source = afterFloatingFilter ? 'floatingFilter' : 'mainFilter';
+            this.abstractProvidedFilterParams.filterChangedCallback({source: source});
         }
     }
 
@@ -148,13 +151,13 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         }
     }
 
-    protected onUiChanged(applyNow = false): void {
+    protected onUiChanged(afterFloatingFilter = false): void {
         this.updateUiVisibility();
         this.abstractProvidedFilterParams.filterModifiedCallback();
 
         // applyNow=true for floating filter changes, we always act on these immediately
-        if (applyNow) {
-            this.onBtApply();
+        if (afterFloatingFilter) {
+            this.onBtApply(true);
         // otherwise if no apply button, we apply (but debounce for time delay)
         } else if (!this.applyActive) {
             this.onBtApplyDebounce();

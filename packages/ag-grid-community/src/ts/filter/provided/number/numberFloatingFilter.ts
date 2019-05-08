@@ -1,6 +1,5 @@
 import {NumberFilter, NumberFilterModel} from "./numberFilter";
 import {AbstractSimpleFilter} from "../abstractSimpleFilter";
-import {_} from "../../../utils";
 import {AbstractTextInputFloatingFilter} from "../../floating/provided/abstractTextInputFloatingFilter";
 
 export class NumberFloatingFilter extends AbstractTextInputFloatingFilter {
@@ -25,17 +24,4 @@ export class NumberFloatingFilter extends AbstractTextInputFloatingFilter {
         }
     }
 
-    private stringToFloat(value: string): number {
-        let filterText = _.makeNull(value);
-        if (filterText && filterText.trim() === '') {
-            filterText = null;
-        }
-        let newFilter: number;
-        if (filterText !== null && filterText !== undefined) {
-            newFilter = parseFloat(filterText);
-        } else {
-            newFilter = null;
-        }
-        return newFilter;
-    }
 }

@@ -8,7 +8,7 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../../headerRendering/hoverFeature";
-import { Events } from "../../events";
+import {Events, FilterChangedEvent} from "../../events";
 import { EventService } from "../../eventService";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { _, Promise } from "../../utils";
@@ -109,15 +109,16 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private setupSyncWithFilter(): void {
-        const syncWithFilter = () => {
+        const syncWithFilter = (filterChangedEvent: FilterChangedEvent) => {
             const filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(this.column, 'NO_UI');
-            this.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
+            const parentModel = filterComponentPromise.resolveNow(null, filter => filter.getModel());
+            this.onParentModelChanged(parentModel, filterChangedEvent);
         };
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
 
         if (this.filterManager.isFilterActive(this.column)) {
-            syncWithFilter();
+            syncWithFilter(null);
         }
     }
 
@@ -252,11 +253,11 @@ export class FloatingFilterWrapper extends Component {
         return filterPromise.resolveNow(null, filter => filter.getModel() );
     }
 
-    private onParentModelChanged(model: any): void {
+    private onParentModelChanged(model: any, filterChangedEvent: FilterChangedEvent): void {
         if (!this.floatingFilterCompPromise) { return; }
 
         this.floatingFilterCompPromise.then(floatingFilterComp => {
-            floatingFilterComp.onParentModelChanged(model);
+            floatingFilterComp.onParentModelChanged(model, filterChangedEvent);
         });
     }
 
