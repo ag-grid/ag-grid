@@ -6,7 +6,8 @@ import {Constants} from "../../../constants";
 import {AbstractProvidedFilter} from "../../provided/abstractProvidedFilter";
 import {PostConstruct} from "../../../context/context";
 import {AbstractSimpleFloatingFilter} from "./abstractSimpleFloatingFilter";
-import {AbstractSimpleFilter, IAbstractSimpleModel} from "../../provided/abstractSimpleFilter";
+import {AbstractSimpleFilter, IAbstractSimpleModel, ICombinedSimpleModel} from "../../provided/abstractSimpleFilter";
+import {NumberFilterModel} from "../../provided/number/numberFilter";
 
 export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloatingFilter {
 
@@ -14,8 +15,6 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
     private eFloatingFilterText: HTMLInputElement;
 
     protected params: IFloatingFilterParams;
-
-    protected abstract getModelFromText(value: string): FilterModel;
 
     @PostConstruct
     private postConstruct(): void {

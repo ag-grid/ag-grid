@@ -15,6 +15,9 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
     protected abstract conditionToString(condition: FilterModel): string;
     protected abstract getDefaultFilterOptions(): string[];
 
+    // used by:
+    // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
+    // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
     protected getTextFromModel(model: FilterModel): string {
         if (!model) {
             return null;

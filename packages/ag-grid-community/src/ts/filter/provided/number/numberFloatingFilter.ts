@@ -25,18 +25,6 @@ export class NumberFloatingFilter extends AbstractTextInputFloatingFilter {
         }
     }
 
-    protected getModelFromText(value: string): NumberFilterModel {
-        if (!value) {
-            return null;
-        } else {
-            return {
-                type: null,
-                filter: this.stringToFloat(value),
-                filterType: 'text'
-            };
-        }
-    }
-
     private stringToFloat(value: string): number {
         let filterText = _.makeNull(value);
         if (filterText && filterText.trim() === '') {

@@ -4,12 +4,10 @@ import {UserComponentFactory} from "../../../components/framework/userComponentF
 import {_} from "../../../utils";
 import {IDateParams} from "../../../rendering/dateComponent";
 import {IFloatingFilterParams} from "../../floating/floatingFilter";
-import {AbstractProvidedFilter} from "../abstractProvidedFilter";
 import {DateCompWrapper} from "./dateCompWrapper";
 import {RefSelector} from "../../../widgets/componentAnnotations";
 import {AbstractSimpleFilter, IAbstractSimpleModel} from "../abstractSimpleFilter";
 import {AbstractSimpleFloatingFilter} from "../../floating/provided/abstractSimpleFloatingFilter";
-import {Constants} from "../../../constants";
 
 export class DateFloatingFilter extends AbstractSimpleFloatingFilter {
 

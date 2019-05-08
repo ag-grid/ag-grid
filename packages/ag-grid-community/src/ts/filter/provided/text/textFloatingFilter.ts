@@ -13,18 +13,6 @@ export class TextFloatingFilter extends AbstractTextInputFloatingFilter {
         }
     }
 
-    protected getModelFromText(value: string): TextFilterModel {
-        if (!value) {
-            return null;
-        } else {
-            return {
-                type: null,
-                filter: value,
-                filterType: 'text'
-            };
-        }
-    }
-
     protected getDefaultFilterOptions(): string[] {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
