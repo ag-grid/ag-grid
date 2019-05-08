@@ -312,7 +312,7 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
     }
 
     protected updateUiVisibility(): void {
-        const showSecondFilter = this.isFilterUiComplete(FilterPosition.One);
+        const showSecondFilter = this.allowTwoConditions && this.isFilterUiComplete(FilterPosition.One);
         _.setVisible(this.eCondition2Body, showSecondFilter);
         _.setVisible(this.eType2, showSecondFilter);
         _.setVisible(this.eJoinOperatorPanel, showSecondFilter);
