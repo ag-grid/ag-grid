@@ -3,7 +3,6 @@ import {FilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "..
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {BaseFloatingFilterChange} from "../floating/floatingFilter";
 import {_} from "../../utils";
 
 export interface IAbstractProvidedFilterParams extends IFilterParams {
@@ -81,13 +80,13 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
         this.setupOnBtApplyDebounce();
     }
 
+
     protected setParams(params: IFilterParams): void {
         this.abstractProvidedFilterParams = params;
 
+
         this.clearActive = params.clearButton === true;
-        // Allowing for old param property apply, even though is not advertised through the interface
-        const deprecatedApply = (params as any).apply === true;
-        this.applyActive = (params.applyButton === true) || deprecatedApply;
+        this.applyActive = AbstractProvidedFilter.isUseApplyButton(params);
         this.newRowsActionKeep = params.newRowsAction === 'keep';
 
         _.setVisible(this.eApplyButton, this.applyActive);
@@ -101,7 +100,7 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
     }
 
     private setupOnBtApplyDebounce(): void {
-        const debounceMs = this.getDebounceMs();
+        const debounceMs = AbstractProvidedFilter.getDebounceMs(this.abstractProvidedFilterParams);
         this.onBtApplyDebounce = _.debounce(this.onBtApply.bind(this), debounceMs);
     }
 
@@ -179,14 +178,25 @@ export abstract class AbstractProvidedFilter extends Component implements IFilte
                 </div>`;
     }
 
-    private getDebounceMs(): number {
-        if (this.applyActive) {
-            if (this.abstractProvidedFilterParams.debounceMs != null) {
+    // static, as used by floating filter also
+    public static getDebounceMs(params: IAbstractProvidedFilterParams): number {
+        const applyActive = AbstractProvidedFilter.isUseApplyButton(params);
+        if (applyActive) {
+            if (params.debounceMs != null) {
                 console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
             }
             return 0;
         }
-        return this.abstractProvidedFilterParams.debounceMs != null ? this.abstractProvidedFilterParams.debounceMs : 500;
+        return params.debounceMs != null ? params.debounceMs : 500;
     }
 
+    // static, as used by floating filter also
+    public static isUseApplyButton(params: IFilterParams): boolean {
+        if ((params as any).apply && !params.applyButton) {
+            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is now filterParams.applyButton, please change to applyButton')
+            params.applyButton = true;
+        }
+
+        return params.applyButton === true;
+    }
 }

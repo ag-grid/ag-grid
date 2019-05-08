@@ -17,6 +17,8 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
 
     protected params: IFloatingFilterParams;
 
+    private applyActive: boolean;
+
     @PostConstruct
     private postConstruct(): void {
         this.setTemplate(
@@ -42,7 +44,9 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
         super.init(params);
         this.params = params;
 
-        const debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
+        this.applyActive = AbstractProvidedFilter.isUseApplyButton(this.params.filterParams);
+        const debounceMs = AbstractProvidedFilter.getDebounceMs(this.params.filterParams);
+
         const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 
         this.addDestroyableEventListener(this.eFloatingFilterText, 'input', toDebounce);
@@ -57,8 +61,9 @@ export abstract class AbstractTextInputFloatingFilter extends AbstractSimpleFloa
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
         const value = this.eFloatingFilterText.value;
-        ////////////// FIX - how to handle enter key??
+
         const enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
+        if (this.applyActive && !enterKeyPressed) { return; }
 
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
