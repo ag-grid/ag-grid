@@ -86,11 +86,16 @@ export { RowNode } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
-export { ProvidedFilter } from "./filter/provided/providedFilter";
-export { DateFilter, DateFilterModel } from "./filter/provided/date/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
-export { NumberFilter } from "./filter/provided/number/numberFilter";
-export { TextFilter, TextFilterModel } from "./filter/provided/text/textFilter";
+
+export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
+export { SimpleFilter, ISimpleFilterParams, ISimpleModel } from "./filter/provided/simpleFilter";
+export { ScalerFilter, IScalarFilterParams } from "./filter/provided/scalerFilter";
+
+export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
+export { TextFilter, ITextFilterParams, TextFilterModel } from "./filter/provided/text/textFilter";
+export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
+
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp } from "./filter/floating/floatingFilter";
 
 // gridPanel
@@ -304,7 +309,6 @@ export { WrapableInterface } from "./components/framework/frameworkComponentWrap
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-export { NumberFilterModel } from "./filter/provided/number/numberFilter";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
 export { TooltipManager } from "./widgets/tooltipManager";
