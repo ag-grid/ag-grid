@@ -304,18 +304,19 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
 
     tooltipRenderer?: (params: LineTooltipRendererParams<D>) => string;
 
-    provideLegendData(data: LegendDatum[]): void {
+    listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yField) {
             data.push({
                 id: this.id,
+                index: 0,
+                enabled: this.visible,
                 label: {
                     text: this.title || this.yField
                 },
                 marker: {
                     fillStyle: this.color,
                     strokeStyle: this.strokeColor
-                },
-                enabled: this.visible
+                }
             });
         }
     }

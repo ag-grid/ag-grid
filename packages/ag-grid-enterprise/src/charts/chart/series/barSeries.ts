@@ -101,6 +101,12 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
     set yFields(values: Extract<keyof D, string>[]) {
         this._yFields = values;
 
+        const enabled = this.enabled;
+        enabled.length = values.length;
+        for (let i = 0, ln = values.length; i < ln; i++) {
+            enabled[i] = true;
+        }
+
         const groupScale = this.groupScale;
         groupScale.domain = values;
         groupScale.padding = 0.1;
@@ -231,15 +237,16 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         //   yField3: 20
         // }]
         //
+        const enabled = this.enabled;
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
-            yFields.forEach(field => {
+            yFields.forEach((field, index) => {
                 const value = datum[field];
                 if (isNaN(value) || !isFinite(value)) {
                     throw new Error(`The ${field} value is not a finite number.`);
                 }
-                values.push(value);
+                values.push(enabled[index] ? value : 0);
             });
             return values;
         });
@@ -253,6 +260,8 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
 
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
+
+        this.groupScale.domain = this.enabledYFields;
 
         if (this.grouped) {
             // Find the tallest positive/negative bar in each group,
@@ -447,20 +456,20 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
 
     tooltipRenderer?: (params: BarTooltipRendererParams<D>) => string;
 
-    provideLegendData(data: LegendDatum[]): void {
+    listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {
             this.yFields.forEach((yField, index) => {
                 data.push({
                     id: this.id,
-                    tag: index,
+                    index,
+                    enabled: this.enabled[index],
                     label: {
                         text: this.yFieldNames[index] || this.yFields[index]
                     },
                     marker: {
                         fillStyle: this.colors[index % this.colors.length],
                         strokeStyle: this.strokeColors[index % this.strokeColors.length]
-                    },
-                    enabled: this.visible
+                    }
                 });
             });
         }

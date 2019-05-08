@@ -4,17 +4,15 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 
 export interface LegendDatum {
-    id: string,    // for example, series ID
-    tag?: number,  // optional field, used to provide auxiliary info, for example:
-                   // - yField index for stacked series
-                   // - slice index for pie series
-    enabled: boolean,
+    id: string,       // component ID
+    index: number,    // sub-component index (zero in case of zero or one sub-component)
+    enabled: boolean, // the current state of the sub-component
     marker: {
         fillStyle: string,
         strokeStyle: string
     },
     label: {
-        text: string
+        text: string  // display name for the sub-component
     }
 }
 

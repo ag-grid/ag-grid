@@ -200,7 +200,7 @@ export abstract class Chart<D, X, Y> {
                 series.processData();
             }
             if (series.showInLegend) {
-                series.provideLegendData(legendData);
+                series.listSeriesItems(legendData);
             }
         });
         this.legend.data = legendData;
@@ -415,11 +415,11 @@ export abstract class Chart<D, X, Y> {
 
         const datum = this.legend.datumForPoint(x, y);
         if (datum) {
-            const {id, tag, enabled} = datum;
+            const {id, index, enabled} = datum;
             const series = find(this.series, series => series.id === id);
 
             if (series) {
-                series.visible = !enabled;
+                series.toggleSeriesItem(index, !enabled);
             }
         }
     };

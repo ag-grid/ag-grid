@@ -81,6 +81,7 @@ export class MarkerLabel extends Group {
 
     set opacity(value: number) {
         this.marker.opacity = value;
+        this.label.opacity = value;
     }
     get opacity(): number {
         return this.marker.opacity;
