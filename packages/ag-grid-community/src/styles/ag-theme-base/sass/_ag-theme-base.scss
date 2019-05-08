@@ -678,23 +678,21 @@
     ////////////////////////////////////////
     .ag-column-select-panel {
         .ag-column-tool-panel-column-group,
-        .ag-column-tool-panel-column-label,
         .ag-column-tool-panel-column {
             height: $grid-size * 4;
             line-height: $grid-size * 4;
-            margin-left: $grid-size;
 
             .ag-column-select-indent {
                 width: $grid-size * 2;
             }
 
             .ag-column-select-checkbox,
+            .ag-column-tool-panel-column-label,
             .ag-column-group-icons {
                 margin-left: $grid-size;
                 margin-right: $grid-size;
             }
         }
-
         .ag-primary-cols-list-panel {
             padding-top: $grid-size;
             > div {
