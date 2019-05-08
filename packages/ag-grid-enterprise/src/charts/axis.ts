@@ -358,6 +358,7 @@ export class Axis<D> {
         line.y2 = scale.range[scale.range.length - 1];
         line.lineWidth = this.lineWidth;
         line.strokeStyle = this.lineColor;
+        line.visible = ticks.length > 0;
 
         // debug (bbox)
         // const bbox = this.getBBox();
