@@ -189,15 +189,17 @@ export class NumberFilter extends AbstractScalerFilter<NumberFilterModel, number
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
-        const show = (type: string, eValue: HTMLElement, eValueTo: HTMLElement) => {
-            const showValue = !this.doesFilterHaveHiddenInput(type) && type !== AbstractSimpleFilter.EMPTY;
-            _.setVisible(eValue, showValue);
-            const showValueTo = type === AbstractSimpleFilter.IN_RANGE;
-            _.setVisible(eValueTo, showValueTo);
-        };
+        const showFrom1 = this.showValueFrom(this.getType1());
+        _.setVisible(this.eValueFrom1, showFrom1);
 
-        show(this.getType1(), this.eValueFrom1, this.eValueTo1);
-        show(this.getType2(), this.eValueFrom2, this.eValueTo2);
+        const showTo1 = this.showValueTo(this.getType1());
+        _.setVisible(this.eValueTo1, showTo1);
+
+        const showFrom2 = this.showValueFrom(this.getType2());
+        _.setVisible(this.eValueFrom2, showFrom2);
+
+        const showTo2 = this.showValueTo(this.getType2());
+        _.setVisible(this.eValueTo2, showTo2);
     }
 
 

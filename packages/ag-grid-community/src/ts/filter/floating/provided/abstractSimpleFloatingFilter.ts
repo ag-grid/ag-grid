@@ -99,6 +99,8 @@ export abstract class AbstractSimpleFloatingFilter extends Component implements 
     }
 
     private isTypeEditable(type: string): boolean {
-        return type && (type != AbstractSimpleFilter.IN_RANGE)
+        return type
+            && (type != AbstractSimpleFilter.IN_RANGE)
+            && (type != AbstractSimpleFilter.EMPTY);
     }
 }

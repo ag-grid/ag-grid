@@ -171,13 +171,10 @@ export class TextFilter extends AbstractSimpleFilter<TextFilterModel> {
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
-        const show = (type: string, eValue: HTMLElement) => {
-            const showValue = !this.doesFilterHaveHiddenInput(type) && type !== AbstractSimpleFilter.EMPTY;
-            _.setVisible(eValue, showValue);
-        };
-
-        show(this.getType1(), this.eValue1);
-        show(this.getType2(), this.eValue2);
+        const showValue1 = this.showValueFrom(this.getType1());
+        _.setVisible(this.eValue1, showValue1);
+        const showValue2 = this.showValueFrom(this.getType2());
+        _.setVisible(this.eValue2, showValue2);
     }
 
     public afterGuiAttached() {

@@ -99,6 +99,14 @@ export abstract class AbstractSimpleFilter<M extends IAbstractSimpleModel> exten
 
     protected abstract setConditionIntoUi(model: M, position: FilterPosition): void;
 
+    protected showValueFrom(type: string): boolean {
+        return !this.doesFilterHaveHiddenInput(type) && type !== AbstractSimpleFilter.EMPTY;
+    }
+
+    protected showValueTo(type: string): boolean {
+        return type === AbstractSimpleFilter.IN_RANGE;
+    }
+
     public onFloatingFilterChanged(type: string, value: any): void {
         this.setValueFromFloatingFilter(value);
         this.setTypeFromFloatingFilter(type);
