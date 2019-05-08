@@ -105,7 +105,7 @@
     }
 
     .ag-column-drop-cell {
-        height: $grid-size * 6 !important;
+        min-height: $grid-size * 6;
 
         .ag-column-drop-cell-button {
             height: calc(100% - #{$grid-size});
@@ -172,7 +172,6 @@
 
             .ag-column-drop-title {
                 display: inline-block;
-                float: none;
                 margin-bottom: $grid-size;
             }
 

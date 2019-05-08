@@ -118,7 +118,7 @@
         }
         border: 1px solid $border-color;
         border-radius: 0;
-        height: $grid-size * 4.5 !important;
+        min-height: $grid-size * 4.5;
 
         .ag-column-drop-cell-button {
             height: calc(100% - #{$grid-size});
@@ -153,10 +153,6 @@
     .ag-cell-inline-editing {
         height: $row-height;
         padding: 0;
-    }
-
-    .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-title {
-        float: none;
     }
 
     .ag-column-select-panel {

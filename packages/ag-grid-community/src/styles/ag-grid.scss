@@ -372,10 +372,10 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 }
 
 .ag-header-cell {
-    display: inline-block;
-    height: 100%;
+    display: inline-flex;
+    align-items: center;
     position: absolute;
-    vertical-align: bottom;
+    height: 100%;
 }
 
 .ag-header-group-cell-label {
@@ -385,8 +385,30 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 }
 
 .ag-header-cell-label {
+    display: flex;
+    height: 100%;
+    flex: 1 1 auto;
+    align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    .ag-header-cell-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.ag-numeric-header {
+    .ag-header-cell-label {
+        flex-direction: row-reverse;
+    }
+}
+
+.ag-header-group-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ag-header-cell-resize {
@@ -398,10 +420,6 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 
 .ag-header-expand-icon {
     padding-left: 4px;
-}
-
-.ag-header-cell-menu-button {
-    float: right;
 }
 
 .ag-primary-cols-header-panel .ag-column-name-filter {
@@ -416,6 +434,10 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 .ag-primary-cols-header-panel {
     display: flex;
     flex-direction: row;
+}
+
+.ag-header-select-all {
+    display: flex;
 }
 
 /**
@@ -438,31 +460,48 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 }
 
 .ag-column-drop {
+    display: inline-flex;
+    align-items: center;
+    overflow: auto;
     width: 100%;
+}
+
+.ag-column-drop-list {
+    display: flex;
+    align-items: center;
+}
+
+.ag-column-drop-cell {
+    display: flex;
+    align-items: center;
+
+    .ag-column-drop-cell-text {
+        overflow: hidden;
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 .ag-column-drop-vertical {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     flex-grow: 1;
     height: 50px;
     overflow: hidden;
 
-    .ag-column-drop-list {
-        flex-grow: 1;
-        height: 20px;
-        overflow-x: auto;
+    > div {
+        display: flex;
     }
 
-    .ag-column-drop-cell {
-        display: flex;
-
-        .ag-column-drop-cell-text {
-            overflow: hidden;
-            flex: 1;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+    .ag-column-drop-list {
+        align-items: stretch;
+        flex-grow: 1;
+        flex-direction: column;
+        overflow-x: auto;
+        height: 20px;
+        width: 100%;
     }
 
     .ag-column-drop-empty-message {
@@ -474,29 +513,9 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     }
 }
 
-.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {
-    float: right;
-}
-
-.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {
-    float: left;
-}
-
 .ag-column-drop-horizontal {
     white-space: nowrap;
     overflow: hidden;
-
-    .ag-column-drop-cell {
-        display: inline-block;
-    }
-
-    .ag-column-drop-empty-message {
-        display: inline-block;
-    }
-
-    .ag-column-drop-list {
-        height: 100%;
-    }
 }
 
 .ag-column-select-indent {
@@ -654,16 +673,20 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 }
 
 .ag-floating-filter-body {
+    flex: 1 1 auto;
+    height: 20px;
+
     input {
-        height: 19px;
         margin: 0;
         width: 100%;
     }
 }
 
 .ag-floating-filter-full-body {
+    height: 100%;
+    width: 100%;
+
     input {
-        height: 19px;
         margin: 0;
         width: 100%;
     }
@@ -671,20 +694,9 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
         height: 100%;
     }
 }
-
 .ag-floating-filter {
     display: inline-block;
     position: absolute;
-}
-
-.ag-floating-filter-body {
-    height: 20px;
-    margin-right: 25px;
-}
-
-.ag-floating-filter-full-body {
-    height: 100%;
-    width: 100%;
 }
 
 .ag-floating-filter-input {
@@ -700,6 +712,10 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     user-select: none;
 }
 
+.ag-floating-filter-button {
+    display: flex;
+}
+
 /**
  ****************************
  * Drag & Drop
@@ -709,6 +725,8 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 // the ghost header cell doesn't live inside the grid, it's parent is the body element,
 // so we cannot style using standard themes. hence we break the rules, and style it here
 .ag-dnd-ghost {
+    display: flex;
+    align-items: center;
     background: #e5e5e5;
     border: 1px solid black;
     cursor: move;
@@ -724,13 +742,9 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 }
 
 .ag-dnd-ghost-icon {
-    display: inline-block;
     padding: 2px;
 }
 
-.ag-dnd-ghost-label {
-    display: inline-block;
-}
 
 /**
  ****************************
@@ -1169,8 +1183,7 @@ $handleSize: 5px;
 
     .ag-column-tool-panel-column,
     .ag-column-tool-panel-column-group {
-        flex-grow: 1;
-        flex-shrink: 1;
+        flex: 1 1 auto;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -1202,12 +1215,10 @@ $handleSize: 5px;
 }
 
 .ag-rtl .ag-tool-panel-horizontal-resize {
-    float: right;
     transform: translateX(3px);
 }
 
 .ag-ltr .ag-tool-panel-horizontal-resize {
-    float: left;
     transform: translateX(-3px);
 }
 
@@ -1237,9 +1248,18 @@ $handleSize: 5px;
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
-    //float: left // safari doesn't align if we don't float
 }
 
+.ag-cell-label-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    width: 100%;
+}
+
+.ag-numeric-header .ag-cell-label-container {
+    flex-direction: row;
+}
 /**
  ****************************
  * Group Component
@@ -1368,9 +1388,6 @@ $row-group-indent-size: 10px !default;
     .ag-pinned-right-header .ag-header-cell-resize {
         left: -4px;
     }
-    .ag-header-select-all {
-        float: left;
-    }
 }
 
 .ag-rtl {
@@ -1383,9 +1400,6 @@ $row-group-indent-size: 10px !default;
     }
     .ag-pinned-left-header .ag-header-cell-resize {
         right: -4px;
-    }
-    .ag-header-select-all {
-        float: right;
     }
 }
 
