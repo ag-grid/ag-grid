@@ -13,6 +13,7 @@ import {
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 import {RangeController} from "../../rangeController";
+import {RowRenderer} from "../../../../ag-grid-community/src/ts/rendering/rowRenderer";
 
 export interface ColState {
     column?: Column;
@@ -27,6 +28,7 @@ export class ChartModel extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rangeController') rangeController: RangeController;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     // model state
     private cellRanges: CellRange[];
@@ -321,31 +323,49 @@ export class ChartModel extends BeanStub {
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
+        const firstRow = this.rowRenderer.getRowNode({rowIndex: 0, rowPinned: undefined}) as any;
+        const firstRowData = firstRow ? firstRow.data : null;
+
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
         const dimensionCols: Column[] = [];
         const valueCols: Column[] = [];
         displayedCols.forEach(col => {
-            if (this.isDimensionColumn(col, displayedCols)) {
-                dimensionCols.push(col);
-            } else if (this.isValueColumn(col, displayedCols)) {
-                valueCols.push(col);
-            } else {
-                // ignore!
+            const colDef = col.getColDef() as ColDef;
+
+            const chartType = colDef.chartType;
+            if (chartType) {
+                let validChartType = true;
+
+                if (chartType === 'category') {
+                    dimensionCols.push(col);
+                } else if (chartType === 'series') {
+                    valueCols.push(col);
+                } else if (chartType === 'excluded') {
+                    // ignore
+                } else {
+                    console.warn(`ag-Grid: unexpected chartType value '${chartType}' supplied, instead use 'category', 'series' or 'excluded'`);
+                    validChartType = false;
+                }
+
+                if (validChartType) return;
             }
+
+            if (!!colDef.enableRowGroup || !!colDef.enablePivot) {
+                dimensionCols.push(col);
+                return;
+            }
+
+            if (!!colDef.enableValue) {
+                valueCols.push(col);
+                return;
+            }
+
+            const isNumberCol = firstRowData && typeof firstRowData[col.getColId()] === 'number';
+            isNumberCol ? valueCols.push(col) : dimensionCols.push(col);
         });
 
         return {dimensionCols, valueCols};
-    }
-
-    private isDimensionColumn(col: Column, displayedCols: Column[]): boolean {
-        const colDef = col.getColDef() as ColDef;
-        return displayedCols.indexOf(col) > -1 && (!!colDef.enableRowGroup || !!colDef.enablePivot);
-    }
-
-    private isValueColumn(col: Column, displayedCols: Column[]): boolean {
-        const colDef = col.getColDef() as ColDef;
-        return displayedCols.indexOf(col) > -1 && (!!colDef.enableValue);
     }
 
     public destroy() {

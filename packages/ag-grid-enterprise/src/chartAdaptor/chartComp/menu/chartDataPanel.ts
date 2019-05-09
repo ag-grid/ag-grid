@@ -42,7 +42,7 @@ export class ChartDataPanel extends Component {
             const groupComp = new AgGroupComponent({
                 label: isCategory
                         ? localeTextFunc('chartCategories', 'Categories')
-                        : localeTextFunc('chartValues', 'Values')
+                        : localeTextFunc('chartSeries', 'Series')
             });
             this.getContext().wireBean(groupComp);
             
