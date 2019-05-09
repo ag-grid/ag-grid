@@ -58,7 +58,7 @@ export class Legend {
         return this._orientation;
     }
 
-    private _itemPadding: number = 4;
+    private _itemPadding: number = 8;
     set itemPadding(value: number) {
         if (this._itemPadding !== value) {
             this._itemPadding = value;
