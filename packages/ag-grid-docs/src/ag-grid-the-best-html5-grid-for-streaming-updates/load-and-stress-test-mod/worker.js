@@ -1,3 +1,4 @@
+"use strict";
 // update these to change the stress test parameters
 var STRESS_TEST_MESSAGE_COUNT = 1000;
 var STRESS_TEST_UPDATES_PER_MESSAGE = 100;
@@ -60,9 +61,9 @@ function randomBetween(min,max) {
 }
 
 function createTradeRecord(product, portfolio, book, batch) {
-    var current = Math.floor(Math.random()*100000) + 10000;
+    var current = Math.floor(Math.random()*10000) + (Math.random()<.45 ? 15000 : -13000);
 
-    var previous = current + Math.floor(Math.random()*10000) - (Math.random()<.5 ? 200000 : -200000);
+    var previous = current + (Math.random()<.5 ? 15000 : -15000);
 
     var trade = {
         product: product,
@@ -75,8 +76,8 @@ function createTradeRecord(product, portfolio, book, batch) {
         bidFlag: (Math.random()<.5) ? 'Buy' : 'Sell',
         current: current,
         previous: previous,
-        pl1: randomBetween(100,1000),
-        pl2: randomBetween(100,1000),
+        pl1: randomBetween(100,10000),
+        pl2: randomBetween(100,10000),
         gainDx: randomBetween(100,1000),
         sxPx: randomBetween(100,1000),
         _99Out: randomBetween(100,1000),

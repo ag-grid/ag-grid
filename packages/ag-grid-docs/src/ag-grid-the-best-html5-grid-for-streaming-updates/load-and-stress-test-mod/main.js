@@ -8,11 +8,11 @@ var columnDefs = [
         ]},
 
         // some string values, that do not get aggregated
-        {headerName: 'Attributes', children: [
-                {headerName: 'Trade', field: 'trade', width: 100},
-                {headerName: 'Deal Type', field: 'dealType', type: 'dimension'},
-                {headerName: 'Bid', field: 'bidFlag', type: 'dimension', width: 100}
-        ]},
+        // {headerName: 'Attributes', children: [
+        //         {headerName: 'Trade', field: 'trade', width: 100},
+        //         {headerName: 'Deal Type', field: 'dealType', type: 'dimension'},
+        //         {headerName: 'Bid', field: 'bidFlag', type: 'dimension', width: 100}
+        // ]},
 
         // all the other columns (visible and not grouped)
         {headerName: 'Values', children: [
@@ -54,6 +54,10 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     animateRows: true,
+
+    enableCharts: true,
+
+
     enableRangeSelection: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
@@ -61,8 +65,7 @@ var gridOptions = {
     sideBar: {
         toolPanels: ['columns','filters'],
         defaultToolPanel: ''
-    },
-    enableCharts: true
+    }
 };
 
 function onStartLoad() {
@@ -117,5 +120,5 @@ document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
     startWorker();
-    onStartLoad();
+    // onStartLoad();
 });
