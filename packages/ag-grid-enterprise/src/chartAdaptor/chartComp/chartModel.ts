@@ -7,13 +7,13 @@ import {
     ChartType,
     ColDef,
     Column,
+    RowRenderer,
     ColumnController,
     PostConstruct
 } from "ag-grid-community";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {ChartOptions} from "./gridChartComp";
 import {RangeController} from "../../rangeController";
-import {RowRenderer} from "../../../../ag-grid-community/src/ts/rendering/rowRenderer";
 
 export interface ColState {
     column?: Column;
