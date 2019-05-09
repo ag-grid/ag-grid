@@ -118,9 +118,11 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
         this.updateAxes();
 
         this.series.forEach(series => {
-            series.group.translationX = shrinkRect.x;
-            series.group.translationY = shrinkRect.y;
-            series.update(); // this has to happen after the `updateAxis` call
+            if (series.visible) {
+                series.group.translationX = shrinkRect.x;
+                series.group.translationY = shrinkRect.y;
+                series.update(); // this has to happen after the `updateAxis` call
+            }
         });
 
         this.positionLegend();
@@ -138,11 +140,13 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
         const yDomains: Y[][] = [];
 
         this.series.forEach(series => {
-            const xDomain = series.getDomainX();
-            const yDomain = series.getDomainY();
+            if (series.visible) {
+                const xDomain = series.getDomainX();
+                const yDomain = series.getDomainY();
 
-            xDomains.push(xDomain);
-            yDomains.push(yDomain);
+                xDomains.push(xDomain);
+                yDomains.push(yDomain);
+            }
         });
 
         const xDomain: X[] = new Array<X>().concat(...xDomains);

@@ -204,7 +204,7 @@ export class Axis<D> {
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
-     * Supposed to be called manually after changing any of the axis properties.
+     * Supposed to be called _manually_ after changing _any_ of the axis properties.
      * This allows to bulk set axis properties before updating the nodes.
      * The node changes made by this method are rendered on the next animation frame.
      * We could schedule this method call automatically on the next animation frame
@@ -358,6 +358,7 @@ export class Axis<D> {
         line.y2 = scale.range[scale.range.length - 1];
         line.lineWidth = this.lineWidth;
         line.strokeStyle = this.lineColor;
+        line.visible = ticks.length > 0;
 
         // debug (bbox)
         // const bbox = this.getBBox();

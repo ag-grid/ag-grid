@@ -37,6 +37,13 @@
 
     @include ag-grid-theme($params);
 
+    .ag-icon-checkbox-checked,
+    .ag-icon-checkbox-unchecked,
+    .ag-icon-checkbox-indeterminate {
+        background-color: $background-color;
+        border-radius: 3px;
+    }
+
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;
     }
@@ -105,10 +112,9 @@
     }
 
     .ag-column-drop-cell {
-        height: $grid-size * 6 !important;
+        min-height: $grid-size * 6;
 
         .ag-column-drop-cell-button {
-            height: calc(100% - #{$grid-size});
             margin-bottom: $grid-size / 2;
             margin-top: $grid-size / 2;
         }
@@ -172,7 +178,6 @@
 
             .ag-column-drop-title {
                 display: inline-block;
-                float: none;
                 margin-bottom: $grid-size;
             }
 
@@ -214,7 +219,6 @@
     .ag-filter-filter {
         margin-left: $grid-size;
         margin-right: $grid-size;
-        width: calc(100% - #{$grid-size * 2});
     }
 
     .ag-tab-header {

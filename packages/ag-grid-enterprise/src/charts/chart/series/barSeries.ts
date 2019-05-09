@@ -101,6 +101,10 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
     set yFields(values: Extract<keyof D, string>[]) {
         this._yFields = values;
 
+        const enabled = this.enabled;
+        enabled.clear();
+        values.forEach(field => enabled.set(field, true));
+
         const groupScale = this.groupScale;
         groupScale.domain = values;
         groupScale.padding = 0.1;
@@ -150,7 +154,7 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         return this._strokeStyle;
     }
 
-    private _lineWidth: number = 2;
+    private _lineWidth: number = 1;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;
@@ -231,6 +235,7 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         //   yField3: 20
         // }]
         //
+        const enabled = this.enabled;
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
@@ -239,7 +244,7 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
                 if (isNaN(value) || !isFinite(value)) {
                     throw new Error(`The ${field} value is not a finite number.`);
                 }
-                values.push(value);
+                values.push(enabled.get(field) ? value : 0);
             });
             return values;
         });
@@ -447,20 +452,20 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
 
     tooltipRenderer?: (params: BarTooltipRendererParams<D>) => string;
 
-    provideLegendData(data: LegendDatum[]): void {
+    listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {
             this.yFields.forEach((yField, index) => {
                 data.push({
                     id: this.id,
-                    tag: index,
+                    itemId: yField,
+                    enabled: this.enabled.get(yField) || false,
                     label: {
                         text: this.yFieldNames[index] || this.yFields[index]
                     },
                     marker: {
                         fillStyle: this.colors[index % this.colors.length],
                         strokeStyle: this.strokeColors[index % this.strokeColors.length]
-                    },
-                    enabled: this.visible
+                    }
                 });
             });
         }

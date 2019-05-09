@@ -83,7 +83,19 @@ export abstract class Series<D, X, Y> {
 
     tooltip: boolean = false;
 
-    abstract provideLegendData(data: LegendDatum[]): void;
+    /**
+     * @private
+     * Populates the given {@param data} array with the items of this series
+     * that should be shown in the legend. It's up to the series to determine
+     * what is considered an item. An item could be the series itself or some
+     * part of the series.
+     * @param data
+     */
+    abstract listSeriesItems(data: LegendDatum[]): void;
+
+    toggleSeriesItem(itemId: any, enabled: boolean): void {
+        this.visible = enabled;
+    }
 
     private _showInLegend: boolean = true;
     set showInLegend(value: boolean) {

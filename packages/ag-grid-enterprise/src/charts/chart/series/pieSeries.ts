@@ -54,6 +54,23 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
      */
     private groupSelectionData: GroupSelectionDatum<D>[] = [];
 
+    protected readonly enabled: boolean[] = [];
+
+    set data(data: D[]) {
+        this._data = data;
+
+        const enabled = this.enabled;
+        enabled.length = data.length;
+        for (let i = 0, ln = data.length; i < ln; i++) {
+            enabled[i] = true;
+        }
+
+        this.scheduleData();
+    }
+    get data(): D[] {
+        return this._data;
+    }
+
     /**
      * `null` means make the callout color the same as {@link strokeStyle}.
      */
@@ -275,9 +292,38 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
      * colors by darkening them. To make the stroke appear invisible use the same
      * color as the background of the chart (such as 'white').
      */
-    strokeStyle: string | null = null;
-    lineWidth: number = 2;
-    shadow: DropShadow | null = null;
+    private _strokeStyle: string | null = null;
+    set strokeStyle(value: string | null) {
+        if (this._strokeStyle !== value) {
+            this._strokeStyle = value;
+            this.update();
+        }
+    }
+    get strokeStyle(): string | null {
+        return this._strokeStyle;
+    }
+
+    private _lineWidth: number = 1;
+    set lineWidth(value: number) {
+        if (this._lineWidth !== value) {
+            this._lineWidth = value;
+            this.update();
+        }
+    }
+    get lineWidth(): number {
+        return this._lineWidth;
+    }
+
+    private _shadow: DropShadow | null = null;
+    set shadow(value: DropShadow | null) {
+        if (this._shadow !== value) {
+            this._shadow = value;
+            this.update();
+        }
+    }
+    get shadow(): DropShadow | null {
+        return this._shadow;
+    }
 
     private angleScale: LinearScale<number> = (() => {
         const scale = scaleLinear();
@@ -300,8 +346,9 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
 
     processData(): boolean {
         const data = this.data as any[];
+        const enabled = this.enabled;
 
-        const angleData: number[] = data.map(datum => +datum[this.angleField] || 0);
+        const angleData: number[] = data.map((datum, index) => enabled[index] && +datum[this.angleField] || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
         // Each slice starts where the previous one ends, so we only keep the ratios for end angles.
@@ -524,23 +571,28 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
 
     tooltipRenderer?: (params: PieTooltipRendererParams<D>) => string;
 
-    provideLegendData(data: LegendDatum[]): void {
+    listSeriesItems(data: LegendDatum[]): void {
         const labelField = this.labelField;
         if (this.data.length && labelField) {
             this.data.forEach((datum, index) => {
                 data.push({
                     id: this.id,
-                    tag: index,
+                    itemId: index,
+                    enabled: this.enabled[index],
                     label: {
                         text: String(datum[labelField])
                     },
                     marker: {
                         fillStyle: this.colors[index % this.colors.length],
                         strokeStyle: this.strokeColors[index % this.strokeColors.length]
-                    },
-                    enabled: this.visible
+                    }
                 });
             });
         }
+    }
+
+    toggleSeriesItem(itemId: number, enabled: boolean): void {
+        this.enabled[itemId] = enabled;
+        this.scheduleData();
     }
 }

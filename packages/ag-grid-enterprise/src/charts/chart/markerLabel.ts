@@ -5,7 +5,7 @@ import { Text } from "../scene/shape/text";
 export class MarkerLabel extends Group {
 
     static defaults = Object.freeze({
-        padding: 8,
+        padding: 4,
         markerSize: 14,
         labelFont: '12px Verdana, sans-serif',
         labelColor: 'black'
@@ -81,6 +81,7 @@ export class MarkerLabel extends Group {
 
     set opacity(value: number) {
         this.marker.opacity = value;
+        this.label.opacity = value;
     }
     get opacity(): number {
         return this.marker.opacity;

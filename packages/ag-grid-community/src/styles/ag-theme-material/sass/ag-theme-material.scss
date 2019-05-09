@@ -8,6 +8,16 @@
 
     @include ag-grid-theme($params);
 
+    .ag-icon-checkbox-checked,
+    .ag-icon-checkbox-unchecked,
+    .ag-icon-checkbox-indeterminate,
+    .ag-icon-radio-button-on,
+    .ag-icon-radio-button-off {
+        height: $icon-size + 6;
+        width: $icon-size + 6;
+        background-size: cover;
+    }
+
     .ag-header-cell, .ag-header-group-cell {
         transition: background-color 0.5s;
     }

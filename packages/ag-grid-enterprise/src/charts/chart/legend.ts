@@ -4,17 +4,15 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 
 export interface LegendDatum {
-    id: string,    // for example, series ID
-    tag?: number,  // optional field, used to provide auxiliary info, for example:
-                   // - yField index for stacked series
-                   // - slice index for pie series
-    enabled: boolean,
+    id: string,       // component ID
+    itemId: any,      // sub-component ID
+    enabled: boolean, // the current state of the sub-component
     marker: {
         fillStyle: string,
         strokeStyle: string
     },
     label: {
-        text: string
+        text: string  // display name for the sub-component
     }
 }
 
@@ -60,7 +58,7 @@ export class Legend {
         return this._orientation;
     }
 
-    private _itemPadding: number = 4;
+    private _itemPadding: number = 8;
     set itemPadding(value: number) {
         if (this._itemPadding !== value) {
             this._itemPadding = value;
@@ -123,7 +121,7 @@ export class Legend {
         return this._markerSize;
     }
 
-    private _markerLineWidth: number = 2;
+    private _markerLineWidth: number = 1;
     set markerLineWidth(value: number) {
         if (this._markerLineWidth !== value) {
             this._markerLineWidth = value;
