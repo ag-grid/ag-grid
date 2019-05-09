@@ -10,7 +10,7 @@ export class BandScale<D> implements Scale<D, number> {
      * Maps datum to its index in the {@link domain} array.
      * Used to check for duplicate datums (not allowed).
      */
-    private index = {} as any; // new Map<D, number>();
+    private index = new Map<D, number>();
 
     /**
      * The output range values for datum at each index.
@@ -27,17 +27,16 @@ export class BandScale<D> implements Scale<D, number> {
         const domain = this._domain;
         domain.length = 0;
 
-        this.index = {};
+        this.index = new Map<D, number>();
         const index = this.index;
 
         // In case one wants to have duplicate domain values, for example, two 'Italy' categories,
         // one should use objects rather than strings for domain values like so:
-        // { toString: () => 'Italy', id: '1' }
-        // { toString: () => 'Italy', id: '2' }
+        // { toString: () => 'Italy' }
+        // { toString: () => 'Italy' }
         values.forEach(value => {
-            const key = typeof value === 'object' ? (value as any).id : value;
-            if (index[key] === undefined) {
-                index[key] = domain.push(value) - 1;
+            if (index.get(value) === undefined) {
+                index.set(value, domain.push(value) - 1);
             }
         });
 
@@ -62,8 +61,7 @@ export class BandScale<D> implements Scale<D, number> {
     }
 
     convert(d: D): number {
-        const key = typeof d === 'object' ? (d as any).id : d;
-        const i = this.index[key];
+        const i = this.index.get(d);
         if (i === undefined) {
             return NaN;
         }
