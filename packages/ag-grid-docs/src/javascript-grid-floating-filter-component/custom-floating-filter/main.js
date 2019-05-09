@@ -47,7 +47,6 @@ function getNumberFloatingFilterComponent (){
     }
 
     NumberFloatingFilter.prototype.init = function (params) {
-        this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>';
         this.currentValue = null;
@@ -56,17 +55,17 @@ function getNumberFloatingFilterComponent (){
         var that = this;
         function onInputBoxChanged(){
             if (that.eFilterInput.value === '') {
-                //Remove the filter
-                that.onFloatingFilterChanged(null);
+                // Remove the filter
+                params.parentFilterInstance( function(instance) {
+                    instance.onFloatingFilterChanged(null, null);
+                });
                 return;
             }
 
             that.currentValue = Number(that.eFilterInput.value);
-            that.onFloatingFilterChanged({model:{
-                //In this example we are only interested in filtering by greaterThan
-                type:'greaterThan',
-                filter:that.currentValue
-            }});
+            params.parentFilterInstance( function(instance) {
+                instance.onFloatingFilterChanged('greaterThan', that.currentValue);
+            });
         }
         this.eFilterInput.addEventListener('input', onInputBoxChanged);
     };
