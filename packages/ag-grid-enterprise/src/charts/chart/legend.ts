@@ -121,7 +121,7 @@ export class Legend {
         return this._markerSize;
     }
 
-    private _markerLineWidth: number = 2;
+    private _markerLineWidth: number = 1;
     set markerLineWidth(value: number) {
         if (this._markerLineWidth !== value) {
             this._markerLineWidth = value;

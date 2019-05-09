@@ -292,9 +292,38 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
      * colors by darkening them. To make the stroke appear invisible use the same
      * color as the background of the chart (such as 'white').
      */
-    strokeStyle: string | null = null;
-    lineWidth: number = 2;
-    shadow: DropShadow | null = null;
+    private _strokeStyle: string | null = null;
+    set strokeStyle(value: string | null) {
+        if (this._strokeStyle !== value) {
+            this._strokeStyle = value;
+            this.update();
+        }
+    }
+    get strokeStyle(): string | null {
+        return this._strokeStyle;
+    }
+
+    private _lineWidth: number = 1;
+    set lineWidth(value: number) {
+        if (this._lineWidth !== value) {
+            this._lineWidth = value;
+            this.update();
+        }
+    }
+    get lineWidth(): number {
+        return this._lineWidth;
+    }
+
+    private _shadow: DropShadow | null = null;
+    set shadow(value: DropShadow | null) {
+        if (this._shadow !== value) {
+            this._shadow = value;
+            this.update();
+        }
+    }
+    get shadow(): DropShadow | null {
+        return this._shadow;
+    }
 
     private angleScale: LinearScale<number> = (() => {
         const scale = scaleLinear();
