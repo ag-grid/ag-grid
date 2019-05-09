@@ -19,9 +19,4 @@ export abstract class StackedCartesianSeries<D, X, Y> extends Series<D, X, Y> {
     protected _yFieldNames: string[] = [];
     abstract set yFieldNames(value: string[]);
     abstract get yFieldNames(): string[];
-
-    toggleSeriesItem(itemId: string, enabled: boolean): void {
-        this.enabled.set(itemId, enabled);
-        this.scheduleData();
-    }
 }

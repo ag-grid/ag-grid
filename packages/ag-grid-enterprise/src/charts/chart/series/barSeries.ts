@@ -470,4 +470,16 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
             });
         }
     }
+
+    toggleSeriesItem(itemId: string, enabled: boolean): void {
+        this.enabled.set(itemId, enabled);
+        const enabledYFields: string[] = [];
+        this.enabled.forEach((enabled, yField) => {
+            if (enabled) {
+                enabledYFields.push(yField);
+            }
+        });
+        this.groupScale.domain = enabledYFields;
+        this.scheduleData();
+    }
 }
