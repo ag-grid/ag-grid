@@ -31,17 +31,3 @@ export function toReadableNumber(value: number, fractionDigits: number = 2): str
     const thousands = ~~(Math.log10(value) / Math.log10(1000)); // discard the floating point part
     return prefix + (value / Math.pow(1000.0, thousands)).toFixed(fractionDigits) + numberUnits[thousands];
 }
-
-/*
-
-private val numberUnits = arrayOf("", "K", "M", "B", "T")
-private val decimalFormat = DecimalFormat("#,##0.#")
-
-fun Long.toReadableNumber(): String {
-    // E.g. 10_550_000_000.main.toReadableNumber()  // 10.6B
-    if (this <= 0) return "0"
-    val thousands = (Math.log10(this.toDouble()) / Math.log10(1000.0)).toInt()
-    return decimalFormat.format(this / Math.pow(1000.0, thousands.toDouble())) +
-        numberUnits[thousands]
-}
- */
