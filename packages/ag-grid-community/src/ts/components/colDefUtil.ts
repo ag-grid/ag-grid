@@ -22,7 +22,8 @@ export class ColDefUtil {
         'aggFunc',
         'cellRenderer',
         'cellEditor',
-        'pinned'
+        'pinned',
+        'chartType'
     ];
 
     public static OBJECT_PROPERTIES = [

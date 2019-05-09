@@ -18,3 +18,16 @@ export function toFixed(value: number, fractionOrSignificantDigits: number = 2):
     }
     return value.toFixed(Math.abs(power) - 1 + fractionOrSignificantDigits); // significant digits
 }
+
+const numberUnits = ["", "K", "M", "B", "T"];
+
+export function toReadableNumber(value: number, fractionDigits: number = 2): string {
+    // For example: toReadableNumber(10550000000) yields "10.6B"
+    let prefix = '';
+    if (value <= 0) {
+        value = -value;
+        prefix = '-';
+    }
+    const thousands = ~~(Math.log10(value) / Math.log10(1000)); // discard the floating point part
+    return prefix + (value / Math.pow(1000.0, thousands)).toFixed(fractionDigits) + numberUnits[thousands];
+}

@@ -240,9 +240,9 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
             yFields.forEach(field => {
-                const value = datum[field];
+                let value = datum[field];
                 if (isNaN(value) || !isFinite(value)) {
-                    throw new Error(`The ${field} value is not a finite number.`);
+                    value = 0;
                 }
                 values.push(enabled.get(field) ? value : 0);
             });
@@ -469,5 +469,17 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
                 });
             });
         }
+    }
+
+    toggleSeriesItem(itemId: string, enabled: boolean): void {
+        this.enabled.set(itemId, enabled);
+        const enabledYFields: string[] = [];
+        this.enabled.forEach((enabled, yField) => {
+            if (enabled) {
+                enabledYFields.push(yField);
+            }
+        });
+        this.groupScale.domain = enabledYFields;
+        this.scheduleData();
     }
 }

@@ -4,10 +4,7 @@ import { MD5 } from './license/md5';
 @Bean('licenseManager')
 export class LicenseManager {
     private static RELEASE_INFORMATION: string = 'MTU1MzA4OTQ1Njk3Mw==';
-    // private static licenseKey: string = "Adcore_Desarrollo_y_Comunicación_S.L_Sitweb_1Devs1_SaaS_18_April_2019__MTU1NTU0MjAwMDAwMA==3c5a3b0fcc94ec4a5bd5452284b614df";
-    // private static licenseKey: string = "Adcore_Desarrollo_y_Comunicación_S.L_Sit[ur]web_1Devs1_SaaS_18_April_2019__MTU1NTU0MjAwMDAwMA==3c5a3b0fcc94ec4a5bd5452284b614df";
-    // private static licenseKey: string = "My_Co_My_App_Single_Devs__10_June_2019_[v2]_[TRIAL]_MTU2MDEyNDgwMDAwMA==ec73cef7323ec1ed2666237323e562f1";
-    private static licenseKey: string = "My_Co_My_App_Single_Devs__10_June_2019_[v2]_MTU2MDEyNDgwMDAwMA==ec73cef7323ec1ed2666237323e562f1";
+    private static licenseKey: string;
     private displayWatermark: boolean = false;
 
     @Autowired('md5') private md5: MD5;
