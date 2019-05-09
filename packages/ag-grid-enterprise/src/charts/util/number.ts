@@ -18,3 +18,30 @@ export function toFixed(value: number, fractionOrSignificantDigits: number = 2):
     }
     return value.toFixed(Math.abs(power) - 1 + fractionOrSignificantDigits); // significant digits
 }
+
+const numberUnits = ["", "K", "M", "B", "T"];
+
+export function toReadableNumber(value: number, fractionDigits: number = 2): string {
+    // For example: toReadableNumber(10550000000) yields "10.6B"
+    let prefix = '';
+    if (value <= 0) {
+        value = -value;
+        prefix = '-';
+    }
+    const thousands = ~~(Math.log10(value) / Math.log10(1000)); // discard the floating point part
+    return prefix + (value / Math.pow(1000.0, thousands)).toFixed(fractionDigits) + numberUnits[thousands];
+}
+
+/*
+
+private val numberUnits = arrayOf("", "K", "M", "B", "T")
+private val decimalFormat = DecimalFormat("#,##0.#")
+
+fun Long.toReadableNumber(): String {
+    // E.g. 10_550_000_000.main.toReadableNumber()  // 10.6B
+    if (this <= 0) return "0"
+    val thousands = (Math.log10(this.toDouble()) / Math.log10(1000.0)).toInt()
+    return decimalFormat.format(this / Math.pow(1000.0, thousands.toDouble())) +
+        numberUnits[thousands]
+}
+ */
