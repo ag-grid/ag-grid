@@ -58,17 +58,30 @@ export class Legend {
         return this._orientation;
     }
 
-    private _itemPadding: number = 8;
-    set itemPadding(value: number) {
-        if (this._itemPadding !== value) {
-            this._itemPadding = value;
+    private _itemPaddingX: number = 16;
+    set itemPaddingX(value: number) {
+        if (this._itemPaddingX !== value) {
+            this._itemPaddingX = value;
             if (this.onLayoutChange) {
                 this.onLayoutChange();
             }
         }
     }
-    get itemPadding(): number {
-        return this._itemPadding;
+    get itemPaddingX(): number {
+        return this._itemPaddingX;
+    }
+
+    private _itemPaddingY: number = 8;
+    set itemPaddingY(value: number) {
+        if (this._itemPaddingY !== value) {
+            this._itemPaddingY = value;
+            if (this.onLayoutChange) {
+                this.onLayoutChange();
+            }
+        }
+    }
+    get itemPaddingY(): number {
+        return this._itemPaddingY;
     }
 
     private _markerPadding: number = MarkerLabel.defaults.padding;
@@ -152,7 +165,8 @@ export class Legend {
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
 
         const itemCount = itemSelection.size;
-        const itemPadding = this.itemPadding;
+        const itemPaddingX = this.itemPaddingX;
+        const itemPaddingY = this.itemPaddingY;
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
@@ -207,11 +221,11 @@ export class Legend {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPadding;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPaddingX;
 
                 } while (paddedItemsWidth > width);
 
-                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * itemPadding;
+                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * itemPaddingY;
 
                 break;
 
@@ -252,8 +266,8 @@ export class Legend {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPadding;
-                    paddedItemsHeight = itemsHeight + (rowCount - 1) * itemPadding;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPaddingX;
+                    paddedItemsHeight = itemsHeight + (rowCount - 1) * itemPaddingY;
 
                 } while (paddedItemsHeight > height && rowCount > 1);
 
@@ -278,11 +292,11 @@ export class Legend {
                 columnWidth = bbox.width;
             }
             if ((i + 1) % rowCount === 0) {
-                x += columnWidth + itemPadding;
+                x += columnWidth + itemPaddingX;
                 y = 0;
                 columnWidth = 0;
             } else {
-                y += bbox.height + itemPadding;
+                y += bbox.height + itemPaddingY;
             }
         });
 
