@@ -122,18 +122,26 @@ interface IFloatingFilterParams {
 }
 </snippet>
 
-<h2>Setting Filter from Floating Filter</h2>
+<h2>Floating Filter Methods on Provided Filters</h2>
 
 <p>
-    It is possible for the floating filter to get a reference to the parent filter instance.
-    It is to you what method your expose on the parent filter to take filter changes from
-    the floating filter. What method you call has nothing to do with the grid.
+    When the user interacts with a floating filter, the floating filter must set the state
+    of the main parent filter in order for filter changes to take effect. This is done by
+    the floating filter getting a reference to the parent filter instance and calling
+    a method on it.
+</p>
+<p>
+    If you create your own filter and floating filter, it is up to you what method you
+    expose on the filter for the floating filter to call. This contract is between the
+    filter and the floating filter and doesn't go through the grid.
 </p>
 
 <p>
-    The provided filters provide the following methods that the corresponding provided
-    floating filters then call. This information is useful if you want to create your own
-    floating filter that is paired with a provided parent filter.
+    The simple provided filters (text, string, date) provide the following methods that
+    the corresponding provided floating filters then call. This information is useful if
+    a) you want to create your own floating filter that is paired with a provided parent filter
+    or b) you are just interested to know how the interaction works to help build your
+    own filters and floating filters.
 </p>
 
 <ul>
@@ -163,13 +171,12 @@ interface IFloatingFilterParams {
 <p>
     In the following example you can see how the columns Gold, Silver, Bronze and Total have a custom floating filter
     NumberFloatingFilter. This filter substitutes the standard floating filter for a input box that the user can change
-    to
-    adjust how many medals of each column to filter by based on a greater than filter.
+    to adjust how many medals of each column to filter by based on a greater than filter.
 </p>
 
 <p>
-    Since this example its using standard filters, the object that needs to be passed to the method <code>onParentFilterChanged()</code>
-    needs to provide two properties:
+    Since this example its using standard filters, the object that needs to be passed
+    to the method <code>onParentFilterChanged()</code> needs to provide two properties:
 </p>
 
 <ul class="content">
@@ -244,33 +251,13 @@ interface IFloatingFilterParams {
 
 <?= example('Custom Filter Only', 'custom-filter') ?>
 
-<h3>Custom Filters Containing a Floating Element</h3>
+<h2>Complex example with JQuery</h2>
 
 <p>
-    Sometimes you will need to create custom components for your filters that also contain a floating element, 
-    which is the case of a Date filter the expands a Date Picker. When this happens, you will end up facing a
-    problem with extra floating element (in this case the calendar picker) does not belong (hierarchically)
-    to your custom component. For this reason, when you click on it, the grid detects a click outside of the floating
-    filter and collapses it.
-
-    There are two ways you can get fix this problem: 
-    <ul>
-        <li>Add a mouse click listener to your floating element and set it to preventDefault(). This way, the click event 
-        will not bubble up to the grid.<br>
-        Note: This is the best solution, but you can only do this if you are writing the component yourself.
-        </li>
-        <li>
-        Add the <code>ag-custom-component-popup</code> CSS class to your floating element. An example of this 
-        usage can be found here: <a href="/javascript-grid-date-component/#example-custom-date">Custom Date Component</a>
-        </li>
-    </ul>
+    The following example illustrates a complex scenario. All the columns have floating filters.
+    The first 6 columns (Athlete to Sport) have the standard provided floating filters.
+    The last 4 (Gold to Total) have custom filters and custom floating filters that use jQuery sliders.
 </p>
-
-<h3>Complex example with JQuery</h3>
-
-<p>The following example illustrates a complex scenario where all columns have ag-Grid floating filters, except for
-    the columns: gold, silver, bronze and total, that have custom filter and custom floating filters that use jquery
-    sliders</p>
 
 <p> Note that: </p>
 
@@ -280,7 +267,7 @@ interface IFloatingFilterParams {
     <li>All the other columns have the standard 500ms debounce</i></li>
 </ul>
 
-<?= example('Custom Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', array('extras' => array('jquery', 'jqueryui'))) ?>
+<?= example('Custom Complex Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', array('extras' => array('jquery', 'jqueryui'))) ?>
 
 <?php include './angular.php'; ?>
 <?php include './react.php'; ?>

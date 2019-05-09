@@ -193,6 +193,28 @@ will be empty.
 
 <?= example('Filter Component', 'custom-filter') ?>
 
+<h2>Custom Filters Containing a Popup Element</h2>
+
+<p>
+    Sometimes you will need to create custom components for your filters that also contain popup elements.
+    This is is the case for Date Filter as it pops up a Date Picker. If the library you use to display
+    anchors the popup element outside of the parent filter, then when you click on it the grid will think
+    you clicked outside of the filter and hence close the column menu.
+</p>
+<p>
+    There are two ways you can get fix this problem:
+</p>
+<ul>
+    <li>Add a mouse click listener to your floating element and set it to preventDefault(). This way, the click event
+        will not bubble up to the grid.<br>
+        Note: This is the best solution, but you can only do this if you are writing the component yourself.
+    </li>
+    <li>
+        Add the <code>ag-custom-component-popup</code> CSS class to your floating element. An example of this
+        usage can be found here: <a href="/javascript-grid-date-component/#example-custom-date">Custom Date Component</a>
+    </li>
+</ul>
+
 <?php 
 include './angular.php'; 
 

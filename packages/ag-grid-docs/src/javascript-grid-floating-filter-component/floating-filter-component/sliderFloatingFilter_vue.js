@@ -23,8 +23,10 @@ export default Vue.extend({
     methods: {
         valueChanged(event) {
             this.currentValue = event.target.value;
-            this.params.onFloatingFilterChanged({model: this.buildModel()});
-
+            let valueToUse = (this.currentValue === 0) ? null : this.currentValue;
+            this.params.parentFilterInstance( function(instance) {
+                instance.onFloatingFilterChanged('greaterThan', valueToUse);
+            });
         },
 
         onParentModelChanged(parentModel) {
