@@ -10,17 +10,17 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     suppressAndOrCondition?: boolean;
 }
 
-export interface ISimpleModel extends ProvidedFilterModel {
+export interface ISimpleFilterModel extends ProvidedFilterModel {
     type: string;
 }
 
-export interface ICombinedSimpleModel<M extends ISimpleModel> extends ProvidedFilterModel {
+export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
     operator: string;
     condition1: M;
     condition2: M;
 }
 
-export enum FilterPosition {One, Two}
+export enum ConditionPosition {One, Two}
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
     loadingOoo:'Loading...',
@@ -48,7 +48,7 @@ const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilter {
+export abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -59,10 +59,10 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
     public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
     public static IN_RANGE = 'inRange';
 
-    public static CONTAINS = 'contains'; //1;
-    public static NOT_CONTAINS = 'notContains'; //1;
-    public static STARTS_WITH = 'startsWith'; //4;
-    public static ENDS_WITH = 'endsWith'; //5;
+    public static CONTAINS = 'contains';
+    public static NOT_CONTAINS = 'notContains';
+    public static STARTS_WITH = 'startsWith';
+    public static ENDS_WITH = 'endsWith';
 
     @RefSelector('eOptions1')
     private eType1: HTMLSelectElement;
@@ -84,31 +84,51 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
 
     private allowTwoConditions: boolean;
 
-    protected optionsFactory: OptionsFactory;
-
     private simpleFilterParams: ISimpleFilterParams;
+
+    protected optionsFactory: OptionsFactory;
 
     protected abstract getDefaultFilterOptions(): string[];
 
-    protected abstract individualFilterPasses(params: IDoesFilterPassParams, type:ISimpleModel): boolean;
-    protected abstract createValueTemplate(position: FilterPosition): string;
-    protected abstract isFilterUiComplete(position: FilterPosition): boolean;
-    protected abstract areSimpleModelsEqual(a: M, b: M): boolean;
+    // gets called once during initialisation, to build up the html template
+    protected abstract createValueTemplate(position: ConditionPosition): string;
+
+    // returns true in the row passes the said condition
+    protected abstract individualConditionPasses(params: IDoesFilterPassParams, type:ISimpleFilterModel): boolean;
+
+    // returns true if the UI represents a working filter, eg all parts are filled out.
+    // eg if text filter and textfield blank then returns false.
+    protected abstract isConditionUiComplete(position: ConditionPosition): boolean;
+
+    // filter uses this to know if new model is different from previous model, ie if filter has changed
+    protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
+
+    // returns the type selected from the drop down. base classes us this.
     protected abstract getFilterType(): string;
+
+    // after floating filter changes, this sets the 'value' section. this is implemented by the base class
+    // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
     protected abstract setValueFromFloatingFilter(value: string): void;
 
-    protected abstract createCondition(position: FilterPosition): M;
+    // getModel() calls this to create the two conditions. if only one condition,
+    // the result is returned by getModel(), otherwise is called twice and both results
+    // returned in a CombinedFilter object.
+    protected abstract createCondition(position: ConditionPosition): M;
 
-    protected abstract setConditionIntoUi(model: M, position: FilterPosition): void;
+    // puts model values into the UI
+    protected abstract setConditionIntoUi(model: ISimpleFilterModel, position: ConditionPosition): void;
 
+    // returns true if this type requires a 'from' field, eg any filter that requires at least one text value
     protected showValueFrom(type: string): boolean {
         return !this.doesFilterHaveHiddenInput(type) && type !== SimpleFilter.EMPTY;
     }
 
+    // returns true if this type requires a 'to' field, currently only 'range' returns true
     protected showValueTo(type: string): boolean {
         return type === SimpleFilter.IN_RANGE;
     }
 
+    // floating filter calls this when user applies filter from floating filter
     public onFloatingFilterChanged(type: string, value: any): void {
         this.setValueFromFloatingFilter(value);
         this.setTypeFromFloatingFilter(type);
@@ -122,27 +142,27 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
     }
 
     protected getModelFromUi(): M | ICombinedSimpleModel<M> {
-        if (!this.isFilterUiComplete(FilterPosition.One)) { return null; }
+        if (!this.isConditionUiComplete(ConditionPosition.One)) { return null; }
 
-        if (this.isAllowTwoConditions() && this.isFilterUiComplete(FilterPosition.Two)) {
+        if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
             const res: ICombinedSimpleModel<M> = {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
-                condition1: this.createCondition(FilterPosition.One),
-                condition2: this.createCondition(FilterPosition.Two)
+                condition1: this.createCondition(ConditionPosition.One),
+                condition2: this.createCondition(ConditionPosition.Two)
             };
             return res;
         } else {
-            const res: M = this.createCondition(FilterPosition.One);
+            const res: M = this.createCondition(ConditionPosition.One);
             return res;
         }
     }
 
-    protected getType1(): string {
+    protected getCondition1Type(): string {
         return this.eType1.value;
     }
 
-    protected getType2(): string {
+    protected getCondition2Type(): string {
         return this.eType2.value;
     }
 
@@ -183,7 +203,7 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
         return res;
     }
 
-    protected setModelIntoUi(model: ISimpleModel | ICombinedSimpleModel<M>): void {
+    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): void {
 
         const isCombined = (<any>model).operator;
 
@@ -197,11 +217,11 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
             this.eType1.value = combinedModel.condition1.type;
             this.eType2.value = combinedModel.condition2.type;
 
-            this.setConditionIntoUi(combinedModel.condition1, FilterPosition.One);
-            this.setConditionIntoUi(combinedModel.condition2, FilterPosition.Two);
+            this.setConditionIntoUi(combinedModel.condition1, ConditionPosition.One);
+            this.setConditionIntoUi(combinedModel.condition2, ConditionPosition.Two);
 
         } else {
-            const simpleModel = <ISimpleModel> model;
+            const simpleModel = <ISimpleFilterModel> model;
 
             this.eJoinOperatorAnd.checked = true;
             this.eJoinOperatorOr.checked = false;
@@ -209,8 +229,8 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
             this.eType1.value = simpleModel.type;
             this.eType2.value = this.optionsFactory.getDefaultOption();
 
-            this.setConditionIntoUi(<M>simpleModel, FilterPosition.One);
-            this.setConditionIntoUi(null, FilterPosition.Two);
+            this.setConditionIntoUi(<M>simpleModel, ConditionPosition.One);
+            this.setConditionIntoUi(null, ConditionPosition.Two);
         }
 
     }
@@ -223,8 +243,8 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
         if (isCombined) {
             const combinedModel = <ICombinedSimpleModel<M>> model;
 
-            const firstResult = this.individualFilterPasses(params, combinedModel.condition1);
-            const secondResult = this.individualFilterPasses(params, combinedModel.condition2);
+            const firstResult = this.individualConditionPasses(params, combinedModel.condition1);
+            const secondResult = this.individualConditionPasses(params, combinedModel.condition2);
 
             if (combinedModel.operator === 'AND') {
                 return firstResult && secondResult;
@@ -233,8 +253,8 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
             }
 
         } else {
-            const simpleModel = <ISimpleModel> model;
-            const result = this.individualFilterPasses(params, simpleModel);
+            const simpleModel = <ISimpleFilterModel> model;
+            const result = this.individualConditionPasses(params, simpleModel);
             return result;
         }
     }
@@ -282,10 +302,10 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
 
     protected createBodyTemplate(): string {
         const optionsTemplate1 = `<select class="ag-filter-select" ref="eOptions1"></select>`;
-        const valueTemplate1 = this.createValueTemplate(FilterPosition.One);
+        const valueTemplate1 = this.createValueTemplate(ConditionPosition.One);
 
         const optionsTemplate2 = `<select class="ag-filter-select" ref="eOptions2"></select>`;
-        const valueTemplate2 = this.createValueTemplate(FilterPosition.Two);
+        const valueTemplate2 = this.createValueTemplate(ConditionPosition.Two);
 
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
 
@@ -314,7 +334,8 @@ export abstract class SimpleFilter<M extends ISimpleModel> extends ProvidedFilte
     }
 
     protected updateUiVisibility(): void {
-        const showSecondFilter = this.allowTwoConditions && this.isFilterUiComplete(FilterPosition.One);
+        const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
+        const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
         _.setVisible(this.eCondition2Body, showSecondFilter);
         _.setVisible(this.eType2, showSecondFilter);
         _.setVisible(this.eJoinOperatorPanel, showSecondFilter);

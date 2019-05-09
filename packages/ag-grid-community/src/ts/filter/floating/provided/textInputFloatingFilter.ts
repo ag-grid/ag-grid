@@ -6,7 +6,7 @@ import {Constants} from "../../../constants";
 import {ProvidedFilter} from "../../provided/providedFilter";
 import {PostConstruct} from "../../../context/context";
 import {SimpleFloatingFilter} from "./simpleFloatingFilter";
-import {SimpleFilter, ISimpleModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
+import {SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
 import {NumberFilterModel} from "../../provided/number/numberFilter";
 import {FilterChangedEvent} from "../../../events";
 
@@ -67,7 +67,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
-                const simpleFilter = <SimpleFilter<ISimpleModel>> filterInstance;
+                const simpleFilter = <SimpleFilter<ISimpleFilterModel>> filterInstance;
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), value);
             }
         });

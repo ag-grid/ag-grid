@@ -6,7 +6,7 @@ import {IDateParams} from "../../../rendering/dateComponent";
 import {IFloatingFilterParams} from "../../floating/floatingFilter";
 import {DateCompWrapper} from "./dateCompWrapper";
 import {RefSelector} from "../../../widgets/componentAnnotations";
-import {SimpleFilter, ISimpleModel} from "../simpleFilter";
+import {SimpleFilter, ISimpleFilterModel} from "../simpleFilter";
 import {SimpleFloatingFilter} from "../../floating/provided/simpleFloatingFilter";
 import {FilterChangedEvent} from "../../../events";
 import {ProvidedFilter} from "../providedFilter";
@@ -61,7 +61,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         _.setVisible(this.eReadOnlyText, !editable);
     }
 
-    public onParentModelChanged(model: ISimpleModel, event: FilterChangedEvent): void {
+    public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {
         // we don't want to update the floating filter if the floating filter caused the change.
         // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
         // would behave strange as it would be updating as the user is typing
@@ -94,7 +94,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         this.params.parentFilterInstance( filterInstance => {
             if (filterInstance) {
-                const simpleFilter = <SimpleFilter<ISimpleModel>> filterInstance;
+                const simpleFilter = <SimpleFilter<ISimpleFilterModel>> filterInstance;
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), filterValueText);
             }
         });

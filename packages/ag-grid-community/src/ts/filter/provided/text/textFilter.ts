@@ -3,12 +3,12 @@ import {RefSelector} from "../../../widgets/componentAnnotations";
 import {_} from "../../../utils";
 import {
     SimpleFilter,
-    FilterPosition,
+    ConditionPosition,
     ISimpleFilterParams,
-    ISimpleModel
+    ISimpleFilterModel
 } from "../simpleFilter";
 
-export interface TextFilterModel extends ISimpleModel {
+export interface TextFilterModel extends ISimpleFilterModel {
     filter?: string;
 }
 
@@ -107,19 +107,19 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         this.addValueChangedListeners();
     }
 
-    protected setConditionIntoUi(model: TextFilterModel, position: FilterPosition): void {
-        const positionOne = position===FilterPosition.One;
+    protected setConditionIntoUi(model: TextFilterModel, position: ConditionPosition): void {
+        const positionOne = position===ConditionPosition.One;
 
         const eValue = positionOne ? this.eValue1 : this.eValue2;
 
         eValue.value = model ? model.filter : null;
     }
 
-    protected createCondition(position: FilterPosition): TextFilterModel {
+    protected createCondition(position: ConditionPosition): TextFilterModel {
 
-        const positionOne = position===FilterPosition.One;
+        const positionOne = position===ConditionPosition.One;
 
-        const type = positionOne ? this.getType1() : this.getType2();
+        const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValue1 : this.eValue2;
         const value = this.getValue(eValue);
 
@@ -157,9 +157,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: FilterPosition): string {
+    protected createValueTemplate(position: ConditionPosition): string {
 
-        const pos = position===FilterPosition.One ? '1' : '2';
+        const pos = position===ConditionPosition.One ? '1' : '2';
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body">
@@ -172,9 +172,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
-        const showValue1 = this.showValueFrom(this.getType1());
+        const showValue1 = this.showValueFrom(this.getCondition1Type());
         _.setVisible(this.eValue1, showValue1);
-        const showValue2 = this.showValueFrom(this.getType2());
+        const showValue2 = this.showValueFrom(this.getCondition2Type());
         _.setVisible(this.eValue2, showValue2);
     }
 
@@ -182,10 +182,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         this.eValue1.focus();
     }
 
-    protected isFilterUiComplete(position: FilterPosition): boolean {
-        const positionOne = position===FilterPosition.One;
+    protected isConditionUiComplete(position: ConditionPosition): boolean {
+        const positionOne = position===ConditionPosition.One;
 
-        const option = positionOne ? this.getType1() : this.getType2();
+        const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eFilterValue = positionOne ? this.eValue1 : this.eValue2;
 
         if (option===SimpleFilter.EMPTY) { return false; }
@@ -198,7 +198,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return value != null;
     }
 
-    public individualFilterPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
+    public individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
 
         const filterText:string =  filterModel.filter;
         const filterOption:string = filterModel.type;

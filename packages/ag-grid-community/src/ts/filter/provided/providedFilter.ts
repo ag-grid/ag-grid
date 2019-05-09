@@ -22,7 +22,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
-    private abstractProvidedFilterParams: IProvidedFilterParams;
+    private providedFilterParams: IProvidedFilterParams;
 
     private clearActive: boolean;
     private applyActive: boolean;
@@ -42,7 +42,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     @Autowired('gridOptionsWrapper')
     protected gridOptionsWrapper: GridOptionsWrapper;
 
-    // part if IFilter interface, hence public
+    // part of IFilter interface, hence public
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     protected abstract updateUiVisibility(): void;
@@ -85,7 +85,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
 
     protected setParams(params: IProvidedFilterParams): void {
-        this.abstractProvidedFilterParams = params;
+        this.providedFilterParams = params;
 
 
         this.clearActive = params.clearButton === true;
@@ -103,7 +103,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     private setupOnBtApplyDebounce(): void {
-        const debounceMs = ProvidedFilter.getDebounceMs(this.abstractProvidedFilterParams);
+        const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams);
         this.onBtApplyDebounce = _.debounce(this.onBtApply.bind(this), debounceMs);
     }
 
@@ -142,7 +142,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             // the floating filter uses this info, so it doesn't refresh after filter changed if change
             // came from floating filter
             const source = afterFloatingFilter ? 'floatingFilter' : 'mainFilter';
-            this.abstractProvidedFilterParams.filterChangedCallback({source: source});
+            this.providedFilterParams.filterChangedCallback({source: source});
         }
     }
 
@@ -155,7 +155,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     protected onUiChanged(afterFloatingFilter = false): void {
         this.updateUiVisibility();
-        this.abstractProvidedFilterParams.filterModifiedCallback();
+        this.providedFilterParams.filterModifiedCallback();
 
         // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {

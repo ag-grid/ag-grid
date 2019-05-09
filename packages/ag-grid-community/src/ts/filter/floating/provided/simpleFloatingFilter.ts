@@ -1,7 +1,7 @@
 import {Component} from "../../../widgets/component";
 import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
 import {ProvidedFilterModel} from "../../../interfaces/iFilter";
-import {SimpleFilter, ISimpleModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
+import {SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
 import {OptionsFactory} from "../../provided/optionsFactory";
 import {IScalarFilterParams} from "../../provided/scalerFilter";
 import {FilterChangedEvent} from "../../../events";
@@ -30,14 +30,14 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         const isCombined = (<any>model).operator;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<ISimpleModel>>model;
+            const combinedModel = <ICombinedSimpleModel<ISimpleFilterModel>>model;
 
             const con1Str = this.conditionToString(combinedModel.condition1);
             const con2Str = this.conditionToString(combinedModel.condition2);
 
             return `${con1Str} ${combinedModel.operator} ${con2Str}`;
         } else {
-            const condition = <ISimpleModel>model;
+            const condition = <ISimpleFilterModel>model;
             return this.conditionToString(condition);
         }
     }
@@ -58,13 +58,13 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
         const isCombined = (<any>model).operator;
 
-        let condition: ISimpleModel;
+        let condition: ISimpleFilterModel;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<ISimpleModel>>model;
+            const combinedModel = <ICombinedSimpleModel<ISimpleFilterModel>>model;
             condition = combinedModel.condition1;
         } else {
-            condition = <ISimpleModel>model;
+            condition = <ISimpleFilterModel>model;
         }
 
         this.lastType = condition.type;
@@ -84,7 +84,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
             return false;
         }
 
-        const simpleModel = <ISimpleModel>model;
+        const simpleModel = <ISimpleFilterModel>model;
 
         const typeIsEditable = this.isTypeEditable(simpleModel.type);
         return typeIsEditable;

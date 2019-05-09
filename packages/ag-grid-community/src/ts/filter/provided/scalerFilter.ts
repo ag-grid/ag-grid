@@ -1,4 +1,4 @@
-import {SimpleFilter, ISimpleFilterParams, ISimpleModel} from "./simpleFilter";
+import {SimpleFilter, ISimpleFilterParams, ISimpleFilterModel} from "./simpleFilter";
 import {IDoesFilterPassParams} from "../../interfaces/iFilter";
 
 export interface NullComparator {
@@ -16,7 +16,7 @@ export interface Comparator<T> {
     (left: T, right: T): number;
 }
 
-export abstract class ScalerFilter<M extends ISimpleModel, T> extends SimpleFilter<M> {
+export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends SimpleFilter<M> {
 
     static readonly DEFAULT_NULL_COMPARATOR: NullComparator = {
         equals: false,
@@ -29,7 +29,7 @@ export abstract class ScalerFilter<M extends ISimpleModel, T> extends SimpleFilt
     protected abstract comparator(): Comparator<T>;
 
     // because the date and number filter models have different attribute names, we have to map
-    protected abstract mapRangeFromModel(filterModel: ISimpleModel): {from: T, to: T};
+    protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): {from: T, to: T};
 
     protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);
@@ -86,7 +86,7 @@ export abstract class ScalerFilter<M extends ISimpleModel, T> extends SimpleFilt
         return (ScalerFilter.DEFAULT_NULL_COMPARATOR as any)[reducedType];
     }
 
-    protected individualFilterPasses(params: IDoesFilterPassParams, filterModel: ISimpleModel) {
+    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: ISimpleFilterModel) {
 
         const cellValue: any = this.scalarFilterParams.valueGetter(params.node);
 

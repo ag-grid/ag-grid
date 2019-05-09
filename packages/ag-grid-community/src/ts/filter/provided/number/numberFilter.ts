@@ -3,13 +3,13 @@ import {_} from "../../../utils";
 
 import {
     SimpleFilter,
-    FilterPosition,
+    ConditionPosition,
     ISimpleFilterParams,
-    ISimpleModel
+    ISimpleFilterModel
 } from "../simpleFilter";
 import {ScalerFilter, Comparator} from "../scalerFilter";
 
-export interface NumberFilterModel extends ISimpleModel {
+export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
     filterTo?: number;
 }
@@ -52,8 +52,8 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         this.eValueTo2.value = null;
     }
 
-    protected setConditionIntoUi(model: NumberFilterModel, position: FilterPosition): void {
-        const positionOne = position===FilterPosition.One;
+    protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void {
+        const positionOne = position===ConditionPosition.One;
 
         const eValueFrom = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
@@ -99,9 +99,9 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: FilterPosition): string {
+    protected createValueTemplate(position: ConditionPosition): string {
 
-        const positionOne = position===FilterPosition.One;
+        const positionOne = position===ConditionPosition.One;
 
         const pos = positionOne ? '1' : '2';
 
@@ -117,10 +117,10 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         </div>`;
     }
 
-    protected isFilterUiComplete(position: FilterPosition): boolean {
-        const positionOne = position===FilterPosition.One;
+    protected isConditionUiComplete(position: ConditionPosition): boolean {
+        const positionOne = position===ConditionPosition.One;
 
-        const option = positionOne ? this.getType1() : this.getType2();
+        const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
 
@@ -165,10 +165,10 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         return newFilter;
     }
 
-    protected createCondition(position: FilterPosition): NumberFilterModel {
-        const positionOne = position===FilterPosition.One;
+    protected createCondition(position: ConditionPosition): NumberFilterModel {
+        const positionOne = position===ConditionPosition.One;
 
-        const type = positionOne ? this.getType1() : this.getType2();
+        const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
 
         const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         const value = this.stringToFloat(eValue.value);
@@ -191,16 +191,16 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
-        const showFrom1 = this.showValueFrom(this.getType1());
+        const showFrom1 = this.showValueFrom(this.getCondition1Type());
         _.setVisible(this.eValueFrom1, showFrom1);
 
-        const showTo1 = this.showValueTo(this.getType1());
+        const showTo1 = this.showValueTo(this.getCondition1Type());
         _.setVisible(this.eValueTo1, showTo1);
 
-        const showFrom2 = this.showValueFrom(this.getType2());
+        const showFrom2 = this.showValueFrom(this.getCondition2Type());
         _.setVisible(this.eValueFrom2, showFrom2);
 
-        const showTo2 = this.showValueTo(this.getType2());
+        const showTo2 = this.showValueTo(this.getCondition2Type());
         _.setVisible(this.eValueTo2, showTo2);
     }
 

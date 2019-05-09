@@ -6,9 +6,9 @@ import {_} from "../../../utils";
 import {DateCompWrapper} from "./dateCompWrapper";
 import {
     SimpleFilter,
-    FilterPosition,
+    ConditionPosition,
     ISimpleFilterParams,
-    ISimpleModel
+    ISimpleFilterModel
 } from "../simpleFilter";
 import {IDateComparatorFunc} from "./dateFilter";
 import {ScalerFilter, Comparator} from "../scalerFilter";
@@ -17,7 +17,7 @@ import {ScalerFilter, Comparator} from "../scalerFilter";
 // filter actually works with dates. this is because a Date object won't convert
 // easily to JSON. so when the model is used for doing the filtering, it's converted
 // to Date objects.
-export interface DateFilterModel extends ISimpleModel {
+export interface DateFilterModel extends ISimpleFilterModel {
     dateFrom: string;
     dateTo: string;
 }
@@ -88,8 +88,8 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         this.dateCompTo2.setDate(null);
     }
 
-    protected setConditionIntoUi(model: DateFilterModel, position: FilterPosition): void {
-        const positionOne = position===FilterPosition.One;
+    protected setConditionIntoUi(model: DateFilterModel, position: ConditionPosition): void {
+        const positionOne = position===ConditionPosition.One;
 
         const dateFromString = model ? model.dateFrom : null;
         const dateToString = model ? model.dateTo : null;
@@ -158,9 +158,9 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: FilterPosition): string {
+    protected createValueTemplate(position: ConditionPosition): string {
 
-        const positionOne = position===FilterPosition.One;
+        const positionOne = position===ConditionPosition.One;
 
         const pos = positionOne ? '1' : '2';
 
@@ -172,10 +172,10 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
                 </div>`;
     }
 
-    protected isFilterUiComplete(position: FilterPosition): boolean {
-        const positionOne = position===FilterPosition.One;
+    protected isConditionUiComplete(position: ConditionPosition): boolean {
+        const positionOne = position===ConditionPosition.One;
 
-        const option = positionOne ? this.getType1() : this.getType2();
+        const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
 
@@ -206,11 +206,11 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         return DateFilter.FILTER_TYPE;
     }
 
-    protected createCondition(position: FilterPosition): DateFilterModel {
+    protected createCondition(position: ConditionPosition): DateFilterModel {
 
-        const positionOne = position===FilterPosition.One;
+        const positionOne = position===ConditionPosition.One;
 
-        const type = positionOne ? this.getType1() : this.getType2();
+        const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
 
         const dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         const dateCompFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
@@ -227,16 +227,16 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
         super.updateUiVisibility();
 
-        const showFrom1 = this.showValueFrom(this.getType1());
+        const showFrom1 = this.showValueFrom(this.getCondition1Type());
         _.setVisible(this.ePanelFrom1, showFrom1);
 
-        const showTo1 = this.showValueTo(this.getType1());
+        const showTo1 = this.showValueTo(this.getCondition1Type());
         _.setVisible(this.ePanelTo1, showTo1);
 
-        const showFrom2 = this.showValueFrom(this.getType2());
+        const showFrom2 = this.showValueFrom(this.getCondition2Type());
         _.setVisible(this.ePanelFrom2, showFrom2);
 
-        const showTo2 = this.showValueTo(this.getType2());
+        const showTo2 = this.showValueTo(this.getCondition2Type());
         _.setVisible(this.ePanelTo2, showTo2);
 
     }
