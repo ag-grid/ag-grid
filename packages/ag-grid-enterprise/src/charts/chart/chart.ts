@@ -415,11 +415,11 @@ export abstract class Chart<D, X, Y> {
 
         const datum = this.legend.datumForPoint(x, y);
         if (datum) {
-            const {id, index, enabled} = datum;
+            const {id, itemId, enabled} = datum;
             const series = find(this.series, series => series.id === id);
 
             if (series) {
-                series.toggleSeriesItem(index, !enabled);
+                series.toggleSeriesItem(itemId, !enabled);
             }
         }
     };

@@ -5,7 +5,7 @@ import { BBox } from "../scene/bbox";
 
 export interface LegendDatum {
     id: string,       // component ID
-    index: number,    // sub-component index (zero in case of zero or one sub-component)
+    itemId: any,      // sub-component ID
     enabled: boolean, // the current state of the sub-component
     marker: {
         fillStyle: string,

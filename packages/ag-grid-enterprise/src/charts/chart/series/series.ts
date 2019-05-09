@@ -93,7 +93,7 @@ export abstract class Series<D, X, Y> {
      */
     abstract listSeriesItems(data: LegendDatum[]): void;
 
-    toggleSeriesItem(index: number, enabled: boolean): void {
+    toggleSeriesItem(itemId: any, enabled: boolean): void {
         this.visible = enabled;
     }
 

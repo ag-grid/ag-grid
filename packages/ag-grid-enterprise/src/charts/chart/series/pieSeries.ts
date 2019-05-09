@@ -577,7 +577,7 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
             this.data.forEach((datum, index) => {
                 data.push({
                     id: this.id,
-                    index,
+                    itemId: index,
                     enabled: this.enabled[index],
                     label: {
                         text: String(datum[labelField])
@@ -591,8 +591,8 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
         }
     }
 
-    toggleSeriesItem(index: number, enabled: boolean): void {
-        this.enabled[index] = enabled;
+    toggleSeriesItem(itemId: number, enabled: boolean): void {
+        this.enabled[itemId] = enabled;
         this.scheduleData();
     }
 }

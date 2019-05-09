@@ -102,10 +102,8 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         this._yFields = values;
 
         const enabled = this.enabled;
-        enabled.length = values.length;
-        for (let i = 0, ln = values.length; i < ln; i++) {
-            enabled[i] = true;
-        }
+        enabled.clear();
+        values.forEach(field => enabled.set(field, true));
 
         const groupScale = this.groupScale;
         groupScale.domain = values;
@@ -241,12 +239,12 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
-            yFields.forEach((field, index) => {
+            yFields.forEach(field => {
                 const value = datum[field];
                 if (isNaN(value) || !isFinite(value)) {
                     throw new Error(`The ${field} value is not a finite number.`);
                 }
-                values.push(enabled[index] ? value : 0);
+                values.push(enabled.get(field) ? value : 0);
             });
             return values;
         });
@@ -260,8 +258,6 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
 
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
-
-        this.groupScale.domain = this.enabledYFields;
 
         if (this.grouped) {
             // Find the tallest positive/negative bar in each group,
@@ -461,8 +457,8 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
             this.yFields.forEach((yField, index) => {
                 data.push({
                     id: this.id,
-                    index,
-                    enabled: this.enabled[index],
+                    itemId: yField,
+                    enabled: this.enabled.get(yField) || false,
                     label: {
                         text: this.yFieldNames[index] || this.yFields[index]
                     },

@@ -308,7 +308,7 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         if (this.data.length && this.xField && this.yField) {
             data.push({
                 id: this.id,
-                index: 0,
+                itemId: undefined,
                 enabled: this.visible,
                 label: {
                     text: this.title || this.yField
