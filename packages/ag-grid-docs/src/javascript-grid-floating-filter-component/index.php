@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     Floating filters do not contain filter state, they merely show the state of the actual underlying filter. Floating
     filters are just another view for the main filter. For this reason the floating filters lifecycle is
     bound to the visibility of the column. So if you hide a column (either set not visible, or
-    horizontally scroll the column out of view) then the floating filter GUI component is destroyed.
+    horizontally scroll the column out of view) then the floating filter UI component is destroyed.
     If the column comes back into view, it is created again. This is different to column filters,
     where the column filter will exist as long as the column exists, regardless of the columns
     visibility.
@@ -50,23 +50,26 @@ include '../documentation-main/documentation_header.php';
 interface IFloatingFilterComp {
     // mandatory methods
 
-    // The init(params) method is called on the floating filter once. See below for details on the parameters.
+    // The init(params) method is called on the floating filter once.
+    // See below for details on the parameters.
     init(params: IFilterFloatingParams): void;
 
-    // Gets called every time the model from the associated rich filter for this floating filter changes.
-    // Typically this would be used so that you can refresh your UI and show on it a visual representation
-    // of the latest model for the filter as it is being updated somewhere else.
-    onParentModelChanged(parentModel:any)
+    // Gets called every time the parent filter changes. Your floating
+    // filter would typically refresh it's UI to reflect the new filter
+    // state. The provided parentModel is what the parent filter returns
+    // from it's getModel() method. The event is the FilterChangedEvent
+    // that the grid fires.
+    onParentModelChanged(parentModel:any, event: FilterChangeEvent)
 
     // Returns the dom html element for this floating filter.
     getGui(): HTMLElement;
 
     // optional methods
 
-    // Gets called when the floating filter is destroyed.
-    // Like column headers, the floating filter life span is only when the column is visible,
-    // so gets destroyed if column is made not visible or when user scrolls column out of
-    // view with horizontal scrolling.
+    // Gets called when the floating filter is destroyed. Like column headers,
+    // the floating filter life span is only when the column is visible,
+    // so gets destroyed if column is made not visible or when user scrolls
+    // column out of view with horizontal scrolling.
     destroy?(): void;
 }
 </snippet>
@@ -86,26 +89,74 @@ interface IFloatingFilterParams {
     // The column this filter is for
     column: Column;
 
-    // This is the callback you need to invoke from your component every time that you want
-    // to update the model from your parent rich filter. In order to make this call you need to be able to produce a
-    // model object like the one this rich filter will produce through getModel(). After this call is completed,
-    // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.
-    onFloatingFilterChanged(change:any): void;
+    // The params object passed to the filter. This is to allow the
+    // floating filter access to the configuration of the parent filter.
+    // For example, the provided filters use debounceMs from the parent
+    // filter params.
+    filterParams: IFilterParams,
 
-    // This is a shortcut to invoke getModel on the parent rich filter..
+    // This is a shortcut to invoke getModel on the parent parent filter.
+    // If the parent filter doesn't exist (filters are lazy created as needed)
+    // then returns null rather than calling getModel() on the parent filter.
     currentParentModel(): any;
 
-    // Boolean flag to indicate if the button in the floating filter that opens the rich
-    // filter in a popup should be displayed
+    // Boolean flag to indicate if the button in the floating filter that
+    // opens the parent filter in a popup should be displayed
     suppressFilterButton: boolean;
 
-    // Amount in ms to debounce key presses before the filter is fired defaults to 500
-    debounceMs?:number;
+    // Gets a reference to the parent filter. The result is returned returned
+    // async via a callback as the parent filter may not exist yet. If it does
+    // not exist, it is created and asynchronously returned (ag-Grid itself
+    // does not create component asynchronously, however if providing a framework
+    // provided filter eg React, this might be).
+    //
+    // The floating filter can then call any method it likes on the parent filter.
+    // The parent filter will typically provide it's own method for the floating
+    // filter to call to set the filter. Eg if creating customer filter A, then
+    // it should have a method your floating floating A can call to set the state
+    // when the user updates via the floating filter.
+    parentFilterInstance: ( callback: (filterInstance: IFilterComp)=>void ) => void;
 
     // The grid API
     api: any;
 }
 </snippet>
+
+<h2>Setting Filter from Floating Filter</h2>
+
+<p>
+    It is possible for the floating filter to get a reference to the parent filter instance.
+    It is to you what method your expose on the parent filter to take filter changes from
+    the floating filter. What method you call has nothing to do with the grid.
+</p>
+
+<p>
+    The provided filters provide the following methods that the corresponding provided
+    floating filters then call. This information is useful if you want to create your own
+    floating filter that is paired with a provided parent filter.
+</p>
+
+<ul>
+    <li>
+        <b>Date, Text and Number Filters:</b> All these filters provide a method
+        <code>onFloatingFilterChanged(type: string, value: string)</code> where
+        type is the type ('lessThan', 'equals' etc) and the value is the text value
+        to use (the number and date filters will convert the text to the corresponding
+        type).
+    </li>
+    <li>
+        <b>Set Filter:</b> The floating set filter is not editable, thus no method is
+        exposed on the parent filter for the floating filter to call.
+    </li>
+</ul>
+
+<p>
+    You could also call <code>setModel()</code> on the filters as an alternative. For
+    example you could build your own floating filter for the Set Filter that allows
+    picking all European or Asian countries, or you could provide your own Number floating
+    filter that allows selecting ranges (the provided Number floating filter does not
+    allow editing ranges).
+</p>
 
 <h2>Custom Floating Filter Example</h2>
 
@@ -188,7 +239,7 @@ interface IFloatingFilterParams {
 <p>
     This example uses the previous custom filter implementing method <code>NumberFilter.getModelAsString()</code>. Note
     how there are no custom floating filters and yet each column using NumberFilter (gold, silver, bronze and total),
-    have a read-only floating filter that gets updated as you change the values from their rich filter
+    have a read-only floating filter that gets updated as you change the values from their parent filter
 </p>
 
 <?= example('Custom Filter Only', 'custom-filter') ?>

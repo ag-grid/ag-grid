@@ -7,11 +7,13 @@ import {FilterChangedEvent} from "../../events";
 export interface IFloatingFilterParams {
     column: Column;
     filterParams: IFilterParams,
-    onFloatingFilterChanged: (change: any) => boolean;
     currentParentModel: () => any;
     parentFilterInstance: ( callback: (filterInstance: IFilterComp)=>void ) => void;
     suppressFilterButton: boolean;
     api: GridApi;
+
+    /** @deprecated in v21, use parentFilterInstance() callback instead and tell filter directly */
+    onFloatingFilterChanged: (change: any) => boolean;
 }
 
 export interface IFloatingFilter {

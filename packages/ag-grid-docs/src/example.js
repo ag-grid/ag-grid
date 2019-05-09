@@ -1071,14 +1071,18 @@ PersonFilter.prototype.setupGui = function () {
         '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
-    var that = this;
-    this.onFilterChanged = function () {
-        that.extractFilterText();
-        that.params.filterChangedCallback();
-    };
-
     this.eFilterText = this.gui.querySelector('#filterText');
-    this.eFilterText.addEventListener("input", this.onFilterChanged);
+    this.eFilterText.addEventListener("input", this.onFilterChanged.bind(this));
+};
+
+PersonFilter.prototype.setFromFloatingFilter = function (filter) {
+    this.eFilterText.value = filter;
+    this.onFilterChanged();
+};
+
+PersonFilter.prototype.onFilterChanged = function () {
+    this.extractFilterText();
+    this.params.filterChangedCallback();
 };
 
 PersonFilter.prototype.extractFilterText = function () {
@@ -1137,7 +1141,9 @@ PersonFloatingFilterComponent.prototype.init = function (params) {
     input.className = 'ag-floating-filter-input';
     eGui.appendChild(input);
     this.changeEventListener = function () {
-        params.onFloatingFilterChanged(input.value);
+        params.parentFilterInstance(function(instance) {
+            instance.setFromFloatingFilter(input.value);
+        });
     };
     input.addEventListener('input', this.changeEventListener);
 };

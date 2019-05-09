@@ -115,8 +115,8 @@ gridOptions = {
     </table>
 
     <p>
-        If no filter type is specified, the default is 'agTextColumnFilter' for ag-Grid (free versions) and
-        'agSetColumnFilter' for ag-Grid Enterprise.
+        If no filter type is specified, the default is Text Filter for ag-Grid Community and
+        Set Filter for ag-Grid Enterprise.
     </p>
 
     <h2>Filter Parameters</h2>
@@ -146,7 +146,7 @@ columnDefinition = {
         The example below demonstrates:
     </p>
         <ul class="content">
-        <li>Three filter types 1) text filter, 2) number filter and 3) date filter.</li>
+        <li>Three filter types: 1) text filter, 2) number filter and 3) date filter.</li>
         <li>Using the <code>ag-header-cell-filtered</code> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
@@ -175,25 +175,15 @@ columnDefinition = {
 
     <p>
         Filtering results in the following events getting emitted:
-        <table class="table">
-            <tr>
-                <th>filterChanged</th>
-                <td>
-                    Filter has changed.
-                </td>
-            </tr>
-            <tr>
-                <th>filterModified</th>
-                <td>
-                    Gets called when filter has been modified but <code>filterChanged</code>
-                    not necessarily called. This is useful when
-                    using an apply button inside the filter, as this event fires
-                    when the filter is modified, and then <code>filterChanged</code>
-                    is fired when the apply button is pressed.
-                </td>
-            </tr>
-        </table>
     </p>
+
+    <ul>
+        <li><b>Filter Changed:</b> Filter has changed and applied by the grid.</li>
+        <li><b>Filter Modified:</b> Filter UI has changed but not necessarily applied.
+            This is useful when using an apply button and you want to know if the filter
+            changed but not applied.
+        </li>
+    </ul>
 
     <h2>Example: Apply Button and Filter Events</h2>
 
@@ -334,10 +324,9 @@ gridOptions = {
 }</snippet>
 
 <p>
-    Floating filters are an accessory to the main column filters. They do not contain their own state,
-    rather they display the state of the main filter, and if editable they set state on the main filter.
-    Underneath the hood this is done by using the main filters <code>getModel()</code> and <code>setModel()</code>
-    methods. For this reason, there is no api for getting or setting state of the floating filters.
+    Floating filters depend on and coordinate with the main column filters. They do not contain their own state,
+    rather they display the state of the main filter and if editable they set state on the main filter.
+    For this reason, there is no API for getting or setting state of the floating filters.
 </p>
 
 <p>
@@ -364,7 +353,8 @@ gridOptions = {
             to in range filtering, then the floating filter is read only (Age and date columns)</li>
         <li>Columns with the applyButton require the user to press enter on the floating filter for the filter to take
         effect (Gold column)</li>
-        <li>Changes made from the outside are reflected automatically in the floating filters (Press any button)</li>
+        <li>Changes made directly to the main filter are reflected automatically in the floating filters
+            (change any main filter)</li>
         <li>Columns with custom filter have automatic read only filter if the custom filter implements the method
         getModelAsString. (Athlete column)</li>
         <li>The user can configure when to show/hide the button that shows the rich filter (Silver and Bronze columns)</li>
