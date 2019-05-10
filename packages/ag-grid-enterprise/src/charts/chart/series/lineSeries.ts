@@ -36,16 +36,18 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
     private xData: X[] = [];
     private yData: Y[] = [];
 
-    private linePath = new Path();
+    private lineNode = new Path();
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
     constructor() {
         super();
-        this.linePath.fillStyle = null;
-        this.linePath.lineJoin = 'round';
-        this.linePath.pointerEvents = PointerEvents.None;
-        this.group.append(this.linePath);
+
+        const lineNode = this.lineNode;
+        lineNode.fillStyle = null;
+        lineNode.lineJoin = 'round';
+        lineNode.pointerEvents = PointerEvents.None;
+        this.group.append(lineNode);
     }
 
     set chart(chart: CartesianChart<D, X, Y> | null) {
@@ -80,7 +82,18 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         return this._yField;
     }
 
-    private _markerRadius: number = 5;
+    private _marker: boolean = false;
+    set marker(value: boolean) {
+        if (this._marker !== value) {
+            this._marker = value;
+            this.update();
+        }
+    }
+    get marker(): boolean {
+        return this._marker;
+    }
+
+    private _markerRadius: number = 4;
     set markerRadius(value: number) {
         if (this._markerRadius !== value) {
             this._markerRadius = Math.abs(value);
@@ -183,7 +196,7 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         return this._strokeColor;
     }
 
-    private _lineWidth: number = 2;
+    private _lineWidth: number = 3;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
             this._lineWidth = value;
@@ -211,13 +224,17 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         const xData = this.xData;
         const yData = this.yData;
         const n = xData.length;
+        const fillStyle = this.color;
+        const strokeStyle = this.strokeColor;
+        const marker = this.marker;
+        const markerLineWidth = this.markerLineWidth;
+        const markerRadius = this.markerRadius;
 
-        const linePath: Path = this.linePath;
-        const path: Path2D = linePath.path;
-
+        const lineNode: Path = this.lineNode;
+        const linePath: Path2D = lineNode.path;
         const groupSelectionData: GroupSelectionDatum<D>[] = [];
 
-        path.clear();
+        linePath.clear();
         for (let i = 0; i < n; i++) {
             const xDatum = xData[i];
             const yDatum = yData[i];
@@ -225,24 +242,26 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
             const y = yScale.convert(yDatum) + yOffset;
 
             if (!i) {
-                path.moveTo(x, y);
+                linePath.moveTo(x, y);
             } else {
-                path.lineTo(x, y);
+                linePath.lineTo(x, y);
             }
 
-            groupSelectionData.push({
-                seriesDatum: data[i],
-                x,
-                y,
-                fillStyle: this.color,
-                strokeStyle: this.strokeColor,
-                lineWidth: this.markerLineWidth,
-                radius: this.markerRadius
-            });
+            if (marker) {
+                groupSelectionData.push({
+                    seriesDatum: data[i],
+                    x,
+                    y,
+                    fillStyle,
+                    strokeStyle,
+                    lineWidth: markerLineWidth,
+                    radius: markerRadius
+                });
+            }
         }
 
-        linePath.strokeStyle = this.strokeColor;
-        linePath.lineWidth = this.lineWidth;
+        lineNode.strokeStyle = strokeStyle;
+        lineNode.lineWidth = this.lineWidth;
 
         // ------------------------------------------
 
