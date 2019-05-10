@@ -107,6 +107,8 @@ export class Axis<D> {
      */
     tickColor: string | null = 'rgba(195, 195, 195, 1)';
 
+    labelFormatter?: (value: D, decimalDigits?: number) => string;
+
     /**
      * The font to be used by the labels. The given font string should use the
      * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
@@ -322,6 +324,7 @@ export class Axis<D> {
             });
         }
 
+        const labelFormatter = this.labelFormatter;
         const labels = groupSelection.selectByClass(Text)
             .each((label, datum) => {
                 label.font = this.labelFont;
@@ -329,9 +332,13 @@ export class Axis<D> {
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                label.text = decimalDigits && typeof datum === 'number'
-                    ? datum.toFixed(decimalDigits)
-                    : datum.toString();
+                label.text = labelFormatter
+                    ? labelFormatter(datum, decimalDigits)
+                    : decimalDigits
+                        // the `datum` is a floating point number
+                        ? (datum as any as number).toFixed(decimalDigits)
+                        // the `datum` is an integer, a string or an object
+                        : datum.toString();
                 label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
