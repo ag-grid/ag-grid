@@ -115,7 +115,7 @@ export class CellComp extends Component {
 
         this.createGridCellVo();
 
-        this.rangeSelectionEnabled = beans.enterprise && beans.gridOptionsWrapper.isEnableRangeSelection();
+        this.rangeSelectionEnabled = beans.gridOptionsWrapper.isEnableRangeSelection();
         this.cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
         this.firstRightPinned = this.column.isFirstRightPinned();
         this.lastLeftPinned = this.column.isLastLeftPinned();
@@ -210,34 +210,9 @@ export class CellComp extends Component {
         this.attachCellRenderer();
         this.angular1Compile();
 
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onCellChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
-
-        // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
-        // then changing the width of the containers will impact left position. eg the center cols all have their
-        // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
-        // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
-        // in different containers so doesn't impact.
-        if (this.printLayout) {
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
-        }
-
         // if not doing enterprise, then range selection service would be missing
         // so need to check before trying to use it
         if (this.rangeSelectionEnabled) {
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
-
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_MOVED, this.updateRangeBordersIfRangeCount.bind(this));
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_PINNED, this.updateRangeBordersIfRangeCount.bind(this));
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateRangeBordersIfRangeCount.bind(this));
-
             if (this.shouldHaveSelectionHandle()) {
                 this.addSelectionHandle();
             }
@@ -248,12 +223,12 @@ export class CellComp extends Component {
         }
     }
 
-    private onColumnHover(): void {
+    public onColumnHover(): void {
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
-    private onCellChanged(event: CellChangedEvent): void {
+    public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
         if (eventImpactsThisCell) {
             this.refreshCell({});
@@ -281,7 +256,7 @@ export class CellComp extends Component {
         return result;
     }
 
-    private onFlashCells(event: FlashCellsEvent): void {
+    public onFlashCells(event: FlashCellsEvent): void {
         const cellId = CellPositionUtils.createId(this.cellPosition);
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
@@ -1612,7 +1587,7 @@ export class CellComp extends Component {
         }
     }
 
-    private onLeftChanged(): void {
+    public onLeftChanged(): void {
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
         this.getGui().style.left = left + 'px';
     }
@@ -1637,7 +1612,7 @@ export class CellComp extends Component {
         return leftWidth + leftPosition;
     }
 
-    private onWidthChanged(): void {
+    public onWidthChanged(): void {
         const width = this.getCellWidth();
         this.getGui().style.width = width + 'px';
     }
@@ -1747,7 +1722,7 @@ export class CellComp extends Component {
         return res;
     }
 
-    private onRowIndexChanged(): void {
+    public onRowIndexChanged(): void {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.
         this.createGridCellVo();
@@ -1757,7 +1732,7 @@ export class CellComp extends Component {
         this.onRangeSelectionChanged();
     }
 
-    private onRangeSelectionChanged(): void {
+    public onRangeSelectionChanged(): void {
         if (!this.beans.enterprise) {
             return;
         }
@@ -1864,7 +1839,7 @@ export class CellComp extends Component {
         this.selectionHandle.refresh(this);
     }
 
-    private updateRangeBordersIfRangeCount(): void {
+    public updateRangeBordersIfRangeCount(): void {
         // we only need to update range borders if we are in a range
         if (this.rangeCount > 0) {
             this.updateRangeBorders();
@@ -1888,7 +1863,7 @@ export class CellComp extends Component {
         _.addOrRemoveCssClass(element, 'ag-cell-range-left', isLeft);
     }
 
-    private onFirstRightPinnedChanged(): void {
+    public onFirstRightPinnedChanged(): void {
         const firstRightPinned = this.column.isFirstRightPinned();
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
@@ -1896,7 +1871,7 @@ export class CellComp extends Component {
         }
     }
 
-    private onLastLeftPinnedChanged(): void {
+    public onLastLeftPinnedChanged(): void {
         const lastLeftPinned = this.column.isLastLeftPinned();
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
@@ -1974,7 +1949,7 @@ export class CellComp extends Component {
         );
     }
 
-    private onCellFocused(event?: any): void {
+    public onCellFocused(event?: any): void {
         const cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
 
         // see if we need to change the classes on this cell

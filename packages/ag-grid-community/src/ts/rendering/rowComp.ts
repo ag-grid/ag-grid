@@ -435,6 +435,19 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+
+        this.addListenersForCellComps();
+    }
+
+    private addListenersForCellComps(): void {
+
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
+            this.forEachCellComp( cellComp => cellComp.onRowIndexChanged() );
+        });
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
+            this.forEachCellComp( cellComp => cellComp.onCellChanged(event) );
+        });
+
     }
 
     // when grid columns change, then all cells should be cleaned out,

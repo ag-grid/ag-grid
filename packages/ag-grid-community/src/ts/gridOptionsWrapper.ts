@@ -818,7 +818,7 @@ export class GridOptionsWrapper {
     }
 
     public isEnableRangeSelection(): boolean {
-        return isTrue(this.gridOptions.enableRangeSelection);
+        return this.enterprise && isTrue(this.gridOptions.enableRangeSelection);
     }
 
     public isEnableRangeHandle(): boolean {

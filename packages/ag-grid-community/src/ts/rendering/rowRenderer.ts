@@ -53,6 +53,8 @@ export class RowRenderer extends BeanStub {
 
     private gridPanel: GridPanel;
 
+    private destroyFuncsForColumnListeners: (() => void)[] = [];
+
     private firstRenderedRow: number;
     private lastRenderedRow: number;
 
@@ -103,11 +105,124 @@ export class RowRenderer extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
+        this.registerCellEventListeners();
+
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.redrawAfterModelUpdate();
     }
+
+    // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
+    // registering and de-registering for events is a performance bottleneck. so we register here once and inform
+    // all active cells.
+    private registerCellEventListeners(): void {
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_FOCUSED, () => {
+            this.forEachCellComp( cellComp => cellComp.onCellFocused() );
+        });
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
+            this.forEachCellComp( cellComp => cellComp.onFlashCells(event) );
+        });
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
+            this.forEachCellComp( cellComp => cellComp.onColumnHover() );
+        });
+
+        // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
+        // then changing the width of the containers will impact left position. eg the center cols all have their
+        // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
+        // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
+        // in different containers so doesn't impact.
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
+            if (this.printLayout) {
+                this.forEachCellComp( cellComp => cellComp.onLeftChanged() );
+            }
+        });
+
+        let rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
+        if (rangeSelectionEnabled) {
+
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
+                this.forEachCellComp( cellComp => cellComp.onRangeSelectionChanged() );
+            });
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
+                this.forEachCellComp( cellComp => cellComp.updateRangeBordersIfRangeCount() );
+            });
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
+                this.forEachCellComp( cellComp => cellComp.updateRangeBordersIfRangeCount() );
+            });
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
+                this.forEachCellComp( cellComp => cellComp.updateRangeBordersIfRangeCount() );
+            });
+
+        }
+
+        // add listeners to the grid columns
+        this.refreshListenersToColumnsForCellComps();
+        // if the grid columns change, then refresh the listeners again
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
+
+        this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
+    }
+
+    // executes all functions in destroyFuncsForColumnListeners and then clears the list
+    private removeGridColumnListeners(): void {
+        this.destroyFuncsForColumnListeners.forEach( func => func() );
+        this.destroyFuncsForColumnListeners.length = 0;
+    }
+
+    // this function adds listeners onto all the grid columns, which are the column that we could have cellComps for.
+    // when the grid columns change, we add listeners again. in an ideal design, each CellComp would just register to
+    // the column it belongs to on creation, however this was a bottleneck with the number of cells, so do it here
+    // once instead.
+    private refreshListenersToColumnsForCellComps(): void {
+
+        this.removeGridColumnListeners();
+
+        const cols = this.columnController.getAllGridColumns();
+
+        if (!cols) { return; }
+
+        cols.forEach( col => {
+
+            const forEachCellWithThisCol = (callback: (cellComp: CellComp)=>void) => {
+                this.forEachCellComp( cellComp => {
+                    if (cellComp.getColumn()===col) {
+                        callback(cellComp);
+                    }
+                });
+            };
+
+            const leftChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onLeftChanged());
+            };
+            const widthChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onWidthChanged());
+            };
+            const firstRightPinnedChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onFirstRightPinnedChanged());
+            };
+            const lastLeftPinnedChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onLastLeftPinnedChanged());
+            };
+
+            col.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+            col.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            col.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
+            col.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
+
+            this.destroyFuncsForColumnListeners.push( ()=> {
+                col.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+                col.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+                col.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
+                col.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
+            });
+        });
+
+    }
+
 
     private onDomLayoutChanged(): void {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
