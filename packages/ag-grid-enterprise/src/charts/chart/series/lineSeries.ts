@@ -209,8 +209,9 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
 
     update(): void {
         const chart = this.chart;
+        const visible = this.group.visible = this.visible;
 
-        if (!chart || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
             return;
         }
 

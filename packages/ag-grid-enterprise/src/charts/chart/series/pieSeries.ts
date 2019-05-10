@@ -243,16 +243,6 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
 
     private strokeColors = colors.map(color => Color.fromString(color).darker().toHexString());
 
-    set visible(value: boolean) {
-        if (this._visible !== value) {
-            this._visible = value;
-            this.group.visible = value;
-        }
-    }
-    get visible(): boolean {
-        return this._visible;
-    }
-
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
@@ -440,8 +430,9 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
 
     update(): void {
         const chart = this.chart;
+        const visible = this.group.visible = this.visible && this.enabled.indexOf(true) >= 0;
 
-        if (!chart || chart.dataPending || chart.layoutPending) {
+        if (!chart || !visible || chart.dataPending || chart.layoutPending) {
             return;
         }
 
