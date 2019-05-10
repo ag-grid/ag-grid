@@ -107,7 +107,13 @@ export class Axis<D> {
      */
     tickColor: string | null = 'rgba(195, 195, 195, 1)';
 
-    labelFormatter?: (value: D, decimalDigits?: number) => string;
+    /**
+     * In case {@param value} is a number, the {@param fractionDigits} parameter will
+     * be provided as well. The `fractionDigits` corresponds to the number of fraction
+     * digits used by the tick step. For example, if the tick step is `0.0005`,
+     * the `fractionDigits` is 4.
+     */
+    labelFormatter?: (value: D, fractionDigits?: number) => string;
 
     /**
      * The font to be used by the labels. The given font string should use the
@@ -230,9 +236,9 @@ export class Axis<D> {
 
         // Render ticks and labels.
         const ticks = scale.ticks!(10);
-        let decimalDigits = 0;
+        let fractionDigits = 0;
         if (ticks instanceof NumericTicks) {
-            decimalDigits = ticks.decimalDigits;
+            fractionDigits = ticks.fractionDigits;
         }
         const bandwidth = (scale.bandwidth || 0) / 2;
         // The side of the axis line to position the labels on.
@@ -333,10 +339,10 @@ export class Axis<D> {
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 label.text = labelFormatter
-                    ? labelFormatter(datum, decimalDigits)
-                    : decimalDigits
+                    ? labelFormatter(datum, fractionDigits)
+                    : fractionDigits
                         // the `datum` is a floating point number
-                        ? (datum as any as number).toFixed(decimalDigits)
+                        ? (datum as any as number).toFixed(fractionDigits)
                         // the `datum` is an integer, a string or an object
                         : datum.toString();
                 label.textAlign = parallelLabels
