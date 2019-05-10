@@ -618,12 +618,13 @@ class AutoScrollService {
     }
 
     public check(mouseEvent: MouseEvent, skipVerticalScroll: boolean = false): void {
-        // we don't do ticking if grid is auto height
-        if (this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL) {
+        const rect: ClientRect = this.gridPanel.getBodyClientRect();
+        skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL;
+        
+        // we don't do ticking if grid is auto height unless we have a horizontal scroller
+        if (skipVerticalScroll && !this.gridPanel.isHorizontalScrollShowing()) {
             return;
         }
-
-        const rect: ClientRect = this.gridPanel.getBodyClientRect();
 
         this.tickLeft = mouseEvent.clientX < (rect.left + 20);
         this.tickRight = mouseEvent.clientX > (rect.right - 20);
@@ -653,13 +654,7 @@ class AutoScrollService {
 
         let tickAmount: number;
 
-        if (this.tickCount > 20) {
-            tickAmount = 200;
-        } else if (this.tickCount > 10) {
-            tickAmount = 80;
-        } else {
-            tickAmount = 40;
-        }
+        tickAmount = this.tickCount > 20 ? 200 : (this.tickCount > 10 ? 80 : 40);
 
         if (this.tickUp) {
             this.gridPanel.setVerticalScrollPosition(vScrollPosition.top - tickAmount);
