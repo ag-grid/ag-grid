@@ -572,6 +572,11 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     z-index: 2;
 }
 
+.ag-stub-cell {
+    display: flex;
+    align-items: center;
+}
+
 /**
  ****************************
  * Cells
