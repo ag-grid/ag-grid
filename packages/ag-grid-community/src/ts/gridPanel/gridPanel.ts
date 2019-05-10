@@ -1319,11 +1319,11 @@ export class GridPanel extends Component {
 
         this.nextScrollTop = scrollTop;
 
-        // if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
             this.redrawRowsAfterScroll();
-        // } else {
-        //     this.animationFrameService.schedule();
-        // }
+        } else {
+            this.animationFrameService.schedule();
+        }
     }
 
     public executeFrame(): boolean {

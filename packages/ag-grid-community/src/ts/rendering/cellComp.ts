@@ -207,7 +207,7 @@ export class CellComp extends Component {
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
         this.populateTemplate();
-        this.attachCellRenderer();
+        this.createCellRendererInstance(true);
         this.angular1Compile();
 
         // if not doing enterprise, then range selection service would be missing
@@ -614,13 +614,11 @@ export class CellComp extends Component {
         } else {
             // we can switch from using a cell renderer back to the default if a user
             // is using cellRendererSelect
-            if (this.usingCellRenderer) {
-                if (!this.attachCellRenderer()) {
-                    this.usingCellRenderer = false;
-                }
-            }
+            this.chooseCellRenderer();
 
-            if (!this.usingCellRenderer) {
+            if (this.usingCellRenderer) {
+                this.createCellRendererInstance();
+            } else {
                 const valueToUse = this.getValueToUse();
                 if (valueToUse !== null && valueToUse !== undefined) {
                     this.eParentOfValue.innerHTML = _.escape(valueToUse);
@@ -802,27 +800,36 @@ export class CellComp extends Component {
         }
     }
 
-    private createCellRendererInstance(): boolean {
+    private createCellRendererInstance(useTaskService = false): void {
+        if (!this.usingCellRenderer) { return; }
+
         const params = this.createCellRendererParams();
 
         this.cellRendererVersion++;
         const callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        // this can return null in the event that the user has switched from a renderer component to nothing, for example
-        // when using a cellRendererSelect to return a component or null depending on row data etc
+        const cellRendererTypeNormal = this.cellRendererType === CellComp.CELL_RENDERER_TYPE_NORMAL;
 
-        let componentPromise: Promise<ICellRendererComp>;
-        if (this.cellRendererType === CellComp.CELL_RENDERER_TYPE_NORMAL) {
-            componentPromise = this.beans.userComponentFactory.newCellRenderer(this.getComponentHolder(), params);
+        const task = () => {
+            // this can return null in the event that the user has switched from a renderer component to nothing, for example
+            // when using a cellRendererSelect to return a component or null depending on row data etc
+            let componentPromise: Promise<ICellRendererComp>;
+            if (cellRendererTypeNormal) {
+                componentPromise = this.beans.userComponentFactory.newCellRenderer(this.getComponentHolder(), params);
+            } else {
+                componentPromise = this.beans.userComponentFactory.newPinnedRowCellRenderer(this.getComponentHolder(), params);
+            }
+
+            if (componentPromise) {
+                componentPromise.then(callback);
+            }
+        };
+
+        if (useTaskService) {
+            this.beans.taskQueue.addP2Task(task);
         } else {
-            componentPromise = this.beans.userComponentFactory.newPinnedRowCellRenderer(this.getComponentHolder(), params);
+            task;
         }
-
-        if (componentPromise) {
-            componentPromise.then(callback);
-            return true;
-        }
-        return false;
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
@@ -846,14 +853,6 @@ export class CellComp extends Component {
         if (!this.editingCell) {
             this.eParentOfValue.appendChild(this.cellRendererGui);
         }
-    }
-
-    private attachCellRenderer(): boolean {
-        if (!this.usingCellRenderer) {
-            return false;
-        }
-
-        return this.createCellRendererInstance();
     }
 
     private createCellRendererParams(): ICellRendererParams {
