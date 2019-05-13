@@ -1763,16 +1763,7 @@ export class CellComp extends Component {
         const isSingleCell = this.rangeCount === 1 && !rangeController.isMoreThanOneCell();
         _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', isSingleCell);
 
-        const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
-
-        if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle.destroy();
-            this.selectionHandle = null;
-        }
-
-        if (shouldHaveSelectionHandle) {
-            this.addSelectionHandle();
-        }
+        this.refreshHandle();
 
         _.addOrRemoveCssClass(element, 'ag-cell-range-handle', !!this.selectionHandle);
     }
@@ -1785,6 +1776,8 @@ export class CellComp extends Component {
 
         if (!rangesLen) { return false; }
 
+        const lastRange = _.last(cellRanges);
+
         let handlesAllowed = (
             gridOptionsWrapper.isEnableFillHandle() ||
             gridOptionsWrapper.isEnableRangeHandle() ||
@@ -1794,12 +1787,11 @@ export class CellComp extends Component {
         if (!handlesAllowed && this.hasChartRange) {
             const cellPosition = this.getCellPosition();
             const isFirstRangeCategory = cellRanges[0].type === CellRangeType.DIMENSION;
-
             handlesAllowed =
                 isFirstRangeCategory &&
                 rangesLen === 2 &&
                 rangeController.isCellInSpecificRange(
-                    this.getCellPosition(), _.last(cellRanges)
+                    this.getCellPosition(), lastRange
                 );
 
             const isCategory =
@@ -1813,6 +1805,7 @@ export class CellComp extends Component {
 
         return this.rangeCount &&
                handlesAllowed &&
+               this.beans.rangeController.isContiguousRange(lastRange) &&
                (
                     _.containsClass(el, 'ag-cell-range-single-cell') ||
                     (_.containsClass(el, 'ag-cell-range-bottom') && _.containsClass(el, 'ag-cell-range-right'))
@@ -1842,6 +1835,20 @@ export class CellComp extends Component {
         // we only need to update range borders if we are in a range
         if (this.rangeCount > 0) {
             this.updateRangeBorders();
+            this.refreshHandle();
+        }
+    }
+
+    private refreshHandle(): void {
+        const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
+
+        if (this.selectionHandle && !shouldHaveSelectionHandle) {
+            this.selectionHandle.destroy();
+            this.selectionHandle = null;
+        }
+
+        if (shouldHaveSelectionHandle) {
+            this.addSelectionHandle();
         }
     }
 

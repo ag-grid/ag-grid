@@ -71,14 +71,32 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
 
-        // we used to remove range when moving column as old range design had start and end cols. but now we allowed
-        // broken ranges (as the cols are in a list). if there is no other side effect of removing these, we can remove
-        // the four lines of code below.
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.removeAllCellRanges.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.removeAllCellRanges.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.removeAllCellRanges.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.refreshLastRangeStart.bind(this));
 
+    }
+
+    public refreshLastRangeStart(): void {
+        const lastRange = _.last(this.cellRanges);
+        if (!lastRange) { return; }
+
+        this.refreshRangeStart(lastRange);
+    }
+
+    public isContiguousRange(cellRange: CellRange): boolean {
+        const rangeColumns = cellRange.columns;
+        
+        if (!rangeColumns.length) { return false; }
+
+        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allPositions: number[] = [];
+
+        rangeColumns.forEach(col => allPositions.push(allColumns.indexOf(col)));
+        allPositions.sort((a, b) => a - b);
+
+        return _.last(allPositions)! - allPositions[0] + 1 === rangeColumns.length;
     }
 
     public getRangeStartRow(cellRange: CellRange): RowPosition {
@@ -88,7 +106,7 @@ export class RangeController implements IRangeController {
         }
 
         const pinned = (this.pinnedRowModel.getPinnedTopRowCount() > 0) ? Constants.PINNED_TOP : undefined;
-        return {rowIndex: 0, rowPinned: pinned} as RowPosition;
+        return { rowIndex: 0, rowPinned: pinned } as RowPosition;
     }
 
     public getRangeEndRow(cellRange: CellRange): RowPosition {
@@ -117,7 +135,7 @@ export class RangeController implements IRangeController {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
             return;
         }
-
+ 
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
         if (!columns) { return; }
 
@@ -220,6 +238,42 @@ export class RangeController implements IRangeController {
                 type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED
             };
             this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private refreshRangeStart(cellRange: CellRange) {
+        const { left, right } = this.getRangeEdgeColumns(cellRange);
+        const { startColumn, columns } = cellRange;
+        const isFirst = startColumn === left;
+        const isLast = startColumn === right;
+        const wasFirst = startColumn === columns[0];
+        const wasLast = startColumn === _.last(columns);
+
+        if (wasFirst && !isFirst) {
+            cellRange.startColumn = left;
+            cellRange.columns = [left, ...cellRange.columns.filter(col => col !== left)];
+        } else if (wasLast && !isLast) {
+            cellRange.startColumn = right;
+            cellRange.columns = [...cellRange.columns.filter(col => col !== right), right];
+        }
+    }
+
+    public getRangeEdgeColumns(cellRange: CellRange): { left: Column, right: Column } {
+        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allIndices: number[] = [];
+
+        for (const column of cellRange.columns) {
+            const idx = allColumns.indexOf(column);
+            if (idx > -1) {
+                allIndices.push(idx)
+            }
+        }
+
+        allIndices.sort((a, b) => a - b);
+
+        return {
+            left: allColumns[allIndices[0]],
+            right: allColumns[_.last(allIndices)!]
         }
     }
 
