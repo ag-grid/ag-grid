@@ -28,16 +28,19 @@ export class ChartDataPanel extends Component {
 
     @PostConstruct
     private init() {
+        this.createDataGroupElements();
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.createDataGroupElements.bind(this));
+    }
+
+    private createDataGroupElements() {
+        this.destroyColumnComps();
+
+        const eGui = this.getGui();
+
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
 
-        this.createDataGroupElements([dimensionCols, valueCols], localeTextFunc);
-    }
-
-    private createDataGroupElements(groups: ColState[][], localeTextFunc: Function) {
-        const eGui = this.getGui();
-
-        groups.forEach((group, idx) => {
+        [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
             const groupComp = new AgGroupComponent({
                 label: isCategory
