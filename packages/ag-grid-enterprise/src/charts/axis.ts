@@ -30,7 +30,7 @@ export type GridStyle = {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<D> {
+export class Axis<D = any> {
 
     // debug (bbox)
     // private bboxRect = (() => {

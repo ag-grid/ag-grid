@@ -1,12 +1,12 @@
 import { Series } from "./series";
 
-export abstract class CartesianSeries<D, X, Y> extends Series<D, X, Y> {
+export abstract class CartesianSeries extends Series {
 
-    protected _xField: Extract<keyof D, string> | undefined = undefined;
-    abstract set xField(value: Extract<keyof D, string> | undefined);
-    abstract get xField(): Extract<keyof D, string> | undefined;
+    protected _xField: string = '';
+    abstract set xField(value: string);
+    abstract get xField(): string;
 
-    protected _yField: Extract<keyof D, string> | undefined = undefined;
-    abstract set yField(value: Extract<keyof D, string> | undefined);
-    abstract get yField(): Extract<keyof D, string> | undefined;
+    protected _yField: string = '';
+    abstract set yField(value: string);
+    abstract get yField(): string;
 }

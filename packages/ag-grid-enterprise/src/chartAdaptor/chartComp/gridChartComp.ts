@@ -44,7 +44,7 @@ export class GridChartComp extends Component {
 
     @RefSelector('eChart') private eChart: HTMLElement;
 
-    private chart: Chart<any, string, number>;
+    private chart: Chart;
     private chartMenu: ChartMenu;
     private chartDialog: Dialog;
 
@@ -174,9 +174,9 @@ export class GridChartComp extends Component {
     }
 
     private updateBarChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
-        const barSeries = this.chart.series[0] as BarSeries<any, string, number>;
+        const barSeries = this.chart.series[0] as BarSeries;
 
-        const barChart = barSeries.chart as CartesianChart<any, string, number>;
+        const barChart = barSeries.chart as CartesianChart;
 
         barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
         barChart.xAxis.gridStyle;
@@ -201,15 +201,15 @@ export class GridChartComp extends Component {
             return;
         }
 
-        const lineChart = this.chart as CartesianChart<any, string, number>;
+        const lineChart = this.chart as CartesianChart;
 
         lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
 
         const fieldIds = fields.map(f => f.colId);
 
-        const existingSeriesMap: { [id: string]: LineSeries<any, string, number> } = {};
+        const existingSeriesMap: { [id: string]: LineSeries } = {};
         lineChart.series.forEach(series => {
-            const lineSeries = (series as LineSeries<any, string, number>);
+            const lineSeries = (series as LineSeries);
             const id = lineSeries.yField as string;
             fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
         });
@@ -217,7 +217,7 @@ export class GridChartComp extends Component {
         fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
-            const lineSeries = existingSeries ? existingSeries : new LineSeries<any, string, number>();
+            const lineSeries = existingSeries ? existingSeries : new LineSeries();
 
             lineSeries.title = f.displayName;
 
@@ -248,7 +248,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        const pieChart = this.chart as PolarChart<any, string, number>;
+        const pieChart = this.chart as PolarChart;
 
         const existingSeries = pieChart.series[0] as PieSeries<any, string, number>;
         const existingSeriesId = existingSeries && existingSeries.angleField as string;
@@ -292,7 +292,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        const doughnutChart = this.chart as PolarChart<any, string, number>;
+        const doughnutChart = this.chart as PolarChart;
         const fieldIds = fields.map(f => f.colId);
 
         const existingSeriesMap: { [id: string]: PieSeries<any, string, number> } = {};

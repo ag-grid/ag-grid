@@ -15,7 +15,7 @@ import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 
-interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
+interface GroupSelectionDatum extends SeriesNodeDatum {
     radius: number, // in the [0, 1] range
     startAngle: number,
     endAngle: number,
@@ -36,23 +36,23 @@ enum PieSeriesNodeTag {
     Label
 }
 
-export interface PieTooltipRendererParams<D> {
-    datum: D,
-    angleField: Extract<keyof D, string>,
-    radiusField?: Extract<keyof D, string>,
-    labelField?: Extract<keyof D, string>
+export interface PieTooltipRendererParams {
+    datum: any,
+    angleField: string,
+    radiusField?: string,
+    labelField?: string
 }
 
-export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X, Y> {
+export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
 
     private titleNode = new Text();
     private radiusScale: LinearScale<number> = scaleLinear();
-    private groupSelection: Selection<Group, Group, GroupSelectionDatum<D>, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
     /**
      * The processed data that gets visualized.
      */
-    private groupSelectionData: GroupSelectionDatum<D>[] = [];
+    private groupSelectionData: GroupSelectionDatum[] = [];
 
     protected readonly enabled: boolean[] = [];
 
@@ -163,13 +163,13 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
         this.group.appendChild(title);
     }
 
-    set chart(chart: Chart<D, X, Y> | null) {
+    set chart(chart: Chart | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.update();
         }
     }
-    get chart(): Chart<D, X, Y> | null {
+    get chart(): Chart | null {
         return this._chart;
     }
 
@@ -536,7 +536,7 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
         this.groupSelection = groupSelection;
     }
 
-    getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
+    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         let html: string = '';
         const angleField = this.angleField;
 
@@ -560,7 +560,7 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries<D, X
         return html;
     }
 
-    tooltipRenderer?: (params: PieTooltipRendererParams<D>) => string;
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
         const labelField = this.labelField;

@@ -7,11 +7,11 @@ import { LegendDatum } from "../legend";
  * `SeriesNodeDatum` - processed series datum used in node selections,
  *                     contains information used to render pie sectors, bars, line markers, etc.
  */
-export interface SeriesNodeDatum<D = any> {
-    seriesDatum: D;
+export interface SeriesNodeDatum {
+    seriesDatum: any;
 }
 
-export abstract class Series<D, X, Y> {
+export abstract class Series {
 
     readonly id: string = this.createId();
 
@@ -48,18 +48,18 @@ export abstract class Series<D, X, Y> {
         return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
 
-    protected _data: D[] = [];
-    set data(data: D[]) {
+    protected _data: any[] = [];
+    set data(data: any[]) {
         this._data = data;
         this.scheduleData();
     }
-    get data(): D[] {
+    get data(): any[] {
         return this._data;
     }
 
-    protected _chart: Chart<D, X, Y> | null = null;
-    abstract set chart(chart: Chart<D, X, Y> | null);
-    abstract get chart(): Chart<D, X, Y> | null;
+    protected _chart: Chart | null = null;
+    abstract set chart(chart: Chart | null);
+    abstract get chart(): Chart | null;
 
     protected _visible: boolean = true;
     set visible(value: boolean) {
@@ -78,7 +78,7 @@ export abstract class Series<D, X, Y> {
     abstract processData(): boolean;
     abstract update(): void;
 
-    abstract getTooltipHtml(nodeDatum: SeriesNodeDatum<D>): string;
+    abstract getTooltipHtml(nodeDatum: SeriesNodeDatum): string;
 
     tooltip: boolean = false;
 

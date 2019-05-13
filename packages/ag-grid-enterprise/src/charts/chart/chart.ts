@@ -15,7 +15,15 @@ export enum LegendPosition {
     Left
 }
 
-export abstract class Chart<D, X, Y> {
+export interface ChartOptions {
+    parent: HTMLElement,
+    width: number,
+    height: number,
+    data: any,
+    tooltipClass: string
+}
+
+export abstract class Chart {
     readonly scene: Scene = new Scene();
     legend = new Legend();
 
@@ -31,6 +39,7 @@ export abstract class Chart<D, X, Y> {
         }
     }
     get tooltipClass(): string {
+        const arr = [1,2,3].slice(2);
         return this._tooltipClass;
     }
 
@@ -94,12 +103,12 @@ export abstract class Chart<D, X, Y> {
         return this._legendPadding;
     }
 
-    private _data: D[] = [];
-    set data(data: D[]) {
+    private _data: any[] = [];
+    set data(data: any[]) {
         this._data = data;
         this.series.forEach(series => series.data = data);
     }
-    get data(): D[] {
+    get data(): any[] {
         return this._data;
     }
 
@@ -287,15 +296,15 @@ export abstract class Chart<D, X, Y> {
 
     abstract get seriesRoot(): Node;
 
-    protected _series: Series<D, X, Y>[] = [];
-    set series(values: Series<D, X, Y>[]) {
+    protected _series: Series[] = [];
+    set series(values: Series[]) {
         this._series = values;
     }
-    get series(): Series<D, X, Y>[] {
+    get series(): Series[] {
         return this._series;
     }
 
-    addSeries(series: Series<D, X, Y>, before: Series<D, X, Y> | null = null): boolean {
+    addSeries(series: Series, before: Series | null = null): boolean {
         const canAdd = this.series.indexOf(series) < 0;
 
         if (canAdd) {
@@ -316,7 +325,7 @@ export abstract class Chart<D, X, Y> {
         return false;
     }
 
-    removeSeries(series: Series<D, X, Y>): boolean {
+    removeSeries(series: Series): boolean {
         const index = this.series.indexOf(series);
 
         if (index >= 0) {
@@ -352,7 +361,7 @@ export abstract class Chart<D, X, Y> {
     }
 
     private pickSeriesNode(x: number, y: number): {
-        series: Series<D, X, Y>,
+        series: Series,
         node: Node
     } | undefined {
         const allSeries = this.series;
@@ -371,7 +380,7 @@ export abstract class Chart<D, X, Y> {
     }
 
     private lastPick?: {
-        series: Series<D, X, Y>,
+        series: Series,
         node: Shape,
         fillStyle: string | null // used to save the original fillStyle of the node,
                                  // to be restored when the highlight fillStyle is removed
@@ -424,7 +433,7 @@ export abstract class Chart<D, X, Y> {
         }
     };
 
-    private onSeriesNodePick(event: MouseEvent, series: Series<D, X, Y>, node: Shape) {
+    private onSeriesNodePick(event: MouseEvent, series: Series, node: Shape) {
         this.lastPick = {
             series,
             node,
@@ -432,7 +441,7 @@ export abstract class Chart<D, X, Y> {
         };
         node.fillStyle = 'yellow';
 
-        const html = series.tooltip && series.getTooltipHtml(node.datum as SeriesNodeDatum<D>);
+        const html = series.tooltip && series.getTooltipHtml(node.datum as SeriesNodeDatum);
         if (html) {
             this.showTooltip(event, html);
         }

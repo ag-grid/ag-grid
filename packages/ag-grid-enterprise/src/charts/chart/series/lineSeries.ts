@@ -14,7 +14,7 @@ import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 
-interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
+interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number,
     y: number,
     fillStyle: string | null,
@@ -23,18 +23,18 @@ interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
     radius: number
 }
 
-export interface LineTooltipRendererParams<D> {
-    datum: D,
-    xField: Extract<keyof D, string>,
-    yField: Extract<keyof D, string>
+export interface LineTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string
 }
 
-export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries<D, X, Y> {
+export class LineSeries extends CartesianSeries {
 
-    private domainX: X[] = [];
-    private domainY: Y[] = [];
-    private xData: X[] = [];
-    private yData: Y[] = [];
+    private domainX: any[] = [];
+    private domainY: any[] = [];
+    private xData: any[] = [];
+    private yData: any[] = [];
 
     private lineNode = new Path();
 
@@ -50,35 +50,35 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         this.group.append(lineNode);
     }
 
-    set chart(chart: CartesianChart<D, X, Y> | null) {
+    set chart(chart: CartesianChart | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart<D, X, Y> | null {
-        return this._chart as CartesianChart<D, X, Y>;
+    get chart(): CartesianChart | null {
+        return this._chart as CartesianChart;
     }
 
-    set xField(value: Extract<keyof D, string> | undefined) {
+    set xField(value: string) {
         if (this._xField !== value) {
             this._xField = value;
             this.xData = [];
             this.scheduleData();
         }
     }
-    get xField(): Extract<keyof D, string> | undefined {
+    get xField(): string {
         return this._xField;
     }
 
-    set yField(value: Extract<keyof D, string> | undefined) {
+    set yField(value: string) {
         if (this._yField !== value) {
             this._yField = value;
             this.yData = [];
             this.scheduleData();
         }
     }
-    get yField(): Extract<keyof D, string> | undefined {
+    get yField(): string {
         return this._yField;
     }
 
@@ -167,8 +167,8 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
                 (domainY[1] as any) = 1;
             }
         }
-        this.domainX = domainX as X[];
-        this.domainY = domainY as Y[];
+        this.domainX = domainX;
+        this.domainY = domainY;
 
         return true;
     }
@@ -233,7 +233,7 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
 
         const lineNode: Path = this.lineNode;
         const linePath: Path2D = lineNode.path;
-        const groupSelectionData: GroupSelectionDatum<D>[] = [];
+        const groupSelectionData: GroupSelectionDatum[] = [];
 
         linePath.clear();
         for (let i = 0; i < n; i++) {
@@ -289,15 +289,15 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         this.groupSelection = groupSelection;
     }
 
-    getDomainX(): X[] {
+    getDomainX(): any[] {
         return this.domainX;
     }
 
-    getDomainY(): Y[] {
+    getDomainY(): any[] {
         return this.domainY;
     }
 
-    getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
+    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         let html: string = '';
         const yField = this.yField;
 
@@ -322,7 +322,7 @@ export class LineSeries<D = any, X = string, Y = number> extends CartesianSeries
         return html;
     }
 
-    tooltipRenderer?: (params: LineTooltipRendererParams<D>) => string;
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yField) {

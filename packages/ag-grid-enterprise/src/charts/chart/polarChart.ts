@@ -3,7 +3,7 @@ import { PolarSeries } from "./series/polarSeries";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
 
-export class PolarChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
+export class PolarChart extends Chart {
     centerX: number = 0;
     centerY: number = 0;
 
@@ -21,14 +21,14 @@ export class PolarChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
         return this.scene.root!;
     }
 
-    protected _series: PolarSeries<D, X, Y>[] = [];
-    set series(values: PolarSeries<D, X, Y>[]) {
+    protected _series: PolarSeries[] = [];
+    set series(values: PolarSeries[]) {
         this.removeAllSeries();
         values.forEach(series => {
             this.addSeries(series, null);
         });
     }
-    get series(): PolarSeries<D, X, Y>[] {
+    get series(): PolarSeries[] {
         return this._series;
     }
 

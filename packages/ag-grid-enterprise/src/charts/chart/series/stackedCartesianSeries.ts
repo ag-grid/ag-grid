@@ -1,6 +1,6 @@
 import { Series } from "./series";
 
-export abstract class StackedCartesianSeries<D, X, Y> extends Series<D, X, Y> {
+export abstract class StackedCartesianSeries extends Series {
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -8,13 +8,13 @@ export abstract class StackedCartesianSeries<D, X, Y> extends Series<D, X, Y> {
      */
     protected readonly enabled = new Map<string, boolean>();
 
-    protected _xField: Extract<keyof D, string> | undefined = undefined;
-    abstract set xField(value: Extract<keyof D, string> | undefined);
-    abstract get xField(): Extract<keyof D, string> | undefined;
+    protected _xField: string = '';
+    abstract set xField(value: string);
+    abstract get xField(): string;
 
-    protected _yFields: Extract<keyof D, string>[] = [];
-    abstract set yFields(value: Extract<keyof D, string>[]);
-    abstract get yFields(): Extract<keyof D, string>[];
+    protected _yFields: string[] = [];
+    abstract set yFields(value: string[]);
+    abstract get yFields(): string[];
 
     protected _yFieldNames: string[] = [];
     abstract set yFieldNames(value: string[]);

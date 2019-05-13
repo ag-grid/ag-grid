@@ -5,11 +5,11 @@ import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
 
-export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
+export class CartesianChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent: HTMLElement = document.body) {
+    constructor(xAxis: Axis, yAxis: Axis, parent: HTMLElement = document.body) {
         super(parent);
 
         this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
@@ -24,23 +24,23 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
         return this.seriesClipRect;
     }
 
-    private readonly _xAxis: Axis<X>;
-    get xAxis(): Axis<X> {
+    private readonly _xAxis: Axis;
+    get xAxis(): Axis {
         return this._xAxis;
     }
 
-    private readonly _yAxis: Axis<Y>;
-    get yAxis(): Axis<Y> {
+    private readonly _yAxis: Axis;
+    get yAxis(): Axis {
         return this._yAxis;
     }
 
-    set series(values: Series<D, X, Y>[]) {
+    set series(values: Series[]) {
         this.removeAllSeries();
         values.forEach(series => {
             this.addSeries(series);
         });
     }
-    get series(): Series<D, X, Y>[] {
+    get series(): Series[] {
         return this._series;
     }
 
@@ -134,8 +134,8 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
             return;
         }
 
-        const xDomains: X[][] = [];
-        const yDomains: Y[][] = [];
+        const xDomains: any[][] = [];
+        const yDomains: any[][] = [];
 
         this.series.forEach(series => {
             if (series.visible) {
@@ -147,8 +147,8 @@ export class CartesianChart<D = any, X = any, Y = any> extends Chart<D, X, Y> {
             }
         });
 
-        const xDomain: X[] = new Array<X>().concat(...xDomains);
-        const yDomain: Y[] = new Array<Y>().concat(...yDomains);
+        const xDomain = new Array<any>().concat(...xDomains);
+        const yDomain = new Array<any>().concat(...yDomains);
 
         if (typeof xDomain[0] === 'number') {
             xAxis.domain = checkExtent(extent(xDomain));

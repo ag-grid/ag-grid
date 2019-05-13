@@ -23,23 +23,23 @@ export class GridChartFactory {
     private static darkAxisColour = 'rgb(100, 100, 100)';
     private static lightAxisColour = 'rgb(219, 219, 219)';
 
-    static createChart(options: CreateChartOptions): Chart<any, string, number> {
+    static createChart(options: CreateChartOptions): Chart {
         switch (options.chartType) {
             case ChartType.GroupedBar:
                 return GridChartFactory.createBarChart(options, true);
             case ChartType.StackedBar:
                 return GridChartFactory.createBarChart(options, false);
-            case ChartType.Line:
-                return GridChartFactory.createLineChart(options);
             case ChartType.Pie:
                 return GridChartFactory.createPolarChart(options);
             case ChartType.Doughnut:
                 return GridChartFactory.createPolarChart(options);
+            default: // case ChartType.Line:
+                return GridChartFactory.createLineChart(options);
         }
     }
 
-    private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart<any, string, number> {
-        const barChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), options.parentElement);
+    private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
+        const barChart = new CartesianChart(new CategoryAxis(), new NumberAxis(), options.parentElement);
 
         barChart.width = options.width;
         barChart.height = options.height;
@@ -61,7 +61,7 @@ export class GridChartFactory {
             lineDash: [4, 2]
         }];
 
-        const barSeries = new BarSeries<any>();
+        const barSeries = new BarSeries();
         barSeries.tooltip = options.showTooltips;
         barSeries.grouped = grouped;
 
@@ -72,8 +72,8 @@ export class GridChartFactory {
         return barChart;
     }
 
-    private static createLineChart(options: CreateChartOptions): Chart<any, string, number> {
-        const lineChart = new CartesianChart<any, string, number>(new CategoryAxis(), new NumberAxis(), options.parentElement);
+    private static createLineChart(options: CreateChartOptions): Chart {
+        const lineChart = new CartesianChart(new CategoryAxis(), new NumberAxis(), options.parentElement);
 
         lineChart.width = options.width;
         lineChart.height = options.height;
@@ -98,8 +98,8 @@ export class GridChartFactory {
         return lineChart;
     }
 
-    private static createPolarChart(options: CreateChartOptions): Chart<any, string, number> {
-        const pieChart = new PolarChart<any, string, number>(options.parentElement);
+    private static createPolarChart(options: CreateChartOptions): Chart {
+        const pieChart = new PolarChart(options.parentElement);
 
         pieChart.width = options.width;
         pieChart.height = options.height;

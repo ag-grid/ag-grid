@@ -13,7 +13,7 @@ import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 
-interface GroupSelectionDatum<T> extends SeriesNodeDatum<T> {
+interface GroupSelectionDatum extends SeriesNodeDatum {
     yField: string,
     x: number,
     y: number,
@@ -36,13 +36,13 @@ enum BarSeriesNodeTag {
     Label
 }
 
-export interface BarTooltipRendererParams<D> {
-    datum: D,
-    xField: Extract<keyof D, string>,
-    yField: Extract<keyof D, string>
+export interface BarTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string
 }
 
-export class BarSeries<D = any, X = string, Y = number> extends StackedCartesianSeries<D, X, Y> {
+export class BarSeries extends StackedCartesianSeries {
 
     /**
      * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
@@ -71,24 +71,24 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
      */
     private groupScale = new BandScale<string>();
 
-    set chart(chart: CartesianChart<D, X, Y> | null) {
+    set chart(chart: CartesianChart | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart<D, X, Y> | null {
-        return this._chart as CartesianChart<D, X, Y>;
+    get chart(): CartesianChart | null {
+        return this._chart as CartesianChart;
     }
 
-    set xField(value: Extract<keyof D, string> | undefined) {
+    set xField(value: string) {
         if (this._xField !== value) {
             this._xField = value;
             this.xData = [];
             this.scheduleData();
         }
     }
-    get xField(): Extract<keyof D, string> | undefined {
+    get xField(): string {
         return this._xField;
     }
 
@@ -98,7 +98,7 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
      * If the {@link grouped} set to `true`, we get the grouped bar series.
      * @param values
      */
-    set yFields(values: Extract<keyof D, string>[]) {
+    set yFields(values: string[]) {
         this._yFields = values;
 
         const enabled = this.enabled;
@@ -113,7 +113,7 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         this.yData = [];
         this.scheduleData();
     }
-    get yFields(): Extract<keyof D, string>[] {
+    get yFields(): string[] {
         return this._yFields;
     }
 
@@ -344,18 +344,18 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
-        const groupSelectionData: GroupSelectionDatum<D>[] = [];
+        const groupSelectionData: GroupSelectionDatum[] = [];
 
         for (let i = 0; i < n; i++) {
             const category = xData[i];
             const values = yData[i];
-            const x = xScale.convert(category as any as X);
+            const x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
                 const yField = yFields[yFieldIndex];
                 const barX = grouped ? x + groupScale.convert(yField) : x;
-                const y = yScale.convert((grouped ? curr : prev + curr) as any as Y);
-                const bottomY = yScale.convert((grouped ? 0 : prev) as any as Y);
+                const y = yScale.convert((grouped ? curr : prev + curr));
+                const bottomY = yScale.convert((grouped ? 0 : prev));
                 const labelText = this.yFieldNames[yFieldIndex];
 
                 groupSelectionData.push({
@@ -432,10 +432,10 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         this.groupSelection = groupSelection;
     }
 
-    getTooltipHtml(nodeDatum: GroupSelectionDatum<D>): string {
+    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         let html: string = '';
         if (this.tooltip) {
-            const yField = nodeDatum.yField as Extract<keyof D, string>;
+            const yField = nodeDatum.yField;
             const labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
 
             if (this.tooltipRenderer && this.xField) {
@@ -451,7 +451,7 @@ export class BarSeries<D = any, X = string, Y = number> extends StackedCartesian
         return html;
     }
 
-    tooltipRenderer?: (params: BarTooltipRendererParams<D>) => string;
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {
