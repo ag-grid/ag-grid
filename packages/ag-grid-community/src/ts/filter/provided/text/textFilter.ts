@@ -82,9 +82,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         if (val && val.trim() === '') {
             val = null;
         }
-        if (val && !this.textFilterParams.caseSensitive) {
-            val = val.toLowerCase();
-        }
         return val;
     }
 
