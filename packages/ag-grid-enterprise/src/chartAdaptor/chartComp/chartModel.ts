@@ -139,17 +139,12 @@ export class ChartModel extends BeanStub {
         }
     }
 
-    public updateCellRanges(movingCols: boolean, updatedCol?: ColState) {
+    public updateCellRanges(updatedCol?: ColState) {
         const {dimensionCols, valueCols} = this.getAllChartColumns();
         const lastRange = _.last(this.cellRanges) as CellRange;
         if (lastRange) {
             // update the reference range
             this.referenceCellRange = lastRange;
-
-            if (movingCols) {
-                const colsInOrder = this.getColumnInDisplayOrder(valueCols, this.referenceCellRange.columns);
-                this.referenceCellRange.startColumn = colsInOrder[0];
-            }
 
             if(updatedCol) {
                 const updatingStartCol = lastRange.columns[0] === updatedCol.column;
@@ -194,41 +189,8 @@ export class ChartModel extends BeanStub {
             }
         }
 
-        if (valueColsInRange.length === 0) {
-            // no range to add
-        } else if (valueColsInRange.length === 1) {
-            this.addRange(CellRangeType.VALUE, valueColsInRange)
-        } else {
-            let currentRange = [];
-            for (let i = 0; i < valueColsInRange.length; i++) {
-                // dragging left or right works as the value cols are sorted by display order
-
-                const currentValCol = valueColsInRange[i];
-
-                const updateFromRangeDragging = !movingCols && !_.exists(updatedCol);
-                const valueColNotInRange = this.referenceCellRange.columns.indexOf(currentValCol) < 0;
-                if (updateFromRangeDragging && valueColNotInRange) {
-                    // skip column as it's being dragged out of range
-                    continue;
-                }
-
-                currentRange.push(currentValCol);
-
-                // if last value col, close out range
-                if (i === valueColsInRange.length - 1) {
-                    this.addRange(CellRangeType.VALUE, currentRange);
-                    break;
-                }
-
-                const nextValCol = valueColsInRange[i + 1];
-                const nextDisplayedCol = this.columnController.getDisplayedColAfter(currentValCol) as Column;
-
-                // if next val col is not contiguous, close out range and start over
-                if (nextValCol !== nextDisplayedCol) {
-                    this.addRange(CellRangeType.VALUE, currentRange);
-                    currentRange = [];
-                }
-            }
+        if (valueColsInRange.length > 0) {
+            this.addRange(CellRangeType.VALUE, valueColsInRange);
         }
     }
 

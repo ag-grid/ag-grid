@@ -40,7 +40,7 @@ export abstract class Chart<D, X, Y> {
         this.legend.onLayoutChange = this.onLegendLayoutChange.bind(this);
 
         this.tooltipElement.style.display = 'none';
-        this.tooltipClass = 'ag-theme-balham ag-chart-tooltip';
+        this.tooltipClass = 'ag-chart-tooltip';
         document.body.appendChild(this.tooltipElement);
 
         this.setupListeners(this.scene.hdpiCanvas.canvas);

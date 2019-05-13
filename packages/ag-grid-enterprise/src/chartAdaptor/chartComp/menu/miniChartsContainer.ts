@@ -139,7 +139,7 @@ export class MiniDonut extends MiniChart {
     }
 }
 
-export class MiniLine extends MiniChart {
+class MiniLine extends MiniChart {
     private readonly lines: Path[];
 
     constructor(parent: HTMLElement, colors: string[]) {
@@ -159,7 +159,7 @@ export class MiniLine extends MiniChart {
         yScale.range = [size - padding, padding];
 
         const data = [
-            [9, 7, 8, 4, 6],
+            [9, 7, 8, 5, 6],
             [5, 6, 3, 4, 1],
             [1, 3, 4, 8, 7]
         ];
@@ -206,7 +206,7 @@ export class MiniLine extends MiniChart {
     }
 }
 
-export class MiniBar extends MiniChart {
+class MiniBar extends MiniChart {
     private readonly bars: Rect[];
 
     constructor(parent: HTMLElement, colors: string[]) {
@@ -238,15 +238,20 @@ export class MiniBar extends MiniChart {
         bottomAxis.lineWidth = 1;
         (this as any).axes = [leftAxis, bottomAxis];
 
+        const rectLineWidth = 1;
+        const alignment = Math.floor(rectLineWidth) % 2 / 2;
+
         const bottom = yScale.convert(0);
         this.bars = data.map((datum, i) => {
             const top = yScale.convert(datum);
             const rect = new Rect();
-            rect.lineWidth = 1;
-            rect.x = xScale.convert(i);
-            rect.y = top;
-            rect.width = xScale.bandwidth;
-            rect.height = bottom - top;
+            rect.lineWidth = rectLineWidth;
+            rect.x = Math.floor(xScale.convert(i)) + alignment;
+            rect.y = Math.floor(top) + alignment;
+            const width = xScale.bandwidth;
+            const height = bottom - top;
+            rect.width = Math.floor(width) + Math.floor(rect.x % 1 + width % 1);
+            rect.height = Math.floor(height) + Math.floor(rect.y % 1 + height % 1);
             return rect;
         });
 
@@ -267,7 +272,7 @@ export class MiniBar extends MiniChart {
     }
 }
 
-export class MiniStackedBar extends MiniChart {
+class MiniStackedBar extends MiniChart {
     private readonly bars: Rect[][];
 
     constructor(parent: HTMLElement, colors: string[]) {
@@ -302,16 +307,21 @@ export class MiniStackedBar extends MiniChart {
         bottomAxis.strokeStyle = 'gray';
         bottomAxis.lineWidth = 1;
 
+        const rectLineWidth = 1;
+        const alignment = Math.floor(rectLineWidth) % 2 / 2;
+
         const bottom = yScale.convert(0);
         this.bars = data.map(series => {
             return series.map((datum, i) => {
                 const top = yScale.convert(datum);
                 const rect = new Rect();
-                rect.lineWidth = 1;
-                rect.x = xScale.convert(i);
-                rect.y = top;
-                rect.width = xScale.bandwidth;
-                rect.height = bottom - top;
+                rect.lineWidth = rectLineWidth;
+                rect.x = Math.floor(xScale.convert(i)) + alignment;
+                rect.y = Math.floor(top) + alignment;
+                const width = xScale.bandwidth;
+                const height = bottom - top;
+                rect.width = Math.floor(width) + Math.floor(rect.x % 1 + width % 1);
+                rect.height = Math.floor(height) + Math.floor(rect.y % 1 + height % 1);
                 return rect;
             });
         });

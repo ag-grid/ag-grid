@@ -29,18 +29,6 @@ var names = ['Andy Murray', 'Magnus Moan', 'Eric Lamaze', 'Christine Girard', 'A
 
 var groups = ['Fast Ducks', 'Speedy Spanners', 'Lightening Strikers', 'Burning Buddies'];
 
-var rowData = [];
-names.forEach( function(name, index) {
-    rowData.push({
-        name: name,
-        group: groups[index % 4],
-        apples: ((index+1) * 17 % 20),
-        oranges: ((index+1) * 19 % 20),
-        pears: ((index+1) * 13 % 20),
-        bananas: ((index+1) * 133 % 20),
-    })
-});
-
 function numberValueParser(params) {
     let res = Number.parseInt(params.newValue);
     if (isNaN(res)) {
@@ -62,7 +50,21 @@ var gridOptions = {
     enableCharts: true,
     // needed for the menu's in the carts, otherwise popups appear over grid
     popupParent: document.body,
-    rowData: rowData,
+    onGridReady: function(params) {
+        var rowData = [];
+        names.forEach( function(name, index) {
+            rowData.push({
+                name: name,
+                group: groups[index % 4],
+                apples: ((index+1) * 17 % 20),
+                oranges: ((index+1) * 19 % 20),
+                pears: ((index+1) * 13 % 20),
+                bananas: ((index+1) * 133 % 20),
+            })
+        });
+
+        params.api.setRowData(rowData);
+    },
     onFirstDataRendered: onFirstDataRendered
 };
 

@@ -49,6 +49,9 @@ export class RangeChartService implements IRangeChartService {
             case 'pie':
                 chartType = ChartType.Pie;
                 break;
+            case 'doughnut':
+                chartType = ChartType.Doughnut;
+                break;
             case 'line':
                 chartType = ChartType.Line;
                 break;
