@@ -12,6 +12,7 @@ export class RangeHandle extends AbstractSelectionHandle {
 
     protected type = 'range';
     private endPosition: CellPosition;
+    private rangeFixed: boolean = false;
 
     constructor() {
         super(RangeHandle.TEMPLATE);
@@ -23,6 +24,11 @@ export class RangeHandle extends AbstractSelectionHandle {
         if (!lastCellHovered) { return; }
         const cellRanges = this.rangeController.getCellRanges();
         const lastRange = _.last(cellRanges) as CellRange;
+
+        if (!this.rangeFixed) {
+            this.fixRangeStartEnd(lastRange);
+            this.rangeFixed = true;
+        }
 
         const newEndRow = {
             rowIndex: lastCellHovered.rowIndex,
@@ -52,6 +58,11 @@ export class RangeHandle extends AbstractSelectionHandle {
     protected onDragEnd(e: MouseEvent) {
         const cellRange = _.last(this.rangeController.getCellRanges())!;
 
+        this.fixRangeStartEnd(cellRange);
+        this.rangeFixed = false;
+    }
+
+    private fixRangeStartEnd(cellRange: CellRange): void {
         const startRow = this.rangeController.getRangeStartRow(cellRange);
         const endRow = this.rangeController.getRangeEndRow(cellRange);
         const column = cellRange.columns[0];
