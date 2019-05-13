@@ -25,18 +25,6 @@ var names = ['Andy Murray', 'Magnus Moan', 'Eric Lamaze', 'Christine Girard', 'A
 
 var groups = ['Fast Ducks', 'Speedy Spanners', 'Lightening Strikers', 'Burning Buddies'];
 
-var rowData = [];
-names.forEach( function(name, index) {
-    rowData.push({
-        name: name,
-        group: groups[index % 4],
-        apples: ((index+1) * 17 % 20),
-        oranges: ((index+1) * 19 % 20),
-        pears: ((index+1) * 13 % 20),
-        bananas: ((index+1) * 133 % 20),
-    })
-});
-
 var gridOptions = {
     defaultColDef: {
         width: 100,
@@ -45,7 +33,20 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    rowData: rowData
+    onGridReady: function(params) {
+        var rowData = [];
+        names.forEach( function(name, index) {
+            rowData.push({
+                name: name,
+                group: groups[index % 4],
+                apples: ((index+1) * 17 % 20),
+                oranges: ((index+1) * 19 % 20),
+                pears: ((index+1) * 13 % 20),
+                bananas: ((index+1) * 133 % 20),
+            })
+        });
+        params.api.setRowData(rowData);
+    }
 };
 
 function onChart1() {
