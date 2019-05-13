@@ -40,7 +40,6 @@ export class ChartDataPanel extends Component {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
 
-
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
             const groupComp = new AgGroupComponent({
