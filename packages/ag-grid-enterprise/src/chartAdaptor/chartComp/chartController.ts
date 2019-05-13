@@ -32,12 +32,9 @@ export class ChartController extends BeanStub {
         // this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
     }
 
-    public updateForGridChange(event?: AgEvent) {
-
-        const movingCols = !!(event && event.type === Events.EVENT_COLUMN_MOVED);
-
+    public updateForGridChange() {
         // update the model with changes to the cell ranges from the grid before updating the column state
-        this.model.updateCellRanges(movingCols);
+        this.model.updateCellRanges();
         this.model.resetColumnState();
 
         this.model.updateData();
@@ -52,7 +49,7 @@ export class ChartController extends BeanStub {
 
         // update the column state before updating the cell ranges to be sent to the grid
         this.model.updateColumnState(updatedCol);
-        this.model.updateCellRanges(false, updatedCol);
+        this.model.updateCellRanges(updatedCol);
         this.model.updateData();
 
         // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
