@@ -382,6 +382,7 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     overflow: hidden;
     text-overflow: ellipsis;
     display: flex;
+    align-items: center;
 }
 
 .ag-header-cell-label {
@@ -1252,7 +1253,8 @@ $handleSize: 5px;
 }
 
 .ag-header-group-cell {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     height: 100%;
     overflow: hidden;
     position: absolute;
@@ -1263,6 +1265,7 @@ $handleSize: 5px;
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
+    align-items: center;
     width: 100%;
 }
 

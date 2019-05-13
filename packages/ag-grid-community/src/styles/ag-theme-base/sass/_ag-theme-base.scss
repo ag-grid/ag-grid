@@ -349,14 +349,6 @@
         cursor: col-resize;
     }
 
-    .ag-header-group-cell-label {
-        height: 100%;
-
-        span {
-            height: 100%;
-        }
-    }
-
     .ag-header-select-all {
         margin-right: $cell-horizontal-padding;
     }
@@ -1379,6 +1371,9 @@
             font-size: $font-size - 2px;
             font-weight: 500;
             text-transform: uppercase;
+        }
+        .ag-group-item {
+            margin-top: 2px;
         }
     }
 
