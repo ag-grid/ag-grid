@@ -435,9 +435,15 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.draggedFromHideOpenParents = true;
         } else {
             const rowGroupColumn = rowNode.rowGroupColumn;
-            // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
-            // then nothing was dragged down
-            this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+            if (rowGroupColumn) {
+                // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
+                // then nothing was dragged down
+                this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+            } else {
+                // the only way we can end up here (no column, but a group) is if we are at the root node,
+                // which only happens when 'groupIncludeTotalFooter' is true. here, we are never dragging
+                this.draggedFromHideOpenParents = false;
+            }
         }
 
         if (this.draggedFromHideOpenParents) {

@@ -206,6 +206,7 @@ var gridOptions = {
     // suppressMovingCss: true,
     // suppressMovableColumns: true,
     // groupIncludeFooter: true,
+    // groupIncludeTotalFooter: true,
     // suppressHorizontalScroll: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressRowHoverHighlight: true,
