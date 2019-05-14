@@ -112,15 +112,13 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const {gridOptionsWrapper: options} = this;
+        const { gridOptionsWrapper: options } = this;
 
         if (options.isSuppressTouch()) { return; }
 
         const touchListener = new TouchListener(this.getGui(), true);
-
         const suppressMenuHide = options.isSuppressMenuHide();
         const tapMenuButton = suppressMenuHide && _.exists(this.eMenu);
-
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
 
         if (this.params.enableMenu) {
@@ -144,27 +142,25 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
         }
 
+        // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
+        // so we need to make sure to destroy both listeners here
         this.addDestroyFunc(() => touchListener.destroy());
-
-        if (menuTouchListener !== touchListener) {
+        if (tapMenuButton) {
             this.addDestroyFunc(() => menuTouchListener.destroy());
         }
     }
 
     private setupMenu(): void {
-
         // if no menu provided in template, do nothing
-        if (!this.eMenu) {
-            return;
-        }
+        if (!this.eMenu) { return; }
 
         // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device
         // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        const dontShowMenu = !this.params.enableMenu || (_.isUserAgentIPad() && !suppressMenuHide);
+        const hideShowMenu = !this.params.enableMenu || (_.isUserAgentIPad() && !suppressMenuHide);
 
-        if (dontShowMenu) {
+        if (hideShowMenu) {
             _.removeFromParent(this.eMenu);
             return;
         }
@@ -263,9 +259,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     // set the asc / desc icons) then it's possible other cols are yet to get their sorting state.
     private setMultiSortOrder(): void {
 
-        if (!this.eSortOrder) {
-            return;
-        }
+        if (!this.eSortOrder) { return; }
 
         const col = this.params.column;
         const allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
@@ -284,9 +278,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private setupFilterIcon(): void {
 
-        if (!this.eFilter) {
-            return;
-        }
+        if (!this.eFilter) { return; }
 
         this.addDestroyableEventListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
@@ -296,5 +288,4 @@ export class HeaderComp extends Component implements IHeaderComp {
         const filterPresent = this.params.column.isFilterActive();
         _.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     }
-
 }
