@@ -39,7 +39,11 @@ export class GridChartFactory {
     }
 
     private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
-        const barChart = new CartesianChart(new CategoryAxis(), new NumberAxis(), options.parentElement);
+        const barChart = new CartesianChart({
+            parent: options.parentElement,
+            xAxis: new CategoryAxis(),
+            yAxis: new NumberAxis()
+        });
 
         barChart.width = options.width;
         barChart.height = options.height;
@@ -73,7 +77,11 @@ export class GridChartFactory {
     }
 
     private static createLineChart(options: CreateChartOptions): Chart {
-        const lineChart = new CartesianChart(new CategoryAxis(), new NumberAxis(), options.parentElement);
+        const lineChart = new CartesianChart({
+            parent: options.parentElement,
+            xAxis: new CategoryAxis(),
+            yAxis: new NumberAxis()
+        });
 
         lineChart.width = options.width;
         lineChart.height = options.height;
@@ -99,7 +107,7 @@ export class GridChartFactory {
     }
 
     private static createPolarChart(options: CreateChartOptions): Chart {
-        const pieChart = new PolarChart(options.parentElement);
+        const pieChart = new PolarChart({ parent: options.parentElement });
 
         pieChart.width = options.width;
         pieChart.height = options.height;

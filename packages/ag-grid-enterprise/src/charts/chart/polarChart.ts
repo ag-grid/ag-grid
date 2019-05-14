@@ -1,18 +1,22 @@
-import { Chart } from "./chart";
+import { Chart, ChartOptions } from "./chart";
 import { PolarSeries } from "./series/polarSeries";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
+import { Axis } from "../axis";
+
+export interface PolarChartOptions extends ChartOptions {
+}
 
 export class PolarChart extends Chart {
-    centerX: number = 0;
-    centerY: number = 0;
+    private centerX: number = 0;
+    private centerY: number = 0;
 
-    radius: number = 0;
+    private radius: number = 0;
 
     protected _padding = new Padding(50);
 
-    constructor(parent: HTMLElement = document.body) {
-        super(parent);
+    constructor(options?: PolarChartOptions) {
+        super(options);
 
         this.scene.root!.append(this.legend.group);
     }

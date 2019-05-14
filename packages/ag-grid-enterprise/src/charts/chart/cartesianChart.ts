@@ -1,16 +1,23 @@
-import { Chart, LegendPosition } from "./chart";
+import { Chart, ChartOptions, LegendPosition } from "./chart";
 import { Axis } from "../axis";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
 
+export interface CartesianChartOptions extends ChartOptions {
+    xAxis: Axis,
+    yAxis: Axis
+}
+
 export class CartesianChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: Axis, yAxis: Axis, parent: HTMLElement = document.body) {
-        super(parent);
+    constructor(options: CartesianChartOptions) {
+        super(options);
+
+        const {xAxis, yAxis} = options;
 
         this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
         this.scene.root!.append(this.legend.group);
