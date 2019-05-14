@@ -307,7 +307,9 @@ export class GridPanel extends Component {
     }
 
     private onCenterViewportResized(): void {
-        this.checkViewportAndScrolls();
+        if (_.isVisible(this.eCenterViewport)) {
+            this.checkViewportAndScrolls();
+        }
     }
 
     // used by ColumnAnimationService
