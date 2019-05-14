@@ -89,7 +89,7 @@ export class RangeChartService implements IRangeChartService {
             // is using it's own dialog's rather than the grid provided dialogs)
             createChartContainerFunc(chartRef);
         } else {
-            // remove charts that get destroyed from the active charts list
+            // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
             chartComp.addEventListener(GridChartComp.EVENT_DESTROYED, () => {
                 _.removeFromArray(this.activeCharts, chartRef);
             });
