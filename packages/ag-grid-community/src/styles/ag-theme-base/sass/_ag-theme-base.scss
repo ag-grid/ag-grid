@@ -225,7 +225,6 @@
         input[type="date"],
         input[type="datetime-local"] {
             @include textbox($params);
-            width: 100%;
         }
 
         input[type="date"] {

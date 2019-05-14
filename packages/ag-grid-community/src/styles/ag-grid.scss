@@ -608,11 +608,7 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     height: 100%;
 }
 
-.ag-cell-edit-input {
-    height: 100%;
-    width: 100%;
-    line-height: normal;
-}
+
 
 .ag-group-cell-entire-row {
     display: inline-block;
@@ -637,6 +633,11 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 
 .ag-cell-inline-editing {
     z-index: 1;
+    .ag-cell-edit-input, .ag-input-text-wrapper {
+        height: 100%;
+        width: 100%;
+        line-height: normal;
+    }
 }
 
 /**
