@@ -236,6 +236,11 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-data-update/#flashing">Flashing Data Changes</a>.</td>
         </tr>
         <tr>
+            <th>allowShowChangeAfterFilter</th>
+            <td>Set to true to have cells flash after data changes even when the change is due to filtering.
+                See <a href="../javascript-grid-data-update/#flashing">Flashing Data Changes</a>.</td>
+        </tr>
+        <tr>
             <th>stopEditingWhenGridLosesFocus</th>
             <td>
                 Set this to true to <a href="../javascript-grid-cell-editing/#losingFocusStopsEditing">

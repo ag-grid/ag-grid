@@ -638,6 +638,17 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
     </note>
 
     <p>
+        One exception to the above is changes due to filtering. If you are
+        <a href="../javascript-grid-grouping/">Row Grouping</a> the data with
+        <a href="../javascript-grid-aggregation/">Aggregations</a>, then the aggregated values will change as filtering
+        adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes
+        when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not
+        usefully bringing the users attention to any particular cell. If you do not like this exception and would
+        like to flash changes even when it's the result of a filter change, then set
+        <code>gridOptions.allowShowChangeAfterFilter=true</code>.
+    </p>
+
+    <p>
         You can also explicitly flash cells using the grid API <code>flashCells(params)</code>.
         The params takes a list of columns and rows to flash, e.g. to flash one cell pass in
         one column and one row that identifies that cell.

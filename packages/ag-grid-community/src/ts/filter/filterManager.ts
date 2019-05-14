@@ -46,6 +46,14 @@ export class FilterManager {
 
     private gridCore: GridCore;
 
+    // this is true when the grid is processing the filter change. this is used by the cell comps, so that they
+    // don't flash when data changes due to filter changes. there is no need to flash when filter changes as the
+    // user is in control, so doesn't make sense to show flashing changes. for example, go to main demo where
+    // this feature is turned off (hack code to always return false for isSuppressFlashingCellsBecauseFiltering(), put in)
+    // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
+    private processingFilterChange = false;
+    private allowShowChangeAfterFilter: boolean;
+
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
     }
@@ -57,6 +65,8 @@ export class FilterManager {
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
         this.setQuickFilterParts();
+
+        this.allowShowChangeAfterFilter = this.gridOptionsWrapper.isAllowShowChangeAfterFilter();
 
         // check this here, in case there is a filter from the start
         this.checkExternalFilter();
@@ -256,7 +266,24 @@ export class FilterManager {
         if (additionalEventAttributes) {
             _.mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
+
+        // because internal events are not async in ag-grid, when the dispatchEvent
+        // method comes back, we know all listeners have finished executing.
+        this.processingFilterChange = true;
+
         this.eventService.dispatchEvent(filterChangedEvent);
+
+        this.processingFilterChange = false;
+    }
+
+    public isSuppressFlashingCellsBecauseFiltering(): boolean {
+        if (this.allowShowChangeAfterFilter) {
+            // if user has elected to always flash cell changes, then return false always
+            return false;
+        } else {
+            // otherwise we suppress flashing changes when filtering
+            return this.processingFilterChange;
+        }
     }
 
     public isQuickFilterPresent(): boolean {

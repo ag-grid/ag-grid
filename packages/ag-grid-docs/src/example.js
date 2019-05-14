@@ -320,6 +320,7 @@ var gridOptions = {
     // ],
     // callback when row clicked
     // stopEditingWhenGridLosesFocus: true,
+    // allowShowChangeAfterFilter: true,
     onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },

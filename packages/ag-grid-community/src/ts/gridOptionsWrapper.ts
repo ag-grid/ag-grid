@@ -933,6 +933,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressCsvExport);
     }
 
+    public isAllowShowChangeAfterFilter() {
+        return isTrue(this.gridOptions.allowShowChangeAfterFilter);
+    }
+
     public isSuppressExcelExport() {
         return isTrue(this.gridOptions.suppressExcelExport);
     }

@@ -1,6 +1,8 @@
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { _ } from "../../utils";
+import {FilterManager} from "../../filter/filterManager";
+import {Autowired} from "../../context/context";
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
@@ -20,6 +22,8 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     private eDelta: HTMLElement;
 
     private refreshCount = 0;
+
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     constructor() {
         super(AnimateShowChangeCellRenderer.TEMPLATE);
@@ -87,6 +91,12 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             this.eValue.innerHTML = value;
         } else {
             _.clearElement(this.eValue);
+        }
+
+        // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
+        // with regards processingFilterChange
+        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+            return;
         }
 
         if (typeof value === 'number' && typeof this.lastValue === 'number') {
