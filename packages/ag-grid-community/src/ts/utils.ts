@@ -287,27 +287,82 @@ export class Utils {
         return hex;
     }
 
+    // taken from https://github.com/mathiasbynens/utf8.js
     static utf8_encode = (s: string): string => {
-        let utftext = '';
+        const stringFromCharCode = String.fromCharCode;
 
-        s = s.replace(/\r\n/g, "\n");
+        function ucs2decode(string: string) {
+            const output = [];
+            let counter = 0;
+            const length = string.length;
+            let value;
+            let extra;
 
-        for (let n = 0, len = s.length; n < len; n++) {
-            const c = s.charCodeAt(n);
+            while (counter < length) {
+                value = string.charCodeAt(counter++);
+                if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+                    // high surrogate, and there is a next character
+                    extra = string.charCodeAt(counter++);
+                    if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+                        output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+                    } else {
+                        // unmatched surrogate; only append this code unit, in case the next
+                        // code unit is the high surrogate of a surrogate pair
+                        output.push(value);
+                        counter--;
+                    }
+                } else {
+                    output.push(value);
+                }
+            }
+            return output;
+        }
 
-            if (c < 128) {
-                utftext += String.fromCharCode(c);
-            } else if ((c > 127) && (c < 2048)) {
-                utftext += String.fromCharCode((c >> 6) | 192);
-                utftext += String.fromCharCode((c & 63) | 128);
-            } else {
-                utftext += String.fromCharCode((c >> 12) | 224);
-                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-                utftext += String.fromCharCode((c & 63) | 128);
+        function checkScalarValue(codePoint: number) {
+            if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+                throw Error(
+                    'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+                    ' is not a scalar value'
+                );
             }
         }
 
-        return utftext;
+        function createByte(codePoint: number, shift: number) {
+            return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+        }
+
+        function encodeCodePoint(codePoint: number) {
+            if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
+                return stringFromCharCode(codePoint);
+            }
+            let symbol = '';
+
+            if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
+            } else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
+                checkScalarValue(codePoint);
+                symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
+                symbol += createByte(codePoint, 6);
+            } else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
+                symbol += createByte(codePoint, 12);
+                symbol += createByte(codePoint, 6);
+            }
+            symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+            return symbol;
+        }
+
+        const codePoints = ucs2decode(s);
+        const length = codePoints.length;
+        let index = -1;
+        let codePoint;
+        let byteString = '';
+
+        while (++index < length) {
+            codePoint = codePoints[index];
+            byteString += encodeCodePoint(codePoint);
+        }
+        return byteString;
     }
 
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
