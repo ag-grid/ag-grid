@@ -364,6 +364,7 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 
 .ag-header-row {
     position: absolute;
+    overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
 }
 
 .ag-header-overlay {
