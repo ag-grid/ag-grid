@@ -164,11 +164,13 @@ class MiniLine extends MiniChart {
             [1, 3, 4, 8, 7]
         ];
 
-        const leftAxis = Line.create(padding, padding, padding, size);
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
         leftAxis.strokeStyle = 'gray';
         leftAxis.lineWidth = 1;
 
-        const bottomAxis = Line.create(0, size - padding, size - padding, size - padding);
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
         bottomAxis.strokeStyle = 'gray';
         bottomAxis.lineWidth = 1;
 
@@ -229,11 +231,13 @@ class MiniBar extends MiniChart {
         yScale.domain = [0, 4];
         yScale.range = [size - padding, padding];
 
-        const leftAxis = Line.create(padding, padding, padding, size);
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
         leftAxis.strokeStyle = 'gray';
         leftAxis.lineWidth = 1;
 
-        const bottomAxis = Line.create(0, size - padding, size - padding, size - padding);
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
         bottomAxis.strokeStyle = 'gray';
         bottomAxis.lineWidth = 1;
         (this as any).axes = [leftAxis, bottomAxis];
@@ -299,11 +303,13 @@ class MiniStackedBar extends MiniChart {
         yScale.domain = [0, 16];
         yScale.range = [size - padding, padding];
 
-        const leftAxis = Line.create(padding, padding, padding, size);
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
         leftAxis.strokeStyle = 'gray';
         leftAxis.lineWidth = 1;
 
-        const bottomAxis = Line.create(0, size - padding, size - padding, size - padding);
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
         bottomAxis.strokeStyle = 'gray';
         bottomAxis.lineWidth = 1;
 
