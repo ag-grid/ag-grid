@@ -40,9 +40,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-input-text-wrapper {
     display: flex;
+    flex: 1 1 auto;
     align-items: center;
-    height: 100%;
-    width: 100%;
     line-height: normal;
     position: relative;
 }
@@ -680,16 +679,18 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 }
 
 .ag-floating-filter-body {
+    display: flex;
     flex: 1 1 auto;
     height: 20px;
 
     input {
         margin: 0;
-        width: 100%;
+        flex: 1 1 auto;
     }
 }
 
 .ag-floating-filter-full-body {
+    display: flex;
     height: 100%;
     width: 100%;
 
@@ -721,6 +722,7 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 
 .ag-floating-filter-button {
     display: flex;
+    flex: none;
 }
 
 /**
