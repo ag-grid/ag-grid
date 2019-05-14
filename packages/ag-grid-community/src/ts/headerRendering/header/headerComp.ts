@@ -112,18 +112,21 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const {gridOptionsWrapper: gow} = this;
+        const {gridOptionsWrapper: options} = this;
 
-        if (gow.isSuppressTouch()) { return; }
+        if (options.isSuppressTouch()) { return; }
 
-        const suppressMenuHide = gow.isSuppressMenuHide();
         const touchListener = new TouchListener(this.getGui(), true);
-        const menuTouchListener = suppressMenuHide ? new TouchListener(this.eMenu, true) : touchListener;
+
+        const suppressMenuHide = options.isSuppressMenuHide();
+        const tapMenuButton = suppressMenuHide && _.exists(this.eMenu);
+
+        const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
 
         if (this.params.enableMenu) {
-            const eventType = suppressMenuHide ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
+            const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                gow.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                options.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addDestroyableEventListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
