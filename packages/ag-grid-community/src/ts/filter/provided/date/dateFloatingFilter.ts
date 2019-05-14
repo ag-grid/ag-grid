@@ -1,15 +1,15 @@
-import {DateFilter, DateFilterModel} from "./dateFilter";
-import {Autowired} from "../../../context/context";
-import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
-import {_} from "../../../utils";
-import {IDateParams} from "../../../rendering/dateComponent";
-import {IFloatingFilterParams} from "../../floating/floatingFilter";
-import {DateCompWrapper} from "./dateCompWrapper";
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {SimpleFilter, ISimpleFilterModel} from "../simpleFilter";
-import {SimpleFloatingFilter} from "../../floating/provided/simpleFloatingFilter";
-import {FilterChangedEvent} from "../../../events";
-import {ProvidedFilter} from "../providedFilter";
+import { DateFilter, DateFilterModel } from "./dateFilter";
+import { Autowired } from "../../../context/context";
+import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { _ } from "../../../utils";
+import { IDateParams } from "../../../rendering/dateComponent";
+import { IFloatingFilterParams } from "../../floating/floatingFilter";
+import { DateCompWrapper } from "./dateCompWrapper";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { SimpleFilter, ISimpleFilterModel } from "../simpleFilter";
+import { SimpleFloatingFilter } from "../../floating/provided/simpleFloatingFilter";
+import { FilterChangedEvent } from "../../../events";
+import { ProvidedFilter } from "../providedFilter";
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
 
@@ -26,7 +26,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         super(
             `<div class="ag-input-text-wrapper">
                 <input ref="eReadOnlyText" disabled="true" class="ag-floating-filter-input">
-                <span ref="eDateWrapper" style="width: 100%; height: 100%;"></span>
+                <div ref="eDateWrapper" style="display: flex; flex: 1 1 auto;"></div>
             </div>`);
     }
 
@@ -42,7 +42,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             return `${condition.dateFrom}-${condition.dateTo}`;
         } else {
             // cater for when the type doesn't need a value
-            if (condition.dateFrom!=null) {
+            if (condition.dateFrom != null) {
                 return `${condition.dateFrom}`;
             } else {
                 return `${condition.type}`;
@@ -92,9 +92,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         const filterValueDate: Date = this.dateComp.getDate();
         const filterValueText: string = _.serializeDateToYyyyMmDd(filterValueDate, "-");
 
-        this.params.parentFilterInstance( filterInstance => {
+        this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
-                const simpleFilter = <SimpleFilter<ISimpleFilterModel>> filterInstance;
+                const simpleFilter = filterInstance as SimpleFilter<ISimpleFilterModel>;
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), filterValueText);
             }
         });
@@ -111,7 +111,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);
 
-        this.addDestroyFunc( () => {
+        this.addDestroyFunc(() => {
             this.dateComp.destroy();
         });
     }

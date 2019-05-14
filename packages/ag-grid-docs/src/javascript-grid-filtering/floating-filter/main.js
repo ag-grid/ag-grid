@@ -68,7 +68,7 @@ function getPersonFilter() {
             setModel: function (model) {
                 that.eFilterText.value = model.value;
             }
-        }
+        };
     };
 
     PersonFilter.prototype.getModelAsString = function (model) {
@@ -91,7 +91,7 @@ var columnDefs = [
     {headerName: "Country", field: "country", width: 120, filter: 'agSetColumnFilter', suppressMenu: true},
     {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter', suppressMenu: true},
     {
-        headerName: "Date", field: "date", width: 145, filter: 'agDateColumnFilter', filterParams: {
+        headerName: "Date", field: "date", width: 170, filter: 'agDateColumnFilter', filterParams: {
             comparator: function (filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
                 if (dateAsString == null) return -1;
@@ -99,7 +99,7 @@ var columnDefs = [
                 var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
                 if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                    return 0
+                    return 0;
                 }
 
                 if (cellDate < filterLocalDateAtMidnight) {
