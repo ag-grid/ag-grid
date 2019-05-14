@@ -43,7 +43,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean {
-        return (event && (<any>event).source==='floating');
+        return (event && (<any>event).afterFloatingFilter);
     }
 
     protected getLastType(): string {

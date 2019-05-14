@@ -508,12 +508,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.filterActive;
     }
 
-    public setFilterActive(active: boolean, source: ColumnEventType = "api"): void {
+    // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
+    public setFilterActive(active: boolean, source: ColumnEventType = "api", additionalEventAttributes?: any): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED, source));
         }
-        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source));
+        const filterChangedEvent = this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source);
+        if (additionalEventAttributes) {
+            _.mergeDeep(filterChangedEvent, additionalEventAttributes);
+        }
+        this.eventService.dispatchEvent(filterChangedEvent);
     }
 
     public setPinned(pinned: string | boolean | null | undefined): void {

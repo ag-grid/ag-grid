@@ -139,10 +139,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         // and it's a case insensitive filter
         const newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
         if (newModelDifferent) {
-            // the floating filter uses this info, so it doesn't refresh after filter changed if change
+            // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            const source = afterFloatingFilter ? 'floatingFilter' : 'mainFilter';
-            this.providedFilterParams.filterChangedCallback({source: source});
+            this.providedFilterParams.filterChangedCallback({afterFloatingFilter: afterFloatingFilter});
         }
     }
 

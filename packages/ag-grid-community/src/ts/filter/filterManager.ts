@@ -153,10 +153,10 @@ export class FilterManager {
         this.advancedFilterPresent = atLeastOneActive;
     }
 
-    private updateFilterFlagInColumns(source: ColumnEventType): void {
+    private updateFilterFlagInColumns(source: ColumnEventType, additionalEventAttributes?: any): void {
         _.iterateObject(this.allFilters, function(key, filterWrapper: FilterWrapper) {
             const filterActive = filterWrapper.filterPromise.resolveNow(false, filter => filter.isFilterActive());
-            filterWrapper.column.setFilterActive(filterActive, source);
+            filterWrapper.column.setFilterActive(filterActive, source, additionalEventAttributes);
         });
     }
 
@@ -237,7 +237,7 @@ export class FilterManager {
 
     public onFilterChanged(additionalEventAttributes?: any): void {
         this.setAdvancedFilterPresent();
-        this.updateFilterFlagInColumns("filterChanged");
+        this.updateFilterFlagInColumns("filterChanged", additionalEventAttributes);
         this.checkExternalFilter();
 
         _.iterateObject(this.allFilters, function(key, filterWrapper: FilterWrapper) {
@@ -248,15 +248,15 @@ export class FilterManager {
             });
         });
 
-        const event: FilterChangedEvent = {
+        const filterChangedEvent: FilterChangedEvent = {
             type: Events.EVENT_FILTER_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
         if (additionalEventAttributes) {
-            _.mergeDeep(event, additionalEventAttributes);
+            _.mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(filterChangedEvent);
     }
 
     public isQuickFilterPresent(): boolean {
