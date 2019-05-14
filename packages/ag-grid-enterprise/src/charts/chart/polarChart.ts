@@ -2,7 +2,6 @@ import { Chart, ChartOptions } from "./chart";
 import { PolarSeries } from "./series/polarSeries";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
-import { Axis } from "../axis";
 
 export interface PolarChartOptions extends ChartOptions {
 }
