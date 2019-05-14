@@ -70,6 +70,17 @@ export abstract class Chart {
         this.layoutPending = true;
     }
 
+    get element(): HTMLElement {
+        return this.scene.hdpiCanvas.canvas;
+    }
+
+    set parent(value: HTMLElement | null) {
+        this.scene.parent = value;
+    }
+    get parent(): HTMLElement | null {
+        return this.scene.parent;
+    }
+
     private _legendPosition: LegendPosition = LegendPosition.Right;
     set legendPosition(value: LegendPosition) {
         if (this._legendPosition !== value) {
