@@ -3,7 +3,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 @Component({
     selector: 'app-loading-overlay',
     template: `
-        <div #flatpickrEl class="ag-input-text-wrapper custom-date-filter fa">
+        <div #flatpickrEl class="ag-input-text-wrapper custom-date-filter">
             <input type='text' data-input />
             <a class='input-button' title='clear' data-clear>
                 <i class='fa fa-times'></i>
@@ -12,20 +12,20 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
     `,
     styles: [
         `
-    .custom-date-filter a {
-    position: relative;
-    right: 30px;
+  .custom-date-filter a {
+    position: absolute;
+    right: 20px;
     color: rgba(0, 0, 0, 0.54);
     cursor: pointer;
   }
 
   .custom-date-filter:after {
+    position: absolute;
     content: '\f073';
     display: block;
     font-weight: 400;
     font-family: 'Font Awesome 5 Free';
-    position: relative;
-    right: 25px;
+    right: 5px;
     pointer-events: none;
     color: rgba(0, 0, 0, 0.54);
   }

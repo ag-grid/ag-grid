@@ -228,6 +228,10 @@
             width: 100%;
         }
 
+        input[type="date"] {
+            width: 0;
+        }
+
         textarea {
             @include textbox($params);
         }
@@ -700,10 +704,6 @@
     ////////////////////////////////////////
     // Tool panel
     ////////////////////////////////////////
-
-    .ag-filter-filter {
-        margin-bottom: $grid-size;
-    }
 
     .ag-primary-cols-header-panel {
         border-bottom: 1px solid $border-color;

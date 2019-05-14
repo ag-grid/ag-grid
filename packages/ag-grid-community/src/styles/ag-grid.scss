@@ -376,6 +376,7 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     align-items: center;
     position: absolute;
     height: 100%;
+    overflow: hidden;
 }
 
 .ag-header-group-cell-label {
@@ -647,10 +648,6 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.ag-filter-filter {
-    width: 100%;
 }
 
 .ag-filter {
