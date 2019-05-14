@@ -16,11 +16,15 @@ export enum LegendPosition {
 }
 
 export interface ChartOptions {
-    parent: HTMLElement,
-    width: number,
-    height: number,
-    data: any,
-    tooltipClass: string
+    parent?: HTMLElement,
+    width?: number,
+    height?: number,
+    series?: Series[],
+    data?: any,
+    padding?: Padding,
+    legendPosition?: LegendPosition,
+    legendPadding?: number,
+    tooltipClass?: string
 }
 
 export abstract class Chart {
@@ -30,21 +34,39 @@ export abstract class Chart {
     protected legendAutoPadding = new Padding();
 
     private tooltipElement: HTMLDivElement = document.createElement('div');
+    private tooltipRect?: ClientRect;
 
-    private _tooltipClass: string = '';
-    set tooltipClass(value: string) {
-        if (this._tooltipClass !== value) {
-            this._tooltipClass = value;
-            this.tooltipElement.setAttribute('class', value);
+    tooltipOffset = [20, 20];
+
+    protected constructor(options: ChartOptions = {}) {
+        if (options.parent) {
+            this.parent = options.parent;
         }
-    }
-    get tooltipClass(): string {
-        const arr = [1,2,3].slice(2);
-        return this._tooltipClass;
-    }
+        if (options.width) {
+            this.width = options.width;
+        }
+        if (options.height) {
+            this.height = options.height;
+        }
+        if (options.series) {
+            this.series = options.series;
+        }
+        if (options.padding) {
+            this.padding = options.padding;
+        }
+        if (options.legendPosition) {
+            this.legendPosition = options.legendPosition;
+        }
+        if (options.legendPadding) {
+            this.legendPadding = options.legendPadding;
+        }
+        if (options.data) {
+            this.data = options.data;
+        }
+        if (options.tooltipClass) {
+            this.tooltipClass = options.tooltipClass;
+        }
 
-    protected constructor(parent: HTMLElement = document.body) {
-        this.scene.parent = parent;
         this.scene.root = new Group();
         this.legend.onLayoutChange = this.onLegendLayoutChange.bind(this);
 
@@ -79,6 +101,60 @@ export abstract class Chart {
     }
     get parent(): HTMLElement | null {
         return this.scene.parent;
+    }
+
+    abstract get seriesRoot(): Node;
+
+    protected _series: Series[] = [];
+    set series(values: Series[]) {
+        this._series = values;
+    }
+    get series(): Series[] {
+        return this._series;
+    }
+
+    addSeries(series: Series, before: Series | null = null): boolean {
+        const canAdd = this.series.indexOf(series) < 0;
+
+        if (canAdd) {
+            const beforeIndex = before ? this.series.indexOf(before) : -1;
+
+            if (beforeIndex >= 0) {
+                this.series.splice(beforeIndex, 0, series);
+                this.seriesRoot.insertBefore(series.group, before!.group);
+            } else {
+                this.series.push(series);
+                this.seriesRoot.append(series.group);
+            }
+            series.chart = this;
+            this.dataPending = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    removeSeries(series: Series): boolean {
+        const index = this.series.indexOf(series);
+
+        if (index >= 0) {
+            this.series.splice(index, 1);
+            series.chart = null;
+            this.seriesRoot.removeChild(series.group);
+            this.dataPending = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    removeAllSeries(): void {
+        this.series.forEach(series => {
+            series.chart = null;
+            this.seriesRoot.removeChild(series.group);
+        });
+        this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+        this.dataPending = true;
     }
 
     private _legendPosition: LegendPosition = LegendPosition.Right;
@@ -305,60 +381,6 @@ export abstract class Chart {
         this.legendBBox = legendBBox;
     }
 
-    abstract get seriesRoot(): Node;
-
-    protected _series: Series[] = [];
-    set series(values: Series[]) {
-        this._series = values;
-    }
-    get series(): Series[] {
-        return this._series;
-    }
-
-    addSeries(series: Series, before: Series | null = null): boolean {
-        const canAdd = this.series.indexOf(series) < 0;
-
-        if (canAdd) {
-            const beforeIndex = before ? this.series.indexOf(before) : -1;
-
-            if (beforeIndex >= 0) {
-                this.series.splice(beforeIndex, 0, series);
-                this.seriesRoot.insertBefore(series.group, before!.group);
-            } else {
-                this.series.push(series);
-                this.seriesRoot.append(series.group);
-            }
-            series.chart = this;
-            this.dataPending = true;
-            return true;
-        }
-
-        return false;
-    }
-
-    removeSeries(series: Series): boolean {
-        const index = this.series.indexOf(series);
-
-        if (index >= 0) {
-            this.series.splice(index, 1);
-            series.chart = null;
-            this.seriesRoot.removeChild(series.group);
-            this.dataPending = true;
-            return true;
-        }
-
-        return false;
-    }
-
-    removeAllSeries(): void {
-        this.series.forEach(series => {
-            series.chart = null;
-            this.seriesRoot.removeChild(series.group);
-        });
-        this._series = []; // using `_series` instead of `series` to prevent infinite recursion
-        this.dataPending = true;
-    }
-
     private setupListeners(chartElement: HTMLCanvasElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
@@ -458,9 +480,16 @@ export abstract class Chart {
         }
     }
 
-    tooltipOffset = [20, 20];
-
-    private tooltipRect?: ClientRect;
+    private _tooltipClass: string = '';
+    set tooltipClass(value: string) {
+        if (this._tooltipClass !== value) {
+            this._tooltipClass = value;
+            this.tooltipElement.setAttribute('class', value);
+        }
+    }
+    get tooltipClass(): string {
+        return this._tooltipClass;
+    }
 
     /**
      * Shows tooltip at the given event's coordinates.
