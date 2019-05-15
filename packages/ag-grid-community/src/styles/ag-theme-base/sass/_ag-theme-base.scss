@@ -582,8 +582,12 @@
         padding: $grid-size 0;
 
         // string filter type
-        .ag-filter-select {
+        .ag-filter-select, .ag-filter-body {
             margin: $grid-size; 
+        }
+
+        .ag-filter-body {
+            margin-top: 0;
         }
 
         .ag-menu-list {
