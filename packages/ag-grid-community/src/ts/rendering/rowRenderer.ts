@@ -118,8 +118,8 @@ export class RowRenderer extends BeanStub {
     // all active cells.
     private registerCellEventListeners(): void {
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_FOCUSED, () => {
-            this.forEachCellComp( cellComp => cellComp.onCellFocused() );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
+            this.forEachCellComp( cellComp => cellComp.onCellFocused(event) );
         });
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
