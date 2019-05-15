@@ -2328,6 +2328,7 @@ export class ColumnController {
         });
 
         this.updateGroupsAndDisplayedColumns(source);
+        this.setFirstRightAndLastLeftPinned(source);
 
         impactedGroups.forEach(originalColumnGroup => {
             const event: ColumnGroupOpenedEvent = {
@@ -2439,9 +2440,10 @@ export class ColumnController {
 
         this.calculateColumnsForGroupDisplay();
 
-        // this is also called when a group is opened or closed
+        // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
 
+        // also called when group opened/closed
         this.setFirstRightAndLastLeftPinned(source);
     }
 
