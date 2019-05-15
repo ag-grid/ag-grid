@@ -985,12 +985,14 @@ export class GridApi {
     }
 
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
-        const column = this.columnController.getPrimaryColumn(colKey);
+        // use grid column so works with pivot mode
+        const column = this.columnController.getGridColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     }
 
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
-        const column = this.columnController.getPrimaryColumn(colKey);
+        // use grid column so works with pivot mode
+        const column = this.columnController.getGridColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 
