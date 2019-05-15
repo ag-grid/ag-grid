@@ -46,13 +46,13 @@ meta_and_links("ag-Grid: Thanks, we will be in touch.", "ag-Grid Javascript Grid
                 </li>
             </ul>
             </p>
-            <hr>
-<div>
-                   <h2>
-           Survey
-           </h2>
-<iframe src="https://docs.google.com/a/ag-grid.com/forms/d/e/1FAIpQLSdcyy99botWQ-sNo27aPI_aJ3DHiM905sKn3z8qw9OI4BaZhw/viewform?embedded=true" width="760" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
-</div>
+<!--            <hr>-->
+<!--<div>-->
+<!--                   <h2>-->
+<!--           Survey-->
+<!--           </h2>-->
+<!--<iframe src="https://docs.google.com/a/ag-grid.com/forms/d/e/1FAIpQLSdcyy99botWQ-sNo27aPI_aJ3DHiM905sKn3z8qw9OI4BaZhw/viewform?embedded=true" width="760" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>-->
+<!--</div>-->
 <hr>
 <h2>ag-Grid on Social Media</h2>
 <p>
