@@ -250,7 +250,7 @@ export class GridChartComp extends Component {
 
         const pieChart = this.chart as PolarChart;
 
-        const existingSeries = pieChart.series[0] as PieSeries<any, string, number>;
+        const existingSeries = pieChart.series[0] as PieSeries;
         const existingSeriesId = existingSeries && existingSeries.angleField as string;
 
         const pieSeriesId = fields[0].colId;
@@ -259,7 +259,7 @@ export class GridChartComp extends Component {
         let pieSeries = existingSeries;
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
-            pieSeries = new PieSeries<any, string, number>();
+            pieSeries = new PieSeries();
         }
 
         pieSeries.title = pieSeriesName;
@@ -295,9 +295,9 @@ export class GridChartComp extends Component {
         const doughnutChart = this.chart as PolarChart;
         const fieldIds = fields.map(f => f.colId);
 
-        const existingSeriesMap: { [id: string]: PieSeries<any, string, number> } = {};
+        const existingSeriesMap: { [id: string]: PieSeries } = {};
         doughnutChart.series.forEach(series => {
-            const pieSeries = (series as PieSeries<any, string, number>);
+            const pieSeries = (series as PieSeries);
             const id = pieSeries.angleField as string;
             fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
         });
@@ -306,7 +306,7 @@ export class GridChartComp extends Component {
         fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
-            const pieSeries = existingSeries ? existingSeries : new PieSeries<any, string, number>();
+            const pieSeries = existingSeries ? existingSeries : new PieSeries();
 
             pieSeries.title = f.displayName;
 

@@ -11,15 +11,51 @@ export interface SeriesNodeDatum {
     seriesDatum: any;
 }
 
-export abstract class Series {
+export interface SeriesOptions {
+    type?: string,
+    data?: any[],
+    title?: string,
+    titleFont?: string,
+    visible?: boolean,
+    showInLegend?: boolean,
+    tooltip?: boolean
+}
+
+export abstract class Series<C extends Chart> {
 
     readonly id: string = this.createId();
+
+    /**
+     * The group node that contains all the nodes used to render this series.
+     */
+    readonly group: Group = new Group();
+
+    protected init(options: SeriesOptions) {
+        if (options.title) {
+            this.title = options.title;
+        }
+        if (options.titleFont) {
+            this.titleFont = options.titleFont;
+        }
+        if (options.visible) {
+            this.visible = options.visible;
+        }
+        if (options.showInLegend) {
+            this.showInLegend = options.showInLegend;
+        }
+        if (options.tooltip) {
+            this.tooltip = options.tooltip;
+        }
+        if (options.data) {
+            this.data = options.data;
+        }
+    }
 
     protected _title: string = '';
     set title(value: string) {
         if (this._title !== value) {
             this._title = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get title(): string {
@@ -30,17 +66,12 @@ export abstract class Series {
     set titleFont(value: string) {
         if (this._titleFont !== value) {
             this._titleFont = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get titleFont(): string {
         return this._titleFont;
     }
-
-    /**
-     * The group node that contains all the nodes used to render this series.
-     */
-    readonly group: Group = new Group();
 
     // Uniquely identify series.
     private createId(): string {
@@ -57,9 +88,9 @@ export abstract class Series {
         return this._data;
     }
 
-    protected _chart: Chart | null = null;
-    abstract set chart(chart: Chart | null);
-    abstract get chart(): Chart | null;
+    protected _chart: C | null = null;
+    abstract set chart(chart: C | null);
+    abstract get chart(): C | null;
 
     protected _visible: boolean = true;
     set visible(value: boolean) {

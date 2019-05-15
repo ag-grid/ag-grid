@@ -1,9 +1,12 @@
 import { Axis } from "../../axis";
 import linearScale from "../../scale/linearScale";
+import { AxisOptions, applyAxisOptions } from "./axisOptions";
 
 export class NumberAxis extends Axis<number> {
-    constructor() {
+    constructor(options: AxisOptions = {}) {
         super(linearScale());
+
+        applyAxisOptions(this, options);
     }
 
     private _nice: boolean = true;

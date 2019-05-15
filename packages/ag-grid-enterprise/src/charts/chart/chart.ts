@@ -7,6 +7,7 @@ import { Node } from "../scene/node";
 import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
+import { makeSeries } from "./series/helpers";
 
 export enum LegendPosition {
     Top,
@@ -19,7 +20,7 @@ export interface ChartOptions {
     parent?: HTMLElement,
     width?: number,
     height?: number,
-    series?: Series[],
+    series?: any[],
     data?: any,
     padding?: Padding,
     legendPosition?: LegendPosition,
@@ -38,7 +39,18 @@ export abstract class Chart {
 
     tooltipOffset = [20, 20];
 
-    protected constructor(options: ChartOptions = {}) {
+    protected constructor() {
+        this.scene.root = new Group();
+        this.legend.onLayoutChange = this.onLegendLayoutChange.bind(this);
+
+        this.tooltipElement.style.display = 'none';
+        this.tooltipClass = 'ag-chart-tooltip';
+        document.body.appendChild(this.tooltipElement);
+
+        this.setupListeners(this.scene.hdpiCanvas.canvas);
+    }
+
+    protected init(options: ChartOptions) {
         if (options.parent) {
             this.parent = options.parent;
         }
@@ -49,7 +61,15 @@ export abstract class Chart {
             this.height = options.height;
         }
         if (options.series) {
-            this.series = options.series;
+            const seriesConfigs = options.series;
+            const seriesInstances = [];
+            for (let i = 0, n = seriesConfigs.length; i < n; i++) {
+                const seriesInstance = makeSeries(seriesConfigs[i]);
+                if (seriesInstance) {
+                    seriesInstances.push(seriesInstance);
+                }
+            }
+            this.series = seriesInstances;
         }
         if (options.padding) {
             this.padding = options.padding;
@@ -66,15 +86,6 @@ export abstract class Chart {
         if (options.tooltipClass) {
             this.tooltipClass = options.tooltipClass;
         }
-
-        this.scene.root = new Group();
-        this.legend.onLayoutChange = this.onLegendLayoutChange.bind(this);
-
-        this.tooltipElement.style.display = 'none';
-        this.tooltipClass = 'ag-chart-tooltip';
-        document.body.appendChild(this.tooltipElement);
-
-        this.setupListeners(this.scene.hdpiCanvas.canvas);
     }
 
     destroy() {
@@ -105,15 +116,15 @@ export abstract class Chart {
 
     abstract get seriesRoot(): Node;
 
-    protected _series: Series[] = [];
-    set series(values: Series[]) {
+    protected _series: Series<Chart>[] = [];
+    set series(values: Series<Chart>[]) {
         this._series = values;
     }
-    get series(): Series[] {
+    get series(): Series<Chart>[] {
         return this._series;
     }
 
-    addSeries(series: Series, before: Series | null = null): boolean {
+    addSeries(series: Series<Chart>, before: Series<Chart> | null = null): boolean {
         const canAdd = this.series.indexOf(series) < 0;
 
         if (canAdd) {
@@ -134,7 +145,7 @@ export abstract class Chart {
         return false;
     }
 
-    removeSeries(series: Series): boolean {
+    removeSeries(series: Series<Chart>): boolean {
         const index = this.series.indexOf(series);
 
         if (index >= 0) {
@@ -394,7 +405,7 @@ export abstract class Chart {
     }
 
     private pickSeriesNode(x: number, y: number): {
-        series: Series,
+        series: Series<Chart>,
         node: Node
     } | undefined {
         const allSeries = this.series;
@@ -413,7 +424,7 @@ export abstract class Chart {
     }
 
     private lastPick?: {
-        series: Series,
+        series: Series<Chart>,
         node: Shape,
         fillStyle: string | null // used to save the original fillStyle of the node,
                                  // to be restored when the highlight fillStyle is removed
@@ -466,7 +477,7 @@ export abstract class Chart {
         }
     };
 
-    private onSeriesNodePick(event: MouseEvent, series: Series, node: Shape) {
+    private onSeriesNodePick(event: MouseEvent, series: Series<Chart>, node: Shape) {
         this.lastPick = {
             series,
             node,

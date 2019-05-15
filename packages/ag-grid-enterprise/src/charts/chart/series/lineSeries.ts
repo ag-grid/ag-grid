@@ -1,4 +1,3 @@
-import { CartesianSeries } from "./cartesianSeries";
 import { CartesianChart } from "../cartesianChart";
 import { Path } from "../../scene/shape/path";
 import { Path2D } from "../../scene/path2D";
@@ -9,7 +8,7 @@ import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
 import { extent } from "../../util/array";
 import colors from "../palettes";
-import { SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, SeriesOptions } from "./series";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
@@ -29,7 +28,18 @@ export interface LineTooltipRendererParams {
     yField: string
 }
 
-export class LineSeries extends CartesianSeries {
+export interface LineSeriesOptions extends SeriesOptions {
+    xField?: string,
+    yField?: string,
+    color?: string,
+    lineWidth?: number,
+    marker?: boolean,
+    markerRadius?: number,
+    markerLineWidth?: number,
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+}
+
+export class LineSeries extends Series<CartesianChart> {
 
     private domainX: any[] = [];
     private domainY: any[] = [];
@@ -40,7 +50,7 @@ export class LineSeries extends CartesianSeries {
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
-    constructor() {
+    constructor(options: LineSeriesOptions = {}) {
         super();
 
         const lineNode = this.lineNode;
@@ -48,6 +58,37 @@ export class LineSeries extends CartesianSeries {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
+
+        this.init(options);
+    }
+
+    protected init(options: LineSeriesOptions) {
+        super.init(options);
+
+        if (options.xField) {
+            this.xField = options.xField;
+        }
+        if (options.yField) {
+            this.yField = options.yField;
+        }
+        if (options.color) {
+            this.color = options.color;
+        }
+        if (options.lineWidth) {
+            this.lineWidth = options.lineWidth;
+        }
+        if (options.marker) {
+            this.marker = options.marker;
+        }
+        if (options.markerRadius) {
+            this.markerRadius = options.markerRadius;
+        }
+        if (options.markerLineWidth) {
+            this.markerLineWidth = options.markerLineWidth;
+        }
+        if (options.tooltipRenderer) {
+            this.tooltipRenderer = options.tooltipRenderer;
+        }
     }
 
     set chart(chart: CartesianChart | null) {
@@ -60,6 +101,7 @@ export class LineSeries extends CartesianSeries {
         return this._chart as CartesianChart;
     }
 
+    protected _xField: string = '';
     set xField(value: string) {
         if (this._xField !== value) {
             this._xField = value;
@@ -71,6 +113,7 @@ export class LineSeries extends CartesianSeries {
         return this._xField;
     }
 
+    protected _yField: string = '';
     set yField(value: string) {
         if (this._yField !== value) {
             this._yField = value;

@@ -1,19 +1,18 @@
-import { Chart } from "../chart";
-import { PolarSeries } from "./polarSeries";
 import { Group } from "../../scene/group";
 import { Line } from "../../scene/shape/line";
 import { Text } from "../../scene/shape/text";
 import { Selection } from "../../scene/selection";
-import { DropShadow } from "../../scene/dropShadow";
+import { DropShadow, DropShadowOptions } from "../../scene/dropShadow";
 import scaleLinear, { LinearScale } from "../../scale/linearScale";
 import { normalizeAngle180, toRadians } from "../../util/angle";
 import colors from "../palettes";
 import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
-import { SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, SeriesOptions } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
+import { PolarChart } from "../polarChart";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     radius: number, // in the [0, 1] range
@@ -43,7 +42,30 @@ export interface PieTooltipRendererParams {
     labelField?: string
 }
 
-export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
+export interface PieSeriesOptions extends SeriesOptions {
+    calloutColor?: string,
+    calloutWidth?: number,
+    calloutLength?: number,
+    calloutPadding?: number,
+    labelFont?: string,
+    labelColor?: string,
+    labelMinAngle?: number,
+    angleField?: string,
+    radiusField?: string,
+    labelField?: string,
+    label?: boolean,
+    colors?: string[],
+    rotation?: number,
+    outerRadiusOffset?: number,
+    innerRadiusOffset?: number,
+    minOuterRadius?: number,
+    // strokeStyle?: string // TODO: ???
+    shadow?: DropShadowOptions,
+    lineWidth?: number
+}
+
+export class PieSeries extends Series<PolarChart> {
+    minOuterRadius = 15;
 
     private titleNode = new Text();
     private radiusScale: LinearScale<number> = scaleLinear();
@@ -56,7 +78,92 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
 
     protected readonly enabled: boolean[] = [];
 
-    set data(data: D[]) {
+    private angleScale: LinearScale<number> = (() => {
+        const scale = scaleLinear();
+        // Each slice is a ratio of the whole, where all ratios add up to 1.
+        scale.domain = [0, 1];
+        // Add 90 deg to start the first pie at 12 o'clock.
+        scale.range = [-Math.PI, Math.PI].map(angle => angle + Math.PI / 2);
+        return scale;
+    })();
+
+    constructor(options: PieSeriesOptions = {}) {
+        super();
+
+        const title = this.titleNode;
+        title.pointerEvents = PointerEvents.None;
+        title.fillStyle = this.labelColor;
+        title.textAlign = 'center';
+        title.textBaseline = 'bottom';
+
+        this.group.appendChild(title);
+
+        this.init(options);
+    }
+
+    protected init(options: PieSeriesOptions) {
+        super.init(options);
+
+        if (options.calloutColor) {
+            this.calloutColor = options.calloutColor;
+        }
+        if (options.calloutWidth) {
+            this.calloutWidth = options.calloutWidth;
+        }
+        if (options.calloutLength) {
+            this.calloutLength = options.calloutLength;
+        }
+        if (options.calloutLength) {
+            this.calloutLength = options.calloutLength;
+        }
+        if (options.calloutPadding) {
+            this.calloutPadding = options.calloutPadding;
+        }
+        if (options.labelFont) {
+            this.labelFont = options.labelFont;
+        }
+        if (options.labelColor) {
+            this.labelColor = options.labelColor;
+        }
+        if (options.labelMinAngle) {
+            this.labelMinAngle = options.labelMinAngle;
+        }
+        if (options.angleField) {
+            this.angleField = options.angleField;
+        }
+        if (options.radiusField) {
+            this.radiusField = options.radiusField;
+        }
+        if (options.labelField) {
+            this.labelField = options.labelField;
+        }
+        if (options.label) {
+            this.label = options.label;
+        }
+        if (options.colors) {
+            this.colors = options.colors;
+        }
+        if (options.rotation) {
+            this.rotation = options.rotation;
+        }
+        if (options.outerRadiusOffset) {
+            this.outerRadiusOffset = options.outerRadiusOffset;
+        }
+        if (options.innerRadiusOffset) {
+            this.innerRadiusOffset = options.innerRadiusOffset;
+        }
+        if (options.minOuterRadius) {
+            this.minOuterRadius = options.minOuterRadius;
+        }
+        if (options.lineWidth) {
+            this.lineWidth = options.lineWidth;
+        }
+        if (options.shadow) {
+            this.shadow = DropShadow.create(options.shadow);
+        }
+    }
+
+    set data(data: any[]) {
         this._data = data;
 
         const enabled = this.enabled;
@@ -67,7 +174,7 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
 
         this.scheduleData();
     }
-    get data(): D[] {
+    get data(): any[] {
         return this._data;
     }
 
@@ -151,25 +258,13 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
         return this._labelMinAngle;
     }
 
-    constructor() {
-        super();
-
-        const title = this.titleNode;
-        title.pointerEvents = PointerEvents.None;
-        title.fillStyle = this.labelColor;
-        title.textAlign = 'center';
-        title.textBaseline = 'bottom';
-
-        this.group.appendChild(title);
-    }
-
-    set chart(chart: Chart | null) {
+    set chart(chart: PolarChart | null) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.update();
         }
     }
-    get chart(): Chart | null {
+    get chart(): PolarChart | null {
         return this._chart;
     }
 
@@ -177,14 +272,14 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
      * The name of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    private _angleField: Extract<keyof D, string> | undefined = undefined;
-    set angleField(value: Extract<keyof D, string> | undefined) {
+    private _angleField: string = '';
+    set angleField(value: string) {
         if (this._angleField !== value) {
             this._angleField = value;
             this.scheduleData();
         }
     }
-    get angleField(): Extract<keyof D, string> | undefined {
+    get angleField(): string {
         return this._angleField;
     }
 
@@ -194,14 +289,14 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
      * proportionally smaller radii. To prevent confusing visuals, this config only works
      * if {@link innerRadiusOffset} is zero.
      */
-    private _radiusField: Extract<keyof D, string> | undefined = undefined;
-    set radiusField(value: Extract<keyof D, string> | undefined) {
+    private _radiusField: string = '';
+    set radiusField(value: string) {
         if (this._radiusField !== value) {
             this._radiusField = value;
             this.scheduleData();
         }
     }
-    get radiusField(): Extract<keyof D, string> | undefined {
+    get radiusField(): string {
         return this._radiusField;
     }
 
@@ -209,14 +304,14 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
      * The value of the label field is supposed to be a string.
      * If it isn't, it will be coerced to a string value.
      */
-    private _labelField: Extract<keyof D, string> | undefined = undefined;
-    set labelField(value: Extract<keyof D, string> | undefined) {
+    private _labelField: string = '';
+    set labelField(value: string) {
         if (this._labelField !== value) {
             this._labelField = value;
             this.scheduleData();
         }
     }
-    get labelField(): Extract<keyof D, string> | undefined {
+    get labelField(): string {
         return this._labelField;
     }
 
@@ -243,6 +338,10 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
 
     private strokeColors = colors.map(color => Color.fromString(color).darker().toHexString());
 
+    /**
+     * The series rotation in degrees.
+     */
+    private _rotation: number = 0;
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
@@ -315,15 +414,6 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
         return this._shadow;
     }
 
-    private angleScale: LinearScale<number> = (() => {
-        const scale = scaleLinear();
-        // Each slice is a ratio of the whole, where all ratios add up to 1.
-        scale.domain = [0, 1];
-        // Add 90 deg to start the first pie at 12 o'clock.
-        scale.range = [-Math.PI, Math.PI].map(angle => angle + Math.PI / 2);
-        return scale;
-    })();
-
     getDomainX(): [number, number] {
         return this.angleScale.domain as [number, number];
     }
@@ -331,8 +421,6 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
     getDomainY(): [number, number] {
         return this.radiusScale.domain as [number, number];
     }
-
-    minOuterRadius = 15;
 
     processData(): boolean {
         const data = this.data as any[];
@@ -443,13 +531,13 @@ export class PieSeries<D = any, X = number, Y = number> extends PolarSeries {
         const outerRadiusOffset = this.outerRadiusOffset;
         const innerRadiusOffset = this.innerRadiusOffset;
         const radiusScale = this.radiusScale;
-        radiusScale.range = [0, this.radius];
+        radiusScale.range = [0, chart.radius];
 
-        this.group.translationX = this.centerX;
-        this.group.translationY = this.centerY;
+        this.group.translationX = chart.centerX;
+        this.group.translationY = chart.centerY;
 
         const title = this.titleNode;
-        title.translationY = -this.radius - outerRadiusOffset - 2;
+        title.translationY = -chart.radius - outerRadiusOffset - 2;
         title.text = this.title;
         title.fillStyle = this.labelColor;
         title.font = this.titleFont;

@@ -1,14 +1,13 @@
-import { StackedCartesianSeries } from "./stackedCartesianSeries";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
 import { Rect } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
-import { DropShadow } from "../../scene/dropShadow";
+import { DropShadow, DropShadowOptions } from "../../scene/dropShadow";
 import colors from "../palettes";
 import { Color } from "../../util/color";
-import { SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, SeriesOptions } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
@@ -42,12 +41,75 @@ export interface BarTooltipRendererParams {
     yField: string
 }
 
-export class BarSeries extends StackedCartesianSeries {
+export interface BarSeriesOptions extends SeriesOptions {
+    xField?: string,
+    yFields?: string[],
+    yFieldNames?: string[],
+    grouped?: boolean,
+    colors?: string[],
+    lineWidth?: number,
+    // strokeStyle?: string // TODO: ???
+    shadow?: DropShadowOptions,
+    labelFont?: string,
+    labelColor?: string,
+    labelPadding?: [number, number],
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+}
+
+export class BarSeries extends Series<CartesianChart> {
+
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
     /**
      * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
      */
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+
+    /**
+     * The assumption is that the values will be reset (to `true`)
+     * in the {@link yFields} setter.
+     */
+    protected readonly enabled = new Map<string, boolean>();
+
+    constructor(options: BarSeriesOptions = {}) {
+        super();
+        this.init(options);
+    }
+
+    protected init(options: BarSeriesOptions) {
+        super.init(options);
+
+        if (options.xField) {
+            this.xField = options.xField;
+        }
+        if (options.yFields) {
+            this.yFields = options.yFields;
+        }
+        if (options.yFieldNames) {
+            this.yFieldNames = options.yFieldNames;
+        }
+        if (options.grouped) {
+            this.grouped = options.grouped;
+        }
+        if (options.colors) {
+            this.colors = options.colors;
+        }
+        if (options.lineWidth) {
+            this.lineWidth = options.lineWidth;
+        }
+        if (options.labelFont) {
+            this.labelFont = options.labelFont;
+        }
+        if (options.labelPadding) {
+            this.labelPadding = options.labelPadding;
+        }
+        if (options.tooltipRenderer) {
+            this.tooltipRenderer = options.tooltipRenderer;
+        }
+        if (options.shadow) {
+            this.shadow = DropShadow.create(options.shadow);
+        }
+    }
 
     private _colors: string[] = colors;
     set colors(values: string[]) {
@@ -81,6 +143,7 @@ export class BarSeries extends StackedCartesianSeries {
         return this._chart as CartesianChart;
     }
 
+    protected _xField: string = '';
     set xField(value: string) {
         if (this._xField !== value) {
             this._xField = value;
@@ -98,6 +161,7 @@ export class BarSeries extends StackedCartesianSeries {
      * If the {@link grouped} set to `true`, we get the grouped bar series.
      * @param values
      */
+    protected _yFields: string[] = [];
     set yFields(values: string[]) {
         this._yFields = values;
 
@@ -117,6 +181,7 @@ export class BarSeries extends StackedCartesianSeries {
         return this._yFields;
     }
 
+    protected _yFieldNames: string[] = [];
     set yFieldNames(values: string[]) {
         this._yFieldNames = values;
         this.update();
@@ -450,8 +515,6 @@ export class BarSeries extends StackedCartesianSeries {
         }
         return html;
     }
-
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {

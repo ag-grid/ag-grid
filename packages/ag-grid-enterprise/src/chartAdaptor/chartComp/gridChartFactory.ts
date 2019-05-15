@@ -41,8 +41,8 @@ export class GridChartFactory {
     private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
         const barChart = new CartesianChart({
             parent: options.parentElement,
-            xAxis: new CategoryAxis(),
-            yAxis: new NumberAxis()
+            xAxis: { type: 'category' },
+            yAxis: { type: 'number' }
         });
 
         barChart.width = options.width;
@@ -79,8 +79,8 @@ export class GridChartFactory {
     private static createLineChart(options: CreateChartOptions): Chart {
         const lineChart = new CartesianChart({
             parent: options.parentElement,
-            xAxis: new CategoryAxis(),
-            yAxis: new NumberAxis()
+            xAxis: { type: 'category' },
+            yAxis: { type: 'number' }
         });
 
         lineChart.width = options.width;

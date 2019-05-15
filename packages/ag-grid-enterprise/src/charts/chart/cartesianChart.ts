@@ -4,10 +4,11 @@ import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
+import { AxisOptions, makeAxis } from "./axis/axisOptions";
 
 export interface CartesianChartOptions extends ChartOptions {
-    xAxis: Axis,
-    yAxis: Axis
+    xAxis: AxisOptions,
+    yAxis: AxisOptions
 }
 
 export class CartesianChart extends Chart {
@@ -15,14 +16,14 @@ export class CartesianChart extends Chart {
     private axisAutoPadding = new Padding();
 
     constructor(options: CartesianChartOptions) {
-        super(options);
+        super();
+        super.init(options);
 
-        const {xAxis, yAxis} = options;
+        const xAxis = this._xAxis = makeAxis(options.xAxis);
+        const yAxis = this._yAxis = makeAxis(options.yAxis);
 
         this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
         this.scene.root!.append(this.legend.group);
-        this._xAxis = xAxis;
-        this._yAxis = yAxis;
     }
 
     private seriesClipRect = new ClipRect();
@@ -41,14 +42,14 @@ export class CartesianChart extends Chart {
         return this._yAxis;
     }
 
-    set series(values: Series[]) {
+    set series(values: Series<CartesianChart>[]) {
         this.removeAllSeries();
         values.forEach(series => {
             this.addSeries(series);
         });
     }
-    get series(): Series[] {
-        return this._series;
+    get series(): Series<CartesianChart>[] {
+        return this._series as Series<CartesianChart>[];
     }
 
     performLayout(): void {
