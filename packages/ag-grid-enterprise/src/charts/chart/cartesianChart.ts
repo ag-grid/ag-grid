@@ -66,17 +66,17 @@ export class CartesianChart extends Chart {
 
             const legendPadding = this.legendPadding;
             switch (this.legendPosition) {
-                case LegendPosition.Right:
+                case 'right':
                     shrinkRect.width -= legendPadding;
                     break;
-                case LegendPosition.Bottom:
+                case 'bottom':
                     shrinkRect.height -= legendPadding;
                     break;
-                case LegendPosition.Left:
+                case 'left':
                     shrinkRect.x += legendPadding;
                     shrinkRect.width -= legendPadding;
                     break;
-                case LegendPosition.Top:
+                case 'top':
                     shrinkRect.y += legendPadding;
                     shrinkRect.height -= legendPadding;
                     break;

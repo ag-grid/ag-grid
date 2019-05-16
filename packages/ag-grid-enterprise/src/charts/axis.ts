@@ -16,10 +16,10 @@ enum Tags {
     GridLine
 }
 
-export type GridStyle = {
+export interface GridStyle {
     strokeStyle: string | null,
     lineDash: number[] | null
-};
+}
 
 /**
  * A general purpose linear axis with no notion of orientation.

@@ -21,8 +21,12 @@ export interface AxisOptions {
     mirrorLabels?: boolean;
     parallelLabels?: boolean;
     labelFormatter?: (value: any, fractionDigits?: number) => string;
+    gridStyle?: IGridStyle[];
+}
 
-    // gridStyle?: GridStyle[]
+export interface IGridStyle {
+    strokeStyle: string | null;
+    lineDash: number[] | null;
 }
 
 export interface IChartOptions {
@@ -31,11 +35,20 @@ export interface IChartOptions {
     height?: number;
     series?: any[];
     data?: any;
-    // padding?: Padding,
-    // legendPosition?: LegendPosition,
+    padding?: IPadding;
+    legendPosition?: LegendPosition;
     legendPadding?: number;
     tooltipClass?: string;
 }
+
+interface IPadding {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}
+
+export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface CartesianChartOptions extends IChartOptions {
     xAxis: AxisOptions;

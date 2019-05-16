@@ -19,6 +19,7 @@ import {Series, SeriesOptions} from "../../charts/chart/series/series";
 import {DropShadow, Offset} from "../../charts/scene/dropShadow";
 import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
 import {NumberAxis} from "../../charts/chart/axis/numberAxis";
+import { Padding } from "../../charts/util/padding";
 
 export class ChartBuilder {
 
@@ -67,12 +68,17 @@ export class ChartBuilder {
             }
             chart.series = seriesInstances;
         }
-        // if (options.padding) {
-        //     chart.padding = options.padding;
-        // }
-        // if (options.legendPosition) {
-        //     chart.legendPosition = options.legendPosition;
-        // }
+        if (options.padding) {
+            chart.padding = new Padding(
+                options.padding.top,
+                options.padding.right,
+                options.padding.bottom,
+                options.padding.left
+            );
+        }
+        if (options.legendPosition) {
+            chart.legendPosition = options.legendPosition;
+        }
         if (options.legendPadding) {
             chart.legendPadding = options.legendPadding;
         }

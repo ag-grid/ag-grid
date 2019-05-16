@@ -8,24 +8,7 @@ import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 
-export enum LegendPosition {
-    Top,
-    Right,
-    Bottom,
-    Left
-}
-
-export interface ChartOptions {
-    parent?: HTMLElement,
-    width?: number,
-    height?: number,
-    series?: any[],
-    data?: any,
-    padding?: Padding,
-    legendPosition?: LegendPosition,
-    legendPadding?: number,
-    tooltipClass?: string
-}
+export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export abstract class Chart {
     readonly scene: Scene = new Scene();
@@ -129,18 +112,18 @@ export abstract class Chart {
         this.dataPending = true;
     }
 
-    private _legendPosition: LegendPosition = LegendPosition.Right;
+    private _legendPosition: LegendPosition = 'right';
     set legendPosition(value: LegendPosition) {
         if (this._legendPosition !== value) {
             this._legendPosition = value;
             this.legendAutoPadding.clear();
             switch (value) {
-                case LegendPosition.Right:
-                case LegendPosition.Left:
+                case 'right':
+                case 'left':
                     this.legend.orientation = Orientation.Vertical;
                     break;
-                case LegendPosition.Bottom:
-                case LegendPosition.Top:
+                case 'bottom':
+                case 'top':
                     this.legend.orientation = Orientation.Horizontal;
                     break;
             }
@@ -297,7 +280,7 @@ export abstract class Chart {
 
         let legendBBox: BBox;
         switch (this.legendPosition) {
-            case LegendPosition.Bottom:
+            case 'bottom':
                 legend.performLayout(width - legendPadding * 2, 0);
                 legendBBox = legendGroup.getBBox();
 
@@ -310,7 +293,7 @@ export abstract class Chart {
                 }
                 break;
 
-            case LegendPosition.Top:
+            case 'top':
                 legend.performLayout(width - legendPadding * 2, 0);
                 legendBBox = legendGroup.getBBox();
 
@@ -323,7 +306,7 @@ export abstract class Chart {
                 }
                 break;
 
-            case LegendPosition.Left:
+            case 'left':
                 legend.performLayout(0, height - legendPadding * 2);
                 legendBBox = legendGroup.getBBox();
 
@@ -336,7 +319,7 @@ export abstract class Chart {
                 }
                 break;
 
-            default: // case LegendPosition.Right:
+            default: // case 'right':
                 legend.performLayout(0, height - legendPadding * 2);
                 legendBBox = legendGroup.getBBox();
 
