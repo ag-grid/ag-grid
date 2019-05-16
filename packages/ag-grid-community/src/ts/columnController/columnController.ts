@@ -2997,7 +2997,7 @@ export class ColumnController {
         // see if we need to insert the default grouping column
         const needAutoColumns = (this.rowGroupColumns.length > 0 || this.usingTreeData)
             && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
-            && !this.gridOptionsWrapper.isGroupUseEntireRow()
+            && !this.gridOptionsWrapper.isGroupUseEntireRow(this.pivotMode)
             && !this.gridOptionsWrapper.isGroupSuppressRow();
 
         if (needAutoColumns) {

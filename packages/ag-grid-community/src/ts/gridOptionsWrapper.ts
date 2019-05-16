@@ -670,8 +670,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowData;
     }
 
-    public isGroupUseEntireRow() {
-        return isTrue(this.gridOptions.groupUseEntireRow);
+    // this property is different - we never allow groupUseEntireRow if in pivot mode,
+    // as otherwise we don't see the pivot values.
+    public isGroupUseEntireRow(pivotMode: boolean) {
+        return pivotMode ? false : isTrue(this.gridOptions.groupUseEntireRow);
     }
 
     public isEnableRtl() {

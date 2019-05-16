@@ -1119,7 +1119,8 @@ export class RowRenderer extends BeanStub {
 
             if (_.missing(nextCell)) { break; }
 
-            const skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow();
+            const pivotMode = this.columnController.isPivotMode();
+            const skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
             if (!skipGroupRows) { break; }
 
             const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
