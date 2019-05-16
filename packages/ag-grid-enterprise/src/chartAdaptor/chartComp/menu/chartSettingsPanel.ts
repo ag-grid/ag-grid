@@ -16,17 +16,19 @@ export class ChartSettingsPanel extends Component {
                 <div ref="ePrevBtn" class="ag-char-settings-prev-btn ag-icon-small-left">
                     <button type="button"></button>
                 </div>
-                <div class="ag-spacer"></div>
+                <div ref="eCardSelector" class="ag-nav-card-selector"></div>
                 <div ref="eNextBtn" class="ag-char-settings-next-btn ag-icon-small-right">
                     <button type="button"></button>
                 </div>
             </div>
         </div>`;
 
+    @RefSelector("eCardSelector") private eCardSelector: HTMLElement;
     @RefSelector("ePrevBtn") private ePrevBtn: HTMLElement;
     @RefSelector("eNextBtn") private eNextBtn: HTMLElement;
 
     private miniCharts: MiniChartsContainer[] = [];
+    private cardItems: HTMLElement[] = [];
 
     private chartController: ChartController;
     private activePalette: number;
@@ -46,12 +48,25 @@ export class ChartSettingsPanel extends Component {
 
             this.miniCharts.push(miniChartsContainer);
             this.getGui().appendChild(miniChartsContainer.getGui());
+            this.addCardLink(idx);
         });
 
         this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
         this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
 
         this.setActivePalette(this.activePalette, 0);
+    }
+
+    private addCardLink(idx: number): void {
+        const link = document.createElement('div');
+        _.addCssClass(link, 'ag-nav-card-item');
+        link.innerHTML = '\u25CF';
+        this.addDestroyableEventListener(link, 'click', () => {
+            if (idx === this.activePalette || this.isAnimating) { return; }
+            this.setActivePalette(idx, idx < this.activePalette ? 1 : 2);
+        });
+        this.eCardSelector.appendChild(link);
+        this.cardItems.push(link);
     }
 
     private getPrev(): number {
@@ -86,6 +101,8 @@ export class ChartSettingsPanel extends Component {
     }
 
     private setActivePalette(palette: number, animate?: number) {
+        _.radioCssClass(this.cardItems[palette], 'ag-selected');
+
         if (!animate) {
             this.miniCharts.forEach((miniChart, idx) => {
                 _.addOrRemoveCssClass(miniChart.getGui(), 'ag-hidden', idx !== palette);

@@ -43,9 +43,8 @@ export class MiniChartsContainer extends Component {
     }
 
     public refreshSelected() {
-        this.wrappers.forEach((wrapper, idx) => {
-            _.addOrRemoveCssClass(wrapper, 'ag-selected', idx === this.chartController.getChartType());
-        });
+        const type = this.chartController.getChartType();
+        _.radioCssClass(this.wrappers[type], 'ag-selected');
     }
 }
 

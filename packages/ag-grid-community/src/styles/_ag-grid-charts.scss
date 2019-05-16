@@ -63,9 +63,18 @@
                 display: flex;
                 height: 30px;
                 align-items: center;
-                padding: 0 10px;
-                .ag-spacer {
+                .ag-nav-card-selector {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
                     flex: 1 1 auto;
+                    height: 100%;
+                    .ag-nav-card-item {
+                        opacity: 0.2;
+                        &.ag-selected {
+                            opacity: 1;
+                        }
+                    }
                 }
                 .ag-char-settings-prev-btn, .ag-char-settings-next-btn {
                     flex: none;
@@ -103,6 +112,7 @@
         height: 100%;
         overflow: auto;
         position: relative;
+        user-select: none;
     }
 }
 

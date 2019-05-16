@@ -823,6 +823,12 @@ export class Utils {
         return (element.offsetParent !== null);
     }
 
+    static callIfPresent(func: Function): void {
+        if (func) {
+            func();
+        }
+    }
+
     /**
      * loads the template and returns it as an element. makes up for no simple way in
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
@@ -853,9 +859,14 @@ export class Utils {
         }
     }
 
-    static callIfPresent(func: Function): void {
-        if (func) {
-            func();
+    static radioCssClass(element: HTMLElement, className: string) {
+        const parent = element.parentElement;
+
+        let sibling = parent.firstChild as HTMLElement;
+
+        while (sibling) {
+            _.addOrRemoveCssClass(sibling, className, sibling === element);
+            sibling = sibling.nextSibling as HTMLElement;
         }
     }
 
@@ -882,6 +893,25 @@ export class Utils {
                 // do not use element.classList = className here, it will cause
                 // a read-only assignment error on some browsers (IE/Edge).
                 element.setAttribute('class', className);
+            }
+        }
+    }
+
+    static removeCssClass(element: HTMLElement, className: string) {
+        if (element.classList) {
+            if (element.classList.contains(className)) {
+                element.classList.remove(className);
+            }
+        } else {
+            if (element.className && element.className.length > 0) {
+                const cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) >= 0) {
+                    // remove all instances of the item, not just the first, in case it's in more than once
+                    while (cssClasses.indexOf(className) >= 0) {
+                        cssClasses.splice(cssClasses.indexOf(className), 1);
+                    }
+                    element.setAttribute('class', cssClasses.join(' '));
+                }
             }
         }
     }
@@ -930,25 +960,6 @@ export class Utils {
 
     static sortNumberArray(numberArray: number[]): void {
         numberArray.sort((a: number, b: number) => a - b);
-    }
-
-    static removeCssClass(element: HTMLElement, className: string) {
-        if (element.classList) {
-            if (element.classList.contains(className)) {
-                element.classList.remove(className);
-            }
-        } else {
-            if (element.className && element.className.length > 0) {
-                const cssClasses = element.className.split(' ');
-                if (cssClasses.indexOf(className) >= 0) {
-                    // remove all instances of the item, not just the first, in case it's in more than once
-                    while (cssClasses.indexOf(className) >= 0) {
-                        cssClasses.splice(cssClasses.indexOf(className), 1);
-                    }
-                    element.setAttribute('class', cssClasses.join(' '));
-                }
-            }
-        }
     }
 
     static removeRepeatsFromArray<T>(array: T[], object: T) {

@@ -1499,6 +1499,22 @@
                     border-color: $primary-color;
                 }
             }
+
+            .ag-chart-settings-nav-bar {
+                padding: 0 10px;
+                user-select: none;
+                .ag-nav-card-selector {
+                    padding: 0 10px;
+                    .ag-nav-card-item {
+                        color: $foreground-color;
+                        font-size: $font-size - 2;
+                        cursor: pointer;
+                        &.ag-selected {
+                            color: $primary-color;
+                        }
+                    }
+                }
+            }
         }
     }
 
