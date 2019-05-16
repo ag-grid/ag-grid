@@ -1404,15 +1404,3 @@ function countryCellRenderer(params) {
         return flag + ' ' + params.value;
     }
 }
-
-// setTimeout( function(){
-//     columnApi.setRowGroupColumns(['country']);
-//     columnApi.setValueColumns(['jan']);
-//     columnApi.setPivotMode(true);
-// }, 5000);
-
-function movePopup() {
-    var e = document.querySelector('.ag-popup-window');
-    e.style.top = '400px';
-    e.style.left = '100px';
-}
