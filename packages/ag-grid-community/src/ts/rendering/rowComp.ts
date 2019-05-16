@@ -310,7 +310,12 @@ export class RowComp extends Component {
         const isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
         const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         const pivotMode = this.beans.columnController.isPivotMode();
-        const isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+        // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
+        // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
+        // so each can be set independently (as a customer complained about footers getting full width, hence
+        // introducing this logic)
+        const isGroupRow = this.rowNode.group && !this.rowNode.footer;
+        const isFullWidthGroup =  isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
 
         if (this.rowNode.stub) {
             this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME);
@@ -318,7 +323,7 @@ export class RowComp extends Component {
             this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME);
         } else if (isFullWidthCell) {
             this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null);
-        } else if (isGroupSpanningRow) {
+        } else if (isFullWidthGroup) {
             this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME);
         } else {
             this.setupNormalRowContainers();
