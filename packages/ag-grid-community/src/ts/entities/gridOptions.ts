@@ -75,6 +75,7 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
+import { IChartOptions } from "../interfaces/iChartOptions";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -430,6 +431,8 @@ export interface GridOptions {
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
 
     postSort?(nodes: RowNode[]): void;
+
+    getChartOptions?(): IChartOptions;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

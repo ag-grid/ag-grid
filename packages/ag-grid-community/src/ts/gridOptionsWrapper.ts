@@ -14,6 +14,7 @@ import {
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
+import { _ } from "./utils";
 import { EventService } from "./eventService";
 import { Constants } from "./constants";
 import { ComponentUtil } from "./components/componentUtil";
@@ -35,7 +36,7 @@ import { Events } from "./eventKeys";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
 import { ModuleNames } from "./modules/moduleNames";
-import { _ } from "./utils";
+import { IChartOptions } from "./interfaces/iChartOptions";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1058,6 +1059,10 @@ export class GridOptionsWrapper {
 
     public getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined {
         return this.gridOptions.postSort;
+    }
+
+    public getChartOptionsFunc(): () => IChartOptions {
+        return this.gridOptions.getChartOptions;
     }
 
     public getClipboardDeliminator() {

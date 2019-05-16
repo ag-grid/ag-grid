@@ -8,7 +8,8 @@ import {
     Environment,
     PostConstruct,
     RefSelector,
-    ResizeObserverService
+    ResizeObserverService,
+    IChartOptions
 } from "ag-grid-community";
 import { GridChartFactory } from "./gridChartFactory";
 import { Chart } from "../../charts/chart/chart";
@@ -23,7 +24,8 @@ import { ChartController } from "./chartController";
 import { ChartModel } from "./chartModel";
 import { Color } from "../../charts/util/color";
 
-export interface ChartOptions {
+export interface GridChartOptions {
+    chartOptions: IChartOptions;
     chartType: ChartType;
     insideDialog: boolean;
     showTooltips: boolean;
@@ -53,13 +55,13 @@ export class GridChartComp extends Component {
 
     private currentChartType: ChartType;
 
-    private readonly chartOptions: ChartOptions;
-    private readonly initialCellRanges: CellRange[];
+    private readonly chartOptions: GridChartOptions;
+    private readonly initialCellRange: CellRange;
 
-    constructor(chartOptions: ChartOptions, cellRanges: CellRange[]) {
+    constructor(chartOptions: GridChartOptions, cellRange: CellRange) {
         super(GridChartComp.TEMPLATE);
         this.chartOptions = chartOptions;
-        this.initialCellRanges = cellRanges;
+        this.initialCellRange = cellRange;
     }
 
     @PostConstruct
@@ -69,7 +71,7 @@ export class GridChartComp extends Component {
             this.chartOptions.palette = this.getPalette();
         }
 
-        this.model = new ChartModel(this.chartOptions, this.initialCellRanges);
+        this.model = new ChartModel(this.chartOptions, this.initialCellRange);
         this.getContext().wireBean(this.model);
 
         this.chartController = new ChartController(this.model);
@@ -104,6 +106,7 @@ export class GridChartComp extends Component {
 
         const chartOptions = {
             chartType: this.model.getChartType(),
+            chartOptions: this.chartOptions.chartOptions,
             parentElement: this.eChart,
             width: width,
             height: height,

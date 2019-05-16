@@ -1,17 +1,15 @@
-import { ChartType } from "ag-grid-community";
-import { CartesianChart } from "../../charts/chart/cartesianChart";
-import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
-import { NumberAxis } from "../../charts/chart/axis/numberAxis";
-import { BarSeries } from "../../charts/chart/series/barSeries";
-import { PolarChart } from "../../charts/chart/polarChart";
-import { Chart } from "../../charts/chart/chart";
+import {CartesianChartOptions, ChartType, IChartOptions, PolarChartOptions} from "ag-grid-community";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {Chart} from "../../charts/chart/chart";
+import {ChartBuilder} from "../builder/chartBuilder";
 
 interface CreateChartOptions {
-    chartType: ChartType,
-    width: number,
-    height: number,
-    showTooltips: boolean,
-    parentElement: HTMLElement,
+    chartType: ChartType;
+    chartOptions: IChartOptions;
+    width: number;
+    height: number;
+    showTooltips: boolean;
+    parentElement: HTMLElement;
     isDarkTheme: boolean
 }
 
@@ -39,11 +37,13 @@ export class GridChartFactory {
     }
 
     private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
-        const barChart = new CartesianChart({
-            parent: options.parentElement,
-            xAxis: { type: 'category' },
-            yAxis: { type: 'number' }
-        });
+        // const barChart = new CartesianChart({
+        //     parent: options.parentElement,
+        //     xAxis: { type: 'category' },
+        //     yAxis: { type: 'number' }
+        // });
+
+        const barChart = ChartBuilder.createCartesianChart({} as CartesianChartOptions);
 
         barChart.width = options.width;
         barChart.height = options.height;
@@ -77,11 +77,13 @@ export class GridChartFactory {
     }
 
     private static createLineChart(options: CreateChartOptions): Chart {
-        const lineChart = new CartesianChart({
-            parent: options.parentElement,
-            xAxis: { type: 'category' },
-            yAxis: { type: 'number' }
-        });
+        // const lineChart = new CartesianChart({
+        //     parent: options.parentElement,
+        //     xAxis: { type: 'category' },
+        //     yAxis: { type: 'number' }
+        // });
+
+        const lineChart = ChartBuilder.createCartesianChart({} as CartesianChartOptions);
 
         lineChart.width = options.width;
         lineChart.height = options.height;
@@ -107,7 +109,8 @@ export class GridChartFactory {
     }
 
     private static createPolarChart(options: CreateChartOptions): Chart {
-        const pieChart = new PolarChart({ parent: options.parentElement });
+
+        const pieChart = ChartBuilder.createPolarChart({} as PolarChartOptions);
 
         pieChart.width = options.width;
         pieChart.height = options.height;

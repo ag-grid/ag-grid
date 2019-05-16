@@ -56,6 +56,7 @@ import { IRangeChartService } from "./interfaces/iRangeChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
 import { ChartRef } from "./entities/gridOptions";
+import {IChartOptions} from "./interfaces/iChartOptions";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -87,6 +88,7 @@ export interface RedrawRowsParams {
 export interface ChartRangeParams {
     cellRange: CellRangeParams;
     chartType: string;
+    chartOptions?: IChartOptions;
     chartContainer?: HTMLElement;
     aggregate?: boolean;
 }

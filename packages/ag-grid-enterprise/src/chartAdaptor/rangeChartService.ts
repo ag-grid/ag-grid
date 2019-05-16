@@ -9,10 +9,11 @@ import {
     Context,
     GridOptionsWrapper,
     IRangeChartService,
-    PreDestroy
+    PreDestroy,
+    IChartOptions
 } from "ag-grid-community";
 import { RangeController } from "../rangeController";
-import { ChartOptions, GridChartComp } from "./chartComp/gridChartComp";
+import { GridChartOptions, GridChartComp } from "./chartComp/gridChartComp";
 
 @Bean('rangeChartService')
 export class RangeChartService implements IRangeChartService {
@@ -27,7 +28,10 @@ export class RangeChartService implements IRangeChartService {
 
     public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
-        return this.chartRange([selectedRange], chartType);
+
+        const getChartOptionsFunc = this.gridOptionsWrapper.getChartOptionsFunc();
+        const chartOptions = getChartOptionsFunc ? getChartOptionsFunc() : {};
+        return this.chartRange(selectedRange, chartType, chartOptions);
     }
 
     public chartCellRange(params: ChartRangeParams): ChartRef | undefined {
@@ -60,14 +64,17 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            return this.chartRange([cellRange], chartType, params.chartContainer, params.aggregate);
+            const chartOptions = params.chartOptions ? params.chartOptions : {};
+            return this.chartRange(cellRange, chartType, chartOptions, params.chartContainer, params.aggregate);
         }
     }
 
-    public chartRange(cellRanges: CellRange[], chartType: ChartType, container?: HTMLElement, aggregate = false): ChartRef | undefined {
+    private chartRange(cellRange: CellRange, chartType: ChartType, chartOptions: IChartOptions, container?: HTMLElement, aggregate = false): ChartRef | undefined {
+
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
-        const chartOptions: ChartOptions = {
+        const gridChartOptions: GridChartOptions = {
+            chartOptions: chartOptions,
             chartType: chartType,
             insideDialog: !(container || createChartContainerFunc),
             aggregate: aggregate,
@@ -76,7 +83,7 @@ export class RangeChartService implements IRangeChartService {
             width: 800
         };
 
-        const chartComp = new GridChartComp(chartOptions, cellRanges);
+        const chartComp = new GridChartComp(gridChartOptions, cellRange);
         this.context.wireBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);
