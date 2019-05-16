@@ -4,8 +4,6 @@
 .ag-theme-balham-dark {
     @include ag-theme-balham($params);
 
-    @include scrollbars(14px, #6b6b6b, #1c1f20, #959595);
-
     input,
     select {
         background-color: $odd-row-background-color;

@@ -23,42 +23,6 @@
     padding-right: $padding;
 }
 
-@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white,  50%), $hover-color: mix($foreground-color, white, 25%)) {
-    // For Google Chrome
-    ::-webkit-scrollbar {
-        width:  $size;
-        height: $size;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background-color: $foreground-color;
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: content-box;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background-color: $hover-color;
-        border-radius: 10px;
-        border: 3px solid transparent;
-        background-clip: content-box;
-    }
-
-    ::-webkit-scrollbar-track {
-        background-color: $background-color;
-    }
-
-    ::-webkit-scrollbar-corner {
-        background-color: $background-color;
-    }
-
-    // For Internet Explorer
-    body {
-        scrollbar-face-color: $foreground-color;
-        scrollbar-track-color: $background-color;
-    }
-}
-
 @mixin icon-background($params, $icon) {
     $size: map-get($params, "icon-size");
     $iconpath: map-get($params, "icons-path");
