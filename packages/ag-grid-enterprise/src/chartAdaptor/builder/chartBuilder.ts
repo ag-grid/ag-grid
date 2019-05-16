@@ -1,10 +1,14 @@
 import {
+    IChartOptions,
     AxisOptions,
     BarSeriesOptions,
-    CartesianChartOptions, DropShadowOptions, IChartOptions,
-    LineSeriesOptions, PieSeriesOptions,
+    CartesianChartOptions,
+    DropShadowOptions,
+    LineSeriesOptions,
+    PieSeriesOptions,
     PolarChartOptions
-} from "../../../../ag-grid-community/src/ts/interfaces/iChartOptions";
+} from "ag-grid-community";
+
 import {CartesianChart} from "../../charts/chart/cartesianChart";
 import {PolarChart} from "../../charts/chart/polarChart";
 import {LineSeries} from "../../charts/chart/series/lineSeries";

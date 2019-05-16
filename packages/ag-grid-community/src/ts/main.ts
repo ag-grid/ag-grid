@@ -285,6 +285,17 @@ export {
     ProcessDataFromClipboardParams,
     ChartRef
 } from "./entities/gridOptions";
+
+export {
+    IChartOptions,
+    AxisOptions,
+    BarSeriesOptions,
+    CartesianChartOptions,
+    DropShadowOptions,
+    LineSeriesOptions,
+    PieSeriesOptions,
+    PolarChartOptions } from "./interfaces/iChartOptions";
+
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
