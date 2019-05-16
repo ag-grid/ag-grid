@@ -311,7 +311,7 @@ export class EnterpriseMenu extends BeanStub {
     private getDefaultMenuOptions(): string[] {
         const result: string[] = [];
 
-        const allowPinning = !this.column.isLockPinned();
+        const allowPinning = !this.column.getColDef().lockPinned;
 
         const rowGroupCount = this.columnController.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;

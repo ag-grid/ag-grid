@@ -106,7 +106,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private onChangeCommon(nextState: boolean): void {
         // ignore lock visible columns
-        if (this.column.isLockVisible()) {
+        if (this.column.getColDef().lockVisible) {
             return;
         }
 
@@ -297,7 +297,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
             checkboxReadOnly = functionsReadOnly || noFunctionsAllowed;
         } else {
             // when in normal mode, the checkbox is read only if visibility is locked
-            checkboxReadOnly = this.column.isLockVisible();
+            checkboxReadOnly = !!this.column.getColDef().lockVisible;
         }
 
         this.cbSelect.setReadOnly(checkboxReadOnly);

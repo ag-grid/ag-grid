@@ -90,12 +90,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private moving = false;
     private menuVisible = false;
 
-    // we copy this from col def, as if it's value changes are column is created,
-    // it will break the logic in the column controller
-    private readonly lockPosition: boolean;
-    private readonly lockPinned: boolean;
-    private readonly lockVisible: boolean;
-
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
 
@@ -126,9 +120,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
-        this.lockPosition = colDef.lockPosition === true;
-        this.lockPinned = colDef.lockPinned === true;
-        this.lockVisible = colDef.lockVisible === true;
     }
 
     // gets called when user provides an alternative colDef, eg
@@ -139,18 +130,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getUserProvidedColDef(): ColDef {
         return this.userProvidedColDef;
-    }
-
-    public isLockPosition(): boolean {
-        return this.lockPosition;
-    }
-
-    public isLockVisible(): boolean {
-        return this.lockVisible;
-    }
-
-    public isLockPinned(): boolean {
-        return this.lockPinned;
     }
 
     public setParent(parent: ColumnGroup): void {

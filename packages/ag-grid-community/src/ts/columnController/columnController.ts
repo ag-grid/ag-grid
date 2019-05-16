@@ -1186,7 +1186,7 @@ export class ColumnController {
 
         // go though the cols, see if any non-locked appear before any locked
         proposedColumnOrder.forEach(col => {
-            if (col.isLockPosition()) {
+            if (col.getColDef().lockPosition) {
                 if (foundNonLocked) {
                     rulePassed = false;
                 }
@@ -1605,6 +1605,10 @@ export class ColumnController {
     }
 
     public resetColumnState(suppressEverythingEvent = false, source: ColumnEventType = "api"): void {
+        // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
+        // this is ignored  below when ordering the cols. to work, we should always put lockPosition cols first.
+        // As a work around, developers should just put lockPosition columns first in their colDef list.
+
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         const primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
         const columnStates: ColumnState[] = [];
@@ -2635,8 +2639,8 @@ export class ColumnController {
     }
 
     private putFixedColumnsFirst(): void {
-        const locked = this.gridColumns.filter(c => c.isLockPosition());
-        const unlocked = this.gridColumns.filter(c => !c.isLockPosition());
+        const locked = this.gridColumns.filter(c => c.getColDef().lockPosition);
+        const unlocked = this.gridColumns.filter(c => !c.getColDef().lockPosition);
         this.gridColumns = locked.concat(unlocked);
     }
 
