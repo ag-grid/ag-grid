@@ -1,119 +1,20 @@
-import { CartesianChart } from "../../charts/chart/cartesianChart";
-import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
-import { NumberAxis } from "../../charts/chart/axis/numberAxis";
-import { GridStyle } from "../../charts/axis";
-import { LineSeries, LineTooltipRendererParams } from "../../charts/chart/series/lineSeries";
-import { BarSeries, BarTooltipRendererParams } from "../../charts/chart/series/barSeries";
-import { PieSeries } from "../../charts/chart/series/pieSeries";
-import { Padding } from "../../charts/util/padding";
-import { Chart, LegendPosition } from "../../charts/chart/chart";
-import { Series } from "../../charts/chart/series/series";
-import { DropShadow, Offset } from "../../charts/scene/dropShadow";
-import { PolarChart } from "../../charts/chart/polarChart";
-
-export interface AxisOptions {
-    type?: 'category' | 'number',
-
-    lineWidth?: number,
-    lineColor?: string,
-
-    tickWidth?: number,
-    tickSize?: number,
-    tickPadding?: number,
-    tickColor?: string,
-
-    labelFont?: string,
-    labelColor?: string,
-    labelRotation?: number,
-    mirrorLabels?: boolean,
-    parallelLabels?: boolean,
-    labelFormatter?: (value: any, fractionDigits?: number) => string,
-
-    gridStyle?: GridStyle[]
-}
-
-export interface ChartOptions {
-    parent?: HTMLElement,
-    width?: number,
-    height?: number,
-    series?: any[],
-    data?: any,
-    padding?: Padding,
-    legendPosition?: LegendPosition,
-    legendPadding?: number,
-    tooltipClass?: string
-}
-
-export interface CartesianChartOptions extends ChartOptions {
-    xAxis: AxisOptions,
-    yAxis: AxisOptions
-}
-
-export interface PolarChartOptions extends ChartOptions {}
-
-export interface DropShadowOptions {
-    color?: string,
-    offset?: [number, number],
-    blur?: number
-}
-
-export interface SeriesOptions {
-    type?: string,
-    data?: any[],
-    title?: string,
-    titleFont?: string,
-    visible?: boolean,
-    showInLegend?: boolean,
-    tooltip?: boolean
-}
-
-export interface LineSeriesOptions extends SeriesOptions {
-    xField?: string,
-    yField?: string,
-    color?: string,
-    lineWidth?: number,
-    marker?: boolean,
-    markerRadius?: number,
-    markerLineWidth?: number,
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
-}
-
-export interface BarSeriesOptions extends SeriesOptions {
-    xField?: string,
-    yFields?: string[],
-    yFieldNames?: string[],
-    grouped?: boolean,
-    colors?: string[],
-    lineWidth?: number,
-    // strokeStyle?: string // TODO: ???
-    shadow?: DropShadowOptions,
-    labelFont?: string,
-    labelColor?: string,
-    labelPadding?: [number, number],
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
-}
-
-export interface PieSeriesOptions extends SeriesOptions {
-    calloutColor?: string,
-    calloutWidth?: number,
-    calloutLength?: number,
-    calloutPadding?: number,
-    labelFont?: string,
-    labelColor?: string,
-    labelMinAngle?: number,
-    angleField?: string,
-    radiusField?: string,
-    labelField?: string,
-    label?: boolean,
-    colors?: string[],
-    rotation?: number,
-    outerRadiusOffset?: number,
-    innerRadiusOffset?: number,
-    minOuterRadius?: number,
-    // strokeStyle?: string // TODO: ???
-    shadow?: DropShadowOptions,
-    lineWidth?: number
-}
+import {
+    AxisOptions,
+    BarSeriesOptions,
+    CartesianChartOptions, DropShadowOptions, IChartOptions,
+    LineSeriesOptions, PieSeriesOptions,
+    PolarChartOptions
+} from "../../../../ag-grid-community/src/ts/interfaces/iChartOptions";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {PolarChart} from "../../charts/chart/polarChart";
+import {LineSeries} from "../../charts/chart/series/lineSeries";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {PieSeries} from "../../charts/chart/series/pieSeries";
+import {Chart} from "../../charts/chart/chart";
+import {Series, SeriesOptions} from "../../charts/chart/series/series";
+import {DropShadow, Offset} from "../../charts/scene/dropShadow";
+import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
+import {NumberAxis} from "../../charts/chart/axis/numberAxis";
 
 export class ChartBuilder {
 
@@ -141,7 +42,7 @@ export class ChartBuilder {
         }
     }
 
-    static initChart<C extends Chart>(chart: C, options: ChartOptions) {
+    static initChart<C extends Chart>(chart: C, options: IChartOptions) {
         if (options.parent) {
             chart.parent = options.parent;
         }
@@ -162,12 +63,12 @@ export class ChartBuilder {
             }
             chart.series = seriesInstances;
         }
-        if (options.padding) {
-            chart.padding = options.padding;
-        }
-        if (options.legendPosition) {
-            chart.legendPosition = options.legendPosition;
-        }
+        // if (options.padding) {
+        //     chart.padding = options.padding;
+        // }
+        // if (options.legendPosition) {
+        //     chart.legendPosition = options.legendPosition;
+        // }
         if (options.legendPadding) {
             chart.legendPadding = options.legendPadding;
         }
@@ -234,9 +135,9 @@ export class ChartBuilder {
         if (options.markerLineWidth) {
             series.markerLineWidth = options.markerLineWidth;
         }
-        if (options.tooltipRenderer) {
-            series.tooltipRenderer = options.tooltipRenderer;
-        }
+        // if (options.tooltipRenderer) {
+        //     series.tooltipRenderer = options.tooltipRenderer;
+        // }
 
         return series;
     }
@@ -266,9 +167,9 @@ export class ChartBuilder {
         if (options.labelPadding) {
             series.labelPadding = options.labelPadding;
         }
-        if (options.tooltipRenderer) {
-            series.tooltipRenderer = options.tooltipRenderer;
-        }
+        // if (options.tooltipRenderer) {
+        //     series.tooltipRenderer = options.tooltipRenderer;
+        // }
         if (options.shadow) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
