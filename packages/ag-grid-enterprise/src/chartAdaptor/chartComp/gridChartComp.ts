@@ -23,6 +23,7 @@ import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
 import { ChartModel } from "./chartModel";
 import { Color } from "../../charts/util/color";
+import {ChartBuilder} from "../builder/chartBuilder";
 
 export interface GridChartOptions {
     chartOptions: IChartOptions;
@@ -179,18 +180,12 @@ export class GridChartComp extends Component {
     private updateBarChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
         const barSeries = this.chart.series[0] as BarSeries;
 
-        const barChart = barSeries.chart as CartesianChart;
-
-        barChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
-        barChart.xAxis.gridStyle;
-
         barSeries.data = data;
         barSeries.xField = categoryId;
         barSeries.yFields = fields.map(f => f.colId);
         barSeries.yFieldNames = fields.map(f => f.displayName);
 
         //barSeries.colors = palettes[this.getPalette()];
-
         //barSeries.tooltip = this.chartOptions.showTooltips;
         // barSeries.tooltipRenderer = params => {
         //     const colDisplayName = fields.filter(f => f.colId === params.yField)[0].displayName;
@@ -205,9 +200,6 @@ export class GridChartComp extends Component {
         }
 
         const lineChart = this.chart as CartesianChart;
-
-        lineChart.xAxis.labelRotation = categoryId === ChartModel.DEFAULT_CATEGORY ? 0 : -90;
-
         const fieldIds = fields.map(f => f.colId);
 
         const existingSeriesMap: { [id: string]: LineSeries } = {};
@@ -220,27 +212,36 @@ export class GridChartComp extends Component {
         fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
-            const lineSeries = existingSeries ? existingSeries : new LineSeries();
+            let lineSeries: LineSeries;
+            if (existingSeries) {
+                lineSeries = existingSeries;
+            } else {
+                const colors = palettes[this.getPalette()];
 
-            lineSeries.title = f.displayName;
+                const defaultLineSeriesDef = {
+                    type: 'line',
+                    lineWidth: 3,
+                    markerRadius: 3,
+                    color: colors[index % colors.length],
+                    tooltip: this.chartOptions.showTooltips,
+                    tooltipRenderer: (params: any) => { //TODO
+                        return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
+                    }
+                };
 
-            lineSeries.lineWidth = 3;
-            lineSeries.markerRadius = 3;
+                const mergedLineSeriesDefs = _.assign(defaultLineSeriesDef, this.chartOptions.chartOptions.lineSeries);
+                lineSeries = ChartBuilder.createSeries(mergedLineSeriesDefs) as LineSeries;
+            }
 
-            const colors = palettes[this.getPalette()];
-            lineSeries.color = colors[index % colors.length];
+            if (lineSeries) {
+                lineSeries.title = f.displayName;
+                lineSeries.data = this.model.getData();
+                lineSeries.xField = categoryId;
+                lineSeries.yField = f.colId;
 
-            lineSeries.data = this.model.getData();
-            lineSeries.xField = categoryId;
-            lineSeries.yField = f.colId;
-
-            lineSeries.tooltip = this.chartOptions.showTooltips;
-            lineSeries.tooltipRenderer = params => {
-                return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
-            };
-
-            if (!existingSeries) {
-                lineChart.addSeries(lineSeries);
+                if (!existingSeries) {
+                    lineChart.addSeries(lineSeries);
+                }
             }
         });
     }
