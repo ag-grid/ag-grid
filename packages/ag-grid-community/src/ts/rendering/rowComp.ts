@@ -442,10 +442,10 @@ export class RowComp extends Component {
     private addListenersForCellComps(): void {
 
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
-            this.forEachCellComp( cellComp => cellComp.onRowIndexChanged() );
+            this.forEachCellComp(cellComp => cellComp.onRowIndexChanged());
         });
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
-            this.forEachCellComp( cellComp => cellComp.onCellChanged(event) );
+            this.forEachCellComp(cellComp => cellComp.onCellChanged(event));
         });
 
     }

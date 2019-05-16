@@ -1,8 +1,8 @@
-import {ProvidedFilterModel, IDoesFilterPassParams, IFilterOptionDef} from "../../interfaces/iFilter";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {OptionsFactory} from "./optionsFactory";
-import {ProvidedFilter, IProvidedFilterParams} from "./providedFilter";
-import {_} from "../../utils";
+import { ProvidedFilterModel, IDoesFilterPassParams, IFilterOptionDef } from "../../interfaces/iFilter";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { OptionsFactory } from "./optionsFactory";
+import { ProvidedFilter, IProvidedFilterParams } from "./providedFilter";
+import { _ } from "../../utils";
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string) [];
@@ -178,8 +178,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         if ((!a && b) || (a && !b)) { return false; }
 
         // one is combined, the other is not
-        const aIsSimple = !(<any>a).operator;
-        const bIsSimple = !(<any>b).operator;
+        const aIsSimple = !(a as any).operator;
+        const bIsSimple = !(b as any).operator;
         const oneSimpleOneCombined = (!aIsSimple && bIsSimple) || (aIsSimple && !bIsSimple);
         if (oneSimpleOneCombined) { return false; }
 
@@ -187,13 +187,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
         // otherwise both present, so compare
         if (aIsSimple) {
-            const aSimple = <M> a;
-            const bSimple = <M> b;
+            const aSimple = a as M;
+            const bSimple = b as M;
 
             res = this.areSimpleModelsEqual(aSimple, bSimple);
         } else {
-            const aCombined = <ICombinedSimpleModel<M>> a;
-            const bCombined = <ICombinedSimpleModel<M>> b;
+            const aCombined = a as ICombinedSimpleModel<M>;
+            const bCombined = b as ICombinedSimpleModel<M>;
 
             res = aCombined.operator === bCombined.operator
                 && this.areSimpleModelsEqual(aCombined.condition1, bCombined.condition1)
@@ -205,10 +205,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): void {
 
-        const isCombined = (<any>model).operator;
+        const isCombined = (model as any).operator;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<M>> model;
+            const combinedModel = model as ICombinedSimpleModel<M>;
 
             const orChecked = combinedModel.operator === 'OR';
             this.eJoinOperatorAnd.checked = !orChecked;
@@ -221,7 +221,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             this.setConditionIntoUi(combinedModel.condition2, ConditionPosition.Two);
 
         } else {
-            const simpleModel = <ISimpleFilterModel> model;
+            const simpleModel = model as ISimpleFilterModel;
 
             this.eJoinOperatorAnd.checked = true;
             this.eJoinOperatorOr.checked = false;
@@ -229,7 +229,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             this.eType1.value = simpleModel.type;
             this.eType2.value = this.optionsFactory.getDefaultOption();
 
-            this.setConditionIntoUi(<M>simpleModel, ConditionPosition.One);
+            this.setConditionIntoUi(simpleModel as M, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
 
@@ -238,10 +238,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const model = this.getModel();
 
-        const isCombined = (<any>model).operator;
+        const isCombined = (model as any).operator;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<M>> model;
+            const combinedModel = model as ICombinedSimpleModel<M>;
 
             const firstResult = this.individualConditionPasses(params, combinedModel.condition1);
             const secondResult = this.individualConditionPasses(params, combinedModel.condition2);
@@ -253,7 +253,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             }
 
         } else {
-            const simpleModel = <ISimpleFilterModel> model;
+            const simpleModel = model as ISimpleFilterModel;
             const result = this.individualConditionPasses(params, simpleModel);
             return result;
         }
@@ -276,8 +276,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     private putOptionsIntoDropdown(): void {
         const filterOptions = this.optionsFactory.getFilterOptions();
 
-        filterOptions.forEach( option => {
-            const createOption = ()=> {
+        filterOptions.forEach(option => {
+            const createOption = () => {
                 const key = (typeof option === 'string') ? option : option.displayKey;
                 const localName = this.translate(key);
 
@@ -315,7 +315,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             `<div class="ag-filter-condition" ref="eJoinOperatorPanel">
                     <label>
                         <input ref="eJoinOperatorAnd" type="radio" class="and" name="${uniqueGroupId}" value="AND")} checked="checked" />
-                        ${translate('andCondition','AND')}
+                        ${translate('andCondition', 'AND')}
                     </label>
                     <label>
                         <input ref="eJoinOperatorOr" type="radio" class="or" name="${uniqueGroupId}" value="OR" />
@@ -362,7 +362,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     public addChangedListeners() {
-        const listener = ()=> this.onUiChanged();
+        const listener = () => this.onUiChanged();
         this.addDestroyableEventListener(this.eType1, "change", listener);
         this.addDestroyableEventListener(this.eType2, "change", listener);
         this.addDestroyableEventListener(this.eJoinOperatorOr, "change", listener);

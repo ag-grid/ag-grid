@@ -1,5 +1,5 @@
-import {SimpleFilter, ISimpleFilterParams, ISimpleFilterModel} from "./simpleFilter";
-import {IDoesFilterPassParams} from "../../interfaces/iFilter";
+import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./simpleFilter";
+import { IDoesFilterPassParams } from "../../interfaces/iFilter";
 
 export interface NullComparator {
     equals?: boolean;

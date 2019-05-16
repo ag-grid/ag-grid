@@ -50,7 +50,6 @@ export const nord: string[] = [
     '#85c0d1'
 ];
 
-
 export const office: string[] = [
     '#a2282f',
     '#c8501f',

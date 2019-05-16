@@ -8,12 +8,12 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../../headerRendering/hoverFeature";
-import {Events, FilterChangedEvent} from "../../events";
+import { Events, FilterChangedEvent } from "../../events";
 import { EventService } from "../../eventService";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { _, Promise } from "../../utils";
 import { ColDef } from "../../entities/colDef";
-import {IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
@@ -178,7 +178,7 @@ export class FloatingFilterWrapper extends Component {
         }
     }
 
-    private parentFilterInstance( callback: (filterInstance: IFilterComp)=>void ): void {
+    private parentFilterInstance(callback: (filterInstance: IFilterComp) => void): void {
         const promise = this.filterManager.getFilterComponent(this.column, 'NO_UI');
         promise.then(callback);
     }
@@ -250,7 +250,7 @@ export class FloatingFilterWrapper extends Component {
 
     private currentParentModel(): any {
         const filterPromise = this.filterManager.getFilterComponent(this.column, 'NO_UI');
-        return filterPromise.resolveNow(null, filter => filter.getModel() );
+        return filterPromise.resolveNow(null, filter => filter.getModel());
     }
 
     private onParentModelChanged(model: any, filterChangedEvent: FilterChangedEvent): void {
@@ -264,6 +264,6 @@ export class FloatingFilterWrapper extends Component {
     private onFloatingFilterChanged(): void {
         console.warn('ag-Grid: since version 21.x, how floating filters are implemented has changed. ' +
             'Instead of calling params.onFloatingFilterChanged(), get a reference to the main filter via ' +
-            'params.parentFilterInstance() and then set a value on the parent filter directly.')
+            'params.parentFilterInstance() and then set a value on the parent filter directly.');
     }
 }

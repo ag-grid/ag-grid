@@ -1,5 +1,5 @@
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {_} from "../../../utils";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { _ } from "../../../utils";
 
 import {
     SimpleFilter,
@@ -7,7 +7,7 @@ import {
     ISimpleFilterParams,
     ISimpleFilterModel
 } from "../simpleFilter";
-import {ScalerFilter, Comparator} from "../scalerFilter";
+import { ScalerFilter, Comparator } from "../scalerFilter";
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
@@ -53,13 +53,13 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     }
 
     protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void {
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const eValueFrom = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
 
-        eValueFrom.value = model ? (''+model.filter) : null;
-        eValueTo.value = model ? (''+model.filterTo) : null;
+        eValueFrom.value = model ? ('' + model.filter) : null;
+        eValueTo.value = model ? ('' + model.filterTo) : null;
     }
 
     protected setValueFromFloatingFilter(value: string): void {
@@ -84,7 +84,7 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     }
 
     private addValueChangedListeners(): void {
-        const listener = ()=> this.onUiChanged();
+        const listener = () => this.onUiChanged();
         this.addDestroyableEventListener(this.eValueFrom1, 'input', listener);
         this.addDestroyableEventListener(this.eValueFrom2, 'input', listener);
         this.addDestroyableEventListener(this.eValueTo1, 'input', listener);
@@ -101,7 +101,7 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
 
     protected createValueTemplate(position: ConditionPosition): string {
 
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const pos = positionOne ? '1' : '2';
 
@@ -118,7 +118,7 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
@@ -127,13 +127,13 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         const value = this.stringToFloat(eValue.value);
         const valueTo = this.stringToFloat(eValueTo.value);
 
-        if (option===SimpleFilter.EMPTY) { return false; }
+        if (option === SimpleFilter.EMPTY) { return false; }
 
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
 
-        if (option===SimpleFilter.IN_RANGE) {
+        if (option === SimpleFilter.IN_RANGE) {
             return value != null && valueTo != null;
         } else {
             return value != null;
@@ -166,7 +166,7 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     }
 
     protected createCondition(position: ConditionPosition): NumberFilterModel {
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
 
@@ -203,6 +203,5 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         const showTo2 = this.showValueTo(this.getCondition2Type());
         _.setVisible(this.eValueTo2, showTo2);
     }
-
 
 }

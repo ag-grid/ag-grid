@@ -11,8 +11,8 @@ import {
     IRangeChartService,
     PreDestroy
 } from "ag-grid-community";
-import {RangeController} from "../rangeController";
-import {ChartOptions, GridChartComp} from "./chartComp/gridChartComp";
+import { RangeController } from "../rangeController";
+import { ChartOptions, GridChartComp } from "./chartComp/gridChartComp";
 
 @Bean('rangeChartService')
 export class RangeChartService implements IRangeChartService {

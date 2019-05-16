@@ -73,7 +73,7 @@ export class ChartSettingsPanel extends Component {
         let prev = this.activePalette - 1;
 
         if (prev < 0) {
-            prev = palettes.length -1;
+            prev = palettes.length - 1;
         }
 
         return prev;

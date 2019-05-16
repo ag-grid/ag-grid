@@ -1,6 +1,6 @@
-import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
-import {Component} from "../../../widgets/component";
-import {RefSelector} from "../../../widgets/componentAnnotations";
+import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
+import { Component } from "../../../widgets/component";
+import { RefSelector } from "../../../widgets/componentAnnotations";
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
@@ -27,7 +27,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             return;
         }
 
-        this.params.parentFilterInstance( filterInstance => {
+        this.params.parentFilterInstance(filterInstance => {
             // getModelAsString should be present, as we check this
             // in floatingFilterWrapper
             if (filterInstance.getModelAsString) {

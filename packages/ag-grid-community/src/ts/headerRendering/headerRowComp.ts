@@ -15,7 +15,7 @@ import { IComponent } from "../interfaces/iComponent";
 import { GridApi } from "../gridApi";
 import { Constants } from "../constants";
 import { _ } from "../utils";
-import {FloatingFilterWrapper} from "../filter/floating/floatingFilterWrapper";
+import { FloatingFilterWrapper } from "../filter/floating/floatingFilterWrapper";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER

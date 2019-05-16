@@ -1,10 +1,10 @@
-import {Component} from "../../../widgets/component";
-import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
-import {ProvidedFilterModel} from "../../../interfaces/iFilter";
-import {SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
-import {OptionsFactory} from "../../provided/optionsFactory";
-import {IScalarFilterParams} from "../../provided/scalerFilter";
-import {FilterChangedEvent} from "../../../events";
+import { Component } from "../../../widgets/component";
+import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
+import { ProvidedFilterModel } from "../../../interfaces/iFilter";
+import { SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel } from "../../provided/simpleFilter";
+import { OptionsFactory } from "../../provided/optionsFactory";
+import { IScalarFilterParams } from "../../provided/scalerFilter";
+import { FilterChangedEvent } from "../../../events";
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
@@ -27,23 +27,23 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
             return null;
         }
 
-        const isCombined = (<any>model).operator;
+        const isCombined = (model as any).operator;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<ISimpleFilterModel>>model;
+            const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
 
             const con1Str = this.conditionToString(combinedModel.condition1);
             const con2Str = this.conditionToString(combinedModel.condition2);
 
             return `${con1Str} ${combinedModel.operator} ${con2Str}`;
         } else {
-            const condition = <ISimpleFilterModel>model;
+            const condition = model as ISimpleFilterModel;
             return this.conditionToString(condition);
         }
     }
 
     protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean {
-        return (event && (<any>event).afterFloatingFilter);
+        return (event && (event as any).afterFloatingFilter);
     }
 
     protected getLastType(): string {
@@ -56,15 +56,15 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
             return;
         }
 
-        const isCombined = (<any>model).operator;
+        const isCombined = (model as any).operator;
 
         let condition: ISimpleFilterModel;
 
         if (isCombined) {
-            const combinedModel = <ICombinedSimpleModel<ISimpleFilterModel>>model;
+            const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
             condition = combinedModel.condition1;
         } else {
-            condition = <ISimpleFilterModel>model;
+            condition = model as ISimpleFilterModel;
         }
 
         this.lastType = condition.type;
@@ -79,12 +79,12 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         }
 
         // never allow editing if the filter is combined (ie has two parts)
-        const isCombined = (<any>model).operator;
+        const isCombined = (model as any).operator;
         if (isCombined) {
             return false;
         }
 
-        const simpleModel = <ISimpleFilterModel>model;
+        const simpleModel = model as ISimpleFilterModel;
 
         const typeIsEditable = this.isTypeEditable(simpleModel.type);
         return typeIsEditable;

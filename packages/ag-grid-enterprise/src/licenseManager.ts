@@ -137,7 +137,7 @@ export class LicenseManager {
     }
 
     private static extractBracketedInformation(licenseKey: string): [string | null, boolean] {
-        var matches = licenseKey.split('[')
+        const matches = licenseKey.split('[')
             .filter(function(v) {
                 return v.indexOf(']') > -1
             })

@@ -22,8 +22,8 @@ import { _ } from "../../utils";
 import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
 import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
 import { TextFilter } from "../../filter/provided/text/textFilter";
-import {NumberFloatingFilter} from "../../filter/provided/number/numberFloatingFilter";
-import {TextFloatingFilter} from "../../filter/provided/text/textFloatingFilter";
+import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
+import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED

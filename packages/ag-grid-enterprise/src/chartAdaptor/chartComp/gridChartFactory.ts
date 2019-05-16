@@ -1,10 +1,10 @@
-import {ChartType} from "ag-grid-community";
-import {CartesianChart} from "../../charts/chart/cartesianChart";
-import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
-import {NumberAxis} from "../../charts/chart/axis/numberAxis";
-import {BarSeries} from "../../charts/chart/series/barSeries";
-import {PolarChart} from "../../charts/chart/polarChart";
-import {Chart} from "../../charts/chart/chart";
+import { ChartType } from "ag-grid-community";
+import { CartesianChart } from "../../charts/chart/cartesianChart";
+import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
+import { NumberAxis } from "../../charts/chart/axis/numberAxis";
+import { BarSeries } from "../../charts/chart/series/barSeries";
+import { PolarChart } from "../../charts/chart/polarChart";
+import { Chart } from "../../charts/chart/chart";
 
 interface CreateChartOptions {
     chartType: ChartType,

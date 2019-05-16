@@ -1,5 +1,5 @@
-import {Component, IFloatingFilter, RefSelector} from "ag-grid-community";
-import {SetFilterModel} from "./setFilterModel";
+import { Component, IFloatingFilter, RefSelector } from "ag-grid-community";
+import { SetFilterModel } from "./setFilterModel";
 
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
 

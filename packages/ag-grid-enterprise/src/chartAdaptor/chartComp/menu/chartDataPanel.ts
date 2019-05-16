@@ -105,4 +105,3 @@ export class ChartDataPanel extends Component {
         this.columnComps = {};
     }
 }
-

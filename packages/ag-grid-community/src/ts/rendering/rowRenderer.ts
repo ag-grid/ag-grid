@@ -119,15 +119,15 @@ export class RowRenderer extends BeanStub {
     private registerCellEventListeners(): void {
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
-            this.forEachCellComp( cellComp => cellComp.onCellFocused(event) );
+            this.forEachCellComp(cellComp => cellComp.onCellFocused(event));
         });
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
-            this.forEachCellComp( cellComp => cellComp.onFlashCells(event) );
+            this.forEachCellComp(cellComp => cellComp.onFlashCells(event));
         });
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
-            this.forEachCellComp( cellComp => cellComp.onColumnHover() );
+            this.forEachCellComp(cellComp => cellComp.onColumnHover());
         });
 
         // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
@@ -137,24 +137,24 @@ export class RowRenderer extends BeanStub {
         // in different containers so doesn't impact.
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
             if (this.printLayout) {
-                this.forEachCellComp( cellComp => cellComp.onLeftChanged() );
+                this.forEachCellComp(cellComp => cellComp.onLeftChanged());
             }
         });
 
-        let rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
+        const rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
 
             this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
-                this.forEachCellComp( cellComp => cellComp.onRangeSelectionChanged() );
+                this.forEachCellComp(cellComp => cellComp.onRangeSelectionChanged());
             });
             this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
-                this.forEachCellComp( cellComp => cellComp.updateRangeBordersIfRangeCount() );
+                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
             this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
-                this.forEachCellComp( cellComp => cellComp.updateRangeBordersIfRangeCount() );
+                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
             this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-                this.forEachCellComp( cellComp => cellComp.updateRangeBordersIfRangeCount() );
+                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
 
         }
@@ -169,7 +169,7 @@ export class RowRenderer extends BeanStub {
 
     // executes all functions in destroyFuncsForColumnListeners and then clears the list
     private removeGridColumnListeners(): void {
-        this.destroyFuncsForColumnListeners.forEach( func => func() );
+        this.destroyFuncsForColumnListeners.forEach(func => func());
         this.destroyFuncsForColumnListeners.length = 0;
     }
 
@@ -185,11 +185,11 @@ export class RowRenderer extends BeanStub {
 
         if (!cols) { return; }
 
-        cols.forEach( col => {
+        cols.forEach(col => {
 
-            const forEachCellWithThisCol = (callback: (cellComp: CellComp)=>void) => {
-                this.forEachCellComp( cellComp => {
-                    if (cellComp.getColumn()===col) {
+            const forEachCellWithThisCol = (callback: (cellComp: CellComp) => void) => {
+                this.forEachCellComp(cellComp => {
+                    if (cellComp.getColumn() === col) {
                         callback(cellComp);
                     }
                 });
@@ -213,7 +213,7 @@ export class RowRenderer extends BeanStub {
             col.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
             col.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
 
-            this.destroyFuncsForColumnListeners.push( ()=> {
+            this.destroyFuncsForColumnListeners.push(() => {
                 col.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
                 col.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
                 col.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
@@ -222,7 +222,6 @@ export class RowRenderer extends BeanStub {
         });
 
     }
-
 
     private onDomLayoutChanged(): void {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;

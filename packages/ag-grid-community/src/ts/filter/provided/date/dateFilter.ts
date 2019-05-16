@@ -1,17 +1,17 @@
-import {IDateParams} from "../../../rendering/dateComponent";
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {Autowired} from "../../../context/context";
-import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
-import {_} from "../../../utils";
-import {DateCompWrapper} from "./dateCompWrapper";
+import { IDateParams } from "../../../rendering/dateComponent";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { Autowired } from "../../../context/context";
+import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { _ } from "../../../utils";
+import { DateCompWrapper } from "./dateCompWrapper";
 import {
     SimpleFilter,
     ConditionPosition,
     ISimpleFilterParams,
     ISimpleFilterModel
 } from "../simpleFilter";
-import {IDateComparatorFunc} from "./dateFilter";
-import {ScalerFilter, Comparator} from "../scalerFilter";
+import { IDateComparatorFunc } from "./dateFilter";
+import { ScalerFilter, Comparator } from "../scalerFilter";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert
@@ -27,11 +27,9 @@ export interface IDateFilterParams extends ISimpleFilterParams {
     browserDatePicker?: boolean;
 }
 
-
 export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
-
 
 export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
@@ -76,7 +74,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     protected setValueFromFloatingFilter(value: string): void {
-        if (value!=null) {
+        if (value != null) {
             const dateFrom = _.parseYyyyMmDdToDate(value, "-");
             this.dateCompFrom1.setDate(dateFrom);
         } else {
@@ -89,7 +87,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     protected setConditionIntoUi(model: DateFilterModel, position: ConditionPosition): void {
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const dateFromString = model ? model.dateFrom : null;
         const dateToString = model ? model.dateTo : null;
@@ -137,7 +135,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
         // params to pass to all four date comps
         const dateComponentParams: IDateParams = {
-            onDateChanged: ()=> this.onUiChanged(),
+            onDateChanged: () => this.onUiChanged(),
             filterParams: this.dateFilterParams
         };
 
@@ -146,7 +144,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         this.dateCompTo1 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelTo1);
         this.dateCompTo2 = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.ePanelTo2);
 
-        this.addDestroyFunc( () => {
+        this.addDestroyFunc(() => {
             this.dateCompFrom1.destroy();
             this.dateCompFrom2.destroy();
             this.dateCompTo1.destroy();
@@ -160,7 +158,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     protected createValueTemplate(position: ConditionPosition): string {
 
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const pos = positionOne ? '1' : '2';
 
@@ -173,7 +171,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
@@ -182,13 +180,13 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         const valueFrom = compFrom.getDate();
         const valueTo = compTo.getDate();
 
-        if (option===SimpleFilter.EMPTY) { return false; }
+        if (option === SimpleFilter.EMPTY) { return false; }
 
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
 
-        if (option===SimpleFilter.IN_RANGE) {
+        if (option === SimpleFilter.IN_RANGE) {
             return valueFrom != null && valueTo != null;
         } else {
             return valueFrom != null;
@@ -208,7 +206,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     protected createCondition(position: ConditionPosition): DateFilterModel {
 
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
 
@@ -240,6 +238,5 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         _.setVisible(this.ePanelTo2, showTo2);
 
     }
-
 
 }

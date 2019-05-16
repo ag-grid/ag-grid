@@ -497,7 +497,7 @@ export class FilterManager {
 
         // hack in scope if using AngularJS
         if ($scope) {
-            (<any>params).$scope = $scope;
+            (params as any).$scope = $scope;
         }
 
         return params;

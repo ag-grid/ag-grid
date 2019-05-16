@@ -10,18 +10,18 @@ import {
     RefSelector,
     ResizeObserverService
 } from "ag-grid-community";
-import {GridChartFactory} from "./gridChartFactory";
-import {Chart} from "../../charts/chart/chart";
-import {BarSeries} from "../../charts/chart/series/barSeries";
-import {LineSeries} from "../../charts/chart/series/lineSeries";
-import {PieSeries} from "../../charts/chart/series/pieSeries";
-import {palettes} from "../../charts/chart/palettes";
-import {CartesianChart} from "../../charts/chart/cartesianChart";
-import {PolarChart} from "../../charts/chart/polarChart";
-import {ChartMenu} from "./menu/chartMenu";
-import {ChartController} from "./chartController";
-import {ChartModel} from "./chartModel";
-import {Color} from "../../charts/util/color";
+import { GridChartFactory } from "./gridChartFactory";
+import { Chart } from "../../charts/chart/chart";
+import { BarSeries } from "../../charts/chart/series/barSeries";
+import { LineSeries } from "../../charts/chart/series/lineSeries";
+import { PieSeries } from "../../charts/chart/series/pieSeries";
+import { palettes } from "../../charts/chart/palettes";
+import { CartesianChart } from "../../charts/chart/cartesianChart";
+import { PolarChart } from "../../charts/chart/polarChart";
+import { ChartMenu } from "./menu/chartMenu";
+import { ChartController } from "./chartController";
+import { ChartModel } from "./chartModel";
+import { Color } from "../../charts/util/color";
 
 export interface ChartOptions {
     chartType: ChartType;
@@ -329,7 +329,6 @@ export class GridChartComp extends Component {
 
             pieSeries.labelField = categoryId;
             pieSeries.label = false;
-
 
             pieSeries.labelColor = this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black';
 

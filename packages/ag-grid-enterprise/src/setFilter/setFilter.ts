@@ -9,10 +9,10 @@ import {
     RefSelector,
     ValueFormatterService
 } from "ag-grid-community";
-import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
-import {SetFilterListItem} from "./setFilterListItem";
-import {VirtualList, VirtualListModel} from "../rendering/virtualList";
-import {SetFilterModel} from "./setFilterModel";
+import { SetFilterModelValuesType, SetValueModel } from "./setValueModel";
+import { SetFilterListItem } from "./setFilterListItem";
+import { VirtualList, VirtualListModel } from "../rendering/virtualList";
+import { SetFilterModel } from "./setFilterModel";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
@@ -89,7 +89,7 @@ export class SetFilter extends ProvidedFilter {
 
         if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
             // this is a hack, it breaks casting rules, to apply with old model
-            return <SetFilterModel> (<any>values);
+            return (values as any) as SetFilterModel;
         } else {
             return {
                 values: values,

@@ -1,9 +1,9 @@
-import {Component} from "../../widgets/component";
-import {ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams} from "../../interfaces/iFilter";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {Autowired, PostConstruct} from "../../context/context";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {_} from "../../utils";
+import { Component } from "../../widgets/component";
+import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { Autowired, PostConstruct } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { _ } from "../../utils";
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
@@ -83,10 +83,8 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.setupOnBtApplyDebounce();
     }
 
-
     protected setParams(params: IProvidedFilterParams): void {
         this.providedFilterParams = params;
-
 
         this.clearActive = params.clearButton === true;
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
@@ -195,7 +193,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // static, as used by floating filter also
     public static isUseApplyButton(params: IProvidedFilterParams): boolean {
         if ((params as any).apply && !params.applyButton) {
-            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is now filterParams.applyButton, please change to applyButton')
+            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is now filterParams.applyButton, please change to applyButton');
             params.applyButton = true;
         }
 

@@ -2,8 +2,8 @@
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { _ } from "../../utils";
-import {Autowired} from "../../context/context";
-import {FilterManager} from "../../filter/filterManager";
+import { Autowired } from "../../context/context";
+import { FilterManager } from "../../filter/filterManager";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 

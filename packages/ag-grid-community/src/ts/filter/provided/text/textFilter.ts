@@ -1,6 +1,6 @@
-import {IDoesFilterPassParams} from "../../../interfaces/iFilter";
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {_} from "../../../utils";
+import { IDoesFilterPassParams } from "../../../interfaces/iFilter";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { _ } from "../../../utils";
 import {
     SimpleFilter,
     ConditionPosition,
@@ -36,12 +36,12 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
-    };
+    }
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    };
+    }
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -63,7 +63,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    };
+    }
 
     @RefSelector('eValue1')
     private eValue1: HTMLInputElement;
@@ -86,7 +86,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     private addValueChangedListeners(): void {
-        const listener = ()=> this.onUiChanged();
+        const listener = () => this.onUiChanged();
         this.addDestroyableEventListener(this.eValue1, 'input', listener);
         this.addDestroyableEventListener(this.eValue2, 'input', listener);
     }
@@ -105,7 +105,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     protected setConditionIntoUi(model: TextFilterModel, position: ConditionPosition): void {
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const eValue = positionOne ? this.eValue1 : this.eValue2;
 
@@ -114,7 +114,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     protected createCondition(position: ConditionPosition): TextFilterModel {
 
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValue1 : this.eValue2;
@@ -156,7 +156,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     protected createValueTemplate(position: ConditionPosition): string {
 
-        const pos = position===ConditionPosition.One ? '1' : '2';
+        const pos = position === ConditionPosition.One ? '1' : '2';
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body">
@@ -180,12 +180,12 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
-        const positionOne = position===ConditionPosition.One;
+        const positionOne = position === ConditionPosition.One;
 
         const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eFilterValue = positionOne ? this.eValue1 : this.eValue2;
 
-        if (option===SimpleFilter.EMPTY) { return false; }
+        if (option === SimpleFilter.EMPTY) { return false; }
 
         const value = this.getValue(eFilterValue);
         if (this.doesFilterHaveHiddenInput(option)) {

@@ -1,14 +1,14 @@
-import {IFloatingFilterParams} from "../floatingFilter";
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {ProvidedFilterModel} from "../../../interfaces/iFilter";
-import {_} from "../../../utils";
-import {Constants} from "../../../constants";
-import {ProvidedFilter} from "../../provided/providedFilter";
-import {PostConstruct} from "../../../context/context";
-import {SimpleFloatingFilter} from "./simpleFloatingFilter";
-import {SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel} from "../../provided/simpleFilter";
-import {NumberFilterModel} from "../../provided/number/numberFilter";
-import {FilterChangedEvent} from "../../../events";
+import { IFloatingFilterParams } from "../floatingFilter";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { ProvidedFilterModel } from "../../../interfaces/iFilter";
+import { _ } from "../../../utils";
+import { Constants } from "../../../constants";
+import { ProvidedFilter } from "../../provided/providedFilter";
+import { PostConstruct } from "../../../context/context";
+import { SimpleFloatingFilter } from "./simpleFloatingFilter";
+import { SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel } from "../../provided/simpleFilter";
+import { NumberFilterModel } from "../../provided/number/numberFilter";
+import { FilterChangedEvent } from "../../../events";
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
@@ -65,9 +65,9 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
         const enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
         if (this.applyActive && !enterKeyPressed) { return; }
 
-        this.params.parentFilterInstance( filterInstance => {
+        this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
-                const simpleFilter = <SimpleFilter<ISimpleFilterModel>> filterInstance;
+                const simpleFilter = filterInstance as SimpleFilter<ISimpleFilterModel>;
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), value);
             }
         });

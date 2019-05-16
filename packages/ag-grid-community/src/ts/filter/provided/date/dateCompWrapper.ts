@@ -1,8 +1,8 @@
 // removes the complexity of async component creation from the date panel. while the component does not
 // exist, the wrapper keeps the value that was set and returns this value when queried. when the component
 // is finally created, it gets the temp value if set.
-import {IDateComp, IDateParams} from "../../../rendering/dateComponent";
-import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
+import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
+import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */

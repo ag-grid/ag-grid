@@ -11,9 +11,9 @@ import {
     ColumnController,
     PostConstruct
 } from "ag-grid-community";
-import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
-import {ChartOptions} from "./gridChartComp";
-import {RangeController} from "../../rangeController";
+import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
+import { ChartOptions } from "./gridChartComp";
+import { RangeController } from "../../rangeController";
 
 export interface ColState {
     column?: Column;
@@ -146,7 +146,7 @@ export class ChartModel extends BeanStub {
             // update the reference range
             this.referenceCellRange = lastRange;
 
-            if(updatedCol) {
+            if (updatedCol) {
                 const updatingStartCol = lastRange.columns[0] === updatedCol.column;
                 this.referenceCellRange.startColumn = updatingStartCol ? lastRange.columns[1] : lastRange.columns[0];
             }
@@ -157,7 +157,7 @@ export class ChartModel extends BeanStub {
         // clear ranges
         this.cellRanges = [];
 
-        let dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
+        const dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
         if (this.initialising) {
             // first time in just take the first dimension from the range as the column state hasn't been updated yet
             if (dimensionColsInRange.length > 0) {
@@ -199,7 +199,7 @@ export class ChartModel extends BeanStub {
         // replacing the selected dimension with a complex object to facilitate duplicated categories
         return this.chartData.map((d: any, index: number) => {
             const dimensionValue = d[selectedDimension] ? d[selectedDimension].toString() : '';
-            d[selectedDimension] = {toString: () => {return dimensionValue}, id: index};
+            d[selectedDimension] = {toString: () => dimensionValue, id: index};
             return d;
         });
     }
@@ -310,7 +310,7 @@ export class ChartModel extends BeanStub {
                     validChartType = false;
                 }
 
-                if (validChartType) return;
+                if (validChartType) { return; }
             }
 
             if (!!colDef.enableRowGroup || !!colDef.enablePivot) {
