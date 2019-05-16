@@ -1002,7 +1002,7 @@ function onThemeChanged(newTheme) {
 
     document.body.classList.toggle('dark', isDark);
 
-    document.body.style.scrollbarColor = isDark ? '#6B6B6B #2B3436' : 'inherit';
+    document.body.style.scrollbarColor = isDark ? '#6B6B6B #1c1f20' : 'inherit';
 }
 
 var filterCount = 0;
