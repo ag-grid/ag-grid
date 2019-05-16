@@ -1100,19 +1100,11 @@ export class RowRenderer extends BeanStub {
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
-
-            const cellComp = this.getComponentForCell(currentCell);
-            const colSpanningList = cellComp.getColSpanningList();
-
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (key === Constants.KEY_RIGHT && colSpanningList.length > 1) {
-                currentCell = {
-                    rowIndex: currentCell.rowIndex,
-                    column: _.last(colSpanningList),
-                    rowPinned: currentCell.rowPinned
-                };
+            if (key === Constants.KEY_RIGHT) {
+                currentCell = this.getLastCellOfColSpan(currentCell);
             }
 
             nextCell = this.cellNavigationService.getNextCellToFocus(key, currentCell);
@@ -1173,6 +1165,21 @@ export class RowRenderer extends BeanStub {
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
         }
+    }
+
+    private getLastCellOfColSpan(cell: CellPosition): CellPosition {
+        const cellComp = this.getComponentForCell(cell);
+        const colSpanningList = cellComp.getColSpanningList();
+
+        if (colSpanningList.length === 1) {
+            return cell;
+        }
+
+        return {
+            rowIndex: cell.rowIndex,
+            column: _.last(colSpanningList),
+            rowPinned: cell.rowPinned
+        };
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
@@ -1360,6 +1367,9 @@ export class RowRenderer extends BeanStub {
         let nextCell: CellPosition = gridCell;
 
         while (true) {
+            if (!backwards) {
+                nextCell = this.getLastCellOfColSpan(nextCell);
+            }
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
 
             // allow user to override what cell to go to next
