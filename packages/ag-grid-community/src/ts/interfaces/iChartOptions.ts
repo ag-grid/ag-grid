@@ -1,6 +1,9 @@
 export interface IChartOptions {
     cartesian: CartesianChartOptions; // shared object for all bar and line charts
-    barSeries?: BarSeriesOptions;
+    polar: PolarChartOptions;
+    barSeries: BarSeriesOptions;
+    lineSeries: LineSeriesOptions;
+    pieSeries: PieSeriesOptions;
 }
 
 export interface AxisOptions {
