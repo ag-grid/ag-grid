@@ -1,4 +1,4 @@
-import {_, ChartType, IChartOptions} from "ag-grid-community";
+import {_, CartesianChartOptions, ChartType, IChartOptions} from "ag-grid-community";
 import {Chart} from "../../charts/chart/chart";
 import {ChartBuilder} from "../builder/chartBuilder";
 
@@ -38,36 +38,11 @@ export class GridChartFactory {
     private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
         const chartOptions = options.chartOptions;
 
-        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
-        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
-
-        const defaultCartesianDef = {
-            parent: options.parentElement,
-            width: options.width,
-            height: options.height,
-            xAxis: {
-                type: 'category',
-                labelColor: labelColor,
-                gridStyle: [{
-                    strokeStyle: axisGridColor,
-                    lineDash: [4, 2]
-                }],
-            },
-            yAxis: {
-                type: 'number',
-                labelColor: labelColor,
-                gridStyle: [{
-                    strokeStyle: axisGridColor,
-                    lineDash: [4, 2]
-                }],
-            }
-        };
-
-        const mergedDefs = _.assign(defaultCartesianDef, chartOptions.cartesian);
+        const mergedDefs = _.assign(this.defaultCartesianDef(options), chartOptions.cartesian);
         const barChart = ChartBuilder.createCartesianChart(mergedDefs);
 
         //TODO
-        barChart.legend.labelColor = labelColor;
+        barChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;;
 
         const defaultBarSeriesDef = {
             type: 'bar',
@@ -87,36 +62,11 @@ export class GridChartFactory {
     private static createLineChart(options: CreateChartOptions): Chart {
         const chartOptions = options.chartOptions;
 
-        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
-        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
-
-        const defaultCartesianDef = {
-            parent: options.parentElement,
-            width: options.width,
-            height: options.height,
-            xAxis: {
-                type: 'category',
-                labelColor: labelColor,
-                gridStyle: [{
-                    strokeStyle: axisGridColor,
-                    lineDash: [4, 2]
-                }],
-            },
-            yAxis: {
-                type: 'number',
-                labelColor: labelColor,
-                gridStyle: [{
-                    strokeStyle: axisGridColor,
-                    lineDash: [4, 2]
-                }],
-            }
-        };
-
-        const mergedDefs = _.assign(defaultCartesianDef, chartOptions.cartesian);
+        const mergedDefs = _.assign(this.defaultCartesianDef(options), chartOptions.cartesian);
         const lineChart = ChartBuilder.createCartesianChart(mergedDefs);
 
         //TODO
-        lineChart.legend.labelColor = labelColor;
+        lineChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;;
 
         return lineChart;
     }
@@ -138,5 +88,32 @@ export class GridChartFactory {
         polarChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
 
         return polarChart;
+    }
+
+    private static defaultCartesianDef(options: CreateChartOptions): CartesianChartOptions {
+        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
+        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
+
+        return {
+            parent: options.parentElement,
+            width: options.width,
+            height: options.height,
+            xAxis: {
+                type: 'category',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            },
+            yAxis: {
+                type: 'number',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            }
+        };
     }
 }
