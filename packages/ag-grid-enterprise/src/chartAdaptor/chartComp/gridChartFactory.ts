@@ -30,7 +30,7 @@ export class GridChartFactory {
                 return GridChartFactory.createPolarChart(options);
             case ChartType.Doughnut:
                 return GridChartFactory.createPolarChart(options);
-            default: // case ChartType.Line:
+            case ChartType.Line:
                 return GridChartFactory.createLineChart(options);
         }
     }
@@ -38,98 +38,90 @@ export class GridChartFactory {
     private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
         const chartOptions = options.chartOptions;
 
-        const defaultDef = {
+        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
+        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
+
+        const defaultCartesianDef = {
             parent: options.parentElement,
             width: options.width,
-            height: options.height
+            height: options.height,
+            xAxis: {
+                type: 'category',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            },
+            yAxis: {
+                type: 'number',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            }
         };
 
-        const mergedDefs = _.assign(defaultDef, chartOptions.cartesian);
-
+        const mergedDefs = _.assign(defaultCartesianDef, chartOptions.cartesian);
         const barChart = ChartBuilder.createCartesianChart(mergedDefs);
 
-        const barSeriesConfig = chartOptions.barSeries ? chartOptions.barSeries : {};
+        //TODO
+        barChart.legend.labelColor = labelColor;
 
-        barSeriesConfig.type = 'bar';
-        barSeriesConfig.grouped = grouped;
+        const defaultBarSeriesDef = {
+            type: 'bar',
+            grouped: grouped,
+            tooltip: options.showTooltips
+        };
 
-        const barSeries = ChartBuilder.createSeries(barSeriesConfig);
+        const mergedBarSeriesDefs = _.assign(defaultBarSeriesDef, chartOptions.barSeries);
+        const barSeries = ChartBuilder.createSeries(mergedBarSeriesDefs);
         if (barSeries) {
             barChart.addSeries(barSeries);
         }
 
         return barChart;
-
-        // const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
-        //
-        // barChart.xAxis.labelColor = labelColor;
-        // barChart.yAxis.labelColor = labelColor;
-        // barChart.legend.labelColor = labelColor;
-        //
-        // const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
-        // barChart.xAxis.gridStyle = [{
-        //     strokeStyle: axisGridColor,
-        //     lineDash: [4, 2]
-        // }];
-        //
-        // barChart.yAxis.gridStyle = [{
-        //     strokeStyle: axisGridColor,
-        //     lineDash: [4, 2]
-        // }];
-        //
-        // const barSeries = new BarSeries();
-        // barSeries.tooltip = options.showTooltips;
-        // barSeries.grouped = grouped;
-        //
-        // barSeries.lineWidth = 1;
     }
 
     private static createLineChart(options: CreateChartOptions): Chart {
-        // const lineChart = new CartesianChart({
-        //     parent: options.parentElement,
-        //     xAxis: { type: 'category' },
-        //     yAxis: { type: 'number' }
-        // });
-
         const chartOptions = options.chartOptions;
 
-        const defaultDef = {
+        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
+        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
+
+        const defaultCartesianDef = {
             parent: options.parentElement,
             width: options.width,
-            height: options.height
+            height: options.height,
+            xAxis: {
+                type: 'category',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            },
+            yAxis: {
+                type: 'number',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            }
         };
 
-        const mergedDefs = _.assign(defaultDef, chartOptions.cartesian);
+        const mergedDefs = _.assign(defaultCartesianDef, chartOptions.cartesian);
+        const lineChart = ChartBuilder.createCartesianChart(mergedDefs);
 
-        return ChartBuilder.createCartesianChart(mergedDefs);
+        //TODO
+        lineChart.legend.labelColor = labelColor;
 
-        // const lineChart = ChartBuilder.createCartesianChart({} as CartesianChartOptions);
-        //
-        // lineChart.width = options.width;
-        // lineChart.height = options.height;
-        //
-        // const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
-        //
-        // lineChart.xAxis.labelColor = labelColor;
-        // lineChart.yAxis.labelColor = labelColor;
-        // lineChart.legend.labelColor = labelColor;
-        //
-        // const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
-        // lineChart.xAxis.gridStyle = [{
-        //     strokeStyle: axisGridColor,
-        //     lineDash: [4, 2]
-        // }];
-        //
-        // lineChart.yAxis.gridStyle = [{
-        //     strokeStyle: axisGridColor,
-        //     lineDash: [4, 2]
-        // }];
-        //
-        // return lineChart;
+        return lineChart;
     }
 
     private static createPolarChart(options: CreateChartOptions): Chart {
-
         const chartOptions = options.chartOptions;
 
         const defaultDef = {
@@ -142,6 +134,7 @@ export class GridChartFactory {
 
         const polarChart = ChartBuilder.createPolarChart(mergedDefs);
 
+        // TODO
         polarChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
 
         return polarChart;
