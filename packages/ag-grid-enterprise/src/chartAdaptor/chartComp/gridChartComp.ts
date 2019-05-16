@@ -189,13 +189,13 @@ export class GridChartComp extends Component {
         barSeries.yFields = fields.map(f => f.colId);
         barSeries.yFieldNames = fields.map(f => f.displayName);
 
-        barSeries.colors = palettes[this.getPalette()];
+        //barSeries.colors = palettes[this.getPalette()];
 
-        barSeries.tooltip = this.chartOptions.showTooltips;
-        barSeries.tooltipRenderer = params => {
-            const colDisplayName = fields.filter(f => f.colId === params.yField)[0].displayName;
-            return `<div><b>${colDisplayName}</b>: ${params.datum[params.yField]}</div>`;
-        };
+        //barSeries.tooltip = this.chartOptions.showTooltips;
+        // barSeries.tooltipRenderer = params => {
+        //     const colDisplayName = fields.filter(f => f.colId === params.yField)[0].displayName;
+        //     return `<div><b>${colDisplayName}</b>: ${params.datum[params.yField]}</div>`;
+        // };
     }
 
     private updateLineChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
