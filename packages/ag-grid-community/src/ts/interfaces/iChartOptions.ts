@@ -1,7 +1,6 @@
 export interface IChartOptions {
-    width?: number;
-    height?: number;
-    tooltip?: boolean;
+    cartesian: CartesianChartOptions; // shared object for all bar and line charts
+    barSeries?: BarSeriesOptions;
 }
 
 export interface AxisOptions {
@@ -29,7 +28,7 @@ export interface IGridStyle {
     lineDash: number[] | null;
 }
 
-export interface IChartOptions {
+export interface BaseChartOptions {
     parent?: HTMLElement;
     width?: number;
     height?: number;
@@ -50,12 +49,12 @@ interface IPadding {
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export interface CartesianChartOptions extends IChartOptions {
+export interface CartesianChartOptions extends BaseChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
 }
 
-export interface PolarChartOptions extends IChartOptions {}
+export interface PolarChartOptions extends BaseChartOptions {}
 
 export interface DropShadowOptions {
     color?: string;

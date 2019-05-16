@@ -1,12 +1,12 @@
 import {
-    IChartOptions,
     AxisOptions,
     BarSeriesOptions,
     CartesianChartOptions,
     DropShadowOptions,
     LineSeriesOptions,
     PieSeriesOptions,
-    PolarChartOptions
+    PolarChartOptions,
+    BaseChartOptions
 } from "ag-grid-community";
 
 import {CartesianChart} from "../../charts/chart/cartesianChart";
@@ -47,7 +47,7 @@ export class ChartBuilder {
         }
     }
 
-    static initChart<C extends Chart>(chart: C, options: IChartOptions) {
+    static initChart<C extends Chart>(chart: C, options: BaseChartOptions) {
         if (options.parent) {
             chart.parent = options.parent;
         }
@@ -286,4 +286,3 @@ export class ChartBuilder {
         return axis;
     }
 }
-

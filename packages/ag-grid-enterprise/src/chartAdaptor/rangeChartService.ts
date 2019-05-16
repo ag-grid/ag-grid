@@ -31,7 +31,7 @@ export class RangeChartService implements IRangeChartService {
 
         const getChartOptionsFunc = this.gridOptionsWrapper.getChartOptionsFunc();
         const chartOptions = getChartOptionsFunc ? getChartOptionsFunc() : {};
-        return this.chartRange(selectedRange, chartType, chartOptions);
+        return this.chartRange(selectedRange, chartType, chartOptions as IChartOptions);
     }
 
     public chartCellRange(params: ChartRangeParams): ChartRef | undefined {
@@ -64,8 +64,8 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            const chartOptions = params.chartOptions ? params.chartOptions : {};
-            return this.chartRange(cellRange, chartType, chartOptions, params.chartContainer, params.aggregate);
+            // const chartOptions = params.chartOptions ? params.chartOptions : {};
+            return this.chartRange(cellRange, chartType, {} as IChartOptions, params.chartContainer, params.aggregate);
         }
     }
 

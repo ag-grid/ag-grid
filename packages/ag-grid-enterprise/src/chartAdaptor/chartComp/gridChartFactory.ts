@@ -1,5 +1,4 @@
 import {CartesianChartOptions, ChartType, IChartOptions, PolarChartOptions} from "ag-grid-community";
-import {BarSeries} from "../../charts/chart/series/barSeries";
 import {Chart} from "../../charts/chart/chart";
 import {ChartBuilder} from "../builder/chartBuilder";
 
@@ -37,43 +36,53 @@ export class GridChartFactory {
     }
 
     private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
-        // const barChart = new CartesianChart({
-        //     parent: options.parentElement,
-        //     xAxis: { type: 'category' },
-        //     yAxis: { type: 'number' }
-        // });
+        const chartOptions = options.chartOptions;
 
-        const barChart = ChartBuilder.createCartesianChart({} as CartesianChartOptions);
+        chartOptions.cartesian.parent = options.parentElement;
+        chartOptions.cartesian.width = options.width;
+        chartOptions.cartesian.height = options.height;
 
-        barChart.width = options.width;
-        barChart.height = options.height;
+        console.log(chartOptions);
 
-        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
+        const barChart = ChartBuilder.createCartesianChart(chartOptions.cartesian);
 
-        barChart.xAxis.labelColor = labelColor;
-        barChart.yAxis.labelColor = labelColor;
-        barChart.legend.labelColor = labelColor;
 
-        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
-        barChart.xAxis.gridStyle = [{
-            strokeStyle: axisGridColor,
-            lineDash: [4, 2]
-        }];
+        const barSeriesConfig = chartOptions.barSeries ? chartOptions.barSeries : {};
 
-        barChart.yAxis.gridStyle = [{
-            strokeStyle: axisGridColor,
-            lineDash: [4, 2]
-        }];
+        barSeriesConfig.type = 'bar';
+        barSeriesConfig.grouped = grouped;
 
-        const barSeries = new BarSeries();
-        barSeries.tooltip = options.showTooltips;
-        barSeries.grouped = grouped;
+        const barSeries = ChartBuilder.createSeries(barSeriesConfig);
+        if (barSeries) {
+            barChart.addSeries(barSeries);
+        }
 
-        barSeries.lineWidth = 1;
-
-        barChart.addSeries(barSeries);
+        console.log('>>> barChart: ', barChart);
 
         return barChart;
+
+        // const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
+        //
+        // barChart.xAxis.labelColor = labelColor;
+        // barChart.yAxis.labelColor = labelColor;
+        // barChart.legend.labelColor = labelColor;
+        //
+        // const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
+        // barChart.xAxis.gridStyle = [{
+        //     strokeStyle: axisGridColor,
+        //     lineDash: [4, 2]
+        // }];
+        //
+        // barChart.yAxis.gridStyle = [{
+        //     strokeStyle: axisGridColor,
+        //     lineDash: [4, 2]
+        // }];
+        //
+        // const barSeries = new BarSeries();
+        // barSeries.tooltip = options.showTooltips;
+        // barSeries.grouped = grouped;
+        //
+        // barSeries.lineWidth = 1;
     }
 
     private static createLineChart(options: CreateChartOptions): Chart {

@@ -287,6 +287,7 @@ export {
 } from "./entities/gridOptions";
 
 export {
+    BaseChartOptions,
     IChartOptions,
     AxisOptions,
     BarSeriesOptions,
