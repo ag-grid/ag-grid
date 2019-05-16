@@ -11,16 +11,6 @@ export interface SeriesNodeDatum {
     seriesDatum: any;
 }
 
-export interface SeriesOptions {
-    type?: string,
-    data?: any[],
-    title?: string,
-    titleFont?: string,
-    visible?: boolean,
-    showInLegend?: boolean,
-    tooltip?: boolean
-}
-
 export abstract class Series<C extends Chart> {
 
     readonly id: string = this.createId();
@@ -29,27 +19,6 @@ export abstract class Series<C extends Chart> {
      * The group node that contains all the nodes used to render this series.
      */
     readonly group: Group = new Group();
-
-    protected init(options: SeriesOptions) {
-        if (options.title) {
-            this.title = options.title;
-        }
-        if (options.titleFont) {
-            this.titleFont = options.titleFont;
-        }
-        if (options.visible) {
-            this.visible = options.visible;
-        }
-        if (options.showInLegend) {
-            this.showInLegend = options.showInLegend;
-        }
-        if (options.tooltip) {
-            this.tooltip = options.tooltip;
-        }
-        if (options.data) {
-            this.data = options.data;
-        }
-    }
 
     protected _title: string = '';
     set title(value: string) {

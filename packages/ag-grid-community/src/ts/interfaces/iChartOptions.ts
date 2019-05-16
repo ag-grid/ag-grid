@@ -41,6 +41,7 @@ export interface BaseChartOptions {
     legendPosition?: LegendPosition;
     legendPadding?: number;
     tooltipClass?: string;
+    legend?: LegendOptions;
 }
 
 interface IPadding {
@@ -121,4 +122,14 @@ export interface PieSeriesOptions extends SeriesOptions {
     // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     lineWidth?: number;
+}
+
+export interface LegendOptions {
+    markerLineWidth?: number;
+    markerSize?: number;
+    markerPadding?: number;
+    itemPaddingX?: number;
+    itemPaddingY?: number;
+    labelFont?: string;
+    labelColor?: string;
 }

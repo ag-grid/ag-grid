@@ -9,17 +9,19 @@ import {
     BaseChartOptions
 } from "ag-grid-community";
 
-import {CartesianChart} from "../../charts/chart/cartesianChart";
-import {PolarChart} from "../../charts/chart/polarChart";
-import {LineSeries} from "../../charts/chart/series/lineSeries";
-import {BarSeries} from "../../charts/chart/series/barSeries";
-import {PieSeries} from "../../charts/chart/series/pieSeries";
-import {Chart} from "../../charts/chart/chart";
-import {Series, SeriesOptions} from "../../charts/chart/series/series";
-import {DropShadow, Offset} from "../../charts/scene/dropShadow";
-import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
-import {NumberAxis} from "../../charts/chart/axis/numberAxis";
+import { CartesianChart } from "../../charts/chart/cartesianChart";
+import { PolarChart } from "../../charts/chart/polarChart";
+import { LineSeries } from "../../charts/chart/series/lineSeries";
+import { BarSeries } from "../../charts/chart/series/barSeries";
+import { PieSeries } from "../../charts/chart/series/pieSeries";
+import { Chart } from "../../charts/chart/chart";
+import { Series } from "../../charts/chart/series/series";
+import { DropShadow, Offset } from "../../charts/scene/dropShadow";
+import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
+import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
+import { Legend } from "../../charts/chart/legend";
+import { LegendOptions, SeriesOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
 export class ChartBuilder {
 
@@ -81,6 +83,9 @@ export class ChartBuilder {
         }
         if (options.legendPadding) {
             chart.legendPadding = options.legendPadding;
+        }
+        if (options.legend) {
+            ChartBuilder.initLegend(chart.legend, options.legend);
         }
         if (options.data) {
             chart.data = options.data;
@@ -247,6 +252,30 @@ export class ChartBuilder {
         }
 
         return series;
+    }
+
+    static initLegend(legend: Legend, options: LegendOptions) {
+        if (options.markerLineWidth) {
+            legend.markerLineWidth = options.markerLineWidth;
+        }
+        if (options.markerSize) {
+            legend.markerSize = options.markerSize;
+        }
+        if (options.markerPadding) {
+            legend.markerPadding = options.markerPadding;
+        }
+        if (options.itemPaddingX) {
+            legend.itemPaddingX = options.itemPaddingX;
+        }
+        if (options.itemPaddingY) {
+            legend.itemPaddingY = options.itemPaddingY;
+        }
+        if (options.labelFont) {
+            legend.labelFont = options.labelFont;
+        }
+        if (options.labelColor) {
+            legend.labelColor = options.labelColor;
+        }
     }
 
     static createDropShadow(options: DropShadowOptions = {}): DropShadow {
