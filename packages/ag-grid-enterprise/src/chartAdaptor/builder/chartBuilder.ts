@@ -241,9 +241,6 @@ export class ChartBuilder {
         if (options.innerRadiusOffset) {
             series.innerRadiusOffset = options.innerRadiusOffset;
         }
-        if (options.minOuterRadius) {
-            series.minOuterRadius = options.minOuterRadius;
-        }
         if (options.lineWidth) {
             series.lineWidth = options.lineWidth;
         }

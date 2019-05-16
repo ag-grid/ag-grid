@@ -43,8 +43,6 @@ export interface PieTooltipRendererParams {
 }
 
 export class PieSeries extends Series<PolarChart> {
-    minOuterRadius = 15;
-
     private titleNode = new Text();
     private radiusScale: LinearScale<number> = scaleLinear();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
@@ -494,8 +492,6 @@ export class PieSeries extends Series<PolarChart> {
                 sector.lineWidth = this.lineWidth;
                 sector.lineJoin = 'round';
             });
-
-        this.visible = minOuterRadius >= this.minOuterRadius;
 
         const calloutLength = this.calloutLength;
         groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout)

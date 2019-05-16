@@ -118,7 +118,6 @@ export interface PieSeriesOptions extends SeriesOptions {
     rotation?: number;
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
-    minOuterRadius?: number;
     // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     lineWidth?: number;
