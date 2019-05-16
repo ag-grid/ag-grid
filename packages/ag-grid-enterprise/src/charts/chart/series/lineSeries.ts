@@ -8,7 +8,7 @@ import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
 import { extent } from "../../util/array";
 import colors from "../palettes";
-import { Series, SeriesNodeDatum, SeriesOptions } from "./series";
+import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";

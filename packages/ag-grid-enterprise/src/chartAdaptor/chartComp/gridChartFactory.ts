@@ -1,4 +1,4 @@
-import {_, CartesianChartOptions, ChartType, IChartOptions} from "ag-grid-community";
+import {_, ChartType, IChartOptions} from "ag-grid-community";
 import {Chart} from "../../charts/chart/chart";
 import {ChartBuilder} from "../builder/chartBuilder";
 
@@ -41,9 +41,6 @@ export class GridChartFactory {
         const mergedDefs = _.assign(this.defaultCartesianDef(options), chartOptions.cartesian);
         const barChart = ChartBuilder.createCartesianChart(mergedDefs);
 
-        //TODO
-        barChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;;
-
         const defaultBarSeriesDef = {
             type: 'bar',
             grouped: grouped,
@@ -63,12 +60,7 @@ export class GridChartFactory {
         const chartOptions = options.chartOptions;
 
         const mergedDefs = _.assign(this.defaultCartesianDef(options), chartOptions.cartesian);
-        const lineChart = ChartBuilder.createCartesianChart(mergedDefs);
-
-        //TODO
-        lineChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;;
-
-        return lineChart;
+        return ChartBuilder.createCartesianChart(mergedDefs);
     }
 
     private static createPolarChart(options: CreateChartOptions): Chart {
@@ -77,20 +69,16 @@ export class GridChartFactory {
         const defaultDef = {
             parent: options.parentElement,
             width: options.width,
-            height: options.height
+            height: options.height,
+            legend: {
+                labelColor: options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour
+            }
         };
-
         const mergedDefs = _.assign(defaultDef, chartOptions.polar);
-
-        const polarChart = ChartBuilder.createPolarChart(mergedDefs);
-
-        // TODO
-        polarChart.legend.labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
-
-        return polarChart;
+        return ChartBuilder.createPolarChart(mergedDefs);
     }
 
-    private static defaultCartesianDef(options: CreateChartOptions): CartesianChartOptions {
+    private static defaultCartesianDef(options: CreateChartOptions) {
         const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
         const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
 
@@ -113,6 +101,9 @@ export class GridChartFactory {
                     strokeStyle: axisGridColor,
                     lineDash: [4, 2]
                 }],
+            },
+            legend: {
+                labelColor: labelColor
             }
         };
     }
