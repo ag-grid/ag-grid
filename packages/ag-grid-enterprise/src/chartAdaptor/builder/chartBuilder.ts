@@ -1,0 +1,378 @@
+import { CartesianChart } from "../../charts/chart/cartesianChart";
+import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
+import { NumberAxis } from "../../charts/chart/axis/numberAxis";
+import { GridStyle } from "../../charts/axis";
+import { LineSeries, LineTooltipRendererParams } from "../../charts/chart/series/lineSeries";
+import { BarSeries, BarTooltipRendererParams } from "../../charts/chart/series/barSeries";
+import { PieSeries } from "../../charts/chart/series/pieSeries";
+import { Padding } from "../../charts/util/padding";
+import { Chart, LegendPosition } from "../../charts/chart/chart";
+import { Series } from "../../charts/chart/series/series";
+import { DropShadow, Offset } from "../../charts/scene/dropShadow";
+import { PolarChart } from "../../charts/chart/polarChart";
+
+export interface AxisOptions {
+    type?: 'category' | 'number',
+
+    lineWidth?: number,
+    lineColor?: string,
+
+    tickWidth?: number,
+    tickSize?: number,
+    tickPadding?: number,
+    tickColor?: string,
+
+    labelFont?: string,
+    labelColor?: string,
+    labelRotation?: number,
+    mirrorLabels?: boolean,
+    parallelLabels?: boolean,
+    labelFormatter?: (value: any, fractionDigits?: number) => string,
+
+    gridStyle?: GridStyle[]
+}
+
+export interface ChartOptions {
+    parent?: HTMLElement,
+    width?: number,
+    height?: number,
+    series?: any[],
+    data?: any,
+    padding?: Padding,
+    legendPosition?: LegendPosition,
+    legendPadding?: number,
+    tooltipClass?: string
+}
+
+export interface CartesianChartOptions extends ChartOptions {
+    xAxis: AxisOptions,
+    yAxis: AxisOptions
+}
+
+export interface PolarChartOptions extends ChartOptions {}
+
+export interface DropShadowOptions {
+    color?: string,
+    offset?: [number, number],
+    blur?: number
+}
+
+export interface SeriesOptions {
+    type?: string,
+    data?: any[],
+    title?: string,
+    titleFont?: string,
+    visible?: boolean,
+    showInLegend?: boolean,
+    tooltip?: boolean
+}
+
+export interface LineSeriesOptions extends SeriesOptions {
+    xField?: string,
+    yField?: string,
+    color?: string,
+    lineWidth?: number,
+    marker?: boolean,
+    markerRadius?: number,
+    markerLineWidth?: number,
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+}
+
+export interface BarSeriesOptions extends SeriesOptions {
+    xField?: string,
+    yFields?: string[],
+    yFieldNames?: string[],
+    grouped?: boolean,
+    colors?: string[],
+    lineWidth?: number,
+    // strokeStyle?: string // TODO: ???
+    shadow?: DropShadowOptions,
+    labelFont?: string,
+    labelColor?: string,
+    labelPadding?: [number, number],
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+}
+
+export interface PieSeriesOptions extends SeriesOptions {
+    calloutColor?: string,
+    calloutWidth?: number,
+    calloutLength?: number,
+    calloutPadding?: number,
+    labelFont?: string,
+    labelColor?: string,
+    labelMinAngle?: number,
+    angleField?: string,
+    radiusField?: string,
+    labelField?: string,
+    label?: boolean,
+    colors?: string[],
+    rotation?: number,
+    outerRadiusOffset?: number,
+    innerRadiusOffset?: number,
+    minOuterRadius?: number,
+    // strokeStyle?: string // TODO: ???
+    shadow?: DropShadowOptions,
+    lineWidth?: number
+}
+
+export class ChartBuilder {
+
+    static createCartesianChart(options: CartesianChartOptions): CartesianChart {
+        return ChartBuilder.initCartesianChart(ChartBuilder.initChart(new CartesianChart(
+            ChartBuilder.createAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        ), options), options);
+    }
+
+    static createPolarChart(options: PolarChartOptions): PolarChart {
+        return ChartBuilder.initPolarChart(ChartBuilder.initChart(new PolarChart(), options), options);
+    }
+
+    static createSeries(options: LineSeriesOptions | BarSeriesOptions | PieSeriesOptions) {
+        switch (options && options.type) {
+            case 'line':
+                return ChartBuilder.initLineSeries(ChartBuilder.initSeries(new LineSeries(), options), options);
+            case 'bar':
+                return ChartBuilder.initBarSeries(ChartBuilder.initSeries(new BarSeries(), options), options);
+            case 'pie':
+                return ChartBuilder.initPieSeries(ChartBuilder.initSeries(new PieSeries(), options), options);
+            default:
+                return null;
+        }
+    }
+
+    static initChart<C extends Chart>(chart: C, options: ChartOptions) {
+        if (options.parent) {
+            chart.parent = options.parent;
+        }
+        if (options.width) {
+            chart.width = options.width;
+        }
+        if (options.height) {
+            chart.height = options.height;
+        }
+        if (options.series) {
+            const seriesConfigs = options.series;
+            const seriesInstances = [];
+            for (let i = 0, n = seriesConfigs.length; i < n; i++) {
+                const seriesInstance = ChartBuilder.createSeries(seriesConfigs[i]);
+                if (seriesInstance) {
+                    seriesInstances.push(seriesInstance);
+                }
+            }
+            chart.series = seriesInstances;
+        }
+        if (options.padding) {
+            chart.padding = options.padding;
+        }
+        if (options.legendPosition) {
+            chart.legendPosition = options.legendPosition;
+        }
+        if (options.legendPadding) {
+            chart.legendPadding = options.legendPadding;
+        }
+        if (options.data) {
+            chart.data = options.data;
+        }
+        if (options.tooltipClass) {
+            chart.tooltipClass = options.tooltipClass;
+        }
+
+        return chart;
+    }
+
+    static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions) {
+        return chart;
+    }
+
+    static initPolarChart(chart: PolarChart, options: PolarChartOptions) {
+        return chart;
+    }
+
+    static initSeries<S extends Series<any>>(series: S, options: SeriesOptions) {
+        if (options.title) {
+            series.title = options.title;
+        }
+        if (options.titleFont) {
+            series.titleFont = options.titleFont;
+        }
+        if (options.visible) {
+            series.visible = options.visible;
+        }
+        if (options.showInLegend) {
+            series.showInLegend = options.showInLegend;
+        }
+        if (options.tooltip) {
+            series.tooltip = options.tooltip;
+        }
+        if (options.data) {
+            series.data = options.data;
+        }
+
+        return series;
+    }
+
+    static initLineSeries(series: LineSeries, options: LineSeriesOptions) {
+        if (options.xField) {
+            series.xField = options.xField;
+        }
+        if (options.yField) {
+            series.yField = options.yField;
+        }
+        if (options.color) {
+            series.color = options.color;
+        }
+        if (options.lineWidth) {
+            series.lineWidth = options.lineWidth;
+        }
+        if (options.marker) {
+            series.marker = options.marker;
+        }
+        if (options.markerRadius) {
+            series.markerRadius = options.markerRadius;
+        }
+        if (options.markerLineWidth) {
+            series.markerLineWidth = options.markerLineWidth;
+        }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+
+        return series;
+    }
+
+    static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
+        if (options.xField) {
+            series.xField = options.xField;
+        }
+        if (options.yFields) {
+            series.yFields = options.yFields;
+        }
+        if (options.yFieldNames) {
+            series.yFieldNames = options.yFieldNames;
+        }
+        if (options.grouped) {
+            series.grouped = options.grouped;
+        }
+        if (options.colors) {
+            series.colors = options.colors;
+        }
+        if (options.lineWidth) {
+            series.lineWidth = options.lineWidth;
+        }
+        if (options.labelFont) {
+            series.labelFont = options.labelFont;
+        }
+        if (options.labelPadding) {
+            series.labelPadding = options.labelPadding;
+        }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+        if (options.shadow) {
+            series.shadow = ChartBuilder.createDropShadow(options.shadow);
+        }
+
+        return series;
+    }
+
+    static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
+        if (options.calloutColor) {
+            series.calloutColor = options.calloutColor;
+        }
+        if (options.calloutWidth) {
+            series.calloutWidth = options.calloutWidth;
+        }
+        if (options.calloutLength) {
+            series.calloutLength = options.calloutLength;
+        }
+        if (options.calloutLength) {
+            series.calloutLength = options.calloutLength;
+        }
+        if (options.calloutPadding) {
+            series.calloutPadding = options.calloutPadding;
+        }
+        if (options.labelFont) {
+            series.labelFont = options.labelFont;
+        }
+        if (options.labelColor) {
+            series.labelColor = options.labelColor;
+        }
+        if (options.labelMinAngle) {
+            series.labelMinAngle = options.labelMinAngle;
+        }
+        if (options.angleField) {
+            series.angleField = options.angleField;
+        }
+        if (options.radiusField) {
+            series.radiusField = options.radiusField;
+        }
+        if (options.labelField) {
+            series.labelField = options.labelField;
+        }
+        if (options.label) {
+            series.label = options.label;
+        }
+        if (options.colors) {
+            series.colors = options.colors;
+        }
+        if (options.rotation) {
+            series.rotation = options.rotation;
+        }
+        if (options.outerRadiusOffset) {
+            series.outerRadiusOffset = options.outerRadiusOffset;
+        }
+        if (options.innerRadiusOffset) {
+            series.innerRadiusOffset = options.innerRadiusOffset;
+        }
+        if (options.minOuterRadius) {
+            series.minOuterRadius = options.minOuterRadius;
+        }
+        if (options.lineWidth) {
+            series.lineWidth = options.lineWidth;
+        }
+        if (options.shadow) {
+            series.shadow = ChartBuilder.createDropShadow(options.shadow);
+        }
+
+        return series;
+    }
+
+    static createDropShadow(options: DropShadowOptions = {}): DropShadow {
+        return new DropShadow(
+            options.color || 'black',
+            options.offset ? new Offset(options.offset[0], options.offset[1]) : new Offset(0, 0),
+            options.blur || 0
+        );
+    }
+
+    static createAxis(options: AxisOptions) {
+        let axis: CategoryAxis | NumberAxis | undefined = undefined;
+
+        switch (options.type) {
+            case 'category':
+                axis = new CategoryAxis();
+                break;
+            case 'number':
+                axis = new NumberAxis();
+                break;
+        }
+
+        if (!axis) {
+            throw new Error('Unknown axis type.');
+        }
+
+        for (const name in options) {
+            if (name === 'type') {
+                continue;
+            }
+            const value = (options as any)[name];
+            if (value !== undefined) {
+                (axis as any)[name] = value;
+            }
+        }
+
+        return axis;
+    }
+}
+

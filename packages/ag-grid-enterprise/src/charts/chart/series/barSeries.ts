@@ -4,10 +4,10 @@ import { CartesianChart } from "../cartesianChart";
 import { Rect } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
-import { DropShadow, DropShadowOptions } from "../../scene/dropShadow";
+import { DropShadow } from "../../scene/dropShadow";
 import colors from "../palettes";
 import { Color } from "../../util/color";
-import { Series, SeriesNodeDatum, SeriesOptions } from "./series";
+import { Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
@@ -41,21 +41,6 @@ export interface BarTooltipRendererParams {
     yField: string
 }
 
-export interface BarSeriesOptions extends SeriesOptions {
-    xField?: string,
-    yFields?: string[],
-    yFieldNames?: string[],
-    grouped?: boolean,
-    colors?: string[],
-    lineWidth?: number,
-    // strokeStyle?: string // TODO: ???
-    shadow?: DropShadowOptions,
-    labelFont?: string,
-    labelColor?: string,
-    labelPadding?: [number, number],
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
-}
-
 export class BarSeries extends Series<CartesianChart> {
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
@@ -70,46 +55,6 @@ export class BarSeries extends Series<CartesianChart> {
      * in the {@link yFields} setter.
      */
     protected readonly enabled = new Map<string, boolean>();
-
-    constructor(options: BarSeriesOptions = {}) {
-        super();
-        this.init(options);
-    }
-
-    protected init(options: BarSeriesOptions) {
-        super.init(options);
-
-        if (options.xField) {
-            this.xField = options.xField;
-        }
-        if (options.yFields) {
-            this.yFields = options.yFields;
-        }
-        if (options.yFieldNames) {
-            this.yFieldNames = options.yFieldNames;
-        }
-        if (options.grouped) {
-            this.grouped = options.grouped;
-        }
-        if (options.colors) {
-            this.colors = options.colors;
-        }
-        if (options.lineWidth) {
-            this.lineWidth = options.lineWidth;
-        }
-        if (options.labelFont) {
-            this.labelFont = options.labelFont;
-        }
-        if (options.labelPadding) {
-            this.labelPadding = options.labelPadding;
-        }
-        if (options.tooltipRenderer) {
-            this.tooltipRenderer = options.tooltipRenderer;
-        }
-        if (options.shadow) {
-            this.shadow = DropShadow.create(options.shadow);
-        }
-    }
 
     private _colors: string[] = colors;
     set colors(values: string[]) {

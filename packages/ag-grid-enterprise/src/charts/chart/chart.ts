@@ -7,7 +7,6 @@ import { Node } from "../scene/node";
 import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
-import { makeSeries } from "./series/helpers";
 
 export enum LegendPosition {
     Top,
@@ -48,44 +47,6 @@ export abstract class Chart {
         document.body.appendChild(this.tooltipElement);
 
         this.setupListeners(this.scene.hdpiCanvas.canvas);
-    }
-
-    protected init(options: ChartOptions) {
-        if (options.parent) {
-            this.parent = options.parent;
-        }
-        if (options.width) {
-            this.width = options.width;
-        }
-        if (options.height) {
-            this.height = options.height;
-        }
-        if (options.series) {
-            const seriesConfigs = options.series;
-            const seriesInstances = [];
-            for (let i = 0, n = seriesConfigs.length; i < n; i++) {
-                const seriesInstance = makeSeries(seriesConfigs[i]);
-                if (seriesInstance) {
-                    seriesInstances.push(seriesInstance);
-                }
-            }
-            this.series = seriesInstances;
-        }
-        if (options.padding) {
-            this.padding = options.padding;
-        }
-        if (options.legendPosition) {
-            this.legendPosition = options.legendPosition;
-        }
-        if (options.legendPadding) {
-            this.legendPadding = options.legendPadding;
-        }
-        if (options.data) {
-            this.data = options.data;
-        }
-        if (options.tooltipClass) {
-            this.tooltipClass = options.tooltipClass;
-        }
     }
 
     destroy() {

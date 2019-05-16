@@ -2,13 +2,13 @@ import { Group } from "../../scene/group";
 import { Line } from "../../scene/shape/line";
 import { Text } from "../../scene/shape/text";
 import { Selection } from "../../scene/selection";
-import { DropShadow, DropShadowOptions } from "../../scene/dropShadow";
+import { DropShadow } from "../../scene/dropShadow";
 import scaleLinear, { LinearScale } from "../../scale/linearScale";
 import { normalizeAngle180, toRadians } from "../../util/angle";
 import colors from "../palettes";
 import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
-import { Series, SeriesNodeDatum, SeriesOptions } from "./series";
+import { Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
@@ -42,28 +42,6 @@ export interface PieTooltipRendererParams {
     labelField?: string
 }
 
-export interface PieSeriesOptions extends SeriesOptions {
-    calloutColor?: string,
-    calloutWidth?: number,
-    calloutLength?: number,
-    calloutPadding?: number,
-    labelFont?: string,
-    labelColor?: string,
-    labelMinAngle?: number,
-    angleField?: string,
-    radiusField?: string,
-    labelField?: string,
-    label?: boolean,
-    colors?: string[],
-    rotation?: number,
-    outerRadiusOffset?: number,
-    innerRadiusOffset?: number,
-    minOuterRadius?: number,
-    // strokeStyle?: string // TODO: ???
-    shadow?: DropShadowOptions,
-    lineWidth?: number
-}
-
 export class PieSeries extends Series<PolarChart> {
     minOuterRadius = 15;
 
@@ -87,7 +65,7 @@ export class PieSeries extends Series<PolarChart> {
         return scale;
     })();
 
-    constructor(options: PieSeriesOptions = {}) {
+    constructor() {
         super();
 
         const title = this.titleNode;
@@ -97,70 +75,6 @@ export class PieSeries extends Series<PolarChart> {
         title.textBaseline = 'bottom';
 
         this.group.appendChild(title);
-
-        this.init(options);
-    }
-
-    protected init(options: PieSeriesOptions) {
-        super.init(options);
-
-        if (options.calloutColor) {
-            this.calloutColor = options.calloutColor;
-        }
-        if (options.calloutWidth) {
-            this.calloutWidth = options.calloutWidth;
-        }
-        if (options.calloutLength) {
-            this.calloutLength = options.calloutLength;
-        }
-        if (options.calloutLength) {
-            this.calloutLength = options.calloutLength;
-        }
-        if (options.calloutPadding) {
-            this.calloutPadding = options.calloutPadding;
-        }
-        if (options.labelFont) {
-            this.labelFont = options.labelFont;
-        }
-        if (options.labelColor) {
-            this.labelColor = options.labelColor;
-        }
-        if (options.labelMinAngle) {
-            this.labelMinAngle = options.labelMinAngle;
-        }
-        if (options.angleField) {
-            this.angleField = options.angleField;
-        }
-        if (options.radiusField) {
-            this.radiusField = options.radiusField;
-        }
-        if (options.labelField) {
-            this.labelField = options.labelField;
-        }
-        if (options.label) {
-            this.label = options.label;
-        }
-        if (options.colors) {
-            this.colors = options.colors;
-        }
-        if (options.rotation) {
-            this.rotation = options.rotation;
-        }
-        if (options.outerRadiusOffset) {
-            this.outerRadiusOffset = options.outerRadiusOffset;
-        }
-        if (options.innerRadiusOffset) {
-            this.innerRadiusOffset = options.innerRadiusOffset;
-        }
-        if (options.minOuterRadius) {
-            this.minOuterRadius = options.minOuterRadius;
-        }
-        if (options.lineWidth) {
-            this.lineWidth = options.lineWidth;
-        }
-        if (options.shadow) {
-            this.shadow = DropShadow.create(options.shadow);
-        }
     }
 
     set data(data: any[]) {

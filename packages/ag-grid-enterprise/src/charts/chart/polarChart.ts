@@ -1,10 +1,7 @@
-import { Chart, ChartOptions } from "./chart";
+import { Chart } from "./chart";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
 import { Series } from "./series/series";
-
-export interface PolarChartOptions extends ChartOptions {
-}
 
 export class PolarChart extends Chart {
     /**
@@ -25,9 +22,8 @@ export class PolarChart extends Chart {
 
     protected _padding = new Padding(50);
 
-    constructor(options: PolarChartOptions = {}) {
+    constructor() {
         super();
-        super.init(options);
 
         this.scene.root!.append(this.legend.group);
     }

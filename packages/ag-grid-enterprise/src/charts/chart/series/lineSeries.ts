@@ -28,17 +28,6 @@ export interface LineTooltipRendererParams {
     yField: string
 }
 
-export interface LineSeriesOptions extends SeriesOptions {
-    xField?: string,
-    yField?: string,
-    color?: string,
-    lineWidth?: number,
-    marker?: boolean,
-    markerRadius?: number,
-    markerLineWidth?: number,
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
-}
-
 export class LineSeries extends Series<CartesianChart> {
 
     private domainX: any[] = [];
@@ -50,7 +39,7 @@ export class LineSeries extends Series<CartesianChart> {
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
-    constructor(options: LineSeriesOptions = {}) {
+    constructor() {
         super();
 
         const lineNode = this.lineNode;
@@ -58,37 +47,6 @@ export class LineSeries extends Series<CartesianChart> {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
-
-        this.init(options);
-    }
-
-    protected init(options: LineSeriesOptions) {
-        super.init(options);
-
-        if (options.xField) {
-            this.xField = options.xField;
-        }
-        if (options.yField) {
-            this.yField = options.yField;
-        }
-        if (options.color) {
-            this.color = options.color;
-        }
-        if (options.lineWidth) {
-            this.lineWidth = options.lineWidth;
-        }
-        if (options.marker) {
-            this.marker = options.marker;
-        }
-        if (options.markerRadius) {
-            this.markerRadius = options.markerRadius;
-        }
-        if (options.markerLineWidth) {
-            this.markerLineWidth = options.markerLineWidth;
-        }
-        if (options.tooltipRenderer) {
-            this.tooltipRenderer = options.tooltipRenderer;
-        }
     }
 
     set chart(chart: CartesianChart | null) {
