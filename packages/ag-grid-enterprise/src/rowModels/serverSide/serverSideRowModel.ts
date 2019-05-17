@@ -676,4 +676,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             return detailNode;
         }
     }
+
+    public isLoading(): boolean {
+        return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
+    }
 }

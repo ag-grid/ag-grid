@@ -106,4 +106,8 @@ export class RowNodeBlockLoader {
                 + ` blocks = ${JSON.stringify(this.getBlockState())}`);
         }
     }
+
+    public isLoading(): boolean {
+        return this.activeBlockLoadsCount > 0;
+    }
 }
