@@ -437,7 +437,11 @@ export class ColumnController {
 
     public autoSizeAllColumns(source: ColumnEventType = "api"): void {
         const allDisplayedColumns = this.getAllDisplayedColumns();
-        this.autoSizeColumns(allDisplayedColumns, source);
+        const columnsToAutoSize = _.filter(allDisplayedColumns, (column: Column): boolean => {
+            return column.getColDef().suppressAutoSizeAll === false;
+        });
+        
+        this.autoSizeColumns(columnsToAutoSize, source);
     }
 
     private getColumnsFromTree(rootColumns: OriginalColumnGroupChild[]): Column[] {
