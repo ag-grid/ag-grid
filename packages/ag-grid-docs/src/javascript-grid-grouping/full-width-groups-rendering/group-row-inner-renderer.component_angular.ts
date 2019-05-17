@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {RowNode} from 'ag-grid-community';
 import {ICellRendererAngularComp} from "ag-grid-angular";
 
 @Component({
@@ -6,10 +7,10 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
     template: `
         <div class="row">
             <img *ngIf="flagCode" class="flag" border="0" width="20" height="15" [src]="flagCodeImg" />
-            <span class="groupTitle"> {{countryName}}</span>
-            <span class="medal gold"> Gold: {{goldCount}}</span>
-            <span class="medal silver"> Silver: {{silverCount}}</span>
-            <span class="medal bronze"> Bronze: {{bronzeCount}}</span>
+            <span class="groupTitle"> {{node.key}}</span>
+            <span class="medal gold"> Gold: {{node.aggData.gold}}</span>
+            <span class="medal silver"> Silver: {{node.aggData.silver}}</span>
+            <span class="medal bronze"> Bronze: {{node.aggData.bronze}}</span>
         </div>`,
     styles: [
         `
@@ -49,22 +50,15 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
     ]
 })
 export class GroupRowInnerRenderer implements ICellRendererAngularComp {
+
     private flagCodeImg: string;
-    private countryName: number;
-    private goldCount: number;
-    private silverCount: number;
-    private bronzeCount: number;
     private flagCode: any;
+    private node: RowNode;
 
     agInit(params: any): void {
-        const node = params.node;
-        const aggData = node.aggData;
+        this.node = params.node;
         this.flagCode = params.flagCodes[params.node.key];
         this.flagCodeImg = `https://flags.fmcdn.net/data/flags/mini/${this.flagCode}.png`;
-        this.countryName = node.key;
-        this.goldCount = aggData.gold;
-        this.silverCount = aggData.silver;
-        this.bronzeCount = aggData.bronze;
     }
 
     refresh(): boolean {

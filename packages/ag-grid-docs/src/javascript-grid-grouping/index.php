@@ -412,10 +412,38 @@ gridOptions.groupRowRendererParams: {
 </snippet>
 
     <p>
-        Below shows an example of aggregating, then using the entire row to give a summary.
+        Below shows an example of aggregating with full width rows for groups. The following can be noted:
     </p>
 
-    <p>We use Components for the groupRowRenderer in this example.</p>
+    <ul>
+        <li>
+            Each group spans the width of the grid.
+        </li>
+        <li>
+            Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+        </li>
+        <li>
+            Each medal column is editable, you can change the number of medals for any of the athletes.
+        </li>
+        <li>
+            The column Year has a filter on it.
+        </li>
+        <li>
+            The cell renderer has logic listening for changes to filtering and data cell changes*. This means the
+            aggregation data in the full with row is updated if:
+            <ol>
+                <li>If you edit any cell</li>
+                <li>If you filter the data (ie take rows out).</li>
+            </ol>
+        </li>
+    </ul>
+
+    <p>
+        <i>
+            * This is true for Vanilla Javascript and React. Angular uses data binding and thus the aggregation data
+            updates automatically without needing to listen to events.
+        </i>
+    </p>
 
     <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
