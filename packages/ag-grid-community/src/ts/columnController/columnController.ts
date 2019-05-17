@@ -323,6 +323,13 @@ export class ColumnController {
         }
 
         this.pivotMode = pivotMode;
+
+        // we need to update grid columns to cover the scenario where user has groupSuppressAutoColumn=true, as
+        // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
+        // so need to updateGridColumn() to check it autoGroupCol needs to be added / removed
+        this.autoGroupsNeedBuilding = true;
+        this.updateGridColumns();
+
         this.updateDisplayedColumns(source);
         const event: ColumnPivotModeChangedEvent = {
             type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
@@ -2994,21 +3001,22 @@ export class ColumnController {
         }
         this.autoGroupsNeedBuilding = false;
 
-        // see if we need to insert the default grouping column
-        const needAutoColumns = (this.rowGroupColumns.length > 0 || this.usingTreeData)
-            && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
-            && !this.gridOptionsWrapper.isGroupUseEntireRow(this.pivotMode)
-            && !this.gridOptionsWrapper.isGroupSuppressRow();
+        const groupFullWidthRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.pivotMode);
+        // we never suppress auto col for pivot mode, as there is no way for user to provide group columns
+        // in pivot mode. pivot mode has auto group column (provide by grid) and value columns (provided by
+        // pivot feature in the grid).
+        const groupSuppressAutoColumn = this.gridOptionsWrapper.isGroupSuppressAutoColumn() && !this.pivotMode;
+        const groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
+        const groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
+
+        const needAutoColumns = groupingActive && !groupSuppressAutoColumn && !groupFullWidthRow && !groupSuppressRow;
 
         if (needAutoColumns) {
-            // this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
-
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             if (autoColsDifferent) {
                 this.groupAutoColumns = newAutoGroupCols;
             }
-
         } else {
             this.groupAutoColumns = null;
         }
