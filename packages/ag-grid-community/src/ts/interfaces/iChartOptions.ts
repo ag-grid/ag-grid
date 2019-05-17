@@ -1,3 +1,9 @@
+import { LineSeries } from "../../../../ag-grid-enterprise/src/charts/chart/series/lineSeries";
+import { PieSeries } from "../../../../ag-grid-enterprise/src/charts/chart/series/pieSeries";
+import { BarSeries } from "../../../../ag-grid-enterprise/src/charts/chart/series/barSeries";
+import { Series } from "../../../../ag-grid-enterprise/src/charts/chart/series/series";
+import { Chart } from "../../../../ag-grid-enterprise/src/charts/chart/chart";
+
 export interface IChartOptions {
     cartesian: CartesianChartOptions; // shared object for all bar and line charts
     polar: PolarChartOptions;
@@ -58,7 +64,19 @@ export interface CartesianChartOptions extends BaseChartOptions {
     yAxis: AxisOptions;
 }
 
+export interface BarChartOptions extends CartesianChartOptions {
+    series?: BarSeriesOptions[];
+}
+
+export interface LineChartOptions extends CartesianChartOptions {
+    series?: LineSeriesOptions[];
+}
+
 export interface PolarChartOptions extends BaseChartOptions {}
+
+export interface PieChartOptions extends PolarChartOptions {
+    series?: PieSeriesOptions[];
+}
 
 export interface DropShadowOptions {
     color?: string;
