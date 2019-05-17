@@ -7243,7 +7243,11 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.autoSizeAllColumns = function (source) {
         if (source === void 0) { source = "api"; }
         var allDisplayedColumns = this.getAllDisplayedColumns();
-        this.autoSizeColumns(allDisplayedColumns, source);
+        var columnsToAutoSize = _.filter(allDisplayedColumns, function(column) {
+            return column.getColDef().suppressAutoSizeAll === false;
+        });
+
+        this.autoSizeColumns(columnsToAutoSize, source);
     };
     ColumnController.prototype.getColumnsFromTree = function (rootColumns) {
         var result = [];

@@ -26,7 +26,7 @@ import {generateBindables} from "./agUtils";
     "pinnedRowValueFormatter", "valueParser", "allowedAggFuncs", "rowGroup", "showRowGroup", "pivot", "equals", "pivotComparator",
     "menuTabs", "colSpan", "suppressPaste", "template", "templateUrl", "pivotValueColumn", "pivotTotalColumnIds", "headerComponent",
     "headerComponentFramework", "headerComponentParams", "floatingFilterComponent", "floatingFilterComponentParams",
-    "lockPinned"])
+    "lockPinned", "suppressAutoSizeAll"])
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
 @inlineView(`<template><slot></slot></template>`)
 @autoinject()

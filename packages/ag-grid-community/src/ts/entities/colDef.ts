@@ -244,6 +244,9 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
 
+    /** Set to true if you do not want this column to be auto-resized during 'auto size all columns' operation. */
+    suppressAutoSizeAll?: boolean;
+
     /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
