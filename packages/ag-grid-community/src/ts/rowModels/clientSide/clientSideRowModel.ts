@@ -783,7 +783,7 @@ export class ClientSideRowModel {
                 const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
                 rowNodeTrans.push(rowNodeTran);
                 if (tranItem.callback) {
-                    callbackFuncsBound.push(tranItem.callback.bind(rowNodeTran));
+                    callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
                 }
             });
         }
