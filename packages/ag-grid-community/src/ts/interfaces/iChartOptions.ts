@@ -1,9 +1,3 @@
-import { LineSeries } from "../../../../ag-grid-enterprise/src/charts/chart/series/lineSeries";
-import { PieSeries } from "../../../../ag-grid-enterprise/src/charts/chart/series/pieSeries";
-import { BarSeries } from "../../../../ag-grid-enterprise/src/charts/chart/series/barSeries";
-import { Series } from "../../../../ag-grid-enterprise/src/charts/chart/series/series";
-import { Chart } from "../../../../ag-grid-enterprise/src/charts/chart/chart";
-
 export interface IChartOptions {
     cartesian: CartesianChartOptions; // shared object for all bar and line charts
     polar: PolarChartOptions;
@@ -94,6 +88,12 @@ export interface SeriesOptions {
     tooltip?: boolean;
 }
 
+export interface LineTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string
+}
+
 export interface LineSeriesOptions extends SeriesOptions {
     xField?: string;
     yField?: string;
@@ -102,7 +102,13 @@ export interface LineSeriesOptions extends SeriesOptions {
     marker?: boolean;
     markerRadius?: number;
     markerLineWidth?: number;
-    // tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+}
+
+export interface BarTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string
 }
 
 export interface BarSeriesOptions extends SeriesOptions {
@@ -117,7 +123,14 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelFont?: string;
     labelColor?: string;
     labelPadding?: [number, number];
-    // tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+}
+
+export interface PieTooltipRendererParams {
+    datum: any,
+    angleField: string,
+    radiusField?: string,
+    labelField?: string
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
@@ -139,6 +152,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     lineWidth?: number;
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 }
 
 export interface LegendOptions {
