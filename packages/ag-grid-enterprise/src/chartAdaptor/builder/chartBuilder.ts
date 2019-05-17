@@ -21,35 +21,67 @@ import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
-import { LegendOptions, SeriesOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
+import {
+    BarChartOptions,
+    LegendOptions,
+    LineChartOptions, PieChartOptions,
+    SeriesOptions
+} from "ag-grid-community/src/ts/interfaces/iChartOptions";
+
+type CartesianSeriesType = 'line' | 'bar';
+type PolarSeriesType = 'pie';
+type SeriesType = CartesianSeriesType | PolarSeriesType;
 
 export class ChartBuilder {
 
     static createCartesianChart(options: CartesianChartOptions): CartesianChart {
-        return ChartBuilder.initCartesianChart(ChartBuilder.initChart(new CartesianChart(
+        const chart = new CartesianChart(
             ChartBuilder.createAxis(options.xAxis),
             ChartBuilder.createAxis(options.yAxis)
-        ), options), options);
+        );
+        return ChartBuilder.initCartesianChart(chart, options);
+    }
+
+    static createBarChart(options: BarChartOptions): CartesianChart {
+        const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initCartesianChart(chart, options, 'bar');
+    }
+
+    static createLineChart(options: LineChartOptions): CartesianChart {
+        const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initCartesianChart(chart, options, 'line');
     }
 
     static createPolarChart(options: PolarChartOptions): PolarChart {
-        return ChartBuilder.initPolarChart(ChartBuilder.initChart(new PolarChart(), options), options);
+        const chart = new PolarChart();
+        return ChartBuilder.initPolarChart(chart, options);
     }
 
-    static createSeries(options: LineSeriesOptions | BarSeriesOptions | PieSeriesOptions) {
-        switch (options && options.type) {
+    static createPieChart(options: PieChartOptions): PolarChart {
+        const chart = new PolarChart();
+        return ChartBuilder.initPolarChart(chart, options, 'pie');
+    }
+
+    static createSeries(options: LineSeriesOptions | BarSeriesOptions | PieSeriesOptions, type?: string) {
+        switch (type || options && options.type) {
             case 'line':
-                return ChartBuilder.initLineSeries(ChartBuilder.initSeries(new LineSeries(), options), options);
+                return ChartBuilder.initLineSeries(new LineSeries(), options);
             case 'bar':
-                return ChartBuilder.initBarSeries(ChartBuilder.initSeries(new BarSeries(), options), options);
+                return ChartBuilder.initBarSeries(new BarSeries(), options);
             case 'pie':
-                return ChartBuilder.initPieSeries(ChartBuilder.initSeries(new PieSeries(), options), options);
+                return ChartBuilder.initPieSeries(new PieSeries(), options);
             default:
                 return null;
         }
     }
 
-    static initChart<C extends Chart>(chart: C, options: BaseChartOptions) {
+    static initChart<C extends Chart>(chart: C, options: BaseChartOptions, seriesType?: SeriesType) {
         if (options.parent) {
             chart.parent = options.parent;
         }
@@ -63,7 +95,7 @@ export class ChartBuilder {
             const seriesConfigs = options.series;
             const seriesInstances = [];
             for (let i = 0, n = seriesConfigs.length; i < n; i++) {
-                const seriesInstance = ChartBuilder.createSeries(seriesConfigs[i]);
+                const seriesInstance = ChartBuilder.createSeries(seriesConfigs[i], seriesType);
                 if (seriesInstance) {
                     seriesInstances.push(seriesInstance);
                 }
@@ -97,11 +129,13 @@ export class ChartBuilder {
         return chart;
     }
 
-    static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions) {
+    static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
+        ChartBuilder.initChart(chart, options, seriesType);
         return chart;
     }
 
-    static initPolarChart(chart: PolarChart, options: PolarChartOptions) {
+    static initPolarChart(chart: PolarChart, options: PolarChartOptions, seriesType?: PolarSeriesType) {
+        ChartBuilder.initChart(chart, options, seriesType);
         return chart;
     }
 
@@ -129,6 +163,8 @@ export class ChartBuilder {
     }
 
     static initLineSeries(series: LineSeries, options: LineSeriesOptions) {
+        ChartBuilder.initSeries(series, options);
+
         if (options.xField) {
             series.xField = options.xField;
         }
@@ -150,14 +186,16 @@ export class ChartBuilder {
         if (options.markerLineWidth) {
             series.markerLineWidth = options.markerLineWidth;
         }
-        // if (options.tooltipRenderer) {
-        //     series.tooltipRenderer = options.tooltipRenderer;
-        // }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
 
         return series;
     }
 
     static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
+        ChartBuilder.initSeries(series, options);
+
         if (options.xField) {
             series.xField = options.xField;
         }
@@ -182,9 +220,9 @@ export class ChartBuilder {
         if (options.labelPadding) {
             series.labelPadding = options.labelPadding;
         }
-        // if (options.tooltipRenderer) {
-        //     series.tooltipRenderer = options.tooltipRenderer;
-        // }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
         if (options.shadow) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
@@ -193,6 +231,8 @@ export class ChartBuilder {
     }
 
     static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
+        ChartBuilder.initSeries(series, options);
+
         if (options.calloutColor) {
             series.calloutColor = options.calloutColor;
         }
@@ -246,6 +286,9 @@ export class ChartBuilder {
         }
         if (options.shadow) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
+        }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
         }
 
         return series;
@@ -312,3 +355,5 @@ export class ChartBuilder {
         return axis;
     }
 }
+
+const CB = ChartBuilder;

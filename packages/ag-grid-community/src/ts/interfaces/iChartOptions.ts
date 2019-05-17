@@ -58,7 +58,19 @@ export interface CartesianChartOptions extends BaseChartOptions {
     yAxis: AxisOptions;
 }
 
+export interface BarChartOptions extends CartesianChartOptions {
+    series?: BarSeriesOptions[];
+}
+
+export interface LineChartOptions extends CartesianChartOptions {
+    series?: LineSeriesOptions[];
+}
+
 export interface PolarChartOptions extends BaseChartOptions {}
+
+export interface PieChartOptions extends PolarChartOptions {
+    series?: PieSeriesOptions[];
+}
 
 export interface DropShadowOptions {
     color?: string;
@@ -76,6 +88,12 @@ export interface SeriesOptions {
     tooltip?: boolean;
 }
 
+export interface LineTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string
+}
+
 export interface LineSeriesOptions extends SeriesOptions {
     xField?: string;
     yField?: string;
@@ -84,7 +102,13 @@ export interface LineSeriesOptions extends SeriesOptions {
     marker?: boolean;
     markerRadius?: number;
     markerLineWidth?: number;
-    // tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+}
+
+export interface BarTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string
 }
 
 export interface BarSeriesOptions extends SeriesOptions {
@@ -99,7 +123,14 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelFont?: string;
     labelColor?: string;
     labelPadding?: [number, number];
-    // tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+}
+
+export interface PieTooltipRendererParams {
+    datum: any,
+    angleField: string,
+    radiusField?: string,
+    labelField?: string
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
@@ -121,6 +152,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     lineWidth?: number;
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 }
 
 export interface LegendOptions {
