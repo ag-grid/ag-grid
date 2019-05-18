@@ -1,10 +1,43 @@
-export interface IChartOptions {
-    cartesian: CartesianChartOptions; // shared object for all bar and line charts
-    polar: PolarChartOptions;
-    barSeries: BarSeriesOptions;
-    lineSeries: LineSeriesOptions;
-    pieSeries: PieSeriesOptions;
+export interface BaseChartOptions {
+    parent?: HTMLElement;
+    width?: number;
+    height?: number;
+    series?: any[];
+    data?: any;
+    padding?: IPadding;
+    legendPosition?: LegendPosition;
+    legendPadding?: number;
+    tooltipClass?: string;
+    legend?: LegendOptions;
 }
+
+export interface CartesianChartOptions extends BaseChartOptions {
+    xAxis: AxisOptions;
+    yAxis: AxisOptions;
+}
+
+export interface BarChartOptions extends CartesianChartOptions {
+    seriesDefaults?: BarSeriesOptions;
+}
+
+export interface LineChartOptions extends CartesianChartOptions {
+    seriesDefaults: LineSeriesOptions;
+}
+
+export interface PolarChartOptions extends BaseChartOptions {}
+
+export interface PieChartOptions extends PolarChartOptions {
+    seriesDefaults: PieSeriesOptions;
+}
+
+interface IPadding {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}
+
+export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface AxisOptions {
     type?: 'category' | 'number';
@@ -29,47 +62,6 @@ export interface AxisOptions {
 export interface IGridStyle {
     strokeStyle: string | null;
     lineDash: number[] | null;
-}
-
-export interface BaseChartOptions {
-    parent?: HTMLElement;
-    width?: number;
-    height?: number;
-    series?: any[];
-    data?: any;
-    padding?: IPadding;
-    legendPosition?: LegendPosition;
-    legendPadding?: number;
-    tooltipClass?: string;
-    legend?: LegendOptions;
-}
-
-interface IPadding {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-}
-
-export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
-
-export interface CartesianChartOptions extends BaseChartOptions {
-    xAxis: AxisOptions;
-    yAxis: AxisOptions;
-}
-
-export interface BarChartOptions extends CartesianChartOptions {
-    series?: BarSeriesOptions[];
-}
-
-export interface LineChartOptions extends CartesianChartOptions {
-    series?: LineSeriesOptions[];
-}
-
-export interface PolarChartOptions extends BaseChartOptions {}
-
-export interface PieChartOptions extends PolarChartOptions {
-    series?: PieSeriesOptions[];
 }
 
 export interface DropShadowOptions {

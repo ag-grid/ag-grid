@@ -70,7 +70,7 @@ export class PropertyKeys {
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'onGridReady',
         'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard',
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
-        'suppressKeyboardEvent', 'createChartContainer', 'getChartOptions'];
+        'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions'];
 
     public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

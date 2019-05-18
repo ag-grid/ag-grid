@@ -75,7 +75,7 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
-import { IChartOptions } from "../interfaces/iChartOptions";
+import { BaseChartOptions } from "../interfaces/iChartOptions";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -432,7 +432,7 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
-    getChartOptions?(): IChartOptions;
+    processChartOptions?(params: ProcessChartOptionsParams): BaseChartOptions;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -673,6 +673,11 @@ export interface TabToNextCellParams {
     editing: boolean;
     previousCellPosition: CellPosition;
     nextCellPosition: CellPosition;
+}
+
+export interface ProcessChartOptionsParams {
+    type: string;
+    options: BaseChartOptions;
 }
 
 export interface PostProcessPopupParams {

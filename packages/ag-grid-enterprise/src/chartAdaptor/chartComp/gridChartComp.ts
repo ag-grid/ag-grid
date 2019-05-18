@@ -6,27 +6,26 @@ import {
     Component,
     Dialog,
     Environment,
+    GridOptionsWrapper,
     PostConstruct,
     RefSelector,
     ResizeObserverService,
-    IChartOptions
 } from "ag-grid-community";
-import { GridChartFactory } from "./gridChartFactory";
-import { Chart } from "../../charts/chart/chart";
-import { BarSeries } from "../../charts/chart/series/barSeries";
-import { LineSeries } from "../../charts/chart/series/lineSeries";
-import { PieSeries } from "../../charts/chart/series/pieSeries";
-import { palettes } from "../../charts/chart/palettes";
-import { CartesianChart } from "../../charts/chart/cartesianChart";
-import { PolarChart } from "../../charts/chart/polarChart";
-import { ChartMenu } from "./menu/chartMenu";
-import { ChartController } from "./chartController";
-import { ChartModel } from "./chartModel";
-import { Color } from "../../charts/util/color";
+import {GridChartFactory} from "./gridChartFactory";
+import {Chart} from "../../charts/chart/chart";
+import {BarSeries} from "../../charts/chart/series/barSeries";
+import {LineSeries} from "../../charts/chart/series/lineSeries";
+import {PieSeries} from "../../charts/chart/series/pieSeries";
+import {palettes} from "../../charts/chart/palettes";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {PolarChart} from "../../charts/chart/polarChart";
+import {ChartMenu} from "./menu/chartMenu";
+import {ChartController} from "./chartController";
+import {ChartModel} from "./chartModel";
+import {Color} from "../../charts/util/color";
 import {ChartBuilder} from "../builder/chartBuilder";
 
 export interface GridChartOptions {
-    chartOptions: IChartOptions;
     chartType: ChartType;
     insideDialog: boolean;
     showTooltips: boolean;
@@ -43,6 +42,7 @@ export class GridChartComp extends Component {
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
 
     @RefSelector('eChart') private eChart: HTMLElement;
@@ -56,31 +56,30 @@ export class GridChartComp extends Component {
 
     private currentChartType: ChartType;
 
-    private readonly chartOptions: GridChartOptions;
+    private readonly gridChartOptions: GridChartOptions;
     private readonly initialCellRange: CellRange;
 
-    constructor(chartOptions: GridChartOptions, cellRange: CellRange) {
+    constructor(gridChartOptions: GridChartOptions, cellRange: CellRange) {
         super(GridChartComp.TEMPLATE);
-        this.chartOptions = chartOptions;
+        this.gridChartOptions = gridChartOptions;
         this.initialCellRange = cellRange;
     }
 
     @PostConstruct
     public init(): void {
 
-        if (!this.chartOptions.palette) {
-            this.chartOptions.palette = this.getPalette();
+        if (!this.gridChartOptions.palette) {
+            this.gridChartOptions.palette = this.getPalette();
         }
 
-        this.model = new ChartModel(this.chartOptions, this.initialCellRange);
+        this.model = new ChartModel(this.gridChartOptions, this.initialCellRange);
         this.getContext().wireBean(this.model);
-
         this.chartController = new ChartController(this.model);
         this.getContext().wireBean(this.chartController);
 
         this.createChart();
 
-        if (this.chartOptions.insideDialog) {
+        if (this.gridChartOptions.insideDialog) {
             this.addDialog();
         }
 
@@ -95,7 +94,7 @@ export class GridChartComp extends Component {
     }
 
     private createChart() {
-        let {width, height} = this.chartOptions;
+        let {width, height} = this.gridChartOptions;
 
         // destroy chart and remove it from DOM
         if (this.chart) {
@@ -107,11 +106,11 @@ export class GridChartComp extends Component {
 
         const chartOptions = {
             chartType: this.model.getChartType(),
-            chartOptions: this.chartOptions.chartOptions,
+            processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
             parentElement: this.eChart,
             width: width,
             height: height,
-            showTooltips: this.chartOptions.showTooltips,
+            showTooltips: this.gridChartOptions.showTooltips,
             isDarkTheme: this.isDarkTheme()
         };
 
@@ -223,14 +222,15 @@ export class GridChartComp extends Component {
                     lineWidth: 3,
                     markerRadius: 3,
                     color: colors[index % colors.length],
-                    tooltip: this.chartOptions.showTooltips,
+                    tooltip: this.gridChartOptions.showTooltips,
                     tooltipRenderer: (params: any) => { //TODO
                         return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
                     }
                 };
 
-                const mergedLineSeriesDefs = _.assign(defaultLineSeriesDef, this.chartOptions.chartOptions.lineSeries);
-                lineSeries = ChartBuilder.createSeries(mergedLineSeriesDefs) as LineSeries;
+                // const mergedLineSeriesDefs = _.assign(defaultLineSeriesDef, this.gridChartOptions.chartOptions.lineSeries);
+                // lineSeries = ChartBuilder.createSeries(mergedLineSeriesDefs) as LineSeries; const mergedLineSeriesDefs = _.assign(defaultLineSeriesDef, this.gridChartOptions.chartOptions.lineSeries);
+                lineSeries = ChartBuilder.createSeries(defaultLineSeriesDef) as LineSeries;
             }
 
             if (lineSeries) {
@@ -262,28 +262,33 @@ export class GridChartComp extends Component {
 
         let pieSeries = existingSeries;
         if (existingSeriesId !== pieSeriesId) {
+
+
             pieChart.removeSeries(existingSeries);
-            pieSeries = new PieSeries();
+
+            const defaultPieSeriesDef = {
+                type: 'pie',
+                title: pieSeriesName,
+                tooltip: this.gridChartOptions.showTooltips,
+                tooltipRenderer: (params: any) => {
+                    return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
+                },
+                showInLegend: true,
+                lineWidth: 1,
+                calloutWidth: 1,
+                label: false,
+                labelColor: this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
+                colors: palettes[this.getPalette()],
+                angleField: pieSeriesId,
+                labelField: categoryId
+            };
+
+            // const mergedPieSeriesDefs = _.assign(defaultPieSeriesDef, this.gridChartOptions.chartOptions.pieSeries);
+            // pieSeries = ChartBuilder.createSeries(mergedPieSeriesDefs) as PieSeries;
+            pieSeries = ChartBuilder.createSeries(defaultPieSeriesDef) as PieSeries;
         }
 
-        pieSeries.title = pieSeriesName;
-        pieSeries.tooltip = this.chartOptions.showTooltips;
-        pieSeries.tooltipRenderer = params => {
-            return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
-        };
-
-        pieSeries.showInLegend = true;
-        pieSeries.lineWidth = 1;
-        pieSeries.calloutWidth = 1;
-
         pieSeries.data = data;
-        pieSeries.angleField = pieSeriesId;
-
-        pieSeries.labelField = categoryId;
-        pieSeries.label = false;
-        pieSeries.labelColor = this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black';
-
-        pieSeries.colors = palettes[this.getPalette()];
 
         if (!existingSeries) {
             pieChart.addSeries(pieSeries)
@@ -314,7 +319,7 @@ export class GridChartComp extends Component {
 
             pieSeries.title = f.displayName;
 
-            pieSeries.tooltip = this.chartOptions.showTooltips;
+            pieSeries.tooltip = this.gridChartOptions.showTooltips;
             pieSeries.tooltipRenderer = params => {
                 return `<div><b>${params.datum[params.labelField as string]}:</b> ${params.datum[params.angleField]}</div>`;
             };

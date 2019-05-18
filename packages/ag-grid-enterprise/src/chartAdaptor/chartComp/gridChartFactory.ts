@@ -1,10 +1,18 @@
-import {_, ChartType, IChartOptions} from "ag-grid-community";
+import {
+    BarSeriesOptions,
+    BaseChartOptions,
+    ChartType,
+    PolarChartOptions,
+    ProcessChartOptionsParams,
+    BarChartOptions,
+    LineChartOptions
+} from "ag-grid-community";
 import {Chart} from "../../charts/chart/chart";
 import {ChartBuilder} from "../builder/chartBuilder";
 
 interface CreateChartOptions {
     chartType: ChartType;
-    chartOptions: IChartOptions;
+    processChartOptions: (params: ProcessChartOptionsParams) => BaseChartOptions;
     width: number;
     height: number;
     showTooltips: boolean;
@@ -36,19 +44,17 @@ export class GridChartFactory {
     }
 
     private static createBarChart(options: CreateChartOptions, grouped: boolean): Chart {
-        const chartOptions = options.chartOptions;
+        let barChartOptions: BarChartOptions = this.barChartOptions(options, grouped);
+        if (options.processChartOptions) {
+            barChartOptions = options.processChartOptions({
+                type: 'bar',
+                options: barChartOptions
+            }) as BarChartOptions;
+        }
 
-        const mergedDefs = _.assign(this.defaultCartesianDef(options), chartOptions.cartesian);
-        const barChart = ChartBuilder.createCartesianChart(mergedDefs);
+        const barChart = ChartBuilder.createCartesianChart(barChartOptions);
 
-        const defaultBarSeriesDef = {
-            type: 'bar',
-            grouped: grouped,
-            tooltip: options.showTooltips
-        };
-
-        const mergedBarSeriesDefs = _.assign(defaultBarSeriesDef, chartOptions.barSeries);
-        const barSeries = ChartBuilder.createSeries(mergedBarSeriesDefs);
+        const barSeries = ChartBuilder.createSeries(barChartOptions.seriesDefaults as BarSeriesOptions);
         if (barSeries) {
             barChart.addSeries(barSeries);
         }
@@ -57,16 +63,19 @@ export class GridChartFactory {
     }
 
     private static createLineChart(options: CreateChartOptions): Chart {
-        const chartOptions = options.chartOptions;
+        let lineChartOptions: LineChartOptions = this.lineChartOptions(options);
+        if (options.processChartOptions) {
+            lineChartOptions = options.processChartOptions({
+                type: 'line',
+                options: lineChartOptions
+            }) as LineChartOptions;
+        }
 
-        const mergedDefs = _.assign(this.defaultCartesianDef(options), chartOptions.cartesian);
-        return ChartBuilder.createCartesianChart(mergedDefs);
+        return ChartBuilder.createCartesianChart(lineChartOptions);
     }
 
     private static createPolarChart(options: CreateChartOptions): Chart {
-        const chartOptions = options.chartOptions;
-
-        const defaultDef = {
+        let polarChartOptions: PolarChartOptions = {
             parent: options.parentElement,
             width: options.width,
             height: options.height,
@@ -74,11 +83,18 @@ export class GridChartFactory {
                 labelColor: options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour
             }
         };
-        const mergedDefs = _.assign(defaultDef, chartOptions.polar);
-        return ChartBuilder.createPolarChart(mergedDefs);
+
+        if (options.processChartOptions) {
+            polarChartOptions = options.processChartOptions({
+                type: 'line',
+                options: polarChartOptions
+            }) as PolarChartOptions;
+        }
+
+        return ChartBuilder.createPolarChart(polarChartOptions);
     }
 
-    private static defaultCartesianDef(options: CreateChartOptions) {
+    private static barChartOptions(options: CreateChartOptions, grouped: boolean): BarChartOptions {
         const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
         const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
 
@@ -104,7 +120,47 @@ export class GridChartFactory {
             },
             legend: {
                 labelColor: labelColor
+            },
+            seriesDefaults: {
+                type: 'bar',
+                grouped: grouped,
+                tooltip: options.showTooltips
             }
         };
     }
+
+    private static lineChartOptions(options: CreateChartOptions): LineChartOptions {
+        const labelColor = options.isDarkTheme ? this.darkLabelColour : this.lightLabelColour;
+        const axisGridColor = options.isDarkTheme ? this.darkAxisColour : this.lightAxisColour;
+
+        return {
+            parent: options.parentElement,
+            width: options.width,
+            height: options.height,
+            xAxis: {
+                type: 'category',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            },
+            yAxis: {
+                type: 'number',
+                labelColor: labelColor,
+                gridStyle: [{
+                    strokeStyle: axisGridColor,
+                    lineDash: [4, 2]
+                }],
+            },
+            legend: {
+                labelColor: labelColor
+            },
+            seriesDefaults: {
+                type: 'line',
+                tooltip: options.showTooltips
+            }
+        };
+    }
+
 }
