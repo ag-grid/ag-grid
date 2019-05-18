@@ -17,17 +17,20 @@ export interface CartesianChartOptions extends BaseChartOptions {
 }
 
 export interface BarChartOptions extends CartesianChartOptions {
+    series?: BarSeriesOptions[];
     seriesDefaults?: BarSeriesOptions;
 }
 
 export interface LineChartOptions extends CartesianChartOptions {
-    seriesDefaults: LineSeriesOptions;
+    series?: LineChartOptions[];
+    seriesDefaults?: LineSeriesOptions;
 }
 
 export interface PolarChartOptions extends BaseChartOptions {}
 
 export interface PieChartOptions extends PolarChartOptions {
-    seriesDefaults: PieSeriesOptions;
+    series?: PieSeriesOptions[];
+    seriesDefaults?: PieSeriesOptions;
 }
 
 interface IPadding {
