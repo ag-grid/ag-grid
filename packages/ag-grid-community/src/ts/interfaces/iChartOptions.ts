@@ -102,7 +102,7 @@ export interface LineSeriesOptions extends SeriesOptions {
     marker?: boolean;
     markerRadius?: number;
     markerLineWidth?: number;
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+    // tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 }
 
 export interface BarTooltipRendererParams {
@@ -123,7 +123,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelFont?: string;
     labelColor?: string;
     labelPadding?: [number, number];
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+    // tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 }
 
 export interface PieTooltipRendererParams {
@@ -152,7 +152,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     lineWidth?: number;
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
+    // tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 }
 
 export interface LegendOptions {
