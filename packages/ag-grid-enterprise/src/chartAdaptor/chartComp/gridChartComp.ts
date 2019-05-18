@@ -184,12 +184,7 @@ export class GridChartComp extends Component {
         barSeries.yFields = fields.map(f => f.colId);
         barSeries.yFieldNames = fields.map(f => f.displayName);
 
-        //barSeries.colors = palettes[this.getPalette()];
-        //barSeries.tooltip = this.chartOptions.showTooltips;
-        // barSeries.tooltipRenderer = params => {
-        //     const colDisplayName = fields.filter(f => f.colId === params.yField)[0].displayName;
-        //     return `<div><b>${colDisplayName}</b>: ${params.datum[params.yField]}</div>`;
-        // };
+        barSeries.colors = palettes[this.getPalette()];
     }
 
     private updateLineChart(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
@@ -202,11 +197,16 @@ export class GridChartComp extends Component {
         const fieldIds = fields.map(f => f.colId);
 
         const existingSeriesMap: { [id: string]: LineSeries } = {};
-        lineChart.series.forEach(series => {
-            const lineSeries = (series as LineSeries);
+
+        const updateSeries = (lineSeries: LineSeries) => {
             const id = lineSeries.yField as string;
-            fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
-        });
+            const seriesExists = fieldIds.indexOf(id) > -1;
+            seriesExists ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
+        };
+
+        lineChart.series
+            .map(series => series as LineSeries)
+            .forEach(updateSeries);
 
         fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
@@ -215,21 +215,16 @@ export class GridChartComp extends Component {
             if (existingSeries) {
                 lineSeries = existingSeries;
             } else {
-                const colors = palettes[this.getPalette()];
-
                 const defaultLineSeriesDef = {
                     type: 'line',
                     lineWidth: 3,
                     markerRadius: 3,
-                    color: colors[index % colors.length],
                     tooltip: this.gridChartOptions.showTooltips,
-                    tooltipRenderer: (params: any) => { //TODO
-                        return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
-                    }
+                    // tooltipRenderer: (params: any) => { //TODO
+                    //     return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
+                    // }
                 };
 
-                // const mergedLineSeriesDefs = _.assign(defaultLineSeriesDef, this.gridChartOptions.chartOptions.lineSeries);
-                // lineSeries = ChartBuilder.createSeries(mergedLineSeriesDefs) as LineSeries; const mergedLineSeriesDefs = _.assign(defaultLineSeriesDef, this.gridChartOptions.chartOptions.lineSeries);
                 lineSeries = ChartBuilder.createSeries(defaultLineSeriesDef) as LineSeries;
             }
 
@@ -238,6 +233,9 @@ export class GridChartComp extends Component {
                 lineSeries.data = this.model.getData();
                 lineSeries.xField = categoryId;
                 lineSeries.yField = f.colId;
+
+                const colors = palettes[this.getPalette()];
+                lineSeries.color = colors[index % colors.length];
 
                 if (!existingSeries) {
                     lineChart.addSeries(lineSeries);
@@ -263,7 +261,6 @@ export class GridChartComp extends Component {
         let pieSeries = existingSeries;
         if (existingSeriesId !== pieSeriesId) {
 
-
             pieChart.removeSeries(existingSeries);
 
             const defaultPieSeriesDef = {
@@ -278,17 +275,15 @@ export class GridChartComp extends Component {
                 calloutWidth: 1,
                 label: false,
                 labelColor: this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
-                colors: palettes[this.getPalette()],
                 angleField: pieSeriesId,
                 labelField: categoryId
             };
 
-            // const mergedPieSeriesDefs = _.assign(defaultPieSeriesDef, this.gridChartOptions.chartOptions.pieSeries);
-            // pieSeries = ChartBuilder.createSeries(mergedPieSeriesDefs) as PieSeries;
             pieSeries = ChartBuilder.createSeries(defaultPieSeriesDef) as PieSeries;
         }
 
         pieSeries.data = data;
+        pieSeries.colors = palettes[this.getPalette()];
 
         if (!existingSeries) {
             pieChart.addSeries(pieSeries)
@@ -340,8 +335,6 @@ export class GridChartComp extends Component {
             pieSeries.label = false;
 
             pieSeries.labelColor = this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black';
-
-            console.log(pieSeries.labelColor);
 
             pieSeries.colors = palettes[this.getPalette()];
 
