@@ -55,7 +55,9 @@ function refreshCol3(api, newValue) {
     filter.resetFilterValues();
     var filterWasActive = model !== null;
     if (filterWasActive) {
-        model.push(newValue);
+        if (model && model.values.indexOf(newValue)<0) {
+            model.values.push(newValue);
+        }
         filter.setModel(model);
     }
 }
@@ -66,7 +68,9 @@ function refreshCol4(api, newValue) {
     filter.resetFilterValues();
     var filterWasActive = model !== null;
     if (filterWasActive) {
-        model.push(newValue);
+        if (model && model.values.indexOf(newValue)<0) {
+            model.values.push(newValue);
+        }
         filter.setModel(model);
         api.onFilterChanged();
     }

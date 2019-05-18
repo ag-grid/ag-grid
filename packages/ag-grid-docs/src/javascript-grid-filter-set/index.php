@@ -194,17 +194,21 @@ filterParams: {
 
     <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2>Refresh After Edit</h2>
+    <h2>Refresh After Edit or Transcation Update</h2>
 
     <p>
-        The set filter does NOT refresh after you edit the data. If the data is changing and you want the
+        The set filter does NOT refresh after you
+        a) <a href="../javascript-grid-cell-editing">edit the data</a> (eg through the grid UI) or 2) update
+        the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>.
+
+        If the data is changing and you want the
         set filter values to also change, it is up to your application to get the filter to change.
     </p>
 
     <p>
         The grid does not update the filters for you as the as there are two many use cases that
         are open to different interpretation. For example, different users will have different requirements
-        on how to hand new values or how to handle row refresh (eg if a filter is active, should the data
+        on how to handle new values or how to handle row refresh (eg if a filter is active, should the data
         be filtered again after the value is added).
     </p>
 
