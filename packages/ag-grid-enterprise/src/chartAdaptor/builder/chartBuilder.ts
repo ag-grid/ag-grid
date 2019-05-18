@@ -24,7 +24,8 @@ import { Legend } from "../../charts/chart/legend";
 import {
     BarChartOptions,
     LegendOptions,
-    LineChartOptions, PieChartOptions,
+    LineChartOptions,
+    PieChartOptions,
     SeriesOptions
 } from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
@@ -66,6 +67,10 @@ export class ChartBuilder {
     static createPieChart(options: PieChartOptions): PolarChart {
         const chart = new PolarChart();
         return ChartBuilder.initPolarChart(chart, options, 'pie');
+    }
+
+    static createLineSeries(options: LineSeriesOptions): LineSeries {
+        return new LineSeries();
     }
 
     static createSeries(options: LineSeriesOptions | BarSeriesOptions | PieSeriesOptions, type?: string) {
@@ -186,9 +191,9 @@ export class ChartBuilder {
         if (options.markerLineWidth) {
             series.markerLineWidth = options.markerLineWidth;
         }
-        if (options.tooltipRenderer) {
-            series.tooltipRenderer = options.tooltipRenderer;
-        }
+        // if (options.tooltipRenderer) {
+        //     series.tooltipRenderer = options.tooltipRenderer;
+        // }
 
         return series;
     }
@@ -220,9 +225,9 @@ export class ChartBuilder {
         if (options.labelPadding) {
             series.labelPadding = options.labelPadding;
         }
-        if (options.tooltipRenderer) {
-            series.tooltipRenderer = options.tooltipRenderer;
-        }
+        // if (options.tooltipRenderer) {
+        //     series.tooltipRenderer = options.tooltipRenderer;
+        // }
         if (options.shadow) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
@@ -287,9 +292,9 @@ export class ChartBuilder {
         if (options.shadow) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
-        if (options.tooltipRenderer) {
-            series.tooltipRenderer = options.tooltipRenderer;
-        }
+        // if (options.tooltipRenderer) {
+        //     series.tooltipRenderer = options.tooltipRenderer;
+        // }
 
         return series;
     }
