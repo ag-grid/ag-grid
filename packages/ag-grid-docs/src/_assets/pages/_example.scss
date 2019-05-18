@@ -1,4 +1,8 @@
-@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white,  50%), $hover-color: mix($foreground-color, white, 25%)) {
+@mixin scrollbars($size, $foreground-color,
+    $background-color: mix($foreground-color, white,  50%),
+    $hover-color: mix($foreground-color, white, 25%),
+    $border-color: rgba(0,0,0,0)
+) {
     // For Google Chrome
     ::-webkit-scrollbar {
         width:  $size;
@@ -21,6 +25,14 @@
 
     ::-webkit-scrollbar-track {
         background-color: $background-color;
+    }
+
+    ::-webkit-scrollbar-track:vertical {
+        border-left: 1px solid $border-color;
+    }
+
+    ::-webkit-scrollbar-track:horizontal {
+        border-top: 1px solid $border-color;
     }
 
     ::-webkit-scrollbar-corner {
@@ -70,11 +82,11 @@ body .ag-theme-material, body .ag-theme-balham {
 }
 
 body:not(.dark) {
-    @include scrollbars(14px, #c2c2c2, #fafafa, #7d7d7d);
+    @include scrollbars(14px, #c2c2c2, #fafafa, #7d7d7d, #e8e8e8);
 }
 
 .dark {
-    @include scrollbars(14px, #6b6b6b, #1c1f20, #959595);
+    @include scrollbars(14px, #6b6b6b, #1c1f20, #959595, #424242);
     background-color:#222;
     color: white;
      .good-score {
