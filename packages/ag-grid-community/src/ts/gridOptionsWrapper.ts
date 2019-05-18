@@ -11,6 +11,7 @@ import {
     NodeChildDetails,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
+    ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
@@ -36,7 +37,7 @@ import { Events } from "./eventKeys";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
 import { ModuleNames } from "./modules/moduleNames";
-import { IChartOptions } from "./interfaces/iChartOptions";
+import { BaseChartOptions } from "./interfaces/iChartOptions";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1063,8 +1064,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.postSort;
     }
 
-    public getChartOptionsFunc(): () => IChartOptions {
-        return this.gridOptions.getChartOptions;
+    public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => BaseChartOptions {
+        return this.gridOptions.processChartOptions;
     }
 
     public getClipboardDeliminator() {

@@ -10,7 +10,6 @@ import {
     GridOptionsWrapper,
     IRangeChartService,
     PreDestroy,
-    IChartOptions
 } from "ag-grid-community";
 import { RangeController } from "../rangeController";
 import { GridChartOptions, GridChartComp } from "./chartComp/gridChartComp";
@@ -28,10 +27,7 @@ export class RangeChartService implements IRangeChartService {
 
     public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
-
-        const getChartOptionsFunc = this.gridOptionsWrapper.getChartOptionsFunc();
-        const chartOptions = getChartOptionsFunc ? getChartOptionsFunc() : {};
-        return this.chartRange(selectedRange, chartType, chartOptions as IChartOptions);
+        return this.chartRange(selectedRange, chartType);
     }
 
     public chartCellRange(params: ChartRangeParams): ChartRef | undefined {
@@ -65,16 +61,15 @@ export class RangeChartService implements IRangeChartService {
 
         if (cellRange) {
             // const chartOptions = params.chartOptions ? params.chartOptions : {};
-            return this.chartRange(cellRange, chartType, {} as IChartOptions, params.chartContainer, params.aggregate);
+            return this.chartRange(cellRange, chartType, params.chartContainer, params.aggregate);
         }
     }
 
-    private chartRange(cellRange: CellRange, chartType: ChartType, chartOptions: IChartOptions, container?: HTMLElement, aggregate = false): ChartRef | undefined {
+    private chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, aggregate = false): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
         const gridChartOptions: GridChartOptions = {
-            chartOptions: chartOptions,
             chartType: chartType,
             insideDialog: !(container || createChartContainerFunc),
             aggregate: aggregate,
