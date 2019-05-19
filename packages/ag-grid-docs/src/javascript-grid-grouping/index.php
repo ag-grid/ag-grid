@@ -278,7 +278,7 @@ columnDefs = [
 
     <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2 id="fullWidthRows">Keeping Columns Visible</h2>
+    <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
 
     <p>
         By default dragging a column out of the grid will make it hidden and

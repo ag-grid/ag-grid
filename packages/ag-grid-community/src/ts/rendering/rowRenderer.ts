@@ -1096,27 +1096,38 @@ export class RowRenderer extends BeanStub {
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
     public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean) {
-        let nextCell: CellPosition;
-
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
-        while (true) {
+        let nextCell = currentCell;
+        let finished = false;
+        while (!finished) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
             if (key === Constants.KEY_RIGHT) {
-                currentCell = this.getLastCellOfColSpan(currentCell);
+                nextCell = this.getLastCellOfColSpan(nextCell);
             }
 
-            nextCell = this.cellNavigationService.getNextCellToFocus(key, currentCell);
+            nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
-            if (_.missing(nextCell)) { break; }
-
-            const pivotMode = this.columnController.isPivotMode();
-            const skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
-            if (!skipGroupRows) { break; }
-
-            const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
-            if (!rowNode.group) { break; }
+            if (_.missing(nextCell)) {
+                // pointer points to nothing, we have hit a border of the grid
+                finished = true;
+            } else {
+                const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                if (rowNode.group) {
+                    // full width rows cannot be focused, so if it's a group and using full width rows,
+                    // we need to skip over the row
+                    const pivotMode = this.columnController.isPivotMode();
+                    const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+                    if (usingFullWidthRows) {
+                        finished = !rowNode.group;
+                    } else {
+                        finished = true;
+                    }
+                } else {
+                    finished = true;
+                }
+            }
         }
 
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
