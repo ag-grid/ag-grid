@@ -65,6 +65,8 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
 
+
+    /** @deprecated */
     public onFilterChanged(): void {
         console.warn(`ag-Grid: you should not call onFilterChanged() directly on the filter, please call
         gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was
