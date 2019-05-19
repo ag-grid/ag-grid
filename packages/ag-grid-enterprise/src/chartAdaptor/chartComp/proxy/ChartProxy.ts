@@ -1,6 +1,13 @@
 import {BaseChartOptions, ChartType, ProcessChartOptionsParams} from "ag-grid-community";
 import {Chart} from "../../../charts/chart/chart";
 
+export enum ChartOptionsType {
+    BAR = 'bar',
+    LINE = 'line',
+    PIE = 'pie',
+    DOUGHNUT = 'doughnut'
+}
+
 export interface CreateChartOptions {
     chartType: ChartType;
     processChartOptions: (params: ProcessChartOptionsParams) => BaseChartOptions;
@@ -16,8 +23,6 @@ export interface ChartUpdateParams {
     fields: { colId: string, displayName: string }[];
     data: any[];
 }
-
-export enum ChartOptionsType {BAR = 'bar', LINE = 'line', PIE = 'pie', DOUGHNUT = 'doughnut'}
 
 export abstract class ChartProxy {
     protected static darkLabelColour = 'rgb(221, 221, 221)';
@@ -44,7 +49,7 @@ export abstract class ChartProxy {
     protected getChartOptions(type: string, defaultOptions: BaseChartOptions) {
         // allow user to override options
         if (this.options.processChartOptions) {
-            const params: ProcessChartOptionsParams = {type: 'bar', options: defaultOptions};
+            const params: ProcessChartOptionsParams = {type: type, options: defaultOptions};
             return this.options.processChartOptions(params);
         }
 
