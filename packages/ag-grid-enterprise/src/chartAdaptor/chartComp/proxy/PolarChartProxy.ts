@@ -1,5 +1,5 @@
 import {ChartBuilder} from "../../builder/chartBuilder";
-import {ChartType, PieChartOptions} from "ag-grid-community";
+import {ChartType, PieChartOptions, PieSeriesOptions} from "ag-grid-community";
 import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./ChartProxy";
 import {PolarChart} from "../../../charts/chart/polarChart";
 import {PieSeries} from "../../../charts/chart/series/pieSeries";
@@ -42,7 +42,7 @@ export class PolarChartProxy extends ChartProxy {
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
 
-            const seriesOptions = this.chartOptions.seriesDefaults;
+            const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
 
             seriesOptions.title = pieSeriesName;
             seriesOptions.angleField = pieSeriesId;
@@ -80,7 +80,8 @@ export class PolarChartProxy extends ChartProxy {
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
-            const seriesOptions = this.chartOptions.seriesDefaults;
+            const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+
             seriesOptions.title = f.displayName;
             seriesOptions.angleField = f.colId;
             seriesOptions.labelField = params.categoryId;

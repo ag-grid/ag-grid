@@ -1,5 +1,5 @@
 import {ChartBuilder} from "../../builder/chartBuilder";
-import {LineChartOptions} from "ag-grid-community";
+import {LineChartOptions, LineSeriesOptions} from "ag-grid-community";
 import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./ChartProxy";
 import {CartesianChart} from "../../../charts/chart/cartesianChart";
 import {LineSeries} from "../../../charts/chart/series/lineSeries";
@@ -40,7 +40,7 @@ export class LineChartProxy extends ChartProxy {
             .forEach(updateSeries);
 
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
-            const seriesOptions = this.chartOptions.seriesDefaults;
+            const seriesOptions = this.chartOptions.seriesDefaults as LineSeriesOptions;
 
             const existingSeries = existingSeriesMap[f.colId];
             let lineSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as LineSeries;
