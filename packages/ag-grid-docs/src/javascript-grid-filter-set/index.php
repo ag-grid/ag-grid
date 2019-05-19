@@ -313,7 +313,7 @@ countryFilterComponent.setModel({
     type: 'set',
     values: ['Spain','Ireland','South Africa','Australia','England']
 });
-countryFilterComponent.onFilterChanged()</snippet>
+gridApi.onFilterChanged()</snippet>
 
 
     <p>
