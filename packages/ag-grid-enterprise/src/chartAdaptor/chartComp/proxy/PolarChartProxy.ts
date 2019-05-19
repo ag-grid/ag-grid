@@ -1,29 +1,22 @@
 import {ChartBuilder} from "../../builder/chartBuilder";
-import {ChartType, PolarChartOptions} from "ag-grid-community";
+import {ChartType, PieChartOptions} from "ag-grid-community";
 import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./ChartProxy";
 import {PolarChart} from "../../../charts/chart/polarChart";
 import {PieSeries} from "../../../charts/chart/series/pieSeries";
-import { palettes } from "../../../charts/chart/palettes";
+import {palettes} from "../../../charts/chart/palettes";
 
 export class PolarChartProxy extends ChartProxy {
+    private readonly chartOptions: PieChartOptions;
 
     public constructor(options: CreateChartOptions) {
         super(options);
+
+        const optionsType = this.options.chartType === ChartType.Pie ? ChartOptionsType.PIE : ChartOptionsType.DOUGHNUT;
+        this.chartOptions = this.getChartOptions(optionsType, this.defaultOptions()) as PieChartOptions;
     }
 
     public create(): ChartProxy {
-        let defaultOptions: PolarChartOptions = {
-            parent: this.options.parentElement,
-            width: this.options.width,
-            height: this.options.height,
-            legend: {
-                labelColor: this.getLabelColor()
-            }
-        };
-
-        const chartOptions = this.getChartOptions(ChartOptionsType.POLAR, defaultOptions) as PolarChartOptions;
-        this.chart = ChartBuilder.createPolarChart(chartOptions);
-
+        this.chart = ChartBuilder.createPolarChart(this.chartOptions);
         return this;
     }
 
@@ -47,26 +40,15 @@ export class PolarChartProxy extends ChartProxy {
 
         let pieSeries = existingSeries;
         if (existingSeriesId !== pieSeriesId) {
-
             pieChart.removeSeries(existingSeries);
 
-            const defaultPieSeriesDef = {
-                type: 'pie',
-                title: pieSeriesName,
-                tooltip: true,
-                tooltipRenderer: (params: any) => {
-                    return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
-                },
-                showInLegend: true,
-                lineWidth: 1,
-                calloutWidth: 1,
-                label: false,
-                labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
-                angleField: pieSeriesId,
-                labelField: params.categoryId
-            };
+            const seriesOptions = this.chartOptions.seriesDefaults;
 
-            pieSeries = ChartBuilder.createSeries(defaultPieSeriesDef) as PieSeries;
+            seriesOptions.title = pieSeriesName;
+            seriesOptions.angleField = pieSeriesId;
+            seriesOptions.labelField = params.categoryId;
+
+            pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
         }
 
         pieSeries.data = params.data;
@@ -98,36 +80,49 @@ export class PolarChartProxy extends ChartProxy {
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
-            const pieSeries = existingSeries ? existingSeries : new PieSeries();
+            const seriesOptions = this.chartOptions.seriesDefaults;
+            seriesOptions.title = f.displayName;
+            seriesOptions.angleField = f.colId;
+            seriesOptions.labelField = params.categoryId;
+            seriesOptions.showInLegend = index === 0;
 
-            pieSeries.title = f.displayName;
+            const pieSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
-            pieSeries.tooltip = true;
-            pieSeries.tooltipRenderer = params => {
-                return `<div><b>${params.datum[params.labelField as string]}:</b> ${params.datum[params.angleField]}</div>`;
-            };
-
-            pieSeries.showInLegend = index === 0;
-            pieSeries.lineWidth = 1;
-            pieSeries.calloutWidth = 1;
+            pieSeries.data = params.data;
 
             pieSeries.outerRadiusOffset = offset;
             offset -= 20;
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
 
-            pieSeries.data = params.data;
-            pieSeries.angleField = f.colId;
-
-            pieSeries.labelField = params.categoryId;
-            pieSeries.label = false;
-
-            pieSeries.labelColor = this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black';
             pieSeries.colors = palettes[this.options.getPalette()];
 
             if (!existingSeries) {
                 doughnutChart.addSeries(pieSeries)
             }
         });
+    }
+
+    private defaultOptions() {
+        return {
+            parent: this.options.parentElement,
+            width: this.options.width,
+            height: this.options.height,
+            legend: {
+                labelColor: this.getLabelColor()
+            },
+            seriesDefaults: {
+                type: 'pie',
+                showInLegend: true,
+                lineWidth: 1,
+                calloutWidth: 1,
+                label: false,
+                labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
+                tooltip: true,
+                // tooltipRenderer: (params: any) => {
+                //     return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
+                // }
+            }
+        };
     }
 }

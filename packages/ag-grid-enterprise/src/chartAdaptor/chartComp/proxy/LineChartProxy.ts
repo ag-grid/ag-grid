@@ -6,14 +6,15 @@ import {LineSeries} from "../../../charts/chart/series/lineSeries";
 import {palettes} from "../../../charts/chart/palettes";
 
 export class LineChartProxy extends ChartProxy {
+    private readonly chartOptions: LineChartOptions;
 
     public constructor(options: CreateChartOptions) {
         super(options);
+        this.chartOptions = this.getChartOptions(ChartOptionsType.LINE, this.defaultOptions()) as LineChartOptions;
     }
 
     public create(): ChartProxy {
-        const chartOptions = this.getChartOptions(ChartOptionsType.LINE, this.defaultOptions()) as LineChartOptions;
-        this.chart = ChartBuilder.createLineChart(chartOptions);
+        this.chart = ChartBuilder.createLineChart(this.chartOptions);
         return this;
     }
 
@@ -39,24 +40,10 @@ export class LineChartProxy extends ChartProxy {
             .forEach(updateSeries);
 
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+            const seriesOptions = this.chartOptions.seriesDefaults;
+
             const existingSeries = existingSeriesMap[f.colId];
-
-            let lineSeries: LineSeries;
-            if (existingSeries) {
-                lineSeries = existingSeries;
-            } else {
-                const defaultLineSeriesDef = {
-                    type: 'line',
-                    lineWidth: 3,
-                    markerRadius: 3,
-                    tooltip: true,
-                    tooltipRenderer: (params: any) => {
-                        return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
-                    }
-                };
-
-                lineSeries = ChartBuilder.createSeries(defaultLineSeriesDef) as LineSeries;
-            }
+            let lineSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as LineSeries;
 
             if (lineSeries) {
                 lineSeries.title = f.displayName;
@@ -73,7 +60,6 @@ export class LineChartProxy extends ChartProxy {
             }
         });
     }
-
 
     private defaultOptions(): LineChartOptions {
         return {
@@ -101,7 +87,12 @@ export class LineChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'line',
+                lineWidth: 3,
+                markerRadius: 3,
                 tooltip: true
+                // tooltipRenderer: (params: any) => {
+                //     return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
+                // }
             }
         };
     }

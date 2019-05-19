@@ -17,7 +17,7 @@ export interface ChartUpdateParams {
     data: any[];
 }
 
-export enum ChartOptionsType {BAR = 'bar', LINE = 'line', POLAR = 'polar'}
+export enum ChartOptionsType {BAR = 'bar', LINE = 'line', PIE = 'pie', DOUGHNUT = 'doughnut'}
 
 export abstract class ChartProxy {
     protected static darkLabelColour = 'rgb(221, 221, 221)';
