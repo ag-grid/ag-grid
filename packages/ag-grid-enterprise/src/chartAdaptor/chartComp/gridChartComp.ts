@@ -15,10 +15,10 @@ import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
 import {ChartModel} from "./chartModel";
 import {Color} from "../../charts/util/color";
-import {BarChartProxy} from "./proxy/BarChartProxy";
-import {ChartProxy, CreateChartOptions} from "./proxy/ChartProxy";
-import {LineChartProxy} from "./proxy/LineChartProxy";
-import {PolarChartProxy} from "./proxy/PolarChartProxy";
+import {BarChartProxy} from "./chartProxies/barChartProxy";
+import {ChartProxy, CreateChartOptions} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/lineChartProxy";
+import {PolarChartProxy} from "./chartProxies/polarChartProxy";
 
 export interface GridChartOptions {
     chartType: ChartType;

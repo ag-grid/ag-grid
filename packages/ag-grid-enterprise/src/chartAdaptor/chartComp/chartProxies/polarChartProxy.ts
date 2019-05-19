@@ -1,6 +1,6 @@
 import {ChartBuilder} from "../../builder/chartBuilder";
 import {ChartType, PieChartOptions, PieSeriesOptions} from "ag-grid-community";
-import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./ChartProxy";
+import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./chartProxy";
 import {PolarChart} from "../../../charts/chart/polarChart";
 import {PieSeries} from "../../../charts/chart/series/pieSeries";
 import {palettes} from "../../../charts/chart/palettes";
