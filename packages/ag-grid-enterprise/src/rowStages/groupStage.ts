@@ -67,6 +67,8 @@ export class GroupStage implements IRowNodeStage {
     // rowNode.childrenMapped: string=>RowNode = children mapped by group key (when groups) or an empty map if leaf group (this is then used by pivot)
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
+    private oldGroupingDetails: GroupingDetails;
+
     @PostConstruct
     private postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -132,7 +134,7 @@ export class GroupStage implements IRowNodeStage {
             this.moveNodesInWrongPath(tran.update, details);
         }
         if (tran.remove) {
-            this.removeNodes(tran.remove, details);
+            this.removeNodes(tran.remove, details, true);
         }
         if (details.rowNodeOrder) {
             this.sortChildren(details);
@@ -211,7 +213,7 @@ export class GroupStage implements IRowNodeStage {
 
     private moveNode(childNode: RowNode, details: GroupingDetails): void {
 
-        this.removeOneNode(childNode, details);
+        this.removeNodes([childNode], details, false);
         this.insertOneNode(childNode, details);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
@@ -229,64 +231,97 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails): void {
-        leafRowNodes.forEach(leafToRemove => {
-            this.removeOneNode(leafToRemove, details);
-            if (details.changedPath.isActive()) {
-                details.changedPath.addParentNode(leafToRemove.parent);
-            }
-        });
-    }
+    private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails, addToChangedPath: boolean): void {
+        this.removeNodes_removeFromParents(leafRowNodes, details);
+        this.removeNodes_createFillerNodes(leafRowNodes, details);
+        this.removeNodes_removeEmptyRowGroups(leafRowNodes, details);
 
-    private removeOneNode(childNode: RowNode, details: GroupingDetails): void {
-
-        // utility func to execute once on each parent node
-        const forEachParentGroup = (callback: (parent: RowNode) => void) => {
-            let pointer = childNode.parent;
-            while (pointer && pointer !== details.rootNode) {
-                callback(pointer);
-                pointer = pointer.parent;
-            }
-        };
-
-        // remove leaf from direct parent
-        this.removeFromParent(childNode);
-
-        // remove from allLeafChildren
-        forEachParentGroup(parentNode => _.removeFromArray(parentNode.allLeafChildren, childNode));
-
-        // if not group, and children are present, need to move children to a group.
-        // otherwise if no children, we can just remove without replacing.
-        const replaceWithGroup = childNode.hasChildren();
-        if (replaceWithGroup) {
-            const oldPath = this.getExistingPathForNode(childNode, details);
-            // because we just removed the userGroup, this will always return new support group
-            const newGroupNode = this.findParentForNode(childNode, oldPath, details);
-
-            // these properties are the ones that will be incorrect in the newly created group,
-            // so copy them form the old childNode
-            newGroupNode.expanded = childNode.expanded;
-            newGroupNode.allLeafChildren = childNode.allLeafChildren;
-            newGroupNode.childrenAfterGroup = childNode.childrenAfterGroup;
-            newGroupNode.childrenMapped = childNode.childrenMapped;
-
-            newGroupNode.childrenAfterGroup.forEach((rowNode: RowNode) => rowNode.parent = newGroupNode);
+        if (addToChangedPath && details.changedPath.isActive()) {
+            leafRowNodes.forEach( rowNode => details.changedPath.addParentNode(rowNode.parent));
         }
+    }
 
-        // remove empty groups
-        forEachParentGroup(node => {
-            if (node.isEmptyFillerNode()) {
-                this.removeFromParent(node);
-                // we remove selection on filler nodes here, as the selection would not be removed
-                // from the RowNodeManager, as filler nodes don't exist on teh RowNodeManager
-                node.setSelected(false);
+    private forEachParentGroup(details: GroupingDetails, child: RowNode, callback: (parent: RowNode) => void): void {
+        let pointer = child.parent;
+        while (pointer && pointer !== details.rootNode) {
+            callback(pointer);
+            pointer = pointer.parent;
+        }
+    }
+
+    private removeNodes_removeFromParents(nodesToRemove: RowNode[], details: GroupingDetails): void {
+
+        const batchRemover: BatchRemover = new BatchRemover();
+
+        nodesToRemove.forEach( nodeToRemove => {
+
+            this.removeFromParent(nodeToRemove, batchRemover);
+
+            // remove from allLeafChildren
+            this.forEachParentGroup(details, nodeToRemove, parentNode => {
+                batchRemover.removeFromAllLeafChildren(parentNode, nodeToRemove);
+            });
+
+        });
+
+        batchRemover.flush();
+    }
+
+    private removeNodes_createFillerNodes(nodesToRemove: RowNode[], details: GroupingDetails): void {
+        nodesToRemove.forEach( nodeToRemove => {
+
+            // if not group, and children are present, need to move children to a group.
+            // otherwise if no children, we can just remove without replacing.
+            const replaceWithGroup = nodeToRemove.hasChildren();
+            if (replaceWithGroup) {
+                const oldPath = this.getExistingPathForNode(nodeToRemove, details);
+                // because we just removed the userGroup, this will always return new support group
+                const newGroupNode = this.findParentForNode(nodeToRemove, oldPath, details);
+
+                // these properties are the ones that will be incorrect in the newly created group,
+                // so copy them from the old childNode
+                newGroupNode.expanded = nodeToRemove.expanded;
+                newGroupNode.allLeafChildren = nodeToRemove.allLeafChildren;
+                newGroupNode.childrenAfterGroup = nodeToRemove.childrenAfterGroup;
+                newGroupNode.childrenMapped = nodeToRemove.childrenMapped;
+
+                newGroupNode.childrenAfterGroup.forEach(rowNode => rowNode.parent = newGroupNode);
             }
+
         });
     }
 
-    private removeFromParent(child: RowNode) {
+    private removeNodes_removeEmptyRowGroups(nodesToRemove: RowNode[], details: GroupingDetails): void {
+        // we do this multiple times, as when we remove groups, that means the parent of just removed
+        // group can then be empty. to get around this, if we remove, then we check everything again for
+        // newly emptied groups. the max number of times this will execute is the depth of the group tree.
+        let checkAgain = true;
+        while (checkAgain) {
+            checkAgain = false;
+            const batchRemover: BatchRemover = new BatchRemover();
+            nodesToRemove.forEach(nodeToRemove => {
+                // remove empty groups
+                this.forEachParentGroup(details, nodeToRemove, node => {
+                    if (node.isEmptyRowGroupNode()) {
+                        checkAgain = true;
+                        this.removeFromParent(node, batchRemover);
+                        // we remove selection on filler nodes here, as the selection would not be removed
+                        // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+                        node.setSelected(false);
+                    }
+                });
+            });
+            batchRemover.flush();
+        }
+    }
+
+    private removeFromParent(child: RowNode, batchRemover?: BatchRemover) {
         if (child.parent) {
-            _.removeFromArray(child.parent.childrenAfterGroup, child);
+            if (batchRemover) {
+                batchRemover.removeFromChildrenAfterGroup(child.parent, child);
+            } else {
+                _.removeFromArray(child.parent.childrenAfterGroup, child);
+            }
         }
         const mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
         if (child.parent && child.parent.childrenMapped) {
@@ -306,8 +341,6 @@ export class GroupStage implements IRowNodeStage {
             parent.childrenAfterGroup.push(child);
         }
     }
-
-    private oldGroupingDetails: GroupingDetails;
 
     private areGroupColsEqual(d1: GroupingDetails, d2: GroupingDetails): boolean {
 
@@ -542,5 +575,56 @@ export class GroupStage implements IRowNodeStage {
             }
         });
         return res;
+    }
+}
+
+interface RemoveDetails {
+    removeFromChildrenAfterGroup: {[id:string]: boolean};
+    removeFromAllLeafChildren: {[id:string]: boolean};
+}
+
+// doing _.removeFromArray() multiple times on a large list can be a bottleneck.
+// when doing large deletes (eg removing 1,000 rows) then we would be calling _.removeFromArray()
+// a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
+// 1,000 removes is time consuming as each one requires traversing the full list.
+// to get around this, we do all the removes in a batch. this class manages the batch.
+//
+// This problem was brought to light by a client (AG-2879), with dataset of 20,000
+// in 10,000 groups (2 items per group), then deleting all rows with transaction,
+// it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
+class BatchRemover {
+
+    private allSets: {[parentId: string]: RemoveDetails} = {};
+    private allParents: RowNode[] = [];
+
+    public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
+        const set = this.getSet(parent);
+        set.removeFromChildrenAfterGroup[child.id] = true;
+    }
+
+    public removeFromAllLeafChildren(parent: RowNode, child: RowNode): void {
+        const set = this.getSet(parent);
+        set.removeFromAllLeafChildren[child.id] = true;
+    }
+
+    private getSet(parent: RowNode): RemoveDetails {
+        if (!this.allSets[parent!.id]) {
+            this.allSets[parent!.id] = {
+                removeFromAllLeafChildren: {},
+                removeFromChildrenAfterGroup: {}
+            };
+            this.allParents.push(parent!);
+        }
+        return this.allSets[parent!.id];
+    }
+
+    public flush(): void {
+        this.allParents.forEach( parent => {
+            const nodeDetails = this.allSets[parent.id];
+            parent.childrenAfterGroup = parent.childrenAfterGroup.filter( child => !nodeDetails.removeFromChildrenAfterGroup[child.id] );
+            parent.allLeafChildren = parent.allLeafChildren.filter( child => !nodeDetails.removeFromAllLeafChildren[child.id] );
+        });
+        this.allSets = {};
+        this.allParents.length = 0;
     }
 }
