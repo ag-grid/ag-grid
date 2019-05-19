@@ -1,8 +1,9 @@
 import {ChartBuilder} from "../../builder/chartBuilder";
 import {LineChartOptions} from "ag-grid-community";
-import {ChartProxy, CreateChartOptions} from "./ChartProxy";
+import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./ChartProxy";
 import {CartesianChart} from "../../../charts/chart/cartesianChart";
 import {LineSeries} from "../../../charts/chart/series/lineSeries";
+import {palettes} from "../../../charts/chart/palettes";
 
 export class LineChartProxy extends ChartProxy {
 
@@ -11,28 +12,19 @@ export class LineChartProxy extends ChartProxy {
     }
 
     public create(): ChartProxy {
-        let lineChartOptions: LineChartOptions = this.lineChartOptions();
-
-        if (this.options.processChartOptions) {
-            lineChartOptions = this.options.processChartOptions({
-                type: 'line',
-                options: lineChartOptions
-            }) as LineChartOptions;
-        }
-
-        this.chart = ChartBuilder.createLineChart(lineChartOptions);
-
+        const chartOptions = this.getChartOptions(ChartOptionsType.LINE, this.defaultOptions()) as LineChartOptions;
+        this.chart = ChartBuilder.createLineChart(chartOptions);
         return this;
     }
 
-    public update(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
-        if (fields.length === 0) {
+    public update(params: ChartUpdateParams): void {
+        if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
         }
 
         const lineChart = this.chart as CartesianChart;
-        const fieldIds = fields.map(f => f.colId);
+        const fieldIds = params.fields.map(f => f.colId);
 
         const existingSeriesMap: { [id: string]: LineSeries } = {};
 
@@ -46,7 +38,7 @@ export class LineChartProxy extends ChartProxy {
             .map(series => series as LineSeries)
             .forEach(updateSeries);
 
-        fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
             let lineSeries: LineSeries;
@@ -57,10 +49,10 @@ export class LineChartProxy extends ChartProxy {
                     type: 'line',
                     lineWidth: 3,
                     markerRadius: 3,
-                    // tooltip: this.gridChartOptions.showTooltips,
-                    // tooltipRenderer: (params: any) => { //TODO
-                    //     return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
-                    // }
+                    tooltip: true,
+                    tooltipRenderer: (params: any) => {
+                        return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
+                    }
                 };
 
                 lineSeries = ChartBuilder.createSeries(defaultLineSeriesDef) as LineSeries;
@@ -68,12 +60,12 @@ export class LineChartProxy extends ChartProxy {
 
             if (lineSeries) {
                 lineSeries.title = f.displayName;
-                lineSeries.data = data;
-                lineSeries.xField = categoryId;
+                lineSeries.data = params.data;
+                lineSeries.xField = params.categoryId;
                 lineSeries.yField = f.colId;
 
-                // const colors = palettes[this.getPalette()];
-                // lineSeries.color = colors[index % colors.length];
+                const colors = palettes[this.options.getPalette()];
+                lineSeries.color = colors[index % colors.length];
 
                 if (!existingSeries) {
                     lineChart.addSeries(lineSeries);
@@ -83,36 +75,33 @@ export class LineChartProxy extends ChartProxy {
     }
 
 
-    private lineChartOptions(): LineChartOptions {
-        const labelColor = this.options.isDarkTheme ? ChartProxy.darkLabelColour : ChartProxy.lightLabelColour;
-        const axisGridColor = this.options.isDarkTheme ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
-
+    private defaultOptions(): LineChartOptions {
         return {
             parent: this.options.parentElement,
             width: this.options.width,
             height: this.options.height,
             xAxis: {
                 type: 'category',
-                labelColor: labelColor,
+                labelColor: this.getLabelColor(),
                 gridStyle: [{
-                    strokeStyle: axisGridColor,
+                    strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }],
             },
             yAxis: {
                 type: 'number',
-                labelColor: labelColor,
+                labelColor: this.getLabelColor(),
                 gridStyle: [{
-                    strokeStyle: axisGridColor,
+                    strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }],
             },
             legend: {
-                labelColor: labelColor
+                labelColor: this.getLabelColor()
             },
             seriesDefaults: {
                 type: 'line',
-                tooltip: this.options.showTooltips
+                tooltip: true
             }
         };
     }

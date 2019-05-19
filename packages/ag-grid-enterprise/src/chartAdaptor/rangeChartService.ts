@@ -60,7 +60,6 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            // const chartOptions = params.chartOptions ? params.chartOptions : {};
             return this.chartRange(cellRange, chartType, params.chartContainer, params.aggregate);
         }
     }
@@ -73,7 +72,6 @@ export class RangeChartService implements IRangeChartService {
             chartType: chartType,
             insideDialog: !(container || createChartContainerFunc),
             aggregate: aggregate,
-            showTooltips: true,
             height: 400,
             width: 800
         };

@@ -51,8 +51,8 @@ export class ChartModel extends BeanStub {
 
         this.chartType = chartOptions.chartType;
         this.aggregate = chartOptions.aggregate;
-        this.palette = chartOptions.palette as number;
         this.cellRanges = [cellRange];
+        this.palette = 0;
     }
 
     @PostConstruct

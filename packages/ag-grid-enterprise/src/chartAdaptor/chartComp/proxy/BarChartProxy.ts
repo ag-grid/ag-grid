@@ -1,7 +1,8 @@
 import {ChartBuilder} from "../../builder/chartBuilder";
 import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
 import {BarSeries} from "../../../charts/chart/series/barSeries";
-import {ChartProxy, CreateChartOptions} from "./ChartProxy";
+import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./ChartProxy";
+import {palettes} from "../../../charts/chart/palettes";
 
 export class BarChartProxy extends ChartProxy {
 
@@ -10,20 +11,10 @@ export class BarChartProxy extends ChartProxy {
     }
 
     public create(): ChartProxy {
-        const grouped = this.options.chartType === ChartType.GroupedBar;
+        const chartOptions = this.getChartOptions(ChartOptionsType.BAR, this.defaultOptions()) as BarChartOptions;
+        this.chart = ChartBuilder.createBarChart(chartOptions);
 
-        let barChartOptions: BarChartOptions = this.barChartOptions(grouped);
-
-        if (this.options.processChartOptions) {
-            barChartOptions = this.options.processChartOptions({
-                type: 'bar',
-                options: barChartOptions
-            }) as BarChartOptions;
-        }
-
-        this.chart = ChartBuilder.createBarChart(barChartOptions);
-
-        const barSeries = ChartBuilder.createSeries(barChartOptions.seriesDefaults as BarSeriesOptions);
+        const barSeries = ChartBuilder.createSeries(chartOptions.seriesDefaults as BarSeriesOptions);
         if (barSeries) {
             this.chart.addSeries(barSeries);
         }
@@ -31,50 +22,45 @@ export class BarChartProxy extends ChartProxy {
         return this;
     }
 
-    public update(categoryId: string, fields: { colId: string, displayName: string }[], data: any[]) {
+    public update(params: ChartUpdateParams): void {
         const barSeries = this.chart.series[0] as BarSeries;
 
-        barSeries.data = data;
-        barSeries.xField = categoryId;
-        barSeries.yFields = fields.map(f => f.colId);
-        barSeries.yFieldNames = fields.map(f => f.displayName);
+        barSeries.data = params.data;
+        barSeries.xField = params.categoryId;
+        barSeries.yFields = params.fields.map(f => f.colId);
+        barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        //TODO
-        // barSeries.colors = palettes[this.getPalette()];
+        barSeries.colors = palettes[this.options.getPalette()];
     }
 
-
-    private barChartOptions(grouped: boolean): BarChartOptions {
-        const labelColor = this.options.isDarkTheme ? ChartProxy.darkLabelColour : ChartProxy.lightLabelColour;
-        const axisGridColor = this.options.isDarkTheme ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
-
+    private defaultOptions(): BarChartOptions {
         return {
             parent: this.options.parentElement,
             width: this.options.width,
             height: this.options.height,
             xAxis: {
                 type: 'category',
-                labelColor: labelColor,
+                labelColor: this.getLabelColor(),
                 gridStyle: [{
-                    strokeStyle: axisGridColor,
+                    strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }],
             },
             yAxis: {
                 type: 'number',
-                labelColor: labelColor,
+                labelColor: this.getLabelColor(),
                 gridStyle: [{
-                    strokeStyle: axisGridColor,
+                    strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }],
             },
             legend: {
-                labelColor: labelColor
+                labelColor: this.getLabelColor()
             },
             seriesDefaults: {
                 type: 'bar',
-                grouped: grouped,
-                tooltip: this.options.showTooltips
+                grouped: this.options.chartType === ChartType.GroupedBar,
+                tooltip: true
             }
         };
     }

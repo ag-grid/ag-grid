@@ -23,11 +23,9 @@ import {PolarChartProxy} from "./proxy/PolarChartProxy";
 export interface GridChartOptions {
     chartType: ChartType;
     insideDialog: boolean;
-    showTooltips: boolean;
     aggregate: boolean;
     height: number;
     width: number;
-    palette?: number;
 }
 
 export class GridChartComp extends Component {
@@ -42,7 +40,6 @@ export class GridChartComp extends Component {
 
     @RefSelector('eChart') private eChart: HTMLElement;
 
-    // private chart: Chart;
     private chartMenu: ChartMenu;
     private chartDialog: Dialog;
 
@@ -63,11 +60,6 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
-
-        if (!this.gridChartOptions.palette) {
-            this.gridChartOptions.palette = this.getPalette();
-        }
-
         this.model = new ChartModel(this.gridChartOptions, this.initialCellRange);
         this.getContext().wireBean(this.model);
         this.chartController = new ChartController(this.model);
@@ -104,11 +96,11 @@ export class GridChartComp extends Component {
         const chartOptions = {
             chartType: this.model.getChartType(),
             processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
+            getPalette: this.getPalette.bind(this),
+            isDarkTheme: this.isDarkTheme.bind(this),
             parentElement: this.eChart,
             width: width,
             height: height,
-            showTooltips: this.gridChartOptions.showTooltips,
-            isDarkTheme: this.isDarkTheme()
         };
 
         this.chartProxy = this.createChartProxy(chartOptions);
@@ -167,13 +159,18 @@ export class GridChartComp extends Component {
     }
 
     public updateChart() {
-        const data = this.model.getData();
-        const categoryId = this.model.getSelectedDimensionId();
-        const fields = this.model.getSelectedColState().map(cs => {
-            return {colId: cs.colId, displayName: cs.displayName};
+        const selectedCols = this.model.getSelectedColState();
+        const fields = selectedCols.map(c => {
+            return {colId: c.colId, displayName: c.displayName};
         });
 
-        this.chartProxy.update(categoryId, fields, data);
+        const chartUpdateParams = {
+            data: this.model.getData(),
+            categoryId: this.model.getSelectedDimensionId(),
+            fields: fields
+        };
+
+        this.chartProxy.update(chartUpdateParams);
     }
 
     private downloadChart() {
@@ -191,9 +188,9 @@ export class GridChartComp extends Component {
                 return;
             }
 
-            //TODO
-            // this.chart.height = _.getInnerHeight(eParent);
-            // this.chart.width = _.getInnerWidth(eParent);
+            const chart = this.chartProxy.getChart();
+            chart.height = _.getInnerHeight(eParent);
+            chart.width = _.getInnerWidth(eParent);
         };
 
         const observeResize = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
