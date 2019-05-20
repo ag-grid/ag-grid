@@ -90,9 +90,9 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(woff|woff2|ttf|svg)$/,
+                test: /\.(svg)$/,
                 use: [
-                    {loader: 'url-loader', options: {limit: 100000}}
+                    {loader: 'url-loader', options: {limit: 20000}}
                 ]
             }
         ]

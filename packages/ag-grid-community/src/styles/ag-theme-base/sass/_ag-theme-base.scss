@@ -1,5 +1,12 @@
 @import "../../mixins/ag-theme-mixins";
 
+@font-face {
+    font-family: '#{$icon-font-family}';
+    src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$icons-data}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 @mixin ag-grid-theme($params) {
     $grid-size: map-get($params, "grid-size");
     $icon-size: map-get($params, "icon-size");
@@ -11,7 +18,7 @@
     $rich-select-item-height: map-get($params, "rich-select-item-height");
     $cell-horizontal-padding: map-get($params, "cell-horizontal-padding");
 
-    $icons-path: map-get($params, "icons-path");
+    $icons-data: map-get($params, "icons-data");
 
     $font-family: map-get($params, "font-family");
     $font-size: map-get($params, "font-size");
@@ -1408,30 +1415,22 @@
     ////////////////////////////////////////
     // Icons
     ////////////////////////////////////////
-    @font-face {
-        font-family: '#{$icon-font-family}';
-        src:
-            url('#{$icons-path}/#{$icon-font-family}.ttf?z8pysc') format('truetype'),
-            url('#{$icons-path}/#{$icon-font-family}.woff?z8pysc') format('woff'),
-            url('#{$icons-path}/#{$icon-font-family}.svg?z8pysc##{$icon-font-family}') format('svg');
-        font-weight: normal;
-        font-style: normal;
-    }
-      
-    [class^="ag-icon-"], [class*=" ag-icon-"] {
+    .ag-icon {
         /* use !important to prevent issues with browser extensions that change fonts */
         font-family: '#{$icon-font-family}' !important;
         speak: none;
+        font-size: $icon-size;
+        color: $icon-color;
         font-style: normal;
         font-weight: normal;
         font-variant: normal;
         text-transform: none;
         line-height: 1;
-        
+      
         /* Better Font Rendering =========== */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-    }
+      }
       
     .ag-icon-aggregation {
         &:before {

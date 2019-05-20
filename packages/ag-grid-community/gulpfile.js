@@ -187,15 +187,34 @@ function scssTask() {
                         ]
                     },
                     {
-                        // Match woff2 in addition to patterns like .woff?v=1.1.1.
-                        test: /\.(woff|woff2|ttf|svg)$/,
-                        use: {
-                            loader: "url-loader",
-                            options: {
-                                // Limit at 50k. Above that it emits separate files
-                                limit: 100000
+                        test: /\.(svg)$/,
+                        use: [
+                            'cache-loader',
+                            {
+                                loader: 'url-loader',
+                                options: {
+                                    limit: 8192
+                                }
+                            },
+                            {
+                                loader: 'image-webpack-loader',
+                                options: {
+                                    svgo: {
+                                        cleanupAttrs: true,
+                                        removeDoctype: true,
+                                        removeComments: true,
+                                        removeMetadata: true,
+                                        removeTitle: true,
+                                        removeDesc: true,
+                                        removeEditorsNSData: true,
+                                        removeUselessStrokeAndFill: true,
+                                        cleanupIDs: true,
+                                        collapseGroups: true,
+                                        convertShapeToPath: true
+                                    }
+                                }
                             }
-                        }
+                        ]
                     }
                 ]
             },

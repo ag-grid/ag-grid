@@ -47,35 +47,5 @@ $active: #E91E63; // pink-500 from https://www.materialui.co/colors
 The recommended way to process your project's Scss files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. 
 </p>
 
-<note>The ag grid icons path should be re-adjusted when importing the scss file. 
-
-This is a common problem, <a href="https://github.com/webpack-contrib/sass-loader#problems-with-url">described in the Sass(scss) loader project</a>. 
-The theme exposes the <code>$ag-icons-path</code> variable to address that. The <a href="https://github.com/ag-grid/ag-grid-customise-theme/">customize theme sample repo in github</a> demonstrates how to override the variable.</note>
-
-
-<h2>Change the Theme Icons</h2>
-
-<h3>Replace the Entire Set</h3>
-
-<p>
-The easiest way to replace the entire icon set is to change the <code>$ag-icons-path</code> Scss variable to point to a directory with your set of icons.
-The icons should be <strong>16x16px sized SVG</strong> files. You can check the <a href="https://github.com/ag-grid/ag-grid/tree/latest/src/styles/balham-icons">full list in the GitHub repository</a>. 
-</p> 
-
-<h3>Change Individual Icons</h3>
-
-<p>You can also change individual icons by overriding the background images for the respective CSS selector. 
-The following code snippet overrides the pin icon used in the drag hint when reordering columns:<p>
-
-<snippet>
-/* 
- * The override should be placed after the import of the theme. 
- * Alternatively, you can aso increase the selector's specifcity 
- */
-.ag-theme-balham .ag-icon-pin {
-    background-image: url('path/to/my-pin-icon.svg');
-}</snippet>
-
-<p>The icon classes follow the <code>.ag-icon-{icon-file-name}</code> convention.</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

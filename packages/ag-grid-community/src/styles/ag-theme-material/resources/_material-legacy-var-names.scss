@@ -10,7 +10,6 @@
 @if variable-exists(ag-mat-cell-horizontal-padding) { $cell-horizontal-padding: $ag-mat-cell-horizontal-padding };
 @if variable-exists(ag-mat-virtual-item-height) { $virtual-item-height: $ag-mat-virtual-item-height };
 @if variable-exists(ag-mat-header-icon-size) { $header-icon-size: $ag-mat-header-icon-size };
-@if variable-exists(ag-mat-icons-path) { $icons-path: $ag-mat-icons-path };
 @if variable-exists(ag-mat-font-family) { $font-family: $ag-mat-font-family };
 @if variable-exists(ag-mat-font-size) { $font-size: $ag-mat-font-size };
 @if variable-exists(ag-mat-font-weight) { $font-weight: $ag-mat-font-weight };
