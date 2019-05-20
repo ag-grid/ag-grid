@@ -97,7 +97,7 @@ export default class AgGridPolymer extends PolymerElement {
             let gridParams = {
                 globalEventListener: globalEventListener,
                 frameworkFactory: new PolymerFrameworkFactory(
-                    new agGrid.BaseFrameworkFactory(),
+                    new agGrid.VanillaFrameworkOverrides(),
                     new PolymerComponentFactory()
                 ),
                 seedBeanInstances: {
