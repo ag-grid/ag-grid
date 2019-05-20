@@ -528,6 +528,40 @@ var masterGridOptions = {
 
 <?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
+<h2>Changing Data & Refresh</h2>
+
+<p>
+    By default when updating data using <a href="../javascript-grid-data-update/#transactions">transactions</a> then
+    detail rows / grids get refreshed when there is new data for the master row they belong to. Other rows (where no
+    data change accrued) do not get updated.
+</p>
+
+<p>
+    This refresh behaviour can be undesirable as the refresh will reset the detail grid loosing any context (eg
+    sorting and filtering in the detail grid will be lost).
+</p>
+
+<p>
+    To change this behaviour, and never have the detail row / grid refresh, set <code>suppressRefresh</code>
+    parameter on the detail cell renderer params.
+</p>
+
+<p>
+    The example below demonstrates changing data without refreshing the detail grids. Note the following:
+</p>
+
+<ul>
+    <li>The grid refreshes a row each second by incrementing the call count.</li>
+    <li>The detail grid never refreshes, thus any sort or filter applied will remain.</li>
+</ul>
+
+<note>
+    To fully understand this example, try opening it in Plunker and remove the <code>suppressRefresh</code> property.
+</note>
+
+<?= example('Suppress Refresh', 'suppress-refresh', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
+
+
 <h2>Supported Modes</h2>
 
 <p>
