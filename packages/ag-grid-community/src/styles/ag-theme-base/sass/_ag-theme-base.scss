@@ -368,11 +368,6 @@
     .ag-row-drag {
         cursor: grab;
         min-width: $icon-size + $grid-size * 3;
-        .ag-icon-row-drag {
-            display: block;
-            @include icon-background($params, "grip");
-            background-position-x: left;
-        }
     }
 
     .ag-row-dragging, .ag-row-dragging .ag-row-drag {
@@ -386,10 +381,6 @@
     }
 
     .ag-column-drag {
-        @include icon-background($params, "grip");
-
-        background-position-x: left;
-        background-position-y: center;
         cursor: grab;
     }
 
@@ -420,29 +411,10 @@
     ////////////////////////////////////////
     // Icons
     ////////////////////////////////////////
-    $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly
-            checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut
-            data desc expanded eye-slash eye filter group indeterminate left loading maximize minimize menu minus none
-            not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right small-up
-            small-down tick cross save tree-open tree-closed tree-indeterminate;
-
-    @each $icon in $icons {
-        .ag-icon-#{$icon} {
-            @include icon-background($params, "#{$icon}");
-        }
-    }
 
     .ag-header-cell-menu-button .ag-icon-menu {
         display: block;
         height: $header-height;
-    }
-
-    .ag-icon-checkbox-checked:empty {
-        @include colorful-icon($icons-path, "checkbox-checked", $accent-color, map-get($params, "alt-icon-color"));
-    }
-
-    .ag-icon-radio-button-on:empty {
-        @include colorful-icon($icons-path, "radio-button-on", $accent-color, map-get($params, "alt-icon-color"));
     }
 
     ////////////////////////////////////////
@@ -566,14 +538,6 @@
 
             &.ag-tab-selected {
                 @extend %selected-tab !optional;
-
-                $icons: filter columns menu;
-
-                @each $icon in $icons {
-                    .ag-icon-#{$icon} {
-                        @include colorful-icon($icons-path, $icon, $primary-color, map-get($params, "alt-icon-color"));
-                    }
-                }
             }
         }
     }
@@ -815,21 +779,6 @@
     ////////////////////////////////////////
     // Sorting
     ////////////////////////////////////////
-    .ag-filter-icon:empty {
-        @include icon-background($params, "filter");
-    }
-
-    .ag-sort-ascending-icon:empty {
-        @include icon-background($params, "asc");
-    }
-
-    .ag-sort-descending-icon:empty {
-        @include icon-background($params, "desc");
-    }
-
-    .ag-sort-none-icon:empty {
-        @include icon-background($params, "none");
-    }
 
     .ag-numeric-header .ag-header-cell-label .ag-header-icon {
         margin-left: 0;
@@ -850,43 +799,6 @@
 
         & > span {
             margin-left: $grid-size * 4;
-        }
-    }
-
-    @if map-get($params, "use-icons-for-pager-buttons") {
-        $buttonIcons: (
-            btFirst: first,
-            btPrevious: previous,
-            btLast: last,
-            btNext: next
-        );
-        $rtlButtonIcons: (
-            btFirst: last,
-            btPrevious: next,
-            btLast: first,
-            btNext: previous
-        );
-
-        @each $ref, $icon in $buttonIcons {
-            button[ref="#{$ref}"] {
-                @include icon-background($params, $icon);
-                @include hide-text;
-
-                appearance: none;
-                border: 0;
-                opacity: $secondary-foreground-color-opacity;
-                padding: 0;
-
-                &[disabled] {
-                    opacity: $disabled-foreground-color-opacity;
-                }
-            }
-        }
-
-        @each $ref, $icon in $rtlButtonIcons {
-            .ag-rtl button[ref="#{$ref}"] {
-                @include icon-background($params, $icon);
-            }
         }
     }
 
@@ -1024,16 +936,6 @@
             height: $row-height * 6.5; // intentional
         }
 
-        .ag-rich-select-value {
-            background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor($icon-color)}");
-            background-position: center right $grid-size;
-            background-repeat: no-repeat;
-            background-size: $icon-size $icon-size;
-            height: $row-height;
-            line-height: $row-height;
-            padding-left: $cell-horizontal-padding;
-        }
-
         .ag-virtual-list-item {
             cursor: default;
             height: $rich-select-item-height;
@@ -1096,12 +998,6 @@
         position: relative;
     }
 
-    .ag-group-expanded {
-        .ag-icon-contracted:empty {
-            @include icon-background($params, "tree-open");
-        }
-    }
-
     ////////////////////////////////////////
     // Column drop
     ////////////////////////////////////////
@@ -1114,14 +1010,6 @@
         .ag-icon-group,
         .ag-icon-pivot {
             margin-right: $cell-horizontal-padding;
-        }
-
-        .ag-right-arrow {
-            @include icon-background($params, "right");
-        }
-
-        .ag-left-arrow {
-            @include icon-background($params, "left");
         }
 
         .ag-left-arrow,
@@ -1153,7 +1041,6 @@
         }
 
         .ag-column-drop-cell-button {
-            @include icon-background($params, "cancel");
             @include hide-text;
             min-width: $grid-size * 4;
 
@@ -1519,6 +1406,281 @@
     }
 
     ////////////////////////////////////////
+    // Icons
+    ////////////////////////////////////////
+    @font-face {
+        font-family: '#{$icon-font-family}';
+        src:
+            url('#{$icons-path}/#{$icon-font-family}.ttf?z8pysc') format('truetype'),
+            url('#{$icons-path}/#{$icon-font-family}.woff?z8pysc') format('woff'),
+            url('#{$icons-path}/#{$icon-font-family}.svg?z8pysc##{$icon-font-family}') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+      
+    [class^="ag-icon-"], [class*=" ag-icon-"] {
+        /* use !important to prevent issues with browser extensions that change fonts */
+        font-family: '#{$icon-font-family}' !important;
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+      
+    .ag-icon-aggregation {
+        &:before {
+            content: $ag-icon-aggregation; 
+        }
+    }
+    .ag-icon-arrows {
+        &:before {
+            content: $ag-icon-arrows; 
+        }
+    }
+    .ag-icon-asc {
+        &:before {
+            content: $ag-icon-asc; 
+        }
+    }
+    .ag-icon-cancel {
+        &:before {
+            content: $ag-icon-cancel; 
+        }
+    }
+    .ag-icon-chart {
+        &:before {
+            content: $ag-icon-chart; 
+        }
+    }
+    .ag-icon-checkbox-checked {
+        &:before {
+            content: $ag-icon-checkbox-checked; 
+        }
+    }
+    .ag-icon-checkbox-indeterminate {
+        &:before {
+            content: $ag-icon-checkbox-indeterminate; 
+        }
+    }
+    .ag-icon-checkbox-unchecked {
+        &:before {
+            content: $ag-icon-checkbox-unchecked; 
+        }
+    }
+    .ag-icon-column {
+        &:before {
+            content: $ag-icon-column; 
+        }
+    }
+    .ag-icon-columns {
+        &:before {
+            content: $ag-icon-columns; 
+        }
+    }
+    .ag-icon-contracted {
+        &:before {
+            content: $ag-icon-contracted; 
+        }
+    }
+    .ag-icon-copy {
+        &:before {
+            content: $ag-icon-copy; 
+        }
+    }
+    .ag-icon-cross {
+        &:before {
+            content: $ag-icon-cross; 
+        }
+    }
+    .ag-icon-cut {
+        &:before {
+            content: $ag-icon-cut; 
+        }
+    }
+    .ag-icon-data {
+        &:before {
+            content: $ag-icon-data; 
+        }
+    }
+    .ag-icon-desc {
+        &:before {
+            content: $ag-icon-desc; 
+        }
+    }
+    .ag-icon-expanded {
+        &:before {
+            content: $ag-icon-expanded; 
+        }
+    }
+    .ag-icon-eye-slash {
+        &:before {
+            content: $ag-icon-eye-slash; 
+        }
+    }
+    .ag-icon-eye {
+        &:before {
+            content: $ag-icon-eye; 
+        }
+    }
+    .ag-icon-filter {
+        &:before {
+            content: $ag-icon-filter; 
+        }
+    }
+    .ag-icon-first {
+        &:before {
+            content: $ag-icon-first; 
+        }
+    }
+    .ag-icon-grip {
+        &:before {
+            content: $ag-icon-grip; 
+        }
+    }
+    .ag-icon-group {
+        &:before {
+            content: $ag-icon-group; 
+        }
+    }
+    .ag-icon-indeterminate {
+        &:before {
+            content: $ag-icon-indeterminate; 
+        }
+    }
+    .ag-icon-last {
+        &:before {
+            content: $ag-icon-last; 
+        }
+    }
+    .ag-icon-left {
+        &:before {
+            content: $ag-icon-left; 
+        }
+    }
+    .ag-icon-maximize {
+        &:before {
+            content: $ag-icon-maximize; 
+        }
+    }
+    .ag-icon-menu {
+        &:before {
+            content: $ag-icon-menu; 
+        }
+    }
+    .ag-icon-minimize {
+        &:before {
+            content: $ag-icon-minimize; 
+        }
+    }
+    .ag-icon-minus {
+        &:before {
+            content: $ag-icon-minus; 
+        }
+    }
+    .ag-icon-next {
+        &:before {
+            content: $ag-icon-next; 
+        }
+    }
+    .ag-icon-none {
+        &:before {
+            content: $ag-icon-none; 
+        }
+    }
+    .ag-icon-not-allowed {
+        &:before {
+            content: $ag-icon-not-allowed; 
+        }
+    }
+    .ag-icon-paste {
+        &:before {
+            content: $ag-icon-paste; 
+        }
+    }
+    
+    .ag-icon-pivot {
+        &:before {
+            content: $ag-icon-pivot; 
+        }
+    }
+    .ag-icon-plus {
+        &:before {
+            content: $ag-icon-plus; 
+        }
+    }
+    .ag-icon-previous {
+        &:before {
+            content: $ag-icon-previous; 
+        }
+    }
+    .ag-icon-radio-button-off {
+        &:before {
+            content: $ag-icon-radio-button-off; 
+        }
+    }
+    .ag-icon-radio-button-on {
+        &:before {
+            content: $ag-icon-radio-button-on; 
+        }
+    }
+    .ag-icon-right {
+        &:before {
+            content: $ag-icon-right; 
+        }
+    }
+    .ag-icon-save {
+        &:before {
+            content: $ag-icon-save; 
+        }
+    }
+    .ag-icon-small-down {
+        &:before {
+            content: $ag-icon-small-down; 
+        }
+    }
+    .ag-icon-small-left {
+        &:before {
+            content: $ag-icon-small-left; 
+        }
+    }
+    .ag-icon-small-right {
+        &:before {
+            content: $ag-icon-small-right; 
+        }
+    }
+    .ag-icon-small-up {
+        &:before {
+            content: $ag-icon-small-up; 
+        }
+    }
+    .ag-icon-tick {
+        &:before {
+            content: $ag-icon-tick; 
+        }
+    }
+    .ag-icon-tree-closed {
+        &:before {
+            content: $ag-icon-tree-closed; 
+        }
+    }
+    .ag-icon-tree-indeterminate {
+        &:before {
+            content: $ag-icon-tree-indeterminate; 
+        }
+    }
+    .ag-icon-tree-open {
+        &:before {
+            content: $ag-icon-tree-open; 
+        }
+    }
+
+    ////////////////////////////////////////
     // Right-To-Left
     ////////////////////////////////////////
     .ag-rtl {
@@ -1570,10 +1732,6 @@
             }
         }
 
-        .ag-icon-tree-closed {
-            @include icon-background($params, "contracted");
-        }
-
         .ag-header-group-cell-label {
             height: 100%;
 
@@ -1618,14 +1776,10 @@
             }
 
             .ag-right-arrow {
-                @include icon-background($params, "right");
-
                 height: 100%;
             }
 
             .ag-left-arrow {
-                @include icon-background($params, "left");
-
                 height: 100%;
             }
         }

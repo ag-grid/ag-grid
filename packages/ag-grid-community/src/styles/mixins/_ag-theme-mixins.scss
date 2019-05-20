@@ -23,30 +23,6 @@
     padding-right: $padding;
 }
 
-@mixin icon-background($params, $icon) {
-    $size: map-get($params, "icon-size");
-    $iconpath: map-get($params, "icons-path");
-    $color1: #{encodecolor(map-get($params, "icon-color"))};
-    $color2: #{encodecolor(map-get($params, "alt-icon-color"))};
-
-    background-color: transparent;
-    background-image: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: $size $size;
-    height: $size;
-    opacity: map-get($params, "icon-opacity");
-    width: $size;
-}
-
-@mixin colorful-icon($path, $icon, $color, $altColor) {
-    $iconpath: map-get($params, "icons-path");
-    $color1: encodecolor($color);
-    $color2: encodecolor($altColor);
-
-    background-image: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
-}
-
 @mixin card($params) {
     @extend %card !optional;
 

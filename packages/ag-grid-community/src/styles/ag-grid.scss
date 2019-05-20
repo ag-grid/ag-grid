@@ -67,36 +67,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
-$icons-path: "./ag-theme-base/icons/" !default;
-
-@if variable-exists(ag-icons-path) {
-    $icons-path: $ag-icons-path;
-}
-
-$ag-icons-filter: "initial" !default;
-
-@mixin icon-background($icon) {
-    background: transparent url("#{$icons-path}#{$icon}.svg") center no-repeat;
-    background-size: 12px 12px;
-    filter: $ag-icons-filter;
-    height: 12px;
-    width: 12px;
-}
-
-/* icons are used outside of the grid root (in the ghost) */
-$icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate
-        checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cross cut data desc expanded eye-slash eye filter
-        group indeterminate left loading maximize minimize menu minus none not-allowed paste pin pivot plus radio-button-on radio-button-off
-        right small-left small-right small-up small-down tick save tree-open tree-closed tree-indeterminate;
-
-@each $icon in $icons {
-    .ag-icon-#{$icon} {
-        display: block;
-
-        @include icon-background("#{$icon}");
-    }
-}
-
 .ag-root-wrapper {
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;

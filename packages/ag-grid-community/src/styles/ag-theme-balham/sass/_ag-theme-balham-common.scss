@@ -37,12 +37,73 @@
 
     @include ag-grid-theme($params);
 
-    .ag-icon-checkbox-checked,
-    .ag-icon-checkbox-unchecked,
-    .ag-icon-checkbox-indeterminate {
-        background-color: $background-color;
-        border-radius: 3px;
-    }
+    .ag-icon-loading .path1 {
+        &:before {
+          content: $ag-icon-loading-path1;  
+          color: rgb(0, 0, 0);  
+          opacity: 0.8;
+        }
+      }
+      .ag-icon-loading .path2 {
+        &:before {
+          content: $ag-icon-loading-path2;  
+          margin-left: -1em;  
+          color: rgb(0, 0, 0);  
+          opacity: 0.6;
+        }
+      }
+      .ag-icon-loading .path3 {
+        &:before {
+          content: $ag-icon-loading-path3;  
+          margin-left: -1em;  
+          color: rgb(0, 0, 0);
+        }
+      }
+      .ag-icon-loading .path4 {
+        &:before {
+          content: $ag-icon-loading-path4;  
+          margin-left: -1em;  
+          color: rgb(0, 0, 0);  
+          opacity: 0.4;
+        }
+      }
+      .ag-icon-loading .path5 {
+        &:before {
+          content: $ag-icon-loading-path5;  
+          margin-left: -1em;  
+          color: rgb(0, 0, 0);  
+          opacity: 0.5020;
+        }
+      }
+      .ag-icon-loading .path6 {
+        &:before {
+          content: $ag-icon-loading-path6;  
+          margin-left: -1em;  
+          color: rgb(0, 0, 0);  
+          opacity: 0.7020;
+        }
+      }
+      .ag-icon-loading .path7 {
+        &:before {
+          content: $ag-icon-loading-path7;  
+          margin-left: -1em;  
+          color: rgb(0, 0, 0);  
+          opacity: 0.9020;
+        }
+      }
+      .ag-icon-loading .path8 {
+        &:before {
+          content: $ag-icon-loading-path8;  
+          margin-left: -1em;  
+          color: rgb(0, 0, 0);  
+          opacity: 0.3020;
+        }
+      }
+      .ag-icon-pin {
+        &:before {
+          content: $ag-icon-pin; 
+        }
+      }      
 
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;

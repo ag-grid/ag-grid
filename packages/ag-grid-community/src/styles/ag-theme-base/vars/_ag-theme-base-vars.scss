@@ -11,9 +11,6 @@ $cell-horizontal-padding: $grid-size * 3 !default;
 $virtual-item-height: $grid-size * 5 !default;
 $header-icon-size: 14px !default;
 
-// Icons
-$icons-path: '../../ag-theme-base/icons/' !default;
-
 // Fonts
 $font-family: 'Helvetica Neue', sans-serif !default;
 $font-size: 14px !default;
@@ -63,3 +60,62 @@ $dialog-title-icon-size: max(20px, $icon-size) !default;
 
 $range-selection-chart-background-color: adjust-hue($range-selection-background-color, 25%) !default;
 $range-selection-chart-category-background-color: adjust-hue($range-selection-background-color, -80%) !default;
+
+// Icons
+$icon-font-family: "agGridClassic" !default;
+$icons-path: '../../ag-theme-base/icons/fonts' !default;
+
+$ag-icon-aggregation: "\e900" !default;
+$ag-icon-arrows: "\e901" !default;
+$ag-icon-asc: "\e902" !default;
+$ag-icon-cancel: "\e903" !default;
+$ag-icon-chart: "\e904" !default;
+$ag-icon-checkbox-checked: "\e905" !default;
+$ag-icon-checkbox-indeterminate: "\e906" !default;
+$ag-icon-checkbox-unchecked: "\e907" !default;
+$ag-icon-column: "\e908" !default;
+$ag-icon-columns: "\e909" !default;
+$ag-icon-contracted: "\e90a" !default;
+$ag-icon-copy: "\e90b" !default;
+$ag-icon-cross: "\e90c" !default;
+$ag-icon-cut: "\e90d" !default;
+$ag-icon-data: "\e90e" !default;
+$ag-icon-desc: "\e90f" !default;
+$ag-icon-expanded: "\e910" !default;
+$ag-icon-eye-slash: "\e911" !default;
+$ag-icon-eye: "\e912" !default;
+$ag-icon-filter: "\e913" !default;
+$ag-icon-first: "\e914" !default;
+$ag-icon-grip: "\e915" !default;
+$ag-icon-group: "\e916" !default;
+$ag-icon-indeterminate: "\e917" !default;
+$ag-icon-last: "\e918" !default;
+$ag-icon-left: "\e919" !default;
+$ag-icon-loading-path1: "\e91a" !default;
+$ag-icon-loading-path2: "\e91b" !default;
+$ag-icon-maximize: "\e91c" !default;
+$ag-icon-menu: "\e91d" !default;
+$ag-icon-minimize: "\e91e" !default;
+$ag-icon-minus: "\e91f" !default;
+$ag-icon-next: "\e920" !default;
+$ag-icon-none: "\e921" !default;
+$ag-icon-not-allowed: "\e922" !default;
+$ag-icon-paste: "\e923" !default;
+$ag-icon-pin-path1: "\e924" !default;
+$ag-icon-pin-path2: "\e925" !default;
+$ag-icon-pin-path3: "\e926" !default;
+$ag-icon-pivot: "\e927" !default;
+$ag-icon-plus: "\e928" !default;
+$ag-icon-previous: "\e929" !default;
+$ag-icon-radio-button-off: "\e92a" !default;
+$ag-icon-radio-button-on: "\e92b" !default;
+$ag-icon-right: "\e92c" !default;
+$ag-icon-save: "\e92d" !default;
+$ag-icon-small-down: "\e92e" !default;
+$ag-icon-small-left: "\e92f" !default;
+$ag-icon-small-right: "\e930" !default;
+$ag-icon-small-up: "\e931" !default;
+$ag-icon-tick: "\e932" !default;
+$ag-icon-tree-closed: "\e933" !default;
+$ag-icon-tree-indeterminate: "\e934" !default;
+$ag-icon-tree-open: "\e935" !default;

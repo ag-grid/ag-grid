@@ -58,13 +58,9 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(svg)$/,
+                test: /\.(woff|woff2|ttf|svg)$/,
                 use: [
-                    {loader: 'url-loader', options: {limit: 20000}},
-                    {
-                        loader: 'svg-colorize-loader',
-                        options: {color1: '#000000', color2: '#FFFFFF'}
-                    }
+                    {loader: 'url-loader', options: {limit: 100000}}
                 ]
             }
         ]

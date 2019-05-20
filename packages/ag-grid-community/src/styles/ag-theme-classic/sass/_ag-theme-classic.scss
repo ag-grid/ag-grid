@@ -46,6 +46,43 @@
 
     @include ag-grid-theme($params);
 
+    .ag-icon-loading .path1 {
+        &:before {
+            content: $ag-icon-loading-path1;  
+            color: rgb(151, 151, 151);
+        }
+    }
+    .ag-icon-loading .path2 {
+        &:before {
+            content: $ag-icon-loading-path2;  
+            margin-left: -1em;  
+            color: rgb(151, 151, 151);  
+            opacity: 0.6471;
+        }
+    }
+    .ag-icon-pin .path1 {
+        &:before {
+            content: $ag-icon-pin-path1;  
+            color: rgb(0, 0, 0);
+        }
+    }
+    .ag-icon-pin .path2 {
+        &:before {
+            content: $ag-icon-pin-path2;  
+            margin-left: -1em;  
+            color: rgb(0, 0, 0);  
+            opacity: 0.8;
+        }
+    }
+    .ag-icon-pin .path3 {
+        &:before {
+            content: $ag-icon-pin-path3;  
+            margin-left: -1em;  
+            color: rgb(0, 0, 0);  
+            opacity: 0.4941;
+        }
+    }
+
     .ag-tab-header {
         background-color: $tab-background-color;
     }
@@ -137,16 +174,6 @@
 
     .ag-cell-highlight-animation {
         transition: all 1s;
-    }
-
-    .ag-group-expanded {
-        .ag-icon-contracted:empty {
-            @include icon-background($params, "contracted");
-        }
-    }
-
-    .ag-rtl .ag-icon-tree-closed {
-        @include icon-background($params, "small-left");
     }
 
     .ag-cell-inline-editing {

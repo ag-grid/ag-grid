@@ -72,9 +72,6 @@ $cell-horizontal-padding: $grid-size * 3 !default;
 $header-icon-size: 14px !default;
 $border-radius: 2px;
 
-// Icons
-$icons-path: "../../ag-theme-balham/icons/" !default;
-
 // Fonts
 $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !default;
 
@@ -91,6 +88,42 @@ $tooltip-background-color: lighten($flat-gray-2, 5%) !default;
 $tooltip-foreground-color: $foreground-color !default;
 $tooltip-border-radius: $border-radius !default;
 $tooltip-border-color: $tooltip-background-color !default;
+
+$icon-font-family: "agGridBalham" !default;
+$icons-path: "../../ag-theme-balham/icons/fonts" !default;
+
+$ag-icon-loading-path1: "\e91a" !default;
+$ag-icon-loading-path2: "\e91b" !default;
+$ag-icon-loading-path3: "\e91c" !default;
+$ag-icon-loading-path4: "\e91d" !default;
+$ag-icon-loading-path5: "\e91e" !default;
+$ag-icon-loading-path6: "\e91f" !default;
+$ag-icon-loading-path7: "\e920" !default;
+$ag-icon-loading-path8: "\e921" !default;
+$ag-icon-maximize: "\e922" !default;
+$ag-icon-menu: "\e923" !default;
+$ag-icon-minimize: "\e924" !default;
+$ag-icon-minus: "\e925" !default;
+$ag-icon-next: "\e926" !default;
+$ag-icon-none: "\e927" !default;
+$ag-icon-not-allowed: "\e928" !default;
+$ag-icon-paste: "\e929" !default;
+$ag-icon-pin: "\e92a" !default;
+$ag-icon-pivot: "\e92b" !default;
+$ag-icon-plus: "\e92c" !default;
+$ag-icon-previous: "\e92d" !default;
+$ag-icon-radio-button-off: "\e92e" !default;
+$ag-icon-radio-button-on: "\e92f" !default;
+$ag-icon-right: "\e930" !default;
+$ag-icon-save: "\e931" !default;
+$ag-icon-small-down: "\e932" !default;
+$ag-icon-small-left: "\e933" !default;
+$ag-icon-small-right: "\e934" !default;
+$ag-icon-small-up: "\e935" !default;
+$ag-icon-tick: "\e936" !default;
+$ag-icon-tree-closed: "\e937" !default;
+$ag-icon-tree-indeterminate: "\e938" !default;
+$ag-icon-tree-open: "\e939" !default;
 
 
 @import "../../ag-theme-base/vars/ag-theme-base-vars";
