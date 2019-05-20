@@ -8,11 +8,11 @@ import {
     GridOptions,
     GridOptionsWrapper,
     ICellRendererParams,
+    ICellRenderer,
     RefSelector,
     RowNode,
     _
 } from "ag-grid-community";
-import {ICellRenderer} from "ag-grid-community/src/ts/rendering/cellRenderers/iCellRenderer";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
 
