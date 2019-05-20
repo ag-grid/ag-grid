@@ -134,7 +134,7 @@ export class GroupStage implements IRowNodeStage {
             this.moveNodesInWrongPath(tran.update, details);
         }
         if (tran.remove) {
-            this.removeNodes(tran.remove, details, true);
+            this.removeNodes(tran.remove, details);
         }
         if (details.rowNodeOrder) {
             this.sortChildren(details);
@@ -213,7 +213,7 @@ export class GroupStage implements IRowNodeStage {
 
     private moveNode(childNode: RowNode, details: GroupingDetails): void {
 
-        this.removeNodes([childNode], details, false);
+        this.removeNodesInStages([childNode], details);
         this.insertOneNode(childNode, details);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
@@ -231,14 +231,17 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails, addToChangedPath: boolean): void {
-        this.removeNodes_removeFromParents(leafRowNodes, details);
-        this.removeNodes_createFillerNodes(leafRowNodes, details);
-        this.removeNodes_removeEmptyRowGroups(leafRowNodes, details);
-
-        if (addToChangedPath && details.changedPath.isActive()) {
+    private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails): void {
+        this.removeNodesInStages(leafRowNodes, details);
+        if (details.changedPath.isActive()) {
             leafRowNodes.forEach( rowNode => details.changedPath.addParentNode(rowNode.parent));
         }
+    }
+
+    private removeNodesInStages(leafRowNodes: RowNode[], details: GroupingDetails): void {
+        this.removeNodesFromParents(leafRowNodes, details);
+        this.postRemoveCreateFillerNodes(leafRowNodes, details);
+        this.postRemoveRemoveEmptyGroups(leafRowNodes, details);
     }
 
     private forEachParentGroup(details: GroupingDetails, child: RowNode, callback: (parent: RowNode) => void): void {
@@ -249,7 +252,7 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private removeNodes_removeFromParents(nodesToRemove: RowNode[], details: GroupingDetails): void {
+    private removeNodesFromParents(nodesToRemove: RowNode[], details: GroupingDetails): void {
 
         const batchRemover: BatchRemover = new BatchRemover();
 
@@ -257,7 +260,8 @@ export class GroupStage implements IRowNodeStage {
 
             this.removeFromParent(nodeToRemove, batchRemover);
 
-            // remove from allLeafChildren
+            // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
+            // the ClientSideNodeManager is responsible for the Root Node.
             this.forEachParentGroup(details, nodeToRemove, parentNode => {
                 batchRemover.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
@@ -267,7 +271,7 @@ export class GroupStage implements IRowNodeStage {
         batchRemover.flush();
     }
 
-    private removeNodes_createFillerNodes(nodesToRemove: RowNode[], details: GroupingDetails): void {
+    private postRemoveCreateFillerNodes(nodesToRemove: RowNode[], details: GroupingDetails): void {
         nodesToRemove.forEach( nodeToRemove => {
 
             // if not group, and children are present, need to move children to a group.
@@ -291,7 +295,7 @@ export class GroupStage implements IRowNodeStage {
         });
     }
 
-    private removeNodes_removeEmptyRowGroups(nodesToRemove: RowNode[], details: GroupingDetails): void {
+    private postRemoveRemoveEmptyGroups(nodesToRemove: RowNode[], details: GroupingDetails): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
@@ -315,6 +319,10 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
+    // removes the node from the parent by:
+    // a) removing from childrenAfterGroup (using batchRemover if present, otherwise immediately)
+    // b) removing from childrenMapped (immediately)
+    // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
     private removeFromParent(child: RowNode, batchRemover?: BatchRemover) {
         if (child.parent) {
             if (batchRemover) {
