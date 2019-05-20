@@ -548,6 +548,7 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
 }
 
 .ag-row {
+    will-change: transform;
     white-space: nowrap;
     width: 100%;
 }
