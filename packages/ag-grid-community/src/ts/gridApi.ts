@@ -1079,8 +1079,7 @@ export class GridApi {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
         }
 
-        // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
-        // to the data change event on the row node and refreshed itself.
+        // refresh all the full width rows
         this.rowRenderer.refreshFullWidthRows();
 
         // do change detection for all present cells

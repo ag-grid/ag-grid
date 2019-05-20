@@ -839,8 +839,11 @@ export class RowRenderer extends BeanStub {
         const rowsToRemove: string[] = [];
         _.iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowComp) => {
             if (rowComp.isFullWidth()) {
-                const rowIndex = rowComp.getRowNode().rowIndex;
-                rowsToRemove.push(rowIndex.toString());
+                const fullWidthRowsRefreshed = rowComp.refreshFullWidth();
+                if (!fullWidthRowsRefreshed) {
+                    const rowIndex = rowComp.getRowNode().rowIndex;
+                    rowsToRemove.push(rowIndex.toString());
+                }
             }
         });
         this.removeRowComps(rowsToRemove);

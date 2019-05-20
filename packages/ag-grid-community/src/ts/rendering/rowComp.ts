@@ -422,6 +422,35 @@ export class RowComp extends Component {
         return this.fullWidthRow;
     }
 
+    public refreshFullWidth(): boolean {
+
+        // returns 'true' if refresh succeeded
+        const tryRefresh = (eRow: HTMLElement, eCellComp: ICellRendererComp, pinned: string): boolean => {
+            if (!eRow || !eCellComp) {
+                // no refresh needed
+                return true;
+            }
+
+            if (!eCellComp.refresh) {
+                // no refresh method present, so can't refresh, hard refresh needed
+                return false;
+            }
+
+            const params = this.createFullWidthParams(eRow, pinned);
+            const refreshSucceeded = eCellComp.refresh(params);
+            return refreshSucceeded;
+        };
+
+        const normalSuccess = tryRefresh(this.eFullWidthRow, this.fullWidthRowComponent, null);
+        const bodySuccess = tryRefresh(this.eFullWidthRowBody, this.fullWidthRowComponentBody, null);
+        const leftSuccess = tryRefresh(this.eFullWidthRowLeft, this.fullWidthRowComponentLeft, Column.PINNED_LEFT);
+        const rightSuccess = tryRefresh(this.eFullWidthRowRight, this.fullWidthRowComponentRight, Column.PINNED_RIGHT);
+
+        const allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
+
+        return allFullWidthRowsRefreshed;
+    }
+
     private addListeners(): void {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
