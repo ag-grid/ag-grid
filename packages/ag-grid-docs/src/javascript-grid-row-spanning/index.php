@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Spanning: Having cells span multiple rows inside the grid";
-$pageDescription = "Cells can span multiple rows in ag-Grid, just like cell spanning inside Excel. Learn how to implement cell spanning inside ag-Grid.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. Cells can span multiple rows in ag-Grid, just like cell spanning inside Excel. Learn how to implement cell spanning inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Cell Spanning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
