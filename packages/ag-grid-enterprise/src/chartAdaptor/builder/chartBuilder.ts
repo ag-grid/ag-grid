@@ -73,7 +73,7 @@ export class ChartBuilder {
         return new LineSeries();
     }
 
-    static createSeries(options: LineSeriesOptions | BarSeriesOptions | PieSeriesOptions, type?: string) {
+    static createSeries(options: any, type?: string) {
         switch (type || options && options.type) {
             case 'line':
                 return ChartBuilder.initLineSeries(new LineSeries(), options);
