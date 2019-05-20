@@ -176,8 +176,11 @@ export class ChartBuilder {
         if (options.yField) {
             series.yField = options.yField;
         }
-        if (options.color) {
-            series.color = options.color;
+        if (options.fill) {
+            series.fill = options.fill;
+        }
+        if (options.stroke) {
+            series.stroke = options.stroke;
         }
         if (options.lineWidth) {
             series.lineWidth = options.lineWidth;
@@ -213,8 +216,11 @@ export class ChartBuilder {
         if (options.grouped) {
             series.grouped = options.grouped;
         }
-        if (options.colors) {
-            series.colors = options.colors;
+        if (options.fills) {
+            series.fills = options.fills;
+        }
+        if (options.strokes) {
+            series.strokes = options.strokes;
         }
         if (options.lineWidth) {
             series.lineWidth = options.lineWidth;
@@ -238,8 +244,8 @@ export class ChartBuilder {
     static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        if (options.calloutColor) {
-            series.calloutColor = options.calloutColor;
+        if (options.calloutColors) {
+            series.calloutColors = options.calloutColors;
         }
         if (options.calloutWidth) {
             series.calloutWidth = options.calloutWidth;
@@ -274,8 +280,11 @@ export class ChartBuilder {
         if (options.label) {
             series.label = options.label;
         }
-        if (options.colors) {
-            series.colors = options.colors;
+        if (options.fills) {
+            series.fills = options.fills;
+        }
+        if (options.strokes) {
+            series.strokes = options.strokes;
         }
         if (options.rotation) {
             series.rotation = options.rotation;

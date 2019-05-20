@@ -93,15 +93,15 @@ export class PieSeries extends Series<PolarChart> {
     /**
      * `null` means make the callout color the same as {@link strokeStyle}.
      */
-    private _calloutColor: string | null = null;
-    set calloutColor(value: string | null) {
-        if (this._calloutColor !== value) {
-            this._calloutColor = value;
+    private _calloutColors: string[] = colors.map(color => Color.fromString(color).darker().toHexString());
+    set calloutColors(value: string[]) {
+        if (this._calloutColors !== value) {
+            this._calloutColors = value;
             this.update();
         }
     }
-    get calloutColor(): string | null {
-        return this._calloutColor;
+    get calloutColors(): string[] {
+        return this._calloutColors;
     }
 
     private _calloutWidth: number = 2;
@@ -238,17 +238,25 @@ export class PieSeries extends Series<PolarChart> {
         return this._label;
     }
 
-    private _colors: string[] = colors;
-    set colors(values: string[]) {
-        this._colors = values;
-        this.strokeColors = values.map(color => Color.fromString(color).darker().toHexString());
+    private _fills: string[] = colors;
+    set fills(values: string[]) {
+        this._fills = values;
+        this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
         this.scheduleData();
     }
-    get colors(): string[] {
-        return this._colors;
+    get fills(): string[] {
+        return this._fills;
     }
 
-    private strokeColors = colors.map(color => Color.fromString(color).darker().toHexString());
+    private _strokes: string[] = colors.map(color => Color.fromString(color).darker().toHexString());
+    set strokes(values: string[]) {
+        this._strokes = values;
+        this.calloutColors = values;
+        this.scheduleData();
+    }
+    get strokes(): string[] {
+        return this._strokes;
+    }
 
     /**
      * The series rotation in degrees.
@@ -284,24 +292,6 @@ export class PieSeries extends Series<PolarChart> {
     }
     get innerRadiusOffset(): number {
         return this._innerRadiusOffset;
-    }
-
-    /**
-     * The stroke style to use for all pie sectors.
-     * `null` value here doesn't mean invisible stroke, as it normally would
-     * (see `Shape.strokeStyle` comments), it means derive stroke colors from fill
-     * colors by darkening them. To make the stroke appear invisible use the same
-     * color as the background of the chart (such as 'white').
-     */
-    private _strokeStyle: string | null = null;
-    set strokeStyle(value: string | null) {
-        if (this._strokeStyle !== value) {
-            this._strokeStyle = value;
-            this.update();
-        }
-    }
-    get strokeStyle(): string | null {
-        return this._strokeStyle;
     }
 
     private _lineWidth: number = 1;
@@ -436,9 +426,9 @@ export class PieSeries extends Series<PolarChart> {
             return;
         }
 
-        const colors = this.colors;
-        const strokeColors = this.strokeStyle ? [this.strokeStyle] : this.strokeColors;
-        const calloutColors = this.calloutColor ? [this.calloutColor] : this.strokeColors;
+        const fills = this.fills;
+        const strokes = this.strokes;
+        const calloutColors = this.calloutColors;
 
         const outerRadiusOffset = this.outerRadiusOffset;
         const innerRadiusOffset = this.innerRadiusOffset;
@@ -486,8 +476,8 @@ export class PieSeries extends Series<PolarChart> {
                 sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
                 sector.startAngle = datum.startAngle;
                 sector.endAngle = datum.endAngle;
-                sector.fillStyle = colors[index % colors.length];
-                sector.strokeStyle = strokeColors[index % strokeColors.length];
+                sector.fillStyle = fills[index % fills.length];
+                sector.strokeStyle = strokes[index % strokes.length];
                 sector.shadow = this.shadow;
                 sector.lineWidth = this.lineWidth;
                 sector.lineJoin = 'round';
@@ -563,17 +553,21 @@ export class PieSeries extends Series<PolarChart> {
     listSeriesItems(data: LegendDatum[]): void {
         const labelField = this.labelField;
         if (this.data.length && labelField) {
+            const fills = this.fills;
+            const strokes = this.strokes;
+            const id = this.id;
+
             this.data.forEach((datum, index) => {
                 data.push({
-                    id: this.id,
+                    id,
                     itemId: index,
                     enabled: this.enabled[index],
                     label: {
                         text: String(datum[labelField])
                     },
                     marker: {
-                        fillStyle: this.colors[index % this.colors.length],
-                        strokeStyle: this.strokeColors[index % this.strokeColors.length]
+                        fillStyle: fills[index % fills.length],
+                        strokeStyle: strokes[index % strokes.length]
                     }
                 });
             });

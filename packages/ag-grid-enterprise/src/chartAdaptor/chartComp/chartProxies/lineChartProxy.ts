@@ -52,7 +52,7 @@ export class LineChartProxy extends ChartProxy {
                 lineSeries.yField = f.colId;
 
                 const colors = palettes[this.options.getPalette()];
-                lineSeries.color = colors[index % colors.length];
+                lineSeries.fill = colors[index % colors.length];
 
                 if (!existingSeries) {
                     lineChart.addSeries(lineSeries);

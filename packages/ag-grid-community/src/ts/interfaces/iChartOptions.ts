@@ -92,7 +92,8 @@ export interface LineTooltipRendererParams {
 export interface LineSeriesOptions extends SeriesOptions {
     xField?: string;
     yField?: string;
-    color?: string;
+    fill?: string;
+    stroke?: string;
     lineWidth?: number;
     marker?: boolean;
     markerRadius?: number;
@@ -111,13 +112,14 @@ export interface BarSeriesOptions extends SeriesOptions {
     yFields?: string[];
     yFieldNames?: string[];
     grouped?: boolean;
-    colors?: string[];
+    fills?: string[];
+    strokes?: string[];
     lineWidth?: number;
     // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     labelFont?: string;
     labelColor?: string;
-    labelPadding?: [number, number];
+    labelPadding?: {x: number, y: number};
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 }
 
@@ -129,7 +131,7 @@ export interface PieTooltipRendererParams {
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
-    calloutColor?: string;
+    calloutColors?: string[];
     calloutWidth?: number;
     calloutLength?: number;
     calloutPadding?: number;
@@ -140,7 +142,8 @@ export interface PieSeriesOptions extends SeriesOptions {
     radiusField?: string;
     labelField?: string;
     label?: boolean;
-    colors?: string[];
+    fills?: string[];
+    strokes?: string[];
     rotation?: number;
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;

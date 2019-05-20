@@ -56,18 +56,24 @@ export class BarSeries extends Series<CartesianChart> {
      */
     protected readonly enabled = new Map<string, boolean>();
 
-    private _colors: string[] = colors;
-    set colors(values: string[]) {
-        if (this._colors !== values) {
-            this._colors = values;
-            this.strokeColors = values.map(color => Color.fromString(color).darker().toHexString());
-            this.scheduleData();
-        }
+    private _fills: string[] = colors;
+    set fills(values: string[]) {
+        this._fills = values;
+        this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
+        this.scheduleData();
     }
-    get colors(): string[] {
-        return this._colors;
+    get fills(): string[] {
+        return this._fills;
     }
-    private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
+
+    private _strokes: string[] = colors.map(color => Color.fromString(color).darker().toHexString());
+    set strokes(values: string[]) {
+        this._strokes = values;
+        this.scheduleData();
+    }
+    get strokes(): string[] {
+        return this._strokes;
+    }
 
     private xData: string[] = [];
     private yData: number[][] = [];
@@ -146,24 +152,6 @@ export class BarSeries extends Series<CartesianChart> {
         return this._grouped;
     }
 
-    /**
-     * The stroke style to use for all bars.
-     * `null` value here doesn't mean invisible stroke, as it normally would
-     * (see `Shape.strokeStyle` comments), it means derive stroke colors from fill
-     * colors by darkening them. To make the stroke appear invisible use the same
-     * color as the background of the chart (such as 'white').
-     */
-    private _strokeStyle: string | null = null;
-    set strokeStyle(value: string | null) {
-        if (this._strokeStyle !== value) {
-            this._strokeStyle = value;
-            this.update();
-        }
-    }
-    get strokeStyle(): string | null {
-        return this._strokeStyle;
-    }
-
     private _lineWidth: number = 1;
     set lineWidth(value: number) {
         if (this._lineWidth !== value) {
@@ -211,14 +199,14 @@ export class BarSeries extends Series<CartesianChart> {
     /**
      * Vertical and horizontal label padding as an array of two numbers.
      */
-    private _labelPadding: [number, number] = [10, 10];
-    set labelPadding(value: [number, number]) {
+    private _labelPadding: {x: number, y: number} = {x: 10, y: 10};
+    set labelPadding(value: {x: number, y: number}) {
         if (this._labelPadding !== value) {
             this._labelPadding = value;
             this.update();
         }
     }
-    get labelPadding(): [number, number] {
+    get labelPadding(): {x: number, y: number} {
         return this._labelPadding;
     }
 
@@ -339,9 +327,8 @@ export class BarSeries extends Series<CartesianChart> {
         const yScale = yAxis.scale;
         const groupScale = this.groupScale;
         const yFields = this.yFields;
-        const colors = this.colors;
-        const strokeColor = this.strokeStyle;
-        const strokeColors = this.strokeColors;
+        const fills = this.fills;
+        const strokes = this.strokes;
         const grouped = this.grouped;
         const lineWidth = this.lineWidth;
         const labelFont = this.labelFont;
@@ -375,15 +362,15 @@ export class BarSeries extends Series<CartesianChart> {
                     y: Math.min(y, bottomY),
                     width: barWidth,
                     height: Math.abs(bottomY - y),
-                    fillStyle: colors[yFieldIndex % colors.length],
-                    strokeStyle: strokeColor ? strokeColor : strokeColors[yFieldIndex % strokeColors.length],
+                    fillStyle: fills[yFieldIndex % fills.length],
+                    strokeStyle: strokes[yFieldIndex % strokes.length],
                     lineWidth,
                     label: labelText ? {
                         text: labelText,
                         font: labelFont,
                         fillStyle: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + lineWidth / 2 + labelPadding[0]
+                        y: y + lineWidth / 2 + labelPadding.x
                     } : undefined
                 });
 
@@ -432,8 +419,8 @@ export class BarSeries extends Series<CartesianChart> {
                     text.y = label.y;
                     text.fillStyle = label.fillStyle;
                     const textBBox = text.getBBox();
-                    text.visible = datum.height > (textBBox.height + datum.lineWidth + labelPadding[0] * 2)
-                        && datum.width > (textBBox.width + datum.lineWidth + labelPadding[1] * 2);
+                    text.visible = datum.height > (textBBox.height + datum.lineWidth + labelPadding.x * 2)
+                        && datum.width > (textBBox.width + datum.lineWidth + labelPadding.y * 2);
                 } else {
                     text.visible = false;
                 }
@@ -463,17 +450,21 @@ export class BarSeries extends Series<CartesianChart> {
 
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {
+            const fills = this.fills;
+            const strokes = this.strokes;
+            const id = this.id;
+
             this.yFields.forEach((yField, index) => {
                 data.push({
-                    id: this.id,
+                    id,
                     itemId: yField,
                     enabled: this.enabled.get(yField) || false,
                     label: {
                         text: this.yFieldNames[index] || this.yFields[index]
                     },
                     marker: {
-                        fillStyle: this.colors[index % this.colors.length],
-                        strokeStyle: this.strokeColors[index % this.strokeColors.length]
+                        fillStyle: fills[index % fills.length],
+                        strokeStyle: strokes[index % strokes.length]
                     }
                 });
             });

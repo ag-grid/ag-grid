@@ -53,7 +53,7 @@ export class PolarChartProxy extends ChartProxy {
 
         pieSeries.data = params.data;
 
-        pieSeries.colors = palettes[this.options.getPalette()];
+        pieSeries.fills = palettes[this.options.getPalette()];
 
         if (!existingSeries) {
             pieChart.addSeries(pieSeries)
@@ -96,7 +96,7 @@ export class PolarChartProxy extends ChartProxy {
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
 
-            pieSeries.colors = palettes[this.options.getPalette()];
+            pieSeries.fills = palettes[this.options.getPalette()];
 
             if (!existingSeries) {
                 doughnutChart.addSeries(pieSeries)

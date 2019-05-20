@@ -174,27 +174,27 @@ export class LineSeries extends Series<CartesianChart> {
         return true;
     }
 
-    private _color: string = colors[0];
-    set color(value: string) {
-        if (this._color !== value) {
-            this._color = value;
-            this.strokeColor = Color.fromString(value).darker().toHexString();
-            this.update();
+    private _fill: string = colors[0];
+    set fill(value: string) {
+        if (this._fill !== value) {
+            this._fill = value;
+            this.stroke = Color.fromString(value).darker().toHexString();
+            this.scheduleData();
         }
     }
-    get color(): string {
-        return this._color;
+    get fill(): string {
+        return this._fill;
     }
 
-    private _strokeColor: string = Color.fromHexString(this.color).darker().toHexString();
-    set strokeColor(value: string) {
-        if (this._strokeColor !== value) {
-            this._strokeColor = value;
-            this.update();
+    private _stroke: string = Color.fromString(colors[0]).darker().toHexString();
+    set stroke(value: string) {
+        if (this._stroke !== value) {
+            this._stroke = value;
+            this.scheduleData();
         }
     }
-    get strokeColor(): string {
-        return this._strokeColor;
+    get stroke(): string {
+        return this._stroke;
     }
 
     private _lineWidth: number = 3;
@@ -226,8 +226,8 @@ export class LineSeries extends Series<CartesianChart> {
         const xData = this.xData;
         const yData = this.yData;
         const n = xData.length;
-        const fillStyle = this.color;
-        const strokeStyle = this.strokeColor;
+        const fillStyle = this.fill;
+        const strokeStyle = this.stroke;
         const marker = this.marker;
         const markerLineWidth = this.markerLineWidth;
         const markerRadius = this.markerRadius;
@@ -335,8 +335,8 @@ export class LineSeries extends Series<CartesianChart> {
                     text: this.title || this.yField
                 },
                 marker: {
-                    fillStyle: this.color,
-                    strokeStyle: this.strokeColor
+                    fillStyle: this.fill,
+                    strokeStyle: this.stroke
                 }
             });
         }

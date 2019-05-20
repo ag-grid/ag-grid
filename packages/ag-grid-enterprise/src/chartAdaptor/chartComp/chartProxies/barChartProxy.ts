@@ -30,7 +30,7 @@ export class BarChartProxy extends ChartProxy {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        barSeries.colors = palettes[this.options.getPalette()];
+        barSeries.fills = palettes[this.options.getPalette()];
     }
 
     private defaultOptions(): BarChartOptions {
@@ -38,29 +38,58 @@ export class BarChartProxy extends ChartProxy {
             parent: this.options.parentElement,
             width: this.options.width,
             height: this.options.height,
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            },
             xAxis: {
                 type: 'category',
+                labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                tickSize: 6,
+                tickWidth: 1,
+                tickPadding: 5,
+                lineColor: 'rgba(195, 195, 195, 1)',
+                lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
-                }],
+                }]
             },
             yAxis: {
                 type: 'number',
+                labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                tickSize: 6,
+                tickWidth: 1,
+                tickPadding: 5,
+                lineColor: 'rgba(195, 195, 195, 1)',
+                lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
-                }],
+                }]
             },
             legend: {
-                labelColor: this.getLabelColor()
+                labelFont: '12px Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerPadding: 4,
+                markerSize: 14,
+                markerLineWidth: 1
             },
             seriesDefaults: {
                 type: 'bar',
                 grouped: this.options.chartType === ChartType.GroupedBar,
-                tooltip: true
+                lineWidth: 1,
+                tooltip: true,
+                labelFont: '12px Verdana, sans-serif',
+                labelColor: 'black',
+                labelPadding: {x: 10, y: 10},
+                tooltipRenderer: undefined
             }
         };
     }
