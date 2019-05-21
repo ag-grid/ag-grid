@@ -431,6 +431,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex: 1 1 auto;
 }
 
 .ag-column-select-panel {

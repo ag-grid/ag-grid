@@ -633,6 +633,7 @@
             }
         }
         .ag-primary-cols-list-panel {
+            border-top: 1px solid $border-color;
             padding-top: $grid-size;
             > div {
                 cursor: pointer;
@@ -649,7 +650,7 @@
     ////////////////////////////////////////
 
     .ag-primary-cols-header-panel {
-        border-bottom: 1px solid $border-color;
+        border-top: 1px solid $border-color;
         height: $header-height;
         align-items: center;
 
@@ -699,9 +700,7 @@
         }
 
         .ag-pivot-mode-panel {
-            border-bottom: 1px solid $border-color;
             height: $header-height;
-            line-height: $header-height;
             display: flex;
             flex: none;
 
