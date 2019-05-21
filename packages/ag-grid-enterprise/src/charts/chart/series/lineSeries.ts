@@ -7,7 +7,7 @@ import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
 import { extent } from "../../util/array";
-import colors from "../palettes";
+import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
@@ -174,7 +174,7 @@ export class LineSeries extends Series<CartesianChart> {
         return true;
     }
 
-    private _fill: string = colors[0];
+    private _fill: string = palette.fills[0];
     set fill(value: string) {
         if (this._fill !== value) {
             this._fill = value;
@@ -186,7 +186,7 @@ export class LineSeries extends Series<CartesianChart> {
         return this._fill;
     }
 
-    private _stroke: string = Color.fromString(colors[0]).darker().toHexString();
+    private _stroke: string = palette.strokes[0];
     set stroke(value: string) {
         if (this._stroke !== value) {
             this._stroke = value;

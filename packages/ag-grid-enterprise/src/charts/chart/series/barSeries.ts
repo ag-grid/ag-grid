@@ -5,7 +5,7 @@ import { Rect } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
-import colors from "../palettes";
+import palette from "../palettes";
 import { Color } from "../../util/color";
 import { Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
@@ -56,7 +56,7 @@ export class BarSeries extends Series<CartesianChart> {
      */
     protected readonly enabled = new Map<string, boolean>();
 
-    private _fills: string[] = colors;
+    private _fills: string[] = palette.fills;
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -66,7 +66,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._fills;
     }
 
-    private _strokes: string[] = colors.map(color => Color.fromString(color).darker().toHexString());
+    private _strokes: string[] = palette.strokes;
     set strokes(values: string[]) {
         this._strokes = values;
         this.scheduleData();
