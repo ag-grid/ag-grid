@@ -120,9 +120,7 @@ export class PolarChartProxy extends ChartProxy {
                 label: false,
                 labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
                 tooltip: true,
-                // tooltipRenderer: (params: any) => {
-                //     return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
-                // }
+                tooltipRenderer: undefined
             }
         };
     }
