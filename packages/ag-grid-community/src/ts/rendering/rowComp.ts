@@ -1038,6 +1038,7 @@ export class RowComp extends Component {
                 node: this.rowNode,
                 rowIndex: this.rowNode.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext()
             }, onApplicableClass, onNotApplicableClass);
