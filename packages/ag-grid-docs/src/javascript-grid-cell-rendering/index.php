@@ -211,6 +211,8 @@ colDef = {
     <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
     <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
     <li><b>suppressPadding:</b> Set to true to node including any padding (indentation) in the child rows.</li>
+    <li><b>suppressDoubleClickExpand:</b> Set to true to suppress expand on double click.</li>
+    <li><b>suppressEnterExpand:</b> Set to true to to suppress expand on Enter key.</li>
     <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
     <li><b>footerValueGetter:</b> The value getter for the footer text. Can be a function or expression.</li>
     <li><b>suppressDoubleClickExpand:</b> If true then double clicking will not expand the group.</li>
