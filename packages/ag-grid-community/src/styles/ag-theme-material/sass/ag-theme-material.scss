@@ -35,7 +35,8 @@
     .ag-icon-radio-button-off {
         height: $icon-size + 6;
         width: $icon-size + 6;
-        background-size: cover;
+        font-size: $icon-size + 6;
+        line-height: $icon-size + 6;
     }
 
     .ag-header-cell, .ag-header-group-cell {

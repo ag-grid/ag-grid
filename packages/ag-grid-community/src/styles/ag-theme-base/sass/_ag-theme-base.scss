@@ -322,7 +322,7 @@
     .ag-header-cell,
     .ag-header-group-cell {
         @include row-border($border-color);
-        @include grid-cell($header-height, $cell-horizontal-padding);
+        @include grid-header-cell($cell-horizontal-padding);
         @if $header-cell-moving-background-color {
             &.ag-header-cell-moving {
                 background-color: $header-cell-moving-background-color;
@@ -403,15 +403,6 @@
     ////////////////////////////////////////
     .ag-header-cell-resize {
         width: $grid-size * 2;
-    }
-
-    ////////////////////////////////////////
-    // Icons
-    ////////////////////////////////////////
-
-    .ag-header-cell-menu-button .ag-icon-menu {
-        display: block;
-        height: $header-height;
     }
 
     ////////////////////////////////////////
@@ -631,7 +622,6 @@
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
             height: $grid-size * 4;
-            line-height: $grid-size * 4;
 
             .ag-column-select-indent {
                 width: $grid-size * 2;
@@ -1129,6 +1119,7 @@
         font-family: $secondary-font-family;
         padding-right: $grid-size * 4;
         padding-left: $grid-size * 4;
+        line-height: 1.5;
     }
 
     .ag-name-value-value {

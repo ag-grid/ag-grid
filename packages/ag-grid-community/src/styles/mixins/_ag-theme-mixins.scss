@@ -17,10 +17,14 @@
     border-color: $color;
 }
 
-@mixin grid-cell($height, $padding) {
-    line-height: $height;
+@mixin grid-header-cell($padding) {
     padding-left: $padding;
     padding-right: $padding;
+}
+
+@mixin grid-cell($height, $padding) {
+    line-height: $height;
+    @include grid-header-cell($padding);
 }
 
 @mixin card($params) {
