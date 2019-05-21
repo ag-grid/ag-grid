@@ -96,8 +96,3 @@
     padding: 0;
     text-transform: $text-transform;
 }
-
-@mixin hide-text {
-    overflow: hidden;
-    text-indent: 100%;
-}

@@ -99,7 +99,7 @@ class SideBarButtonComp extends Component {
             `<div class="ag-side-button">
                 <button type="button" ref="eToggleButton">
                     <div>
-                        <span class="ag-icon-${def.iconKey}"></span>
+                        <span class="ag-icon ag-icon-${def.iconKey}"></span>
                     </div>
                     <span>${label}</span>
                 </button>

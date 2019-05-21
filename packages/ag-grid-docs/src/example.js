@@ -183,7 +183,8 @@ var gridOptions = {
     // debug: true,
     // suppressMultiRangeSelection: true,
     rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
-    suppressMenuHide: isSmall,
+    // suppressMenuHide: isSmall,
+    suppressMenuHide: true,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotColumnGroupTotals: 'before',
     pivotRowTotals: 'before',
@@ -276,7 +277,6 @@ var gridOptions = {
     // clipboardDeliminator: ',',
     // suppressMenuMainPanel: true,
     // suppressMenuColumnPanel: true,
-    // suppressMenuHide: true,
     // forPrint: true,
     // rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
     // headerCellRenderer: headerCellRenderer_text,

@@ -73,6 +73,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-direction: column;
     box-sizing: border-box;
     overflow: hidden;
+    line-height: 1;
 
     *, *:before, *:after {
         box-sizing: border-box;
@@ -323,6 +324,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
+.ag-header-icon {
+    display: flex;
+}
+
 .ag-pinned-left-header {
     height: 100%;
 }
@@ -465,6 +470,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
     > div {
         display: flex;
+        align-items: center;
     }
 
     .ag-column-drop-list {
@@ -478,10 +484,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
     .ag-column-drop-empty-message {
         display: block;
-    }
-
-    .ag-column-drop-cell-button {
-        line-height: 16px;
     }
 }
 
@@ -1062,37 +1064,18 @@ $handleSize: 5px;
 }
 
 .ag-menu-list {
-    border-collapse: collapse;
-    display: table;
+    display: flex;
+    flex-direction: column;
 }
 
 .ag-menu-option {
-    display: table-row;
+    display: flex;
+    align-items: center;
 }
 
 .ag-menu-option-text {
-    display: table-cell;
+    flex: 1 1 auto;
     white-space: nowrap;
-}
-
-.ag-menu-option-shortcut {
-    display: table-cell;
-}
-
-.ag-menu-option-icon {
-    display: table-cell;
-}
-
-.ag-menu-option-popup-pointer {
-    display: table-cell;
-}
-
-.ag-menu-separator {
-    display: table-row;
-}
-
-.ag-menu-separator-cell {
-    display: table-cell;
 }
 
 .ag-menu-column-select-wrapper .ag-column-select-panel {
@@ -1168,12 +1151,6 @@ $handleSize: 5px;
         flex: 1 1 auto;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    .ag-column-drag {
-        min-width: 16px;
-        flex-grow: 0;
-        flex-shrink: 0;
     }
 }
 

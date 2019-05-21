@@ -121,10 +121,6 @@
         border-right: 1px solid $border-color;
     }
 
-    .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-empty-message {
-        line-height: $header-height;
-    }
-
     .ag-floating-filter-button {
         margin-top: $grid-size * 2;
     }
@@ -229,9 +225,5 @@
 
     .ag-column-name-filter {
         height: $grid-size * 4;
-    }
-
-    .ag-column-drop-cell .ag-column-drag {
-        background-position-y: center;
     }
 }

@@ -28,7 +28,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-drag" ref="eDragHandle"></span>
+            <span class="ag-icon ag-icon-grip ag-column-drag" ref="eDragHandle"></span>
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
         </div>`;
 
