@@ -167,7 +167,9 @@ class ContextMenu extends Component implements IComponent<any> {
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-        this.addDestroyFunc(params.hidePopup);
+        if (params.hidePopup) {
+            this.addDestroyFunc(params.hidePopup);
+        }
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));

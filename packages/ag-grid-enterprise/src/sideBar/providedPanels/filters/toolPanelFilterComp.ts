@@ -101,7 +101,7 @@ export class ToolPanelFilterComp extends Component {
             container.appendChild(filter.getGui());
             this.agFilterToolPanelBody.appendChild(container);
             if (filter.afterGuiAttached) {
-                filter.afterGuiAttached();
+                filter.afterGuiAttached({});
             }
         });
 
