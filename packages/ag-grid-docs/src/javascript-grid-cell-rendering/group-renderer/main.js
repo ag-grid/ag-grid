@@ -42,7 +42,8 @@ var columnDefs = [
             suppressCount: true,
             checkbox: true,
             innerRenderer: 'simpleCellRenderer',
-            suppressDoubleClickExpand: true
+            suppressDoubleClickExpand: true,
+            suppressEnterExpand: true
         }
     },
 

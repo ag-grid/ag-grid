@@ -21,16 +21,18 @@ import {
 import { _, Promise } from "../../utils";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
-    pinned:string;
-    padding:number;
-    suppressPadding:boolean;
-    suppressDoubleClickExpand:boolean;
-    footerValueGetter:any;
-    suppressCount:boolean;
-    fullWidth:boolean;
-    checkbox:any;
-    scope:any;
-    actualValue:string;
+    pinned: string;
+    suppressPadding: boolean;
+    suppressDoubleClickExpand: boolean;
+    suppressEnterExpand: boolean;
+    footerValueGetter: any;
+    suppressCount: boolean;
+    fullWidth: boolean;
+    checkbox: any;
+    scope: any;
+
+    /** @deprecated */
+    padding: number;
 }
 
 export class GroupCellRenderer extends Component implements ICellRenderer {
@@ -389,7 +391,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
 
         // expand / contract as the user hits enter
-        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this), { capture: true });
+        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
 
@@ -412,11 +414,13 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        if (!event.defaultPrevented && _.isKeyPressed(event, Constants.KEY_ENTER)) {
+        const enterKeyPressed = _.isKeyPressed(event, Constants.KEY_ENTER);
+        if (enterKeyPressed) {
+            if (this.params.suppressEnterExpand) { return; }
+
             const cellEditable = this.params.column.isCellEditable(this.params.node);
-            if (cellEditable) {
-                return;
-            }
+            if (cellEditable) { return; }
+
             event.preventDefault();
             this.onExpandOrContract();
         }
