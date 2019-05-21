@@ -87,16 +87,16 @@ export class ChartBuilder {
     }
 
     static initChart<C extends Chart>(chart: C, options: BaseChartOptions, seriesType?: SeriesType) {
-        if (options.parent) {
+        if (options.parent !== undefined) {
             chart.parent = options.parent;
         }
-        if (options.width) {
+        if (options.width !== undefined) {
             chart.width = options.width;
         }
-        if (options.height) {
+        if (options.height !== undefined) {
             chart.height = options.height;
         }
-        if (options.series) {
+        if (options.series !== undefined) {
             const seriesConfigs = options.series;
             const seriesInstances = [];
             for (let i = 0, n = seriesConfigs.length; i < n; i++) {
@@ -107,7 +107,7 @@ export class ChartBuilder {
             }
             chart.series = seriesInstances;
         }
-        if (options.padding) {
+        if (options.padding !== undefined) {
             chart.padding = new Padding(
                 options.padding.top,
                 options.padding.right,
@@ -115,19 +115,19 @@ export class ChartBuilder {
                 options.padding.left
             );
         }
-        if (options.legendPosition) {
+        if (options.legendPosition !== undefined) {
             chart.legendPosition = options.legendPosition;
         }
-        if (options.legendPadding) {
+        if (options.legendPadding !== undefined) {
             chart.legendPadding = options.legendPadding;
         }
-        if (options.legend) {
+        if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
-        if (options.data) {
+        if (options.data !== undefined) {
             chart.data = options.data;
         }
-        if (options.tooltipClass) {
+        if (options.tooltipClass !== undefined) {
             chart.tooltipClass = options.tooltipClass;
         }
 
@@ -145,22 +145,22 @@ export class ChartBuilder {
     }
 
     static initSeries<S extends Series<any>>(series: S, options: SeriesOptions) {
-        if (options.title) {
+        if (options.title !== undefined) {
             series.title = options.title;
         }
-        if (options.titleFont) {
+        if (options.titleFont !== undefined) {
             series.titleFont = options.titleFont;
         }
-        if (options.visible) {
+        if (options.visible !== undefined) {
             series.visible = options.visible;
         }
-        if (options.showInLegend) {
+        if (options.showInLegend !== undefined) {
             series.showInLegend = options.showInLegend;
         }
-        if (options.tooltip) {
+        if (options.tooltip !== undefined) {
             series.tooltip = options.tooltip;
         }
-        if (options.data) {
+        if (options.data !== undefined) {
             series.data = options.data;
         }
 
@@ -170,31 +170,31 @@ export class ChartBuilder {
     static initLineSeries(series: LineSeries, options: LineSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        if (options.xField) {
+        if (options.xField !== undefined) {
             series.xField = options.xField;
         }
-        if (options.yField) {
+        if (options.yField !== undefined) {
             series.yField = options.yField;
         }
-        if (options.fill) {
+        if (options.fill !== undefined) {
             series.fill = options.fill;
         }
-        if (options.stroke) {
+        if (options.stroke !== undefined) {
             series.stroke = options.stroke;
         }
-        if (options.lineWidth) {
+        if (options.lineWidth !== undefined) {
             series.lineWidth = options.lineWidth;
         }
-        if (options.marker) {
+        if (options.marker !== undefined) {
             series.marker = options.marker;
         }
-        if (options.markerRadius) {
+        if (options.markerRadius !== undefined) {
             series.markerRadius = options.markerRadius;
         }
-        if (options.markerLineWidth) {
+        if (options.markerLineWidth !== undefined) {
             series.markerLineWidth = options.markerLineWidth;
         }
-        if (options.tooltipRenderer) {
+        if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
         }
 
@@ -204,37 +204,37 @@ export class ChartBuilder {
     static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        if (options.xField) {
+        if (options.xField !== undefined) {
             series.xField = options.xField;
         }
-        if (options.yFields) {
+        if (options.yFields !== undefined) {
             series.yFields = options.yFields;
         }
-        if (options.yFieldNames) {
+        if (options.yFieldNames !== undefined) {
             series.yFieldNames = options.yFieldNames;
         }
-        if (options.grouped) {
+        if (options.grouped !== undefined) {
             series.grouped = options.grouped;
         }
-        if (options.fills) {
+        if (options.fills !== undefined) {
             series.fills = options.fills;
         }
-        if (options.strokes) {
+        if (options.strokes !== undefined) {
             series.strokes = options.strokes;
         }
-        if (options.lineWidth) {
+        if (options.lineWidth !== undefined) {
             series.lineWidth = options.lineWidth;
         }
-        if (options.labelFont) {
+        if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;
         }
-        if (options.labelPadding) {
+        if (options.labelPadding !== undefined) {
             series.labelPadding = options.labelPadding;
         }
-        if (options.tooltipRenderer) {
+        if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
         }
-        if (options.shadow) {
+        if (options.shadow !== undefined) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
 
@@ -244,64 +244,64 @@ export class ChartBuilder {
     static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        if (options.calloutColors) {
+        if (options.calloutColors !== undefined) {
             series.calloutColors = options.calloutColors;
         }
-        if (options.calloutWidth) {
+        if (options.calloutWidth !== undefined) {
             series.calloutWidth = options.calloutWidth;
         }
-        if (options.calloutLength) {
+        if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
         }
-        if (options.calloutLength) {
+        if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
         }
-        if (options.calloutPadding) {
+        if (options.calloutPadding !== undefined) {
             series.calloutPadding = options.calloutPadding;
         }
-        if (options.labelFont) {
+        if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;
         }
-        if (options.labelColor) {
+        if (options.labelColor !== undefined) {
             series.labelColor = options.labelColor;
         }
-        if (options.labelMinAngle) {
+        if (options.labelMinAngle !== undefined) {
             series.labelMinAngle = options.labelMinAngle;
         }
-        if (options.angleField) {
+        if (options.angleField !== undefined) {
             series.angleField = options.angleField;
         }
-        if (options.radiusField) {
+        if (options.radiusField !== undefined) {
             series.radiusField = options.radiusField;
         }
-        if (options.labelField) {
+        if (options.labelField !== undefined) {
             series.labelField = options.labelField;
         }
-        if (options.label) {
+        if (options.label !== undefined) {
             series.label = options.label;
         }
-        if (options.fills) {
+        if (options.fills !== undefined) {
             series.fills = options.fills;
         }
-        if (options.strokes) {
+        if (options.strokes !== undefined) {
             series.strokes = options.strokes;
         }
-        if (options.rotation) {
+        if (options.rotation !== undefined) {
             series.rotation = options.rotation;
         }
-        if (options.outerRadiusOffset) {
+        if (options.outerRadiusOffset !== undefined) {
             series.outerRadiusOffset = options.outerRadiusOffset;
         }
-        if (options.innerRadiusOffset) {
+        if (options.innerRadiusOffset !== undefined) {
             series.innerRadiusOffset = options.innerRadiusOffset;
         }
-        if (options.lineWidth) {
+        if (options.lineWidth !== undefined) {
             series.lineWidth = options.lineWidth;
         }
-        if (options.shadow) {
+        if (options.shadow !== undefined) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
-        if (options.tooltipRenderer) {
+        if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
         }
 
@@ -309,25 +309,25 @@ export class ChartBuilder {
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
-        if (options.markerLineWidth) {
+        if (options.markerLineWidth !== undefined) {
             legend.markerLineWidth = options.markerLineWidth;
         }
-        if (options.markerSize) {
+        if (options.markerSize !== undefined) {
             legend.markerSize = options.markerSize;
         }
-        if (options.markerPadding) {
+        if (options.markerPadding !== undefined) {
             legend.markerPadding = options.markerPadding;
         }
-        if (options.itemPaddingX) {
+        if (options.itemPaddingX !== undefined) {
             legend.itemPaddingX = options.itemPaddingX;
         }
-        if (options.itemPaddingY) {
+        if (options.itemPaddingY !== undefined) {
             legend.itemPaddingY = options.itemPaddingY;
         }
-        if (options.labelFont) {
+        if (options.labelFont !== undefined) {
             legend.labelFont = options.labelFont;
         }
-        if (options.labelColor) {
+        if (options.labelColor !== undefined) {
             legend.labelColor = options.labelColor;
         }
     }
@@ -369,5 +369,3 @@ export class ChartBuilder {
         return axis;
     }
 }
-
-const CB = ChartBuilder;
