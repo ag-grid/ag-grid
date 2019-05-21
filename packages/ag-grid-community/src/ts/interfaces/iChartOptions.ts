@@ -1,4 +1,5 @@
 export interface BaseChartOptions {
+    type?: string;
     parent?: HTMLElement;
     width?: number;
     height?: number;
@@ -29,6 +30,11 @@ export interface LineChartOptions extends CartesianChartOptions {
 export interface PolarChartOptions extends BaseChartOptions {}
 
 export interface PieChartOptions extends PolarChartOptions {
+    series?: PieSeriesOptions[];
+    seriesDefaults?: PieSeriesOptions;
+}
+
+export interface DoughnutChartOptions extends PolarChartOptions {
     series?: PieSeriesOptions[];
     seriesDefaults?: PieSeriesOptions;
 }

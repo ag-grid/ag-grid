@@ -283,7 +283,6 @@ export {
     TabToNextCellParams,
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
-    ProcessChartOptionsParams,
     ChartRef
 } from "./entities/gridOptions";
 
@@ -292,6 +291,7 @@ export {
     BarChartOptions,
     LineChartOptions,
     PieChartOptions,
+    DoughnutChartOptions,
     AxisOptions,
     BarSeriesOptions,
     CartesianChartOptions,
@@ -299,7 +299,10 @@ export {
     LineSeriesOptions,
     PieSeriesOptions,
     PolarChartOptions,
-    LineTooltipRendererParams} from "./interfaces/iChartOptions";
+    LegendOptions,
+    SeriesOptions,
+    LineTooltipRendererParams
+} from "./interfaces/iChartOptions";
 
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";

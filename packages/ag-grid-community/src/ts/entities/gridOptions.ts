@@ -17,7 +17,9 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent,
+    CellFocusedEvent,
+    CellKeyDownEvent,
+    CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -67,7 +69,8 @@ import {
     SortChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent, ToolPanelVisibleChangedEvent
+    VirtualRowRemovedEvent,
+    ToolPanelVisibleChangedEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
@@ -434,7 +437,7 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
-    processChartOptions?(params: ProcessChartOptionsParams): BaseChartOptions;
+    processChartOptions?(options: BaseChartOptions): BaseChartOptions;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -677,11 +680,6 @@ export interface TabToNextCellParams {
     editing: boolean;
     previousCellPosition: CellPosition;
     nextCellPosition: CellPosition;
-}
-
-export interface ProcessChartOptionsParams {
-    type: string;
-    options: BaseChartOptions;
 }
 
 export interface PostProcessPopupParams {

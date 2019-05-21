@@ -5,8 +5,14 @@ import {
     DropShadowOptions,
     LineSeriesOptions,
     PieSeriesOptions,
+    DoughnutChartOptions,
+    BaseChartOptions,
+    BarChartOptions,
+    LegendOptions,
     PolarChartOptions,
-    BaseChartOptions
+    LineChartOptions,
+    PieChartOptions,
+    SeriesOptions
 } from "ag-grid-community";
 
 import { CartesianChart } from "../../charts/chart/cartesianChart";
@@ -21,13 +27,6 @@ import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
-import {
-    BarChartOptions,
-    LegendOptions,
-    LineChartOptions,
-    PieChartOptions,
-    SeriesOptions
-} from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
 type CartesianSeriesType = 'line' | 'bar';
 type PolarSeriesType = 'pie';
@@ -60,6 +59,11 @@ export class ChartBuilder {
     }
 
     static createPolarChart(options: PolarChartOptions): PolarChart {
+        const chart = new PolarChart();
+        return ChartBuilder.initPolarChart(chart, options);
+    }
+
+    static createDoughnutChart(options: DoughnutChartOptions): PolarChart {
         const chart = new PolarChart();
         return ChartBuilder.initPolarChart(chart, options);
     }

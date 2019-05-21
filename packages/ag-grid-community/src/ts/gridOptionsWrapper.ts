@@ -11,7 +11,6 @@ import {
     NodeChildDetails,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
-    ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
@@ -1064,7 +1063,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.postSort;
     }
 
-    public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => BaseChartOptions {
+    public getProcessChartOptionsFunc(): (options: BaseChartOptions) => BaseChartOptions {
         return this.gridOptions.processChartOptions;
     }
 

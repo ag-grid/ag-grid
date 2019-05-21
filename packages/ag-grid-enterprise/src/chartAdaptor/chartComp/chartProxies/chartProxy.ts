@@ -1,16 +1,9 @@
-import {BaseChartOptions, ChartType, ProcessChartOptionsParams} from "ag-grid-community";
+import {BaseChartOptions, ChartType} from "ag-grid-community";
 import {Chart} from "../../../charts/chart/chart";
-
-export enum ChartOptionsType {
-    BAR = 'bar',
-    LINE = 'line',
-    PIE = 'pie',
-    DOUGHNUT = 'doughnut'
-}
 
 export interface CreateChartOptions {
     chartType: ChartType;
-    processChartOptions: (params: ProcessChartOptionsParams) => BaseChartOptions;
+    processChartOptions: (options: BaseChartOptions) => BaseChartOptions;
     getPalette: () => number;
     isDarkTheme: () => boolean;
     width: number;
@@ -46,11 +39,10 @@ export abstract class ChartProxy {
         return this.chart;
     }
 
-    protected getChartOptions(type: string, defaultOptions: BaseChartOptions) {
-        // allow user to override options
+    protected getChartOptions(defaultOptions: BaseChartOptions) {
+        // allow users to override default options
         if (this.options.processChartOptions) {
-            const params: ProcessChartOptionsParams = {type: type, options: defaultOptions};
-            return this.options.processChartOptions(params);
+            return this.options.processChartOptions(defaultOptions);
         }
 
         return defaultOptions;
