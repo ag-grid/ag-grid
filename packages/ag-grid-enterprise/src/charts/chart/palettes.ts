@@ -43,10 +43,7 @@ export const material: Palette = {
         '#ffeb3b',
         '#ffc107',
         '#ff9800',
-        '#ff5722',
-        '#795548',
-        '#9e9e9e',
-        '#607d8b',
+        '#ff5722'
     ],
     strokes: [
         '#ab2f26',
@@ -64,10 +61,7 @@ export const material: Palette = {
         '#b3a429',
         '#b38705',
         '#b36a00',
-        '#b33d18',
-        '#553c32',
-        '#6f6f6f',
-        '#435861'
+        '#b33d18'
     ]
 };
 
