@@ -110,10 +110,16 @@ interface RowSpanParams {
 
     <h2>Constraints with Row Spanning</h2>
 
+    <p>
+        Row Spanning breaks out of the row / cell calculations that a lot of features in the grid is based on.
+        If using Row Spanning, be aware of the following:
+    </p>
+
     <ul>
         <li>
-            Responsibility is with user to not span past the last row. Will give strange
-            results when sorting or filtering.
+            Responsibility is with the developer to not span past the last row. This is especially true if
+            sorting and filtering (eg a cell may span outside the grid after the data is sorted and the cell's
+            row ends up at the bottom of the grid).
         </li>
         <li>
             Responsibility is with application to apply background style to spanning cells
@@ -132,6 +138,11 @@ interface RowSpanParams {
             Sorting and filtering will provide strange results when row spanning. For example
             a cell may span 4 rows, however applying a filter or a sort will probably change
             the requirements of what rows should be spanned.
+        </li>
+        <li>
+            <a href="../javascript-grid-range-selection/">Range Selection</a> will not work correctly when spanning
+            cells. This is because it is not possible to cover all scenarios, a range is no longer
+            a perfect rectangle.
         </li>
     </ul>
 
