@@ -18,7 +18,8 @@ import {Color} from "../../charts/util/color";
 import {BarChartProxy} from "./chartProxies/barChartProxy";
 import {ChartProxy, CreateChartOptions} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/lineChartProxy";
-import {PolarChartProxy} from "./chartProxies/polarChartProxy";
+import {PieChartProxy} from "./chartProxies/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
 
 export interface GridChartOptions {
     chartType: ChartType;
@@ -115,9 +116,9 @@ export class GridChartComp extends Component {
             case ChartType.StackedBar:
                 return new BarChartProxy(chartOptions).create();
             case ChartType.Pie:
-                return new PolarChartProxy(chartOptions).create();
+                return new PieChartProxy(chartOptions).create();
             case ChartType.Doughnut:
-                return new PolarChartProxy(chartOptions).create();
+                return new DoughnutChartProxy(chartOptions).create();
             case ChartType.Line:
                 return new LineChartProxy(chartOptions).create();
         }

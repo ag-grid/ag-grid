@@ -1,18 +1,17 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
-import { ChartType, PieChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
 import borneo, { palettes } from "../../../charts/chart/palettes";
 
-export class PolarChartProxy extends ChartProxy {
+export class DoughnutChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
 
     public constructor(options: CreateChartOptions) {
         super(options);
 
-        const optionsType = this.options.chartType === ChartType.Pie ? ChartOptionsType.PIE : ChartOptionsType.DOUGHNUT;
-        this.chartOptions = this.getChartOptions(optionsType, this.defaultOptions()) as PieChartOptions;
+        this.chartOptions = this.getChartOptions(ChartOptionsType.DOUGHNUT, this.defaultOptions()) as PieChartOptions;
     }
 
     public create(): ChartProxy {
@@ -21,46 +20,6 @@ export class PolarChartProxy extends ChartProxy {
     }
 
     public update(params: ChartUpdateParams): void {
-        this.options.chartType === ChartType.Pie ? this.updatePieChart(params) : this.updateDoughnutChart(params);
-    }
-
-    private updatePieChart(params: ChartUpdateParams) {
-        if (params.fields.length === 0) {
-            this.chart.removeAllSeries();
-            return;
-        }
-
-        const pieChart = this.chart as PolarChart;
-
-        const existingSeries = pieChart.series[0] as PieSeries;
-        const existingSeriesId = existingSeries && existingSeries.angleField as string;
-
-        const pieSeriesId = params.fields[0].colId;
-        const pieSeriesName = params.fields[0].displayName;
-
-        let pieSeries = existingSeries;
-        if (existingSeriesId !== pieSeriesId) {
-            pieChart.removeSeries(existingSeries);
-
-            const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
-
-            seriesOptions.title = pieSeriesName;
-            seriesOptions.angleField = pieSeriesId;
-            seriesOptions.labelField = params.categoryId;
-
-            pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
-        }
-
-        pieSeries.data = params.data;
-
-        pieSeries.fills = palettes[this.options.getPalette()].fills;
-
-        if (!existingSeries) {
-            pieChart.addSeries(pieSeries)
-        }
-    }
-
-    private updateDoughnutChart(params: ChartUpdateParams) {
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
