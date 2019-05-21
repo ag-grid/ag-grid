@@ -54,7 +54,6 @@ import { Group } from "../../../charts/scene/group";
 import { Scene } from "../../../charts/scene/scene";
 import { toRadians } from "../../../charts/util/angle";
 import { Sector } from "../../../charts/scene/shape/sector";
-import { Color } from "../../../charts/util/color";
 import { Path } from "../../../charts/scene/shape/path";
 import linearScale from "../../../charts/scale/linearScale";
 import { Line } from "../../../charts/scene/shape/line";
