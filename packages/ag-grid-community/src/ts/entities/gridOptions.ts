@@ -67,7 +67,7 @@ import {
     SortChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
+    VirtualRowRemovedEvent, ToolPanelVisibleChangedEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
@@ -440,6 +440,8 @@ export interface GridOptions {
 
     // events
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
+
+    onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
 
     onNewColumnsLoaded?(event: NewColumnsLoadedEvent): void;
 

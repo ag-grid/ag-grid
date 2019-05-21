@@ -451,7 +451,7 @@ export class GridPanel extends Component {
         eventNames.forEach(eventName => {
             const listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach(container => {
-                this.addDestroyableEventListener(container, eventName, listener, true);
+                this.addDestroyableEventListener(container, eventName, listener);
             });
         });
     }
@@ -526,8 +526,6 @@ export class GridPanel extends Component {
                     cellComp.onKeyPress(keyboardEvent);
                     break;
             }
-        } else {
-            keyboardEvent.preventDefault();
         }
 
         if (eventName === 'keydown') {

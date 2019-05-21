@@ -109,5 +109,20 @@ interface ColSpanParams {
 
     <?= example('Column Spanning Complex', 'column-spanning-complex', 'generated', array("processVue" => true)) ?>
 
+    <h2>Column Spanning Constraints</h2>
+
+    <p>
+        Column Spanning breaks out of the row / cell calculations that a lot of features in the grid is based on.
+        If using Column Spanning, be aware of the following:
+    </p>
+
+    <ul>
+        <li>
+            <a href="../javascript-grid-range-selection/">Range Selection</a> will not work correctly when spanning
+            cells. This is because it is not possible to cover all scenarios, a range is no longer
+            a perfect rectangle.
+        </li>
+    </ul>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

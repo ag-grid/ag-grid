@@ -414,6 +414,7 @@ export interface CellClassParams {
     colDef: ColDef;
     rowIndex: number;
     $scope: any;
-    api: GridApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
 }

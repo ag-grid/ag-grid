@@ -1,4 +1,4 @@
-import { Chart, LegendPosition } from "./chart";
+import { Chart } from "./chart";
 import { Axis } from "../axis";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";

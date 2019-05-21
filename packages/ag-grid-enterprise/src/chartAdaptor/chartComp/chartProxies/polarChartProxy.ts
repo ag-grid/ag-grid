@@ -1,9 +1,9 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {ChartType, PieChartOptions, PieSeriesOptions} from "ag-grid-community";
-import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./chartProxy";
-import {PolarChart} from "../../../charts/chart/polarChart";
-import {PieSeries} from "../../../charts/chart/series/pieSeries";
-import {palettes} from "../../../charts/chart/palettes";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { ChartType, PieChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import { PolarChart } from "../../../charts/chart/polarChart";
+import { PieSeries } from "../../../charts/chart/series/pieSeries";
+import { palettes } from "../../../charts/chart/palettes";
 
 export class PolarChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
@@ -109,20 +109,46 @@ export class PolarChartProxy extends ChartProxy {
             parent: this.options.parentElement,
             width: this.options.width,
             height: this.options.height,
+            padding: {
+                top: 50,
+                right: 50,
+                bottom: 50,
+                left: 50
+            },
             legend: {
-                labelColor: this.getLabelColor()
+                labelFont: '12px Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerPadding: 4,
+                markerSize: 14,
+                markerLineWidth: 1
             },
             seriesDefaults: {
                 type: 'pie',
-                showInLegend: true,
+                fills: [
+                    '#f3622d',
+                    '#fba71b',
+                    '#57b757',
+                    '#41a9c9',
+                    '#4258c9',
+                    '#9a42c8',
+                    '#c84164',
+                    '#888888'
+                ],
+                // strokes: [], // derived from `fills`
                 lineWidth: 1,
-                calloutWidth: 1,
+                // calloutColors: [], // same as `strokes`
+                calloutWidth: 2,
+                calloutLength: 10,
+                calloutPadding: 3,
                 label: false,
+                labelFont: '12px Verdana, sans-serif',
                 labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
+                labelMinAngle: 20,
                 tooltip: true,
-                // tooltipRenderer: (params: any) => {
-                //     return `<div><b>${params.datum[params.labelField as string]}</b>: ${params.datum[params.angleField]}</div>`;
-                // }
+                tooltipRenderer: undefined,
+                showInLegend: true
             }
         };
     }

@@ -2115,22 +2115,13 @@ export class Utils {
     static addSafePassiveEventListener(
         frameworkOverrides: IFrameworkOverrides,
         eElement: HTMLElement,
-        event: string, listener: (event?: any) => void,
-        options?: boolean | AddEventListenerOptions
+        event: string, listener: (event?: any) => void
     ) {
 
         const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
         const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
 
-        if (isPassive) {
-            if (options === undefined) {
-                options = {};
-            } else if (typeof options === 'boolean') {
-                options = { capture: options };
-            }
-
-            options.passive = true;
-        }
+        const options = isPassive ? {passive: true} : undefined;
 
         if (isOutsideAngular) {
             frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);

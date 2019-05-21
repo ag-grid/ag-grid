@@ -1,0 +1,34 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "docs"
+        },
+        {
+            "type": "npm",
+            "script": "buildCore"
+        },
+        {
+            "type": "npm",
+            "script": "buildVanilla"
+        },
+        {
+            "type": "npm",
+            "script": "updateDependencies"
+        },
+        {
+            "type": "npm",
+            "script": "build"
+        },
+        {
+            "label": "Clean",
+            "command": "lerna",
+            "args": [
+                "clean"
+            ]
+        }
+    ]
+}

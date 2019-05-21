@@ -1,8 +1,8 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {BarChartOptions, BarSeriesOptions, ChartType, LineTooltipRendererParams} from "ag-grid-community";
-import {BarSeries} from "../../../charts/chart/series/barSeries";
-import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./chartProxy";
-import {palettes} from "../../../charts/chart/palettes";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
+import { BarSeries } from "../../../charts/chart/series/barSeries";
+import { ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import { palettes } from "../../../charts/chart/palettes";
 
 export class BarChartProxy extends ChartProxy {
 
@@ -83,17 +83,25 @@ export class BarChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'bar',
+                fills: [
+                    '#f3622d',
+                    '#fba71b',
+                    '#57b757',
+                    '#41a9c9',
+                    '#4258c9',
+                    '#9a42c8',
+                    '#c84164',
+                    '#888888'
+                ],
+                // strokes: [], // derived from `fills`
                 grouped: this.options.chartType === ChartType.GroupedBar,
                 lineWidth: 1,
                 tooltip: true,
                 labelFont: '12px Verdana, sans-serif',
-                labelColor: 'black',
+                labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
                 labelPadding: {x: 10, y: 10},
-                tooltipRenderer: function(params: LineTooltipRendererParams) {
-                    //TODO - fix
-                    console.log( params.datum, params.xField, params.yField);
-                    return 'fred';
-                }
+                tooltipRenderer: undefined,
+                showInLegend: true
             }
         };
     }
