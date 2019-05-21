@@ -17,6 +17,7 @@ $active: #0091EA !default;
 $foreground-color: #000 !default;
 $border-color: $flat-silver !default;
 $icon-color: $flat-gray-4 !default;
+$alt-icon-color: $default-background !default;
 $alt-background: $flat-gray-1 !default;
 $odd-row-background-color: rgb(252, 253, 254) !default;
 $header-cell-moving-background-color: $default-background !default;
@@ -39,7 +40,6 @@ $ag-range-selected-color-4: opacify($range-selection-background-color, 0.4) !def
 $range-selection-highlight-color: $active !default;
 $selected-color: lighten($active, 40) !default;
 
-$alt-icon-color: $default-background !default;
 $background-color: $default-background !default;
 
 $editor-background-color: $chrome-background !default;

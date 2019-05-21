@@ -11,6 +11,7 @@
     $grid-size: map-get($params, "grid-size");
     $icon-size: map-get($params, "icon-size");
     $icon-color: map-get($params, "icon-color");
+    $alt-icon-color: map-get($params, "alt-icon-color");
     $header-icon-size: map-get($params, "header-icon-size");
     $row-height: map-get($params, "row-height");
     $header-height: map-get($params, "header-height");
@@ -1112,7 +1113,7 @@
     .ag-status-bar {
         background: $background-color;
         border: 1px solid $border-color;
-        border-top: 0;
+        border-top-width: 0;
         color: $disabled-foreground-color;
         font-weight: $secondary-font-weight;
         font-size: $secondary-font-size;
@@ -1151,14 +1152,13 @@
 
     .ag-side-bar {
         background-color: $tool-panel-background-color;
-        border-right: 1px solid $border-color;
-        border-top: 1px solid $border-color;
+        border: 1px solid $border-color;
+        border-left-width: 0;
         position: relative;
 
         .ag-side-buttons {
             padding-top: $grid-size * 4;
             background: $background-color;
-            border-bottom: 1px solid $border-color;
             width: $icon-size + 4;
             position: relative;
 
@@ -1414,32 +1414,31 @@
             content: $ag-icon-chart; 
         }
     }
+    .ag-icon-checkbox-checked,
+    .ag-icon-checkbox-indeterminate,
+    .ag-icon-checkbox-unchecked {
+        background-color: $alt-icon-color;
+        line-height: $icon-size;
+        border-radius: 3px;
+        &-readonly {
+            cursor: default;
+            opacity: $disabled-foreground-color-opacity;
+        }
+    }
     .ag-icon-checkbox-checked {
         color: $accent-color;
         &:before, &-readonly:before {
             content: $ag-icon-checkbox-checked;
-        }
-        &-readonly {
-            cursor: default;
-            opacity: $disabled-foreground-color-opacity;
         }
     }
     .ag-icon-checkbox-indeterminate {
         &:before, &-readonly:before {
             content: $ag-icon-checkbox-indeterminate; 
         }
-        &-readonly {
-            cursor: default;
-            opacity: $disabled-foreground-color-opacity;
-        }
     }
     .ag-icon-checkbox-unchecked {
         &:before, &-readonly:before  {
             content: $ag-icon-checkbox-unchecked; 
-        }
-        &-readonly {
-            cursor: default;
-            opacity: $disabled-foreground-color-opacity;
         }
     }
     .ag-icon-column {

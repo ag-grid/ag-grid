@@ -29,8 +29,11 @@
       }
 
     .ag-icon-checkbox-checked,
+    .ag-icon-checkbox-checked-readonly,
     .ag-icon-checkbox-unchecked,
+    .ag-icon-checkbox-unchecked-readonly,
     .ag-icon-checkbox-indeterminate,
+    .ag-icon-checkbox-indeterminate-readonly,
     .ag-icon-radio-button-on,
     .ag-icon-radio-button-off {
         height: $icon-size + 6;
@@ -80,6 +83,10 @@
         .ag-filter-toolpanel-body {
             background-color: $background-color;
         }
+    }
+
+    .ag-status-bar {
+      border-top-width: 1px;
     }
 
     .ag-rtl .ag-side-bar {
