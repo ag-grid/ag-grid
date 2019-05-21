@@ -66,33 +66,61 @@ export class LineChartProxy extends ChartProxy {
             parent: this.options.parentElement,
             width: this.options.width,
             height: this.options.height,
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            },
             xAxis: {
                 type: 'category',
+                labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 0,
+                tickSize: 6,
+                tickWidth: 1,
+                tickPadding: 5,
+                lineColor: 'rgba(195, 195, 195, 1)',
+                lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
-                }],
+                }]
             },
             yAxis: {
                 type: 'number',
+                labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                tickSize: 6,
+                tickWidth: 1,
+                tickPadding: 5,
+                lineColor: 'rgba(195, 195, 195, 1)',
+                lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
                     lineDash: [4, 2]
-                }],
+                }]
             },
             legend: {
-                labelColor: this.getLabelColor()
+                labelFont: '12px Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerPadding: 4,
+                markerSize: 14,
+                markerLineWidth: 1
             },
             seriesDefaults: {
                 type: 'line',
+                fill: '#f3622d',
+                // strokes: [], // derived from `fills`
                 lineWidth: 3,
+                marker: true,
                 markerRadius: 3,
-                tooltip: true
-                // tooltipRenderer: (params: any) => {
-                //     return `<div><b>${f.displayName}</b>: ${params.datum[params.yField]}</div>`;
-                // }
+                markerLineWidth: 1,
+                tooltip: true,
+                tooltipRenderer: undefined,
+                showInLegend: true
             }
         };
     }

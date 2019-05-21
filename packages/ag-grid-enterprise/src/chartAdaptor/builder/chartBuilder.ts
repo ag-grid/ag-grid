@@ -194,9 +194,9 @@ export class ChartBuilder {
         if (options.markerLineWidth) {
             series.markerLineWidth = options.markerLineWidth;
         }
-        // if (options.tooltipRenderer) {
-        //     series.tooltipRenderer = options.tooltipRenderer;
-        // }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
 
         return series;
     }
@@ -231,9 +231,9 @@ export class ChartBuilder {
         if (options.labelPadding) {
             series.labelPadding = options.labelPadding;
         }
-        // if (options.tooltipRenderer) {
-        //     series.tooltipRenderer = options.tooltipRenderer;
-        // }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
         if (options.shadow) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
@@ -301,9 +301,9 @@ export class ChartBuilder {
         if (options.shadow) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);
         }
-        // if (options.tooltipRenderer) {
-        //     series.tooltipRenderer = options.tooltipRenderer;
-        // }
+        if (options.tooltipRenderer) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
 
         return series;
     }
