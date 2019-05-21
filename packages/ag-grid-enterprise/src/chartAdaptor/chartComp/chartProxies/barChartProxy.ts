@@ -30,7 +30,7 @@ export class BarChartProxy extends ChartProxy {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        barSeries.fills = palettes[this.options.getPalette()];
+        barSeries.fills = palettes[this.options.getPalette()].fills;
     }
 
     private defaultOptions(): BarChartOptions {
