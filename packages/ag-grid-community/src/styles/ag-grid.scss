@@ -1064,17 +1064,18 @@ $handleSize: 5px;
 }
 
 .ag-menu-list {
-    display: flex;
-    flex-direction: column;
+    display: table;
 }
 
-.ag-menu-option {
-    display: flex;
-    align-items: center;
+.ag-menu-option, .ag-menu-separator {
+    display: table-row;
+    > span {
+        display: table-cell;
+        vertical-align: middle;
+    }
 }
 
 .ag-menu-option-text {
-    flex: 1 1 auto;
     white-space: nowrap;
 }
 
