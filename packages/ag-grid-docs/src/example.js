@@ -183,8 +183,7 @@ var gridOptions = {
     // debug: true,
     // suppressMultiRangeSelection: true,
     rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
-    // suppressMenuHide: isSmall,
-    suppressMenuHide: true,
+    suppressMenuHide: isSmall,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotColumnGroupTotals: 'before',
     pivotRowTotals: 'before',
