@@ -1526,6 +1526,11 @@
             content: $ag-icon-left; 
         }
     }
+    .ag-icon-loading {
+        &:before {
+            content: $ag-icon-loading;
+        }
+    }
     .ag-icon-maximize {
         &:before {
             content: $ag-icon-maximize; 
@@ -1566,7 +1571,11 @@
             content: $ag-icon-paste; 
         }
     }
-    
+    .ag-icon-pin {
+        &:before {
+            content: $ag-icon-pin; 
+        }
+    }
     .ag-icon-pivot {
         &:before {
             content: $ag-icon-pivot; 
