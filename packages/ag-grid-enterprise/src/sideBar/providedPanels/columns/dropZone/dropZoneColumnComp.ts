@@ -35,9 +35,9 @@ export class DropZoneColumnComp extends Component {
 
     private static TEMPLATE =
        `<span class="ag-column-drop-cell">
-          <span class="ag-column-drag" ref="eDragHandle"></span>
+          <span class="ag-icon ag-icon-grip ag-column-drag" ref="eDragHandle"></span>
           <span class="ag-column-drop-cell-text"></span>
-          <span class="ag-column-drop-cell-button">&#10006;</span>
+          <span class="ag-column-drop-cell-button ag-icon ag-icon-cancel"></span>
         </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;

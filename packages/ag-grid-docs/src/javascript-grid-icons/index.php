@@ -57,19 +57,12 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 
 <p>If you are using Sass/Scss in your project, you can include the ag-grid theme source file and customize its properties by overriding the default variables, including the path to the icons. </p>
 
-<p>The easiest way to replace the entire icon set is to change the <code>$ag-icons-path</code> Scss variable to point to a directory with your set of icons.
-The icons should be <strong>14x14px sized SVG</strong> files. You can check the <a href="https://github.com/ag-grid/ag-grid/tree/latest/src/styles/icons">full icon list in the GitHub repository</a>. 
-</p> 
-
 <snippet>
 // styles.scss
 // This is an example of the application scss file; 
 // Popular framework project scaffolders like angular-cli support 
 // generating sass enabled projects. 
 // For example, the `ng new` command accepts `--style scss`.
-
-// override the icons path to a custom path
-$ag-icons-path: "./my-icons/";
 
 // import the Sass files from the ag-Grid npm package. //
 // The "~" path prefix below relies on Webpack's sass-loader -

@@ -455,13 +455,11 @@ export abstract class BaseDropZonePanel extends Component {
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             const enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-            const charCode = enableRtl ?
-                BaseDropZonePanel.CHAR_LEFT_ARROW : BaseDropZonePanel.CHAR_RIGHT_ARROW;
             const spanClass = enableRtl ? 'ag-left-arrow' : 'ag-right-arrow';
             const eArrow = document.createElement('span');
 
-            eArrow.className = spanClass;
-            eArrow.innerHTML = charCode;
+            _.addCssClass(eArrow, spanClass);
+            _.addCssClass(eArrow, 'ag-icon');
             eParent.appendChild(eArrow);
         }
     }

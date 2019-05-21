@@ -84,10 +84,6 @@
         border-right: 1px solid $border-color;
     }
 
-    .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-empty-message {
-        line-height: $header-height;
-    }
-
     .ag-floating-filter-button {
         margin-top: $grid-size * 2;
     }
@@ -139,16 +135,6 @@
         transition: all 1s;
     }
 
-    .ag-group-expanded {
-        .ag-icon-contracted:empty {
-            @include icon-background($params, "contracted");
-        }
-    }
-
-    .ag-rtl .ag-icon-tree-closed {
-        @include icon-background($params, "small-left");
-    }
-
     .ag-cell-inline-editing {
         height: $row-height;
         padding: 0;
@@ -158,7 +144,6 @@
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
             height: $grid-size * 5;
-            line-height: $grid-size * 5;
         }
     }
 
@@ -202,9 +187,5 @@
 
     .ag-column-name-filter {
         height: $grid-size * 4;
-    }
-
-    .ag-column-drop-cell .ag-column-drag {
-        background-position-y: center;
     }
 }

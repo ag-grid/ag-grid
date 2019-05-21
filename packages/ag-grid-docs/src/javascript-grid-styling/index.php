@@ -783,11 +783,6 @@ window.addEventListener("load", function() {
                     <td>The header icon height.</td>
                 </tr>
                 <tr>
-                    <td>icons-path</td>
-                    <td><code>../../ag-theme-base/icons/</code></td>
-                    <td>The path to the icon svg files. If you are to change that, make sure that the directory you point to contains the complete set of icons.</td>
-                </tr>
-                <tr>
                     <td>font-family</td>
                     <td>'Helvetica Neue', sans-serif</td>
                     <td>The grid font family.</td>
@@ -1089,10 +1084,6 @@ window.addEventListener("load", function() {
                         <td>2px</td>
                     </tr>
                     <tr>
-                        <td>icons-path</td>
-                        <td> "../../ag-theme-balham/icons/"</td>
-                    </tr>
-                    <tr>
                         <td>font-family</td>
                         <td>-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif</td>
                     </tr>
@@ -1231,10 +1222,6 @@ window.addEventListener("load", function() {
                     <tr>
                         <td>header-icon-size</td>
                         <td>14px</td>
-                    </tr>
-                    <tr>
-                        <td>icons-path</td>
-                        <td>"../icons/"</td>
                     </tr>
                     <tr>
                         <td>font-family</td>

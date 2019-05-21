@@ -37,13 +37,6 @@
 
     @include ag-grid-theme($params);
 
-    .ag-icon-checkbox-checked,
-    .ag-icon-checkbox-unchecked,
-    .ag-icon-checkbox-indeterminate {
-        background-color: $background-color;
-        border-radius: 3px;
-    }
-
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;
     }
@@ -103,14 +96,6 @@
         border-color: $selected-color;
     }
 
-    .ag-icon-row-drag {
-        background-position-y: center;
-    }
-
-    .ag-column-drag {
-        background-position-y: center;
-    }
-
     .ag-column-drop-cell {
         min-height: $grid-size * 6;
 
@@ -121,7 +106,6 @@
 
         .ag-column-drop-cell-button:hover {
             opacity: 1;
-            // border: 1px solid $border-color;
         }
     }
 
@@ -130,7 +114,6 @@
         margin-right: $grid-size * 2;
 
         .ag-column-drop-cell-text {
-            line-height: $grid-size * 6;
             margin-left: $grid-size * 2;
         }
     }
@@ -139,12 +122,7 @@
         background-color: $panel-background-color;
         height: $header-height;
 
-        .ag-column-drop-empty-message {
-            line-height: $header-height;
-        }
-
         .ag-column-drop-cell-text {
-            line-height: $grid-size * 6;
             margin-left: $grid-size * 2;
         }
     }
@@ -156,36 +134,17 @@
     // tool panel
     .ag-tool-panel-wrapper {
         border-right: 1px solid $border-color;
-        border-bottom: 1px solid $border-color;
 
         .ag-column-select-panel {
-            padding-bottom: $grid-size * 2;
-
             .ag-column-tool-panel-column-group,
             .ag-column-tool-panel-column {
-                height: $grid-size * 5;
-                line-height: $grid-size * 5;
+                min-height: $grid-size * 5;
             }
         }
 
         .ag-column-drop {
             padding-bottom: $grid-size * 2;
             padding-top: $grid-size * 2;
-
-            .ag-icon {
-                margin-bottom: $grid-size;
-            }
-
-            .ag-column-drop-title {
-                display: inline-block;
-                margin-bottom: $grid-size;
-            }
-
-            .ag-column-drop-empty-message {
-                height: $grid-size * 4;
-                line-height: $grid-size * 4;
-                padding-left: $icon-size + $grid-size * 2;
-            }
         }
     }
 
@@ -205,14 +164,12 @@
     // context menu spacing
     .ag-menu-option {
         height: $grid-size * 7;
-        line-height: $grid-size * 7;
     }
 
     .ag-column-select-panel {
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
             height: $grid-size * 5;
-            line-height: $grid-size * 5;
         }
     }
 

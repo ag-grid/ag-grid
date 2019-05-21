@@ -67,42 +67,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
-$icons-path: "./ag-theme-base/icons/" !default;
-
-@if variable-exists(ag-icons-path) {
-    $icons-path: $ag-icons-path;
-}
-
-$ag-icons-filter: "initial" !default;
-
-@mixin icon-background($icon) {
-    background: transparent url("#{$icons-path}#{$icon}.svg") center no-repeat;
-    background-size: 12px 12px;
-    filter: $ag-icons-filter;
-    height: 12px;
-    width: 12px;
-}
-
-/* icons are used outside of the grid root (in the ghost) */
-$icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate
-        checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cross cut data desc expanded eye-slash eye filter
-        group indeterminate left loading maximize minimize menu minus none not-allowed paste pin pivot plus radio-button-on radio-button-off
-        right small-left small-right small-up small-down tick save tree-open tree-closed tree-indeterminate;
-
-@each $icon in $icons {
-    .ag-icon-#{$icon} {
-        display: block;
-
-        @include icon-background("#{$icon}");
-    }
-}
-
 .ag-root-wrapper {
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
     overflow: hidden;
+    line-height: 1;
 
     *, *:before, *:after {
         box-sizing: border-box;
@@ -353,6 +324,10 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     white-space: nowrap;
 }
 
+.ag-header-icon {
+    display: flex;
+}
+
 .ag-pinned-left-header {
     height: 100%;
 }
@@ -424,20 +399,6 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     padding-left: 4px;
 }
 
-.ag-primary-cols-header-panel .ag-column-name-filter {
-    flex-grow: 1;
-    flex-shrink: 1;
-}
-
-.ag-primary-cols-header-panel .ag-primary-cols-filter-wrapper {
-    width: 100%;
-}
-
-.ag-primary-cols-header-panel {
-    display: flex;
-    flex-direction: row;
-}
-
 .ag-header-select-all {
     display: flex;
 }
@@ -461,38 +422,76 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
     }
 }
 
+/**
+ ****************************
+ * Column Panel
+ ****************************
+*/
+
+.ag-column-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .ag-column-select-panel {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex-grow: 4;
+        flex-shrink: 1;
+        flex-basis: 0;
+
+        .ag-primary-cols-header-panel {
+            display: flex;
+            flex: none;
+
+            .ag-column-name-filter {
+                flex: 1 1 auto;
+            }
+            .ag-primary-cols-filter-wrapper {
+                flex: 1 1 auto;
+                input {
+                    width: 100%;
+                }
+            }
+        }
+
+        .ag-primary-cols-list-panel {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+    }
+}
+
 .ag-column-drop {
     display: inline-flex;
     align-items: center;
     overflow: auto;
     width: 100%;
-}
 
-.ag-column-drop-list {
-    display: flex;
-    align-items: center;
-}
-
-.ag-column-drop-cell {
-    display: flex;
-    align-items: center;
-
-    .ag-column-drop-cell-text {
-        overflow: hidden;
-        flex: 1;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    .ag-column-drop-list {
+        display: flex;
+        align-items: center;
+        .ag-column-drop-cell {
+            display: flex;
+            align-items: center;
+        
+            .ag-column-drop-cell-text {
+                overflow: hidden;
+                flex: 1;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
     }
 }
 
-.ag-column-drop-vertical {
+.ag-column-drop.ag-column-drop-vertical {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    flex-grow: 1;
-    height: 50px;
     overflow: hidden;
-
+    flex: 1 1 0;
+    align-items: stretch;
     > div {
         display: flex;
     }
@@ -502,35 +501,16 @@ $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked 
         flex-grow: 1;
         flex-direction: column;
         overflow-x: auto;
-        height: 20px;
-        width: 100%;
     }
 
     .ag-column-drop-empty-message {
         display: block;
     }
-
-    .ag-column-drop-cell-button {
-        line-height: 16px;
-    }
 }
 
-.ag-column-drop-horizontal {
+.ag-column-drop.ag-column-drop-horizontal {
     white-space: nowrap;
     overflow: hidden;
-}
-
-.ag-column-select-indent {
-    display: inline-block;
-}
-
-.ag-column-panel {
-    display: flex;
-    min-height: 400px;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-x: hidden;
-    max-height: 100vh;
 }
 
 /**
@@ -1092,37 +1072,19 @@ $handleSize: 5px;
 }
 
 .ag-menu-list {
-    border-collapse: collapse;
     display: table;
 }
 
-.ag-menu-option {
+.ag-menu-option, .ag-menu-separator {
     display: table-row;
+    > span {
+        display: table-cell;
+        vertical-align: middle;
+    }
 }
 
 .ag-menu-option-text {
-    display: table-cell;
     white-space: nowrap;
-}
-
-.ag-menu-option-shortcut {
-    display: table-cell;
-}
-
-.ag-menu-option-icon {
-    display: table-cell;
-}
-
-.ag-menu-option-popup-pointer {
-    display: table-cell;
-}
-
-.ag-menu-separator {
-    display: table-row;
-}
-
-.ag-menu-separator-cell {
-    display: table-cell;
 }
 
 .ag-menu-column-select-wrapper .ag-column-select-panel {
@@ -1170,12 +1132,6 @@ $handleSize: 5px;
     }
 }
 
-.ag-primary-cols-list-panel {
-    flex-grow: 1;
-    height: 50px;
-    overflow: auto;
-}
-
 .ag-ltr .ag-column-tool-panel-column {
     margin-left: 16px;
 }
@@ -1199,22 +1155,6 @@ $handleSize: 5px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
-    .ag-column-drag {
-        min-width: 16px;
-        flex-grow: 0;
-        flex-shrink: 0;
-    }
-}
-
-.ag-column-select-panel {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.ag-side-bar .ag-column-select-panel {
-    flex-grow: 4;
 }
 
 .ag-column-select-checkbox {

@@ -140,9 +140,6 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
 class ContextMenu extends Component implements IComponent<any> {
 
-    @Autowired('clipboardService') private clipboardService: ClipboardService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
 

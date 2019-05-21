@@ -156,22 +156,6 @@ function webpackTask(minify, styles) {
 }
 
 function scssTask() {
-    const svgMinOptions = {
-        plugins: [
-            {cleanupAttrs: true},
-            {removeDoctype: true},
-            {removeComments: true},
-            {removeMetadata: true},
-            {removeTitle: true},
-            {removeDesc: true},
-            {removeEditorsNSData: true},
-            {removeUselessStrokeAndFill: true},
-            {cleanupIDs: true},
-            {collapseGroups: true},
-            {convertShapeToPath: true}
-        ]
-    };
-
     // Uncompressed
     return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
         .pipe(named())
@@ -215,14 +199,19 @@ function scssTask() {
                             {
                                 loader: 'image-webpack-loader',
                                 options: {
-                                    svgo: svgMinOptions
-                                }
-                            },
-                            {
-                                loader: 'svg-colorize-loader',
-                                options: {
-                                    color1: "#000000",
-                                    color2: "#FFFFFF"
+                                    svgo: {
+                                        cleanupAttrs: true,
+                                        removeDoctype: true,
+                                        removeComments: true,
+                                        removeMetadata: true,
+                                        removeTitle: true,
+                                        removeDesc: true,
+                                        removeEditorsNSData: true,
+                                        removeUselessStrokeAndFill: true,
+                                        cleanupIDs: true,
+                                        collapseGroups: true,
+                                        convertShapeToPath: true
+                                    }
                                 }
                             }
                         ]

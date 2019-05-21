@@ -1,9 +1,17 @@
 @import "../../mixins/ag-theme-mixins";
 
+@font-face {
+    font-family: '#{$icon-font-family}';
+    src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$icons-data}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 @mixin ag-grid-theme($params) {
     $grid-size: map-get($params, "grid-size");
     $icon-size: map-get($params, "icon-size");
     $icon-color: map-get($params, "icon-color");
+    $alt-icon-color: map-get($params, "alt-icon-color");
     $header-icon-size: map-get($params, "header-icon-size");
     $row-height: map-get($params, "row-height");
     $header-height: map-get($params, "header-height");
@@ -11,7 +19,7 @@
     $rich-select-item-height: map-get($params, "rich-select-item-height");
     $cell-horizontal-padding: map-get($params, "cell-horizontal-padding");
 
-    $icons-path: map-get($params, "icons-path");
+    $icons-data: map-get($params, "icons-data");
 
     $font-family: map-get($params, "font-family");
     $font-size: map-get($params, "font-size");
@@ -307,10 +315,6 @@
 
     .ag-header-cell-label {
         .ag-header-icon {
-            background-position-y: center;
-            background-size: $header-icon-size $header-icon-size;
-            height: 100%;
-            margin: 0;
             margin-left: $grid-size;
             opacity: $foreground-opacity;
         }
@@ -319,7 +323,7 @@
     .ag-header-cell,
     .ag-header-group-cell {
         @include row-border($border-color);
-        @include grid-cell($header-height, $cell-horizontal-padding);
+        @include grid-header-cell($cell-horizontal-padding);
         @if $header-cell-moving-background-color {
             &.ag-header-cell-moving {
                 background-color: $header-cell-moving-background-color;
@@ -368,28 +372,13 @@
     .ag-row-drag {
         cursor: grab;
         min-width: $icon-size + $grid-size * 3;
-        .ag-icon-row-drag {
-            display: block;
-            @include icon-background($params, "grip");
-            background-position-x: left;
-        }
     }
 
     .ag-row-dragging, .ag-row-dragging .ag-row-drag {
         cursor: move;
     }
 
-    .ag-rtl .ag-row-drag {
-        .ag-icon-row-drag {
-            background-position-x: right;
-        }
-    }
-
     .ag-column-drag {
-        @include icon-background($params, "grip");
-
-        background-position-x: left;
-        background-position-y: center;
         cursor: grab;
     }
 
@@ -418,34 +407,6 @@
     }
 
     ////////////////////////////////////////
-    // Icons
-    ////////////////////////////////////////
-    $icons: aggregation arrows asc chart checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly
-            checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut
-            data desc expanded eye-slash eye filter group indeterminate left loading maximize minimize menu minus none
-            not-allowed paste pin pivot plus right radio-button-on radio-button-off small-left small-right small-up
-            small-down tick cross save tree-open tree-closed tree-indeterminate;
-
-    @each $icon in $icons {
-        .ag-icon-#{$icon} {
-            @include icon-background($params, "#{$icon}");
-        }
-    }
-
-    .ag-header-cell-menu-button .ag-icon-menu {
-        display: block;
-        height: $header-height;
-    }
-
-    .ag-icon-checkbox-checked:empty {
-        @include colorful-icon($icons-path, "checkbox-checked", $accent-color, map-get($params, "alt-icon-color"));
-    }
-
-    .ag-icon-radio-button-on:empty {
-        @include colorful-icon($icons-path, "radio-button-on", $accent-color, map-get($params, "alt-icon-color"));
-    }
-
-    ////////////////////////////////////////
     // Context Menu
     ////////////////////////////////////////
     .ag-menu {
@@ -459,17 +420,6 @@
             width: 100%;
         }
 
-        .ag-menu-option {
-            line-height: $grid-size * 4;
-            padding-left: $grid-size * 2;
-            padding-right: $grid-size * 2;
-
-            & > span {
-                display: table-cell;
-                vertical-align: middle;
-            }
-        }
-
         @if $hover-color {
             .ag-menu-option-active {
                 background-color: $hover-color;
@@ -480,15 +430,14 @@
             opacity: 0.5;
         }
 
+        .ag-menu-option-text {
+            margin-left: $grid-size;
+        }
+
         .ag-menu-option-icon {
             padding-left: $grid-size;
             padding-right: $grid-size;
-
-            span {
-                height: $icon-size;
-                line-height: 0;
-                margin-top: $grid-size;
-            }
+            min-width: $icon-size + $grid-size * 2;
         }
 
         .ag-menu-option-shortcut {
@@ -496,11 +445,9 @@
         }
 
         .ag-menu-separator {
-            margin-left: -$grid-size;
-
+            height: $grid-size * 2;
             & > span {
                 background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'#{$grid-size * 2}'%20viewBox%3D'0%200%201%20#{$grid-size * 2}'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'#{$grid-size}'%20x2%3D'1'%20y2%3D'#{$grid-size}'%20stroke-width%3D'1'%20stroke%3D'#{encodecolor($border-color)}'%2F%3E%3C%2Fsvg%3E");
-                height: $grid-size * 2;
             }
         }
 
@@ -566,14 +513,6 @@
 
             &.ag-tab-selected {
                 @extend %selected-tab !optional;
-
-                $icons: filter columns menu;
-
-                @each $icon in $icons {
-                    .ag-icon-#{$icon} {
-                        @include colorful-icon($icons-path, $icon, $primary-color, map-get($params, "alt-icon-color"));
-                    }
-                }
             }
         }
     }
@@ -583,7 +522,7 @@
 
         // string filter type
         .ag-filter-select, .ag-filter-body {
-            margin: $grid-size; 
+            margin-bottom: $grid-size; 
         }
 
         .ag-filter-body {
@@ -606,6 +545,11 @@
                 background-position-y: 0;
             }
         }
+    }
+
+    .ag-filter-filter {
+        margin-left: $grid-size;
+        margin-right: $grid-size;
     }
 
     // string filter type
@@ -679,11 +623,6 @@
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
             height: $grid-size * 4;
-            line-height: $grid-size * 4;
-
-            .ag-column-select-indent {
-                width: $grid-size * 2;
-            }
 
             .ag-column-select-checkbox,
             .ag-column-tool-panel-column-label,
@@ -738,11 +677,9 @@
                 flex-wrap: nowrap;
                 display: flex;
                 flex-flow: column nowrap;
-                //border-bottom: 1px solid $border-color;
-                //padding: 7px;
 
                 .ag-filter-toolpanel-header {
-                    padding: 5px 0 5px 5px;
+                    padding: 7px 5px;
                     > div {
                         margin: auto 0;
                     }
@@ -765,6 +702,7 @@
             height: $header-height;
             line-height: $header-height;
             display: flex;
+            flex: none;
 
             .ag-pivot-mode-select {
                 display: flex;
@@ -786,23 +724,22 @@
             padding: $grid-size 0;
             padding-bottom: $grid-size * 2;
 
-            .ag-icon {
-                height: $group-height;
-                margin: 0 $grid-size;
-            }
-
-            .ag-column-drop-title {
-                height: $group-height;
-                line-height: $group-height;
-            }
-
             .ag-column-drop-empty-message {
                 color: $disabled-foreground-color;
                 font-weight: $secondary-font-weight;
                 font-size: $secondary-font-size;
                 font-family: $secondary-font-family;
-                line-height: $grid-size * 2;
-                padding-left: $grid-size * 4;
+                padding-left: $icon-size + $grid-size * 2;
+                padding-right: $grid-size;
+                margin-top: $grid-size;
+            }
+
+            .ag-column-drop-list {
+                margin-top: $grid-size;
+            }
+
+            .ag-icon {
+                padding-left: $grid-size;
                 padding-right: $grid-size;
             }
 
@@ -815,21 +752,6 @@
     ////////////////////////////////////////
     // Sorting
     ////////////////////////////////////////
-    .ag-filter-icon:empty {
-        @include icon-background($params, "filter");
-    }
-
-    .ag-sort-ascending-icon:empty {
-        @include icon-background($params, "asc");
-    }
-
-    .ag-sort-descending-icon:empty {
-        @include icon-background($params, "desc");
-    }
-
-    .ag-sort-none-icon:empty {
-        @include icon-background($params, "none");
-    }
 
     .ag-numeric-header .ag-header-cell-label .ag-header-icon {
         margin-left: 0;
@@ -850,43 +772,6 @@
 
         & > span {
             margin-left: $grid-size * 4;
-        }
-    }
-
-    @if map-get($params, "use-icons-for-pager-buttons") {
-        $buttonIcons: (
-            btFirst: first,
-            btPrevious: previous,
-            btLast: last,
-            btNext: next
-        );
-        $rtlButtonIcons: (
-            btFirst: last,
-            btPrevious: next,
-            btLast: first,
-            btNext: previous
-        );
-
-        @each $ref, $icon in $buttonIcons {
-            button[ref="#{$ref}"] {
-                @include icon-background($params, $icon);
-                @include hide-text;
-
-                appearance: none;
-                border: 0;
-                opacity: $secondary-foreground-color-opacity;
-                padding: 0;
-
-                &[disabled] {
-                    opacity: $disabled-foreground-color-opacity;
-                }
-            }
-        }
-
-        @each $ref, $icon in $rtlButtonIcons {
-            .ag-rtl button[ref="#{$ref}"] {
-                @include icon-background($params, $icon);
-            }
         }
     }
 
@@ -1024,16 +909,6 @@
             height: $row-height * 6.5; // intentional
         }
 
-        .ag-rich-select-value {
-            background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor($icon-color)}");
-            background-position: center right $grid-size;
-            background-repeat: no-repeat;
-            background-size: $icon-size $icon-size;
-            height: $row-height;
-            line-height: $row-height;
-            padding-left: $cell-horizontal-padding;
-        }
-
         .ag-virtual-list-item {
             cursor: default;
             height: $rich-select-item-height;
@@ -1096,19 +971,12 @@
         position: relative;
     }
 
-    .ag-group-expanded {
-        .ag-icon-contracted:empty {
-            @include icon-background($params, "tree-open");
-        }
-    }
-
     ////////////////////////////////////////
     // Column drop
     ////////////////////////////////////////
     .ag-column-drop-horizontal {
         background-color: $panel-background-color;
         height: $row-height;
-        line-height: $grid-size * 4;
         padding-left: $cell-horizontal-padding;
 
         .ag-icon-group,
@@ -1116,26 +984,13 @@
             margin-right: $cell-horizontal-padding;
         }
 
-        .ag-right-arrow {
-            @include icon-background($params, "right");
-        }
-
-        .ag-left-arrow {
-            @include icon-background($params, "left");
-        }
-
         .ag-left-arrow,
         .ag-right-arrow {
-            @include hide-text;
-
-            height: 100%;
             margin: 0 $grid-size;
             opacity: $secondary-foreground-color-opacity;
         }
 
         .ag-column-drop-empty-message {
-            height: 100%;
-            line-height: $row-height;
             opacity: $disabled-foreground-color-opacity;
         }
     }
@@ -1147,17 +1002,12 @@
         padding: 0 $grid-size / 2;
 
         .ag-column-drop-cell-text {
-            height: 100%;
-            line-height: $grid-size * 4;
             margin: 0 $grid-size;
         }
 
         .ag-column-drop-cell-button {
-            @include icon-background($params, "cancel");
-            @include hide-text;
             min-width: $grid-size * 4;
 
-            height: 100%;
             margin: 0 $grid-size / 2;
             opacity: $secondary-foreground-color-opacity;
 
@@ -1168,7 +1018,6 @@
 
         .ag-column-drag {
             margin-left: $grid-size * 2;
-            width: $icon-size;
         }
     }
 
@@ -1202,7 +1051,6 @@
     }
 
     .ag-column-drop-vertical > .ag-column-drop-cell {
-        margin-bottom: $grid-size;
         margin-left: $grid-size;
         margin-top: 0;
     }
@@ -1260,13 +1108,14 @@
     .ag-status-bar {
         background: $background-color;
         border: 1px solid $border-color;
-        border-top: 0;
+        border-top-width: 0;
         color: $disabled-foreground-color;
         font-weight: $secondary-font-weight;
         font-size: $secondary-font-size;
         font-family: $secondary-font-family;
         padding-right: $grid-size * 4;
         padding-left: $grid-size * 4;
+        line-height: 1.5;
     }
 
     .ag-name-value-value {
@@ -1298,14 +1147,13 @@
 
     .ag-side-bar {
         background-color: $tool-panel-background-color;
-        border-right: 1px solid $border-color;
-        border-top: 1px solid $border-color;
+        border: 1px solid $border-color;
+        border-left-width: 0;
         position: relative;
 
         .ag-side-buttons {
             padding-top: $grid-size * 4;
             background: $background-color;
-            border-bottom: 1px solid $border-color;
             width: $icon-size + 4;
             position: relative;
 
@@ -1411,17 +1259,16 @@
                 .ag-dialog-button {
                     height: $dialog-title-icon-size;
                     width: $dialog-title-icon-size;
+                    .ag-icon {
+                        line-height: $dialog-title-icon-size;
+                        font-size: $dialog-title-icon-size;
+                    }
                     border-radius: 5px;
                     &:hover, &.ag-has-popup {
                         background-color: darken($dialog-title-background-color, 10%);
                     }
                     &:not(:last-child) {
                         margin-right: 5px;
-                    }
-                    > span {
-                        height: 100%;
-                        width: 100%;
-                        background-size: contain;
                     }
                 }
             }
@@ -1519,6 +1366,294 @@
     }
 
     ////////////////////////////////////////
+    // Icons
+    ////////////////////////////////////////
+    .ag-icon {
+        /* use !important to prevent issues with browser extensions that change fonts */
+        font-family: '#{$icon-font-family}' !important;
+        speak: none;
+        font-size: $icon-size;
+        color: $icon-color;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+      
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+    .ag-icon-aggregation {
+        &:before {
+            content: $ag-icon-aggregation; 
+        }
+    }
+    .ag-icon-arrows {
+        &:before {
+            content: $ag-icon-arrows; 
+        }
+    }
+    .ag-icon-asc {
+        &:before {
+            content: $ag-icon-asc; 
+        }
+    }
+    .ag-icon-cancel {
+        &:before {
+            content: $ag-icon-cancel; 
+        }
+    }
+    .ag-icon-chart {
+        &:before {
+            content: $ag-icon-chart; 
+        }
+    }
+    .ag-icon-checkbox-checked,
+    .ag-icon-checkbox-indeterminate,
+    .ag-icon-checkbox-unchecked {
+        background-color: $alt-icon-color;
+        line-height: $icon-size;
+        border-radius: 3px;
+        &-readonly {
+            cursor: default;
+            opacity: $disabled-foreground-color-opacity;
+        }
+    }
+    .ag-icon-checkbox-checked {
+        color: $accent-color;
+        &:before, &-readonly:before {
+            content: $ag-icon-checkbox-checked;
+        }
+    }
+    .ag-icon-checkbox-indeterminate {
+        &:before, &-readonly:before {
+            content: $ag-icon-checkbox-indeterminate; 
+        }
+    }
+    .ag-icon-checkbox-unchecked {
+        &:before, &-readonly:before  {
+            content: $ag-icon-checkbox-unchecked; 
+        }
+    }
+    .ag-icon-column {
+        &:before {
+            content: $ag-icon-column; 
+        }
+    }
+    .ag-icon-columns {
+        &:before {
+            content: $ag-icon-columns; 
+        }
+    }
+    .ag-icon-contracted {
+        &:before {
+            content: $ag-icon-contracted; 
+        }
+    }
+    .ag-icon-copy {
+        &:before {
+            content: $ag-icon-copy; 
+        }
+    }
+    .ag-icon-cross {
+        &:before {
+            content: $ag-icon-cross; 
+        }
+    }
+    .ag-icon-cut {
+        &:before {
+            content: $ag-icon-cut; 
+        }
+    }
+    .ag-icon-data {
+        &:before {
+            content: $ag-icon-data; 
+        }
+    }
+    .ag-icon-desc {
+        &:before {
+            content: $ag-icon-desc; 
+        }
+    }
+    .ag-icon-expanded {
+        &:before {
+            content: $ag-icon-expanded; 
+        }
+    }
+    .ag-icon-eye-slash {
+        &:before {
+            content: $ag-icon-eye-slash; 
+        }
+    }
+    .ag-icon-eye {
+        &:before {
+            content: $ag-icon-eye; 
+        }
+    }
+    .ag-icon-filter {
+        &:before {
+            content: $ag-icon-filter; 
+        }
+    }
+    .ag-icon-first {
+        &:before {
+            content: $ag-icon-first; 
+        }
+    }
+    .ag-icon-grip, .ag-icon-row-drag {
+        &:before {
+            content: $ag-icon-grip; 
+        }
+    }
+    .ag-icon-group {
+        &:before {
+            content: $ag-icon-group; 
+        }
+    }
+    .ag-icon-indeterminate {
+        &:before {
+            content: $ag-icon-indeterminate; 
+        }
+    }
+    .ag-icon-last {
+        &:before {
+            content: $ag-icon-last; 
+        }
+    }
+    .ag-icon-left, .ag-right-arrow {
+        &:before {
+            content: $ag-icon-left; 
+        }
+    }
+    .ag-icon-loading {
+        &:before {
+            content: $ag-icon-loading;
+        }
+    }
+    .ag-icon-maximize {
+        &:before {
+            content: $ag-icon-maximize; 
+        }
+    }
+    .ag-icon-menu {
+        &:before {
+            content: $ag-icon-menu; 
+        }
+    }
+    .ag-icon-minimize {
+        &:before {
+            content: $ag-icon-minimize; 
+        }
+    }
+    .ag-icon-minus {
+        &:before {
+            content: $ag-icon-minus; 
+        }
+    }
+    .ag-icon-next {
+        &:before {
+            content: $ag-icon-next; 
+        }
+    }
+    .ag-icon-none {
+        &:before {
+            content: $ag-icon-none; 
+        }
+    }
+    .ag-icon-not-allowed {
+        &:before {
+            content: $ag-icon-not-allowed; 
+        }
+    }
+    .ag-icon-paste {
+        &:before {
+            content: $ag-icon-paste; 
+        }
+    }
+    .ag-icon-pin {
+        &:before {
+            content: $ag-icon-pin; 
+        }
+    }
+    .ag-icon-pivot {
+        &:before {
+            content: $ag-icon-pivot; 
+        }
+    }
+    .ag-icon-plus {
+        &:before {
+            content: $ag-icon-plus; 
+        }
+    }
+    .ag-icon-previous {
+        &:before {
+            content: $ag-icon-previous; 
+        }
+    }
+    .ag-icon-radio-button-off {
+        &:before {
+            content: $ag-icon-radio-button-off; 
+        }
+    }
+    .ag-icon-radio-button-on {
+        color: $accent-color;
+        &:before {
+            content: $ag-icon-radio-button-on; 
+        }
+    }
+    .ag-icon-right, .ag-right-arrow {
+        &:before {
+            content: $ag-icon-right; 
+        }
+    }
+    .ag-icon-save {
+        &:before {
+            content: $ag-icon-save; 
+        }
+    }
+    .ag-icon-small-down {
+        &:before {
+            content: $ag-icon-small-down; 
+        }
+    }
+    .ag-icon-small-left {
+        &:before {
+            content: $ag-icon-small-left; 
+        }
+    }
+    .ag-icon-small-right {
+        &:before {
+            content: $ag-icon-small-right; 
+        }
+    }
+    .ag-icon-small-up {
+        &:before {
+            content: $ag-icon-small-up; 
+        }
+    }
+    .ag-icon-tick {
+        &:before {
+            content: $ag-icon-tick; 
+        }
+    }
+    .ag-icon-tree-closed {
+        &:before {
+            content: $ag-icon-tree-closed; 
+        }
+    }
+    .ag-icon-tree-indeterminate {
+        &:before {
+            content: $ag-icon-tree-indeterminate; 
+        }
+    }
+    .ag-icon-tree-open {
+        &:before {
+            content: $ag-icon-tree-open; 
+        }
+    }
+
+    ////////////////////////////////////////
     // Right-To-Left
     ////////////////////////////////////////
     .ag-rtl {
@@ -1570,10 +1705,6 @@
             }
         }
 
-        .ag-icon-tree-closed {
-            @include icon-background($params, "contracted");
-        }
-
         .ag-header-group-cell-label {
             height: 100%;
 
@@ -1618,14 +1749,6 @@
             }
 
             .ag-right-arrow {
-                @include icon-background($params, "right");
-
-                height: 100%;
-            }
-
-            .ag-left-arrow {
-                @include icon-background($params, "left");
-
                 height: 100%;
             }
         }
@@ -1646,10 +1769,6 @@
         .ag-header .ag-header-cell-resize::after {
             border-left: 1px solid $border-color;
             border-right: 0;
-        }
-
-        .ag-column-drag {
-            background-position-x: right;
         }
 
         .ag-side-bar {

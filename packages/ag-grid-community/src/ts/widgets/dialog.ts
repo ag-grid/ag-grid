@@ -59,14 +59,14 @@ export class Dialog extends PopupComponent {
 
     private static CLOSE_BTN_TEMPLATE =
         `<div class="ag-dialog-button">
-            <span class="ag-icon-cross"></span>
+            <span class="ag-icon ag-icon-cross"></span>
         </div>
         `;
 
     private static MAXIMIZE_BTN_TEMPLATE =
         `<div class="ag-dialog-button">
-            <span class="ag-icon-maximize"></span>
-            <span class="ag-icon-minimize ag-hidden"></span>
+            <span class="ag-icon ag-icon-maximize"></span>
+            <span class="ag-icon ag-icon-minimize ag-hidden"></span>
         </span>
         `;
 

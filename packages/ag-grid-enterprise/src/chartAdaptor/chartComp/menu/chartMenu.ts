@@ -17,9 +17,9 @@ export class ChartMenu extends Component {
 
     private static TEMPLATE =
         `<div class="ag-chart-menu">
-            <span ref="eChartButton" class="ag-icon-chart"></span>
-            <span ref="eDataButton" class="ag-icon-data"></span>
-            <span ref="eSaveButton" class="ag-icon-save"></span>
+            <span ref="eChartButton" class="ag-icon ag-icon-chart"></span>
+            <span ref="eDataButton" class="ag-icon ag-icon-data"></span>
+            <span ref="eSaveButton" class="ag-icon ag-icon-save"></span>
         </div>`;
 
     @RefSelector('eChartButton') private eChartButton: HTMLElement;

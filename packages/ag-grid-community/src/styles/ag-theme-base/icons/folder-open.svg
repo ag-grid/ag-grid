@@ -1,8 +1,0 @@
-<svg width="100%" height="100%" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
-    <g id="folder-open" transform="matrix(1,0,0,1,-0.0549507,-0.5)">
-        <g transform="matrix(1,0,0,1,0.0549507,1.2207e-07)">
-            <path fill="#FFFFFF" d="M10.5,10.5L1.5,10.5L0.5,9.714L0.5,3.5L1.333,2.5L5.5,2.5L6.5,3.5L9.5,3.5L10.5,4.5L10.5,5.5L11.5,5.5L10.5,10.5Z"/>
-        </g>
-        <path fill="#000000" d="M10,5L10,4.707L9.293,4L6.293,4L5.293,3L1.568,3L1,3.681L1,9.471L1.673,10L1.806,10L2.14,11L1.327,11L0,9.957L0,3.319L1.099,2L5.707,2L6.707,3L9.707,3L11,4.293L11,5L12.11,5L10.91,11L2.14,11L1.473,9L2.617,5.567L5.45,5L10,5ZM10.89,6L5.55,6L3.383,6.433L2.527,9L2.86,10L10.09,10L10.89,6Z" style="fill-rule:nonzero;"/>
-    </g>
-</svg>

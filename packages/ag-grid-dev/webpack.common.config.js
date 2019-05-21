@@ -48,8 +48,7 @@ module.exports = {
             {
                 test: /\.(svg)$/,
                 use: [
-                    {loader: 'url-loader', options: {limit: 8192}},
-                    {loader: 'svg-colorize-loader', options: {}}
+                    {loader: 'url-loader', options: {limit: 8192}}
                 ]
             },
 

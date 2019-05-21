@@ -13,11 +13,11 @@ export class ChartSettingsPanel extends Component {
     public static TEMPLATE =
         `<div class="ag-chart-settings-wrapper">
             <div class="ag-chart-settings-nav-bar">
-                <div ref="ePrevBtn" class="ag-char-settings-prev-btn ag-icon-small-left">
+                <div ref="ePrevBtn" class="ag-chart-settings-prev-btn ag-icon ag-icon-small-left">
                     <button type="button"></button>
                 </div>
                 <div ref="eCardSelector" class="ag-nav-card-selector"></div>
-                <div ref="eNextBtn" class="ag-char-settings-next-btn ag-icon-small-right">
+                <div ref="eNextBtn" class="ag-chart-settings-next-btn ag-icon ag-icon-small-right">
                     <button type="button"></button>
                 </div>
             </div>

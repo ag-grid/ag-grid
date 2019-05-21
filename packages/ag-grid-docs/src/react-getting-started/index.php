@@ -291,8 +291,6 @@ rowData={this.state.rowData}
 <p>Adding Sass Preprocessor to create-react-app is well documented - follow the steps <a href="https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#adding-a-css-preprocessor-sass-less-etc">outlined in the respective help section</a>.</p>
 <p>After you are done with the setup, assuming that you have renamed <code>src/App.css</code> to <code>src/App.scss</code>, you can replace its contents with this:</p>
 <snippet language="scss">
-$ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
-
 @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
 @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 </snippet>
@@ -302,11 +300,7 @@ import { AgGridReact } from 'ag-grid-react';
 -import 'ag-grid-community/dist/styles/ag-grid.css';
 -import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 </snippet>
-<p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file.
-In fact, by specifying the icons path, we also made our first theme override! We might change the entire theme icon set by changing the path in the variable to a directory containing our icon set.</p>
-<p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
 <snippet language="diff">
-$ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
 +$odd-row-background-color: #CFD8DC;
 </snippet>
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!

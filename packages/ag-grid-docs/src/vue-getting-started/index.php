@@ -460,21 +460,9 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 
 <snippet language="scss">
 &lt;style lang="scss"&gt;
-  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
-
   @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
   @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 &lt;/style&gt;
-</snippet>
-
-<p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
-In fact, by specifying the icons path, we also made our first theme override! We might change the entire theme icon set by changing the path in the variable to a directory containing our icon set.</p> 
-
-<p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
-
-<snippet language="diff">
-  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
-+$odd-row-background-color: #CFD8DC;
 </snippet>
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!

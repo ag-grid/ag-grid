@@ -276,7 +276,6 @@ var gridOptions = {
     // clipboardDeliminator: ',',
     // suppressMenuMainPanel: true,
     // suppressMenuColumnPanel: true,
-    // suppressMenuHide: true,
     // forPrint: true,
     // rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
     // headerCellRenderer: headerCellRenderer_text,
