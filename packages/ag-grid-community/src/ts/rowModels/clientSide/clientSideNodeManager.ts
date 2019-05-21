@@ -73,6 +73,14 @@ export class ClientSideNodeManager {
 
         this.doingLegacyTreeData = _.exists(this.getNodeChildDetails);
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+
+        if (this.getNodeChildDetails) {
+            console.warn(`ag-Grid: the callback nodeChildDetailsFunc() is now deprecated. The new way of doing 
+                                    tree data in ag-Grid was introduced in v14 (released November 2017). In the next
+                                    major release of ag-Grid we will be dropping support for the old version of
+                                    tree data. If you are reading this message, please go to the docs to see how
+                                    to implement Tree Data without using nodeChildDetailsFunc().`)
+        }
     }
 
     public getCopyOfNodesMap(): {[id:string]: RowNode} {

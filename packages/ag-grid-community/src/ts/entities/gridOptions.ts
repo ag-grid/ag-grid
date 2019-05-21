@@ -405,7 +405,9 @@ export interface GridOptions {
 
     getBusinessKeyForNode?(node: RowNode): string;
 
+    /** @deprecated */
     getNodeChildDetails?: GetNodeChildDetails;
+
     getDataPath?: GetDataPath;
     treeData?: boolean;
     isServerSideGroup?: IsServerSideGroup;
