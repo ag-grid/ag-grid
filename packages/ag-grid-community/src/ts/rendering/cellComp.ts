@@ -593,6 +593,7 @@ export class CellComp extends Component {
                 rowIndex: this.rowNode.rowIndex,
                 $scope: this.scope,
                 api: this.beans.gridOptionsWrapper.getApi(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
                 context: this.beans.gridOptionsWrapper.getContext()
             },
             onApplicableClass
@@ -725,6 +726,7 @@ export class CellComp extends Component {
                 colDef: colDef,
                 rowIndex: this.cellPosition.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext()
             }, onApplicableClass, onNotApplicableClass);
