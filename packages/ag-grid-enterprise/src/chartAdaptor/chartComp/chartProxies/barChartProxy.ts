@@ -1,8 +1,8 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
-import {BarSeries} from "../../../charts/chart/series/barSeries";
-import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./chartProxy";
-import {palettes} from "../../../charts/chart/palettes";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
+import { BarSeries } from "../../../charts/chart/series/barSeries";
+import { ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import borneo, { palettes } from "../../../charts/chart/palettes";
 
 export class BarChartProxy extends ChartProxy {
 
@@ -30,7 +30,7 @@ export class BarChartProxy extends ChartProxy {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        barSeries.fills = palettes[this.options.getPalette()];
+        barSeries.fills = palettes[this.options.getPalette()].fills;
     }
 
     private defaultOptions(): BarChartOptions {
@@ -83,17 +83,8 @@ export class BarChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'bar',
-                fills: [
-                    '#f3622d',
-                    '#fba71b',
-                    '#57b757',
-                    '#41a9c9',
-                    '#4258c9',
-                    '#9a42c8',
-                    '#c84164',
-                    '#888888'
-                ],
-                // strokes: [], // derived from `fills`
+                fills: borneo.fills,
+                strokes: borneo.strokes,
                 grouped: this.options.chartType === ChartType.GroupedBar,
                 lineWidth: 1,
                 tooltip: true,

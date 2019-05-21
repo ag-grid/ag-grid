@@ -10,13 +10,15 @@ import { ChartController } from "../chartController";
 export class MiniChartsContainer extends Component {
     static TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
 
-    private readonly colors: string[];
+    private readonly fills: string[];
+    private readonly strokes: string[];
     private wrappers: HTMLElement[] = [];
     private chartController: ChartController;
 
     constructor(palette: number, chartController: ChartController) {
         super(MiniChartsContainer.TEMPLATE);
-        this.colors = palettes[palette];
+        this.fills = palettes[palette].fills;
+        this.strokes = palettes[palette].strokes;
         this.chartController = chartController;
     }
 
@@ -24,7 +26,7 @@ export class MiniChartsContainer extends Component {
     private init() {
         const classes = [MiniBar, MiniStackedBar, MiniLine, MiniPie, MiniDonut];
         const eGui = this.getGui();
-        classes.forEach((MiniClass: new (parent: HTMLElement, colors: string[]) => MiniChart, idx: number) => {
+        classes.forEach((MiniClass: new (parent: HTMLElement, fills: string[], strokes: string[]) => MiniChart, idx: number) => {
             const miniWrapper = document.createElement('div');
             _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
 
@@ -35,7 +37,7 @@ export class MiniChartsContainer extends Component {
 
             this.wrappers.push(miniWrapper);
 
-            new MiniClass(miniWrapper, this.colors);
+            new MiniClass(miniWrapper, this.fills, this.strokes);
             eGui.appendChild(miniWrapper);
         });
 
@@ -52,7 +54,6 @@ import { Group } from "../../../charts/scene/group";
 import { Scene } from "../../../charts/scene/scene";
 import { toRadians } from "../../../charts/util/angle";
 import { Sector } from "../../../charts/scene/shape/sector";
-import { Color } from "../../../charts/util/color";
 import { Path } from "../../../charts/scene/shape/path";
 import linearScale from "../../../charts/scale/linearScale";
 import { Line } from "../../../charts/scene/shape/line";
@@ -72,7 +73,7 @@ export abstract class MiniChart {
 
     readonly element: HTMLElement = this.scene.hdpiCanvas.canvas;
 
-    abstract updateColors(colors: string[]): void;
+    abstract updateColors(fills: string[], strokes: string[]): void;
 }
 
 export class MiniPie extends MiniChart {
@@ -94,19 +95,18 @@ export class MiniPie extends MiniChart {
         return sector;
     });
 
-    constructor(parent: HTMLElement, colors: string[]) {
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
         super();
 
         this.scene.parent = parent;
         this.root.append(this.sectors);
-        this.updateColors(colors);
+        this.updateColors(fills, strokes);
     }
 
-    updateColors(colors: string[]) {
+    updateColors(fills: string[], strokes: string[]) {
         this.sectors.forEach((sector, i) => {
-            const color = colors[i];
-            sector.fillStyle = color;
-            sector.strokeStyle = Color.fromString(color).darker().toHexString();
+            sector.fillStyle = fills[i];
+            sector.strokeStyle = strokes[i];
         });
     }
 }
@@ -121,19 +121,18 @@ export class MiniDonut extends MiniChart {
         return sector;
     });
 
-    constructor(parent: HTMLElement, colors: string[]) {
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
         super();
 
         this.scene.parent = parent;
         this.root.append(this.sectors);
-        this.updateColors(colors);
+        this.updateColors(fills, strokes);
     }
 
-    updateColors(colors: string[]) {
+    updateColors(fills: string[], strokes: string[]) {
         this.sectors.forEach((sector, i) => {
-            const color = colors[i];
-            sector.fillStyle = color;
-            sector.strokeStyle = Color.fromString(color).darker().toHexString();
+            sector.fillStyle = fills[i];
+            sector.strokeStyle = strokes[i];
         });
     }
 }
@@ -141,7 +140,7 @@ export class MiniDonut extends MiniChart {
 class MiniLine extends MiniChart {
     private readonly lines: Path[];
 
-    constructor(parent: HTMLElement, colors: string[]) {
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
         super();
 
         this.scene.parent = parent;
@@ -196,13 +195,12 @@ class MiniLine extends MiniChart {
         root.append(leftAxis);
         root.append(bottomAxis);
 
-        this.updateColors(colors);
+        this.updateColors(fills, strokes);
     }
 
-    updateColors(colors: string[]) {
+    updateColors(fills: string[], strokes: string[]) {
         this.lines.forEach((line, i) => {
-            const color = colors[i];
-            line.strokeStyle = Color.fromString(color).darker().toHexString();
+            line.strokeStyle = strokes[i];
         });
     }
 }
@@ -210,7 +208,7 @@ class MiniLine extends MiniChart {
 class MiniBar extends MiniChart {
     private readonly bars: Rect[];
 
-    constructor(parent: HTMLElement, colors: string[]) {
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
         super();
 
         this.scene.parent = parent;
@@ -263,14 +261,13 @@ class MiniBar extends MiniChart {
         root.append(leftAxis);
         root.append(bottomAxis);
 
-        this.updateColors(colors);
+        this.updateColors(fills, strokes);
     }
 
-    updateColors(colors: string[]) {
+    updateColors(fills: string[], strokes: string[]) {
         this.bars.forEach((bar, i) => {
-            const color = colors[i];
-            bar.fillStyle = color;
-            bar.strokeStyle = Color.fromString(color).darker().toHexString();
+            bar.fillStyle = fills[i];
+            bar.strokeStyle = strokes[i];
         });
     }
 }
@@ -278,7 +275,7 @@ class MiniBar extends MiniChart {
 class MiniStackedBar extends MiniChart {
     private readonly bars: Rect[][];
 
-    constructor(parent: HTMLElement, colors: string[]) {
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
         super();
 
         this.scene.parent = parent;
@@ -336,15 +333,14 @@ class MiniStackedBar extends MiniChart {
         root.append(leftAxis);
         root.append(bottomAxis);
 
-        this.updateColors(colors);
+        this.updateColors(fills, strokes);
     }
 
-    updateColors(colors: string[]) {
+    updateColors(fills: string[], strokes: string[]) {
         this.bars.forEach((series, i) => {
             series.forEach(bar => {
-                const color = colors[i];
-                bar.fillStyle = color;
-                bar.strokeStyle = Color.fromString(color).darker().toHexString();
+                bar.fillStyle = fills[i];
+                bar.strokeStyle = strokes[i];
             })
         });
     }

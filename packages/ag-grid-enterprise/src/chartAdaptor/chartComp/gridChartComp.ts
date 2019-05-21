@@ -18,7 +18,8 @@ import {Color} from "../../charts/util/color";
 import {BarChartProxy} from "./chartProxies/barChartProxy";
 import {ChartProxy, CreateChartOptions} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/lineChartProxy";
-import {PolarChartProxy} from "./chartProxies/polarChartProxy";
+import {PieChartProxy} from "./chartProxies/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
 
 export interface GridChartOptions {
     chartType: ChartType;
@@ -74,7 +75,7 @@ export class GridChartComp extends Component {
         this.addMenu();
         this.addResizeListener();
 
-        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setGridChartEditMode.bind(this));
+        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
@@ -115,9 +116,9 @@ export class GridChartComp extends Component {
             case ChartType.StackedBar:
                 return new BarChartProxy(chartOptions).create();
             case ChartType.Pie:
-                return new PolarChartProxy(chartOptions).create();
+                return new PieChartProxy(chartOptions).create();
             case ChartType.Doughnut:
-                return new PolarChartProxy(chartOptions).create();
+                return new DoughnutChartProxy(chartOptions).create();
             case ChartType.Line:
                 return new LineChartProxy(chartOptions).create();
         }
@@ -196,11 +197,11 @@ export class GridChartComp extends Component {
         const observeResize = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
     }
 
-    private setGridChartEditMode(focusEvent: FocusEvent) {
+    private setActiveChartCellRange(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
             return;
         }
-        this.chartController.setChartCellRangesInRangeController();
+        this.chartController.setChartRange();
     }
 
     private getPalette(): number {

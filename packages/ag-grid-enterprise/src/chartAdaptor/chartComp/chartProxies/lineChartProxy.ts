@@ -1,9 +1,9 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {LineChartOptions, LineSeriesOptions} from "ag-grid-community";
-import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./chartProxy";
-import {CartesianChart} from "../../../charts/chart/cartesianChart";
-import {LineSeries} from "../../../charts/chart/series/lineSeries";
-import {palettes} from "../../../charts/chart/palettes";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
+import { ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import { CartesianChart } from "../../../charts/chart/cartesianChart";
+import { LineSeries } from "../../../charts/chart/series/lineSeries";
+import borneo, { palettes } from "../../../charts/chart/palettes";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
@@ -51,8 +51,8 @@ export class LineChartProxy extends ChartProxy {
                 lineSeries.xField = params.categoryId;
                 lineSeries.yField = f.colId;
 
-                const colors = palettes[this.options.getPalette()];
-                lineSeries.fill = colors[index % colors.length];
+                const fills = palettes[this.options.getPalette()].fills;
+                lineSeries.fill = fills[index % fills.length];
 
                 if (!existingSeries) {
                     lineChart.addSeries(lineSeries);
@@ -112,8 +112,8 @@ export class LineChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'line',
-                fill: '#f3622d',
-                // strokes: [], // derived from `fills`
+                fill: borneo.fills[0],
+                stroke: borneo.strokes[0],
                 lineWidth: 3,
                 marker: true,
                 markerRadius: 3,

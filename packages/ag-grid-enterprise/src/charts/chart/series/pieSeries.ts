@@ -5,7 +5,7 @@ import { Selection } from "../../scene/selection";
 import { DropShadow } from "../../scene/dropShadow";
 import scaleLinear, { LinearScale } from "../../scale/linearScale";
 import { normalizeAngle180, toRadians } from "../../util/angle";
-import colors from "../palettes";
+import palette from "../palettes";
 import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
 import { Series, SeriesNodeDatum } from "./series";
@@ -93,7 +93,7 @@ export class PieSeries extends Series<PolarChart> {
     /**
      * `null` means make the callout color the same as {@link strokeStyle}.
      */
-    private _calloutColors: string[] = colors.map(color => Color.fromString(color).darker().toHexString());
+    private _calloutColors: string[] = palette.strokes;
     set calloutColors(value: string[]) {
         if (this._calloutColors !== value) {
             this._calloutColors = value;
@@ -238,7 +238,7 @@ export class PieSeries extends Series<PolarChart> {
         return this._label;
     }
 
-    private _fills: string[] = colors;
+    private _fills: string[] = palette.fills;
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -248,7 +248,7 @@ export class PieSeries extends Series<PolarChart> {
         return this._fills;
     }
 
-    private _strokes: string[] = colors.map(color => Color.fromString(color).darker().toHexString());
+    private _strokes: string[] = palette.strokes;
     set strokes(values: string[]) {
         this._strokes = values;
         this.calloutColors = values;
