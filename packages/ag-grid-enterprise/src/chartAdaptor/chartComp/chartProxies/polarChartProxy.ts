@@ -3,7 +3,7 @@ import { ChartType, PieChartOptions, PieSeriesOptions } from "ag-grid-community"
 import { ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import { palettes } from "../../../charts/chart/palettes";
+import borneo, { palettes } from "../../../charts/chart/palettes";
 
 export class PolarChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
@@ -126,19 +126,10 @@ export class PolarChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'pie',
-                fills: [
-                    '#f3622d',
-                    '#fba71b',
-                    '#57b757',
-                    '#41a9c9',
-                    '#4258c9',
-                    '#9a42c8',
-                    '#c84164',
-                    '#888888'
-                ],
-                // strokes: [], // derived from `fills`
+                fills: borneo.fills,
+                strokes: borneo.strokes,
                 lineWidth: 1,
-                // calloutColors: [], // same as `strokes`
+                calloutColors: borneo.strokes,
                 calloutWidth: 2,
                 calloutLength: 10,
                 calloutPadding: 3,
