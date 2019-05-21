@@ -8,26 +8,6 @@
 
     @include ag-grid-theme($params);
 
-    .ag-icon-loading .path1 {
-        &:before {
-          content: $ag-icon-loading-path1;  
-          color: rgb(151, 151, 151);
-        }
-      }
-      .ag-icon-loading .path2 {
-        &:before {
-          content: $ag-icon-loading-path2;  
-          margin-left: -1em;  
-          color: rgb(151, 151, 151);  
-          opacity: 0.6471;
-        }
-      }
-      .ag-icon-pin {
-        &:before {
-          content: $ag-icon-pin; 
-        }
-      }
-
     .ag-icon-checkbox-checked,
     .ag-icon-checkbox-checked-readonly,
     .ag-icon-checkbox-unchecked,

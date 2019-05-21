@@ -522,7 +522,7 @@
 
         // string filter type
         .ag-filter-select, .ag-filter-body {
-            margin: $grid-size; 
+            margin-bottom: $grid-size; 
         }
 
         .ag-filter-body {
@@ -545,6 +545,11 @@
                 background-position-y: 0;
             }
         }
+    }
+
+    .ag-filter-filter {
+        margin-left: $grid-size;
+        margin-right: $grid-size;
     }
 
     // string filter type
@@ -619,10 +624,6 @@
         .ag-column-tool-panel-column {
             height: $grid-size * 4;
 
-            .ag-column-select-indent {
-                width: $grid-size * 2;
-            }
-
             .ag-column-select-checkbox,
             .ag-column-tool-panel-column-label,
             .ag-column-group-icons {
@@ -676,11 +677,9 @@
                 flex-wrap: nowrap;
                 display: flex;
                 flex-flow: column nowrap;
-                //border-bottom: 1px solid $border-color;
-                //padding: 7px;
 
                 .ag-filter-toolpanel-header {
-                    padding: 5px 0 5px 5px;
+                    padding: 7px 5px;
                     > div {
                         margin: auto 0;
                     }
@@ -703,6 +702,7 @@
             height: $header-height;
             line-height: $header-height;
             display: flex;
+            flex: none;
 
             .ag-pivot-mode-select {
                 display: flex;

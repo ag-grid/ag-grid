@@ -399,20 +399,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     padding-left: 4px;
 }
 
-.ag-primary-cols-header-panel .ag-column-name-filter {
-    flex-grow: 1;
-    flex-shrink: 1;
-}
-
-.ag-primary-cols-header-panel .ag-primary-cols-filter-wrapper {
-    width: 100%;
-}
-
-.ag-primary-cols-header-panel {
-    display: flex;
-    flex-direction: row;
-}
-
 .ag-header-select-all {
     display: flex;
 }
@@ -436,41 +422,78 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+/**
+ ****************************
+ * Column Panel
+ ****************************
+*/
+
+.ag-column-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .ag-column-select-panel {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex-grow: 4;
+        flex-shrink: 1;
+        flex-basis: 0;
+
+        .ag-primary-cols-header-panel {
+            display: flex;
+            flex: none;
+
+            .ag-column-name-filter {
+                flex: 1 1 auto;
+            }
+            .ag-primary-cols-filter-wrapper {
+                flex: 1 1 auto;
+                input {
+                    width: 100%;
+                }
+            }
+        }
+
+        .ag-primary-cols-list-panel {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+    }
+}
+
 .ag-column-drop {
     display: inline-flex;
     align-items: center;
     overflow: auto;
     width: 100%;
-}
 
-.ag-column-drop-list {
-    display: flex;
-    align-items: center;
-}
-
-.ag-column-drop-cell {
-    display: flex;
-    align-items: center;
-
-    .ag-column-drop-cell-text {
-        overflow: hidden;
-        flex: 1;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    .ag-column-drop-list {
+        display: flex;
+        align-items: center;
+        .ag-column-drop-cell {
+            display: flex;
+            align-items: center;
+        
+            .ag-column-drop-cell-text {
+                overflow: hidden;
+                flex: 1;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
     }
 }
 
-.ag-column-drop-vertical {
+.ag-column-drop.ag-column-drop-vertical {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    flex-grow: 1;
-    height: 50px;
     overflow: hidden;
-
+    flex: 1 1 0;
+    align-items: stretch;
     > div {
         display: flex;
-        align-items: center;
     }
 
     .ag-column-drop-list {
@@ -478,8 +501,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         flex-grow: 1;
         flex-direction: column;
         overflow-x: auto;
-        height: 20px;
-        width: 100%;
     }
 
     .ag-column-drop-empty-message {
@@ -487,22 +508,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
-.ag-column-drop-horizontal {
+.ag-column-drop.ag-column-drop-horizontal {
     white-space: nowrap;
     overflow: hidden;
-}
-
-.ag-column-select-indent {
-    display: inline-block;
-}
-
-.ag-column-panel {
-    display: flex;
-    min-height: 400px;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-x: hidden;
-    max-height: 100vh;
 }
 
 /**
@@ -1124,12 +1132,6 @@ $handleSize: 5px;
     }
 }
 
-.ag-primary-cols-list-panel {
-    flex-grow: 1;
-    height: 50px;
-    overflow: auto;
-}
-
 .ag-ltr .ag-column-tool-panel-column {
     margin-left: 16px;
 }
@@ -1153,16 +1155,6 @@ $handleSize: 5px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-}
-
-.ag-column-select-panel {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.ag-side-bar .ag-column-select-panel {
-    flex-grow: 4;
 }
 
 .ag-column-select-checkbox {
