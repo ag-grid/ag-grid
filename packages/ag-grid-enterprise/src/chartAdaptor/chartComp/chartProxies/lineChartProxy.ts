@@ -112,13 +112,15 @@ export class LineChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'line',
-                lineWidth: 3,
                 fill: '#f3622d',
+                // strokes: [], // derived from `fills`
+                lineWidth: 3,
                 marker: true,
                 markerRadius: 3,
                 markerLineWidth: 1,
                 tooltip: true,
-                tooltipRenderer: undefined
+                tooltipRenderer: undefined,
+                showInLegend: true
             }
         };
     }
