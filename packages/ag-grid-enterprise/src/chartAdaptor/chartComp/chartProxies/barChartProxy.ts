@@ -1,5 +1,5 @@
 import {ChartBuilder} from "../../builder/chartBuilder";
-import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
+import {BarChartOptions, BarSeriesOptions, ChartType, LineTooltipRendererParams} from "ag-grid-community";
 import {BarSeries} from "../../../charts/chart/series/barSeries";
 import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./chartProxy";
 import {palettes} from "../../../charts/chart/palettes";
@@ -89,7 +89,11 @@ export class BarChartProxy extends ChartProxy {
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: 'black',
                 labelPadding: {x: 10, y: 10},
-                tooltipRenderer: undefined
+                tooltipRenderer: function(params: LineTooltipRendererParams) {
+                    //TODO - fix
+                    console.log( params.datum, params.xField, params.yField);
+                    return 'fred';
+                }
             }
         };
     }

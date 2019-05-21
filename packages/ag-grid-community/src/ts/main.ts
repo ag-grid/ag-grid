@@ -298,7 +298,8 @@ export {
     DropShadowOptions,
     LineSeriesOptions,
     PieSeriesOptions,
-    PolarChartOptions } from "./interfaces/iChartOptions";
+    PolarChartOptions,
+    LineTooltipRendererParams} from "./interfaces/iChartOptions";
 
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";

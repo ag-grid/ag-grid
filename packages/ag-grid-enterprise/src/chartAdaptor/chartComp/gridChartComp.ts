@@ -74,7 +74,7 @@ export class GridChartComp extends Component {
         this.addMenu();
         this.addResizeListener();
 
-        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setGridChartEditMode.bind(this));
+        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
@@ -196,11 +196,11 @@ export class GridChartComp extends Component {
         const observeResize = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
     }
 
-    private setGridChartEditMode(focusEvent: FocusEvent) {
+    private setActiveChartCellRange(focusEvent: FocusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
             return;
         }
-        this.chartController.setChartCellRangesInRangeController();
+        this.chartController.setChartRange();
     }
 
     private getPalette(): number {

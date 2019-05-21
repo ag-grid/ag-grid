@@ -40,7 +40,7 @@ export class ChartController extends BeanStub {
         this.model.updateData();
 
         // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
-        this.setChartCellRangesInRangeController();
+        this.setChartRange();
 
         this.raiseChartUpdatedEvent();
     }
@@ -53,13 +53,8 @@ export class ChartController extends BeanStub {
         this.model.updateData();
 
         // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
-        this.setChartCellRangesInRangeController();
+        this.setChartRange();
 
-        this.raiseChartUpdatedEvent();
-    }
-
-    public setChartType(chartType: ChartType): void {
-        this.model.setChartType(chartType);
         this.raiseChartUpdatedEvent();
     }
 
@@ -69,6 +64,11 @@ export class ChartController extends BeanStub {
 
     public getPalette(): number {
         return this.model.getPalette();
+    }
+
+    public setChartType(chartType: ChartType): void {
+        this.model.setChartType(chartType);
+        this.raiseChartUpdatedEvent();
     }
 
     public setChartWithPalette(chartType: ChartType, palette: number): void {
@@ -81,7 +81,7 @@ export class ChartController extends BeanStub {
         return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
     }
 
-    public setChartCellRangesInRangeController() {
+    public setChartRange() {
         this.rangeController.setCellRanges(this.model.getCellRanges());
     }
 
