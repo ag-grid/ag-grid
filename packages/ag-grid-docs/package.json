@@ -121,7 +121,6 @@
     "raw-loader": "1.0.0",
     "react": "16.7.0",
     "react-dom": "16.7.0",
-    "resolve-url-loader": "~3.0.0",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.0",
     "thread-loader": "1.2.0",

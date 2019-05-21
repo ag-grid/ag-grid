@@ -78,7 +78,6 @@
     "postcss-scss": "^2.0.0",
     "postcss-svgo": "^4.0.1",
     "protractor": "^5.4.2",
-    "resolve-url-loader": "3.1.0",
     "sass-loader": "^7.1.0",
     "start-server-and-test": "^1.7.11",
     "style-loader": "^0.23.1",
