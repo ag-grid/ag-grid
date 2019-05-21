@@ -1,9 +1,9 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {LineChartOptions, LineSeriesOptions} from "ag-grid-community";
-import {ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions} from "./chartProxy";
-import {CartesianChart} from "../../../charts/chart/cartesianChart";
-import {LineSeries} from "../../../charts/chart/series/lineSeries";
-import {palettes} from "../../../charts/chart/palettes";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
+import { ChartOptionsType, ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import { CartesianChart } from "../../../charts/chart/cartesianChart";
+import { LineSeries } from "../../../charts/chart/series/lineSeries";
+import { palettes } from "../../../charts/chart/palettes";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
