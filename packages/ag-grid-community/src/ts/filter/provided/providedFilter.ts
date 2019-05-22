@@ -138,13 +138,19 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.onUiChanged();
     }
 
-    private onBtApply(afterFloatingFilter = false) {
+    // returns true if the new model is different to the old model
+    protected updateModel(): boolean {
         const oldAppliedModel = this.appliedModel;
         this.appliedModel = this.getModelFromUi();
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
         const newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
+        return newModelDifferent;
+    }
+
+    private onBtApply(afterFloatingFilter = false) {
+        const newModelDifferent = this.updateModel();
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter

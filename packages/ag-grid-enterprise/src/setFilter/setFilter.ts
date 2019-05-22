@@ -239,6 +239,8 @@ export class SetFilter extends ProvidedFilter {
         this.valueModel.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
         this.updateSelectAll();
         this.virtualList.refresh();
+
+        this.updateModel();
     }
 
     //noinspection JSUnusedGlobalSymbols
