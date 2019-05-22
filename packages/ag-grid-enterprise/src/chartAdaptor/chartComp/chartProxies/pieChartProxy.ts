@@ -1,6 +1,6 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartUpdateParams, ChartProxyOptions } from "./chartProxy";
+import { ChartProxy, UpdateChartParams, ChartProxyOptions } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
 import borneo, { palettes } from "../../../charts/chart/palettes";
@@ -11,14 +11,10 @@ export class PieChartProxy extends ChartProxy {
     public constructor(options: ChartProxyOptions) {
         super(options);
         this.chartOptions = this.getChartOptions(this.defaultOptions()) as PieChartOptions;
-    }
-
-    public create(): ChartProxy {
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
-        return this;
     }
 
-    public update(params: ChartUpdateParams): void {
+    public update(params: UpdateChartParams): void {
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;

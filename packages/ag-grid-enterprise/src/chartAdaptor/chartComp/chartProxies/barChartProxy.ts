@@ -1,16 +1,14 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
-import { ChartProxy, ChartUpdateParams, ChartProxyOptions } from "./chartProxy";
+import { ChartProxy, UpdateChartParams, ChartProxyOptions } from "./chartProxy";
 import borneo, { palettes } from "../../../charts/chart/palettes";
 
 export class BarChartProxy extends ChartProxy {
 
     public constructor(options: ChartProxyOptions) {
         super(options);
-    }
 
-    public create(): ChartProxy {
         const chartOptions = this.getChartOptions(this.defaultOptions()) as BarChartOptions;
         this.chart = ChartBuilder.createBarChart(chartOptions);
 
@@ -18,11 +16,9 @@ export class BarChartProxy extends ChartProxy {
         if (barSeries) {
             this.chart.addSeries(barSeries);
         }
-
-        return this;
     }
 
-    public update(params: ChartUpdateParams): void {
+    public update(params: UpdateChartParams): void {
         const barSeries = this.chart.series[0] as BarSeries;
 
         barSeries.data = params.data;

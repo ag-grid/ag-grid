@@ -112,15 +112,15 @@ export class GridChartComp extends Component {
     private createChartProxy(chartOptions: ChartProxyOptions): ChartProxy {
         switch (chartOptions.chartType) {
             case ChartType.GroupedBar:
-                return new BarChartProxy(chartOptions).create();
+                return new BarChartProxy(chartOptions);
             case ChartType.StackedBar:
-                return new BarChartProxy(chartOptions).create();
+                return new BarChartProxy(chartOptions);
             case ChartType.Pie:
-                return new PieChartProxy(chartOptions).create();
+                return new PieChartProxy(chartOptions);
             case ChartType.Doughnut:
-                return new DoughnutChartProxy(chartOptions).create();
+                return new DoughnutChartProxy(chartOptions);
             case ChartType.Line:
-                return new LineChartProxy(chartOptions).create();
+                return new LineChartProxy(chartOptions);
         }
     }
 

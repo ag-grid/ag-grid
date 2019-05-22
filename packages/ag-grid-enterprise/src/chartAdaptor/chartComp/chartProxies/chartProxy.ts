@@ -11,7 +11,7 @@ export interface ChartProxyOptions {
     parentElement: HTMLElement;
 }
 
-export interface ChartUpdateParams {
+export interface UpdateChartParams {
     categoryId: string;
     fields: { colId: string, displayName: string }[];
     data: any[];
@@ -31,9 +31,7 @@ export abstract class ChartProxy {
         this.options = options;
     }
 
-    public abstract create(): ChartProxy;
-
-    public abstract update(params: ChartUpdateParams): void;
+    public abstract update(params: UpdateChartParams): void;
 
     public getChart(): Chart {
         return this.chart;
