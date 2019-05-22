@@ -31,6 +31,17 @@ export abstract class Series<C extends Chart> {
         return this._title;
     }
 
+    private _titleEnabled: boolean = false;
+    set titleEnabled(value: boolean) {
+        if (this._titleEnabled !== value) {
+            this._titleEnabled = value;
+            this.scheduleLayout();
+        }
+    }
+    get titleEnabled(): boolean {
+        return this._titleEnabled;
+    }
+
     private _titleFont: string = 'bold 12px Verdana, sans-serif';
     set titleFont(value: string) {
         if (this._titleFont !== value) {

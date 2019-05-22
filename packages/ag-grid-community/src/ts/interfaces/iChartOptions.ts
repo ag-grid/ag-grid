@@ -147,7 +147,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     angleField?: string;
     radiusField?: string;
     labelField?: string;
-    label?: boolean;
+    labelEnabled?: boolean;
     fills?: string[];
     strokes?: string[];
     rotation?: number;

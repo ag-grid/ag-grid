@@ -227,15 +227,15 @@ export class PieSeries extends Series<PolarChart> {
         return this._labelField;
     }
 
-    private _label: boolean = true;
-    set label(value: boolean) {
-        if (this._label !== value) {
-            this._label = value;
+    private _labelEnabled: boolean = true;
+    set labelEnabled(value: boolean) {
+        if (this._labelEnabled !== value) {
+            this._labelEnabled = value;
             this.scheduleData();
         }
     }
-    get label(): boolean {
-        return this._label;
+    get labelEnabled(): boolean {
+        return this._labelEnabled;
     }
 
     private _fills: string[] = palette.fills;
@@ -337,7 +337,7 @@ export class PieSeries extends Series<PolarChart> {
             return angleData.map(datum => sum += datum / angleDataTotal);
         })();
 
-        const labelField = this.label && this.labelField;
+        const labelField = this.labelEnabled && this.labelField;
         let labelData: string[] = [];
         if (labelField) {
             labelData = data.map(datum => String(datum[labelField]));
@@ -439,6 +439,7 @@ export class PieSeries extends Series<PolarChart> {
         this.group.translationY = chart.centerY;
 
         const title = this.titleNode;
+        title.visible = this.titleEnabled;
         title.translationY = -chart.radius - outerRadiusOffset - 2;
         title.text = this.title;
         title.fillStyle = this.labelColor;

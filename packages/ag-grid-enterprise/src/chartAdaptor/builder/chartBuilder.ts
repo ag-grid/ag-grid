@@ -281,8 +281,8 @@ export class ChartBuilder {
         if (options.labelField !== undefined) {
             series.labelField = options.labelField;
         }
-        if (options.label !== undefined) {
-            series.label = options.label;
+        if (options.labelEnabled !== undefined) {
+            series.labelEnabled = options.labelEnabled;
         }
         if (options.fills !== undefined) {
             series.fills = options.fills;
