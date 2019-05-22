@@ -90,7 +90,7 @@ export class BarChartProxy extends ChartProxy {
                 lineWidth: 1,
                 tooltipEnabled: true,
                 labelFont: '12px Verdana, sans-serif',
-                labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
+                labelColor: this.getLabelColor(),
                 labelPadding: {x: 10, y: 10},
                 tooltipRenderer: undefined,
                 showInLegend: true

@@ -86,7 +86,7 @@ export class PieChartProxy extends ChartProxy {
                 calloutPadding: 3,
                 labelEnabled: false,
                 labelFont: '12px Verdana, sans-serif',
-                labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
+                labelColor: this.getLabelColor(),
                 labelMinAngle: 20,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
