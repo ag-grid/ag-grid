@@ -1,13 +1,13 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
-import { ChartProxy, UpdateChartParams, ChartProxyOptions } from "./chartProxy";
+import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 import borneo, { palettes } from "../../../charts/chart/palettes";
 
 export class BarChartProxy extends ChartProxy {
 
-    public constructor(options: ChartProxyOptions) {
-        super(options);
+    public constructor(params: ChartProxyParams) {
+        super(params);
 
         const chartOptions = this.getChartOptions(this.defaultOptions()) as BarChartOptions;
         this.chart = ChartBuilder.createBarChart(chartOptions);
@@ -26,15 +26,15 @@ export class BarChartProxy extends ChartProxy {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        barSeries.fills = palettes[this.options.getPalette()].fills;
+        barSeries.fills = palettes[this.chartProxyParams.getPalette()].fills;
     }
 
     private defaultOptions(): BarChartOptions {
         return {
             type: 'bar',
-            parent: this.options.parentElement,
-            width: this.options.width,
-            height: this.options.height,
+            parent: this.chartProxyParams.parentElement,
+            width: this.chartProxyParams.width,
+            height: this.chartProxyParams.height,
             padding: {
                 top: 20,
                 right: 20,
@@ -82,7 +82,7 @@ export class BarChartProxy extends ChartProxy {
                 type: 'bar',
                 fills: borneo.fills,
                 strokes: borneo.strokes,
-                grouped: this.options.chartType === ChartType.GroupedBar,
+                grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
                 lineWidth: 1,
                 tooltipEnabled: true,
                 labelFont: '12px Verdana, sans-serif',

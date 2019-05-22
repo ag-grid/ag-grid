@@ -1,6 +1,6 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
-import { ChartProxy, UpdateChartParams, ChartProxyOptions } from "./chartProxy";
+import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
 import borneo, { palettes } from "../../../charts/chart/palettes";
@@ -8,8 +8,9 @@ import borneo, { palettes } from "../../../charts/chart/palettes";
 export class PieChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
 
-    public constructor(options: ChartProxyOptions) {
-        super(options);
+    public constructor(params: ChartProxyParams) {
+        super(params);
+
         this.chartOptions = this.getChartOptions(this.defaultOptions()) as PieChartOptions;
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
@@ -43,7 +44,7 @@ export class PieChartProxy extends ChartProxy {
         pieSeries.labelField = params.categoryId;
         pieSeries.data = params.data;
 
-        pieSeries.fills = palettes[this.options.getPalette()].fills;
+        pieSeries.fills = palettes[this.chartProxyParams.getPalette()].fills;
 
         if (!existingSeries) {
             pieChart.addSeries(pieSeries)
@@ -53,9 +54,9 @@ export class PieChartProxy extends ChartProxy {
     private defaultOptions() {
         return {
             type: 'pie',
-            parent: this.options.parentElement,
-            width: this.options.width,
-            height: this.options.height,
+            parent: this.chartProxyParams.parentElement,
+            width: this.chartProxyParams.width,
+            height: this.chartProxyParams.height,
             padding: {
                 top: 50,
                 right: 50,

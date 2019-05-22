@@ -1,6 +1,6 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
-import { ChartProxy, UpdateChartParams, ChartProxyOptions } from "./chartProxy";
+import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../charts/chart/series/lineSeries";
 import borneo, { palettes } from "../../../charts/chart/palettes";
@@ -8,8 +8,9 @@ import borneo, { palettes } from "../../../charts/chart/palettes";
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
 
-    public constructor(options: ChartProxyOptions) {
-        super(options);
+    public constructor(params: ChartProxyParams) {
+        super(params);
+
         this.chartOptions = this.getChartOptions(this.defaultOptions()) as LineChartOptions;
         this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
@@ -47,7 +48,7 @@ export class LineChartProxy extends ChartProxy {
                 lineSeries.xField = params.categoryId;
                 lineSeries.yField = f.colId;
 
-                const fills = palettes[this.options.getPalette()].fills;
+                const fills = palettes[this.chartProxyParams.getPalette()].fills;
                 lineSeries.fill = fills[index % fills.length];
 
                 if (!existingSeries) {
@@ -60,9 +61,9 @@ export class LineChartProxy extends ChartProxy {
     private defaultOptions(): LineChartOptions {
         return {
             type: 'line',
-            parent: this.options.parentElement,
-            width: this.options.width,
-            height: this.options.height,
+            parent: this.chartProxyParams.parentElement,
+            width: this.chartProxyParams.width,
+            height: this.chartProxyParams.height,
             padding: {
                 top: 20,
                 right: 20,

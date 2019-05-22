@@ -12,7 +12,7 @@ import {
     PostConstruct
 } from "ag-grid-community";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { GridChartOptions } from "./gridChartComp";
+import { GridChartParams } from "./gridChartComp";
 import { RangeController } from "../../rangeController";
 
 export interface ColState {
@@ -20,6 +20,12 @@ export interface ColState {
     colId: string;
     displayName: string;
     selected: boolean;
+}
+
+export interface ChartModelParams {
+    chartType: ChartType;
+    aggregate: boolean;
+    cellRanges: CellRange[];
 }
 
 export class ChartModel extends BeanStub {
@@ -42,17 +48,18 @@ export class ChartModel extends BeanStub {
 
     private readonly aggregate: boolean;
 
-    private initialising = true; //TODO remove
+    private initialising = true;
 
     private datasource: ChartDatasource;
 
-    public constructor(chartOptions: GridChartOptions, cellRange: CellRange) {
+    public constructor(params: ChartModelParams) {
         super();
 
-        this.chartType = chartOptions.chartType;
-        this.aggregate = chartOptions.aggregate;
-        this.cellRanges = [cellRange];
-        this.palette = 0;
+        this.chartType = params.chartType;
+        this.aggregate = params.aggregate;
+        this.cellRanges = params.cellRanges;
+
+        this.palette = 0; //TODO
     }
 
     @PostConstruct

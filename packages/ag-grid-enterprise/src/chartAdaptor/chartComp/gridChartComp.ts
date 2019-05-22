@@ -13,15 +13,16 @@ import {
 } from "ag-grid-community";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
-import {ChartModel} from "./chartModel";
+import {ChartModel, ChartModelParams} from "./chartModel";
 import {Color} from "../../charts/util/color";
 import {BarChartProxy} from "./chartProxies/barChartProxy";
-import {ChartProxy, ChartProxyOptions} from "./chartProxies/chartProxy";
+import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/lineChartProxy";
 import {PieChartProxy} from "./chartProxies/pieChartProxy";
 import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
 
-export interface GridChartOptions {
+export interface GridChartParams {
+    cellRange: CellRange;
     chartType: ChartType;
     insideDialog: boolean;
     aggregate: boolean;
@@ -48,27 +49,32 @@ export class GridChartComp extends Component {
     private chartController: ChartController;
 
     private currentChartType: ChartType;
-
-    private readonly gridChartOptions: GridChartOptions;
-    private readonly initialCellRange: CellRange;
     private chartProxy: ChartProxy;
 
-    constructor(gridChartOptions: GridChartOptions, cellRange: CellRange) {
+    private readonly params: GridChartParams;
+
+    constructor(params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
-        this.gridChartOptions = gridChartOptions;
-        this.initialCellRange = cellRange;
+        this.params = params;
     }
 
     @PostConstruct
     public init(): void {
-        this.model = new ChartModel(this.gridChartOptions, this.initialCellRange);
+        const modelParams: ChartModelParams = {
+            chartType: this.params.chartType,
+            aggregate: this.params.aggregate,
+            cellRanges: [this.params.cellRange]
+        };
+
+        this.model = new ChartModel(modelParams);
         this.getContext().wireBean(this.model);
+
         this.chartController = new ChartController(this.model);
         this.getContext().wireBean(this.chartController);
 
         this.createChart();
 
-        if (this.gridChartOptions.insideDialog) {
+        if (this.params.insideDialog) {
             this.addDialog();
         }
 
@@ -83,7 +89,7 @@ export class GridChartComp extends Component {
     }
 
     private createChart() {
-        let {width, height} = this.gridChartOptions;
+        let {width, height} = this.params;
 
         // destroy chart and remove it from DOM
         if (this.chartProxy) {
@@ -94,7 +100,7 @@ export class GridChartComp extends Component {
             _.clearElement(this.eChart);
         }
 
-        const chartOptions = {
+        const chartProxyParams: ChartProxyParams = {
             chartType: this.model.getChartType(),
             processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
             getPalette: this.getPalette.bind(this),
@@ -104,12 +110,12 @@ export class GridChartComp extends Component {
             height: height,
         };
 
-        this.chartProxy = this.createChartProxy(chartOptions);
+        this.chartProxy = this.createChartProxy(chartProxyParams);
 
         this.currentChartType = this.model.getChartType();
     }
 
-    private createChartProxy(chartOptions: ChartProxyOptions): ChartProxy {
+    private createChartProxy(chartOptions: ChartProxyParams): ChartProxy {
         switch (chartOptions.chartType) {
             case ChartType.GroupedBar:
                 return new BarChartProxy(chartOptions);
