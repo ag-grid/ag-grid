@@ -16,7 +16,7 @@ import {ChartController} from "./chartController";
 import {ChartModel} from "./chartModel";
 import {Color} from "../../charts/util/color";
 import {BarChartProxy} from "./chartProxies/barChartProxy";
-import {ChartProxy, CreateChartOptions} from "./chartProxies/chartProxy";
+import {ChartProxy, ChartProxyOptions} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/lineChartProxy";
 import {PieChartProxy} from "./chartProxies/pieChartProxy";
 import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
@@ -109,7 +109,7 @@ export class GridChartComp extends Component {
         this.currentChartType = this.model.getChartType();
     }
 
-    private createChartProxy(chartOptions: CreateChartOptions): ChartProxy {
+    private createChartProxy(chartOptions: ChartProxyOptions): ChartProxy {
         switch (chartOptions.chartType) {
             case ChartType.GroupedBar:
                 return new BarChartProxy(chartOptions).create();

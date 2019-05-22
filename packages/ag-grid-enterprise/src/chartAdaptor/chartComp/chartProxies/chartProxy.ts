@@ -1,9 +1,9 @@
-import {BaseChartOptions, ChartType} from "ag-grid-community";
+import {ChartOptions, ChartType} from "ag-grid-community";
 import {Chart} from "../../../charts/chart/chart";
 
-export interface CreateChartOptions {
+export interface ChartProxyOptions {
     chartType: ChartType;
-    processChartOptions: (options: BaseChartOptions) => BaseChartOptions;
+    processChartOptions: (options: ChartOptions) => ChartOptions;
     getPalette: () => number;
     isDarkTheme: () => boolean;
     width: number;
@@ -25,9 +25,9 @@ export abstract class ChartProxy {
     protected static lightAxisColour = 'rgb(219, 219, 219)';
 
     protected chart: Chart;
-    protected options: CreateChartOptions;
+    protected options: ChartProxyOptions;
 
-    protected constructor(options: CreateChartOptions) {
+    protected constructor(options: ChartProxyOptions) {
         this.options = options;
     }
 
@@ -39,13 +39,13 @@ export abstract class ChartProxy {
         return this.chart;
     }
 
-    protected getChartOptions(defaultOptions: BaseChartOptions) {
-        // allow users to override default options
+    protected getChartOptions(options: ChartOptions) {
+        // allow users to override options before they are applied
         if (this.options.processChartOptions) {
-            return this.options.processChartOptions(defaultOptions);
+            return this.options.processChartOptions(options);
         }
 
-        return defaultOptions;
+        return options;
     }
 
     protected getLabelColor() {

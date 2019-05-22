@@ -1,12 +1,12 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
-import { ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import { ChartProxy, ChartUpdateParams, ChartProxyOptions } from "./chartProxy";
 import borneo, { palettes } from "../../../charts/chart/palettes";
 
 export class BarChartProxy extends ChartProxy {
 
-    public constructor(options: CreateChartOptions) {
+    public constructor(options: ChartProxyOptions) {
         super(options);
     }
 

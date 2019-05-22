@@ -36,7 +36,7 @@ import { Events } from "./eventKeys";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
 import { ModuleNames } from "./modules/moduleNames";
-import { BaseChartOptions } from "./interfaces/iChartOptions";
+import { ChartOptions } from "./interfaces/iChartOptions";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1063,7 +1063,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.postSort;
     }
 
-    public getProcessChartOptionsFunc(): (options: BaseChartOptions) => BaseChartOptions {
+    public getProcessChartOptionsFunc(): (options: ChartOptions) => ChartOptions {
         return this.gridOptions.processChartOptions;
     }
 

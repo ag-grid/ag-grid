@@ -6,7 +6,7 @@ import {
     LineSeriesOptions,
     PieSeriesOptions,
     DoughnutChartOptions,
-    BaseChartOptions,
+    ChartOptions,
     BarChartOptions,
     LegendOptions,
     PolarChartOptions,
@@ -90,7 +90,7 @@ export class ChartBuilder {
         }
     }
 
-    static initChart<C extends Chart>(chart: C, options: BaseChartOptions, seriesType?: SeriesType) {
+    static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType) {
         if (options.parent !== undefined) {
             chart.parent = options.parent;
         }

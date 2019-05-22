@@ -78,7 +78,7 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
-import { BaseChartOptions } from "../interfaces/iChartOptions";
+import { ChartOptions } from "../interfaces/iChartOptions";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -437,7 +437,7 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
-    processChartOptions?(options: BaseChartOptions): BaseChartOptions;
+    processChartOptions?(options: ChartOptions): ChartOptions;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

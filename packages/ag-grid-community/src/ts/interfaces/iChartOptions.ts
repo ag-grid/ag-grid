@@ -1,4 +1,4 @@
-export interface BaseChartOptions {
+export interface ChartOptions {
     type?: string;
     parent?: HTMLElement;
     width?: number;
@@ -12,7 +12,7 @@ export interface BaseChartOptions {
     legend?: LegendOptions;
 }
 
-export interface CartesianChartOptions extends BaseChartOptions {
+export interface CartesianChartOptions extends ChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
 }
@@ -27,7 +27,7 @@ export interface LineChartOptions extends CartesianChartOptions {
     seriesDefaults?: LineSeriesOptions;
 }
 
-export interface PolarChartOptions extends BaseChartOptions {}
+export interface PolarChartOptions extends ChartOptions {}
 
 export interface PieChartOptions extends PolarChartOptions {
     series?: PieSeriesOptions[];

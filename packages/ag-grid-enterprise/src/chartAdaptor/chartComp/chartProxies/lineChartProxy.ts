@@ -1,6 +1,6 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import { ChartProxy, ChartUpdateParams, ChartProxyOptions } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../charts/chart/series/lineSeries";
 import borneo, { palettes } from "../../../charts/chart/palettes";
@@ -8,7 +8,7 @@ import borneo, { palettes } from "../../../charts/chart/palettes";
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
 
-    public constructor(options: CreateChartOptions) {
+    public constructor(options: ChartProxyOptions) {
         super(options);
         this.chartOptions = this.getChartOptions(this.defaultOptions()) as LineChartOptions;
     }

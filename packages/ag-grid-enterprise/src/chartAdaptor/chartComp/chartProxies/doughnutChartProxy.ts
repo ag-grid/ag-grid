@@ -1,6 +1,6 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
 import { DoughnutChartOptions, PieSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
+import { ChartProxy, ChartUpdateParams, ChartProxyOptions } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
 import borneo, { palettes } from "../../../charts/chart/palettes";
@@ -8,7 +8,7 @@ import borneo, { palettes } from "../../../charts/chart/palettes";
 export class DoughnutChartProxy extends ChartProxy {
     private readonly chartOptions: DoughnutChartOptions;
 
-    public constructor(options: CreateChartOptions) {
+    public constructor(options: ChartProxyOptions) {
         super(options);
 
         this.chartOptions = this.getChartOptions(this.defaultOptions()) as DoughnutChartOptions;

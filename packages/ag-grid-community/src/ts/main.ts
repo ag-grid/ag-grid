@@ -287,7 +287,7 @@ export {
 } from "./entities/gridOptions";
 
 export {
-    BaseChartOptions,
+    ChartOptions,
     BarChartOptions,
     LineChartOptions,
     PieChartOptions,
