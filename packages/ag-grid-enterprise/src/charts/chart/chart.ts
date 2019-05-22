@@ -333,6 +333,7 @@ export abstract class Chart {
                 break;
         }
 
+        // Round off for pixel grid alignment to work properly.
         legendGroup.translationX = Math.floor(legendGroup.translationX);
         legendGroup.translationY = Math.floor(legendGroup.translationY);
 

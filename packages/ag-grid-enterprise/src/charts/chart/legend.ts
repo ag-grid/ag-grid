@@ -284,6 +284,7 @@ export class Legend {
 
         // Position legend items using the layout computed above.
         itemSelection.each((markerLabel, datum, i) => {
+            // Round off for pixel grid alignment to work properly.
             markerLabel.translationX = Math.floor(startX + x);
             markerLabel.translationY = Math.floor(startY + y);
 
