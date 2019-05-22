@@ -86,7 +86,7 @@ export interface SeriesOptions {
     titleFont?: string;
     visible?: boolean;
     showInLegend?: boolean;
-    tooltip?: boolean;
+    tooltipEnabled?: boolean;
 }
 
 export interface LineTooltipRendererParams {
