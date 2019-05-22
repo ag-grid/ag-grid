@@ -97,7 +97,7 @@ export class DoughnutChartProxy extends ChartProxy {
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
                 labelMinAngle: 20,
-                tooltip: true,
+                tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true
             }

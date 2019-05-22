@@ -88,7 +88,7 @@ export class BarChartProxy extends ChartProxy {
                 strokes: borneo.strokes,
                 grouped: this.options.chartType === ChartType.GroupedBar,
                 lineWidth: 1,
-                tooltip: true,
+                tooltipEnabled: true,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
                 labelPadding: {x: 10, y: 10},
