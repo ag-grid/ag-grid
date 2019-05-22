@@ -17,6 +17,8 @@ export class MarkerLabel extends Group {
     constructor() {
         super();
 
+        this.marker.crisp = true;
+
         const label = this.label;
         label.textBaseline = 'middle';
         label.font = MarkerLabel.defaults.labelFont;

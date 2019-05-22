@@ -284,8 +284,8 @@ export class Legend {
 
         // Position legend items using the layout computed above.
         itemSelection.each((markerLabel, datum, i) => {
-            markerLabel.translationX = startX + x;
-            markerLabel.translationY = startY + y;
+            markerLabel.translationX = Math.floor(startX + x);
+            markerLabel.translationY = Math.floor(startY + y);
 
             const bbox = bboxes[i];
             if (bbox.width > columnWidth) {
