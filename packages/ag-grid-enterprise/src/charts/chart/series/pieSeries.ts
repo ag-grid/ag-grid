@@ -541,10 +541,11 @@ export class PieSeries extends Series<PolarChart> {
                 labelField: this.labelField
             });
         } else {
+            const title = this.title ? this.title + '<br>' : '';
             const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
             const value = nodeDatum.seriesDatum[angleField];
             const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();
-            html = `${label}${formattedValue}`;
+            html = `${title}${label}${formattedValue}`;
         }
         return html;
     }
