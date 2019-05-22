@@ -119,8 +119,8 @@ export class CartesianChart extends Chart {
         this.updateAxes();
 
         this.series.forEach(series => {
-            series.group.translationX = shrinkRect.x;
-            series.group.translationY = shrinkRect.y;
+            series.group.translationX = Math.floor(shrinkRect.x);
+            series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxis` call
         });
 
