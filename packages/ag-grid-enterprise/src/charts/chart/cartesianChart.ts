@@ -106,21 +106,21 @@ export class CartesianChart extends Chart {
 
         xAxis.scale.range = [0, shrinkRect.width];
         xAxis.rotation = -90;
-        xAxis.translationX = shrinkRect.x;
-        xAxis.translationY = shrinkRect.y + shrinkRect.height + 1;
+        xAxis.translationX = Math.floor(shrinkRect.x);
+        xAxis.translationY = Math.floor(shrinkRect.y + shrinkRect.height + 1);
         xAxis.parallelLabels = true;
         xAxis.gridLength = shrinkRect.height;
 
         yAxis.scale.range = [shrinkRect.height, 0];
-        yAxis.translationX = shrinkRect.x;
-        yAxis.translationY = shrinkRect.y;
+        yAxis.translationX = Math.floor(shrinkRect.x);
+        yAxis.translationY = Math.floor(shrinkRect.y);
         yAxis.gridLength = shrinkRect.width;
 
         this.updateAxes();
 
         this.series.forEach(series => {
-            series.group.translationX = shrinkRect.x;
-            series.group.translationY = shrinkRect.y;
+            series.group.translationX = Math.floor(shrinkRect.x);
+            series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxis` call
         });
 

@@ -466,7 +466,7 @@ export class PieSeries extends Series<PolarChart> {
         groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector)
             .each((sector, datum, index) => {
                 const radius = radiusScale.convert(datum.radius);
-                const outerRadius = radius + outerRadiusOffset;
+                const outerRadius = Math.max(0, radius + outerRadiusOffset);
                 if (minOuterRadius > outerRadius) {
                     minOuterRadius = outerRadius;
                 }

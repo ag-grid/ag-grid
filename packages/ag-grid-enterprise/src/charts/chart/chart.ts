@@ -275,8 +275,8 @@ export abstract class Chart {
         const legendPadding = this.legendPadding;
         const legendAutoPadding = this.legendAutoPadding;
 
-        legend.group.translationX = 0;
-        legend.group.translationY = 0;
+        legendGroup.translationX = 0;
+        legendGroup.translationY = 0;
 
         let legendBBox: BBox;
         switch (this.legendPosition) {
@@ -332,6 +332,10 @@ export abstract class Chart {
                 }
                 break;
         }
+
+        // Round off for pixel grid alignment to work properly.
+        legendGroup.translationX = Math.floor(legendGroup.translationX);
+        legendGroup.translationY = Math.floor(legendGroup.translationY);
 
         this.legendBBox = legendBBox;
     }
