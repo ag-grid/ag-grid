@@ -43,11 +43,11 @@ export class DoughnutChartProxy extends ChartProxy {
 
             seriesOptions.title = f.displayName;
             seriesOptions.angleField = f.colId;
-            seriesOptions.labelField = params.categoryId;
             seriesOptions.showInLegend = index === 0;
 
             const pieSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
+            pieSeries.labelField = params.categoryId;
             pieSeries.data = params.data;
 
             pieSeries.outerRadiusOffset = offset;

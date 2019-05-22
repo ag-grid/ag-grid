@@ -40,11 +40,11 @@ export class PieChartProxy extends ChartProxy {
 
             seriesOptions.title = pieSeriesName;
             seriesOptions.angleField = pieSeriesId;
-            seriesOptions.labelField = params.categoryId;
 
             pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
         }
 
+        pieSeries.labelField = params.categoryId;
         pieSeries.data = params.data;
 
         pieSeries.fills = palettes[this.options.getPalette()].fills;
