@@ -246,7 +246,7 @@ export class UserComponentRegistry {
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn(`ag-grid: Looking for component [${name}] but it wasn't found.`);
+            console.warn(`ag-Grid: Looking for component [${name}] but it wasn't found.`);
         }
         return null;
     }

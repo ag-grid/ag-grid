@@ -4,6 +4,8 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { _ } from "../../utils";
+import {IRowModel} from "../../interfaces/iRowModel";
+import {Constants} from "../../constants";
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
@@ -18,6 +20,9 @@ export interface IProvidedFilterParams extends IFilterParams {
  * extend this class.
  */
 export abstract class ProvidedFilter extends Component implements IFilterComp {
+
+    private static NEW_ROWS_ACTION_KEEP = 'keep';
+    private static NEW_ROWS_ACTION_CLEAR = 'clear';
 
     private newRowsActionKeep: boolean;
 
@@ -41,6 +46,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     @Autowired('gridOptionsWrapper')
     protected gridOptionsWrapper: GridOptionsWrapper;
+
+    @Autowired('rowModel')
+    protected rowModel: IRowModel;
 
     // part of IFilter interface, hence public
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
@@ -98,6 +106,17 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.clearActive = params.clearButton === true;
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
         this.newRowsActionKeep = params.newRowsAction === 'keep';
+
+        if (params.newRowsAction==='keep') {
+            this.newRowsActionKeep = true;
+        } else if (params.newRowsAction==='clear') {
+            this.newRowsActionKeep = false;
+        } else {
+            // the default for SSRM and IRM is 'keep', for CSRM and VRM teh default is 'clear'
+            const rowModelType = this.rowModel.getType();
+            const modelsForKeep = [Constants.ROW_MODEL_TYPE_SERVER_SIDE, Constants.ROW_MODEL_TYPE_INFINITE];
+            this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
+        }
 
         _.setVisible(this.eApplyButton, this.applyActive);
         this.addDestroyableEventListener(this.eApplyButton, "click", this.onBtApply.bind(this));

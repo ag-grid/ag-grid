@@ -18,8 +18,7 @@ var columnDefs = [
     {
         headerName: "Age", field: "age", enablePivot: true, enableRowGroup: true, filter: 'agNumberColumnFilter',
         filterParams: {
-            filterOptions: ['equals', 'lessThan', 'greaterThan'],
-            newRowsAction: 'keep'
+            filterOptions: ['equals', 'lessThan', 'greaterThan']
         }
     },
     {
@@ -30,7 +29,7 @@ var columnDefs = [
         rowGroup: true,
         hide: true,
         filter: 'agSetColumnFilter',
-        filterParams: {values: countries(), newRowsAction: 'keep'}
+        filterParams: {values: countries()}
     },
     {
         headerName: "Year",
@@ -40,7 +39,7 @@ var columnDefs = [
         rowGroup: true,
         hide: true,
         filter: 'agSetColumnFilter',
-        filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
+        filterParams: {values: ['2000', '2004', '2008', '2012']}
     },
     {headerName: "Sport", field: "sport", enableRowGroup: true, enablePivot: true, filter: false},
     {headerName: "Gold", field: "gold", aggFunc: 'sum', filter: false, enableValue: true},

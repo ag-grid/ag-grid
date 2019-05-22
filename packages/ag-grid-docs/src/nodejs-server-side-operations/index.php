@@ -158,8 +158,9 @@ const gridOptions = {
 
 <p>
     Sorting is enabled via <code>defaultColDef.sortable = true</code> property. A simple number filter is also added
-    to the 'year' column with <code>filterParams.newRowsAction = 'keep'</code> set to ensure that as new data is loaded
-    the applied filters are kept.
+    to the 'year' column. The example has <code>filterParams.newRowsAction = 'keep'</code> set to ensure that as new data is loaded
+    the applied filters are kept - however since v21 of ag-Grid, newRowsAction defaults to 'keep' for Server Side Row Model
+    so this property no longer needs to be set.
 </p>
 
 <p>

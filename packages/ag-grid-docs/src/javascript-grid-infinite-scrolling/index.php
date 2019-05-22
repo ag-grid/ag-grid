@@ -297,10 +297,6 @@ gridOptions.getRowNodeId: function(item) {
         filtering, ag-Grid-Enterprise is not required for infinite scrolling.
     </note>
 
-    <note>When filtering using the Infinite Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
-          This is to prevent the filter from being reset.
-    </note>
-
     <?= example('Server-side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <note>
@@ -647,7 +643,7 @@ loadingSpinnerColumn = {
         every time a new page is navigated to.
     </p>
 
-    <?= example('Block Equal Than Page', 'block-equal-page', 'generated', array("processVue" => true)) ?>
+    <?= example('Block Equal Than Page', 'block-equal-page', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Overlays</h2>
 

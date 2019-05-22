@@ -28,11 +28,11 @@ var columnDefs = [
         rowGroup: true,
         hide: true,
         filter: 'agSetColumnFilter',
-        filterParams: {values: countries(), newRowsAction: 'keep'}
+        filterParams: {values: countries()}
     },
     {
         field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
-        filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
+        filterParams: {values: ['2000', '2004', '2008', '2012']}
     },
     {field: "sport", enableRowGroup: true, enablePivot: true, filter: false},
     {field: "gold", aggFunc: 'sum', filter: false, enableValue: true},
