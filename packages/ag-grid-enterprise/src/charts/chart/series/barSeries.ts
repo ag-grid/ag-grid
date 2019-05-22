@@ -431,7 +431,7 @@ export class BarSeries extends Series<CartesianChart> {
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         let html: string = '';
-        if (this.tooltip) {
+        if (this.tooltipEnabled) {
             const yField = nodeDatum.yField;
             const labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
 

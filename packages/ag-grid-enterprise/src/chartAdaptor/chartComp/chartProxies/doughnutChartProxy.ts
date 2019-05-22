@@ -43,11 +43,11 @@ export class DoughnutChartProxy extends ChartProxy {
 
             seriesOptions.title = f.displayName;
             seriesOptions.angleField = f.colId;
-            seriesOptions.labelField = params.categoryId;
             seriesOptions.showInLegend = index === 0;
 
             const pieSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
+            pieSeries.labelField = params.categoryId;
             pieSeries.data = params.data;
 
             pieSeries.outerRadiusOffset = offset;
@@ -97,7 +97,7 @@ export class DoughnutChartProxy extends ChartProxy {
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
                 labelMinAngle: 20,
-                tooltip: true,
+                tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true
             }

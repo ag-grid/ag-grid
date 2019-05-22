@@ -161,8 +161,8 @@ export class ChartBuilder {
         if (options.showInLegend !== undefined) {
             series.showInLegend = options.showInLegend;
         }
-        if (options.tooltip !== undefined) {
-            series.tooltip = options.tooltip;
+        if (options.tooltipEnabled !== undefined) {
+            series.tooltipEnabled = options.tooltipEnabled;
         }
         if (options.data !== undefined) {
             series.data = options.data;

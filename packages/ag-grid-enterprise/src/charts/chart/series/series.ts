@@ -80,7 +80,7 @@ export abstract class Series<C extends Chart> {
 
     abstract getTooltipHtml(nodeDatum: SeriesNodeDatum): string;
 
-    tooltip: boolean = false;
+    tooltipEnabled: boolean = false;
 
     /**
      * @private

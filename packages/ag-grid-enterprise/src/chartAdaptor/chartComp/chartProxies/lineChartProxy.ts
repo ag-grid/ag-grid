@@ -119,7 +119,7 @@ export class LineChartProxy extends ChartProxy {
                 marker: true,
                 markerRadius: 3,
                 markerLineWidth: 1,
-                tooltip: true,
+                tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true
             }

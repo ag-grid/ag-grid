@@ -389,7 +389,7 @@ export abstract class Chart {
                         this.lastPick.node.fillStyle = this.lastPick.fillStyle;
                         this.onSeriesNodePick(event, pick.series, node);
                     } else { // cursor moved within the same node
-                        if (pick.series.tooltip) {
+                        if (pick.series.tooltipEnabled) {
                             this.showTooltip(event);
                         }
                     }
@@ -429,7 +429,7 @@ export abstract class Chart {
         };
         node.fillStyle = 'yellow';
 
-        const html = series.tooltip && series.getTooltipHtml(node.datum as SeriesNodeDatum);
+        const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
         if (html) {
             this.showTooltip(event, html);
         }
