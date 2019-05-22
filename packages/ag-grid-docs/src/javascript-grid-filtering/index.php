@@ -370,33 +370,30 @@ gridOptions = {
 
 <h2>Filtering null values in Date and Number filters</h2>
 <p>
-    If your underlying data representation for a row contains <code>null</code> it won't be included in the filter results. If
-    you want to change this behaviour, you can configure the property <code>columnDef.filterParams.nullComparator</code>
+    If the row data contains <code>null</code> it won't be included in the filter results. To change
+    this use the filter params <code>includeNullInEquals</code>, <code>includeNullInLessThan</code> and
+    <code>includeNullInGreaterThan</code>. For example the code snipped below configures a filter
+    to include null for equals, but not for less than or great than:
+</p>
 
-    The null comparator is an object used to tell if nulls should be included when filtering data, its interface it's like
-    this:
 <snippet>
-export interface NullComparator{
-    equals?:boolean
-    lessThan?:boolean
-    greaterThan?:boolean
+filterParams = {
+    includeNullInEquals: true,
+    includeNullInLessThan: false,
+    includeNullInGreaterThan: false
 }</snippet>
-</p>
-
 
 <p>
-    If any of this properties is specified as true, the grid will include <code>null</code> values when doing the according filtering.
+    Only less than, greater than and equals allow nulls. In Range will never include null values.
 </p>
+
 <p>
-In the following example you can filter by age or date and see how <code>null</code> values are included in the filter based
-on the combination of filter type and your <code>columnDef.filterParams.nullComparator</code>
+    In the following example you can filter by age or date and see how <code>null</code> values are included in the filter based
+    on the properties <code>includeNullInEquals</code>, <code>includeNullInLessThan</code> and
+    <code>includeNullInGreaterThan</code>.
 </p>
 
 <?= example('Null Filtering', 'null-filtering', 'vanilla') ?>
-
-<p>
-    Note that <code>inRange</code> will never include <code>null</code>.
-</p>
 
 
 <h2>Adding Custom Filter Options</h2>

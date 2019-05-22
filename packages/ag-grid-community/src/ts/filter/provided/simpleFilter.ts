@@ -103,7 +103,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     // filter uses this to know if new model is different from previous model, ie if filter has changed
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
 
-    // returns the type selected from the drop down. base classes us this.
+    // returns the type selected from the drop down. base classes use this.
     protected abstract getFilterType(): string;
 
     // after floating filter changes, this sets the 'value' section. this is implemented by the base class

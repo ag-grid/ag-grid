@@ -1,6 +1,7 @@
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./simpleFilter";
 import { IDoesFilterPassParams } from "../../interfaces/iFilter";
 
+/** @deprecated in v21*/
 export interface NullComparator {
     equals?: boolean;
     lessThan?: boolean;
@@ -9,6 +10,11 @@ export interface NullComparator {
 
 export interface IScalarFilterParams extends ISimpleFilterParams {
     inRangeInclusive?: boolean;
+    includeNullInEquals?: boolean;
+    includeNullInLessThan?: boolean;
+    includeNullInGreaterThan?: boolean;
+
+    /** @deprecated in v21*/
     nullComparator?: NullComparator;
 }
 
@@ -34,6 +40,18 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
     protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);
         this.scalarFilterParams = params;
+        this.checkDeprecatedParams();
+    }
+
+    private checkDeprecatedParams(): void {
+        if (this.scalarFilterParams.nullComparator) {
+            console.warn('ag-Grid: Since v21.0, the property filterParams.nullComparator is deprecated. ' +
+                'Please use filterParams.includeNullInEquals, filterParams.includeNullInLessThan and ' +
+                'filterParams.includeNullInGreaterThan instead.');
+            this.scalarFilterParams.includeNullInEquals = this.scalarFilterParams.nullComparator.equals;
+            this.scalarFilterParams.includeNullInLessThan= this.scalarFilterParams.nullComparator.lessThan;
+            this.scalarFilterParams.includeNullInGreaterThan = this.scalarFilterParams.nullComparator.greaterThan;
+        }
     }
 
     private nullComparator(selectedOption: string, filterValue: T, gridValue: T): number {
@@ -74,16 +92,18 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
     }
 
     private canNullsPassFilter(type: string): boolean {
-        const reducedType: string =
-            type.indexOf('greater') > -1 ? 'greaterThan' :
-                type.indexOf('lessThan') > -1 ? 'lessThan' :
-                    'equals';
+        switch (type) {
+            case SimpleFilter.GREATER_THAN:
+            case SimpleFilter.GREATER_THAN_OR_EQUAL:
+                return this.scalarFilterParams.includeNullInGreaterThan;
 
-        if (this.scalarFilterParams.nullComparator && (this.scalarFilterParams.nullComparator as any)[reducedType]) {
-            return (this.scalarFilterParams.nullComparator as any)[reducedType];
+            case SimpleFilter.LESS_THAN:
+            case SimpleFilter.LESS_THAN_OR_EQUAL:
+                return this.scalarFilterParams.includeNullInLessThan;
+
+            case SimpleFilter.EQUALS:
+                return this.scalarFilterParams.includeNullInEquals;
         }
-
-        return (ScalerFilter.DEFAULT_NULL_COMPARATOR as any)[reducedType];
     }
 
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: ISimpleFilterModel) {
@@ -110,10 +130,6 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
         // }
 
         const compareResult = this.nullComparator(filterType, filterValue, cellValue);
-
-        if (filterType === ScalerFilter.EMPTY) {
-            return false;
-        }
 
         if (filterType === ScalerFilter.EQUALS) {
             return compareResult === 0;

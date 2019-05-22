@@ -4,17 +4,16 @@ import { _ } from "../../../utils";
 import {
     SimpleFilter,
     ConditionPosition,
-    ISimpleFilterParams,
     ISimpleFilterModel
 } from "../simpleFilter";
-import { ScalerFilter, Comparator } from "../scalerFilter";
+import {ScalerFilter, Comparator, IScalarFilterParams} from "../scalerFilter";
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
     filterTo?: number;
 }
 
-export interface INumberFilterParams extends ISimpleFilterParams {
+export interface INumberFilterParams extends IScalarFilterParams {
 }
 
 export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {

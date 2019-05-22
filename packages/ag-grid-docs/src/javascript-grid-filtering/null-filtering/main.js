@@ -6,11 +6,9 @@ var columnDefs = [
         width: 90,
         filter: 'agNumberColumnFilter',
         filterParams: {
-            nullComparator: {
-                equals: false,
-                lessThan: false,
-                greaterThan: false
-            }
+            includeNullInEquals: false,
+            includeNullInLessThan: false,
+            includeNullInGreaterThan: false
         }
     },
     {headerName: 'Country', field: 'country', width: 120},
@@ -39,11 +37,9 @@ var columnDefs = [
                     return 1;
                 }
             },
-            nullComparator: {
-                equals: false,
-                lessThan: false,
-                greaterThan: false
-            }
+            includeNullInEquals: false,
+            includeNullInLessThan: false,
+            includeNullInGreaterThan: false
         }
     },
     {headerName: 'Sport', field: 'sport', width: 110},
@@ -62,9 +58,25 @@ var gridOptions = {
 };
 
 function changeNull(toChange, value) {
-    gridOptions.columnDefs[1].filterParams.nullComparator[toChange] = value;
-    gridOptions.columnDefs[4].filterParams.nullComparator[toChange] = value;
-    gridOptions.api.onFilterChanged();
+    switch (toChange) {
+        case 'equals':
+            columnDefs[1].filterParams.includeNullInEquals = value;
+            columnDefs[4].filterParams.includeNullInEquals = value;
+            break;
+        case 'lessThan':
+            columnDefs[1].filterParams.includeNullInLessThan = value;
+            columnDefs[4].filterParams.includeNullInLessThan = value;
+            break;
+        case 'greaterThan':
+            columnDefs[1].filterParams.includeNullInGreaterThan = value;
+            columnDefs[4].filterParams.includeNullInGreaterThan = value;
+            break;
+    }
+    var filterModel = gridOptions.api.getFilterModel();
+    gridOptions.api.setColumnDefs(columnDefs);
+    gridOptions.api.destroyFilter('age');
+    gridOptions.api.destroyFilter('date');
+    gridOptions.api.setFilterModel(filterModel);
 }
 
 // setup the grid after the page has finished loading
