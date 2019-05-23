@@ -417,7 +417,8 @@ export interface GridOptions {
     getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
-    getChartConfigPanelItems?: string[];
+    getChartConfigPanels?: string[];
+    getChartButtons?: string[];
     getRowNodeId?: GetRowNodeIdFunc;
 
     getChildCount?(dataItem: any): number;
