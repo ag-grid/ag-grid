@@ -24,7 +24,7 @@ export class BarChartProxy extends ChartProxy {
         barSeries.data = params.data;
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(f => f.colId);
-        barSeries.yFieldNames = params.fields.map(f => f.displayName);
+        // barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
@@ -95,8 +95,8 @@ export class BarChartProxy extends ChartProxy {
                 labelPadding: {x: 10, y: 10},
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: '',
-                titleEnabled: false,
+                title: 'fred',
+                titleEnabled: true,
                 titleFont: 'bold 12px Verdana, sans-serif'
             }
         };

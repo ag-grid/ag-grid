@@ -1,6 +1,6 @@
 import {ChartOptions, ChartType} from "ag-grid-community";
 import {Chart} from "../../../charts/chart/chart";
-import {borneo, Palette, pastel} from "../../../charts/chart/palettes";
+import {Palette} from "../../../charts/chart/palettes";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -47,26 +47,23 @@ export abstract class ChartProxy {
         return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
     }
 
-    protected getDefaultPalette(): Palette {
-        return this.chartProxyParams.isDarkTheme() ? pastel : borneo;
-    }
-
     protected getChartOptions(options: ChartOptions): ChartOptions {
         // allow users to override options before they are applied
         if (this.chartProxyParams.processChartOptions) {
             const overriddenOptions = this.chartProxyParams.processChartOptions(options);
-            this.addUserPalette(overriddenOptions);
+            this.overridePalette(overriddenOptions);
             return overriddenOptions;
         }
 
         return options;
     }
 
-    private addUserPalette(chartOptions: any) {
+    private overridePalette(chartOptions: any) {
         const seriesDefaults = chartOptions.seriesDefaults;
 
-        const defaultFills = this.getDefaultPalette().fills;
-        const defaultStrokes = this.getDefaultPalette().strokes;
+        const palette = this.chartProxyParams.getSelectedPalette();
+        const defaultFills = palette.fills;
+        const defaultStrokes = palette.strokes;
 
         const fillsOverridden = seriesDefaults.fills !== defaultFills;
         const strokesOverridden = seriesDefaults.strokes !== defaultStrokes;
