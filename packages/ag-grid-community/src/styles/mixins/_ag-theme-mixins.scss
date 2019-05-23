@@ -43,6 +43,7 @@
     $primary-color: map-get($params, "primary-color");
     $placeholder-color: map-get($params, "disabled-foreground-color");
     $focused-border: map-get($params, "focused-textbox-border");
+    $input-border-color: map-get($params, "input-border-color");
     $input-border-width: map-get($params, "input-border-width");
     $input-bottom-border: map-get($params, "input-bottom-border");
     $input-disabled-background-color: map-get($params, "input-disabled-background-color");
@@ -80,11 +81,18 @@
                 border-bottom: $input-bottom-border-disabled;
             }
         }
+    } @else if $input-border-color {
+        border-width: 1px;
+        border-style: solid;
+        border-color: $input-border-color;
     }
     &:disabled {
         color: $placeholder-color;
         @if $input-disabled-background-color {
             background-color: $input-disabled-background-color;
+        }
+        @if $input-border-color {
+            border-color: transparentize($input-border-color, 0.7);
         }
     }
 }
