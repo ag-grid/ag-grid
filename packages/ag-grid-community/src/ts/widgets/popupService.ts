@@ -31,7 +31,7 @@ export class PopupService {
         return this.gridOptionsWrapper.getDocument();
     }
 
-    private getPopupParent(): HTMLElement {
+    public getPopupParent(): HTMLElement {
         const ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
             return ePopupParent;

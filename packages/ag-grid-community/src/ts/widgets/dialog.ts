@@ -82,6 +82,7 @@ export class Dialog extends PopupComponent {
     private isResizing = false;
     private minWidth: number;
     private minHeight: number;
+    private popupParent: HTMLElement;
 
     private dragStartPosition = {
         x: 0,
@@ -153,6 +154,7 @@ export class Dialog extends PopupComponent {
 
         const eGui = this.getGui();
 
+        this.popupParent = this.popupService.getPopupParent();
         this.minHeight = minHeight != null ? minHeight : 250;
         this.minWidth = minWidth != null ? minWidth : 250;
 
@@ -280,6 +282,90 @@ export class Dialog extends PopupComponent {
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
+    private calculateMouseMovement(params: {
+        e: MouseEvent,
+        topBuffer?: number,
+        anywhereWithin?: boolean,
+        isLeft?: boolean,
+        isTop?: boolean
+    }): { movementX: number, movementY: number} {
+        const parentRect = this.popupParent.getBoundingClientRect();
+        const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
+        let movementX = e.clientX - this.dragStartPosition.x;
+        let movementY = e.clientY - this.dragStartPosition.y;
+        const width = this.getWidth();
+        const height = this.getHeight();
+
+        // skip if cursor is outside of popupParent horizontally
+        let skipX = (
+            parentRect.left >= e.clientX ||
+            parentRect.right <= e.clientX
+        );
+
+        if (!skipX) {
+            if (isLeft) {
+                skipX = (
+                    // skip if we are moving to the left and the cursor
+                    // is positioned to the right of the left side anchor
+                    (movementX < 0 && e.clientX > this.position.x + parentRect.left) ||
+                    // skip if we are moving to the right and the cursor
+                    // is positioned to the left of the dialog
+                    (movementX > 0 && e.clientX < this.position.x + parentRect.left)
+                );
+            } else {
+                if (anywhereWithin) {
+                    // if anywhereWithin is true, we allow to move
+                    // as long as the cursor is within the dialog
+                    skipX = (
+                        e.clientX < this.position.x + parentRect.left ||
+                        e.clientX > this.position.x + parentRect.left + width
+                    );
+                } else {
+                    skipX = (
+                        // if the movement is bound to the right side of the dialog
+                        // we skip if we are moving to the left and the cursor
+                        // is to the right of the dialog
+                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width) ||
+                        // or skip if we are moving to the right and the cursor
+                        // is to the left of the right side anchor
+                        (movementX > 0 && e.clientX < this.position.x + parentRect.left + width)
+                    );
+                }
+            }
+        }
+
+        movementX = skipX ? 0 : movementX;
+
+        const skipY = (
+            // skip if cursor is outside of popupParent vertically
+            parentRect.top >= e.clientY ||
+            parentRect.bottom <= e.clientY ||
+            isTop && (
+                // skip if we are moving to towards top and the cursor is
+                // below the top anchor + topBuffer
+                // note: topBuffer is used when moving the dialog using the title bar
+                (movementY < 0 && e.clientY > this.position.y + parentRect.top + (topBuffer || 0)) ||
+                // skip if we are moving to the bottom and the cursor is
+                // above the top anchor
+                (movementY > 0 && e.clientY < this.position.y + parentRect.top)
+            ) ||
+            // we are anchored to the bottom of the dialog
+            !isTop && (
+                // skip if we are moving towards the top and the cursor
+                // is below the bottom anchor
+                (movementY < 0 && e.clientY > this.position.y + parentRect.top + height) ||
+
+                // skip if we are moving towards the bottom and the cursor
+                // is above the bottom anchor
+                (movementY > 0 && e.clientY < this.position.y + parentRect.top + height)
+            )
+        );
+
+        movementY = skipY ? 0 : movementY;
+
+        return { movementX, movementY };
+    }
+
     private onDialogResize(e: MouseEvent, side: ResizableSides) {
         if (!this.isResizing) { return; }
 
@@ -292,28 +378,43 @@ export class Dialog extends PopupComponent {
 
         let offsetLeft = 0;
         let offsetTop = 0;
+        const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
 
-        if (isHorizontal) {
+        if (isHorizontal && movementX) {
             const direction = isLeft ? -1 : 1;
             const oldWidth = this.getWidth();
-            const movementX = e.clientX - this.dragStartPosition.x;
-
-            this.setWidth(oldWidth + (movementX * direction));
+            const newWidth = oldWidth + (movementX * direction);
+            let skipWidth = false;
 
             if (isLeft) {
-                offsetLeft = oldWidth - this.getWidth();
+                offsetLeft = oldWidth - newWidth;
+                if (this.position.x + offsetLeft <= 0 || newWidth <= this.minWidth) {
+                    skipWidth = true;
+                    offsetLeft = 0;
+                }
+            }
+
+            if (!skipWidth) {
+                this.setWidth(newWidth);
             }
         }
 
-        if (isVertical) {
+        if (isVertical && movementY) {
             const direction = isTop ? -1 : 1;
             const oldHeight = this.getHeight();
-            const movementY = e.clientY - this.dragStartPosition.y;
-
-            this.setHeight(oldHeight + (movementY * direction));
+            const newHeight = oldHeight + (movementY * direction);
+            let skipHeight = false;
 
             if (isTop) {
-                offsetTop = oldHeight - this.getHeight();
+                offsetTop = oldHeight - newHeight;
+                if (this.position.y + offsetTop <= 0 || newHeight <= this.minHeight) {
+                    skipHeight = true;
+                    offsetTop = 0;
+                }
+            }
+
+            if (!skipHeight) {
+                this.setHeight(newHeight);
             }
         }
 
@@ -367,9 +468,13 @@ export class Dialog extends PopupComponent {
 
     private onDialogMove(e: MouseEvent) {
         if (!this.isMoving) { return; }
-        const movementX = e.clientX - this.dragStartPosition.x;
-        const movementY = e.clientY - this.dragStartPosition.y;
         const { x, y } = this.position;
+        const { movementX, movementY } = this.calculateMouseMovement({
+            e,
+            isTop: true,
+            anywhereWithin: true,
+            topBuffer: this.getHeight() - this.getBodyHeight()
+        });
 
         this.offsetDialog(x + movementX, y + movementY);
 
