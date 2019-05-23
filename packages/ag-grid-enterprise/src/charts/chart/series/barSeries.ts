@@ -174,6 +174,17 @@ export class BarSeries extends Series<CartesianChart> {
         return this._shadow;
     }
 
+    private _labelEnabled: boolean = true;
+    set labelEnabled(value: boolean) {
+        if (this._labelEnabled !== value) {
+            this._labelEnabled = value;
+            this.update();
+        }
+    }
+    get labelEnabled(): boolean {
+        return this._labelEnabled;
+    }
+
     private _labelFont: string = '12px Verdana, sans-serif';
     set labelFont(value: string) {
         if (this._labelFont !== value) {
@@ -337,6 +348,7 @@ export class BarSeries extends Series<CartesianChart> {
         const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
+        const labelEnabled = this.labelEnabled;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
@@ -412,7 +424,7 @@ export class BarSeries extends Series<CartesianChart> {
         groupSelection.selectByTag<Text>(BarSeriesNodeTag.Label)
             .each((text, datum) => {
                 const label = datum.label;
-                if (label) {
+                if (label && labelEnabled) {
                     text.font = label.font;
                     text.text = label.text;
                     text.x = label.x;
@@ -432,17 +444,24 @@ export class BarSeries extends Series<CartesianChart> {
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         let html: string = '';
         if (this.tooltipEnabled) {
+            const xField = this.xField;
             const yField = nodeDatum.yField;
-            const labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
 
-            if (this.tooltipRenderer && this.xField) {
+            if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
                     datum: nodeDatum.seriesDatum,
-                    xField: this.xField,
+                    xField,
                     yField,
                 });
             } else {
-                html = `${labelText}${toFixed(nodeDatum.seriesDatum[yField] as any as number)}`;
+                const title = nodeDatum.label ? `<div class="title">${nodeDatum.label.text}</div>` : '';
+                const seriesDatum = nodeDatum.seriesDatum;
+                const xValue = seriesDatum[xField];
+                const yValue = seriesDatum[yField];
+                const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
+                const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+
+                html = `${title}${xString}: ${yString}`;
             }
         }
         return html;

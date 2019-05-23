@@ -12,14 +12,22 @@ import {
     PostConstruct
 } from "ag-grid-community";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { GridChartOptions } from "./gridChartComp";
 import { RangeController } from "../../rangeController";
+import {Palette} from "../../charts/chart/palettes";
 
 export interface ColState {
     column?: Column;
     colId: string;
     displayName: string;
     selected: boolean;
+}
+
+export interface ChartModelParams {
+    chartType: ChartType;
+    aggregate: boolean;
+    cellRanges: CellRange[];
+    palettes: Palette[];
+    activePalette: number;
 }
 
 export class ChartModel extends BeanStub {
@@ -38,21 +46,23 @@ export class ChartModel extends BeanStub {
     private chartData: any[];
 
     private chartType: ChartType;
-    private palette: number;
+    private activePalette: number;
+    private palettes: Palette[];
 
     private readonly aggregate: boolean;
 
-    private initialising = true; //TODO remove
+    private initialising = true;
 
     private datasource: ChartDatasource;
 
-    public constructor(chartOptions: GridChartOptions, cellRange: CellRange) {
+    public constructor(params: ChartModelParams) {
         super();
 
-        this.chartType = chartOptions.chartType;
-        this.aggregate = chartOptions.aggregate;
-        this.cellRanges = [cellRange];
-        this.palette = 0;
+        this.chartType = params.chartType;
+        this.aggregate = params.aggregate;
+        this.cellRanges = params.cellRanges;
+        this.palettes = params.palettes;
+        this.activePalette = params.activePalette;
     }
 
     @PostConstruct
@@ -224,12 +234,16 @@ export class ChartModel extends BeanStub {
         return this.chartType;
     }
 
-    public setPalette(palette: number) {
-        this.palette = palette;
+    public setActivePalette(palette: number) {
+        this.activePalette = palette;
     }
 
-    public getPalette(): number {
-        return this.palette;
+    public getActivePalette(): number {
+        return this.activePalette;
+    }
+
+    public getPalettes(): Palette[] {
+        return this.palettes;
     }
 
     public getSelectedColState(): ColState[] {

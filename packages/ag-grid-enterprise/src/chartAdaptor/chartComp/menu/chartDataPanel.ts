@@ -19,7 +19,8 @@ export class ChartDataPanel extends Component {
 
     private columnComps: { [key: string]: AgRadioButton | AgCheckbox } = {};
     private dimensionComps: AgRadioButton[] = [];
-    private chartController: ChartController;
+
+    private readonly chartController: ChartController;
 
     constructor(chartModel: ChartController) {
         super(ChartDataPanel.TEMPLATE);

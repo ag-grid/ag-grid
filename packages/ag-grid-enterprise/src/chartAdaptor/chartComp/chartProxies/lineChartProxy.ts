@@ -1,24 +1,20 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
-import { LineSeries } from "../../../charts/chart/series/lineSeries";
-import borneo, { palettes } from "../../../charts/chart/palettes";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {LineChartOptions, LineSeriesOptions} from "ag-grid-community";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import {LineSeries} from "../../../charts/chart/series/lineSeries";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
 
-    public constructor(options: CreateChartOptions) {
-        super(options);
+    public constructor(params: ChartProxyParams) {
+        super(params);
+
         this.chartOptions = this.getChartOptions(this.defaultOptions()) as LineChartOptions;
-    }
-
-    public create(): ChartProxy {
         this.chart = ChartBuilder.createLineChart(this.chartOptions);
-        return this;
     }
 
-    public update(params: ChartUpdateParams): void {
+    public update(params: UpdateChartParams): void {
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
@@ -51,8 +47,13 @@ export class LineChartProxy extends ChartProxy {
                 lineSeries.xField = params.categoryId;
                 lineSeries.yField = f.colId;
 
-                const fills = palettes[this.options.getPalette()].fills;
+                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+                const fills = palette.fills;
                 lineSeries.fill = fills[index % fills.length];
+
+                const strokes = palette.strokes;
+                lineSeries.stroke = strokes[index % strokes.length];
 
                 if (!existingSeries) {
                     lineChart.addSeries(lineSeries);
@@ -62,11 +63,13 @@ export class LineChartProxy extends ChartProxy {
     }
 
     private defaultOptions(): LineChartOptions {
+        const palette = this.chartProxyParams.getSelectedPalette();
+
         return {
             type: 'line',
-            parent: this.options.parentElement,
-            width: this.options.width,
-            height: this.options.height,
+            parent: this.chartProxyParams.parentElement,
+            width: this.chartProxyParams.width,
+            height: this.chartProxyParams.height,
             padding: {
                 top: 20,
                 right: 20,
@@ -113,15 +116,18 @@ export class LineChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'line',
-                fill: borneo.fills[0],
-                stroke: borneo.strokes[0],
+                fill: palette.fills[0], //TODO
+                stroke: palette.strokes[0], //TODO
                 lineWidth: 3,
                 marker: true,
                 markerRadius: 3,
                 markerLineWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
-                showInLegend: true
+                showInLegend: true,
+                title: '',
+                titleEnabled: false,
+                titleFont: 'bold 12px Verdana, sans-serif'
             }
         };
     }

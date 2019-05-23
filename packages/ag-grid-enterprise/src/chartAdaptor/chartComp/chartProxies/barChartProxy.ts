@@ -1,28 +1,24 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
-import { BarSeries } from "../../../charts/chart/series/barSeries";
-import { ChartProxy, ChartUpdateParams, CreateChartOptions } from "./chartProxy";
-import borneo, { palettes } from "../../../charts/chart/palettes";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
+import {BarSeries} from "../../../charts/chart/series/barSeries";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
 
 export class BarChartProxy extends ChartProxy {
 
-    public constructor(options: CreateChartOptions) {
-        super(options);
-    }
+    public constructor(params: ChartProxyParams) {
+        super(params);
 
-    public create(): ChartProxy {
         const chartOptions = this.getChartOptions(this.defaultOptions()) as BarChartOptions;
+
         this.chart = ChartBuilder.createBarChart(chartOptions);
 
         const barSeries = ChartBuilder.createSeries(chartOptions.seriesDefaults as BarSeriesOptions);
         if (barSeries) {
             this.chart.addSeries(barSeries);
         }
-
-        return this;
     }
 
-    public update(params: ChartUpdateParams): void {
+    public update(params: UpdateChartParams): void {
         const barSeries = this.chart.series[0] as BarSeries;
 
         barSeries.data = params.data;
@@ -30,15 +26,20 @@ export class BarChartProxy extends ChartProxy {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        barSeries.fills = palettes[this.options.getPalette()].fills;
+        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+        barSeries.fills = palette.fills;
+        barSeries.strokes = palette.strokes;
     }
 
     private defaultOptions(): BarChartOptions {
+        const palette = this.chartProxyParams.getSelectedPalette();
+
         return {
             type: 'bar',
-            parent: this.options.parentElement,
-            width: this.options.width,
-            height: this.options.height,
+            parent: this.chartProxyParams.parentElement,
+            width: this.chartProxyParams.width,
+            height: this.chartProxyParams.height,
             padding: {
                 top: 20,
                 right: 20,
@@ -84,16 +85,20 @@ export class BarChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'bar',
-                fills: borneo.fills,
-                strokes: borneo.strokes,
-                grouped: this.options.chartType === ChartType.GroupedBar,
+                fills: palette.fills,
+                strokes: palette.strokes,
+                grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
                 lineWidth: 1,
                 tooltipEnabled: true,
+                labelEnabled: false,
                 labelFont: '12px Verdana, sans-serif',
-                labelColor: this.options.isDarkTheme() ? 'rgb(221, 221, 221)' : 'black',
+                labelColor: this.getLabelColor(),
                 labelPadding: {x: 10, y: 10},
                 tooltipRenderer: undefined,
-                showInLegend: true
+                showInLegend: true,
+                title: '',
+                titleEnabled: true,
+                titleFont: 'bold 12px Verdana, sans-serif'
             }
         };
     }

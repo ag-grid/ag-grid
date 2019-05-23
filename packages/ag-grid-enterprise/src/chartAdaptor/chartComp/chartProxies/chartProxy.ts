@@ -1,17 +1,18 @@
-import {BaseChartOptions, ChartType} from "ag-grid-community";
+import {ChartOptions, ChartType} from "ag-grid-community";
 import {Chart} from "../../../charts/chart/chart";
+import {Palette} from "../../../charts/chart/palettes";
 
-export interface CreateChartOptions {
+export interface ChartProxyParams {
     chartType: ChartType;
-    processChartOptions: (options: BaseChartOptions) => BaseChartOptions;
-    getPalette: () => number;
+    processChartOptions: (options: ChartOptions) => ChartOptions;
+    getSelectedPalette: () => Palette;
     isDarkTheme: () => boolean;
     width: number;
     height: number;
     parentElement: HTMLElement;
 }
 
-export interface ChartUpdateParams {
+export interface UpdateChartParams {
     categoryId: string;
     fields: { colId: string, displayName: string }[];
     data: any[];
@@ -25,35 +26,54 @@ export abstract class ChartProxy {
     protected static lightAxisColour = 'rgb(219, 219, 219)';
 
     protected chart: Chart;
-    protected options: CreateChartOptions;
+    protected chartProxyParams: ChartProxyParams;
+    protected overriddenPalette: Palette;
 
-    protected constructor(options: CreateChartOptions) {
-        this.options = options;
+    protected constructor(options: ChartProxyParams) {
+        this.chartProxyParams = options;
     }
 
-    public abstract create(): ChartProxy;
-
-    public abstract update(params: ChartUpdateParams): void;
+    public abstract update(params: UpdateChartParams): void;
 
     public getChart(): Chart {
         return this.chart;
     }
 
-    protected getChartOptions(defaultOptions: BaseChartOptions) {
-        // allow users to override default options
-        if (this.options.processChartOptions) {
-            return this.options.processChartOptions(defaultOptions);
+    protected getLabelColor(): string {
+        return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkLabelColour : ChartProxy.lightLabelColour;
+    }
+
+    protected getAxisGridColor(): string {
+        return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
+    }
+
+    protected getChartOptions(options: ChartOptions): ChartOptions {
+        // allow users to override options before they are applied
+        if (this.chartProxyParams.processChartOptions) {
+            const overriddenOptions = this.chartProxyParams.processChartOptions(options);
+            this.overridePalette(overriddenOptions);
+            return overriddenOptions;
         }
 
-        return defaultOptions;
+        return options;
     }
 
-    protected getLabelColor() {
-        return this.options.isDarkTheme() ? ChartProxy.darkLabelColour : ChartProxy.lightLabelColour;
-    }
+    private overridePalette(chartOptions: any) {
+        const seriesDefaults = chartOptions.seriesDefaults;
 
-    protected getAxisGridColor() {
-        return this.options.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
+        const palette = this.chartProxyParams.getSelectedPalette();
+        const defaultFills = palette.fills;
+        const defaultStrokes = palette.strokes;
+
+        const fillsOverridden = seriesDefaults.fills !== defaultFills;
+        const strokesOverridden = seriesDefaults.strokes !== defaultStrokes;
+
+        if (fillsOverridden || strokesOverridden) {
+            this.overriddenPalette = {
+                fills: fillsOverridden && seriesDefaults.fills ? seriesDefaults.fills : defaultFills,
+                strokes: strokesOverridden && seriesDefaults.strokes ? seriesDefaults.strokes : defaultStrokes
+            };
+        }
     }
 
     public destroy(): void {

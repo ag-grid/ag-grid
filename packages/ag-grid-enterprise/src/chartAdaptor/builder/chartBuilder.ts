@@ -6,7 +6,7 @@ import {
     LineSeriesOptions,
     PieSeriesOptions,
     DoughnutChartOptions,
-    BaseChartOptions,
+    ChartOptions,
     BarChartOptions,
     LegendOptions,
     PolarChartOptions,
@@ -90,7 +90,7 @@ export class ChartBuilder {
         }
     }
 
-    static initChart<C extends Chart>(chart: C, options: BaseChartOptions, seriesType?: SeriesType) {
+    static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType) {
         if (options.parent !== undefined) {
             chart.parent = options.parent;
         }
@@ -151,6 +151,9 @@ export class ChartBuilder {
     static initSeries<S extends Series<any>>(series: S, options: SeriesOptions) {
         if (options.title !== undefined) {
             series.title = options.title;
+        }
+        if (options.titleEnabled !== undefined) {
+            series.titleEnabled = options.titleEnabled;
         }
         if (options.titleFont !== undefined) {
             series.titleFont = options.titleFont;
@@ -229,6 +232,9 @@ export class ChartBuilder {
         if (options.lineWidth !== undefined) {
             series.lineWidth = options.lineWidth;
         }
+        if (options.labelEnabled !== undefined) {
+            series.labelEnabled = options.labelEnabled;
+        }
         if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;
         }
@@ -281,8 +287,8 @@ export class ChartBuilder {
         if (options.labelField !== undefined) {
             series.labelField = options.labelField;
         }
-        if (options.label !== undefined) {
-            series.label = options.label;
+        if (options.labelEnabled !== undefined) {
+            series.labelEnabled = options.labelEnabled;
         }
         if (options.fills !== undefined) {
             series.fills = options.fills;

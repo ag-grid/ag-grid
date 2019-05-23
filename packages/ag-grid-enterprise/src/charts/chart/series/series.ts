@@ -20,6 +20,12 @@ export abstract class Series<C extends Chart> {
      */
     readonly group: Group = new Group();
 
+    // Uniquely identify series.
+    private createId(): string {
+        const constructor = this.constructor as any;
+        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
+    };
+
     protected _title: string = '';
     set title(value: string) {
         if (this._title !== value) {
@@ -29,6 +35,17 @@ export abstract class Series<C extends Chart> {
     }
     get title(): string {
         return this._title;
+    }
+
+    private _titleEnabled: boolean = false;
+    set titleEnabled(value: boolean) {
+        if (this._titleEnabled !== value) {
+            this._titleEnabled = value;
+            this.scheduleLayout();
+        }
+    }
+    get titleEnabled(): boolean {
+        return this._titleEnabled;
     }
 
     private _titleFont: string = 'bold 12px Verdana, sans-serif';
@@ -41,12 +58,6 @@ export abstract class Series<C extends Chart> {
     get titleFont(): string {
         return this._titleFont;
     }
-
-    // Uniquely identify series.
-    private createId(): string {
-        const constructor = this.constructor as any;
-        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
-    };
 
     protected _data: any[] = [];
     set data(data: any[]) {

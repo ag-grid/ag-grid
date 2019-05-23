@@ -1,4 +1,4 @@
-export interface BaseChartOptions {
+export interface ChartOptions {
     type?: string;
     parent?: HTMLElement;
     width?: number;
@@ -12,7 +12,7 @@ export interface BaseChartOptions {
     legend?: LegendOptions;
 }
 
-export interface CartesianChartOptions extends BaseChartOptions {
+export interface CartesianChartOptions extends ChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
 }
@@ -27,7 +27,7 @@ export interface LineChartOptions extends CartesianChartOptions {
     seriesDefaults?: LineSeriesOptions;
 }
 
-export interface PolarChartOptions extends BaseChartOptions {}
+export interface PolarChartOptions extends ChartOptions {}
 
 export interface PieChartOptions extends PolarChartOptions {
     series?: PieSeriesOptions[];
@@ -83,6 +83,7 @@ export interface SeriesOptions {
     type?: string;
     data?: any[];
     title?: string;
+    titleEnabled?: boolean;
     titleFont?: string;
     visible?: boolean;
     showInLegend?: boolean;
@@ -121,8 +122,8 @@ export interface BarSeriesOptions extends SeriesOptions {
     fills?: string[];
     strokes?: string[];
     lineWidth?: number;
-    // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
+    labelEnabled?: boolean;
     labelFont?: string;
     labelColor?: string;
     labelPadding?: {x: number, y: number};
@@ -147,7 +148,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     angleField?: string;
     radiusField?: string;
     labelField?: string;
-    label?: boolean;
+    labelEnabled?: boolean;
     fills?: string[];
     strokes?: string[];
     rotation?: number;

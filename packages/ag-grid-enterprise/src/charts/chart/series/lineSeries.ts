@@ -299,26 +299,29 @@ export class LineSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        let html: string = '';
+        const xField = this.xField;
         const yField = this.yField;
+        let html: string = '';
 
-        if (!yField) {
+        if (!xField || !yField) {
             return html;
         }
 
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
-                xField: this.xField,
+                xField,
                 yField
             });
         } else {
-            const value = nodeDatum.seriesDatum[yField];
-            if (typeof(value) === 'number') {
-                html = `${toFixed(value)}`;
-            } else {
-                html = value.toString();
-            }
+            const title = this.title ? `<div class="title">${this.title}</div>` : '';
+            const seriesDatum = nodeDatum.seriesDatum;
+            const xValue = seriesDatum[xField];
+            const yValue = seriesDatum[yField];
+            const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
+            const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+
+            html = `${title}${xString}: ${yString}`;
         }
         return html;
     }

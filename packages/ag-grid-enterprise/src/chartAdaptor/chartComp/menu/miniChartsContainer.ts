@@ -4,7 +4,6 @@ import {
     PostConstruct
 } from "ag-grid-community";
 
-import { palettes } from "../../../charts/chart/palettes";
 import { ChartController } from "../chartController";
 
 export class MiniChartsContainer extends Component {
@@ -15,10 +14,13 @@ export class MiniChartsContainer extends Component {
     private wrappers: HTMLElement[] = [];
     private chartController: ChartController;
 
-    constructor(palette: number, chartController: ChartController) {
+    constructor(activePalette: number, chartController: ChartController) {
         super(MiniChartsContainer.TEMPLATE);
-        this.fills = palettes[palette].fills;
-        this.strokes = palettes[palette].strokes;
+
+        const palettes = chartController.getPalettes();
+        this.fills = palettes[activePalette].fills;
+        this.strokes = palettes[activePalette].strokes;
+
         this.chartController = chartController;
     }
 
