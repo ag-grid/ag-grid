@@ -1,10 +1,10 @@
-import { ChartOptions, ChartType } from "ag-grid-community";
+import { ChartOptions, ChartType, ProcessChartOptionsParams } from "ag-grid-community";
 import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 
 export interface ChartProxyParams {
     chartType: ChartType;
-    processChartOptions: (options: ChartOptions) => ChartOptions;
+    processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions;
     getSelectedPalette: () => Palette;
     isDarkTheme: () => boolean;
     width: number;
@@ -47,10 +47,11 @@ export abstract class ChartProxy {
         return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
     }
 
-    protected getChartOptions(options: ChartOptions): ChartOptions {
+    protected getChartOptions(type: string, options: ChartOptions): ChartOptions {
         // allow users to override options before they are applied
         if (this.chartProxyParams.processChartOptions) {
-            const overriddenOptions = this.chartProxyParams.processChartOptions(options);
+            const params: ProcessChartOptionsParams = {type: type, options: options};
+            const overriddenOptions = this.chartProxyParams.processChartOptions(params);
             this.overridePalette(overriddenOptions);
             return overriddenOptions;
         }

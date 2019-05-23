@@ -10,7 +10,7 @@ export class DoughnutChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(this.defaultOptions()) as DoughnutChartOptions;
+        this.chartOptions = this.getChartOptions('doughnut', this.defaultOptions()) as DoughnutChartOptions;
         this.chart = ChartBuilder.createDoughnutChart(this.chartOptions);
     }
 
@@ -76,7 +76,6 @@ export class DoughnutChartProxy extends ChartProxy {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
-            type: 'doughnut',
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,

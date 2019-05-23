@@ -10,7 +10,7 @@ export class LineChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(this.defaultOptions()) as LineChartOptions;
+        this.chartOptions = this.getChartOptions('line', this.defaultOptions()) as LineChartOptions;
         this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
 
@@ -66,7 +66,6 @@ export class LineChartProxy extends ChartProxy {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
-            type: 'line',
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,

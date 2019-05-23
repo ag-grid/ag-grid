@@ -8,7 +8,7 @@ export class BarChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        const chartOptions = this.getChartOptions(this.defaultOptions()) as BarChartOptions;
+        const chartOptions = this.getChartOptions('bar', this.defaultOptions()) as BarChartOptions;
 
         this.chart = ChartBuilder.createBarChart(chartOptions);
 
@@ -36,7 +36,6 @@ export class BarChartProxy extends ChartProxy {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
-            type: 'bar',
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,

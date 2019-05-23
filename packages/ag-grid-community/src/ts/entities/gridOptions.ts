@@ -439,7 +439,7 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
-    processChartOptions?(options: ChartOptions): ChartOptions;
+    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -614,6 +614,11 @@ export interface NodeChildDetails {
     expanded?: boolean;
     field?: string;
     key?: any;
+}
+
+export interface ProcessChartOptionsParams {
+    type: string;
+    options: ChartOptions;
 }
 
 export interface GetContextMenuItemsParams {
