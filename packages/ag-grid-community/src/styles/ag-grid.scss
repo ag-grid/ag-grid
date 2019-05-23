@@ -448,6 +448,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         .ag-primary-cols-filter-wrapper {
             flex: 1 1 auto;
             input {
+                border-width: 1px;
+                border-style: solid;
                 width: 100%;
             }
         }
@@ -663,6 +665,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     height: 20px;
 
     input {
+        border-width: 1px;
+        border-style: solid;
         margin: 0;
         flex: 1 1 auto;
     }
