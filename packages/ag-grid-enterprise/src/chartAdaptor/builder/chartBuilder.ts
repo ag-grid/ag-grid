@@ -232,6 +232,9 @@ export class ChartBuilder {
         if (options.lineWidth !== undefined) {
             series.lineWidth = options.lineWidth;
         }
+        if (options.labelEnabled !== undefined) {
+            series.labelEnabled = options.labelEnabled;
+        }
         if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;
         }

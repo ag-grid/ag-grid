@@ -123,6 +123,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     strokes?: string[];
     lineWidth?: number;
     shadow?: DropShadowOptions;
+    labelEnabled?: boolean;
     labelFont?: string;
     labelColor?: string;
     labelPadding?: {x: number, y: number};

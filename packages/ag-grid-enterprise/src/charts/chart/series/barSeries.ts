@@ -174,6 +174,17 @@ export class BarSeries extends Series<CartesianChart> {
         return this._shadow;
     }
 
+    private _labelEnabled: boolean = true;
+    set labelEnabled(value: boolean) {
+        if (this._labelEnabled !== value) {
+            this._labelEnabled = value;
+            this.update();
+        }
+    }
+    get labelEnabled(): boolean {
+        return this._labelEnabled;
+    }
+
     private _labelFont: string = '12px Verdana, sans-serif';
     set labelFont(value: string) {
         if (this._labelFont !== value) {
@@ -337,6 +348,7 @@ export class BarSeries extends Series<CartesianChart> {
         const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
+        const labelEnabled = this.labelEnabled;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
@@ -412,7 +424,7 @@ export class BarSeries extends Series<CartesianChart> {
         groupSelection.selectByTag<Text>(BarSeriesNodeTag.Label)
             .each((text, datum) => {
                 const label = datum.label;
-                if (label) {
+                if (label && labelEnabled) {
                     text.font = label.font;
                     text.text = label.text;
                     text.x = label.x;

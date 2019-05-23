@@ -24,7 +24,7 @@ export class BarChartProxy extends ChartProxy {
         barSeries.data = params.data;
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(f => f.colId);
-        // barSeries.yFieldNames = params.fields.map(f => f.displayName);
+        barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
@@ -90,12 +90,13 @@ export class BarChartProxy extends ChartProxy {
                 grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
                 lineWidth: 1,
                 tooltipEnabled: true,
+                labelEnabled: false,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelPadding: {x: 10, y: 10},
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: 'fred',
+                title: '',
                 titleEnabled: true,
                 titleFont: 'bold 12px Verdana, sans-serif'
             }
