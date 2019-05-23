@@ -976,6 +976,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
+    public getChartConfigPanelItemsFunc(): string[] | undefined {
+        return this.gridOptions.getChartConfigPanelItems;
+    }
+
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
         return this.gridOptions.getRowNodeId;
     }
