@@ -26,6 +26,7 @@ $header-cell-moving-background-color: $default-background !default;
 $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
 $secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba($foreground-color, $disabled-foreground-color-opacity) !default; // foreground-disabled
+$input-border-color: $flat-gray-3 !default;
 $input-disabled-background-color: #ebebeb !default;
 
 $primary-color: $active !default;
@@ -139,6 +140,7 @@ $params: (
     value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
 
     editor-background-color-color: $editor-background-color,
+    input-border-color: $input-border-color,
     input-disabled-background-color: $input-disabled-background-color,
 
     icon-color: $icon-color,
