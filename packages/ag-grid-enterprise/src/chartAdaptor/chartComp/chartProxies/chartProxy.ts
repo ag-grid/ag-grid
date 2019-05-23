@@ -1,6 +1,6 @@
-import {ChartOptions, ChartType} from "ag-grid-community";
-import {Chart} from "../../../charts/chart/chart";
-import {Palette} from "../../../charts/chart/palettes";
+import { ChartOptions, ChartType } from "ag-grid-community";
+import { Chart } from "../../../charts/chart/chart";
+import { Palette } from "../../../charts/chart/palettes";
 
 export interface ChartProxyParams {
     chartType: ChartType;

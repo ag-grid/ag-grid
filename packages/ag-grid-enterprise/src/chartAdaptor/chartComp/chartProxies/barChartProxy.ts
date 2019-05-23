@@ -1,7 +1,7 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
-import {BarSeries} from "../../../charts/chart/series/barSeries";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
+import { BarSeries } from "../../../charts/chart/series/barSeries";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 
 export class BarChartProxy extends ChartProxy {
 

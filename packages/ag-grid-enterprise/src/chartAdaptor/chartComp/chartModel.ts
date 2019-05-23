@@ -13,7 +13,7 @@ import {
 } from "ag-grid-community";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 import { RangeController } from "../../rangeController";
-import {Palette} from "../../charts/chart/palettes";
+import { Palette } from "../../charts/chart/palettes";
 
 export interface ColState {
     column?: Column;

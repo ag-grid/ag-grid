@@ -1,8 +1,8 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {DoughnutChartOptions, PieSeriesOptions} from "ag-grid-community";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
-import {PolarChart} from "../../../charts/chart/polarChart";
-import {PieSeries} from "../../../charts/chart/series/pieSeries";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { DoughnutChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
+import { PolarChart } from "../../../charts/chart/polarChart";
+import { PieSeries } from "../../../charts/chart/series/pieSeries";
 
 export class DoughnutChartProxy extends ChartProxy {
     private readonly chartOptions: DoughnutChartOptions;
