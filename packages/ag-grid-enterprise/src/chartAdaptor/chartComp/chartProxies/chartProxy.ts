@@ -1,10 +1,11 @@
 import {ChartOptions, ChartType} from "ag-grid-community";
 import {Chart} from "../../../charts/chart/chart";
+import {borneo, Palette, pastel} from "../../../charts/chart/palettes";
 
 export interface ChartProxyParams {
     chartType: ChartType;
     processChartOptions: (options: ChartOptions) => ChartOptions;
-    getPalette: () => number;
+    getSelectedPalette: () => Palette;
     isDarkTheme: () => boolean;
     width: number;
     height: number;
@@ -26,6 +27,7 @@ export abstract class ChartProxy {
 
     protected chart: Chart;
     protected chartProxyParams: ChartProxyParams;
+    protected overriddenPalette: Palette;
 
     protected constructor(options: ChartProxyParams) {
         this.chartProxyParams = options;
@@ -37,21 +39,44 @@ export abstract class ChartProxy {
         return this.chart;
     }
 
-    protected getChartOptions(options: ChartOptions) {
+    protected getLabelColor(): string {
+        return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkLabelColour : ChartProxy.lightLabelColour;
+    }
+
+    protected getAxisGridColor(): string {
+        return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
+    }
+
+    protected getDefaultPalette(): Palette {
+        return this.chartProxyParams.isDarkTheme() ? pastel : borneo;
+    }
+
+    protected getChartOptions(options: ChartOptions): ChartOptions {
         // allow users to override options before they are applied
         if (this.chartProxyParams.processChartOptions) {
-            return this.chartProxyParams.processChartOptions(options);
+            const overriddenOptions = this.chartProxyParams.processChartOptions(options);
+            this.addUserPalette(overriddenOptions);
+            return overriddenOptions;
         }
 
         return options;
     }
 
-    protected getLabelColor() {
-        return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkLabelColour : ChartProxy.lightLabelColour;
-    }
+    private addUserPalette(chartOptions: any) {
+        const seriesDefaults = chartOptions.seriesDefaults;
 
-    protected getAxisGridColor() {
-        return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
+        const defaultFills = this.getDefaultPalette().fills;
+        const defaultStrokes = this.getDefaultPalette().strokes;
+
+        const fillsOverridden = seriesDefaults.fills !== defaultFills;
+        const strokesOverridden = seriesDefaults.strokes !== defaultStrokes;
+
+        if (fillsOverridden || strokesOverridden) {
+            this.overriddenPalette = {
+                fills: fillsOverridden && seriesDefaults.fills ? seriesDefaults.fills : defaultFills,
+                strokes: strokesOverridden && seriesDefaults.strokes ? seriesDefaults.strokes : defaultStrokes
+            };
+        }
     }
 
     public destroy(): void {

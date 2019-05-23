@@ -1,6 +1,7 @@
 import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 import { ChartModel, ColState } from "./chartModel";
+import { Palette } from "../../charts/chart/palettes";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -62,8 +63,12 @@ export class ChartController extends BeanStub {
         return this.model.getChartType();
     }
 
-    public getPalette(): number {
-        return this.model.getPalette();
+    public getActivePalette(): number {
+        return this.model.getActivePalette();
+    }
+
+    public getPalettes(): Palette[] {
+        return this.model.getPalettes();
     }
 
     public setChartType(chartType: ChartType): void {
@@ -73,7 +78,7 @@ export class ChartController extends BeanStub {
 
     public setChartWithPalette(chartType: ChartType, palette: number): void {
         this.model.setChartType(chartType);
-        this.model.setPalette(palette);
+        this.model.setActivePalette(palette);
         this.raiseChartUpdatedEvent();
     }
 

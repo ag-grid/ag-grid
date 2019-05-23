@@ -6,7 +6,7 @@ import {
 } from "ag-grid-community";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { ChartController } from "../chartController";
-import { palettes } from "../../../charts/chart/palettes";
+import { Palette } from "../../../charts/chart/palettes";
 
 export class ChartSettingsPanel extends Component {
 
@@ -30,19 +30,23 @@ export class ChartSettingsPanel extends Component {
     private miniCharts: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];
 
-    private chartController: ChartController;
+    private readonly chartController: ChartController;
+
     private activePalette: number;
+    private palettes: Palette[];
+
     private isAnimating: boolean;
 
-    constructor(chartModel: ChartController) {
+    constructor(chartController: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
-        this.chartController = chartModel;
-        this.activePalette = this.chartController.getPalette();
+        this.chartController = chartController;
+        this.activePalette = this.chartController.getActivePalette();
+        this.palettes = this.chartController.getPalettes();
     }
 
     @PostConstruct
     private init() {
-        palettes.forEach((palette, idx) => {
+        this.palettes.forEach((palette, idx) => {
             const miniChartsContainer = new MiniChartsContainer(idx, this.chartController);
             this.getContext().wireBean(miniChartsContainer);
 
@@ -73,7 +77,7 @@ export class ChartSettingsPanel extends Component {
         let prev = this.activePalette - 1;
 
         if (prev < 0) {
-            prev = palettes.length - 1;
+            prev = this.palettes.length - 1;
         }
 
         return prev;
@@ -88,7 +92,7 @@ export class ChartSettingsPanel extends Component {
     private getNext(): number {
         let next = this.activePalette + 1;
 
-        if (next === palettes.length) {
+        if (next === this.palettes.length) {
             next = 0;
         }
         return next;

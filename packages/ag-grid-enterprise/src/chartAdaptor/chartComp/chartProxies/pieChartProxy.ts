@@ -3,7 +3,6 @@ import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import borneo, { palettes } from "../../../charts/chart/palettes";
 
 export class PieChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
@@ -44,7 +43,10 @@ export class PieChartProxy extends ChartProxy {
         pieSeries.labelField = params.categoryId;
         pieSeries.data = params.data;
 
-        pieSeries.fills = palettes[this.chartProxyParams.getPalette()].fills;
+        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+        pieSeries.fills = palette.fills;
+        pieSeries.strokes = palette.strokes;
 
         if (!existingSeries) {
             pieChart.addSeries(pieSeries)
@@ -52,6 +54,8 @@ export class PieChartProxy extends ChartProxy {
     }
 
     private defaultOptions() {
+        const palette = this.chartProxyParams.getSelectedPalette();
+
         return {
             type: 'pie',
             parent: this.chartProxyParams.parentElement,
@@ -74,10 +78,10 @@ export class PieChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'pie',
-                fills: borneo.fills,
-                strokes: borneo.strokes,
+                fills: palette.fills,
+                strokes: palette.strokes,
                 lineWidth: 1,
-                calloutColors: borneo.strokes,
+                calloutColors: palette.strokes,
                 calloutWidth: 2,
                 calloutLength: 10,
                 calloutPadding: 3,

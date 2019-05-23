@@ -20,6 +20,7 @@ import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/lineChartProxy";
 import {PieChartProxy} from "./chartProxies/pieChartProxy";
 import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
+import {Palette, palettes} from "../../charts/chart/palettes";
 
 export interface GridChartParams {
     cellRange: CellRange;
@@ -63,7 +64,9 @@ export class GridChartComp extends Component {
         const modelParams: ChartModelParams = {
             chartType: this.params.chartType,
             aggregate: this.params.aggregate,
-            cellRanges: [this.params.cellRange]
+            cellRanges: [this.params.cellRange],
+            palettes: palettes,
+            activePalette: 0
         };
 
         this.model = new ChartModel(modelParams);
@@ -103,7 +106,7 @@ export class GridChartComp extends Component {
         const chartProxyParams: ChartProxyParams = {
             chartType: this.model.getChartType(),
             processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
-            getPalette: this.getPalette.bind(this),
+            getSelectedPalette: this.getSelectedPalette.bind(this),
             isDarkTheme: this.isDarkTheme.bind(this),
             parentElement: this.eChart,
             width: width,
@@ -113,6 +116,10 @@ export class GridChartComp extends Component {
         this.chartProxy = this.createChartProxy(chartProxyParams);
 
         this.currentChartType = this.model.getChartType();
+    }
+
+    private getSelectedPalette(): Palette {
+        return this.model.getPalettes()[this.model.getActivePalette()];
     }
 
     private createChartProxy(chartOptions: ChartProxyParams): ChartProxy {
@@ -208,11 +215,6 @@ export class GridChartComp extends Component {
             return;
         }
         this.chartController.setChartRange();
-    }
-
-    private getPalette(): number {
-        const palette = this.model && this.model.getPalette();
-        return palette ? this.model.getPalette() : this.isDarkTheme() ? 2 : 0;
     }
 
     private isDarkTheme(): boolean {

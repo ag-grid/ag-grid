@@ -1,9 +1,8 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
-import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
-import { LineSeries } from "../../../charts/chart/series/lineSeries";
-import borneo, { palettes } from "../../../charts/chart/palettes";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {LineChartOptions, LineSeriesOptions} from "ag-grid-community";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import {LineSeries} from "../../../charts/chart/series/lineSeries";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
@@ -48,8 +47,13 @@ export class LineChartProxy extends ChartProxy {
                 lineSeries.xField = params.categoryId;
                 lineSeries.yField = f.colId;
 
-                const fills = palettes[this.chartProxyParams.getPalette()].fills;
+                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+                const fills = palette.fills;
                 lineSeries.fill = fills[index % fills.length];
+
+                const strokes = palette.strokes;
+                lineSeries.stroke = strokes[index % strokes.length];
 
                 if (!existingSeries) {
                     lineChart.addSeries(lineSeries);
@@ -59,6 +63,8 @@ export class LineChartProxy extends ChartProxy {
     }
 
     private defaultOptions(): LineChartOptions {
+        const palette = this.chartProxyParams.getSelectedPalette();
+
         return {
             type: 'line',
             parent: this.chartProxyParams.parentElement,
@@ -78,7 +84,7 @@ export class LineChartProxy extends ChartProxy {
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
+                lineColor: palette.fills[0],
                 lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
@@ -92,7 +98,7 @@ export class LineChartProxy extends ChartProxy {
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
+                lineColor: palette.fills[0], //TODO
                 lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
@@ -110,8 +116,8 @@ export class LineChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'line',
-                fill: borneo.fills[0],
-                stroke: borneo.strokes[0],
+                fill: palette.fills[0], //TODO
+                stroke: palette.strokes[0], //TODO
                 lineWidth: 3,
                 marker: true,
                 markerRadius: 3,

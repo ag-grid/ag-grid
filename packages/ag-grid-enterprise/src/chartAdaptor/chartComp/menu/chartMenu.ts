@@ -43,10 +43,10 @@ export class ChartMenu extends Component {
     }
 
     private saveChart() {
-            const event: AgEvent = {
-                type: ChartMenu.EVENT_DOWNLOAD_CHART
-            };
-            this.dispatchEvent(event);
+        const event: AgEvent = {
+            type: ChartMenu.EVENT_DOWNLOAD_CHART
+        };
+        this.dispatchEvent(event);
     }
 
     private showMenu(tab: number): void {

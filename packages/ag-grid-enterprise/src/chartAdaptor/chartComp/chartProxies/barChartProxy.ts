@@ -1,8 +1,7 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
-import { BarSeries } from "../../../charts/chart/series/barSeries";
-import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
-import borneo, { palettes } from "../../../charts/chart/palettes";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
+import {BarSeries} from "../../../charts/chart/series/barSeries";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
 
 export class BarChartProxy extends ChartProxy {
 
@@ -10,6 +9,7 @@ export class BarChartProxy extends ChartProxy {
         super(params);
 
         const chartOptions = this.getChartOptions(this.defaultOptions()) as BarChartOptions;
+
         this.chart = ChartBuilder.createBarChart(chartOptions);
 
         const barSeries = ChartBuilder.createSeries(chartOptions.seriesDefaults as BarSeriesOptions);
@@ -26,10 +26,15 @@ export class BarChartProxy extends ChartProxy {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        barSeries.fills = palettes[this.chartProxyParams.getPalette()].fills;
+        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+        barSeries.fills = palette.fills;
+        barSeries.strokes = palette.strokes;
     }
 
     private defaultOptions(): BarChartOptions {
+        const palette = this.chartProxyParams.getSelectedPalette();
+
         return {
             type: 'bar',
             parent: this.chartProxyParams.parentElement,
@@ -80,8 +85,8 @@ export class BarChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'bar',
-                fills: borneo.fills,
-                strokes: borneo.strokes,
+                fills: palette.fills,
+                strokes: palette.strokes,
                 grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
                 lineWidth: 1,
                 tooltipEnabled: true,
