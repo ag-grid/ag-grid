@@ -1,6 +1,6 @@
 import { RowNode } from "./entities/rowNode";
 import {
-    ChartRef,
+    ChartRef, GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
@@ -977,12 +977,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
-    public getChartConfigPanelsFunc(): string[] | undefined {
-        return this.gridOptions.getChartConfigPanels;
-    }
-
-    public getChartButtonsFunc(): string[] | undefined {
-        return this.gridOptions.getChartButtons;
+    public getChartToolbarItemsFunc(): GetChartToolbarItems | undefined {
+        return this.gridOptions.getChartToolbarItems;
     }
 
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {

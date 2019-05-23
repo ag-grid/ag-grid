@@ -417,8 +417,7 @@ export interface GridOptions {
     getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
-    getChartConfigPanels?: string[];
-    getChartButtons?: string[];
+    getChartToolbarItems?: GetChartToolbarItems;
     getRowNodeId?: GetRowNodeIdFunc;
 
     getChildCount?(dataItem: any): number;
@@ -633,6 +632,18 @@ export interface GetContextMenuItemsParams {
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
+}
+
+
+export interface GetChartToolbarItemsParams {
+    defaultItems: string[] | undefined;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+    context: any;
+}
+
+export interface GetChartToolbarItems {
+    (params: GetChartToolbarItemsParams): string[];
 }
 
 export interface MenuItemDef {
