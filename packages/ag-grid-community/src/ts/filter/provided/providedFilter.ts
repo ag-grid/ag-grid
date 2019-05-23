@@ -105,11 +105,10 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         this.clearActive = params.clearButton === true;
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
-        this.newRowsActionKeep = params.newRowsAction === 'keep';
 
-        if (params.newRowsAction==='keep') {
+        if (params.newRowsAction===ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
             this.newRowsActionKeep = true;
-        } else if (params.newRowsAction==='clear') {
+        } else if (params.newRowsAction===ProvidedFilter.NEW_ROWS_ACTION_CLEAR) {
             this.newRowsActionKeep = false;
         } else {
             // the default for SSRM and IRM is 'keep', for CSRM and VRM teh default is 'clear'

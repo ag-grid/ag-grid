@@ -534,6 +534,31 @@ table.reference {
     }
 }
 
+table.properties {
+    border-collapse: collapse;
+    margin-bottom: 3rem;
+    width: 100%;
+
+    th {
+        white-space: nowrap;
+    }
+
+    td,
+    th {
+        border-bottom: 1px solid $border-color;
+        border-top: 1px solid $border-color;
+        padding: 0.5rem 1rem;
+        vertical-align: top;
+    }
+
+    tr:nth-child(2n -1) {
+        td:not([colspan="2"]),
+        th {
+            background-color: $offwhite;
+        }
+    }
+}
+
 .event-hierarchy {
     font-size: 0.8rem;
     font-weight: bold;

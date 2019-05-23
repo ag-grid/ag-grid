@@ -239,6 +239,23 @@
         "url": "javascript-grid-filtering/",
         "items": [
           {
+            "title": "Provided Simple Filters",
+            "url": "javascript-grid-filter-provided-simple/"
+          },
+          {
+            "title": "Set Filter",
+            "url": "javascript-grid-filter-set/",
+            "enterprise": true
+          },
+          {
+            "title": "Floating Filters",
+            "url": "javascript-grid-floating-filters/"
+          },
+          {
+            "title": "Custom Filter",
+            "url": "javascript-grid-filter-custom/"
+          },
+          {
             "title": "Text Filter",
             "url": "javascript-grid-filter-text/"
           },
@@ -249,15 +266,6 @@
           {
             "title": "Date Filter",
             "url": "javascript-grid-filter-date/"
-          },
-          {
-            "title": "Set Filter",
-            "url": "javascript-grid-filter-set/",
-            "enterprise": true
-          },
-          {
-            "title": "Custom Filter",
-            "url": "javascript-grid-filter-custom/"
           }
         ]
       },
@@ -600,8 +608,7 @@
       },
       {
         "title": "Balham",
-        "url": "javascript-grid-themes/balham-theme.php",
-        "new": true
+        "url": "javascript-grid-themes/balham-theme.php"
       },
       {
         "title": "Material",

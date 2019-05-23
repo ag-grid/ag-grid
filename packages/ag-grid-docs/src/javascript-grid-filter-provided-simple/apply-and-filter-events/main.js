@@ -5,32 +5,12 @@ var columnDefs = [
     },
     {headerName: "Age", field: "age", width: 90,
         filter: 'agNumberColumnFilter',
-        filterParams: { apply: true }
+        filterParams: { applyButton: true, clearButton:true }
     },
     {headerName: "Country", field: "country", width: 120,
-        filterParams: { applyButton: true }
+        filterParams: { applyButton: true, clearButton:true }
     },
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 145, filter:'agDateColumnFilter', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
-
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
-
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
-
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
-            }
-        },
-        clearButton:true
-    }},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},

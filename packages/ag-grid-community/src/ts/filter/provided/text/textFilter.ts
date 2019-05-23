@@ -36,12 +36,12 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
-    }
+    };
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    }
+    };
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -63,7 +63,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    }
+    };
 
     @RefSelector('eValue1')
     private eValue1: HTMLInputElement;
