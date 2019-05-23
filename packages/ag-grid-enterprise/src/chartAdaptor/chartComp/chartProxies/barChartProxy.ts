@@ -94,7 +94,10 @@ export class BarChartProxy extends ChartProxy {
                 labelColor: this.getLabelColor(),
                 labelPadding: {x: 10, y: 10},
                 tooltipRenderer: undefined,
-                showInLegend: true
+                showInLegend: true,
+                title: '',
+                titleEnabled: false,
+                titleFont: 'bold 12px Verdana, sans-serif'
             }
         };
     }

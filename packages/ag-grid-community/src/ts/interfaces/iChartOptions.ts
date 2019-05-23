@@ -83,6 +83,7 @@ export interface SeriesOptions {
     type?: string;
     data?: any[];
     title?: string;
+    titleEnabled?: boolean;
     titleFont?: string;
     visible?: boolean;
     showInLegend?: boolean;
@@ -121,7 +122,6 @@ export interface BarSeriesOptions extends SeriesOptions {
     fills?: string[];
     strokes?: string[];
     lineWidth?: number;
-    // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     labelFont?: string;
     labelColor?: string;

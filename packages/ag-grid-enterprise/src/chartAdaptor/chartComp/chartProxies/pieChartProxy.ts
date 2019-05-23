@@ -91,7 +91,10 @@ export class PieChartProxy extends ChartProxy {
                 labelMinAngle: 20,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
-                showInLegend: true
+                showInLegend: true,
+                title: '',
+                titleEnabled: false,
+                titleFont: 'bold 12px Verdana, sans-serif'
             }
         };
     }

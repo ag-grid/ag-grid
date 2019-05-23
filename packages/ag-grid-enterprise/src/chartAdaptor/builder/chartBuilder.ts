@@ -152,6 +152,9 @@ export class ChartBuilder {
         if (options.title !== undefined) {
             series.title = options.title;
         }
+        if (options.titleEnabled !== undefined) {
+            series.titleEnabled = options.titleEnabled;
+        }
         if (options.titleFont !== undefined) {
             series.titleFont = options.titleFont;
         }
