@@ -298,8 +298,8 @@ export class Dialog extends PopupComponent {
 
         // skip if cursor is outside of popupParent horizontally
         let skipX = (
-            parentRect.left >= e.clientX ||
-            parentRect.right <= e.clientX
+            parentRect.left >= e.clientX && this.position.x <= 0 ||
+            parentRect.right <= e.clientX && parentRect.right <= this.position.x + parentRect.left + width
         );
 
         if (!skipX) {
@@ -317,8 +317,8 @@ export class Dialog extends PopupComponent {
                     // if anywhereWithin is true, we allow to move
                     // as long as the cursor is within the dialog
                     skipX = (
-                        e.clientX < this.position.x + parentRect.left ||
-                        e.clientX > this.position.x + parentRect.left + width
+                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width) ||
+                        (movementX > 0 && e.clientX < this.position.x + parentRect.left)
                     );
                 } else {
                     skipX = (
@@ -338,8 +338,8 @@ export class Dialog extends PopupComponent {
 
         const skipY = (
             // skip if cursor is outside of popupParent vertically
-            parentRect.top >= e.clientY ||
-            parentRect.bottom <= e.clientY ||
+            parentRect.top >= e.clientY && this.position.y <= 0 ||
+            parentRect.bottom <= e.clientY && parentRect.bottom <= this.position.y + parentRect.top + height ||
             isTop && (
                 // skip if we are moving to towards top and the cursor is
                 // below the top anchor + topBuffer
@@ -376,9 +376,10 @@ export class Dialog extends PopupComponent {
         const isHorizontal = isLeft || isRight;
         const isVertical = isTop || isBottom;
 
+        const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
+
         let offsetLeft = 0;
         let offsetTop = 0;
-        const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
 
         if (isHorizontal && movementX) {
             const direction = isLeft ? -1 : 1;
@@ -488,6 +489,8 @@ export class Dialog extends PopupComponent {
             ePopup,
             x,
             y,
+            minWidth: this.minWidth,
+            minHeight: this.minHeight,
             keepWithinBounds: true
         });
 

@@ -71,12 +71,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
     overflow: hidden;
-
-    *, *:before, *:after {
-        box-sizing: border-box;
-    }
 
     &.ag-layout-normal {
         height: 100%;
