@@ -84,7 +84,7 @@ export class LineChartProxy extends ChartProxy {
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
-                lineColor: palette.fills[0],
+                lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
@@ -98,7 +98,7 @@ export class LineChartProxy extends ChartProxy {
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
-                lineColor: palette.fills[0], //TODO
+                lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
                     strokeStyle: this.getAxisGridColor(),
