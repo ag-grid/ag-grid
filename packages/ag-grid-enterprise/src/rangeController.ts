@@ -480,8 +480,9 @@ export class RangeController implements IRangeController {
 
         const thisRow: RowPosition = {rowIndex: rowIndex, rowPinned: floating};
 
-        const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned === firstRow.rowPinned;
-        const equalsLastRow = thisRow.rowIndex === lastRow.rowIndex && thisRow.rowPinned === lastRow.rowPinned;
+        // compare rowPinned with == instead of === because it can be `null` or `undefined`
+        const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
+        const equalsLastRow = thisRow.rowIndex === lastRow.rowIndex && thisRow.rowPinned == lastRow.rowPinned;
 
         if (equalsFirstRow || equalsLastRow) {
             return true;
