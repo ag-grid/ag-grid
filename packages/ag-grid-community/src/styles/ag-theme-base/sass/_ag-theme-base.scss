@@ -130,6 +130,10 @@
         }
     }
 
+    .ag-tab {
+        box-sizing: content-box;
+    }
+
     // indentation loop
     @for $i from 1 to 50 {
         .ag-ltr .ag-toolpanel-indent-#{$i} {
