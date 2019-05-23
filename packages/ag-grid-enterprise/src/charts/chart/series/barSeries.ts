@@ -432,17 +432,24 @@ export class BarSeries extends Series<CartesianChart> {
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         let html: string = '';
         if (this.tooltipEnabled) {
+            const xField = this.xField;
             const yField = nodeDatum.yField;
-            const labelText = nodeDatum.label ? nodeDatum.label.text + ': ' : '';
 
-            if (this.tooltipRenderer && this.xField) {
+            if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
                     datum: nodeDatum.seriesDatum,
-                    xField: this.xField,
+                    xField,
                     yField,
                 });
             } else {
-                html = `${labelText}${toFixed(nodeDatum.seriesDatum[yField] as any as number)}`;
+                const title = nodeDatum.label ? `<div class="title">${nodeDatum.label.text}</div>` : '';
+                const seriesDatum = nodeDatum.seriesDatum;
+                const xValue = seriesDatum[xField];
+                const yValue = seriesDatum[yField];
+                const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
+                const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+
+                html = `${title}${xString}: ${yString}`;
             }
         }
         return html;

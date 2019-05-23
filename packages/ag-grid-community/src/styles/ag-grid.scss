@@ -476,7 +476,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         .ag-column-drop-cell {
             display: flex;
             align-items: center;
-        
+
             .ag-column-drop-cell-text {
                 overflow: hidden;
                 flex: 1;
@@ -1022,6 +1022,10 @@ $handleSize: 5px;
     color: black;
     background: rgba(244, 244, 244, 0.9);
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+
+    .title {
+        font-weight: bold;
+    }
 }
 
 /**
