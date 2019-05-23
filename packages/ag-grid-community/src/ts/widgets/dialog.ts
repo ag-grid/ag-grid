@@ -375,7 +375,6 @@ export class Dialog extends PopupComponent {
         const isBottom = !!side.match(/bottom/i);
         const isHorizontal = isLeft || isRight;
         const isVertical = isTop || isBottom;
-
         const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
 
         let offsetLeft = 0;

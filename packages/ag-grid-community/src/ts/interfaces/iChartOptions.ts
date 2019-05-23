@@ -91,9 +91,9 @@ export interface SeriesOptions {
 }
 
 export interface LineTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string
+    datum: any;
+    xField: string;
+    yField: string;
 }
 
 export interface LineSeriesOptions extends SeriesOptions {
@@ -109,9 +109,9 @@ export interface LineSeriesOptions extends SeriesOptions {
 }
 
 export interface BarTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string
+    datum: any;
+    xField: string;
+    yField: string;
 }
 
 export interface BarSeriesOptions extends SeriesOptions {
@@ -131,10 +131,10 @@ export interface BarSeriesOptions extends SeriesOptions {
 }
 
 export interface PieTooltipRendererParams {
-    datum: any,
-    angleField: string,
-    radiusField?: string,
-    labelField?: string
+    datum: any;
+    angleField: string;
+    radiusField?: string;
+    labelField?: string;
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
