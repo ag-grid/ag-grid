@@ -52,7 +52,7 @@ export class PieSeries extends Series<PolarChart> {
      */
     private groupSelectionData: GroupSelectionDatum[] = [];
 
-    protected readonly enabled: boolean[] = [];
+    readonly enabled: boolean[] = [];
 
     private angleScale: LinearScale<number> = (() => {
         const scale = scaleLinear();

@@ -45,6 +45,17 @@ export class DoughnutChartProxy extends ChartProxy {
 
             pieSeries.labelField = params.categoryId;
             pieSeries.data = params.data;
+            if (index === 0) {
+                pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
+                    const chart = pieSeries.chart;
+                    if (chart) {
+                        chart.series.forEach(series => {
+                            (series as PieSeries).enabled[itemId] = enabled;
+                        });
+                    }
+                    pieSeries.scheduleData();
+                };
+            }
 
             pieSeries.outerRadiusOffset = offset;
             offset -= 20;
