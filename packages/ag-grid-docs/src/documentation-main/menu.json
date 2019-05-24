@@ -243,19 +243,19 @@
             "url": "javascript-grid-filter-provided/"
           },
           {
-            "title": "&nbsp;> Provided Simple Filters",
+            "title": "&nbsp;> Simple Filters",
             "url": "javascript-grid-filter-provided-simple/"
           },
           {
-            "title": "&nbsp;&nbsp;&nbsp;> Text Filter",
+            "title": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Text Filter",
             "url": "javascript-grid-filter-text/"
           },
           {
-            "title": "&nbsp;&nbsp;&nbsp;> Number Filter",
+            "title": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Number Filter",
             "url": "javascript-grid-filter-number/"
           },
           {
-            "title": "&nbsp;&nbsp;&nbsp;> Date Filter",
+            "title": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Date Filter",
             "url": "javascript-grid-filter-date/"
           },
           {

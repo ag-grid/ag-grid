@@ -10,6 +10,35 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     The grid provides three simple filters for filtering numbers, strings and dates respectively.
+
+</p>
+
+<style>
+    .filterImageSpan {
+        flex-grow: 1;
+        text-align: center;
+    }
+    .filterImageTitle {
+        font-weight: bold;
+    }
+</style>
+
+<p style="display: flex;">
+    <span class="filterImageSpan">
+        <span class="filterImageTitle">Text Filter</span><br/>
+        <img src="./textFilter.png"/>
+    </span>
+    <span class="filterImageSpan">
+        <span class="filterImageTitle">Number Filter</span><br/>
+        <img src="./numberFilter.png"/>
+    </span>
+    <span class="filterImageSpan">
+        <span class="filterImageTitle">Date Filter</span><br/>
+        <img src="./dateFilter.png"/>
+    </span>
+</p>
+
+<p>
     Each of the filters works in a similar way.
     This page describes the common parts of the simple provided filters.
 </p>
@@ -76,12 +105,6 @@ include '../documentation-main/documentation_header.php';
     The Join Operator decides how Condition 1 and Condition 2 are joined, whether to use AND or OR.
 </p>
 
-<h3>Clear & Filter Buttons</h3>
-
-<p>
-    Each filter can optionally have a Clear and Apply button.
-</p>
-
 <h2 id="filterParams">Simple Filters Parameters</h2>
 
 <p>
@@ -105,31 +128,8 @@ include '../documentation-main/documentation_header.php';
         <th>Supported Filters</th>
     </tr>
     <tr>
-        <td class="parameter-key">applyButton</td>
-        <td>Set to <code>true</code> to have the filter us an Apply button. If the Apply button is present,
-        then the filter is only applied after the user hits the Apply button.</td>
-        <td class="supported-filters">Text, Number, Date</td>
-    </tr>
-    <tr>
-        <td class="parameter-key">clearButton</td>
-        <td>Set to <code>true</code> to have the filter us a Clear button. The Clear button will clear the
-            details of the filter thus resetting it.</td>
-        <td class="supported-filters">Text, Number, Date</td>
-    </tr>
-    <tr>
-        <td class="parameter-key">debounceMs</td>
-        <td>By default the provided filters will debounce for 500ms before executing the filter. Use
-        <code>debounceMs</code> to override the default debounce time, or set to 0 to remove the debounce.</td>
-        <td class="supported-filters">Text, Number, Date</td>
-    </tr>
-    <tr>
-        <td class="parameter-key">newRowsAction</td>
-        <td>This property is for when using the <a href="../javascript-grid-client-side-model/">Client Side Row Model</a>
-            only. If set to 'clear', then setting data into the grid by calling api.setRowData() (or updating the rowData
-            property if bound by a framework) will clear (reset) the filter. If set to 'keep' then the grid
-            will keep it's currently set filter. The default is 'clear', so set to 'keep' if you want to keep filter state
-            before loading new data into the grid.
-        </td>
+        <td class="parameter-key">applyButton<br/>clearButton<br/>debounceMs<br/>newRowsAction</td>
+        <td>See <a href="../javascript-grid-filter-provided/#providedFilterParams">Provided Filter Params</a>.</td>
         <td class="supported-filters">Text, Number, Date</td>
     </tr>
     <tr>
@@ -587,35 +587,7 @@ export interface IFilterOptionDef {
 <?= example('Custom Filter Options', 'custom-filter-options', 'generated', array("processVue" => true)) ?>
 
 
-<h2>Apply & Clear Buttons</h2>
-
-<p>
-    Each of the provided filters can have an Apply and / or Clear button.
-</p>
-<p>
-    When the Apply button is active, the filter is only applied after the Apply button is pressed.
-    This is useful if the filtering operation will take a long time because the dataset is large,
-    or if doing server side filtering (thus preventing unnecessary calls to the server).
-</p>
-
-<p>
-    The Clear button clears the filters UI.
-</p>
-
-<p>
-    The example below also demonstrates using the apply button. It also demonstrates the relationship between
-    the Apply button and filter events. Note the following:
-</p>
-<ul class="content">
-    <li>The Athlete, Age and Country columns have filters with Apply and Clear buttons.</li>
-    <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
-    <li>onFilterChanged gets called after a new filter is applied.</li>
-</ul>
-
-<?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("processVue" => true)) ?>
-
-
-<h2>Date and Number Filters and Blank Cells</h2>
+<h2>Blank Cells (Date and Number Filters)</h2>
 <p>
     If the row data contains blanks (ie <code>null</code> or <code>undefined</code>) it won't be included in
     filter results. To change this use the filter params <code>includeBlanksInEquals</code>,
@@ -701,21 +673,6 @@ filterParams = {
 </ul>
 
 <?= example('Text Filter', 'text-filter', 'generated', array("processVue" => true)) ?>
-
-<h2>Common Column Filtering Functionality And Examples</h2>
-
-<p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
-
-<ul class="content">
-    <li>Common filtering params</li>
-    <li>Enabling/Disabling filtering in a column</li>
-    <li>Enabling/Disabling floating filter</li>
-    <li>Adding apply and clear button to a column filter</li>
-    <li>Filtering animation</li>
-    <li>Examples</li>
-</ul>
-
-
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

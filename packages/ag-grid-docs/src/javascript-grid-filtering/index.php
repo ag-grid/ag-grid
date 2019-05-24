@@ -22,11 +22,11 @@ include '../documentation-main/documentation_header.php';
 
     <p style="display: flex; text-align: center; margin-top: 20px; margin-bottom: 40px;">
         <span style="flex: 1">
-            Access via Column Menu<br/>
+            <b>Access via Column Menu</b><br/>
             <img src="./ColumnMenu.png" style="width: 300px;"/>
         </span>
         <span style="flex: 1">
-            Access via Tool Panel<br/>
+            <b>Access via Tool Panel</b><br/>
             <img src="./ToolPanel.png" style="width: 220px;"/>
         </span>
     </p>
@@ -68,12 +68,7 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <p>
-        The Number, Text and Date filters are <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a>
-        and are described in the section on <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a>.
-    </p>
-
-    <p>
-        The <a href="../javascript-grid-filter-set">Set Filter</a> is more advanced and explained in it's own section.
+        The section <a href="../javascript-grid-filter-provided">Provided Filters</a> for details on using them.
     </p>
 
     <h2>Configuring Filters to Columns</h2>
