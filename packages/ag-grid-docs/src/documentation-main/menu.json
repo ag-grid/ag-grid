@@ -239,11 +239,27 @@
         "url": "javascript-grid-filtering/",
         "items": [
           {
-            "title": "Provided Simple Filters",
+            "title": "Provided Filters",
+            "url": "javascript-grid-filter-provided/"
+          },
+          {
+            "title": "&nbsp;> Provided Simple Filters",
             "url": "javascript-grid-filter-provided-simple/"
           },
           {
-            "title": "Set Filter",
+            "title": "&nbsp;&nbsp;&nbsp;> Text Filter",
+            "url": "javascript-grid-filter-text/"
+          },
+          {
+            "title": "&nbsp;&nbsp;&nbsp;> Number Filter",
+            "url": "javascript-grid-filter-number/"
+          },
+          {
+            "title": "&nbsp;&nbsp;&nbsp;> Date Filter",
+            "url": "javascript-grid-filter-date/"
+          },
+          {
+            "title": "&nbsp;> Set Filter",
             "url": "javascript-grid-filter-set/",
             "enterprise": true
           },
@@ -254,18 +270,6 @@
           {
             "title": "Custom Filter",
             "url": "javascript-grid-filter-custom/"
-          },
-          {
-            "title": "Text Filter",
-            "url": "javascript-grid-filter-text/"
-          },
-          {
-            "title": "Number Filter",
-            "url": "javascript-grid-filter-number/"
-          },
-          {
-            "title": "Date Filter",
-            "url": "javascript-grid-filter-date/"
           }
         ]
       },

@@ -6,18 +6,18 @@ var columnDefs = [
         width: 90,
         filter: 'agNumberColumnFilter',
         filterParams: {
-            includeNullInEquals: false,
-            includeNullInLessThan: false,
-            includeNullInGreaterThan: false
+            includeBlanksInEquals: false,
+            includeBlanksInLessThan: false,
+            includeBlanksInGreaterThan: false,
+            debounceMs: 0
         }
     },
-    {headerName: 'Country', field: 'country', width: 120},
-    {headerName: 'Year', field: 'year', width: 90},
     {
         headerName: 'Date',
         field: 'date',
         width: 145,
         filter: 'agDateColumnFilter',
+        debounceMs: 0,
         filterParams: {
             comparator: function(filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
@@ -37,16 +37,15 @@ var columnDefs = [
                     return 1;
                 }
             },
-            includeNullInEquals: false,
-            includeNullInLessThan: false,
-            includeNullInGreaterThan: false
+            includeBlanksInEquals: false,
+            includeBlanksInLessThan: false,
+            includeBlanksInGreaterThan: false
         }
     },
-    {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Silver', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Total', field: 'total', width: 100, filter: false}
+    {   headerName: 'Description',
+        valueGetter: '"Age is " + data.age + " and Date is " + data.date',
+        width: 400
+    },
 ];
 
 var gridOptions = {
@@ -60,16 +59,16 @@ var gridOptions = {
 function changeNull(toChange, value) {
     switch (toChange) {
         case 'equals':
-            columnDefs[1].filterParams.includeNullInEquals = value;
-            columnDefs[4].filterParams.includeNullInEquals = value;
+            columnDefs[1].filterParams.includeBlanksInEquals = value;
+            columnDefs[4].filterParams.includeBlanksInEquals = value;
             break;
         case 'lessThan':
-            columnDefs[1].filterParams.includeNullInLessThan = value;
-            columnDefs[4].filterParams.includeNullInLessThan = value;
+            columnDefs[1].filterParams.includeBlanksInLessThan = value;
+            columnDefs[4].filterParams.includeBlanksInLessThan = value;
             break;
         case 'greaterThan':
-            columnDefs[1].filterParams.includeNullInGreaterThan = value;
-            columnDefs[4].filterParams.includeNullInGreaterThan = value;
+            columnDefs[1].filterParams.includeBlanksInGreaterThan = value;
+            columnDefs[4].filterParams.includeBlanksInGreaterThan = value;
             break;
     }
     var filterModel = gridOptions.api.getFilterModel();
@@ -97,18 +96,18 @@ document.addEventListener('DOMContentLoaded', function() {
             bronze: 0
         },
         {
-            athlete: 'Alberto Gutierrez',
-            age: 36,
+            athlete: 'Niall Crosby',
+            age: 40,
             country: 'Spain',
             year: '2017',
-            date: null,
+            date: undefined,
             sport: 'Running',
             gold: 1,
             silver: 0,
             bronze: 0
         },
         {
-            athlete: 'John Masterson',
+            athlete: 'Sean Landsman',
             age: null,
             country: 'Rainland',
             year: '2017',
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
             athlete: 'Robert Clarke',
-            age: null,
+            age: undefined,
             country: 'Raveland',
             year: '2017',
             date: '25/10/2016',

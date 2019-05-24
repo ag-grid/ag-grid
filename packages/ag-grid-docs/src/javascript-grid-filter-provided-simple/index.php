@@ -10,8 +10,8 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     The grid provides three simple filters for filtering numbers, strings and dates respectively.
-    Each of the filters works in a similar way, the difference only been around the data type.
-    This section goes though how to use each of the three simple filters provided by the grid.
+    Each of the filters works in a similar way.
+    This page describes the common parts of the simple provided filters.
 </p>
 
 <h2>Simple Filter Example</h2>
@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Provided Simple', 'provided-simple', 'generated', array("processVue" => true)) ?>
 
-<h2>Filter Parts</h2>
+<h2>Simple Filter Parts</h2>
 
 <p>
     Each simple filter follows the same layout. The only layout difference is the type of input field
@@ -183,23 +183,23 @@ include '../documentation-main/documentation_header.php';
         <td class="supported-filters">Number, Date</td>
     </tr>
     <tr>
-        <td class="parameter-key">includeNullInEquals</td>
+        <td class="parameter-key">includeBlanksInEquals</td>
         <td>
-            If true then null values will pass the 'equals' filter option.
+            If true then blank (null or undefined) values will pass the 'equals' filter option.
         </td>
         <td class="supported-filters">Number, Date</td>
     </tr>
     <tr>
-        <td class="parameter-key">includeNullInLessThan</td>
+        <td class="parameter-key">includeBlanksInLessThan</td>
         <td>
-            If true then null values will pass the 'lessThan' and 'lessThanOrEqual' filter options.
+            If true then blank (null or undefined) values will pass the 'lessThan' and 'lessThanOrEqual' filter options.
         </td>
         <td class="supported-filters">Number, Date</td>
     </tr>
     <tr>
-        <td class="parameter-key">includeNullInGreaterThan</td>
+        <td class="parameter-key">includeBlanksInGreaterThan</td>
         <td>
-            If true then null values will pass the 'greaterThan' and 'greaterThanOrEqual' filter options.
+            If true then blank (null or undefined) values will pass the 'greaterThan' and 'greaterThanOrEqual' filter options.
         </td>
         <td class="supported-filters">Number, Date</td>
     </tr>
@@ -301,7 +301,7 @@ include '../documentation-main/documentation_header.php';
 </table>
 
 <p>
-    <i>*Empty is NOT a normal filter option. When Empty is displayed, it means the filter is not active.</i>
+    <i>* 'Empty' is a special filter option. When Empty is displayed, it means the filter is not active.</i>
 </p>
 
 <h3>Default Filter Options</h3>
@@ -340,6 +340,162 @@ include '../documentation-main/documentation_header.php';
 </table>
 
 
+
+<h2>Simple Filter Models</h2>
+
+<p>
+    When saving or restoring state on a filter the filter model is used. The filter model represents the
+    state of the filter. For example the code below first gets and then sets the filter model for the Athlete column:
+</p>
+
+<snippet>
+// get filter instance
+var filterInstance = gridOptions.api.getFilterInstance('athlete');
+
+// get filter model
+var model = filterInstance.getModel();
+
+// OR set filter model and update
+filterInstance.setModel({
+    type:'endsWith',
+    filter:'thing'
+});
+// tell the grid to refresh rows based on the filter. the filter does not
+// do this automatically in case multiple filters are going to get set.
+gridOptions.api.onFilterChanged()</snippet>
+
+<p>
+    This section explains what the filter model looks like for each of the simple
+    filters. The interface followed by each filter type is as follows:
+</p>
+
+<note>
+    The best way to understand what the filter models look like is to set a filter via the
+    UI and call api.getFilterModel(). Then observe what the filter model looks like
+    for different variations of the filter.
+</note>
+
+<snippet>
+// text filter uses this filter model
+interface TextFilterModel {
+
+    // always 'text' for text filter
+    filterType: string;
+
+    // one of the filter options eg 'equals'
+    type: string;
+
+    // the text value associated with the filter.
+    // it's optional as custom filters may not
+    // have a text value
+    filter?: string;
+}
+
+// number filter uses this filter model
+interface NumberFilterModel {
+
+    // always 'number' for number filter
+    filterType: string;
+
+    // one of the filter options eg 'equals'
+    type: string;
+
+    // the number value(s) associated with the filter.
+    // custom filters can have no values (hence both are optional).
+    // range filter has two values (from and to).
+    filter?: number;
+    filterTo?: number;
+}
+
+// date filter uses this filter model
+interface DateFilterModel {
+
+    // always 'date' for number filter
+    filterType: string;
+
+    // one of the filter options eg 'equals'
+    type: string;
+
+    // the date value(s) associated with the filter.
+    // the type is string and format is always YYYY-MM-DD eg 2019-05-24
+    // custom filters can have no values (hence both are optional).
+    // range filter has two values (from and to).
+    dateFrom: string;
+    dateTo: string;
+}
+
+</snippet>
+
+<p>
+    Examples of filter model instances are as follows:
+</p>
+
+<snippet>
+// number filter with one condition, with equals type
+var numberLessThan35 = {
+    filterType: 'number',
+    type: 'lessThan',
+    filter: 35
+};
+
+// number filter with one condition, with inRange type
+var numberBetween35And40 = {
+    filterType: 'number',
+    type: 'inRange',
+    filter: 35,
+    filterTo: 40
+};
+</snippet>
+
+<note>
+    The <code>filterType</code> is not used by the grid when you call <code>setFilterModel()</code>.
+    It is provided for information purposes only when you get the filter model. This is useful if
+    you are doing server side filtering, where the filter type may be used in building back end
+    queries.
+</note>
+
+<p>
+    If the filter has both Condition 1 and Condition 2 set, then two instances of the model
+    are created and wrapped inside a Combined Model. A combined model looks as follows:
+</p>
+
+<snippet>
+// a filter combining two conditions. the 'M' is replace with the type
+// of filter model, one of TextFilterModel, NumberFilterModel or DateFilterModel
+interface ICombinedSimpleModel&lt;M&gt; {
+
+    // always 'date' for number filter
+    filterType: string;
+
+    // one of 'AND' or 'OR'
+    operator: string;
+
+    // two instance of the filter model
+    condition1: M;
+    condition2: M;
+}
+</snippet>
+
+<p>
+    An example of a filter model with two conditions is as follows:
+</p>
+
+<snippet>
+// number filter with two conditions, both are equals type
+var numberEquals18OrEquals20 = {
+    filterType: 'number',
+    operator: 'OR'
+    condition1: {
+        filterType: "number",
+        type: "equals",
+        filter: 18
+    },
+    condition2: {
+        filterType: "number",
+        type: "equals",
+        filter: 18
+    }
+};</snippet>
 
 
 <h2 id="customFilterOptions">Custom Filter Options</h2>
@@ -459,19 +615,20 @@ export interface IFilterOptionDef {
 <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("processVue" => true)) ?>
 
 
-<h2>Filtering null values in Date and Number filters</h2>
+<h2>Date and Number Filters and Blank Cells</h2>
 <p>
-    If the row data contains <code>null</code> it won't be included in the filter results. To change
-    this use the filter params <code>includeNullInEquals</code>, <code>includeNullInLessThan</code> and
-    <code>includeNullInGreaterThan</code>. For example the code snipped below configures a filter
-    to include null for equals, but not for less than or great than:
+    If the row data contains blanks (ie <code>null</code> or <code>undefined</code>) it won't be included in
+    filter results. To change this use the filter params <code>includeBlanksInEquals</code>,
+    <code>includeBlanksInLessThan</code> and <code>includeBlanksInGreaterThan</code>.
+    For example the code snippet below configures a filter to include null for equals,
+    but not for less than or great than:
 </p>
 
 <snippet>
 filterParams = {
-    includeNullInEquals: true,
-    includeNullInLessThan: false,
-    includeNullInGreaterThan: false
+    includeBlanksInEquals: true,
+    includeBlanksInLessThan: false,
+    includeBlanksInGreaterThan: false
 }</snippet>
 
 <p>
@@ -479,11 +636,86 @@ filterParams = {
 </p>
 
 <p>
-    In the following example you can filter by age or date and see how <code>null</code> values are included in the filter based
-    on the properties <code>includeNullInEquals</code>, <code>includeNullInLessThan</code> and
-    <code>includeNullInGreaterThan</code>.
+    In the following example you can filter by age or date and see how blank values are included.
+    Not the following:
 </p>
 
+<ul>
+    <li>
+        Columns Age and Date have both <code>null</code> and <code>undefined</code> values
+        resulting in blank cells.
+    </li>
+    <li>
+        Toggle the controls on the top to see how <code>includeBlanksInEquals</code>,
+        <code>includeBlanksInLessThan</code> and <code>includeBlanksInGreaterThan</code>
+        impact the search result.
+    </li>
+</ul>
+
 <?= example('Null Filtering', 'null-filtering', 'vanilla') ?>
+
+
+
+
+    <h2>Floating Text Filter</h2>
+
+    <p>
+        If your grid has floatingFilter enabled, your columns with text filter will automatically show below the header a new
+        column that will show two elements:
+    </p>
+
+    <ul class="content">
+        <li>Filter input box: This input box serves two purposes:
+            <ol>
+                <li>
+                    Lets the user change directly the filtering text that will be used for filtering.
+                </li>
+                <li>It reflects any change made to the filtering text from anywhere within the application. This includes
+                changes on the rich filter for this column made by the user directly or changes made to the filter through
+                a call to setModel to this filter component</li>
+            </ol>
+            </li>
+        <li>Filter button: This button is a shortcut to show the rich filter editor</li>
+    </ul>
+
+    <h2>Example</h2>
+
+    <ul class="content">
+        <li>The athlete column has only two filter options: <code>filterOptions=['contains','notContains']</code></li>
+        <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
+        searching the string 'Bjo'</code></li>
+    <li>
+        The athlete column has a debounce of 0ms <code>debounceMs:0</code>. This is used by both the parent and
+        floating filter components.
+    </li>
+    <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
+    <li>The athlete column filter has the AND/OR additional filter suppressed, note that it has the following flag: <code>suppressAndOrCondition:true</code></li>
+    <li>The country column has only one filter option: <code>filterOptions=['contains']</code></li>
+    <li>The country column has a <code>textCustomComparator</code> so that there are aliases that can be entered in the filter
+    ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
+    <li>
+        The country column filter has a debounce of 2000ms <code>debounceMs:2000</code>
+    </li>
+    <li>The year column has one filter option <code>filterOptions=['inRange']. </code></li>
+    <li>The sports column has a different default option <code>defaultOption='startsWith'</code></li>
+</ul>
+
+<?= example('Text Filter', 'text-filter', 'generated', array("processVue" => true)) ?>
+
+<h2>Common Column Filtering Functionality And Examples</h2>
+
+<p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
+
+<ul class="content">
+    <li>Common filtering params</li>
+    <li>Enabling/Disabling filtering in a column</li>
+    <li>Enabling/Disabling floating filter</li>
+    <li>Adding apply and clear button to a column filter</li>
+    <li>Filtering animation</li>
+    <li>Examples</li>
+</ul>
+
+
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

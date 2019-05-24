@@ -10,9 +10,9 @@ export interface NullComparator {
 
 export interface IScalarFilterParams extends ISimpleFilterParams {
     inRangeInclusive?: boolean;
-    includeNullInEquals?: boolean;
-    includeNullInLessThan?: boolean;
-    includeNullInGreaterThan?: boolean;
+    includeBlanksInEquals?: boolean;
+    includeBlanksInLessThan?: boolean;
+    includeBlanksInGreaterThan?: boolean;
 
     /** @deprecated in v21*/
     nullComparator?: NullComparator;
@@ -46,11 +46,11 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
     private checkDeprecatedParams(): void {
         if (this.scalarFilterParams.nullComparator) {
             console.warn('ag-Grid: Since v21.0, the property filterParams.nullComparator is deprecated. ' +
-                'Please use filterParams.includeNullInEquals, filterParams.includeNullInLessThan and ' +
-                'filterParams.includeNullInGreaterThan instead.');
-            this.scalarFilterParams.includeNullInEquals = this.scalarFilterParams.nullComparator.equals;
-            this.scalarFilterParams.includeNullInLessThan= this.scalarFilterParams.nullComparator.lessThan;
-            this.scalarFilterParams.includeNullInGreaterThan = this.scalarFilterParams.nullComparator.greaterThan;
+                'Please use filterParams.includeBlanksInEquals, filterParams.includeBlanksInLessThan and ' +
+                'filterParams.includeBlanksInGreaterThan instead.');
+            this.scalarFilterParams.includeBlanksInEquals = this.scalarFilterParams.nullComparator.equals;
+            this.scalarFilterParams.includeBlanksInLessThan= this.scalarFilterParams.nullComparator.lessThan;
+            this.scalarFilterParams.includeBlanksInGreaterThan = this.scalarFilterParams.nullComparator.greaterThan;
         }
     }
 
@@ -95,14 +95,14 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
         switch (type) {
             case SimpleFilter.GREATER_THAN:
             case SimpleFilter.GREATER_THAN_OR_EQUAL:
-                return this.scalarFilterParams.includeNullInGreaterThan;
+                return this.scalarFilterParams.includeBlanksInGreaterThan;
 
             case SimpleFilter.LESS_THAN:
             case SimpleFilter.LESS_THAN_OR_EQUAL:
-                return this.scalarFilterParams.includeNullInLessThan;
+                return this.scalarFilterParams.includeBlanksInLessThan;
 
             case SimpleFilter.EQUALS:
-                return this.scalarFilterParams.includeNullInEquals;
+                return this.scalarFilterParams.includeBlanksInEquals;
         }
     }
 
