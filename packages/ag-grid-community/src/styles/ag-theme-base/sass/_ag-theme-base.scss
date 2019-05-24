@@ -912,13 +912,18 @@
         background-color: $editor-background-color-color;
 
         .ag-rich-select-list {
+            width: 200px;
             height: $row-height * 6.5; // intentional
+        }
+
+        .ag-rich-select-value {
+            padding: 0 $grid-size 0 $cell-horizontal-padding;
+            height: $rich-select-item-height;
         }
 
         .ag-virtual-list-item {
             cursor: default;
             height: $rich-select-item-height;
-            line-height: $rich-select-item-height;
 
             &:hover {
                 background-color: $hover-color;
