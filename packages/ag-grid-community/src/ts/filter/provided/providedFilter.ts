@@ -4,8 +4,8 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { _ } from "../../utils";
-import {IRowModel} from "../../interfaces/iRowModel";
-import {Constants} from "../../constants";
+import { IRowModel } from "../../interfaces/iRowModel";
+import { Constants } from "../../constants";
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
@@ -73,7 +73,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
 
-
     /** @deprecated */
     public onFilterChanged(): void {
         console.warn(`ag-Grid: you should not call onFilterChanged() directly on the filter, please call
@@ -106,9 +105,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.clearActive = params.clearButton === true;
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
-        if (params.newRowsAction===ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
+        if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
             this.newRowsActionKeep = true;
-        } else if (params.newRowsAction===ProvidedFilter.NEW_ROWS_ACTION_CLEAR) {
+        } else if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_CLEAR) {
             this.newRowsActionKeep = false;
         } else {
             // the default for SSRM and IRM is 'keep', for CSRM and VRM teh default is 'clear'

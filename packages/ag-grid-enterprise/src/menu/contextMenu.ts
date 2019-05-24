@@ -58,15 +58,6 @@ export class ContextMenuFactory implements IContextMenuFactory {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
             }
-
-            // if user clicks a cell
-            const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
-            const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
-            const onIPad = _.isUserAgentIPad();
-            const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
-            if (anyExport) {
-                defaultMenuOptions.push('export');
-            }
         } else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
             // nothing to show, perhaps tool panels???
@@ -75,6 +66,17 @@ export class ContextMenuFactory implements IContextMenuFactory {
         if (this.gridOptionsWrapper.isEnableCharts() && this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             if (!this.rangeController.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
+            }
+        }
+
+        if (_.exists(node)) {
+            // if user clicks a cell
+            const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
+            const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
+            const onIPad = _.isUserAgentIPad();
+            const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
+            if (anyExport) {
+                defaultMenuOptions.push('export');
             }
         }
 

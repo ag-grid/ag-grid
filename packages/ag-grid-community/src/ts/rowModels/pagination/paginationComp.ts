@@ -7,9 +7,9 @@ import { Events } from "../../events";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { PaginationProxy } from "../paginationProxy";
 import { _ } from "../../utils";
-import {IServerSideRowModel} from "../../interfaces/iServerSideRowModel";
-import {IRowModel} from "../../interfaces/iRowModel";
-import {Constants} from "../../constants";
+import { IServerSideRowModel } from "../../interfaces/iServerSideRowModel";
+import { IRowModel } from "../../interfaces/iRowModel";
+import { Constants } from "../../constants";
 
 export class PaginationComp extends Component {
 
@@ -42,8 +42,8 @@ export class PaginationComp extends Component {
 
         this.setTemplate(this.getTemplate());
 
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-            this.serverSideRowModel = <IServerSideRowModel> this.rowModel;
+        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+            this.serverSideRowModel = this.rowModel as IServerSideRowModel;
         }
 
         const isPaging = this.gridOptionsWrapper.isPagination();

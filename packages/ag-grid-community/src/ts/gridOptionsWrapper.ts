@@ -1,6 +1,6 @@
 import { RowNode } from "./entities/rowNode";
 import {
-    ChartRef,
+    ChartRef, GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
@@ -11,6 +11,7 @@ import {
     NodeChildDetails,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
+    ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
@@ -976,6 +977,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
+    public getChartToolbarItemsFunc(): GetChartToolbarItems | undefined {
+        return this.gridOptions.getChartToolbarItems;
+    }
+
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
         return this.gridOptions.getRowNodeId;
     }
@@ -1063,7 +1068,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.postSort;
     }
 
-    public getProcessChartOptionsFunc(): (options: ChartOptions) => ChartOptions {
+    public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions {
         return this.gridOptions.processChartOptions;
     }
 

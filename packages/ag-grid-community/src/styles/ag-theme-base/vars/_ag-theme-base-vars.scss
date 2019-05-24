@@ -34,14 +34,14 @@ $card-shadow: none !default;
 $card-radius: 0 !default;
 $row-border-width: 0 !default;
 $transition-speed: 120ms !default;
-$cell-horizontal-border: 1px solid transparent;
+$cell-horizontal-border: 1px solid transparent !default;
 
 $toolpanel-indent-size: $grid-size + $icon-size !default;
 $row-group-indent-size: $grid-size * 3 + $icon-size !default;
 
 $header-cell-moving-background-color: rgb(190, 190, 190) !default;
 $input-disabled-background-color: #ebebeb !default;
-$cell-horizontal-border: none !default;
+$input-border-color: #000000 !default;
 $scroll-spacer-border: 1px solid if($border-color, $border-color, lightgrey) !default;
 
 $dialog-background-color: $background-color !default;

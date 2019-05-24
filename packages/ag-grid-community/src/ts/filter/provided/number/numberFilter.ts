@@ -6,7 +6,7 @@ import {
     ConditionPosition,
     ISimpleFilterModel
 } from "../simpleFilter";
-import {ScalerFilter, Comparator, IScalarFilterParams} from "../scalerFilter";
+import { ScalerFilter, Comparator, IScalarFilterParams } from "../scalerFilter";
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;

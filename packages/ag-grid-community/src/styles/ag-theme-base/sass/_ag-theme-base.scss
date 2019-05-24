@@ -123,9 +123,15 @@
 
     * {
         -webkit-font-smoothing: antialiased;
-        &:focus {
+        box-sizing: border-box;
+        &:focus, *:before, *:after {
             outline: none;
+            box-sizing: border-box;
         }
+    }
+
+    .ag-tab {
+        box-sizing: content-box;
     }
 
     // indentation loop
@@ -906,13 +912,18 @@
         background-color: $editor-background-color-color;
 
         .ag-rich-select-list {
+            width: 200px;
             height: $row-height * 6.5; // intentional
+        }
+
+        .ag-rich-select-value {
+            padding: 0 $grid-size 0 $cell-horizontal-padding;
+            height: $rich-select-item-height;
         }
 
         .ag-virtual-list-item {
             cursor: default;
             height: $rich-select-item-height;
-            line-height: $rich-select-item-height;
 
             &:hover {
                 background-color: $hover-color;
@@ -1760,10 +1771,6 @@
                     margin-right: 5px;
                 }
             }
-        }
-
-        .ag-floating-filter-body {
-            margin-left: 0;
         }
 
         .ag-header .ag-header-cell-resize::after {

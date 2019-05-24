@@ -234,7 +234,7 @@ export class GroupStage implements IRowNodeStage {
     private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails): void {
         this.removeNodesInStages(leafRowNodes, details);
         if (details.changedPath.isActive()) {
-            leafRowNodes.forEach( rowNode => details.changedPath.addParentNode(rowNode.parent));
+            leafRowNodes.forEach(rowNode => details.changedPath.addParentNode(rowNode.parent));
         }
     }
 
@@ -256,7 +256,7 @@ export class GroupStage implements IRowNodeStage {
 
         const batchRemover: BatchRemover = new BatchRemover();
 
-        nodesToRemove.forEach( nodeToRemove => {
+        nodesToRemove.forEach(nodeToRemove => {
 
             this.removeFromParent(nodeToRemove, batchRemover);
 
@@ -272,7 +272,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private postRemoveCreateFillerNodes(nodesToRemove: RowNode[], details: GroupingDetails): void {
-        nodesToRemove.forEach( nodeToRemove => {
+        nodesToRemove.forEach(nodeToRemove => {
 
             // if not group, and children are present, need to move children to a group.
             // otherwise if no children, we can just remove without replacing.
@@ -627,10 +627,10 @@ class BatchRemover {
     }
 
     public flush(): void {
-        this.allParents.forEach( parent => {
+        this.allParents.forEach(parent => {
             const nodeDetails = this.allSets[parent.id];
-            parent.childrenAfterGroup = parent.childrenAfterGroup.filter( child => !nodeDetails.removeFromChildrenAfterGroup[child.id] );
-            parent.allLeafChildren = parent.allLeafChildren.filter( child => !nodeDetails.removeFromAllLeafChildren[child.id] );
+            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(child => !nodeDetails.removeFromChildrenAfterGroup[child.id]);
+            parent.allLeafChildren = parent.allLeafChildren.filter(child => !nodeDetails.removeFromAllLeafChildren[child.id]);
         });
         this.allSets = {};
         this.allParents.length = 0;

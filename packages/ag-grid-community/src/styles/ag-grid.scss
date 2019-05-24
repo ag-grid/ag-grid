@@ -71,12 +71,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
     overflow: hidden;
-
-    *, *:before, *:after {
-        box-sizing: border-box;
-    }
 
     &.ag-layout-normal {
         height: 100%;
@@ -1066,10 +1061,6 @@ $handleSize: 5px;
     user-select: none;
 }
 
-.ag-tab {
-    box-sizing: content-box;
-}
-
 .ag-menu-column-select-wrapper {
     height: 265px;
     overflow: auto;
@@ -1105,20 +1096,27 @@ $handleSize: 5px;
 .ag-rich-select {
     cursor: default;
     outline: none;
-}
-
-.ag-rich-select-row {
-    white-space: nowrap;
-}
-
-.ag-rich-select-list {
-    height: 200px;
-    width: 200px;
-}
-
-.ag-set-filter-list {
-    height: 200px;
-    width: 200px;
+    .ag-rich-select-value {
+        display: flex;
+        align-items: center;
+        > span {
+            flex: 1 1 auto;
+        }
+        .ag-icon {
+            order :1;
+        }
+    }
+    .ag-rich-select-list {
+        .ag-virtual-list-item {
+            display: flex;
+            .ag-rich-select-row {
+                display: flex;
+                flex: 1 1 auto;
+                align-items: center;
+                white-space: nowrap;
+            }
+        }
+    }
 }
 
 /**

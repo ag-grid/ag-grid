@@ -417,6 +417,7 @@ export interface GridOptions {
     getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
+    getChartToolbarItems?: GetChartToolbarItems;
     getRowNodeId?: GetRowNodeIdFunc;
 
     getChildCount?(dataItem: any): number;
@@ -437,7 +438,7 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
-    processChartOptions?(options: ChartOptions): ChartOptions;
+    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -614,6 +615,11 @@ export interface NodeChildDetails {
     key?: any;
 }
 
+export interface ProcessChartOptionsParams {
+    type: string;
+    options: ChartOptions;
+}
+
 export interface GetContextMenuItemsParams {
     defaultItems: string[] | undefined;
     column: Column;
@@ -626,6 +632,18 @@ export interface GetContextMenuItemsParams {
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
+}
+
+
+export interface GetChartToolbarItemsParams {
+    defaultItems: string[] | undefined;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+    context: any;
+}
+
+export interface GetChartToolbarItems {
+    (params: GetChartToolbarItemsParams): string[];
 }
 
 export interface MenuItemDef {

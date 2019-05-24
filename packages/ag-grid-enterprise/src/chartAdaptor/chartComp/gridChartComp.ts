@@ -11,16 +11,16 @@ import {
     RefSelector,
     ResizeObserverService,
 } from "ag-grid-community";
-import {ChartMenu} from "./menu/chartMenu";
-import {ChartController} from "./chartController";
-import {ChartModel, ChartModelParams} from "./chartModel";
-import {Color} from "../../charts/util/color";
-import {BarChartProxy} from "./chartProxies/barChartProxy";
-import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
-import {LineChartProxy} from "./chartProxies/lineChartProxy";
-import {PieChartProxy} from "./chartProxies/pieChartProxy";
-import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
-import {Palette, palettes} from "../../charts/chart/palettes";
+import { ChartMenu } from "./menu/chartMenu";
+import { ChartController } from "./chartController";
+import { ChartModel, ChartModelParams } from "./chartModel";
+import { Color } from "../../charts/util/color";
+import { BarChartProxy } from "./chartProxies/barChartProxy";
+import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
+import { LineChartProxy } from "./chartProxies/lineChartProxy";
+import { PieChartProxy } from "./chartProxies/pieChartProxy";
+import { DoughnutChartProxy } from "./chartProxies/doughnutChartProxy";
+import { Palette, palettes } from "../../charts/chart/palettes";
 
 export interface GridChartParams {
     cellRange: CellRange;

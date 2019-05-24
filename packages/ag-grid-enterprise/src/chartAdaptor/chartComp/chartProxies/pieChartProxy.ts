@@ -10,7 +10,7 @@ export class PieChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(this.defaultOptions()) as PieChartOptions;
+        this.chartOptions = this.getChartOptions('pie', this.defaultOptions()) as PieChartOptions;
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
 
@@ -57,7 +57,6 @@ export class PieChartProxy extends ChartProxy {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
-            type: 'pie',
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,

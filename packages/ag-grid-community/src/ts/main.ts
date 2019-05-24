@@ -283,7 +283,8 @@ export {
     TabToNextCellParams,
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
-    ChartRef
+    ChartRef,
+    ProcessChartOptionsParams
 } from "./entities/gridOptions";
 
 export {

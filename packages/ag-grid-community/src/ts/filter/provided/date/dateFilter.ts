@@ -1,12 +1,12 @@
-import {IDateParams} from "../../../rendering/dateComponent";
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {Autowired} from "../../../context/context";
-import {UserComponentFactory} from "../../../components/framework/userComponentFactory";
-import {_} from "../../../utils";
-import {DateCompWrapper} from "./dateCompWrapper";
-import {ConditionPosition, ISimpleFilterModel, SimpleFilter} from "../simpleFilter";
-import {IDateComparatorFunc} from "./dateFilter";
-import {Comparator, IScalarFilterParams, ScalerFilter} from "../scalerFilter";
+import { IDateParams } from "../../../rendering/dateComponent";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { Autowired } from "../../../context/context";
+import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { _ } from "../../../utils";
+import { DateCompWrapper } from "./dateCompWrapper";
+import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from "../simpleFilter";
+import { IDateComparatorFunc } from "./dateFilter";
+import { Comparator, IScalarFilterParams, ScalerFilter } from "../scalerFilter";
 
 // the date filter model is a bit different, it takes strings, although the
 // filter actually works with dates. this is because a Date object won't convert

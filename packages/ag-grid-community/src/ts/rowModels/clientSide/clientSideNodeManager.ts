@@ -75,11 +75,11 @@ export class ClientSideNodeManager {
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
 
         if (this.getNodeChildDetails) {
-            console.warn(`ag-Grid: the callback nodeChildDetailsFunc() is now deprecated. The new way of doing 
+            console.warn(`ag-Grid: the callback nodeChildDetailsFunc() is now deprecated. The new way of doing
                                     tree data in ag-Grid was introduced in v14 (released November 2017). In the next
                                     major release of ag-Grid we will be dropping support for the old version of
                                     tree data. If you are reading this message, please go to the docs to see how
-                                    to implement Tree Data without using nodeChildDetailsFunc().`)
+                                    to implement Tree Data without using nodeChildDetailsFunc().`);
         }
     }
 
@@ -196,7 +196,7 @@ export class ClientSideNodeManager {
             rowNodeTransaction.remove.push(rowNode);
         });
 
-        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter( rowNode => !rowIdsRemoved[rowNode.id]);
+        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id]);
 
         if (anyNodesSelected) {
             this.selectionController.updateGroupsFromChildrenSelections();
