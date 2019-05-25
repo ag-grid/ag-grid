@@ -69,6 +69,71 @@ gridOptions = {
 
 <?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+<h2>Floating Text Filter</h2>
+
+<p>
+    If your grid has floatingFilter enabled, your columns with text filter will automatically show below the header a new
+    column that will show two elements:
+</p>
+
+<ul class="content">
+    <li>Filter input box: This input box serves two purposes:
+        <ol>
+            <li>
+                Lets the user change directly the filtering text that will be used for filtering.
+            </li>
+            <li>It reflects any change made to the filtering text from anywhere within the application. This includes
+                changes on the rich filter for this column made by the user directly or changes made to the filter through
+                a call to setModel to this filter component</li>
+        </ol>
+    </li>
+    <li>Filter button: This button is a shortcut to show the rich filter editor</li>
+</ul>
+
+<h2>Floating Number Filter</h2>
+<p>
+    If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
+    column that will show two elements:
+</p>
+
+<ul class="content">
+    <li>Filter input box: This input box serves two purposes:
+        <ol>
+            <li>
+                Lets the user change directly the filtering number that will be used for filtering, if the filter type
+                is inRange, the filterTo property will only be accessible from the filter rich menu or by setting the
+                model htrough the code.
+            </li>
+            <li>It reflects any change made to the filtering text from anywhere within the application. This includes
+                changes on the rich filter for this column made by the user directly or changes made to the filter through
+                a call to setModel to this filter component</li>
+        </ol>
+    </li>
+    <li>Filter button: This button is a shortcut to show the rich filter editor</li>
+</ul>
+
+<h2>Floating Date Filter</h2>
+<p>
+    If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
+    column that will show two elements:
+</p>
+
+<ul class="content">
+    <li>Filter input box: Dates represented here need to be entered in the following format: yyyy-mm-dd.
+        This input box serves two purposes:
+        <ol>
+            <li>
+                Lets the user change directly the filtering date that will be used for filtering, if the filter type
+                is inRange, the dateTo property will only be accessible from the filter rich menu or by setting the
+                model through the code.
+            </li>
+            <li>It reflects any change made to the filtering date from anywhere within the application. This includes
+                changes on the rich filter for this column made by the user directly or changes made to the filter through
+                a call to setModel to this filter component</li>
+        </ol>
+    </li>
+    <li>Filter button: This button is a shortcut to show the rich filter editor</li>
+</ul>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

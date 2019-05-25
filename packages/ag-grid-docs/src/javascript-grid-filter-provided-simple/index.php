@@ -49,9 +49,6 @@ include '../documentation-main/documentation_header.php';
 </p>
 <ul class="content">
     <li>Three filter types: 1) text filter, 2) number filter and 3) date filter.</li>
-    <li>Using the <code>ag-header-cell-filtered</code> class, which is applied to the header
-        cell when the header is filtered. By default, no style is applied to this class, the example shows
-        applying a different color background to this style.</li>
     <li><code>filter=false</code> is set on Total to hide the filter on this column</li>
 </ul>
 
@@ -627,52 +624,20 @@ filterParams = {
 <?= example('Null Filtering', 'null-filtering', 'vanilla') ?>
 
 
+<h2>Style Header on Filter</h2>
 
+<p>
+    Each time a filter is applied to a column the CSS class <code>ag-header-cell-filtered</code> is added to
+    the header. This can be used for adding style to headers that are filtered.
+</p>
 
-    <h2>Floating Text Filter</h2>
+<p>
+    In the example below a background color is added to <code>ag-header-cell-filtered</code>. This means
+    any column you filter on will it's header change background color.
+</p>
 
-    <p>
-        If your grid has floatingFilter enabled, your columns with text filter will automatically show below the header a new
-        column that will show two elements:
-    </p>
+<?= example('Style Header', 'style-header-on-filter', 'generated', array("processVue" => true)) ?>
 
-    <ul class="content">
-        <li>Filter input box: This input box serves two purposes:
-            <ol>
-                <li>
-                    Lets the user change directly the filtering text that will be used for filtering.
-                </li>
-                <li>It reflects any change made to the filtering text from anywhere within the application. This includes
-                changes on the rich filter for this column made by the user directly or changes made to the filter through
-                a call to setModel to this filter component</li>
-            </ol>
-            </li>
-        <li>Filter button: This button is a shortcut to show the rich filter editor</li>
-    </ul>
-
-    <h2>Example</h2>
-
-    <ul class="content">
-        <li>The athlete column has only two filter options: <code>filterOptions=['contains','notContains']</code></li>
-        <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
-        searching the string 'Bjo'</code></li>
-    <li>
-        The athlete column has a debounce of 0ms <code>debounceMs:0</code>. This is used by both the parent and
-        floating filter components.
-    </li>
-    <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
-    <li>The athlete column filter has the AND/OR additional filter suppressed, note that it has the following flag: <code>suppressAndOrCondition:true</code></li>
-    <li>The country column has only one filter option: <code>filterOptions=['contains']</code></li>
-    <li>The country column has a <code>textCustomComparator</code> so that there are aliases that can be entered in the filter
-    ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
-    <li>
-        The country column filter has a debounce of 2000ms <code>debounceMs:2000</code>
-    </li>
-    <li>The year column has one filter option <code>filterOptions=['inRange']. </code></li>
-    <li>The sports column has a different default option <code>defaultOption='startsWith'</code></li>
-</ul>
-
-<?= example('Text Filter', 'text-filter', 'generated', array("processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

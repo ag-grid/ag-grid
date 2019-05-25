@@ -23,11 +23,11 @@ include '../documentation-main/documentation_header.php';
     <p style="display: flex; text-align: center; margin-top: 20px; margin-bottom: 40px;">
         <span style="flex: 1">
             <b>Access via Column Menu</b><br/>
-            <img src="./ColumnMenu.png" style="width: 300px;"/>
+            <img src="./openColumn.gif" style="border: 1px solid darkgray;"/>
         </span>
         <span style="flex: 1">
             <b>Access via Tool Panel</b><br/>
-            <img src="./ToolPanel.png" style="width: 220px;"/>
+            <img src="./openToolPanel.gif" style="border: 1px solid darkgray;"/>
         </span>
     </p>
 
@@ -68,7 +68,7 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <p>
-        The section <a href="../javascript-grid-filter-provided">Provided Filters</a> for details on using them.
+        The section <a href="../javascript-grid-filter-provided/">Provided Filters</a> for details on using them.
     </p>
 
     <h2>Configuring Filters to Columns</h2>

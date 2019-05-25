@@ -9,7 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Text Filter</h1>
 
+
 <p class="lead">
+
+    Text filters allow you to filter text data.
     The pages <a href="../javascript-grid-filter-provided/">Provided Filters</a> and
     <a href="../javascript-grid-filter-provided-simple/">Provided Simple Filters</a> explains the parts of the
     text filter that are similar to the other provided filters. This page builds on that and explains some
@@ -124,5 +127,30 @@ function(s){
     r = r.replace(new RegExp("\\W", 'g'),"");
     return r;
 };</snippet>
+
+<h2>Example Text Filter</h2>
+
+<ul class="content">
+    <li>The athlete column has only two filter options: <code>filterOptions=['contains','notContains']</code></li>
+    <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
+        searching the string 'Bjo'</code></li>
+    <li>
+        The athlete column has a debounce of 0ms <code>debounceMs:0</code>. This is used by both the parent and
+        floating filter components.
+    </li>
+    <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
+    <li>The athlete column filter has the AND/OR additional filter suppressed, note that it has the following flag: <code>suppressAndOrCondition:true</code></li>
+    <li>The country column has only one filter option: <code>filterOptions=['contains']</code></li>
+    <li>The country column has a <code>textCustomComparator</code> so that there are aliases that can be entered in the filter
+        ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
+    <li>
+        The country column filter has a debounce of 2000ms <code>debounceMs:2000</code>
+    </li>
+    <li>The year column has one filter option <code>filterOptions=['inRange']. </code></li>
+    <li>The sports column has a different default option <code>defaultOption='startsWith'</code></li>
+</ul>
+
+<?= example('Text Filter', 'text-filter', 'generated', array("processVue" => true)) ?>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

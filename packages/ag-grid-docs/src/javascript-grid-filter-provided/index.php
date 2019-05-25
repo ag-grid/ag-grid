@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
         <th>Filter</th>
         <th>Key</th>
         <th>Availability</th>
-        <th>Image</th>
+        <th>Example Image</th>
     </tr>
     <tr>
         <td class="parameter-key">Text Filter</td>

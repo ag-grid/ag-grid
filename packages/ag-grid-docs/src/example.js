@@ -705,10 +705,6 @@ var desktopDefaultCols = [
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
-        filterParams: {
-            applyButton: true,
-            clearButton: true
-        },
         type: 'numericColumn',
         editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
