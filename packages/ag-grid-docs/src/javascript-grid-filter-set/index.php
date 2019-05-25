@@ -6,79 +6,119 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
     <h1 class="heading-enterprise">Set Filter</h1>
 
     <p class="lead">
-        A set filter, influenced by how filters work in Microsoft Excel. Set filters can be provided with
-        additional options through the filterParams attribute.
+        Set filters allow you to filter on set data, influenced by how filters work in Microsoft Excel.
+        The page <a href="../javascript-grid-filter-provided/">Provided Filters</a> explains the common
+        parts of all provided filters. This page builds on that and explains some  details that are specific
+        to the set filter.
     </p>
 
     <h2>Set Filter Parameters</h2>
 
-    <p>
-        An additional attribute on the column definition, filterParams, can be used to provide extra information to
-        the set filter. Set the filterParams on the columnDefinition as follows:
-    </p>
 
-    <snippet>
-columnDefinition = {
-    headerName: "Athlete",
-    field: "athlete",
-    filter: 'agSetColumnFilter',
-    filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20, values: ['A','B','C'], newRowsAction: 'keep'}
-}</snippet>
+<p>
+    The set filter params are as follows:
+</p>
 
-    <p>
-        The set filter params are specific to each filter and have the following meanings:
-    </p>
+<style>
+    .parameter-key {
+        font-weight: bold;
+    }
+</style>
 
-    <ul class="content">
-        <li><code>cellRenderer:</code> Similar to the cell renderer for the grid (you can use the same one in both locations).
+<table class="properties">
+    <tr>
+        <th>Parameter</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td class="parameter-key">applyButton<br/>clearButton<br/>debounceMs<br/>newRowsAction</td>
+        <td>See <a href="../javascript-grid-filter-provided/#providedFilterParams">Provided Filter Params</a>.</td>
+    </tr>
+    <tr>
+        <td class="parameter-key">cellHeight</td>
+        <td>
+            The height of the cell.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">cellRenderer</td>
+        <td>
+            Similar to the cell renderer for the grid (you can use the same one in both locations).
             Setting it separately here allows for the value to be rendered differently in the filter. Note that
             the cell renderer for the set filter only receives the value as a parameter, as opposed to the cell renderer
             in the colDef that receives more information.
-        </li>
-        <li><code>cellHeight:</code> The height of the cell.</li>
-        <li><code>values:</code> The values to display in the filter. If this is not set, then the filter will
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">values</td>
+        <td>
+            The values to display in the filter. If this is not set, then the filter will
             takes its values from what is loaded in the table. Setting it allows you to set values where a) the
             value may not be present in the list (for example, if you want to show all states in America so
             that the user is not confused by missing states, even though states are missing from the data set
             in the grid) and b) the list is not available (happens when doing server side filtering in pagination
-            and infinite scrolling).</li>
-        <li><code>newRowsAction:</code> What to do when new rows are loaded. The default is to reset the filter,
-            as the set of values to select from can have changed. If you want to keep the selection, then
-            set this value to 'keep'. This can be useful if you are using values (above) or otherwise know that the
-            list to select from will not change. If the list does change, then it can be confusing what
-            to do with new values into the set (should they be selected or not??).</li>
-        <li><code>apply:</code> Set to true to include an 'Apply' button with the filter and not filter
-            automatically as the selection changes.</li>
-        <li><code>suppressRemoveEntries:</code> Set to true to stop the filter from removing values that are no
-            longer available (like what Excel does).</li>
-        <li><code>comparator(a,b):</code> Comparator for sorting. If not provided, the colDef comparator is used. If colDef
-            also not provided, the default (agGrid provided) comparator is used.</li>
-        <li><code>suppressSorting:</code> If true, sorting will not be done on the set filter values. Use this if providing
-            your own values and don't want them sorted as you are providing in the order you want.</li>
-        <li><code>suppressMiniFilter:</code> Set to false(default)/true to show/hide the input text box to filter the set
-            entries displayed in the filter .</li>
-        <li><code>selectAllOnMiniFilter:</code> Set to false(default)/true so that the checkbox "select all" applies to:
-            all the filters items/just the ones filtered by the mini filter . </li>
-        <li><code>textFormatter:</code> If specified, formats the text before applying the mini filter compare logic, useful for
+            and infinite scrolling).
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">suppressRemoveEntries</td>
+        <td>
+            Set to true to stop the filter from removing values that are no
+            longer available (like what Excel does).
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">comparator(a,b)</td>
+        <td>
+            <p>
+                Comparator for sorting. If not provided, the colDef comparator is used. If colDef
+                also not provided, the default (agGrid provided) comparator is used.
+            </p>
+            <p>
+                The comparator for a set filter is only provided the values as the first two parameters, whereas the comparator for the colDef
+                is also provided the row data as additional parameters. This is because when sorting rows, row data exists. For example,
+                take 100 rows split across the color values [white, black]. The colDef comparator will be sorting 100 rows, however the
+                filter will be only sorting two values.
+            </p>
+            <p>
+                If you are providing a comparator that depends on the row data, and you are using set filter, be sure to provide
+                the set filter with an alternative comparator that doesn't depend on the row data.
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">suppressSorting</td>
+        <td>
+            If true, sorting will not be done on the set filter values. Use this if providing
+            your own values and don't want them sorted as you are providing in the order you want.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">suppressMiniFilter</td>
+        <td>
+            Set to false(default)/true to show/hide the input text box to filter the set
+            entries displayed in the filter.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">selectAllOnMiniFilter</td>
+        <td>
+            Set to false(default)/true so that the checkbox "select all" applies to:
+            all the filters items/just the ones filtered by the mini filter.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">textFormatter</td>
+        <td>
+            If specified, formats the text before applying the mini filter compare logic, useful for
             instance if substituting accentuated characters or if you want to do case sensitive mini filtering. This
-            matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a></li>
-        <li><code>debounceMs:</code> If specified, the filter will wait this amount of ms after the user stops selecting options in the
-            mini filter before is triggered. If not specified there won't be any debounce.</li>
-    </ul>
-
-    <note>
-        The comparator for a set filter is only provided the values as the first two parameters, whereas the comparator for the colDef
-        is also provided the row data as additional parameters. This is because when sorting rows, row data exists. For example,
-        take 100 rows split across the colors {white,black}. The colDef comparator will be sorting 100 rows, however the
-        filter will be only sorting two values.
-        <br/>
-        If you are providing a comparator that depends on the row data, and you are using set filter, be sure to provide
-        the set filter with an alternative comparator that doesn't depend on the row data.
-    </note>
+            matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a>.
+        </td>
+    </tr>
+</table>
 
     <h2>Complex Objects - keyCreator</h2>
 
@@ -384,35 +424,5 @@ gridApi.onFilterChanged()</snippet>
     </p>
 
     <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
-
-    <h2>Floating Set Filter</h2>
-    <p>
-        If your grid has floatingFilter enabled, your columns with set filter will automatically show below the header a new
-        column that<!----> will show two elements:
-    </p>
-
-    <ul class="content">
-        <li>Filter input box: It reflects any change made to the set filtering from anywhere within the application. This includes
-                    changes on the rich filter for this column made by the user directly or changes made to the filter through
-                    a call to setModel or the API to this filter component</li>
-            </ol>
-        </li>
-        <li>Filter button: This button is a shortcut to show the rich filter editor</li>
-    </ul>
-
-    <h2>Common Column Filtering Functionality And Examples</h2>
-
-    <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
-
-    <ul class="content">
-        <li>Common filtering params</li>
-        <li>Enabling/Disabling filtering in a column</li>
-        <li>Enabling/Disabling floating filter</li>
-        <li>Adding apply and clear button to a column filter</li>
-        <li>Filtering animation</li>
-        <li>Examples</li>
-    </ul>
-
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

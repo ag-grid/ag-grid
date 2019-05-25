@@ -17,8 +17,8 @@ include '../documentation-main/documentation_header.php';
         <ol class="content">
             <li>Create <a href="../javascript-grid-filter-component/">your own custom filter</a></li>
             <li>Create <a href="../javascript-grid-floating-filter-component/">your own custom floating filter</a></li>
-            <li>Create <a href="../javascript-grid-date-component/">your own custom date component</a> and customise your own date picker. (Applies to the default date filter
-                and the date floating filter)
+            <li>Create <a href="../javascript-grid-date-component/">your own custom date component</a> and
+                customise your own date picker (applies to the provided date filter and the date floating filter)
             </li>
         </ol>
 

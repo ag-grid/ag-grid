@@ -264,6 +264,10 @@
             "enterprise": true
           },
           {
+            "title": "Filter API",
+            "url": "javascript-grid-filter-api/"
+          },
+          {
             "title": "Floating Filters",
             "url": "javascript-grid-floating-filters/"
           },

@@ -69,71 +69,83 @@ gridOptions = {
 
 <?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-<h2>Floating Text Filter</h2>
+<h2>Provided Floating Filters</h2>
 
 <p>
-    If your grid has floatingFilter enabled, your columns with text filter will automatically show below the header a new
-    column that will show two elements:
+    Each of the provided filters comes with a floating filter as follows:
 </p>
 
-<ul class="content">
-    <li>Filter input box: This input box serves two purposes:
-        <ol>
-            <li>
-                Lets the user change directly the filtering text that will be used for filtering.
-            </li>
-            <li>It reflects any change made to the filtering text from anywhere within the application. This includes
-                changes on the rich filter for this column made by the user directly or changes made to the filter through
-                a call to setModel to this filter component</li>
-        </ol>
-    </li>
-    <li>Filter button: This button is a shortcut to show the rich filter editor</li>
-</ul>
+<style>
+    .parameter-key {
+        font-weight: bold;
+    }
+</style>
 
-<h2>Floating Number Filter</h2>
+<table class="properties">
+    <tr>
+        <th>Filter</th>
+        <th>Editable</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td class="parameter-key">Text</td>
+        <td>Sometimes</td>
+        <td>
+            Provides a text input field to display the filter value, or a read only label if read only.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">Number</td>
+        <td>Sometimes</td>
+        <td>
+            Provides a text input field to display the filter value, or a read only label if read only.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">Date</td>
+        <td>Sometimes</td>
+        <td>
+            Provides a Date input field to display the filter value, or a read only label if read only.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">Set</td>
+        <td>No</td>
+        <td>Provides a read only label by concatenating all selected values.</td>
+    </tr>
+</table>
+
 <p>
-    If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
-    column that will show two elements:
+    The Text, Number and Date (the simple filters) have their floating filters editable sometimes.
+    The floating filter is editable if the filter have one condition and one value. If the floating
+    filter has two conditions or has zero (custom option) or two ('In Range') values then the
+    floating filter is read only.
 </p>
 
-<ul class="content">
-    <li>Filter input box: This input box serves two purposes:
-        <ol>
-            <li>
-                Lets the user change directly the filtering number that will be used for filtering, if the filter type
-                is inRange, the filterTo property will only be accessible from the filter rich menu or by setting the
-                model htrough the code.
-            </li>
-            <li>It reflects any change made to the filtering text from anywhere within the application. This includes
-                changes on the rich filter for this column made by the user directly or changes made to the filter through
-                a call to setModel to this filter component</li>
-        </ol>
-    </li>
-    <li>Filter button: This button is a shortcut to show the rich filter editor</li>
-</ul>
-
-<h2>Floating Date Filter</h2>
 <p>
-    If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
-    column that will show two elements:
+    The screen shots below show example scenarios where the provided number floating filter
+    is editable and read only.
 </p>
 
-<ul class="content">
-    <li>Filter input box: Dates represented here need to be entered in the following format: yyyy-mm-dd.
-        This input box serves two purposes:
-        <ol>
-            <li>
-                Lets the user change directly the filtering date that will be used for filtering, if the filter type
-                is inRange, the dateTo property will only be accessible from the filter rich menu or by setting the
-                model through the code.
-            </li>
-            <li>It reflects any change made to the filtering date from anywhere within the application. This includes
-                changes on the rich filter for this column made by the user directly or changes made to the filter through
-                a call to setModel to this filter component</li>
-        </ol>
-    </li>
-    <li>Filter button: This button is a shortcut to show the rich filter editor</li>
-</ul>
+<style>
+    .example-floating-filter-p {
+        padding-left: 20px;
+        padding-top: 20px;
+    }
+</style>
+
+<p class="example-floating-filter-p">
+    <b>One Value and One Condition - Editable</b><br/>
+    <img src="./oneValueOneCondition.png"/>
+</p>
+<p class="example-floating-filter-p">
+    <b>One Value and Two Conditions - Read Only</b><br/>
+    <img src="./oneValueTwoConditions.png"/>
+</p>
+<p class="example-floating-filter-p">
+    <b>Two Values and One Condition - Read Only</b><br/>
+    <img src="./twoValuesOneCondition.png"/>
+</p>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>
