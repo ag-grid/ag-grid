@@ -191,7 +191,7 @@ columnDefinition = {
             <td>A Date Filter for date comparisons.</td>
         </tr>
         <tr>
-            <th>agSetColumnFilter*</th>
+            <th>agSetColumnFilter</th>
             <td>A Set Filter, influenced by how filters work in
                 Microsoft Excel. This is an ag-Grid-Enterprise
                 feature.</td>
