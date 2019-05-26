@@ -31,17 +31,12 @@ gridOptions = {
 </p>
 
 <p>
-    All the default filters provided by ag-Grid provide their own implementation of a floating filter.
-    All you need to do to enable these floating filters is set the <code>floatingFilter=true</code> grid property.
+    Every floating filter takes a parameter to show/hide automatically a button that will open the main filter.
 </p>
 
 <p>
-    Every floating filter also takes a parameter to show/hide automatically a button that will open the main filter.
-</p>
-
-<p>
-    To see the specifics on what are all the parameters and the interface for a floating filter check out
-    <a href="../javascript-grid-floating-filter-component/">the docs for floating filter components</a>.
+    To see how floating filters work see
+    <a href="../javascript-grid-floating-filter-component/">Floating Filter Components</a>.
 </p>
 
 <p>
@@ -72,7 +67,9 @@ gridOptions = {
 <h2>Provided Floating Filters</h2>
 
 <p>
-    Each of the provided filters comes with a floating filter as follows:
+    All the default filters provided by the grid provide their own implementation of a floating filter.
+    All you need to do to enable these floating filters is set the <code>floatingFilter=true</code> grid property.
+    The features of the provided floating filters are as follows:
 </p>
 
 <style>
@@ -117,8 +114,8 @@ gridOptions = {
 
 <p>
     The Text, Number and Date (the simple filters) have their floating filters editable sometimes.
-    The floating filter is editable if the filter have one condition and one value. If the floating
-    filter has two conditions or has zero (custom option) or two ('In Range') values then the
+    The floating filter is editable if the filter has one condition and one value. If the floating
+    filter has a) two conditions or b) zero (custom option) or two ('In Range') values, then the
     floating filter is read only.
 </p>
 
@@ -128,24 +125,25 @@ gridOptions = {
 </p>
 
 <style>
-    .example-floating-filter-p {
-        padding-left: 20px;
-        padding-top: 20px;
+    .floating-filter-image {
+        padding-bottom: 20px;
     }
 </style>
 
-<p class="example-floating-filter-p">
-    <b>One Value and One Condition - Editable</b><br/>
-    <img src="./oneValueOneCondition.png"/>
-</p>
-<p class="example-floating-filter-p">
-    <b>One Value and Two Conditions - Read Only</b><br/>
-    <img src="./oneValueTwoConditions.png"/>
-</p>
-<p class="example-floating-filter-p">
-    <b>Two Values and One Condition - Read Only</b><br/>
-    <img src="./twoValuesOneCondition.png"/>
-</p>
+<ul>
+    <li>
+        <b>One Value and One Condition - Editable</b><br/>
+        <img class="floating-filter-image" src="./oneValueOneCondition.png"/>
+    </li>
+    <li>
+        <b>One Value and Two Conditions - Read Only</b><br/>
+        <img class="floating-filter-image" src="./oneValueTwoConditions.png"/>
+    </li>
+    <li>
+        <b>Two Values and One Condition - Read Only</b><br/>
+        <img class="floating-filter-image" src="./twoValuesOneCondition.png"/>
+    </li>
+</ul>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

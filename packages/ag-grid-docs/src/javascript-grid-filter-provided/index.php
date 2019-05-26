@@ -15,14 +15,30 @@ include '../documentation-main/documentation_header.php';
     The advanced Set filter is only available in ag-Grid Enterprise.
 </p>
 
-<table class="properties">
+<p>
+    The diagram below outlines the structure of the filters. Each box represents a filter type
+    with the functions listed in it. For example all provided filters have Apply and Clear button
+    logic. Only the Date filter has a Date Comparator or a Date Picker.
+</p>
+
+<p style="text-align: center; padding-top: 20px; font-size: 20px;">
+    <b>Provided Filter Functions</b>
+</p>
+
+<p>
+    <img src="./providedFilters.png" style="width: 100%; margin-top: 10px; margin-bottom: 60px;"/>
+</p>
+
+<!--<table class="properties">
     <tr>
+        <th></th>
         <th>Filter</th>
         <th>Key</th>
         <th>Availability</th>
         <th>Example Image</th>
     </tr>
     <tr>
+        <td rowspan="3" style="background-color: #e9ecff; text-align: center; ">Simple Filters</td>
         <td class="parameter-key">Text Filter</td>
         <td>agTextColumnFilter</td>
         <td>Community</td>
@@ -41,12 +57,13 @@ include '../documentation-main/documentation_header.php';
         <td><img src="./dateFilter.png"/></td>
     </tr>
     <tr>
+        <td></td>
         <td class="parameter-key">Set Filter</td>
         <td>agSetColumnFilter</td>
         <td>Enterprise <span class="enterprise-icon">e</span></td>
         <td><img src="./setFilter.png"/></td>
     </tr>
-</table>
+</table>-->
 
 <style>
     .filterImageSpan {

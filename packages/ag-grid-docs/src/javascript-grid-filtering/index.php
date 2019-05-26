@@ -36,41 +36,6 @@ include '../documentation-main/documentation_header.php';
         to customise the filter experience to your application.
     </p>
 
-    <h2>Provided Filters</h2>
-
-    <p>
-        There are four provided filters that come with the grid. The provided filters are as follows:
-    </p>
-
-    <table class="table reference">
-        <tr>
-            <th>Filter</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <th>agNumberColumnFilter</th>
-            <td>A Number Filter for number comparisons.</td>
-        </tr>
-        <tr>
-            <th>agTextColumnFilter</th>
-            <td>A Text Filter for string comparisons.</td>
-        </tr>
-        <tr>
-            <th>agDateColumnFilter</th>
-            <td>A Date Filter for date comparisons.</td>
-        </tr>
-        <tr>
-            <th>agSetColumnFilter*</th>
-            <td>A Set Filter, influenced by how filters work in
-                Microsoft Excel. This is an ag-Grid-Enterprise
-                feature.</td>
-        </tr>
-    </table>
-
-    <p>
-        The section <a href="../javascript-grid-filter-provided/">Provided Filters</a> for details on using them.
-    </p>
-
     <h2>Configuring Filters to Columns</h2>
 
     <p>
@@ -199,6 +164,42 @@ columnDefinition = {
         Column filters are tied to a column. Quick filter and external filter
         are not tied to a column. This section of the documentation talks about column filters only.
         For quick filter and external filter, see the relevant sections of the documentation.
+    </p>
+
+
+    <h2>Provided Filters</h2>
+
+    <p>
+        There are four provided filters that come with the grid. The provided filters are as follows:
+    </p>
+
+    <table class="table reference">
+        <tr>
+            <th>Filter</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>agNumberColumnFilter</th>
+            <td>A Number Filter for number comparisons.</td>
+        </tr>
+        <tr>
+            <th>agTextColumnFilter</th>
+            <td>A Text Filter for string comparisons.</td>
+        </tr>
+        <tr>
+            <th>agDateColumnFilter</th>
+            <td>A Date Filter for date comparisons.</td>
+        </tr>
+        <tr>
+            <th>agSetColumnFilter*</th>
+            <td>A Set Filter, influenced by how filters work in
+                Microsoft Excel. This is an ag-Grid-Enterprise
+                feature.</td>
+        </tr>
+    </table>
+
+    <p>
+        The section <a href="../javascript-grid-filter-provided/">Provided Filters</a> for details on using them.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
