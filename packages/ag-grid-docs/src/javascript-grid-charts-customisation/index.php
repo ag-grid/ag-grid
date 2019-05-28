@@ -12,6 +12,24 @@ include '../documentation-main/documentation_header.php';
         This section covers how to customisation each of the chart types to suit your application.
     </p>
 
+    <h2>Configuring Chart Toolbar Items</h2>
+
+    <p>
+        By default all available toolbar items will be shown, however it is possible to configure which options
+        are visible as well as the order they appear.
+    </p>
+
+    <snippet>
+gridOptions.getChartToolbarItems = (params: GetChartToolbarItemsParams) => string[];
+
+interface GetChartToolbarItemsParams {
+    defaultItems: string[];
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+</snippet>
+
+
     <h2>Overriding Chart Options</h2>
 
     <p>

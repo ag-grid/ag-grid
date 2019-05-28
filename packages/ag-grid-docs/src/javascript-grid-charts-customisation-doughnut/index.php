@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-export interface DoughnutChartOptions {
+interface DoughnutChartOptions {
     parent?: HTMLElement;
     width?: number;
     height?: number;
@@ -79,7 +79,7 @@ export interface DoughnutChartOptions {
     };
 }
 
-export interface DoughnutTooltipRendererParams {
+interface DoughnutTooltipRendererParams {
     datum: any;
     angleField: string;
     radiusField?: string;
