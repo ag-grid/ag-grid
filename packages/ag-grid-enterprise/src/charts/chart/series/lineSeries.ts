@@ -16,9 +16,9 @@ import { LegendDatum } from "../legend";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number,
     y: number,
-    fillStyle: string | null,
-    strokeStyle: string | null,
-    lineWidth: number,
+    fill?: string,
+    stroke?: string,
+    strokeWidth: number,
     radius: number
 }
 
@@ -43,7 +43,7 @@ export class LineSeries extends Series<CartesianChart> {
         super();
 
         const lineNode = this.lineNode;
-        lineNode.fillStyle = null;
+        lineNode.fill = undefined;
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
@@ -105,15 +105,15 @@ export class LineSeries extends Series<CartesianChart> {
         return this._markerRadius;
     }
 
-    private _markerLineWidth: number = 2;
-    set markerLineWidth(value: number) {
-        if (this._markerLineWidth !== value) {
-            this._markerLineWidth = value;
+    private _markerStrokeWidth: number = 2;
+    set markerStrokeWidth(value: number) {
+        if (this._markerStrokeWidth !== value) {
+            this._markerStrokeWidth = value;
             this.update();
         }
     }
-    get markerLineWidth(): number {
-        return this._markerLineWidth;
+    get markerStrokeWidth(): number {
+        return this._markerStrokeWidth;
     }
 
     processData(): boolean {
@@ -197,15 +197,15 @@ export class LineSeries extends Series<CartesianChart> {
         return this._stroke;
     }
 
-    private _lineWidth: number = 3;
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
+    private _strokeWidth: number = 3;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             this.update();
         }
     }
-    get lineWidth(): number {
-        return this._lineWidth;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
     update(): void {
@@ -226,10 +226,10 @@ export class LineSeries extends Series<CartesianChart> {
         const xData = this.xData;
         const yData = this.yData;
         const n = xData.length;
-        const fillStyle = this.fill;
-        const strokeStyle = this.stroke;
+        const fill = this.fill;
+        const stroke = this.stroke;
         const marker = this.marker;
-        const markerLineWidth = this.markerLineWidth;
+        const markerStrokeWidth = this.markerStrokeWidth;
         const markerRadius = this.markerRadius;
 
         const lineNode: Path = this.lineNode;
@@ -254,16 +254,16 @@ export class LineSeries extends Series<CartesianChart> {
                     seriesDatum: data[i],
                     x,
                     y,
-                    fillStyle,
-                    strokeStyle,
-                    lineWidth: markerLineWidth,
+                    fill,
+                    stroke,
+                    strokeWidth: markerStrokeWidth,
                     radius: markerRadius
                 });
             }
         }
 
-        lineNode.strokeStyle = strokeStyle;
-        lineNode.lineWidth = this.lineWidth;
+        lineNode.stroke = stroke;
+        lineNode.strokeWidth = this.strokeWidth;
 
         // ------------------------------------------
 
@@ -281,9 +281,9 @@ export class LineSeries extends Series<CartesianChart> {
                 arc.centerY = datum.y;
                 arc.radiusX = datum.radius;
                 arc.radiusY = datum.radius;
-                arc.fillStyle = datum.fillStyle;
-                arc.strokeStyle = datum.strokeStyle;
-                arc.lineWidth = datum.lineWidth;
+                arc.fill = datum.fill;
+                arc.stroke = datum.stroke;
+                arc.strokeWidth = datum.strokeWidth;
                 arc.visible = datum.radius > 0;
             });
 

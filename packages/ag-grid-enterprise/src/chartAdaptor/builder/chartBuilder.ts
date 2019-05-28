@@ -198,7 +198,7 @@ export class ChartBuilder {
             series.stroke = options.stroke;
         }
         if (options.lineWidth !== undefined) {
-            series.lineWidth = options.lineWidth;
+            series.strokeWidth = options.lineWidth;
         }
         if (options.marker !== undefined) {
             series.marker = options.marker;
@@ -207,7 +207,7 @@ export class ChartBuilder {
             series.markerRadius = options.markerRadius;
         }
         if (options.markerLineWidth !== undefined) {
-            series.markerLineWidth = options.markerLineWidth;
+            series.markerStrokeWidth = options.markerLineWidth;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
@@ -237,8 +237,8 @@ export class ChartBuilder {
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
         }
-        if (options.lineWidth !== undefined) {
-            series.lineWidth = options.lineWidth;
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
         }
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;

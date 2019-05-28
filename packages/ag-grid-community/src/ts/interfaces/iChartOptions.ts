@@ -70,7 +70,7 @@ export interface AxisOptions {
 }
 
 export interface IGridStyle {
-    strokeStyle: string | null;
+    stroke: string | null;
     lineDash: number[] | null;
 }
 
@@ -122,7 +122,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     grouped?: boolean;
     fills?: string[];
     strokes?: string[];
-    lineWidth?: number;
+    strokeWidth?: number;
     shadow?: DropShadowOptions;
     labelEnabled?: boolean;
     labelFont?: string;

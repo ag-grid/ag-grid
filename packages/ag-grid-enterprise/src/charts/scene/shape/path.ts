@@ -43,10 +43,10 @@ export class Path extends Shape {
         this.applyContextAttributes(ctx);
         this.scene!.appendPath(this.path);
 
-        if (this.fillStyle) {
+        if (this.fill) {
             ctx.fill();
         }
-        if (this.lineWidth && this.strokeStyle) {
+        if (this.stroke && this.strokeWidth) {
             ctx.stroke();
         }
 

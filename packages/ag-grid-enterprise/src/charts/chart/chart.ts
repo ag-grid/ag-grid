@@ -457,8 +457,8 @@ export abstract class Chart {
     private lastPick?: {
         series: Series<Chart>,
         node: Shape,
-        fillStyle: string | null // used to save the original fillStyle of the node,
-                                 // to be restored when the highlight fillStyle is removed
+        fill?: string // used to save the original fillStyle of the node,
+                           // to be restored when the highlight fillStyle is removed
     };
 
     private readonly onMouseMove = (event: MouseEvent) => {
@@ -473,7 +473,7 @@ export abstract class Chart {
                     this.onSeriesNodePick(event, pick.series, node);
                 } else {
                     if (this.lastPick.node !== node) { // cursor moved from one node to another
-                        this.lastPick.node.fillStyle = this.lastPick.fillStyle;
+                        this.lastPick.node.fill = this.lastPick.fill;
                         this.onSeriesNodePick(event, pick.series, node);
                     } else { // cursor moved within the same node
                         if (pick.series.tooltipEnabled) {
@@ -483,7 +483,7 @@ export abstract class Chart {
                 }
             }
         } else if (this.lastPick) { // cursor moved from a node to empty space
-            this.lastPick.node.fillStyle = this.lastPick.fillStyle;
+            this.lastPick.node.fill = this.lastPick.fill;
             this.hideTooltip();
             this.lastPick = undefined;
         }
@@ -512,9 +512,9 @@ export abstract class Chart {
         this.lastPick = {
             series,
             node,
-            fillStyle: node.fillStyle
+            fill: node.fill
         };
-        node.fillStyle = 'yellow';
+        node.fill = 'yellow';
 
         const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
         if (html) {

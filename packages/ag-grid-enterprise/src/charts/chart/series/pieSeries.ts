@@ -68,7 +68,7 @@ export class PieSeries extends Series<PolarChart> {
 
         const title = this.titleNode;
         title.pointerEvents = PointerEvents.None;
-        title.fillStyle = this.labelColor;
+        title.fill = this.labelColor;
         title.textAlign = 'center';
         title.textBaseline = 'bottom';
 
@@ -305,14 +305,14 @@ export class PieSeries extends Series<PolarChart> {
         return this._lineWidth;
     }
 
-    private _shadow: DropShadow | null = null;
-    set shadow(value: DropShadow | null) {
+    private _shadow: DropShadow | undefined = undefined;
+    set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
             this.update();
         }
     }
-    get shadow(): DropShadow | null {
+    get shadow(): DropShadow | undefined {
         return this._shadow;
     }
 
@@ -442,7 +442,7 @@ export class PieSeries extends Series<PolarChart> {
         title.visible = this.titleEnabled;
         title.translationY = -chart.radius - outerRadiusOffset - 2;
         title.text = this.title;
-        title.fillStyle = this.labelColor;
+        title.fill = this.labelColor;
         title.font = this.titleFont;
 
         const updateGroups = this.groupSelection.setData(this.groupSelectionData);
@@ -477,10 +477,10 @@ export class PieSeries extends Series<PolarChart> {
                 sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
                 sector.startAngle = datum.startAngle;
                 sector.endAngle = datum.endAngle;
-                sector.fillStyle = fills[index % fills.length];
-                sector.strokeStyle = strokes[index % strokes.length];
+                sector.fill = fills[index % fills.length];
+                sector.stroke = strokes[index % strokes.length];
                 sector.shadow = this.shadow;
-                sector.lineWidth = this.lineWidth;
+                sector.strokeWidth = this.lineWidth;
                 sector.lineJoin = 'round';
             });
 
@@ -490,14 +490,14 @@ export class PieSeries extends Series<PolarChart> {
                 if (datum.label) {
                     const outerRadius = outerRadii[index];
 
-                    line.lineWidth = this.calloutWidth;
-                    line.strokeStyle = calloutColors[index % calloutColors.length];
+                    line.strokeWidth = this.calloutWidth;
+                    line.stroke = calloutColors[index % calloutColors.length];
                     line.x1 = datum.midCos * outerRadius;
                     line.y1 = datum.midSin * outerRadius;
                     line.x2 = datum.midCos * (outerRadius + calloutLength);
                     line.y2 = datum.midSin * (outerRadius + calloutLength);
                 } else {
-                    line.strokeStyle = null;
+                    line.stroke = undefined;
                 }
             });
 
@@ -514,11 +514,11 @@ export class PieSeries extends Series<PolarChart> {
                     text.text = label.text;
                     text.x = datum.midCos * labelRadius;
                     text.y = datum.midSin * labelRadius;
-                    text.fillStyle = this.labelColor;
+                    text.fill = this.labelColor;
                     text.textAlign = label.textAlign;
                     text.textBaseline = label.textBaseline;
                 } else {
-                    text.fillStyle = null;
+                    text.fill = undefined;
                 }
             });
 

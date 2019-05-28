@@ -17,8 +17,8 @@ enum Tags {
 }
 
 export interface GridStyle {
-    strokeStyle: string | null,
-    lineDash: number[] | null
+    stroke?: string,
+    lineDash?: number[]
 }
 
 /**
@@ -84,7 +84,7 @@ export class Axis<D = any> {
      * The color of the axis line.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
      */
-    lineColor: string | null = 'rgba(195, 195, 195, 1)';
+    lineColor?: string = 'rgba(195, 195, 195, 1)';
 
     /**
      * The line width to be used by axis ticks.
@@ -105,7 +105,7 @@ export class Axis<D = any> {
      * The color of the axis ticks.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    tickColor: string | null = 'rgba(195, 195, 195, 1)';
+    tickColor?: string = 'rgba(195, 195, 195, 1)';
 
     /**
      * In case {@param value} is a number, the {@param fractionDigits} parameter will
@@ -125,7 +125,7 @@ export class Axis<D = any> {
      * The color of the labels.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    labelColor: string | null = 'rgba(87, 87, 87, 1)';
+    labelColor?: string = 'rgba(87, 87, 87, 1)';
 
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -151,7 +151,7 @@ export class Axis<D = any> {
      * have the same style.
      */
     private _gridStyle: GridStyle[] = [{
-        strokeStyle: 'rgba(219, 219, 219, 1)',
+        stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
     set gridStyle(value: GridStyle[]) {
@@ -288,8 +288,8 @@ export class Axis<D = any> {
 
         groupSelection.selectByTag<Line>(Tags.Tick)
             .each(line => {
-                line.lineWidth = this.tickWidth;
-                line.strokeStyle = this.tickColor;
+                line.strokeWidth = this.tickWidth;
+                line.stroke = this.tickColor;
             })
             .attr('x1', sideFlag * this.tickSize)
             .attr('x2', 0)
@@ -324,9 +324,9 @@ export class Axis<D = any> {
             }
             gridLines.each((arc, datum, index) => {
                 const style = styles[index % styleCount];
-                arc.strokeStyle = style.strokeStyle;
+                arc.stroke = style.stroke;
                 arc.lineDash = style.lineDash;
-                arc.fillStyle = null;
+                arc.fill = undefined;
             });
         }
 
@@ -334,7 +334,7 @@ export class Axis<D = any> {
         const labels = groupSelection.selectByClass(Text)
             .each((label, datum) => {
                 label.font = this.labelFont;
-                label.fillStyle = this.labelColor;
+                label.fill = this.labelColor;
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
@@ -369,8 +369,8 @@ export class Axis<D = any> {
         line.x2 = 0;
         line.y1 = scale.range[0];
         line.y2 = scale.range[scale.range.length - 1];
-        line.lineWidth = this.lineWidth;
-        line.strokeStyle = this.lineColor;
+        line.strokeWidth = this.lineWidth;
+        line.stroke = this.lineColor;
         line.visible = ticks.length > 0;
 
         // debug (bbox)

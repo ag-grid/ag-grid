@@ -43,13 +43,13 @@ export class Caption {
     }
 
     set color(value: string) {
-        if (this.node.fillStyle !== value) {
-            this.node.fillStyle = value;
+        if (this.node.fill !== value) {
+            this.node.fill = value;
             this.requestLayout();
         }
     }
     get color(): string {
-        return this.node.fillStyle || '';
+        return this.node.fill || '';
     }
 
     private _enabled: boolean = true;

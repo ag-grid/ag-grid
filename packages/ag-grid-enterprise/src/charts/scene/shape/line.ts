@@ -113,11 +113,11 @@ export class Line extends Shape {
         // Align to the pixel grid if the line is strictly vertical
         // or horizontal (but not both, i.e. a dot).
         if (x1 === x2) {
-            const delta = Math.floor(this.lineWidth) % 2 / 2;
+            const delta = Math.floor(this.strokeWidth) % 2 / 2;
             x1 += delta;
             x2 += delta;
         } else if (y1 === y2) {
-            const delta = Math.floor(this.lineWidth) % 2 / 2;
+            const delta = Math.floor(this.strokeWidth) % 2 / 2;
             y1 += delta;
             y2 += delta;
         }
@@ -126,7 +126,7 @@ export class Line extends Shape {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
 
-        if (this.strokeStyle) {
+        if (this.stroke) {
             ctx.stroke();
         }
 

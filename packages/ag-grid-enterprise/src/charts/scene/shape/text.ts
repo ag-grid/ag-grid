@@ -172,10 +172,10 @@ export class Text extends Shape {
         if (lineCount > 1) {
             // TODO: multi-line text
         } else if (lineCount === 1) {
-            if (this.fillStyle) {
+            if (this.fill) {
                 ctx.fillText(this.text, this.x, this.y);
             }
-            if (this.strokeStyle) {
+            if (this.stroke) {
                 ctx.strokeText(this.text, this.x, this.y);
             }
         }
