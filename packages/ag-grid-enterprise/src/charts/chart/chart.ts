@@ -7,6 +7,7 @@ import { Node } from "../scene/node";
 import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
+import { Caption } from "./caption";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
@@ -15,6 +16,7 @@ export abstract class Chart {
     legend = new Legend();
 
     protected legendAutoPadding = new Padding();
+    protected captionAutoPadding = 0; // top padding only
 
     private tooltipElement: HTMLDivElement = document.createElement('div');
     private tooltipRect?: ClientRect;
@@ -23,7 +25,7 @@ export abstract class Chart {
 
     protected constructor() {
         this.scene.root = new Group();
-        this.legend.onLayoutChange = this.onLegendLayoutChange.bind(this);
+        this.legend.onLayoutChange = this.onLayoutChange;
 
         this.tooltipElement.style.display = 'none';
         this.tooltipClass = 'ag-chart-tooltip';
@@ -43,9 +45,9 @@ export abstract class Chart {
         this.scene.parent = null;
     }
 
-    onLegendLayoutChange() {
+    private readonly onLayoutChange = () => {
         this.layoutPending = true;
-    }
+    };
 
     get element(): HTMLElement {
         return this.scene.hdpiCanvas.canvas;
@@ -56,6 +58,46 @@ export abstract class Chart {
     }
     get parent(): HTMLElement | null {
         return this.scene.parent;
+    }
+
+    private _title: Caption | null = null;
+    set title(value: Caption | null) {
+        const oldTitle = this._title;
+        if (oldTitle !== value) {
+            if (oldTitle) {
+                oldTitle.onLayoutChange = undefined;
+                this.scene.root!.removeChild(oldTitle.node);
+            }
+            if (value) {
+                value.onLayoutChange = this.onLayoutChange;
+                this.scene.root!.appendChild(value.node);
+            }
+            this._title = value;
+            this.layoutPending = true;
+        }
+    }
+    get title(): Caption | null {
+        return this._title;
+    }
+
+    private _subtitle: Caption | null = null;
+    set subtitle(value: Caption | null) {
+        const oldSubtitle = this._subtitle;
+        if (oldSubtitle !== value) {
+            if (oldSubtitle) {
+                oldSubtitle.onLayoutChange = undefined;
+                this.scene.root!.removeChild(oldSubtitle.node);
+            }
+            if (value) {
+                value.onLayoutChange = this.onLayoutChange;
+                this.scene.root!.appendChild(value.node);
+            }
+            this._subtitle = value;
+            this.layoutPending = true;
+        }
+    }
+    get subtitle(): Caption | null {
+        return this._subtitle;
     }
 
     abstract get seriesRoot(): Node;
@@ -261,6 +303,46 @@ export abstract class Chart {
 
     abstract performLayout(): void;
 
+    protected positionCaptions() {
+        const title = this.title;
+        const subtitle = this.subtitle;
+
+        let titleVisible = false;
+        let subtitleVisible = false;
+
+        const spacing = 5;
+        let paddingTop = 0;
+
+        if (title && title.enabled) {
+            paddingTop += 10;
+            const bbox = title.node.getBBox();
+            title.node.x = this.width / 2;
+            title.node.y = paddingTop;
+            titleVisible = true;
+            paddingTop += bbox.height;
+
+            if (subtitle && subtitle.enabled) {
+                const bbox = subtitle.node.getBBox();
+                subtitle.node.x = this.width / 2;
+                subtitle.node.y = paddingTop;
+                subtitleVisible = true;
+                paddingTop += spacing + bbox.height;
+            }
+        }
+
+        if (title) {
+            title.node.visible = titleVisible;
+        }
+        if (subtitle) {
+            subtitle.node.visible = subtitleVisible;
+        }
+
+        if (this.captionAutoPadding !== paddingTop) {
+            this.captionAutoPadding = paddingTop;
+            this.layoutPending = true;
+        }
+    }
+
     private legendBBox?: BBox;
 
     protected positionLegend() {
@@ -268,8 +350,9 @@ export abstract class Chart {
             return; // TODO: figure out why we ever arrive here (data should be processed before layout)
         }
 
+        const captionAutoPadding = this.captionAutoPadding;
         const width = this.width;
-        const height = this.height;
+        const height = this.height - captionAutoPadding;
         const legend = this.legend;
         const legendGroup = legend.group;
         const legendPadding = this.legendPadding;
@@ -285,7 +368,7 @@ export abstract class Chart {
                 legendBBox = legendGroup.getBBox();
 
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legendGroup.translationY = height - legendBBox.height - legendBBox.y - legendPadding;
+                legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendPadding;
 
                 if (legendAutoPadding.bottom !== legendBBox.height) {
                     legendAutoPadding.bottom = legendBBox.height;
@@ -298,7 +381,7 @@ export abstract class Chart {
                 legendBBox = legendGroup.getBBox();
 
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legendGroup.translationY = legendPadding - legendBBox.y;
+                legendGroup.translationY = captionAutoPadding + legendPadding - legendBBox.y;
 
                 if (legendAutoPadding.top !== legendBBox.height) {
                     legendAutoPadding.top = legendBBox.height;
@@ -311,7 +394,7 @@ export abstract class Chart {
                 legendBBox = legendGroup.getBBox();
 
                 legendGroup.translationX = legendPadding - legendBBox.x;
-                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+                legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                 if (legendAutoPadding.left !== legendBBox.width) {
                     legendAutoPadding.left = legendBBox.width;
@@ -324,7 +407,7 @@ export abstract class Chart {
                 legendBBox = legendGroup.getBBox();
 
                 legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
-                legendGroup.translationY = (height - legendBBox.height) / 2 - legendBBox.y;
+                legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                 if (legendAutoPadding.right !== legendBBox.width) {
                     legendAutoPadding.right = legendBBox.width;

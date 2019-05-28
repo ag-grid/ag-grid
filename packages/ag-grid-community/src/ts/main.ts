@@ -293,6 +293,7 @@ export {
     LineChartOptions,
     PieChartOptions,
     DoughnutChartOptions,
+    CaptionOptions,
     AxisOptions,
     BarSeriesOptions,
     CartesianChartOptions,

@@ -9,6 +9,8 @@ export interface ChartOptions {
     legendPadding?: number;
     tooltipClass?: string;
     legend?: LegendOptions;
+    title?: CaptionOptions;
+    subtitle?: CaptionOptions;
 }
 
 export interface CartesianChartOptions extends ChartOptions {
@@ -153,7 +155,6 @@ export interface PieSeriesOptions extends SeriesOptions {
     rotation?: number;
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
-    // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     lineWidth?: number;
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
@@ -167,4 +168,11 @@ export interface LegendOptions {
     itemPaddingY?: number;
     labelFont?: string;
     labelColor?: string;
+}
+
+export interface CaptionOptions {
+    text?: string;
+    font?: string;
+    color?: string;
+    enabled?: boolean;
 }

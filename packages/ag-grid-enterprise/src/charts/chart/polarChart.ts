@@ -51,6 +51,10 @@ export class PolarChart extends Chart {
             height: this.height
         };
 
+        const captionAutoPadding = this.captionAutoPadding;
+        shrinkRect.y += captionAutoPadding;
+        shrinkRect.height -= captionAutoPadding;
+
         const legendAutoPadding = this.legendAutoPadding;
         if (this.legend.data.length) {
             shrinkRect.x += legendAutoPadding.left;
@@ -73,6 +77,7 @@ export class PolarChart extends Chart {
             series.update();
         });
 
+        this.positionCaptions();
         this.positionLegend();
     }
 }
