@@ -49,9 +49,7 @@ export class Legend {
     set orientation(value: Orientation) {
         if (this._orientation !== value) {
             this._orientation = value;
-            if (this.onLayoutChange) {
-                this.onLayoutChange();
-            }
+            this.requestLayout();
         }
     }
     get orientation(): Orientation {
@@ -62,9 +60,7 @@ export class Legend {
     set itemPaddingX(value: number) {
         if (this._itemPaddingX !== value) {
             this._itemPaddingX = value;
-            if (this.onLayoutChange) {
-                this.onLayoutChange();
-            }
+            this.requestLayout();
         }
     }
     get itemPaddingX(): number {
@@ -75,9 +71,7 @@ export class Legend {
     set itemPaddingY(value: number) {
         if (this._itemPaddingY !== value) {
             this._itemPaddingY = value;
-            if (this.onLayoutChange) {
-                this.onLayoutChange();
-            }
+            this.requestLayout();
         }
     }
     get itemPaddingY(): number {
@@ -88,9 +82,7 @@ export class Legend {
     set markerPadding(value: number) {
         if (this._markerPadding !== value) {
             this._markerPadding = value;
-            if (this.onLayoutChange) {
-                this.onLayoutChange();
-            }
+            this.requestLayout();
         }
     }
     get markerPadding(): number {
@@ -112,9 +104,7 @@ export class Legend {
     set labelFont(value: string) {
         if (this._labelFont !== value) {
             this._labelFont = value;
-            if (this.onLayoutChange) {
-                this.onLayoutChange();
-            }
+            this.requestLayout();
         }
     }
     get labelFont(): string {
@@ -125,9 +115,7 @@ export class Legend {
     set markerSize(value: number) {
         if (this._markerSize !== value) {
             this._markerSize = value;
-            if (this.onLayoutChange) {
-                this.onLayoutChange();
-            }
+            this.requestLayout();
         }
     }
     get markerSize(): number {
@@ -143,6 +131,12 @@ export class Legend {
     }
     get markerLineWidth(): number {
         return this._markerLineWidth;
+    }
+
+    private requestLayout() {
+        if (this.onLayoutChange) {
+            this.onLayoutChange();
+        }
     }
 
     /**
@@ -195,12 +189,13 @@ export class Legend {
                 }
 
                 rowCount = 0;
+                let columnCount = 0;
 
                 // Split legend items into columns until the width is suitable.
                 do {
                     let itemsWidth = 0;
-                    let columnCount = 0;
 
+                    columnCount = 0;
                     columnWidth = 0;
                     rowCount++;
 
@@ -223,7 +218,7 @@ export class Legend {
                     }
                     paddedItemsWidth = itemsWidth + (columnCount - 1) * itemPaddingX;
 
-                } while (paddedItemsWidth > width);
+                } while (paddedItemsWidth > width && columnCount > 1);
 
                 paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * itemPaddingY;
 
@@ -312,9 +307,7 @@ export class Legend {
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];
             oldSize[1] = size[1];
-            if (this.onLayoutChange) {
-                this.onLayoutChange();
-            }
+            this.requestLayout();
         }
     }
 
