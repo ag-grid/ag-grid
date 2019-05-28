@@ -1169,8 +1169,8 @@ function WinningsFilter() {
 }
 
 WinningsFilter.prototype.init = function (params) {
-
     var uniqueId = Math.random();
+    this.filterChangedCallback = params.filterChangedCallback;
     this.eGui = document.createElement("div");
     this.eGui.innerHTML =
         '<div style="margin: 5px; padding: 4px; border: 1px solid lightgray; position: relative; padding-top: 15px; border-radius: 5px; border-top-left-radius: 0;">' +
