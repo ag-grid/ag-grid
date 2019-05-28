@@ -201,6 +201,10 @@
       {
         "title": "Column API",
         "url": "javascript-grid-column-api/"
+      },
+      {
+        "title": "Supported Browsers",
+        "url": "javascript-grid-supported-browsers/"
       }
     ]
   },
