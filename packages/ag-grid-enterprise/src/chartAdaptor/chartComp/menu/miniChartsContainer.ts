@@ -93,7 +93,7 @@ export class MiniPie extends MiniChart {
 
     private readonly sectors = MiniPie.angles.map(pair => {
         const sector = Sector.create(this.center, this.center, 0, this.radius, pair[0], pair[1]);
-        sector.strokeStyle = null;
+        sector.stroke = undefined;
         return sector;
     });
 
@@ -107,8 +107,8 @@ export class MiniPie extends MiniChart {
 
     updateColors(fills: string[], strokes: string[]) {
         this.sectors.forEach((sector, i) => {
-            sector.fillStyle = fills[i];
-            sector.strokeStyle = strokes[i];
+            sector.fill = fills[i];
+            sector.stroke = strokes[i];
         });
     }
 }
@@ -119,7 +119,7 @@ export class MiniDonut extends MiniChart {
 
     private readonly sectors = MiniPie.angles.map(pair => {
         const sector = Sector.create(this.center, this.center, this.radius * 0.6, this.radius, pair[0], pair[1]);
-        sector.strokeStyle = null;
+        sector.stroke = undefined;
         return sector;
     });
 
@@ -133,8 +133,8 @@ export class MiniDonut extends MiniChart {
 
     updateColors(fills: string[], strokes: string[]) {
         this.sectors.forEach((sector, i) => {
-            sector.fillStyle = fills[i];
-            sector.strokeStyle = strokes[i];
+            sector.fill = fills[i];
+            sector.stroke = strokes[i];
         });
     }
 }
@@ -167,18 +167,18 @@ class MiniLine extends MiniChart {
         const axisOvershoot = 3;
 
         const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
-        leftAxis.strokeStyle = 'gray';
-        leftAxis.lineWidth = 1;
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
 
         const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
-        bottomAxis.strokeStyle = 'gray';
-        bottomAxis.lineWidth = 1;
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
 
         this.lines = data.map(series => {
             const line = new Path();
-            line.lineWidth = 3;
+            line.strokeWidth = 3;
             line.lineCap = 'round';
-            line.fillStyle = null;
+            line.fill = undefined;
             series.forEach((datum, i) => {
                 line.path[i > 0 ? 'lineTo' : 'moveTo'](xScale.convert(i), yScale.convert(datum));
             });
@@ -202,7 +202,7 @@ class MiniLine extends MiniChart {
 
     updateColors(fills: string[], strokes: string[]) {
         this.lines.forEach((line, i) => {
-            line.strokeStyle = strokes[i];
+            line.stroke = strokes[i];
         });
     }
 }
@@ -233,12 +233,12 @@ class MiniBar extends MiniChart {
         const axisOvershoot = 3;
 
         const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
-        leftAxis.strokeStyle = 'gray';
-        leftAxis.lineWidth = 1;
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
 
         const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
-        bottomAxis.strokeStyle = 'gray';
-        bottomAxis.lineWidth = 1;
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
         (this as any).axes = [leftAxis, bottomAxis];
 
         const rectLineWidth = 1;
@@ -248,7 +248,7 @@ class MiniBar extends MiniChart {
         this.bars = data.map((datum, i) => {
             const top = yScale.convert(datum);
             const rect = new Rect();
-            rect.lineWidth = rectLineWidth;
+            rect.strokeWidth = rectLineWidth;
             rect.x = Math.floor(xScale.convert(i)) + alignment;
             rect.y = Math.floor(top) + alignment;
             const width = xScale.bandwidth;
@@ -268,8 +268,8 @@ class MiniBar extends MiniChart {
 
     updateColors(fills: string[], strokes: string[]) {
         this.bars.forEach((bar, i) => {
-            bar.fillStyle = fills[i];
-            bar.strokeStyle = strokes[i];
+            bar.fill = fills[i];
+            bar.stroke = strokes[i];
         });
     }
 }
@@ -304,12 +304,12 @@ class MiniStackedBar extends MiniChart {
         const axisOvershoot = 3;
 
         const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
-        leftAxis.strokeStyle = 'gray';
-        leftAxis.lineWidth = 1;
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
 
         const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
-        bottomAxis.strokeStyle = 'gray';
-        bottomAxis.lineWidth = 1;
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
 
         const rectLineWidth = 1;
         const alignment = Math.floor(rectLineWidth) % 2 / 2;
@@ -319,7 +319,7 @@ class MiniStackedBar extends MiniChart {
             return series.map((datum, i) => {
                 const top = yScale.convert(datum);
                 const rect = new Rect();
-                rect.lineWidth = rectLineWidth;
+                rect.strokeWidth = rectLineWidth;
                 rect.x = Math.floor(xScale.convert(i)) + alignment;
                 rect.y = Math.floor(top) + alignment;
                 const width = xScale.bandwidth;
@@ -341,8 +341,8 @@ class MiniStackedBar extends MiniChart {
     updateColors(fills: string[], strokes: string[]) {
         this.bars.forEach((series, i) => {
             series.forEach(bar => {
-                bar.fillStyle = fills[i];
-                bar.strokeStyle = strokes[i];
+                bar.fill = fills[i];
+                bar.stroke = strokes[i];
             })
         });
     }
