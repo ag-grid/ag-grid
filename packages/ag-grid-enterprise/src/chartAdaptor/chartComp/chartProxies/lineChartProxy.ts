@@ -86,7 +86,7 @@ export class LineChartProxy extends ChartProxy {
                 lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
-                    strokeStyle: this.getAxisGridColor(),
+                    stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
             },
@@ -100,7 +100,7 @@ export class LineChartProxy extends ChartProxy {
                 lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
-                    strokeStyle: this.getAxisGridColor(),
+                    stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
             },
