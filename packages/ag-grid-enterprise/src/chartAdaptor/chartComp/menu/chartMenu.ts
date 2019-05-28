@@ -8,7 +8,7 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     Promise,
-    _,
+    _
 } from "ag-grid-community";
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
@@ -25,8 +25,8 @@ export class ChartMenu extends Component {
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['ag-icon-chart', () => this.showMenu(0)],
-        chartData: ['ag-icon-data', () => this.showMenu(1)],
+        chartSettings: ['ag-icon-chart', () => this.showMenu('chartSettings')],
+        chartData: ['ag-icon-data', () => this.showMenu('chartData')],
         chartDownload: ['ag-icon-save', () => this.saveChart()]
     };
 
@@ -95,12 +95,11 @@ export class ChartMenu extends Component {
         this.dispatchEvent(event);
     }
 
-    private showMenu(tab: number): void {
+    private showMenu(tabName: ChartToolbarOptions): void {
         const chartComp = this.parentComponent as GridChartComp;
         const parentGui = chartComp.getGui();
         const parentRect = parentGui.getBoundingClientRect();
-        const tabsLen = this.tabs.length;
-        tab = Math.min(tabsLen - 1, tab);
+        const tab = this.tabs.indexOf(tabName);
 
         this.menuDialog = new Dialog({
             alwaysOnTop: true,
