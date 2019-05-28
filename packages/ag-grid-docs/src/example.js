@@ -379,6 +379,7 @@ var gridOptions = {
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
+
     getContextMenuItems: getContextMenuItems,
     excelStyles: [
         {

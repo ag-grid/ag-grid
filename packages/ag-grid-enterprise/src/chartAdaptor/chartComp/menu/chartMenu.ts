@@ -60,7 +60,13 @@ export class ChartMenu extends Component {
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: chartToolbarOptions
             }
-            chartToolbarOptions = toolbarItemsFunc(params) as ChartToolbarOptions[];
+            chartToolbarOptions = (toolbarItemsFunc(params) as ChartToolbarOptions[]).filter(option => {
+                if (!this.buttons[option]) {
+                    console.warn(`'${option} is not a valid Chart Toolbar Option`);
+                    return false;
+                }
+                return true;
+            });
         }
 
         this.tabs = chartToolbarOptions.filter(option => option !== 'chartDownload');
