@@ -20,13 +20,8 @@
         width: 24px;
         height: 82px;
         overflow: hidden;
-        > span {
-            line-height: 24px;
-            font-size: 24px;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-        }
+        display: flex;
+        flex-direction: column;
     }
 }
 

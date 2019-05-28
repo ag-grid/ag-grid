@@ -1324,6 +1324,11 @@
             background: $background-color;
             > span {
                 opacity: 0.5;
+                line-height: 24px;
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+                cursor: pointer;
                 &:hover {
                     border-radius: 5px;
                     background-color: darken($background-color, 10%);

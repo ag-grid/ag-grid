@@ -13,6 +13,16 @@ export interface ChartOptions {
     subtitle?: CaptionOptions;
 }
 
+export type ChartToolbarOptions = 'chartSettings' | 'chartData' | 'chartDownload';
+
+export enum ChartType {
+    GroupedBar,
+    StackedBar,
+    Line,
+    Pie,
+    Doughnut
+}
+
 export interface CartesianChartOptions extends ChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;

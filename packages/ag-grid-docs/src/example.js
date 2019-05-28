@@ -260,6 +260,7 @@ var gridOptions = {
         defaultToolPanel: 'columns',
         hiddenByDefault: isSmall
     },
+    
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,

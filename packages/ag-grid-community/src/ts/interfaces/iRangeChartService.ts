@@ -1,4 +1,4 @@
-import { ChartType } from "../charts/chartType";
+import { ChartType } from "../interfaces/iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { ChartRangeParams } from "../gridApi";
 

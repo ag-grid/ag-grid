@@ -269,6 +269,7 @@ export {
     GridOptions,
     GetContextMenuItemsParams,
     GetContextMenuItems,
+    GetChartToolbarItemsParams,
     GetDataPath,
     IsRowMaster,
     IsRowSelectable,
@@ -286,25 +287,6 @@ export {
     ChartRef,
     ProcessChartOptionsParams
 } from "./entities/gridOptions";
-
-export {
-    ChartOptions,
-    BarChartOptions,
-    LineChartOptions,
-    PieChartOptions,
-    DoughnutChartOptions,
-    CaptionOptions,
-    AxisOptions,
-    BarSeriesOptions,
-    CartesianChartOptions,
-    DropShadowOptions,
-    LineSeriesOptions,
-    PieSeriesOptions,
-    PolarChartOptions,
-    LegendOptions,
-    SeriesOptions,
-    LineTooltipRendererParams
-} from "./interfaces/iChartOptions";
 
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
@@ -335,7 +317,26 @@ export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
 export { TooltipManager } from "./widgets/tooltipManager";
 
 // charts
-export { ChartType } from "./charts/chartType";
+export {
+    ChartOptions,
+    ChartType,
+    ChartToolbarOptions,
+    BarChartOptions,
+    LineChartOptions,
+    PieChartOptions,
+    DoughnutChartOptions,
+    CaptionOptions,
+    AxisOptions,
+    BarSeriesOptions,
+    CartesianChartOptions,
+    DropShadowOptions,
+    LineSeriesOptions,
+    PieSeriesOptions,
+    PolarChartOptions,
+    LegendOptions,
+    SeriesOptions,
+    LineTooltipRendererParams
+} from "./interfaces/iChartOptions";
 
 // modules
 export { Module } from "./interfaces/iModule";
