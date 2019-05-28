@@ -1171,11 +1171,10 @@ function WinningsFilter() {
 WinningsFilter.prototype.init = function (params) {
 
     var uniqueId = Math.random();
-    this.filterChangedCallback = params.filterChangedCallback;
     this.eGui = document.createElement("div");
     this.eGui.innerHTML =
-        '<div style="padding: 4px;">' +
-        '<div style="font-weight: bold;">Example Custom Filter</div>' +
+        '<div style="margin: 5px; padding: 4px; border: 1px solid lightgray; position: relative; padding-top: 10px; border-radius: 5px; border-top-left-radius: 0;">' +
+        '<div style="position: absolute; font-weight: bold; margin-top: -17px; ">Example Custom Filter</div>' +
         '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter">No filter</input></label></div>' +
         '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive">Positive</input></label></div>' +
         '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative">Negative</input></label></div>' +
@@ -1197,6 +1196,8 @@ WinningsFilter.prototype.init = function (params) {
 };
 
 WinningsFilter.prototype.getGui = function () {
+    var isDark = document.body.classList.contains('dark');
+    this.eGui.querySelectorAll('div')[1].style.backgroundColor = isDark ? '#2d3436' : 'white';
     return this.eGui;
 };
 

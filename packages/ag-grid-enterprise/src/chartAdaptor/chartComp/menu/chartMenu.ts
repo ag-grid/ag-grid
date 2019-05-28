@@ -62,7 +62,7 @@ export class ChartMenu extends Component {
             }
             chartToolbarOptions = (toolbarItemsFunc(params) as ChartToolbarOptions[]).filter(option => {
                 if (!this.buttons[option]) {
-                    console.warn(`'${option} is not a valid Chart Toolbar Option`);
+                    console.warn(`ag-Grid: '${option} is not a valid Chart Toolbar Option`);
                     return false;
                 }
                 return true;

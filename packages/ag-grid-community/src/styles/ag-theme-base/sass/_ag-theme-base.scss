@@ -527,15 +527,6 @@
     .ag-tab-body {
         padding: $grid-size 0;
 
-        // string filter type
-        .ag-filter-select, .ag-filter-body {
-            margin-bottom: $grid-size; 
-        }
-
-        .ag-filter-body {
-            margin-top: 0;
-        }
-
         .ag-menu-list {
             margin-bottom: 0;
             margin-top: 0;
@@ -554,20 +545,28 @@
         }
     }
 
-    .ag-filter-filter {
-        margin-left: $grid-size;
-        margin-right: $grid-size;
-    }
-
-    // string filter type
-    .ag-filter-select {
-        margin: $grid-size;
-    }
-
     ////////////////////////////////////////
     // Value Set Filter
     ////////////////////////////////////////
     .ag-filter {
+        .ag-filter-select, .ag-filter-body {
+            margin-bottom: $grid-size; 
+        }
+
+        .ag-filter-body {
+            margin-top: 0;
+        }
+
+        .ag-filter-filter {
+            margin-left: $grid-size;
+            margin-right: $grid-size;
+        }
+    
+        // string filter type
+        .ag-filter-select {
+            margin: $grid-size;
+        }
+
         input[type="radio"] {
             margin: 0 3px 0 6px;
             width: 12px;
@@ -578,10 +577,6 @@
         input[type="text"],
         input[type="date"] {
             padding-left: $grid-size;
-        }
-
-        label {
-            margin: 0;
         }
 
 
@@ -610,8 +605,8 @@
             justify-content: flex-end;
             padding: $grid-size;
             padding-top: $grid-size * 2;
-
             button {
+                line-height: 1.5;
                 @if map-get($params, "customize-buttons") {
                     @include regular-button($primary-color, $button-background-color, $button-text-transform);
                 }
@@ -1328,6 +1323,7 @@
                 font-size: 24px;
                 width: 24px;
                 height: 24px;
+                margin: 2px 0;
                 cursor: pointer;
                 &:hover {
                     border-radius: 5px;
