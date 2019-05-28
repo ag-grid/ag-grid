@@ -12,7 +12,86 @@ include '../documentation-main/documentation_header.php';
         This sections details how to customise doughnut charts in your applications.
     </p>
 
-    <h3>Doughnut Chart Options</h3>
+<h3>Doughnut Chart Option Interfaces</h3>
+
+<p>
+    The interfaces for doughnut chart options are shown below:
+</p>
+
+<snippet>
+export interface DoughnutChartOptions {
+    parent?: HTMLElement;
+    width?: number;
+    height?: number;
+    series?: any[];
+    data?: any;
+    padding?: {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    };
+    legendPosition?: 'top' | 'right' | 'bottom' | 'left';
+    legendPadding?: number;
+    tooltipClass?: string;
+    legend?: {
+        markerLineWidth?: number;
+        markerSize?: number;
+        markerPadding?: number;
+        itemPaddingX?: number;
+        itemPaddingY?: number;
+        labelFont?: string;
+        labelColor?: string;
+    };
+    seriesDefaults?: {
+        type?: string;
+        data?: any[];
+        title?: string;
+        titleEnabled?: boolean;
+        titleFont?: string;
+        visible?: boolean;
+        showInLegend?: boolean;
+        tooltipEnabled?: boolean;
+        calloutColors?: string[];
+        calloutWidth?: number;
+        calloutLength?: number;
+        calloutPadding?: number;
+        labelFont?: string;
+        labelColor?: string;
+        labelMinAngle?: number;
+        angleField?: string;
+        radiusField?: string;
+        labelField?: string;
+        labelEnabled?: boolean;
+        fills?: string[];
+        strokes?: string[];
+        rotation?: number;
+        outerRadiusOffset?: number;
+        innerRadiusOffset?: number;
+        // strokeStyle?: string // TODO: ???
+        shadow?: {
+            color?: string;
+            offset?: [number, number];
+            blur?: number;
+        };
+        lineWidth?: number;
+        tooltipRenderer?: (params: DoughnutTooltipRendererParams) => string;
+    };
+}
+
+export interface DoughnutTooltipRendererParams {
+    datum: any;
+    angleField: string;
+    radiusField?: string;
+    labelField?: string;
+}
+</snippet>
+
+<h3>Default Doughnut Options</h3>
+
+<p>
+    The default values for the pie chart options are shown below:
+</p>
 
     <snippet>{
     parent: this.chartProxyParams.parentElement,

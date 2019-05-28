@@ -12,7 +12,97 @@ include '../documentation-main/documentation_header.php';
         This sections details how to customise line charts in your applications.
     </p>
 
-    <h3>Line Chart Options</h3>
+<h3>Line Chart Option Interfaces</h3>
+
+<p>
+    The interfaces for line chart options are shown below:
+</p>
+
+<snippet>
+export interface LineChartOptions {
+    parent?: HTMLElement;
+    width?: number;
+    height?: number;
+    series?: any[];
+    data?: any;
+    padding?: {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    };
+    legendPosition?: 'top' | 'right' | 'bottom' | 'left';
+    legendPadding?: number;
+    tooltipClass?: string;
+    legend?: {
+        markerLineWidth?: number;
+        markerSize?: number;
+        markerPadding?: number;
+        itemPaddingX?: number;
+        itemPaddingY?: number;
+        labelFont?: string;
+        labelColor?: string;
+    };
+    xAxis: AxisOptions;
+    yAxis: AxisOptions;
+    seriesDefaults?: {
+        type?: string;
+        data?: any[];
+        title?: string;
+        titleEnabled?: boolean;
+        titleFont?: string;
+        visible?: boolean;
+        showInLegend?: boolean;
+        tooltipEnabled?: boolean;
+        xField?: string;
+        yField?: string;
+        fill?: string;
+        stroke?: string;
+        lineWidth?: number;
+        marker?: boolean;
+        markerRadius?: number;
+        markerLineWidth?: number;
+        tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+    };
+}
+
+export interface LineTooltipRendererParams {
+    datum: any;
+    xField: string;
+    yField: string;
+}
+
+export interface AxisOptions {
+    type?: 'category' | 'number';
+
+    lineWidth?: number;
+    lineColor?: string;
+
+    tickWidth?: number;
+    tickSize?: number;
+    tickPadding?: number;
+    tickColor?: string;
+
+    labelFont?: string;
+    labelColor?: string;
+    labelRotation?: number;
+    mirrorLabels?: boolean;
+    parallelLabels?: boolean;
+    labelFormatter?: (value: any, fractionDigits?: number) => string;
+    gridStyle?: IGridStyle[];
+}
+
+export interface IGridStyle {
+    strokeStyle: string | null;
+    lineDash: number[] | null;
+}
+</snippet>
+
+    <h3>Default Line Options</h3>
+
+    <p>
+        The default values for the bar chart options are shown below:
+    </p>
 
     <snippet>{
     parent: this.chartProxyParams.parentElement,
