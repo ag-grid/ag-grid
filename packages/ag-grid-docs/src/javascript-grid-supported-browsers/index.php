@@ -113,7 +113,7 @@ include '../documentation-main/documentation_header.php';
     The officially supported mobile browsers are as follows:
 </p>
 
-<table class="properties">
+<table class="supported-browsers">
     <tr>
         <th>Browser</th>
         <th>Supported Version</th>
