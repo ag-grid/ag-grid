@@ -520,11 +520,42 @@
       {
         "title": "Context",
         "url": "javascript-grid-context/"
-      },
+      }
+    ]
+  },
+  {
+    "title": "Charts",
+    "gtm": {
+      "category": "charts"
+    },
+    "items": [
       {
-        "title": "Charts",
+        "title": "Overview",
         "url": "javascript-grid-charts/",
         "enterprise": true
+      },
+      {
+        "title": "Customising",
+        "url": "javascript-grid-charts-customisation/",
+        "enterprise": true,
+        "items": [
+          {
+            "title": "Bar",
+            "url": "javascript-grid-charts-customisation-bar/"
+          },
+          {
+            "title": "Line",
+            "url": "javascript-grid-charts-customisation-line/"
+          },
+          {
+            "title": "Pie",
+            "url": "javascript-grid-charts-customisation-pie/"
+          },
+          {
+            "title": "Doughnut",
+            "url": "javascript-grid-charts-customisation-doughnut/"
+          }
+        ]
       }
     ]
   },
