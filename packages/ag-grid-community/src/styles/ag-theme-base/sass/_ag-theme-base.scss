@@ -121,6 +121,10 @@
     font-size: $font-size;
     line-height: 1;
 
+    label {
+        margin-bottom: 0;
+    }
+
     * {
         -webkit-font-smoothing: antialiased;
         box-sizing: border-box;

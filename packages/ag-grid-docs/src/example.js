@@ -1176,10 +1176,10 @@ WinningsFilter.prototype.init = function (params) {
         '<div style="margin: 5px; padding: 4px; border: 1px solid lightgray; position: relative; padding-top: 15px; border-radius: 5px; border-top-left-radius: 0;">' +
         '<div style="position: absolute; font-weight: bold; margin-top: -22px; ">Example Custom Filter</div>' +
         '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter" style="margin-right: 5px;">No filter</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive" style="margin-right: 5px;">Positive</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative" style="margin-right: 5px;">Negative</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50" style="margin-right: 5px;">&gt; &pound;50,000</label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90" style="margin-right: 5px;">&gt; &pound;90,000</label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive" style="margin-right: 5px;">Positive</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative" style="margin-right: 5px;">Negative</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50" style="margin-right: 5px;">&gt; &pound;50,000</label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90" style="margin-right: 5px;">&gt; &pound;90,000</label></div>' +
         '</div>';
     this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
     this.cbPositive = this.eGui.querySelector('#cbPositive');
