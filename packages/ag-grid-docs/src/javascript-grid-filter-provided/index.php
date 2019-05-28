@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     Provided filters are the filters that come as part of the grid. In total there are four
-    provided filters, three simple filters (Text, Number and Date Filters) one advanced
+    provided filters, three simple filters (Text, Number and Date Filters) and one advanced
     filter (Set Filter). The simple filters are available in the community version of ag-Grid.
     The advanced Set filter is only available in ag-Grid Enterprise.
 </p>
@@ -28,55 +28,6 @@ include '../documentation-main/documentation_header.php';
 <p>
     <img src="./providedFilters.png" style="width: 100%; margin-top: 10px; margin-bottom: 60px;"/>
 </p>
-
-<!--<table class="properties">
-    <tr>
-        <th></th>
-        <th>Filter</th>
-        <th>Key</th>
-        <th>Availability</th>
-        <th>Example Image</th>
-    </tr>
-    <tr>
-        <td rowspan="3" style="background-color: #e9ecff; text-align: center; ">Simple Filters</td>
-        <td class="parameter-key">Text Filter</td>
-        <td>agTextColumnFilter</td>
-        <td>Community</td>
-        <td><img src="./textFilter.png"/></td>
-    </tr>
-    <tr>
-        <td class="parameter-key">Number Filter</td>
-        <td>agNumberColumnFilter</td>
-        <td>Community</td>
-        <td><img src="./numberFilter.png"/></td>
-    </tr>
-    <tr>
-        <td class="parameter-key">Date Filter</td>
-        <td>agDateColumnFilter</td>
-        <td>Community</td>
-        <td><img src="./dateFilter.png"/></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td class="parameter-key">Set Filter</td>
-        <td>agSetColumnFilter</td>
-        <td>Enterprise <span class="enterprise-icon">e</span></td>
-        <td><img src="./setFilter.png"/></td>
-    </tr>
-</table>-->
-
-<style>
-    .filterImageSpan {
-        text-align: center;
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    .filterImageTitle {
-        font-weight: bold;
-    }
-</style>
-
-
 
 <p>
     This page describes the functionality common to all provided filters.
@@ -102,9 +53,6 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <style>
-    .supported-filters {
-        white-space: nowrap;
-    }
     .parameter-key {
         font-weight: bold;
     }

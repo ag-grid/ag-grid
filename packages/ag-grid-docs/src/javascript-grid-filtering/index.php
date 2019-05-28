@@ -32,7 +32,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        You can use the provided filters that come with the grid, or you can build your own filters if you want
+        You can use the <a href="../javascript-grid-filter-provided/">Provided Filters</a> that come with the grid,
+        or you can build your own <a href="../javascript-grid-filter-component/">Filter Components</a> if you want
         to customise the filter experience to your application.
     </p>
 
