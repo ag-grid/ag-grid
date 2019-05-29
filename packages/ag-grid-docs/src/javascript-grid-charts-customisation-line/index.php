@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-export interface LineChartOptions {
+interface LineChartOptions {
     parent?: HTMLElement;
     width?: number;
     height?: number;
@@ -66,13 +66,13 @@ export interface LineChartOptions {
     };
 }
 
-export interface LineTooltipRendererParams {
+interface LineTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
 }
 
-export interface AxisOptions {
+interface AxisOptions {
     type?: 'category' | 'number';
 
     lineWidth?: number;
@@ -92,7 +92,7 @@ export interface AxisOptions {
     gridStyle?: IGridStyle[];
 }
 
-export interface IGridStyle {
+interface IGridStyle {
     strokeStyle: string | null;
     lineDash: number[] | null;
 }

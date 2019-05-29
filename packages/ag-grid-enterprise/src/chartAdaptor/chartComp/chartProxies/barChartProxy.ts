@@ -55,7 +55,7 @@ export class BarChartProxy extends ChartProxy {
                 lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
-                    strokeStyle: this.getAxisGridColor(),
+                    stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
             },
@@ -69,7 +69,7 @@ export class BarChartProxy extends ChartProxy {
                 lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
-                    strokeStyle: this.getAxisGridColor(),
+                    stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
             },
@@ -87,7 +87,7 @@ export class BarChartProxy extends ChartProxy {
                 fills: palette.fills,
                 strokes: palette.strokes,
                 grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
-                lineWidth: 1,
+                strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
                 labelFont: '12px Verdana, sans-serif',

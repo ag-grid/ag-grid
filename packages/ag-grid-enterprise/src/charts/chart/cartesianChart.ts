@@ -57,6 +57,10 @@ export class CartesianChart extends Chart {
             height: this.height
         };
 
+        const captionAutoPadding = this.captionAutoPadding;
+        shrinkRect.y += captionAutoPadding;
+        shrinkRect.height -= captionAutoPadding;
+
         const legendAutoPadding = this.legendAutoPadding;
         if (this.legend.data.length) {
             shrinkRect.x += legendAutoPadding.left;
@@ -97,9 +101,9 @@ export class CartesianChart extends Chart {
 
         const seriesClipRect = this.seriesClipRect;
         seriesClipRect.x = shrinkRect.x;
-        seriesClipRect.y = shrinkRect.y - padding.top;
+        seriesClipRect.y = shrinkRect.y;
         seriesClipRect.width = shrinkRect.width;
-        seriesClipRect.height = shrinkRect.height + padding.top;
+        seriesClipRect.height = shrinkRect.height;
 
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
@@ -124,6 +128,7 @@ export class CartesianChart extends Chart {
             series.update(); // this has to happen after the `updateAxis` call
         });
 
+        this.positionCaptions();
         this.positionLegend();
     }
 

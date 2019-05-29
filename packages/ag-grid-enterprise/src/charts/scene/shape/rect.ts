@@ -102,9 +102,9 @@ export class Rect extends Shape {
         return this._crisp;
     }
 
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             // Normally, when the `lineWidth` changes, we only need to repaint the rect
             // without updating the path. If the `isCrisp` is set to `true` however,
             // we need to update the path to make sure the new stroke aligns to
@@ -117,8 +117,8 @@ export class Rect extends Shape {
             }
         }
     }
-    get lineWidth(): number {
-        return this._lineWidth;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
     updatePath() {
@@ -133,7 +133,7 @@ export class Rect extends Shape {
 
         if (!radius) {
             if (this.crisp) {
-                const alignment = Math.floor(this.lineWidth) % 2 / 2;
+                const alignment = Math.floor(this.strokeWidth) % 2 / 2;
                 path.rect(
                     Math.floor(this.x) + alignment,
                     Math.floor(this.y) + alignment,
@@ -182,10 +182,10 @@ export class Rect extends Shape {
         this.updatePath();
         this.scene!.appendPath(this.path);
 
-        if (this.fillStyle) {
+        if (this.fill) {
             ctx.fill();
         }
-        if (this.lineWidth && this.strokeStyle) {
+        if (this.stroke && this.strokeWidth) {
             ctx.stroke();
         }
 

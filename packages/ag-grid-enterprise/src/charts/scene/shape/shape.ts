@@ -15,15 +15,15 @@ export abstract class Shape extends Node {
      * These static defaults are meant to be inherited by subclasses.
      */
     protected static defaultStyles = chainObjects({}, {
-        fillStyle: 'black' as string | null,
-        strokeStyle: null as string | null,
-        lineWidth: 0,
-        lineDash: null as number[] | null,
+        fill: 'black',
+        stroke: undefined,
+        strokeWidth: 0,
+        lineDash: undefined,
         lineDashOffset: 0,
         lineCap: null as ShapeLineCap,
         lineJoin: null as ShapeLineJoin,
         opacity: 1,
-        shadow: null as DropShadow | null
+        shadow: undefined
     });
 
     /**
@@ -65,15 +65,15 @@ export abstract class Shape extends Node {
         }
     }
 
-    private _fillStyle: string | null = Shape.defaultStyles.fillStyle; //| CanvasGradient | CanvasPattern;
-    set fillStyle(value: string | null) {
-        if (this._fillStyle !== value) {
-            this._fillStyle = value;
+    private _fill: string | undefined = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
+    set fill(value: string | undefined) {
+        if (this._fill !== value) {
+            this._fill = value;
             this.dirty = true;
         }
     }
-    get fillStyle(): string | null {
-        return this._fillStyle;
+    get fill(): string | undefined {
+        return this._fill;
     }
 
     /**
@@ -86,30 +86,30 @@ export abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    private _strokeStyle: string | null = Shape.defaultStyles.strokeStyle;
-    set strokeStyle(value: string | null) {
-        if (this._strokeStyle !== value) {
-            this._strokeStyle = value;
+    private _stroke: string | undefined = Shape.defaultStyles.stroke;
+    set stroke(value: string | undefined) {
+        if (this._stroke !== value) {
+            this._stroke = value;
             this.dirty = true;
         }
     }
-    get strokeStyle(): string | null {
-        return this._strokeStyle;
+    get stroke(): string | undefined {
+        return this._stroke;
     }
 
-    protected _lineWidth: number = Shape.defaultStyles.lineWidth;
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
+    protected _strokeWidth: number = Shape.defaultStyles.strokeWidth;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             this.dirty = true;
         }
     }
-    get lineWidth(): number {
-        return this._lineWidth;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
-    private _lineDash: number[] | null = Shape.defaultStyles.lineDash;
-    set lineDash(value: number[] | null) {
+    private _lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
+    set lineDash(value: number[] | undefined) {
         const oldValue = this._lineDash;
 
         if (oldValue !== value) {
@@ -130,7 +130,7 @@ export abstract class Shape extends Node {
             this.dirty = true;
         }
     }
-    get lineDash(): number[] | null {
+    get lineDash(): number[] | undefined {
         return this._lineDash;
     }
 
@@ -179,24 +179,24 @@ export abstract class Shape extends Node {
         return this._opacity;
     }
 
-    private _shadow: DropShadow | null = Shape.defaultStyles.shadow;
-    set shadow(value: DropShadow | null) {
+    private _shadow: DropShadow | undefined = Shape.defaultStyles.shadow;
+    set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
             this.dirty = true;
         }
     }
-    get shadow(): DropShadow | null {
+    get shadow(): DropShadow | undefined {
         return this._shadow;
     }
 
     applyContextAttributes(ctx: CanvasRenderingContext2D) {
-        if (this.fillStyle) {
-            ctx.fillStyle = this.fillStyle;
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
         }
-        if (this.strokeStyle) {
-            ctx.strokeStyle = this.strokeStyle;
-            ctx.lineWidth = this.lineWidth;
+        if (this.stroke) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
                 ctx.setLineDash(this.lineDash);
             }

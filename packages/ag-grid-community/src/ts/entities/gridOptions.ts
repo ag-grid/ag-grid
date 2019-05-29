@@ -634,7 +634,6 @@ export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
 }
 
-
 export interface GetChartToolbarItemsParams {
     defaultItems: string[] | undefined;
     api: GridApi | null | undefined;

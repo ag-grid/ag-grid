@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-export interface PieChartOptions {
+interface PieChartOptions {
     parent?: HTMLElement;
     width?: number;
     height?: number;
@@ -79,7 +79,7 @@ export interface PieChartOptions {
     };
 }
 
-export interface PieTooltipRendererParams {
+interface PieTooltipRendererParams {
     datum: any;
     angleField: string;
     radiusField?: string;

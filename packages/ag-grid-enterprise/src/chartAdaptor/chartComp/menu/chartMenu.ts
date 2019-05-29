@@ -1,30 +1,39 @@
 import {
+    Autowired,
     AgEvent,
     Component,
+    ChartToolbarOptions,
+    Dialog,
+    GetChartToolbarItemsParams,
+    GridOptionsWrapper,
     PostConstruct,
     Promise,
-    RefSelector,
-    Dialog,
     _
 } from "ag-grid-community";
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { GridChartComp } from "../gridChartComp";
 
+type ChartToolbarButtons = {
+    [key in ChartToolbarOptions]: [string, () => any]
+}
+
 export class ChartMenu extends Component {
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
 
-    private static TEMPLATE =
-        `<div class="ag-chart-menu">
-            <span ref="eChartButton" class="ag-icon ag-icon-chart"></span>
-            <span ref="eDataButton" class="ag-icon ag-icon-data"></span>
-            <span ref="eSaveButton" class="ag-icon ag-icon-save"></span>
-        </div>`;
+    private buttons: ChartToolbarButtons = {
+        chartSettings: ['ag-icon-chart', () => this.showMenu('chartSettings')],
+        chartData: ['ag-icon-data', () => this.showMenu('chartData')],
+        chartDownload: ['ag-icon-save', () => this.saveChart()]
+    };
 
-    @RefSelector('eChartButton') private eChartButton: HTMLElement;
-    @RefSelector('eDataButton') private eDataButton: HTMLElement;
-    @RefSelector('eSaveButton') private eSaveButton: HTMLElement;
+    private tabs: ChartToolbarOptions[] = [];
+
+    private static TEMPLATE =
+        `<div class="ag-chart-menu"></div>`;
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
@@ -37,9 +46,46 @@ export class ChartMenu extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eChartButton, 'click', () => this.showMenu(0));
-        this.addDestroyableEventListener(this.eDataButton, 'click', () => this.showMenu(1));
-        this.addDestroyableEventListener(this.eSaveButton, 'click', () => this.saveChart());
+        this.createButtons();
+    }
+
+    private getToolbarOptions(): ChartToolbarOptions[] {
+        let chartToolbarOptions: ChartToolbarOptions[] = ['chartSettings', 'chartData', 'chartDownload'];
+        const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
+
+        if (toolbarItemsFunc) {
+            const params: GetChartToolbarItemsParams = {
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext(),
+                defaultItems: chartToolbarOptions
+            }
+            chartToolbarOptions = (toolbarItemsFunc(params) as ChartToolbarOptions[]).filter(option => {
+                if (!this.buttons[option]) {
+                    console.warn(`ag-Grid: '${option} is not a valid Chart Toolbar Option`);
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        this.tabs = chartToolbarOptions.filter(option => option !== 'chartDownload');
+
+        return chartToolbarOptions;
+    }
+
+    private createButtons(): void {
+        const chartToolbarOptions = this.getToolbarOptions();
+
+        chartToolbarOptions.forEach(button => {
+            const buttonConfig = this.buttons[button];
+            const [ iconCls, callback ] = buttonConfig;
+            const buttonEl = document.createElement('span');
+            _.addCssClass(buttonEl, 'ag-icon');
+            _.addCssClass(buttonEl, iconCls);
+            this.addDestroyableEventListener(buttonEl, 'click', callback);
+            this.getGui().appendChild(buttonEl);
+        });
     }
 
     private saveChart() {
@@ -49,10 +95,11 @@ export class ChartMenu extends Component {
         this.dispatchEvent(event);
     }
 
-    private showMenu(tab: number): void {
+    private showMenu(tabName: ChartToolbarOptions): void {
         const chartComp = this.parentComponent as GridChartComp;
         const parentGui = chartComp.getGui();
         const parentRect = parentGui.getBoundingClientRect();
+        const tab = this.tabs.indexOf(tabName);
 
         this.menuDialog = new Dialog({
             alwaysOnTop: true,
@@ -69,7 +116,11 @@ export class ChartMenu extends Component {
             y: parentRect.top + 5
         });
 
-        this.tabbedMenu = new TabbedChartMenu(this.chartController, chartComp.getCurrentChartType());
+        this.tabbedMenu = new TabbedChartMenu({
+            controller: this.chartController, 
+            type: chartComp.getCurrentChartType(),
+            panels: this.tabs
+        });
 
         new Promise((res) => {
             window.setTimeout(() => {

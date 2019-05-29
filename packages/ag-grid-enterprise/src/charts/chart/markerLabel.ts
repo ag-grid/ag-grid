@@ -22,7 +22,7 @@ export class MarkerLabel extends Group {
         const label = this.label;
         label.textBaseline = 'middle';
         label.font = MarkerLabel.defaults.labelFont;
-        label.fillStyle = MarkerLabel.defaults.labelColor;
+        label.fill = MarkerLabel.defaults.labelColor;
 
         this.append([this.marker, label]);
         this.update();
@@ -42,11 +42,11 @@ export class MarkerLabel extends Group {
         return this.label.font;
     }
 
-    set labelColor(value: string | null) {
-        this.label.fillStyle = value;
+    set labelColor(value: string | undefined) {
+        this.label.fill = value;
     }
-    get labelColor(): string | null {
-        return this.label.fillStyle;
+    get labelColor(): string | undefined {
+        return this.label.fill;
     }
 
     private _markerSize: number = MarkerLabel.defaults.markerSize;
@@ -60,25 +60,25 @@ export class MarkerLabel extends Group {
         return this._markerSize;
     }
 
-    set markerFillStyle(value: string | null) {
-        this.marker.fillStyle = value;
+    set markerFillStyle(value: string | undefined) {
+        this.marker.fill = value;
     }
-    get markerFillStyle(): string | null {
-        return this.marker.fillStyle;
+    get markerFillStyle(): string | undefined {
+        return this.marker.fill;
     }
 
-    set markerStrokeStyle(value: string | null) {
-        this.marker.strokeStyle = value;
+    set markerStrokeStyle(value: string | undefined) {
+        this.marker.stroke = value;
     }
-    get markerStrokeStyle(): string | null {
-        return this.marker.strokeStyle;
+    get markerStrokeStyle(): string | undefined {
+        return this.marker.stroke;
     }
 
     set markerLineWidth(value: number) {
-        this.marker.lineWidth = value;
+        this.marker.strokeWidth = value;
     }
     get markerLineWidth(): number {
-        return this.marker.lineWidth;
+        return this.marker.strokeWidth;
     }
 
     set opacity(value: number) {

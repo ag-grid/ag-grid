@@ -260,6 +260,7 @@ var gridOptions = {
         defaultToolPanel: 'columns',
         hiddenByDefault: isSmall
     },
+    
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
@@ -378,6 +379,7 @@ var gridOptions = {
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
+
     getContextMenuItems: getContextMenuItems,
     excelStyles: [
         {
@@ -1167,18 +1169,17 @@ function WinningsFilter() {
 }
 
 WinningsFilter.prototype.init = function (params) {
-
     var uniqueId = Math.random();
     this.filterChangedCallback = params.filterChangedCallback;
     this.eGui = document.createElement("div");
     this.eGui.innerHTML =
-        '<div style="padding: 4px;">' +
-        '<div style="font-weight: bold;">Example Custom Filter</div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter">No filter</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive">Positive</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative">Negative</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50">&gt; &pound;50,000</label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90">&gt; &pound;90,000</label></div>' +
+        '<div style="margin: 5px; padding: 4px; border: 1px solid lightgray; position: relative; padding-top: 15px; border-radius: 5px; border-top-left-radius: 0;">' +
+        '<div style="position: absolute; font-weight: bold; margin-top: -22px; ">Example Custom Filter</div>' +
+        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter" style="margin-right: 5px;">No filter</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive" style="margin-right: 5px;">Positive</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative" style="margin-right: 5px;">Negative</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50" style="margin-right: 5px;">&gt; &pound;50,000</label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90" style="margin-right: 5px;">&gt; &pound;90,000</label></div>' +
         '</div>';
     this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
     this.cbPositive = this.eGui.querySelector('#cbPositive');
@@ -1195,10 +1196,13 @@ WinningsFilter.prototype.init = function (params) {
 };
 
 WinningsFilter.prototype.getGui = function () {
+    var isDark = document.body.classList.contains('dark');
+    this.eGui.querySelectorAll('div')[1].style.backgroundColor = isDark ? '#2d3436' : 'white';
     return this.eGui;
 };
 
 WinningsFilter.prototype.doesFilterPass = function (node) {
+
     var value = this.valueGetter(node);
     if (this.cbNoFilter.checked) {
         return true;

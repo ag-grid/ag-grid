@@ -9,6 +9,18 @@ export interface ChartOptions {
     legendPadding?: number;
     tooltipClass?: string;
     legend?: LegendOptions;
+    title?: CaptionOptions;
+    subtitle?: CaptionOptions;
+}
+
+export type ChartToolbarOptions = 'chartSettings' | 'chartData' | 'chartDownload';
+
+export enum ChartType {
+    GroupedBar,
+    StackedBar,
+    Line,
+    Pie,
+    Doughnut
 }
 
 export interface CartesianChartOptions extends ChartOptions {
@@ -68,7 +80,7 @@ export interface AxisOptions {
 }
 
 export interface IGridStyle {
-    strokeStyle: string | null;
+    stroke: string | null;
     lineDash: number[] | null;
 }
 
@@ -120,7 +132,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     grouped?: boolean;
     fills?: string[];
     strokes?: string[];
-    lineWidth?: number;
+    strokeWidth?: number;
     shadow?: DropShadowOptions;
     labelEnabled?: boolean;
     labelFont?: string;
@@ -153,7 +165,6 @@ export interface PieSeriesOptions extends SeriesOptions {
     rotation?: number;
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
-    // strokeStyle?: string // TODO: ???
     shadow?: DropShadowOptions;
     lineWidth?: number;
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
@@ -167,4 +178,11 @@ export interface LegendOptions {
     itemPaddingY?: number;
     labelFont?: string;
     labelColor?: string;
+}
+
+export interface CaptionOptions {
+    text?: string;
+    font?: string;
+    color?: string;
+    enabled?: boolean;
 }

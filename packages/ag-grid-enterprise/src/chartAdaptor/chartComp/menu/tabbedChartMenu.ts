@@ -8,7 +8,8 @@ import {
     PostConstruct,
     TabbedItem,
     Promise,
-    _
+    _,
+    ChartToolbarOptions
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
 import { ChartSettingsPanel } from "./chartSettingsPanel";
@@ -25,29 +26,40 @@ export class TabbedChartMenu extends Component {
     private tabbedLayout: TabbedLayout;
     private currentChartType: ChartType;
 
-    private chartSettingsPanel: ChartSettingsPanel;
-    private chartDataPanel: ChartDataPanel;
-
-    private tabs: TabbedItem[];
+    private panels: ChartToolbarOptions[];
+    private tabs: TabbedItem[] = []
     private readonly chartController: ChartController;
 
     private chartIcons: HTMLElement[] = [];
 
-    constructor(chartController: ChartController, currentChartType: ChartType) {
+    constructor(params: {
+        controller: ChartController, 
+        type: ChartType,
+        panels: ChartToolbarOptions[]
+    }) {
         super();
-        this.chartController = chartController;
-        this.currentChartType = currentChartType;
+
+        const { controller, type, panels } = params;
+
+        this.chartController = controller;
+        this.currentChartType = type;
+        this.panels = panels;
     }
 
     @PostConstruct
     public init(): void {
-        const { comp: settingsComp, tab: mainTab } = this.createTab(TabbedChartMenu.TAB_MAIN, 'chart', ChartSettingsPanel);
-        const { comp: dataComp, tab: columnsTab } = this.createTab(TabbedChartMenu.TAB_DATA, 'data', ChartDataPanel);
+        
+        this.panels.forEach(panel => {
+            const panelType = panel.replace('chart', '').toLowerCase();
+            const isMain = panelType === TabbedChartMenu.TAB_MAIN;
+            const iconCls = isMain ? 'chart' : 'data';
+            const panelClass = isMain ? ChartSettingsPanel : ChartDataPanel;
 
-        this.chartSettingsPanel = settingsComp as ChartSettingsPanel;
-        this.chartDataPanel = dataComp as ChartDataPanel;
+            const { comp, tab } = this.createTab(panelType, iconCls, panelClass);
 
-        this.tabs = [mainTab, columnsTab];
+            this.tabs.push(tab);
+            this.addDestroyFunc(() => comp.destroy());
+        })
 
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
@@ -100,13 +112,6 @@ export class TabbedChartMenu extends Component {
     }
 
     public destroy(): void {
-        if (this.chartSettingsPanel) {
-            this.chartSettingsPanel.destroy();
-        }
-
-        if (this.chartDataPanel) {
-            this.chartDataPanel.destroy();
-        }
 
         if (this.parentComponent && this.parentComponent.isAlive()) {
             this.parentComponent.destroy();

@@ -226,10 +226,10 @@ export class Arc extends Shape {
         this.updatePath();
         this.scene!.appendPath(this.path);
 
-        if (this.fillStyle) {
+        if (this.fill) {
             ctx.fill();
         }
-        if (this.strokeStyle) {
+        if (this.stroke) {
             ctx.stroke();
         }
 

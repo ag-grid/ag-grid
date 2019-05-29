@@ -18,13 +18,13 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     y: number,
     width: number,
     height: number,
-    fillStyle: string | null,
-    strokeStyle: string,
-    lineWidth: number,
+    fill?: string,
+    stroke?: string,
+    strokeWidth: number,
     label?: {
         text: string,
         font: string,
-        fillStyle: string,
+        fill: string,
         x: number,
         y: number
     }
@@ -152,25 +152,25 @@ export class BarSeries extends Series<CartesianChart> {
         return this._grouped;
     }
 
-    private _lineWidth: number = 1;
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
+    private _strokeWidth: number = 1;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             this.update();
         }
     }
-    get lineWidth(): number {
-        return this._lineWidth;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
-    private _shadow: DropShadow | null = null;
-    set shadow(value: DropShadow | null) {
+    private _shadow: DropShadow | undefined = undefined;
+    set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
             this.update();
         }
     }
-    get shadow(): DropShadow | null {
+    get shadow(): DropShadow | undefined {
         return this._shadow;
     }
 
@@ -341,7 +341,7 @@ export class BarSeries extends Series<CartesianChart> {
         const fills = this.fills;
         const strokes = this.strokes;
         const grouped = this.grouped;
-        const lineWidth = this.lineWidth;
+        const strokeWidth = this.strokeWidth;
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
         const labelPadding = this.labelPadding;
@@ -374,15 +374,15 @@ export class BarSeries extends Series<CartesianChart> {
                     y: Math.min(y, bottomY),
                     width: barWidth,
                     height: Math.abs(bottomY - y),
-                    fillStyle: fills[yFieldIndex % fills.length],
-                    strokeStyle: strokes[yFieldIndex % strokes.length],
-                    lineWidth,
+                    fill: fills[yFieldIndex % fills.length],
+                    stroke: strokes[yFieldIndex % strokes.length],
+                    strokeWidth,
                     label: labelText ? {
                         text: labelText,
                         font: labelFont,
-                        fillStyle: labelColor,
+                        fill: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + lineWidth / 2 + labelPadding.x
+                        y: y + strokeWidth / 2 + labelPadding.x
                     } : undefined
                 });
 
@@ -414,9 +414,9 @@ export class BarSeries extends Series<CartesianChart> {
                 rect.y = datum.y;
                 rect.width = datum.width;
                 rect.height = datum.height;
-                rect.fillStyle = datum.fillStyle;
-                rect.strokeStyle = datum.strokeStyle;
-                rect.lineWidth = datum.lineWidth;
+                rect.fill = datum.fill;
+                rect.stroke = datum.stroke;
+                rect.strokeWidth = datum.strokeWidth;
                 rect.shadow = this.shadow;
                 rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
             });
@@ -429,10 +429,10 @@ export class BarSeries extends Series<CartesianChart> {
                     text.text = label.text;
                     text.x = label.x;
                     text.y = label.y;
-                    text.fillStyle = label.fillStyle;
+                    text.fill = label.fill;
                     const textBBox = text.getBBox();
-                    text.visible = datum.height > (textBBox.height + datum.lineWidth + labelPadding.x * 2)
-                        && datum.width > (textBBox.width + datum.lineWidth + labelPadding.y * 2);
+                    text.visible = datum.height > (textBBox.height + datum.strokeWidth + labelPadding.x * 2)
+                        && datum.width > (textBBox.width + datum.strokeWidth + labelPadding.y * 2);
                 } else {
                     text.visible = false;
                 }

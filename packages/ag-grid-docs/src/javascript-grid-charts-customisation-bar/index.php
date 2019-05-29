@@ -19,88 +19,121 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-export interface BarChartOptions {
+interface BarChartOptions {
+    // Container element for the chart.
     parent?: HTMLElement;
+    // The width of the chart.
     width?: number;
+    // The height of the chart.
     height?: number;
-    series?: any[];
-    data?: any;
+    // The padding of contents from the edges of the chart.
     padding?:  {
         top: number;
         right: number;
         bottom: number;
         left: number;
     };
+    // The side of the chart to dock the legend to.
     legendPosition?: 'top' | 'right' | 'bottom' | 'left';
+    // The padding amount between the legend and the series.
     legendPadding?: number;
+    // The CSS class name to be used by the tooltip element.
     tooltipClass?: string;
     legend?: {
+        // The line width of a legend marker.
         markerLineWidth?: number;
+        // The size of a legend marker.
         markerSize?: number;
+        // The padding between a legend marker and its label.
         markerPadding?: number;
+        // The amount of horizontal padding between legend items.
         itemPaddingX?: number;
+        // The amount of vertical padding between legend items.
         itemPaddingY?: number;
+        // The font to be used by the legend's labels.
+        // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
+        // The color to be used by the legend's labels.
         labelColor?: string;
     };
     xAxis: AxisOptions;
     yAxis: AxisOptions;
     seriesDefaults?: {
-        type?: string;
-        data?: any[];
-        title?: string;
-        titleEnabled?: boolean;
-        titleFont?: string;
-        visible?: boolean;
+        // Whether this series should be represented in the legend. Defaults to `true`.
         showInLegend?: boolean;
+        // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
         tooltipEnabled?: boolean;
-        xField?: string;
-        yFields?: string[];
-        yFieldNames?: string[];
-        grouped?: boolean;
+        // The fill colors to be used by the series.
         fills?: string[];
+        // The stroke colors to be used by the series.
         strokes?: string[];
+        // The stroke width. Defaults to `1`.
         lineWidth?: number;
+        // The shadow type to use for bars. Defaults to no shadow.
+        // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
         shadow?: {
+            // The shadow color. For example, 'rgba(0, 0, 0, 0.3)'.
             color?: string;
+            // The shadow offset.
             offset?: [number, number];
+            // The blur amount to apply.
             blur?: number;
         };
+        // Whether to show the labels for bars (only applies to the stacked bars).
         labelEnabled?: boolean;
+        // The font to be used by the bar labels.
         labelFont?: string;
+        // The color to be used by the bar labels.
         labelColor?: string;
+        // The padding of the labels within bars (from the top and sides of a bar).
         labelPadding?: {x: number, y: number};
+        // The custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     };
 }
 
-export interface BarTooltipRendererParams {
+interface BarTooltipRendererParams {
+    // The datum object (an element in the data array used by the chart/series).
     datum: any;
+    // The field of the datum object that contains the category name of the highlighted bar.
     xField: string;
+    // The field of the datum object that contains the series value of the highlighted bar.
     yField: string;
 }
 
-export interface AxisOptions {
-    type?: 'category' | 'number';
-
+interface AxisOptions {
+    // The thickness of the axis line.
     lineWidth?: number;
+    // The color of the axis line.
     lineColor?: string;
 
+    // The thickness of the ticks.
     tickWidth?: number;
+    // The length of the ticks.
     tickSize?: number;
+    // The padding between the ticks and the labels.
     tickPadding?: number;
+    // The color of the axis ticks.
     tickColor?: string;
 
+    // The font to be used by axis labels.
     labelFont?: string;
+    // The color of the axis labels.
     labelColor?: string;
+    // The rotation of the axis labels from their default value.
     labelRotation?: number;
-    mirrorLabels?: boolean;
-    parallelLabels?: boolean;
+    // The custom formatter function for the axis labels.
+    // The value is either a category name or a number. If it's the latter, the number
+    // of fractional digits used by the axis step will be provided as well.
+    // The returned string will be used as a label.
     labelFormatter?: (value: any, fractionDigits?: number) => string;
+    // The styles of the grid lines. These are repeated. If only a single style is provided,
+    // it will be used for all grid lines, if two styles are provided, every style will be
+    // used by every other line, and so on.
     gridStyle?: IGridStyle[];
 }
 
-export interface IGridStyle {
+interface IGridStyle {
     strokeStyle: string | null;
     lineDash: number[] | null;
 }

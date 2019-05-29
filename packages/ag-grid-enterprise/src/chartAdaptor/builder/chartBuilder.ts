@@ -12,7 +12,8 @@ import {
     PolarChartOptions,
     LineChartOptions,
     PieChartOptions,
-    SeriesOptions
+    SeriesOptions,
+    CaptionOptions,
 } from "ag-grid-community";
 
 import { CartesianChart } from "../../charts/chart/cartesianChart";
@@ -27,6 +28,7 @@ import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
+import { Caption } from "../../charts/chart/caption";
 
 type CartesianSeriesType = 'line' | 'bar';
 type PolarSeriesType = 'pie';
@@ -99,6 +101,12 @@ export class ChartBuilder {
         }
         if (options.height !== undefined) {
             chart.height = options.height;
+        }
+        if (options.title) {
+            chart.title = ChartBuilder.createTitle(options.title);
+        }
+        if (options.subtitle) {
+            chart.subtitle = ChartBuilder.createSubtitle(options.subtitle);
         }
         if (options.series !== undefined) {
             const seriesConfigs = options.series;
@@ -190,7 +198,7 @@ export class ChartBuilder {
             series.stroke = options.stroke;
         }
         if (options.lineWidth !== undefined) {
-            series.lineWidth = options.lineWidth;
+            series.strokeWidth = options.lineWidth;
         }
         if (options.marker !== undefined) {
             series.marker = options.marker;
@@ -199,7 +207,7 @@ export class ChartBuilder {
             series.markerRadius = options.markerRadius;
         }
         if (options.markerLineWidth !== undefined) {
-            series.markerLineWidth = options.markerLineWidth;
+            series.markerStrokeWidth = options.markerLineWidth;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
@@ -229,8 +237,8 @@ export class ChartBuilder {
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
         }
-        if (options.lineWidth !== undefined) {
-            series.lineWidth = options.lineWidth;
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
         }
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;
@@ -340,6 +348,49 @@ export class ChartBuilder {
         if (options.labelColor !== undefined) {
             legend.labelColor = options.labelColor;
         }
+    }
+
+    static createTitle(options: CaptionOptions) {
+        options = Object.create(options);
+
+        if (!options.text) {
+            options.text = 'Title';
+        }
+        if (!options.font) {
+            options.font = 'bold 16px Verdana, sans-serif';
+        }
+        return ChartBuilder.createCaption(options);
+    }
+
+    static createSubtitle(options: CaptionOptions) {
+        options = Object.create(options);
+
+        if (!options.text) {
+            options.text = 'Subtitle';
+        }
+        if (!options.font) {
+            options.font = '12px Verdana, sans-serif';
+        }
+        return ChartBuilder.createCaption(options);
+    }
+
+    static createCaption(options: CaptionOptions) {
+        const caption = new Caption();
+
+        if (options.text !== undefined) {
+            caption.text = options.text;
+        }
+        if (options.font !== undefined) {
+            caption.font = options.font;
+        }
+        if (options.color !== undefined) {
+            caption.color = options.color;
+        }
+        if (options.enabled !== undefined) {
+            caption.enabled = options.enabled;
+        }
+
+        return caption;
     }
 
     static createDropShadow(options: DropShadowOptions = {}): DropShadow {
