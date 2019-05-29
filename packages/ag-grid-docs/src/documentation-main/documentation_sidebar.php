@@ -3,6 +3,25 @@
 <br>
 <div class="card card-highlight">
     <div class="card-body">
+        <h5 class="card-title">Community or Enterprise?</h5>
+        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/Community.svg"/>
+        <p class="font-weight-normal">Everyone can use ag-Grid Community for free.
+            It's MIT licensed and Open Source. No restrictions. No strings attached.
+        </p>
+<!--
+        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/SA.svg"/>
+        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/MA.svg"/>
+-->
+        <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/enterprise.svg"/>
+        <p class="font-weight-normal">Do you want more features? Then get started with ag-Grid Enterprise. You don't
+            need to contact us to evaluate ag-Grid Enterprise. A license is only required when you start developing for
+            production.
+        </p>
+    </div>
+</div>
+<br>
+<div class="card card-highlight">
+    <div class="card-body">
         <h5 class="card-title">Conferences 2019</h5>
         <p class="font-weight-normal">Come see us at the following conferences that we are attending and sponsoring.</p>
 
