@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
     </p>
 
-    <h2>Defining category and series columns</h2>
+    <h2>Defining categories and series</h2>
     <p>
         It is possible to explicitly define a column as a category or series, or simply let the grid determine the type
         based on the data type. Each method is explained below in the order of precedence used by the grid:
@@ -88,6 +88,9 @@ include '../documentation-main/documentation_header.php';
         will map to 'categories' and columns containing <code>number</code> values will map to 'series' charting columns.
     </p>
 
+    <p>TODO: example showing categories</p>
+
+    <?= example('Defining categories and series', 'defining-categories-and-series', 'generated', array("enterprise" => true)) ?>
 
     <h2>Anatomy of a Charting Range</h2>
     <p>
@@ -98,7 +101,5 @@ include '../documentation-main/documentation_header.php';
     <p>
         <b>TODO</b>
     </p>
-
-
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
