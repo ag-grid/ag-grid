@@ -14,16 +14,20 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        It is possible to directly create charts from a cell range selection via the context menu.
-
-        This is illustrated below:
+        When creating charts off a cell range selection via the context menu, a charting range is created which corresponds
+        to the initial cell range selection.
     </p>
 
-    <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
+    <p>
+        The resulting charting range can then be modified by dragging on the charting range handle, located at the bottom right
+        corner of the charting range, as illustrated below:
+    </p>
+
+    <p>
+        <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
+    </p>
 
     <h2>Charting Ranges</h2>
-
-
 
 
 
