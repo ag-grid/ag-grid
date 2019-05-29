@@ -1,9 +1,14 @@
 var columnDefs = [
+    // different ways to define 'categories'
     {field: "athlete", width: 150, enableRowGroup: true},
+    {field: "sport", chartType: 'category'},
+    {field: "age", chartType: 'category'},
+
+    // different ways to define 'series'
     {field: "gold", enableValue: true},
-    {field: "silver", enableValue: true},
-    {field: "bronze", enableValue: true},
-    {field: "total", enableValue: true}
+    {field: "silver", chartType: 'series'},
+    {field: "bronze"},
+    {field: "total"}
 ];
 
 var gridOptions = {
@@ -18,19 +23,25 @@ var gridOptions = {
         var chartRangeParams = {
             cellRange: {
                 rowStartIndex: 0,
-                rowEndIndex: 10,
-                columns: ['athlete', 'gold', 'silver', 'bronze']
+                rowEndIndex: 100,
+                columns: ['sport', 'gold', 'silver', 'bronze']
             },
             chartType: 'groupedBar',
-            chartContainer: document.body
+            chartContainer: document.body,
+            aggregate: true
         };
+
+        // setTimeout(() => params.api.chartRange(chartRangeParams), 100);
         params.api.chartRange(chartRangeParams);
     },
     processChartOptions: function(params) {
-        const updatedOptions = params.options;
-        updatedOptions.height = 300;
-        updatedOptions.xAxis.labelRotation = 45;
-        return updatedOptions;
+        const opt = params.options;
+
+        opt.title = {text: "Medal Totals by sport"};
+        opt.height = 350;
+        opt.xAxis.labelRotation = 45;
+
+        return opt;
     }
 };
 
