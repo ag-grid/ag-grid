@@ -9,8 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Charting Cell Ranges</h1>
 
     <p class="lead">
-        This section details how charting cell ranges are initially determined along with the different ways they can
-        be modified.
+        This section starts off detailing how columns are determined as categories or series before explaining charting ranges.
     </p>
 
     <p>
@@ -25,16 +24,6 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
-    </p>
-
-    <h2>Anatomy of a Charting Range</h2>
-    <p>
-        Charting ranges can contain a single column range of category values along with a series range comprised of one
-        or more columns.
-    </p>
-
-    <p>
-        <b>TODO</b>
     </p>
 
     <h2>Defining category and series columns</h2>
@@ -75,7 +64,39 @@ include '../documentation-main/documentation_header.php';
     </snippet>
 
     <p>
-        When <code>ColDef.chartType</code> not set or <code>undefined</code> the grid will then consider the following properties:
+        When <code>ColDef.chartType</code> is <code>undefined</code> the grid will then consider then the following properties:
+    </p>
+
+    <ul>
+        <li><b>enableRowGroup / enablePivot</b>: row grouping and pivoting enabled columns map to chart 'categories'.</li>
+        <li><b>enableValue</b>: value columns will be considered chart 'series' columns.</li>
+    </ul>
+
+    <snippet>
+        // 'category' columns
+        {field: "athlete", enableRowGroup: true},
+        {field: "age", enablePivot: true}, // despite containing numbers
+
+        // 'series' columns
+        {field: "gold", enableValue: true},
+        {field: "silver", width: 100} // contains numbers
+    </snippet>
+
+    <p>
+        If none of the above <code>ColDef</code> properties are present then the grid will infer the charting column
+        type based on the data contained in the cells of the first row. Columns containing <code>string</code> values
+        will map to 'categories' and columns containing <code>number</code> values will map to 'series' charting columns.
+    </p>
+
+
+    <h2>Anatomy of a Charting Range</h2>
+    <p>
+        Charting ranges can contain a single column range of category values along with a series range comprised of one
+        or more columns.
+    </p>
+
+    <p>
+        <b>TODO</b>
     </p>
 
 
