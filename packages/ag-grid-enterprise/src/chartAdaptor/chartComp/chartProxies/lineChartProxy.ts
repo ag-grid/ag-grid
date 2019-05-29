@@ -117,7 +117,7 @@ export class LineChartProxy extends ChartProxy {
                 type: 'line',
                 fill: palette.fills[0], //TODO
                 stroke: palette.strokes[0], //TODO
-                lineWidth: 3,
+                strokeWidth: 3,
                 marker: true,
                 markerSize: 3,
                 markerLineWidth: 1,

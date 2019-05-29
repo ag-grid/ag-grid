@@ -113,7 +113,7 @@ export interface LineSeriesOptions extends SeriesOptions {
 
     fill?: string;
     stroke?: string;
-    lineWidth?: number;
+    strokeWidth?: number;
 
     marker?: boolean;
     markerSize?: number;

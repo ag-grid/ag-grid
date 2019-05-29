@@ -197,8 +197,8 @@ export class ChartBuilder {
         if (options.stroke !== undefined) {
             series.stroke = options.stroke;
         }
-        if (options.lineWidth !== undefined) {
-            series.strokeWidth = options.lineWidth;
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
         }
         if (options.marker !== undefined) {
             series.marker = options.marker;
