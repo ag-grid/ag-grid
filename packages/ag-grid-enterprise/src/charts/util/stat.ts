@@ -1,9 +1,9 @@
 /**
- * Returns `[a, b]` for `y = a + bx`.
+ * Returns `{slope, intercept}` for `y = mx + b` given two arrays of variables.
  * @param X Array of independent variables.
  * @param Y Array of dependent variables.
  */
-export function linearRegression(X: number[], Y: number[]): [number, number] | undefined {
+export function linearRegression(X: number[], Y: number[]): {slope: number, intercept: number} | undefined {
     const n = X.length;
 
     if (!n || n !== Y.length) {
@@ -33,8 +33,8 @@ export function linearRegression(X: number[], Y: number[]): [number, number] | u
     }
 
     const denominator = n * sumXX - sumX * sumX;
-    const a = (sumY * sumXX - sumX * sumXY) / denominator;
-    const b = (n * sumXY - sumX * sumY) / denominator;
+    const slope = (n * sumXY - sumX * sumY) / denominator;
+    const intercept = (sumY * sumXX - sumX * sumXY) / denominator;
 
-    return [a, b];
+    return {slope, intercept};
 }
