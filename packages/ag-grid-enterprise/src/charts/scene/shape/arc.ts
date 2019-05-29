@@ -229,7 +229,7 @@ export class Arc extends Shape {
         if (this.fill) {
             ctx.fill();
         }
-        if (this.stroke) {
+        if (this.stroke && this.strokeWidth) {
             ctx.stroke();
         }
 
