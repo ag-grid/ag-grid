@@ -47,7 +47,7 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
  */
 .ag-theme-balham .ag-icon-pin {
     font-family: "Font Awesome 5 Free";
-    // FontAwesome uses font-weight bold
+    /* FontAwesome uses font-weight bold */
     font-weight: bold;
 }
 .ag-theme-balham .ag-icon-pin::before {
