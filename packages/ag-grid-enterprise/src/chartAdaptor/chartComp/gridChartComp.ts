@@ -79,10 +79,11 @@ export class GridChartComp extends Component {
 
         if (this.params.insideDialog) {
             this.addDialog();
+            console.log('asdfasdf');
+            this.addResizeListener();
         }
 
         this.addMenu();
-        this.addResizeListener();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
@@ -198,7 +199,7 @@ export class GridChartComp extends Component {
         const resizeFunc = () => {
             const eParent = eGui.parentElement as HTMLElement;
             if (!eGui || !eGui.offsetParent) {
-                observeResize();
+                observeResizeFunc();
                 return;
             }
 
@@ -207,7 +208,7 @@ export class GridChartComp extends Component {
             chart.width = _.getInnerWidth(eParent);
         };
 
-        const observeResize = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
+        const observeResizeFunc = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent) {
