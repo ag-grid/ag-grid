@@ -56,7 +56,9 @@ interface BarChartOptions {
         // The color to be used by the legend's labels.
         labelColor?: string;
     };
+    // The horizontal chart axis.
     xAxis: AxisOptions;
+    // The vertical chart axis.
     yAxis: AxisOptions;
     seriesDefaults?: {
         // Whether this series should be represented in the legend. Defaults to `true`.

@@ -20,45 +20,59 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface LineChartOptions {
+    // Container element for the chart.
     parent?: HTMLElement;
+    // The width of the chart.
     width?: number;
+    // The height of the chart.
     height?: number;
-    series?: any[];
-    data?: any;
-    padding?: {
+    // The padding of contents from the edges of the chart. Defaults to `20` for all sides.
+    padding?:  {
         top: number;
         right: number;
         bottom: number;
         left: number;
     };
+    // The side of the chart to dock the legend to.
     legendPosition?: 'top' | 'right' | 'bottom' | 'left';
+    // The padding amount between the legend and the series.
     legendPadding?: number;
+    // The CSS class name to be used by the tooltip element.
     tooltipClass?: string;
     legend?: {
+        // The line width of a legend marker.
         markerLineWidth?: number;
+        // The size of a legend marker.
         markerSize?: number;
+        // The padding between a legend marker and its label.
         markerPadding?: number;
+        // The amount of horizontal padding between legend items.
         itemPaddingX?: number;
+        // The amount of vertical padding between legend items.
         itemPaddingY?: number;
+        // The font to be used by the legend's labels.
+        // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
+        // The color to be used by the legend's labels.
         labelColor?: string;
     };
+    // The horizontal chart axis.
     xAxis: AxisOptions;
+    // The vertical chart axis.
     yAxis: AxisOptions;
     seriesDefaults?: {
-        type?: string;
-        data?: any[];
-        title?: string;
-        titleEnabled?: boolean;
-        titleFont?: string;
-        visible?: boolean;
+        // Whether this series should be represented in the legend. Defaults to `true`.
         showInLegend?: boolean;
+        // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
         tooltipEnabled?: boolean;
-        xField?: string;
-        yField?: string;
+        // The title of the series. Shown in the legend and the tooltip.
+        title?: string;
+        // The fill colors to be used by the series' markers.
         fill?: string;
+        // The stroke color to be used by the series' markers and the line itself.
         stroke?: string;
-        lineWidth?: number;
+        // The stroke width. Defaults to `1`.
+        strokeWidth?: number;
         marker?: boolean;
         markerRadius?: number;
         markerLineWidth?: number;

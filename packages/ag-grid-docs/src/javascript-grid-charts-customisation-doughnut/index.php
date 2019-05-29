@@ -57,8 +57,11 @@ interface DoughnutChartOptions {
         labelColor?: string;
     };
     seriesDefaults?: {
+        // The title of the series. Shown above the series and in (default) tooltips.
         title?: string;
+        // Whether to show series title or not. Defaults to `false`.
         titleEnabled?: boolean;
+        // The font to be used by the series title.
         titleFont?: string;
         // Whether this series should be represented in the legend. Defaults to `true`.
         showInLegend?: boolean;
