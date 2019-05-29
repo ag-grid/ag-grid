@@ -9,16 +9,21 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Charting Cell Ranges</h1>
 
     <p class="lead">
-        This section covers how to customisation each of the chart types to suit your application.
+        This section details how charting cell ranges are initially determined along with the different ways they can
+        be modified.
+    </p>
+
+    <p>
+        It is possible to directly create charts from a cell range selection via the context menu.
+
+        This is illustrated below:
     </p>
 
     <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
 
     <h2>Charting Ranges</h2>
 
-    <p>
-        It is possible to create charts from grid range selections
-    </p>
+
 
 
 

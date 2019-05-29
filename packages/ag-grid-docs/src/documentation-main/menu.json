@@ -539,8 +539,8 @@
         "enterprise": true
       },
       {
-        "title": "Range Selection",
-        "url": "javascript-grid-charts-range-selection/",
+        "title": "Cell Ranges",
+        "url": "javascript-grid-charts-cell-ranges/",
         "enterprise": true
       },
       {
