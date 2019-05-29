@@ -68,7 +68,7 @@ interface BarChartOptions {
         // The stroke colors to be used by the series.
         strokes?: string[];
         // The stroke width. Defaults to `1`.
-        lineWidth?: number;
+        strokeWidth?: number;
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
         shadow?: {
@@ -134,8 +134,11 @@ interface AxisOptions {
 }
 
 interface IGridStyle {
-    strokeStyle: string | null;
-    lineDash: number[] | null;
+    // The stroke color of a grid line.
+    stroke?: string;
+    // The line dash array. Every number in the array specifies the length of alternating
+    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
+    lineDash?: number[];
 }
 </snippet>
 
@@ -198,7 +201,7 @@ interface IGridStyle {
         fills: palette.fills,
         strokes: palette.strokes,
         grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
-        lineWidth: 1,
+        strokeWidth: 1,
         tooltipEnabled: true,
         labelEnabled: false,
         labelFont: '12px Verdana, sans-serif',
