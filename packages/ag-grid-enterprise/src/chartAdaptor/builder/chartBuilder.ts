@@ -203,8 +203,8 @@ export class ChartBuilder {
         if (options.marker !== undefined) {
             series.marker = options.marker;
         }
-        if (options.markerRadius !== undefined) {
-            series.markerRadius = options.markerRadius;
+        if (options.markerSize !== undefined) {
+            series.markerSize = options.markerSize;
         }
         if (options.markerLineWidth !== undefined) {
             series.markerStrokeWidth = options.markerLineWidth;

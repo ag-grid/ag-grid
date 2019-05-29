@@ -119,7 +119,7 @@ export class LineChartProxy extends ChartProxy {
                 stroke: palette.strokes[0], //TODO
                 lineWidth: 3,
                 marker: true,
-                markerRadius: 3,
+                markerSize: 3,
                 markerLineWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,

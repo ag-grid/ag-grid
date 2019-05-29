@@ -114,7 +114,7 @@ export interface LineSeriesOptions extends SeriesOptions {
     stroke?: string;
     lineWidth?: number;
     marker?: boolean;
-    markerRadius?: number;
+    markerSize?: number;
     markerLineWidth?: number;
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 }
