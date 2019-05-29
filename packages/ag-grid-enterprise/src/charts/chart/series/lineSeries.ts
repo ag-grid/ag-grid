@@ -94,15 +94,15 @@ export class LineSeries extends Series<CartesianChart> {
         return this._marker;
     }
 
-    private _markerRadius: number = 4;
-    set markerRadius(value: number) {
-        if (this._markerRadius !== value) {
-            this._markerRadius = Math.abs(value);
+    private _markerSize: number = 4;
+    set markerSize(value: number) {
+        if (this._markerSize !== value) {
+            this._markerSize = Math.abs(value);
             this.update();
         }
     }
-    get markerRadius(): number {
-        return this._markerRadius;
+    get markerSize(): number {
+        return this._markerSize;
     }
 
     private _markerStrokeWidth: number = 2;
@@ -230,7 +230,7 @@ export class LineSeries extends Series<CartesianChart> {
         const stroke = this.stroke;
         const marker = this.marker;
         const markerStrokeWidth = this.markerStrokeWidth;
-        const markerRadius = this.markerRadius;
+        const markerSize = this.markerSize;
 
         const lineNode: Path = this.lineNode;
         const linePath: Path2D = lineNode.path;
@@ -257,7 +257,7 @@ export class LineSeries extends Series<CartesianChart> {
                     fill,
                     stroke,
                     strokeWidth: markerStrokeWidth,
-                    radius: markerRadius
+                    radius: markerSize / 2
                 });
             }
         }
