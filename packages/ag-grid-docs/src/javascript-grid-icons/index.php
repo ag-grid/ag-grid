@@ -47,6 +47,8 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
  */
 .ag-theme-balham .ag-icon-pin {
     font-family: "Font Awesome 5 Free";
+    // FontAwesome uses font-weight bold
+    font-weight: bold;
 }
 .ag-theme-balham .ag-icon-pin::before {
     content: '\f08d';
@@ -123,7 +125,12 @@ $ag-icon-tree-indeterminate: "\f068";
 $ag-icon-tree-open: "\f107";
 
 @import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-balham.scss";</snippet>
+@import "~ag-grid/src/styles/ag-theme-balham.scss";
+
+.ag-icon {
+    font-weight: bold;
+}
+</snippet>
 
 <p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
 
