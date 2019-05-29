@@ -110,12 +110,15 @@ export interface LineTooltipRendererParams {
 export interface LineSeriesOptions extends SeriesOptions {
     xField?: string;
     yField?: string;
+
     fill?: string;
     stroke?: string;
     lineWidth?: number;
+
     marker?: boolean;
     markerSize?: number;
     markerLineWidth?: number;
+
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 }
 
@@ -129,15 +132,20 @@ export interface BarSeriesOptions extends SeriesOptions {
     xField?: string;
     yFields?: string[];
     yFieldNames?: string[];
+
     grouped?: boolean;
+
     fills?: string[];
     strokes?: string[];
     strokeWidth?: number;
+
     shadow?: DropShadowOptions;
+
     labelEnabled?: boolean;
     labelFont?: string;
     labelColor?: string;
     labelPadding?: {x: number, y: number};
+
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 }
 
@@ -149,24 +157,31 @@ export interface PieTooltipRendererParams {
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
-    calloutColors?: string[];
-    calloutWidth?: number;
-    calloutLength?: number;
-    calloutPadding?: number;
+    fills?: string[];
+    strokes?: string[];
+    strokeWidth?: number;
+
+    angleField?: string;
+    radiusField?: string;
+
+    labelEnabled?: boolean;
+    labelField?: string;
     labelFont?: string;
     labelColor?: string;
     labelMinAngle?: number;
-    angleField?: string;
-    radiusField?: string;
-    labelField?: string;
-    labelEnabled?: boolean;
-    fills?: string[];
-    strokes?: string[];
+
+    calloutLength?: number;
+    calloutStrokeWidth?: number;
+    calloutPadding?: number;
+    calloutColors?: string[];
+
     rotation?: number;
+
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
+
     shadow?: DropShadowOptions;
-    lineWidth?: number;
+
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 }
 
@@ -174,8 +189,10 @@ export interface LegendOptions {
     markerLineWidth?: number;
     markerSize?: number;
     markerPadding?: number;
+
     itemPaddingX?: number;
     itemPaddingY?: number;
+
     labelFont?: string;
     labelColor?: string;
 }

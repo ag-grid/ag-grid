@@ -265,8 +265,8 @@ export class ChartBuilder {
         if (options.calloutColors !== undefined) {
             series.calloutColors = options.calloutColors;
         }
-        if (options.calloutWidth !== undefined) {
-            series.calloutWidth = options.calloutWidth;
+        if (options.calloutStrokeWidth !== undefined) {
+            series.calloutStrokeWidth = options.calloutStrokeWidth;
         }
         if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
@@ -313,8 +313,8 @@ export class ChartBuilder {
         if (options.innerRadiusOffset !== undefined) {
             series.innerRadiusOffset = options.innerRadiusOffset;
         }
-        if (options.lineWidth !== undefined) {
-            series.lineWidth = options.lineWidth;
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
         }
         if (options.shadow !== undefined) {
             series.shadow = ChartBuilder.createDropShadow(options.shadow);

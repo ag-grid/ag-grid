@@ -104,15 +104,15 @@ export class PieSeries extends Series<PolarChart> {
         return this._calloutColors;
     }
 
-    private _calloutWidth: number = 2;
-    set calloutWidth(value: number) {
-        if (this._calloutWidth !== value) {
-            this._calloutWidth = value;
+    private _calloutStrokeWidth: number = 2;
+    set calloutStrokeWidth(value: number) {
+        if (this._calloutStrokeWidth !== value) {
+            this._calloutStrokeWidth = value;
             this.update();
         }
     }
-    get calloutWidth(): number {
-        return this._calloutWidth;
+    get calloutStrokeWidth(): number {
+        return this._calloutStrokeWidth;
     }
 
     private _calloutLength: number = 10;
@@ -294,15 +294,15 @@ export class PieSeries extends Series<PolarChart> {
         return this._innerRadiusOffset;
     }
 
-    private _lineWidth: number = 1;
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
+    private _strokeWidth: number = 1;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             this.update();
         }
     }
-    get lineWidth(): number {
-        return this._lineWidth;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
     private _shadow: DropShadow | undefined = undefined;
@@ -480,7 +480,7 @@ export class PieSeries extends Series<PolarChart> {
                 sector.fill = fills[index % fills.length];
                 sector.stroke = strokes[index % strokes.length];
                 sector.shadow = this.shadow;
-                sector.strokeWidth = this.lineWidth;
+                sector.strokeWidth = this.strokeWidth;
                 sector.lineJoin = 'round';
             });
 
@@ -490,7 +490,7 @@ export class PieSeries extends Series<PolarChart> {
                 if (datum.label) {
                     const outerRadius = outerRadii[index];
 
-                    line.strokeWidth = this.calloutWidth;
+                    line.strokeWidth = this.calloutStrokeWidth;
                     line.stroke = calloutColors[index % calloutColors.length];
                     line.x1 = datum.midCos * outerRadius;
                     line.y1 = datum.midSin * outerRadius;
