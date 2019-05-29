@@ -58,8 +58,7 @@ meta_and_links($title, $keywords, $description, false);
                     </li>
                 </ul>
 
-                <a href="/javascript-grid-getting-started/" id="free-cta">Use Free Version</a>
-                <a href="/start-trial.php" id="enterprise-cta">Trial Enterprise Version</a>
+                <a href="/javascript-grid-getting-started/" id="free-cta">Get Started</a>
             </div>
         </section>
     </header>

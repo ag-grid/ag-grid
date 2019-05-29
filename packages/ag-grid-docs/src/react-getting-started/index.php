@@ -7,7 +7,6 @@ include '../getting-started/header.php';
 ?>
 <div>
   <h1>React Grid | Get Started with ag-Grid</h1>
-  <h2 id="react-grid-overview">React Grid Overview</h2>
   <p class="lead" id="react-grid-description">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies.
   ag-Grid supports React through a <strong>wrapper component</strong>. The React wrapper lets you use ag-Grid in your application like any other React component &ndash; you pass configuration through properties and handle events through callbacks.
 You can even use React components to customize the grid UI and cell contents / behavior.</p>
@@ -234,7 +233,13 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 </ul>
 
 <h2 id="grouping(enterprise)">Grouping (enterprise)</h2>
-<div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
+
+<div class="note">
+    Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise to see what you
+    think. You only need to get in touch if you want to start using ag-Grid Enterprise in a project intended
+    for production.
+</div>
+
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 <snippet language="diff">
 componentDidMount() {
@@ -255,8 +260,15 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 + import 'ag-grid-enterprise';
 </snippet>
-<p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
+<p>
+    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
+    You can ignore the message as we are trialing.
+    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
+    feel free to look around:
+</p>
+
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
+
 <p>Now, let's enable grouping! Change the <code>state</code> assignment to this:</p>
 <snippet language="jsx">
 this.state = {
@@ -319,7 +331,7 @@ import { AgGridReact } from 'ag-grid-react';
   <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
   <br><br>
   <p>In addition to that, if you are using Redux, make sure to check out the <a href="../react-redux-integration-pt1/">Integrating ag-Grid with Redux guide</a>.</p>
-  <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
+
 </div>
 <div class="card" style="background-color: aliceblue">
   <div class="card-body">
@@ -342,11 +354,4 @@ import { AgGridReact } from 'ag-grid-react';
   </div>
 </div>
 <br/>
-<div>
-  <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
-</div>
-<br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
 <?php include '../getting-started/footer.php'; ?>
