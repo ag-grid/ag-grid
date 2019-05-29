@@ -9,7 +9,11 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">Clipboard</h1>
 
-    <p> You can copy and paste items to and from the grid using the system clipboard.  </p>
+    <p class="lead">
+        You can copy and paste items to and from the grid using the system clipboard.
+    </p>
+
+    <? enterprise_feature("Clipboard"); ?>
 
     <h2> Copy to Clipboard </h2>
 

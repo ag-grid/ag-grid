@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
         groups and then builds up into more advanced topics for row grouping.<br>
     </p>
 
+    <? enterprise_feature("Row Grouping"); ?>
+
     <p>
         Remember Row Grouping works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>

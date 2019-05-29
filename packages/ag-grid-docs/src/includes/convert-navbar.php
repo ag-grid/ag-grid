@@ -22,12 +22,6 @@
                     <a href="/documentation-main/documentation.php">Documentation</a>
                 </li>
 
-
-                <?php if (!defined('HOMEPAGE')) { ?>
-                <li id="trial" class="<?php if ($navKey == "trial") { ?> active<?php }?>">
-                    <a href="/start-trial.php">Start Your 2-Month Free Trial</a>
-                </li>
-                <?php }?>
             </ul>
         <?php } else { ?> 
             <ul>

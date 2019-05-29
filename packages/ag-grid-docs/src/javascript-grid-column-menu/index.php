@@ -15,6 +15,8 @@ include '../documentation-main/documentation_header.php';
         and 3) Column Management panel is shown.
     </p>
 
+    <? enterprise_feature("Column Menu"); ?>
+
     <h2>Showing the Column Menu</h2>
 
     <p>

@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
     This section describes how to nest grids inside grids using a Master / Detail configuration.
 </p>
 
+<? enterprise_feature("Master Detail"); ?>
+
 <p>
     With the Master Detail grid configuration, the top level grid is referred to as the 'master grid' and the nested grid
     is referred to as the 'detail grid'.

@@ -8,11 +8,13 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Aggregation</h1>
 
-    <p>
+    <p class="lead">
         When grouping, you can apply an aggregation function to any column to populate the group
         row with values. You can pick from the grid's built in aggregation functions or
         provide your own.
     </p>
+
+    <? enterprise_feature("Aggregation"); ?>
 
     <h2>Defining Aggregations</h2>
 

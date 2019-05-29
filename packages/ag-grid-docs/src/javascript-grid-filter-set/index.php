@@ -15,6 +15,8 @@ include '../documentation-main/documentation_header.php';
         to the set filter.
     </p>
 
+    <? enterprise_feature("Set Filter"); ?>
+
     <h2>Set Filter Parameters</h2>
 
 

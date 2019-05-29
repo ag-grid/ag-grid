@@ -16,6 +16,8 @@ include '../documentation-main/documentation_header.php';
         or for doing aggregations using the <a href="../javascript-grid-status-bar/">Status Bar</a>.
     </p>
 
+    <? enterprise_feature("Range Selection"); ?>
+
     <h2>Selecting Ranges</h2>
 
     <p>

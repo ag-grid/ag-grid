@@ -328,8 +328,5 @@ private getCountryFilterParams():any {
   </div>
 </div>
 <br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

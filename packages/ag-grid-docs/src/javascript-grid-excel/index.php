@@ -8,10 +8,14 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">JavaScript Grid Excel</h1>
     <article>
-        <h2>Exporting ag-Grid Data to Excel</h2>
 
         <p>
             Excel Export allows exporting ag-Grid data to Excel using Open XML format (xlsx) or Excel's own XML format. <br/>
+        </p>
+
+        <? enterprise_feature("Excel Export"); ?>
+
+        <p>
             Using this format allows for rich Excel files to be created with the following:
         </p>
 

@@ -13,6 +13,8 @@ include '../documentation-main/documentation_header.php';
         By default, the context menu provides the values 'copy' and 'paste'. Copy will copy the selected
         cells or rows to the clipboard. Paste will always, forever, be disabled.</p>
 
+    <? enterprise_feature("Context Menu"); ?>
+
     <note>
         The 'paste' operation in the context menu is not possible and hence always disabled.
         It is not possible because of a browser security restriction that Javascript cannot

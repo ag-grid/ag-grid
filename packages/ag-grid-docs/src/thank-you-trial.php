@@ -40,8 +40,6 @@ meta_and_links("ag-Grid: Thanks, we will be in touch.", "ag-Grid Javascript Grid
                 <br>
                 <a href="../features-overview"><button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: -20px">Features Overview</button></a>
                     <br>
-                <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: -20px">Read our Blog</button></a>
-                    <br>
                 <a href="../testimonials.php"><button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: -20px">See our Customers</button></a>
                 </li>
             </ul>

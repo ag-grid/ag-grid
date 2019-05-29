@@ -11,6 +11,8 @@ include '../documentation-main/documentation_header.php';
 <p class="lead">The status bar appears below the grid and holds components that
     typically display information about the data in the grid.</p>
 
+<? enterprise_feature("Status Bar"); ?>
+
 <p>Within the Status Bar you can specify which Status Bar Panels you want to display. </p>
 
 <p>

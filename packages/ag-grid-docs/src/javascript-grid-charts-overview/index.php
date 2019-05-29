@@ -14,6 +14,8 @@ include '../documentation-main/documentation_header.php';
         from the grid without requiring additional developer coding.
     </p>
 
+    <? enterprise_feature("Charting"); ?>
+
     <note>
         <b>Charting in ag-Grid is currently in beta.</b> If you are an ag-Grid Enterprise customer then you are
         encouraged to try out the charts in ag-Grid as described here and give feedback to the ag-Grid team

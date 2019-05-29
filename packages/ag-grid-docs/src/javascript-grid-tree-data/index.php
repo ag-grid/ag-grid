@@ -14,6 +14,8 @@ include '../documentation-main/documentation_header.php';
         provided as part of the data. For example, a folder can contain zero or more files and other folders.
     </p>
 
+    <? enterprise_feature("Tree Data"); ?>
+
     </p>
         This section introduces simple ways to work with Tree Data before covering more advanced use cases.
     </p>

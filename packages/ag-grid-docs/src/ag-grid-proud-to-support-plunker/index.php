@@ -40,7 +40,7 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and drives us to keep delivering on our mission. You can take a <a href="https://www.ag-grid.com/start-trial.php">free trial</a> to see if it fits your needs.
+            ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and drives us to keep delivering on our mission. You can try out ag-Grid Enterprise for free to see if it fits your needs.
         </p>
 
         <h3>Corporate ‘Open-Source’ Social Responsibility</h3>
@@ -60,7 +60,8 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and drives us to keep delivering on our mission. You can take a <a href="https://www.ag-grid.com/start-trial.php">free trial</a> to see if it fits your needs.
+            ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and drives us to keep delivering on our mission.
+            You can trial ag-Grid Enterprise for free to see if it fits your needs.
         </p>
         
         <div style="background-color: #eee; padding: 10px; display: inline-block;">

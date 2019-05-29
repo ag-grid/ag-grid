@@ -33,11 +33,6 @@
                     <a href="/license-pricing.php">Pricing</a>
                 </li>
 
-                <?php if (!defined('HOMEPAGE')) { ?>
-                <li id="trial" class="<?php if ($navKey == "trial") { ?> active<?php }?>">
-                    <a href="/start-trial.php">Free Trial</a>
-                </li>
-                <?php }?>
             </ul>
         <?php } else { ?> 
             <ul>

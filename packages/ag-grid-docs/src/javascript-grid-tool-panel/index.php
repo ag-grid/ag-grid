@@ -13,6 +13,8 @@ include '../documentation-main/documentation_header.php';
         operations such as grouping, pivoting, and filtering. Custom Tool Panels can also be provided to the grid.
     </p>
 
+    <? enterprise_feature("Tool Panel"); ?>
+
     <h2>Overview</h2>
 
     <p>
