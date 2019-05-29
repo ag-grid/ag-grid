@@ -1,5 +1,5 @@
-import { _, Autowired, Bean, PreConstruct } from 'ag-grid-community';
-import { MD5 } from './license/md5';
+import {_, Autowired, Bean, PreConstruct} from 'ag-grid-community';
+import {MD5} from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
@@ -11,15 +11,22 @@ export class LicenseManager {
 
     @PreConstruct
     public validateLicense(): void {
-        if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
+        console.log("1");
+        if (_.missingOrEmpty(LicenseManager.licenseKey)) {
+            this.outputMissingLicenseKey();
+        } else if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
             const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
 
             if (md5 === this.md5.md5(license)) {
                 if (_.exists(version) && version) {
-                    this.validateLicenseKeyForVersion(version, isTrial, license);
+                    console.log("2");
+                    this.validateLicenseKeyForVersion(version, !!isTrial, license);
                 } else {
+                    console.log("3");
                     this.validateLegacyKey(license);
                 }
+            } else {
+                this.outputInvalidLicenseKey();
             }
         }
     }
@@ -38,7 +45,7 @@ export class LicenseManager {
     }
 
     public getLicenseDetails(licenseKey: string) {
-        const {md5, license} = LicenseManager.extractLicenseComponents(licenseKey);
+        const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(licenseKey);
         let valid = (md5 === this.md5.md5(license));
 
         let expiry: Date | null = null;
@@ -50,21 +57,15 @@ export class LicenseManager {
         return {
             licenseKey,
             valid,
-            expiry: valid ? LicenseManager.formatDate(expiry) : null
+            expiry: valid ? LicenseManager.formatDate(expiry) : null,
+            version: version ? version : 'legacy',
+            isTrial
         };
     }
 
+
     public isDisplayWatermark(): boolean {
         return this.displayWatermark;
-    }
-
-    private static outputMessage(header: string, message: string) {
-        console.error('****************************************************************************************************************');
-        console.error('*************************************** ag-Grid Enterprise License *********************************************');
-        console.error(header);
-        console.error(message);
-        console.error('****************************************************************************************************************');
-        console.error('****************************************************************************************************************');
     }
 
     private static formatDate(date: any): string {
@@ -136,17 +137,17 @@ export class LicenseManager {
         LicenseManager.licenseKey = licenseKey;
     }
 
-    private static extractBracketedInformation(licenseKey: string): [string | null, boolean] {
+    private static extractBracketedInformation(licenseKey: string): [string | null, boolean | null] {
         const matches = licenseKey.split('[')
-            .filter(function(v) {
+            .filter(function (v) {
                 return v.indexOf(']') > -1
             })
-            .map(function(value) {
+            .map(function (value) {
                 return value.split(']')[0]
             });
 
         if (!matches || matches.length === 0) {
-            return [null, false];
+            return [null, null];
         }
 
         const isTrial = matches.filter(match => match === 'TRIAL').length === 1;
@@ -179,15 +180,12 @@ export class LicenseManager {
         }
 
         if (!valid) {
-            LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
-                '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
-            this.displayWatermark = true;
+            this.outputInvalidLicenseKey();
         } else if (!current) {
             const formattedExpiryDate = LicenseManager.formatDate(expiry);
             const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
-            LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
-                `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. Please contact accounts@ag-grid.com to renew your license.`);
-            this.displayWatermark = true;
+
+            this.outputIncompatibleVersion(formattedExpiryDate, formattedReleaseDate);
         }
     }
 
@@ -203,14 +201,58 @@ export class LicenseManager {
         }
 
         if (!valid) {
-            LicenseManager.outputMessage('********************************************* Invalid License **************************************************',
-                '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
-            this.displayWatermark = true;
+            this.outputInvalidLicenseKey();
         } else if (!current) {
             const formattedExpiryDate = LicenseManager.formatDate(expiry);
-            LicenseManager.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************',
-                `Your license for ag-Grid Enterprise expired on ${formattedExpiryDate}. Please contact accounts@ag-grid.com to renew your license.`);
-            this.displayWatermark = true;
+            this.outputExpiredTrialKey(formattedExpiryDate);
         }
+    }
+
+    private outputInvalidLicenseKey() {
+        console.error('*****************************************************************************************************************');
+        console.error('***************************************** ag-Grid Enterprise License ********************************************');
+        console.error('********************************************* Invalid License ***************************************************');
+        console.error('* Your license for ag-Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
+        console.error('*****************************************************************************************************************');
+        console.error('*****************************************************************************************************************');
+
+        this.displayWatermark = true;
+    }
+
+    private outputExpiredTrialKey(formattedExpiryDate: string) {
+        console.error('****************************************************************************************************************');
+        console.error('***************************************** ag-Grid Enterprise License *******************************************');
+        console.error('*****************************************   Trial Period Expired.    *******************************************');
+        console.error(`* Your license for ag-Grid Enterprise expired on ${formattedExpiryDate}.                                                *`);
+        console.error('* Please email info@ag-grid.com to purchase a license.                                                         *');
+        console.error('****************************************************************************************************************');
+        console.error('****************************************************************************************************************');
+
+        this.displayWatermark = true;
+    }
+
+    private outputMissingLicenseKey() {
+        console.error('****************************************************************************************************************');
+        console.error('***************************************** ag-Grid Enterprise License *******************************************');
+        console.error('****************************************** License Key Not Found ***********************************************');
+        console.error('* All ag-Grid Enterprise features are unlocked.                                                                *');
+        console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
+        console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
+        console.error('****************************************************************************************************************');
+        console.error('****************************************************************************************************************');
+
+        this.displayWatermark = true;
+    }
+
+    private outputIncompatibleVersion(formattedExpiryDate: string, formattedReleaseDate: string) {
+        console.error('****************************************************************************************************************************');
+        console.error('********************************************* ag-Grid Enterprise License ***************************************************');
+        console.error('*************************** License not compatible with installed version of ag-Grid Enterprise. ***************************');
+        console.error(`* Your license for ag-Grid Enterprise expired on ${formattedExpiryDate} but the version installed was released on ${formattedReleaseDate}. *`);
+        console.error('* Please contact info@ag-grid.com to renew your subscription to new versions.                                              *');
+        console.error('****************************************************************************************************************************');
+        console.error('****************************************************************************************************************************');
+
+        this.displayWatermark = true;
     }
 }
