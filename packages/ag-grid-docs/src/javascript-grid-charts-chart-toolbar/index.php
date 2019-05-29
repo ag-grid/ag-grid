@@ -42,7 +42,6 @@ interface GetChartToolbarItemsParams {
     api: GridApi;
     columnApi: ColumnApi;
 }
-
 </snippet>
 
 <p>
