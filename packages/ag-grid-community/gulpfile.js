@@ -156,7 +156,8 @@ function webpackTask(minify, styles) {
 }
 
 function scssTask() {
-    // Uncompressed
+    var f = filter(["**/*.css", '!*Font*.css'], { restore: true });
+
     return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
         .pipe(named())
         .pipe(webpackStream({
@@ -222,7 +223,10 @@ function scssTask() {
                 new MiniCssExtractPlugin('[name].css')
             ]
         }))
-        .pipe(filter("**/*.css"))
-        .pipe(gulp.dest('dist/styles/'));
+        .pipe(f)
+        .pipe(gulp.dest('dist/styles/'))
+        .pipe(f.restore)
+        .pipe(filter('*Font*.css'))
+        .pipe(gulp.dest('dist/styles/webfont/'));
 }
 
