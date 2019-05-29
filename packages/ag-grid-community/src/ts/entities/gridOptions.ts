@@ -638,7 +638,6 @@ export interface GetChartToolbarItemsParams {
     defaultItems: string[] | undefined;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
-    context: any;
 }
 
 export interface GetChartToolbarItems {

@@ -57,9 +57,9 @@ export class ChartMenu extends Component {
             const params: GetChartToolbarItemsParams = {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext(),
                 defaultItems: chartToolbarOptions
-            }
+            };
+
             chartToolbarOptions = (toolbarItemsFunc(params) as ChartToolbarOptions[]).filter(option => {
                 if (!this.buttons[option]) {
                     console.warn(`ag-Grid: '${option} is not a valid Chart Toolbar Option`);

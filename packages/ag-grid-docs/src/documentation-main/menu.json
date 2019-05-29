@@ -544,8 +544,13 @@
         "enterprise": true
       },
       {
+        "title": "Chart Toolbar",
+        "url": "javascript-grid-charts-chart-toolbar/",
+        "enterprise": true
+      },
+      {
         "title": "Customising",
-        "url": "javascript-grid-charts-customisation/",
+        "url": "javascript-grniceid-charts-customisation/",
         "enterprise": true,
         "items": [
           {
