@@ -59,7 +59,7 @@ npm install --save ag-grid-community ag-grid-angular
 npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
 </snippet>
 
-<p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid Angular module to our app module (<code>src/app.module.ts</code>):</p>
+<p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid Angular module to our app module (<code>src/app/app.module.ts</code>):</p>
 
 <snippet language="ts">
 import { BrowserModule } from '@angular/platform-browser';
@@ -70,7 +70,10 @@ import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AgGridModule.withComponents([])],
+  imports: [
+    BrowserModule,
+    AgGridModule.withComponents([])
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
