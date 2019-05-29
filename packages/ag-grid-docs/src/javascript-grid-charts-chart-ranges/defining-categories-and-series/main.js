@@ -1,14 +1,16 @@
 var columnDefs = [
     // different ways to define 'categories'
-    {field: "athlete", width: 150, enableRowGroup: true},
-    {field: "sport", chartType: 'category'},
-    {field: "age", chartType: 'category'},
+    {field: "athlete", width: 150, cartType: 'category'},
+    {field: "age", enableRowGroup: true},
+    {field: "sport"},
+
+    // excludes year from charts
+    {field: "year", chartType: 'excluded'},
 
     // different ways to define 'series'
     {field: "gold", enableValue: true},
     {field: "silver", chartType: 'series'},
-    {field: "bronze"},
-    {field: "total"}
+    {field: "bronze"}
 ];
 
 var gridOptions = {
@@ -37,7 +39,7 @@ var gridOptions = {
     processChartOptions: function(params) {
         const opt = params.options;
 
-        opt.title = {text: "Medal Totals by sport"};
+        opt.title = {text: "Medal Totals by Sport"};
         opt.height = 350;
         opt.xAxis.labelRotation = 45;
 
