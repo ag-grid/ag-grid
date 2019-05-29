@@ -29,12 +29,15 @@ padding: 0 3vw;
 h1, h2, h3, h4 {
 text-align: center;
 }
+
+@media only screen and (min-width: 768px) {
 h1 {
 padding: 30px 0;
 font-family: 'Roboto', sans-serif;
 font-size: 3.2rem;
 font-weight: 500;
 }
+
 h2 {
 background: aliceblue;
 padding: 25px 0;
