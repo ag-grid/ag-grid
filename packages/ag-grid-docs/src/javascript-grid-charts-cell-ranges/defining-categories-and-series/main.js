@@ -30,8 +30,6 @@ var gridOptions = {
         const updatedOptions = params.options;
         updatedOptions.height = 300;
         updatedOptions.xAxis.labelRotation = 45;
-
-        console.log(updatedOptions);
         return updatedOptions;
     }
 };
