@@ -27,8 +27,56 @@ include '../documentation-main/documentation_header.php';
         <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
     </p>
 
-    <h2>Charting Ranges</h2>
+    <h2>Anatomy of a Charting Range</h2>
+    <p>
+        Charting ranges can contain a single column range of category values along with a series range comprised of one
+        or more columns.
+    </p>
 
+    <p>
+        <b>TODO</b>
+    </p>
+
+    <h2>Defining category and series columns</h2>
+    <p>
+        It is possible to explicitly define a column as a category or series, or simply let the grid determine the type
+        based on the data type. Each method is explained below in the order of precedence used by the grid:
+    </p>
+
+    <p>
+        When defining column definitions the <code>ColDef.chartType</code> property can be used to define how the column
+        should be considered within the context of charting. The allowed values are should below:
+    </p>
+
+    <snippet>
+        ColDef.chartType = 'category' | 'series' | 'excluded' | undefined
+    </snippet>
+
+    <p>
+        Columns defined as <code>excluded</code> will not be included in charts or charting ranges.
+    </p>
+
+    <p>
+        The following column definitions show how the different <code>ColDef.chartType</code> values are applied:
+    </p>
+
+    <snippet>
+        // 'category' columns
+        {field: "athlete", chartType: 'category'},
+        {field: "age", chartType: 'category'}, // despite containing numbers
+        {field: "country"}, // contains strings
+
+        // 'excluded' from charts
+        {field: "date", chartType: 'excluded'},
+
+        // 'series' columns
+        {field: "gold", chartType: 'series'},
+        {field: "silver", width: 100} // contains numbers
+    </snippet>
+
+    <p>
+        When <code>ColDef.chartType</code> not set or <code>undefined</code> the grid will then consider the following properties:
+    </p>
 
 
 
