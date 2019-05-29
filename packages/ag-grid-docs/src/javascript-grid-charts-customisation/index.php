@@ -29,7 +29,6 @@ interface GetChartToolbarItemsParams {
 }
 </snippet>
 
-
     <h2>Overriding Chart Options</h2>
 
     <p>
@@ -37,7 +36,7 @@ interface GetChartToolbarItemsParams {
     </p>
 
     <snippet>
-        export interface ProcessChartOptionsParams {
+        interface ProcessChartOptionsParams {
             type: string;
             options: ChartOptions;
         }

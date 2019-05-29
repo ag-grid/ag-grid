@@ -535,7 +535,12 @@
     "items": [
       {
         "title": "Overview",
-        "url": "javascript-grid-charts/",
+        "url": "javascript-grid-charts-overview/",
+        "enterprise": true
+      },
+      {
+        "title": "Range Selection",
+        "url": "javascript-grid-charts-range-selection/",
         "enterprise": true
       },
       {
