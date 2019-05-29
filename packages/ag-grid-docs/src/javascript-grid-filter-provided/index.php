@@ -75,8 +75,15 @@ include '../documentation-main/documentation_header.php';
     </tr>
     <tr>
         <td class="parameter-key">debounceMs</td>
-        <td>By default the provided filters will debounce for 500ms before executing the filter. Use
-            <code>debounceMs</code> to override the default debounce time, or set to 0 to remove the debounce.</td>
+        <td>By default the
+            <a href="../javascript-grid-filter-text">Text</a> and
+            <a href="../javascript-grid-filter-number">Number</a> will debounce by 500ms.
+            This is because these filters have text field inputs, so time is given to the user to type items in.
+            The
+            <a href="../javascript-grid-filter-set">Set</a> and
+            <a href="../javascript-grid-filter-date">Date</a> will execute immediately (no debounce).
+            To override these defaults, set <code>debounceMs</code> to the number of milliseconds to debounce by.
+        </td>
     </tr>
     <tr>
         <td class="parameter-key">newRowsAction</td>

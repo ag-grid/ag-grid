@@ -19,6 +19,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     private lastType: string;
 
+    protected getDefaultDebounceMs(): number {
+        return 0;
+    }
+
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
     // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)

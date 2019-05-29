@@ -1,14 +1,13 @@
-import { IFloatingFilterParams } from "../floatingFilter";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { ProvidedFilterModel } from "../../../interfaces/iFilter";
-import { _ } from "../../../utils";
-import { Constants } from "../../../constants";
-import { ProvidedFilter } from "../../provided/providedFilter";
-import { PostConstruct } from "../../../context/context";
-import { SimpleFloatingFilter } from "./simpleFloatingFilter";
-import { SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel } from "../../provided/simpleFilter";
-import { NumberFilterModel } from "../../provided/number/numberFilter";
-import { FilterChangedEvent } from "../../../events";
+import {IFloatingFilterParams} from "../floatingFilter";
+import {RefSelector} from "../../../widgets/componentAnnotations";
+import {ProvidedFilterModel} from "../../../interfaces/iFilter";
+import {_} from "../../../utils";
+import {Constants} from "../../../constants";
+import {ProvidedFilter} from "../../provided/providedFilter";
+import {PostConstruct} from "../../../context/context";
+import {SimpleFloatingFilter} from "./simpleFloatingFilter";
+import {ISimpleFilterModel, SimpleFilter} from "../../provided/simpleFilter";
+import {FilterChangedEvent} from "../../../events";
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
@@ -25,6 +24,10 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
             `<div class="ag-input-text-wrapper">
                 <input ref="eFloatingFilterText" class="ag-floating-filter-input">
             </div>`);
+    }
+
+    protected getDefaultDebounceMs(): number {
+        return 500;
     }
 
     public onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void {
@@ -45,7 +48,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
         this.params = params;
 
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
-        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams);
+        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
 
         const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 

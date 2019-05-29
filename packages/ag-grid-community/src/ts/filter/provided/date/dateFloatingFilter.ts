@@ -102,7 +102,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private createDateComponent(): void {
 
-        const debounceMs: number = ProvidedFilter.getDebounceMs(this.params.filterParams);
+        const debounceMs: number = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         const toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         const dateComponentParams: IDateParams = {
             onDateChanged: toDebounce,

@@ -126,8 +126,13 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
     }
 
+    // subclasses can override this to provide alternative debounce defaults
+    protected getDefaultDebounceMs(): number {
+        return 0;
+    }
+
     private setupOnBtApplyDebounce(): void {
-        const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams);
+        const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
         this.onBtApplyDebounce = _.debounce(this.onBtApply.bind(this), debounceMs);
     }
 
@@ -211,7 +216,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     // static, as used by floating filter also
-    public static getDebounceMs(params: IProvidedFilterParams): number {
+    public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
         const applyActive = ProvidedFilter.isUseApplyButton(params);
         if (applyActive) {
             if (params.debounceMs != null) {
@@ -219,7 +224,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             }
             return 0;
         }
-        return params.debounceMs != null ? params.debounceMs : 500;
+        return params.debounceMs != null ? params.debounceMs : debounceDefault;
     }
 
     // static, as used by floating filter also

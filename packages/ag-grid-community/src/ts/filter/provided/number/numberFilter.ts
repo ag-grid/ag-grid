@@ -42,6 +42,10 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         };
     }
 
+    protected getDefaultDebounceMs(): number {
+        return 500;
+    }
+
     protected resetUiToDefaults(): void {
         super.resetUiToDefaults();
 
