@@ -40,17 +40,17 @@ interface LineChartOptions {
     // The CSS class name to be used by the tooltip element.
     tooltipClass?: string;
     legend?: {
-        // The line width of a legend marker.
-        markerLineWidth?: number;
-        // The size of a legend marker.
+        // The stroke width of a legend marker. Defaults to `1`.
+        markerStrokeWidth?: number;
+        // The size of a legend marker. Defaults to `14`.
         markerSize?: number;
-        // The padding between a legend marker and its label.
+        // The padding between a legend marker and its label. Defaults to `4`.
         markerPadding?: number;
-        // The amount of horizontal padding between legend items.
+        // The amount of horizontal padding between legend items. Defaults to `16`.
         itemPaddingX?: number;
-        // The amount of vertical padding between legend items.
+        // The amount of vertical padding between legend items. Defaults to `8`.
         itemPaddingY?: number;
-        // The font to be used by the legend's labels.
+        // The font to be used by the legend's labels. Defaults to `12px Verdana, sans-serif`.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
         // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
@@ -95,16 +95,16 @@ interface LineTooltipRendererParams {
 }
 
 interface AxisOptions {
-    // The thickness of the axis line.
+    // The thickness of the axis line. Defaults to `1`.
     lineWidth?: number;
     // The color of the axis line. Depends on whether the light or dark mode is used.
     lineColor?: string;
 
-    // The thickness of the ticks.
+    // The thickness of the ticks. Defaults to `1`.
     tickWidth?: number;
-    // The length of the ticks.
+    // The length of the ticks. Defaults to `6`.
     tickSize?: number;
-    // The padding between the ticks and the labels.
+    // The padding between the ticks and the labels. Defaults to `5`.
     tickPadding?: number;
     // The color of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
