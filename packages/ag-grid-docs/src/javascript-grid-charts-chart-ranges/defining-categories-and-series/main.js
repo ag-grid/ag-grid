@@ -23,6 +23,7 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: function(params) {
+
         var chartRangeParams = {
             cellRange: {
                 rowStartIndex: 0,
@@ -35,7 +36,9 @@ var gridOptions = {
         };
 
         params.api.chartRange(chartRangeParams);
-        setTimeout(() => params.api.sizeColumnsToFit(), 100);
+
+        // setTimeout(() => params.api.sizeColumnsToFit(), 100);
+        params.api.sizeColumnsToFit();
     },
     processChartOptions: function(params) {
         const opt = params.options;
@@ -45,7 +48,10 @@ var gridOptions = {
         // opt.legendPadding = 0;
 
         return opt;
-    }
+    },
+    // getChartToolbarItems: function() {
+    //     return [];
+    // }
 };
 
 // setup the grid after the page has finished loading
