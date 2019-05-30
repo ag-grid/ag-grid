@@ -132,7 +132,7 @@ We offer three flavors – <strong>Single Application Developer</strong>, <stron
                     </div>
 
                     <div class="card-footer">
-                        <a class="btn" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-applicationDeveloper">Enquire</a>
+                        <a class="btn" href="mailto:info@ag-grid.com?subject=Web Enquiry"><img src="/images/envelope.png" style="margin-top: -3px; padding-right: 10px">Email Us</a>
                     </div>
                 </div>
 
@@ -151,7 +151,7 @@ We offer three flavors – <strong>Single Application Developer</strong>, <stron
                     </div>
 
                     <div class="card-footer">
-                        <a class="btn" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-siteDeveloper">Enquire</a>
+                        <a class="btn" href="mailto:info@ag-grid.com?subject=Web Enquiry"><img src="/images/envelope.png" style="margin-top: -3px; padding-right: 10px">Email Us</a>
                     </div>
                 </div>
 
@@ -169,7 +169,7 @@ We offer three flavors – <strong>Single Application Developer</strong>, <stron
                     </div>
 
                     <div class="card-footer">
-                        <a class="btn" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-saasAndOEM">Enquire</a>
+                        <a class="btn" href="mailto:info@ag-grid.com?subject=Web Enquiry"><img src="/images/envelope.png" style="margin-top: -3px; padding-right: 10px">Email Us</a>
                     </div>
                 </div>
 

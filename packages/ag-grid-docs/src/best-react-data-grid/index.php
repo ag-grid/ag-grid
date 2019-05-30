@@ -17,11 +17,12 @@ include '../landing-pages/convert-header.php';
         </a>
     </div>
     <h1>World's Leading React Data Grid Component</h1>
-    <p class="lead-description" id="react-data-grid-overview">ag-Grid is designed to integrate deeply into React.<br>
-        Use our grid as a React component to quickly add a react grid table to your application.<br>
-        Discover the versions9 key benefits and resources available to quickly add a data grid or React datatable to your React application.
-    </p>
     <div class="container">
+            <h2 class="overview">Overview</h2>
+    <p class="lead-description">
+        ag-Grid is designed to integrate deeply into React.<br>
+        Use our grid as a React component to quickly add a react grid table to your application.<br>
+        Discover key benefits and resources available to quickly add a data grid or React datatable to your React application.</p>
         <div class="container">
   <div class="row">
     <div class="col">

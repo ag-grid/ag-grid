@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Height: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Height. Rows can have different Row Height. You can even change the row height dynamically at run time. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Row Height. Rows can have different Row Height. You can even change the row height dynamically at run time. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid ag grid javascript Row Height";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

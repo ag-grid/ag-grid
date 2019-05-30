@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid - Working with Data: Setters and Parsers";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Setters and Parsers. Value Setters and Value Parsers are the inverse of value getters and value formatters. Value setters are for placing values into data when field cannot be used. Value parser is for parsing edited values, e.g. removing formatting before storing into the data. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more.One such feature is Setters and Parsers. Value Setters and Value Parsers are the inverse of value getters and value formatters. Value setters are for placing values into data when field cannot be used. Value parser is for parsing edited values, e.g. removing formatting before storing into the data. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Value Setters";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
