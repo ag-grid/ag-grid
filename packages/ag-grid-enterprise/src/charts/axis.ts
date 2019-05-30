@@ -113,7 +113,7 @@ export class Axis<D = any> {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    labelFormatter?: (value: D, fractionDigits?: number) => string;
+    labelFormatter?: (value: any, fractionDigits?: number) => string;
 
     /**
      * The font to be used by the labels. The given font string should use the
@@ -340,7 +340,7 @@ export class Axis<D = any> {
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 label.text = labelFormatter
-                    ? labelFormatter(datum, fractionDigits)
+                    ? labelFormatter(fractionDigits ? datum : String(datum), fractionDigits)
                     : fractionDigits
                         // the `datum` is a floating point number
                         ? (datum as any as number).toFixed(fractionDigits)
