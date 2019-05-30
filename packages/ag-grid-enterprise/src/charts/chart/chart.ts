@@ -23,12 +23,14 @@ export abstract class Chart {
 
     tooltipOffset = [20, 20];
 
+    private defaultTooltipClass = 'ag-chart-tooltip';
+
     protected constructor() {
         this.scene.root = new Group();
         this.legend.onLayoutChange = this.onLayoutChange;
 
         this.tooltipElement.style.display = 'none';
-        this.tooltipClass = 'ag-chart-tooltip';
+        this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
 
         this.setupListeners(this.scene.hdpiCanvas.canvas);
@@ -522,11 +524,11 @@ export abstract class Chart {
         }
     }
 
-    private _tooltipClass: string = '';
+    private _tooltipClass: string = this.defaultTooltipClass;
     set tooltipClass(value: string) {
         if (this._tooltipClass !== value) {
             this._tooltipClass = value;
-            this.tooltipElement.setAttribute('class', value);
+            this.tooltipElement.setAttribute('class', this.defaultTooltipClass + ' ' + value);
         }
     }
     get tooltipClass(): string {
