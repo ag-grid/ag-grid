@@ -95,9 +95,7 @@ export class BarChartProxy extends ChartProxy {
                 labelPadding: {x: 10, y: 10},
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: '',
-                titleEnabled: true,
-                titleFont: 'bold 12px Verdana, sans-serif'
+                shadow: undefined
             }
         };
     }
