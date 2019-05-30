@@ -126,7 +126,7 @@ export class Line extends Shape {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
 
-        if (this.stroke) {
+        if (this.stroke && this.strokeWidth) {
             ctx.stroke();
         }
 
