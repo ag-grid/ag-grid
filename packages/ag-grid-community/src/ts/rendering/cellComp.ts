@@ -1783,16 +1783,16 @@ export class CellComp extends Component {
         if (!rangesLen) { return false; }
 
         const lastRange = _.last(cellRanges);
+        const isFirstRangeCategory = cellRanges[0].type === CellRangeType.DIMENSION;
 
         let handlesAllowed = (
             gridOptionsWrapper.isEnableFillHandle() ||
             gridOptionsWrapper.isEnableRangeHandle() ||
-            this.hasChartRange
+            this.hasChartRange && !isFirstRangeCategory
             ) && rangesLen === 1;
 
         if (!handlesAllowed && this.hasChartRange) {
             const cellPosition = this.getCellPosition();
-            const isFirstRangeCategory = cellRanges[0].type === CellRangeType.DIMENSION;
             handlesAllowed =
                 isFirstRangeCategory &&
                 rangesLen === 2 &&
