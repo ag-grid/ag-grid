@@ -83,11 +83,13 @@ interface BarChartOptions {
         };
         // Whether to show the labels for bars (only applies to the stacked bars).
         labelEnabled?: boolean;
-        // The font to be used by the bar labels.
+        // The font to be used by the bar labels. Defaults to `12px Verdana, sans-serif`.
         labelFont?: string;
-        // The color to be used by the bar labels.
+        // The color to be used by the bar labels. Depends on whether the light or dark mode is used.
         labelColor?: string;
-        // The padding of the labels within bars (from the top and sides of a bar).
+        // The vertical and horizontal padding of the labels within bars (from the top and the sides of a bar).
+        // The labels will only show if they are small enough to fit inside a bar with the given amount of padding.
+        // Defaults to `{x: 10, y: 10}`.
         labelPadding?: {x: number, y: number};
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;

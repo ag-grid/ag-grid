@@ -76,9 +76,9 @@ interface LineChartOptions {
         // Whether to show line series markers at each data point or not. Defaults to `true`.
         // Note: tooltips won't show without markers.
         marker?: boolean;
-        // The size of the marker.
+        // The size of the marker. Defaults to `8`.
         markerSize?: number;
-        // The stroke width of the marker.
+        // The stroke width of the marker. Defaults to `2`.
         markerStrokeWidth?: number;
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: LineTooltipRendererParams) => string;
