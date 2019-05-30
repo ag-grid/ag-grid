@@ -322,11 +322,12 @@ export class Axis<D = any> {
                         line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
                     });
             }
-            gridLines.each((arc, datum, index) => {
+            gridLines.each((gridLine, datum, index) => {
                 const style = styles[index % styleCount];
-                arc.stroke = style.stroke;
-                arc.lineDash = style.lineDash;
-                arc.fill = undefined;
+                gridLine.stroke = style.stroke;
+                gridLine.strokeWidth = this.tickWidth;
+                gridLine.lineDash = style.lineDash;
+                gridLine.fill = undefined;
             });
         }
 

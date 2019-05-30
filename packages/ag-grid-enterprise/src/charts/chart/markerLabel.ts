@@ -60,24 +60,24 @@ export class MarkerLabel extends Group {
         return this._markerSize;
     }
 
-    set markerFillStyle(value: string | undefined) {
+    set markerFill(value: string | undefined) {
         this.marker.fill = value;
     }
-    get markerFillStyle(): string | undefined {
+    get markerFill(): string | undefined {
         return this.marker.fill;
     }
 
-    set markerStrokeStyle(value: string | undefined) {
+    set markerStroke(value: string | undefined) {
         this.marker.stroke = value;
     }
-    get markerStrokeStyle(): string | undefined {
+    get markerStroke(): string | undefined {
         return this.marker.stroke;
     }
 
-    set markerLineWidth(value: number) {
+    set markerStrokeWidth(value: number) {
         this.marker.strokeWidth = value;
     }
-    get markerLineWidth(): number {
+    get markerStrokeWidth(): number {
         return this.marker.strokeWidth;
     }
 

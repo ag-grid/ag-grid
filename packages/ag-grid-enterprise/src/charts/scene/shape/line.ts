@@ -4,7 +4,7 @@ import { BBox } from "../bbox";
 
 export class Line extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
-        lineWidth: 1
+        strokeWidth: 1
     });
 
     constructor() {
@@ -126,7 +126,7 @@ export class Line extends Shape {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
 
-        if (this.stroke) {
+        if (this.stroke && this.strokeWidth) {
             ctx.stroke();
         }
 

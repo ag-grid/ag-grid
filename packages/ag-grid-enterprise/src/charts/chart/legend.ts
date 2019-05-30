@@ -122,15 +122,15 @@ export class Legend {
         return this._markerSize;
     }
 
-    private _markerLineWidth: number = 1;
-    set markerLineWidth(value: number) {
-        if (this._markerLineWidth !== value) {
-            this._markerLineWidth = value;
+    private _markerStrokeWidth: number = 1;
+    set markerStrokeWidth(value: number) {
+        if (this._markerStrokeWidth !== value) {
+            this._markerStrokeWidth = value;
             this.update();
         }
     }
-    get markerLineWidth(): number {
-        return this._markerLineWidth;
+    get markerStrokeWidth(): number {
+        return this._markerStrokeWidth;
     }
 
     private requestLayout() {
@@ -314,9 +314,9 @@ export class Legend {
     update() {
         this.itemSelection.each((markerLabel, datum) => {
             const marker = datum.marker;
-            markerLabel.markerFillStyle = marker.fillStyle;
-            markerLabel.markerStrokeStyle = marker.strokeStyle;
-            markerLabel.markerLineWidth = this.markerLineWidth;
+            markerLabel.markerFill = marker.fillStyle;
+            markerLabel.markerStroke = marker.strokeStyle;
+            markerLabel.markerStrokeWidth = this.markerStrokeWidth;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
 
             markerLabel.labelColor =  this.labelColor;

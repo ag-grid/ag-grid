@@ -89,13 +89,13 @@ interface BarChartOptions {
         labelColor?: string;
         // The padding of the labels within bars (from the top and sides of a bar).
         labelPadding?: {x: number, y: number};
-        // The custom tooltip render to use for bar tooltips. Should return a valid HTML string.
+        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     };
 }
 
 interface BarTooltipRendererParams {
-    // The datum object (an element in the data array used by the chart/series).
+    // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
     // The field of the datum object that contains the category name of the highlighted bar.
     xField: string;
@@ -106,7 +106,7 @@ interface BarTooltipRendererParams {
 interface AxisOptions {
     // The thickness of the axis line.
     lineWidth?: number;
-    // The color of the axis line.
+    // The color of the axis line. Depends on whether the light or dark mode is used.
     lineColor?: string;
 
     // The thickness of the ticks.
@@ -115,14 +115,14 @@ interface AxisOptions {
     tickSize?: number;
     // The padding between the ticks and the labels.
     tickPadding?: number;
-    // The color of the axis ticks.
+    // The color of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
 
-    // The font to be used by axis labels.
+    // The font to be used by axis labels. Defaults to `12px Verdana, sans-serif`.
     labelFont?: string;
-    // The color of the axis labels.
+    // The color of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
-    // The rotation of the axis labels from their default value.
+    // The rotation of the axis labels from their default value. Defaults to zero.
     labelRotation?: number;
     // The custom formatter function for the axis labels.
     // The value is either a category name or a number. If it's the latter, the number
@@ -136,10 +136,11 @@ interface AxisOptions {
 }
 
 interface IGridStyle {
-    // The stroke color of a grid line.
+    // The stroke color of a grid line. Depends on whether the light or dark mode is used.
     stroke?: string;
     // The line dash array. Every number in the array specifies the length of alternating
     // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
+    // Defaults to `[4, 2]`.
     lineDash?: number[];
 }
 </snippet>

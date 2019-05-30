@@ -186,9 +186,9 @@ export interface PieSeriesOptions extends SeriesOptions {
 }
 
 export interface LegendOptions {
-    markerLineWidth?: number;
     markerSize?: number;
     markerPadding?: number;
+    markerStrokeWidth?: number;
 
     itemPaddingX?: number;
     itemPaddingY?: number;

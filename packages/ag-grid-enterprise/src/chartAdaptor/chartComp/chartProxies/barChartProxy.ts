@@ -80,7 +80,7 @@ export class BarChartProxy extends ChartProxy {
                 itemPaddingY: 8,
                 markerPadding: 4,
                 markerSize: 14,
-                markerLineWidth: 1
+                markerStrokeWidth: 1
             },
             seriesDefaults: {
                 type: 'bar',
