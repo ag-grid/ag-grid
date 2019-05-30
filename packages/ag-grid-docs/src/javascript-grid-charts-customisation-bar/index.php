@@ -89,13 +89,13 @@ interface BarChartOptions {
         labelColor?: string;
         // The padding of the labels within bars (from the top and sides of a bar).
         labelPadding?: {x: number, y: number};
-        // The custom tooltip render to use for bar tooltips. Should return a valid HTML string.
+        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     };
 }
 
 interface BarTooltipRendererParams {
-    // The datum object (an element in the data array used by the chart/series).
+    // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
     // The field of the datum object that contains the category name of the highlighted bar.
     xField: string;

@@ -67,12 +67,6 @@ interface DoughnutChartOptions {
         showInLegend?: boolean;
         // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
         tooltipEnabled?: boolean;
-        // The field to use to determine the angle of each pie slice.
-        angleField?: string;
-        // The field to use to determine the radius of each pie slice. Optional field.
-        radiusField?: string;
-        // The field to use to fetch pie slice label text.
-        labelField?: string;
         // Whether to show pie slice labels or not.
         labelEnabled?: boolean;
         // The font to be used for slice labels.
@@ -109,7 +103,7 @@ interface DoughnutChartOptions {
             // The blur amount to apply.
             blur?: number;
         };
-        // The custom tooltip render to use for bar tooltips. Should return a valid HTML string.
+        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: DoughnutTooltipRendererParams) => string;
     };
 }
