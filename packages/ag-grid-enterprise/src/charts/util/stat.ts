@@ -1,5 +1,5 @@
 /**
- * Returns `{slope, intercept}` for `y = mx + b` given two arrays of variables.
+ * Returns `{slope, intercept}` for `y = slope * x + intercept` given two arrays of variables.
  * @param X Array of independent variables.
  * @param Y Array of dependent variables.
  */
