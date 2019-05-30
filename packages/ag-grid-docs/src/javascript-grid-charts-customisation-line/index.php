@@ -86,34 +86,53 @@ interface LineChartOptions {
 }
 
 interface LineTooltipRendererParams {
+    // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
+    // The field of the datum object that contains the category name of the highlighted data point.
     xField: string;
+    // The field of the datum object that contains the series value of the highlighted data point.
     yField: string;
 }
 
 interface AxisOptions {
-    type?: 'category' | 'number';
-
+    // The thickness of the axis line.
     lineWidth?: number;
+    // The color of the axis line. Depends on whether the light or dark mode is used.
     lineColor?: string;
 
+    // The thickness of the ticks.
     tickWidth?: number;
+    // The length of the ticks.
     tickSize?: number;
+    // The padding between the ticks and the labels.
     tickPadding?: number;
+    // The color of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
 
+    // The font to be used by axis labels. Defaults to `12px Verdana, sans-serif`.
     labelFont?: string;
+    // The color of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
+    // The rotation of the axis labels from their default value. Defaults to zero.
     labelRotation?: number;
-    mirrorLabels?: boolean;
-    parallelLabels?: boolean;
+    // The custom formatter function for the axis labels.
+    // The value is either a category name or a number. If it's the latter, the number
+    // of fractional digits used by the axis step will be provided as well.
+    // The returned string will be used as a label.
     labelFormatter?: (value: any, fractionDigits?: number) => string;
+    // The styles of the grid lines. These are repeated. If only a single style is provided,
+    // it will be used for all grid lines, if two styles are provided, every style will be
+    // used by every other line, and so on.
     gridStyle?: IGridStyle[];
 }
 
 interface IGridStyle {
-    strokeStyle: string | null;
-    lineDash: number[] | null;
+    // The stroke color of a grid line. Depends on whether the light or dark mode is used.
+    stroke?: string;
+    // The line dash array. Every number in the array specifies the length of alternating
+    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
+    // Defaults to `[4, 2]`.
+    lineDash?: number[];
 }
 </snippet>
 
