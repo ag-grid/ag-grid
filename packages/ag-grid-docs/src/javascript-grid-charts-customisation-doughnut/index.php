@@ -20,12 +20,6 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface DoughnutChartOptions {
-    // Container element for the chart.
-    parent?: HTMLElement;
-    // The width of the chart.
-    width?: number;
-    // The height of the chart.
-    height?: number;
     // The padding of contents from the edges of the chart.
     padding?: {
         top: number;
