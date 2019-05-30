@@ -1315,65 +1315,31 @@
         }
     }
 
-    ////////////////////////////////////////
-    // Chart Component
-    ////////////////////////////////////////
     .ag-chart {
         .ag-chart-menu {
-            opacity: 0;
-            pointer-events: none;
             background: $background-color;
             > span {
-                opacity: 0.5;
-                line-height: 24px;
-                font-size: 24px;
-                width: 24px;
-                height: 24px;
-                margin: 2px 0;
-                cursor: pointer;
                 &:hover {
-                    border-radius: 5px;
                     background-color: darken($background-color, 10%);
-                }
-            }
-        }
-        &:hover {
-            .ag-chart-menu:not(.ag-has-popup) {
-                opacity: 1;
-                pointer-events: all;
-                &:hover {
-                    > span {
-                        opacity: 1;
-                    }
                 }
             }
         }
     }
 
     .ag-chart-tabbed-menu {
-        .ag-tab-body {
-            padding: 0;
-        }
-
         .ag-chart-settings {
             .ag-chart-settings-mini-wrapper > div {
-                margin: 5px;
                 border: 1px solid $border-color;
-                border-radius: 5px;
                 &.ag-selected {
                     border-color: $primary-color;
                 }
             }
 
             .ag-chart-settings-nav-bar {
-                padding: 0 10px;
-                user-select: none;
                 .ag-nav-card-selector {
-                    padding: 0 10px;
                     .ag-nav-card-item {
                         color: $foreground-color;
                         font-size: $font-size - 2;
-                        cursor: pointer;
                         &.ag-selected {
                             color: $primary-color;
                         }

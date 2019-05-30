@@ -14,7 +14,6 @@ import {
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
 import { ChartModel, ChartModelParams } from "./chartModel";
-import { Color } from "../../charts/util/color";
 import { BarChartProxy } from "./chartProxies/barChartProxy";
 import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
 import { LineChartProxy } from "./chartProxies/lineChartProxy";
