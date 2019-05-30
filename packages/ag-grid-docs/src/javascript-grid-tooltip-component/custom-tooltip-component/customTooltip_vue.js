@@ -17,7 +17,7 @@ export default Vue.extend({
         };
     },
     beforeMount() {
-        var data = this.params.api.getRowNode(this.params.rowIndex).data;
+        var data = this.params.api.getDisplayedRowAtIndex(this.params.rowIndex).data;
         data.color = this.params.color || 'white';
         this.setState(data);
     },
