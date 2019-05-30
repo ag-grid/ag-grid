@@ -94,7 +94,7 @@ export class LineSeries extends Series<CartesianChart> {
         return this._marker;
     }
 
-    private _markerSize: number = 4;
+    private _markerSize: number = 8;
     set markerSize(value: number) {
         if (this._markerSize !== value) {
             this._markerSize = Math.abs(value);
