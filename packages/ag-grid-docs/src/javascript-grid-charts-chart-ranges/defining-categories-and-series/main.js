@@ -18,6 +18,7 @@ var gridOptions = {
         width: 100,
         resizable: true
     },
+    popupParent: document.body,
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
