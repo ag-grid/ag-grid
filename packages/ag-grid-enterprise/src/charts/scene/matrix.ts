@@ -249,7 +249,7 @@ export class Matrix {
         }
 
         if (!target) {
-            target = {} as BBox;
+            target = new BBox(0, 0, 0, 0);
         }
 
         target.x = cx * xx + cy * yx + elements[4] - w;
