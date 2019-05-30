@@ -90,6 +90,39 @@ export class PieSeries extends Series<PolarChart> {
         return this._data;
     }
 
+    protected _title: string = '';
+    set title(value: string) {
+        if (this._title !== value) {
+            this._title = value;
+            this.scheduleLayout();
+        }
+    }
+    get title(): string {
+        return this._title;
+    }
+
+    private _titleEnabled: boolean = false;
+    set titleEnabled(value: boolean) {
+        if (this._titleEnabled !== value) {
+            this._titleEnabled = value;
+            this.scheduleLayout();
+        }
+    }
+    get titleEnabled(): boolean {
+        return this._titleEnabled;
+    }
+
+    private _titleFont: string = 'bold 12px Verdana, sans-serif';
+    set titleFont(value: string) {
+        if (this._titleFont !== value) {
+            this._titleFont = value;
+            this.scheduleLayout();
+        }
+    }
+    get titleFont(): string {
+        return this._titleFont;
+    }
+
     /**
      * `null` means make the callout color the same as {@link strokeStyle}.
      */

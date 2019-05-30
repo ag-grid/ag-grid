@@ -93,9 +93,6 @@ export interface DropShadowOptions {
 export interface SeriesOptions {
     type?: string;
     data?: any[];
-    title?: string;
-    titleEnabled?: boolean;
-    titleFont?: string;
     visible?: boolean;
     showInLegend?: boolean;
     tooltipEnabled?: boolean;
@@ -108,6 +105,8 @@ export interface LineTooltipRendererParams {
 }
 
 export interface LineSeriesOptions extends SeriesOptions {
+    title?: string;
+
     xField?: string;
     yField?: string;
 
@@ -157,6 +156,10 @@ export interface PieTooltipRendererParams {
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
+    title?: string;
+    titleEnabled?: boolean;
+    titleFont?: string;
+
     fills?: string[];
     strokes?: string[];
     strokeWidth?: number;

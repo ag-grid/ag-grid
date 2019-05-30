@@ -59,6 +59,17 @@ export class LineSeries extends Series<CartesianChart> {
         return this._chart as CartesianChart;
     }
 
+    protected _title: string = '';
+    set title(value: string) {
+        if (this._title !== value) {
+            this._title = value;
+            this.scheduleLayout();
+        }
+    }
+    get title(): string {
+        return this._title;
+    }
+
     protected _xField: string = '';
     set xField(value: string) {
         if (this._xField !== value) {

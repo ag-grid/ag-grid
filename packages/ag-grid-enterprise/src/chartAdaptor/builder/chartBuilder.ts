@@ -157,15 +157,6 @@ export class ChartBuilder {
     }
 
     static initSeries<S extends Series<any>>(series: S, options: SeriesOptions) {
-        if (options.title !== undefined) {
-            series.title = options.title;
-        }
-        if (options.titleEnabled !== undefined) {
-            series.titleEnabled = options.titleEnabled;
-        }
-        if (options.titleFont !== undefined) {
-            series.titleFont = options.titleFont;
-        }
         if (options.visible !== undefined) {
             series.visible = options.visible;
         }
@@ -185,6 +176,9 @@ export class ChartBuilder {
     static initLineSeries(series: LineSeries, options: LineSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
+        if (options.title !== undefined) {
+            series.title = options.title;
+        }
         if (options.xField !== undefined) {
             series.xField = options.xField;
         }
@@ -262,6 +256,15 @@ export class ChartBuilder {
     static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
+        if (options.title !== undefined) {
+            series.title = options.title;
+        }
+        if (options.titleEnabled !== undefined) {
+            series.titleEnabled = options.titleEnabled;
+        }
+        if (options.titleFont !== undefined) {
+            series.titleFont = options.titleFont;
+        }
         if (options.calloutColors !== undefined) {
             series.calloutColors = options.calloutColors;
         }
