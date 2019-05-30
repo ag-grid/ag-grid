@@ -14,13 +14,14 @@ import { convertLegacyBorder, BorderSet, Border } from './border';
 import { Xf } from './xf';
 import { CellStyle } from './cellStyle';
 
-const registeredNumberFmts: NumberFormat[] = [];
-const registeredFonts: Font[] = [{ name: 'Calibri', size: 14, colorTheme: '1', family: 2, scheme: 'minor' }];
-const registeredFills: Fill[] = [{ patternType: 'none', }, { patternType: 'gray125' }];
-const registeredBorders: BorderSet[] = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
-const registeredCellStyleXfs: Xf[] = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
-const registeredCellXfs: Xf[] = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
-const registeredCellStyles: CellStyle[] = [{ builtinId: 0, name: 'normal', xfId: 0 }];
+let stylesMap: StylesMap;
+let registeredNumberFmts: NumberFormat[];
+let registeredFonts: Font[];
+let registeredFills: Fill[];
+let registeredBorders: BorderSet[];
+let registeredCellStyleXfs: Xf[];
+let registeredCellXfs: Xf[];
+let registeredCellStyles: CellStyle[];
 
 interface StylesMap {
     [key: string]: number;
@@ -31,7 +32,16 @@ interface ColorMap {
 }
 type BorderProperty = string | undefined;
 
-const stylesMap:StylesMap  = {base: 0};
+const resetStylesheetValues = (): void => {
+    stylesMap = { base: 0 };
+    registeredNumberFmts = [];
+    registeredFonts = [{ name: 'Calibri', size: 14, colorTheme: '1', family: 2, scheme: 'minor' }];
+    registeredFills = [{ patternType: 'none', }, { patternType: 'gray125' }];
+    registeredBorders = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
+    registeredCellStyleXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
+    registeredCellXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
+    registeredCellStyles = [{ builtinId: 0, name: 'normal', xfId: 0 }];
+}
 
 const convertLegacyPattern = (name: string): string => {
     const colorMap: ColorMap = {
@@ -261,6 +271,15 @@ const registerStyle = (config: ExcelStyle): void => {
 
 const stylesheetFactory: ExcelOOXMLTemplate = {
     getTemplate() {
+        const numberFormats = numberFormatsFactory.getTemplate(registeredNumberFmts);
+        const fonts = fontsFactory.getTemplate(registeredFonts);
+        const fills = fillsFactory.getTemplate(registeredFills);
+        const borders = bordersFactory.getTemplate(registeredBorders);
+        const cellStylesXfs = cellStylesXfsFactory.getTemplate(registeredCellStyleXfs);
+        const cellXfs = cellXfsFactory.getTemplate(registeredCellXfs);
+        const cellStyles = cellStylesFactory.getTemplate(registeredCellStyles);
+
+        resetStylesheetValues();
 
         return {
             name: 'styleSheet',
@@ -270,13 +289,13 @@ const stylesheetFactory: ExcelOOXMLTemplate = {
                 }
             },
             children: [
-                numberFormatsFactory.getTemplate(registeredNumberFmts),
-                fontsFactory.getTemplate(registeredFonts),
-                fillsFactory.getTemplate(registeredFills),
-                bordersFactory.getTemplate(registeredBorders),
-                cellStylesXfsFactory.getTemplate(registeredCellStyleXfs),
-                cellXfsFactory.getTemplate(registeredCellXfs),
-                cellStylesFactory.getTemplate(registeredCellStyles),
+                numberFormats,
+                fonts,
+                fills,
+                borders,
+                cellStylesXfs, 
+                cellXfs, 
+                cellStyles,
                 {
                     name: 'tableStyles',
                     properties: {
@@ -297,6 +316,7 @@ export const getStyleId = (name: string): number => {
 };
 
 export const registerStyles = (styles: ExcelStyle[]): void => {
+    resetStylesheetValues();
     styles.forEach(registerStyle);
 };
 
