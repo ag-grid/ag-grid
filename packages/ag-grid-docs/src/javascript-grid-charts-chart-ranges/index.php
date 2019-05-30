@@ -158,10 +158,4 @@ gridOptions = {
 
 <?= example('Defining categories and series', 'defining-categories-and-series', 'generated', array("enterprise" => true)) ?>
 
-
-<b>TODO - TEMP for testing an issue - should be removed!</b>
-
-<?= example('Fred', 'fred', 'generated', array("enterprise" => true)) ?>
-
-
 <?php include '../documentation-main/documentation_footer.php'; ?>
