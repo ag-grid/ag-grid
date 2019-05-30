@@ -14,14 +14,13 @@ if (strcmp($version, 'latest') == 0) {
 
 function enterprise_feature($name) {
 
-    echo('<note>');
+    echo('<div class="enterprise-note">');
     echo('<div class="trial-enterprise-note">');
-    echo('<img class="trial-enterprise-icon" src="../_assets/svg/enterprise.svg"/>');
     echo("$name is an enterprise feature. Want to get started? ");
     echo("You don't need to contact us to start evaluating ag-Grid Enterprise. ");
     echo("A license is only required  when you start developing for production. ");
     echo('</div>');
-    echo('</note>');
+    echo('</div>');
 
 }
 
