@@ -4,7 +4,7 @@ import { BBox } from "../bbox";
 
 export class Line extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
-        lineWidth: 1
+        strokeWidth: 1
     });
 
     constructor() {
