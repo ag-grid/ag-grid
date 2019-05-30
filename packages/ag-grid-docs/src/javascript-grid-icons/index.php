@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Custom Icons: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Custom Icons. All the icons in the grid can be replaced with your own Custom Icons. You can either use CSS or provide your own images. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Custom Icons. All the icons in the grid can be replaced with your own Custom Icons. You can either use CSS or provide your own images. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Pinning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -47,6 +47,8 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
  */
 .ag-theme-balham .ag-icon-pin {
     font-family: "Font Awesome 5 Free";
+    /* FontAwesome uses font-weight bold */
+    font-weight: bold;
 }
 .ag-theme-balham .ag-icon-pin::before {
     content: '\f08d';
@@ -123,7 +125,12 @@ $ag-icon-tree-indeterminate: "\f068";
 $ag-icon-tree-open: "\f107";
 
 @import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-balham.scss";</snippet>
+@import "~ag-grid/src/styles/ag-theme-balham.scss";
+
+.ag-icon {
+    font-weight: bold;
+}
+</snippet>
 
 <p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
 

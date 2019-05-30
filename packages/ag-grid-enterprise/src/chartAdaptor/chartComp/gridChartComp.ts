@@ -79,7 +79,6 @@ export class GridChartComp extends Component {
 
         if (this.params.insideDialog) {
             this.addDialog();
-            console.log('asdfasdf');
             this.addResizeListener();
         }
 

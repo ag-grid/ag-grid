@@ -544,6 +544,11 @@
         "enterprise": true
       },
       {
+        "title": "Chart Toolbar",
+        "url": "javascript-grid-charts-chart-toolbar/",
+        "enterprise": true
+      },
+      {
         "title": "Customising",
         "url": "javascript-grid-charts-customisation/",
         "enterprise": true,

@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Chart Ranges</h1>
 
     <p class="lead">
-        This section covers chart ranges with details on how to define grid columns as either chart categories or series.
+        This section covers chart ranges with details on how to define grid columns for charting as either categories or
+        series data.
     </p>
 
     <p>

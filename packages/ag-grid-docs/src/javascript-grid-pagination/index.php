@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Pagination: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Pagination";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

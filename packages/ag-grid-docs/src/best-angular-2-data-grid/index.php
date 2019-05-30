@@ -20,9 +20,12 @@ include '../landing-pages/convert-header.php';
         </a>
     </div>
     <h1>World's Leading Angular Datagrid Component</h1>
-    <p class="lead-description" id="opener">ag-Grid is a feature rich data grid built for Angular.<br>
-        Use our Angular grid component and integrate seamlessly with Angular 2,4,5,6,7 <br>
-        to deliver features you need with the performance that you expect.
+    <h2 class="overview">Overview</h2>
+    <p class="lead-description" id="angular-data-grid-overview">
+        ag-Grid is a feature-rich data grid built for Angular.<br> 
+        Integrate seamlessly with Angular 2,4,5,6,7 to deliver core and enterprise features with the performance you expect.<br> 
+        Discover key benefits and resources available to quickly add an Angular Data Grid or 
+        Datatable to your Angular application.
     </p>
     <div class="container">
         <div class="row">

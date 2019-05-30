@@ -1,6 +1,6 @@
 var columnDefs = [
     // different ways to define 'categories'
-    {field: "athlete", width: 150, cartType: 'category'},
+    {field: "athlete", width: 150, chartType: 'category'},
     {field: "age", enableRowGroup: true},
     {field: "sport"},
 

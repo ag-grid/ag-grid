@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid Styling & Appearance: Row Styles";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. You can change the CSS row style in ag-Grid. This is done by providing style and class callbacks in the column definition.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. You can change the CSS row style in ag-Grid. This is done by providing style and class callbacks in the column definition.";
 $pageKeyboards = "ag-Grid Row Styles";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -8,8 +8,14 @@ include '../documentation-main/documentation_header.php';
 
 <div>
     <h1 id="implementing-the-vuejs-datagrid">
-        Best Vue Grid | ag-Grid Overview
+    Vue Grid | ag-Grid
     </h1>
+
+    <h2 class="overview">Overview</h2>
+    <p class="lead">
+        ag-Grid is designed to integrate deeply into React.<br>
+        Use our grid as a React component to quickly add a react grid table to your application.<br>
+        Discover key benefits and resources available to quickly add a data grid or React datatable to your React application.</p>
 
     <p class="lead">
         This page details how to set up ag-Grid inside a Vue application.
