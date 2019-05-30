@@ -53,7 +53,7 @@ interface PieChartOptions {
         // The font to be used by the legend's labels.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
-        // The color to be used by the legend's labels.
+        // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
         labelColor?: string;
     };
     seriesDefaults?: {
@@ -83,11 +83,11 @@ interface PieChartOptions {
         strokeWidth?: number;
         // The callout stroke colors. Same as stroke colors by default.
         calloutColors?: string[];
-        // The thickness of a callout line. Defaults to 2.
+        // The thickness of a callout line. Defaults to `2`.
         calloutWidth?: number;
-        // The length of a callout line. Defaults to 10.
+        // The length of a callout line. Defaults to `10`.
         calloutLength?: number;
-        // The padding between the callouts and the labels. Defaults to 3.
+        // The padding between the callouts and the labels. Defaults to `3`.
         calloutPadding?: number;
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.

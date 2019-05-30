@@ -53,7 +53,7 @@ interface LineChartOptions {
         // The font to be used by the legend's labels.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
-        // The color to be used by the legend's labels.
+        // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
         labelColor?: string;
     };
     // The horizontal chart axis.
@@ -113,7 +113,7 @@ interface AxisOptions {
     labelFont?: string;
     // The color of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
-    // The rotation of the axis labels from their default value. Defaults to zero.
+    // The rotation of the axis labels from their default value. Defaults to `0`.
     labelRotation?: number;
     // The custom formatter function for the axis labels.
     // The value is either a category name or a number. If it's the latter, the number
