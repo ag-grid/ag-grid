@@ -11,7 +11,6 @@ export class LicenseManager {
 
     @PreConstruct
     public validateLicense(): void {
-        console.log("1");
         if (_.missingOrEmpty(LicenseManager.licenseKey)) {
             this.outputMissingLicenseKey();
         } else if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
@@ -19,10 +18,8 @@ export class LicenseManager {
 
             if (md5 === this.md5.md5(license)) {
                 if (_.exists(version) && version) {
-                    console.log("2");
                     this.validateLicenseKeyForVersion(version, !!isTrial, license);
                 } else {
-                    console.log("3");
                     this.validateLegacyKey(license);
                 }
             } else {
