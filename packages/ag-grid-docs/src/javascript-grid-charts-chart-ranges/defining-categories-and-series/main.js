@@ -1,7 +1,7 @@
 var columnDefs = [
     // different ways to define 'categories'
     {field: "athlete", width: 150, chartType: 'category'},
-    {field: "age", enableRowGroup: true},
+    {field: "age", enableRowGroup: true, sort: 'asc'},
     {field: "sport"},
 
     // excludes year from charts
@@ -27,28 +27,26 @@ var gridOptions = {
             cellRange: {
                 rowStartIndex: 0,
                 rowEndIndex: 79,
-                columns: ['sport', 'gold', 'silver', 'bronze']
+                columns: ['age', 'gold', 'silver', 'bronze']
             },
             chartType: 'groupedBar',
             chartContainer: document.querySelector('#myChart'),
             aggregate: true
         };
 
-        // setTimeout(() => params.api.chartRange(chartRangeParams), 100);
         params.api.chartRange(chartRangeParams);
+        setTimeout(() => params.api.sizeColumnsToFit(), 100);
     },
     processChartOptions: function(params) {
         const opt = params.options;
 
-        opt.title = {text: "Medal Totals by Sport"};
-        // opt.height = 350;
-        opt.xAxis.labelRotation = 45;
+        opt.title = {text: "Medals by Age"};
+        opt.legendPosition = 'bottom';
+        // opt.legendPadding = 0;
 
         return opt;
     }
 };
-
-console.log('bananas');
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
