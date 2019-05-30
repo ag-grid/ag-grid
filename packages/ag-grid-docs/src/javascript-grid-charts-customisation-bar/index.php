@@ -53,7 +53,7 @@ interface BarChartOptions {
         // The font to be used by the legend's labels.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
-        // The color to be used by the legend's labels.
+        // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
         labelColor?: string;
     };
     // The horizontal chart axis.

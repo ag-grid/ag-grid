@@ -53,7 +53,7 @@ interface DoughnutChartOptions {
         // The font to be used by the legend's labels.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
-        // The color to be used by the legend's labels.
+        // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
         labelColor?: string;
     };
     seriesDefaults?: {
@@ -83,15 +83,15 @@ interface DoughnutChartOptions {
         strokeWidth?: number;
         // The callout stroke colors. Same as stroke colors by default.
         calloutColors?: string[];
-        // The thickness of a callout line. Defaults to 2.
+        // The thickness of a callout line. Defaults to `2`.
         calloutWidth?: number;
-        // The length of a callout line. Defaults to 10.
+        // The length of a callout line. Defaults to `10`.
         calloutLength?: number;
-        // The padding between the callouts and the labels. Defaults to 3.
+        // The padding between the callouts and the labels. Defaults to `3`.
         calloutPadding?: number;
-        // The amount by which to extend or shorten the calculated outer radius value of a slice. Defaults to 0.
+        // The amount by which to extend or shorten the calculated outer radius value of a slice. Defaults to `0`.
         outerRadiusOffset?: number;
-        // The amount by which to extend or shorten the calculated inner radius value of a slice. Defaults to 0.
+        // The amount by which to extend or shorten the calculated inner radius value of a slice. Defaults to `0`.
         innerRadiusOffset?: number;
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
@@ -109,9 +109,11 @@ interface DoughnutChartOptions {
 }
 
 interface DoughnutTooltipRendererParams {
+    // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
+    // The field of the datum object that contains the category name of the highlighted slice.
     angleField: string;
-    radiusField?: string;
+    // The field of the datum object that contains the label text of the highlighted slice.
     labelField?: string;
 }
 </snippet>
