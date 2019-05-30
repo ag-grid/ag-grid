@@ -327,8 +327,8 @@ export class ChartBuilder {
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
-        if (options.markerLineWidth !== undefined) {
-            legend.markerLineWidth = options.markerLineWidth;
+        if (options.markerStrokeWidth !== undefined) {
+            legend.markerStrokeWidth = options.markerStrokeWidth;
         }
         if (options.markerSize !== undefined) {
             legend.markerSize = options.markerSize;
