@@ -220,4 +220,6 @@ interface IGridStyle {
 
     <?= example('Provided Container', 'provided-container', 'generated', array("enterprise" => true)) ?>
 
+    <?= example('Custom Bar Chart', 'custom-bar-chart', 'generated', array("enterprise" => true)) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

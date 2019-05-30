@@ -79,8 +79,8 @@ export class GridChartComp extends Component {
 
         if (this.params.insideDialog) {
             this.addDialog();
-            this.addResizeListener();
         }
+        this.addResizeListener();
 
         this.addMenu();
 
@@ -107,7 +107,7 @@ export class GridChartComp extends Component {
             chartType: this.model.getChartType(),
             processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
             getSelectedPalette: this.getSelectedPalette.bind(this),
-            isDarkTheme: this.isDarkTheme.bind(this),
+            isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width: width,
             height: height,
@@ -215,13 +215,6 @@ export class GridChartComp extends Component {
             return;
         }
         this.chartController.setChartRange();
-    }
-
-    private isDarkTheme(): boolean {
-        const theme = this.environment.getTheme() as string;
-        const el = document.querySelector(`.${theme}`);
-        const background = window.getComputedStyle(el as HTMLElement).backgroundColor;
-        return Color.fromString(background as string).toHSB()[2] < 0.4;
     }
 
     public destroy(): void {

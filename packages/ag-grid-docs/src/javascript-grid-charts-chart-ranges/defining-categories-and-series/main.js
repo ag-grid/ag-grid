@@ -25,11 +25,11 @@ var gridOptions = {
         var chartRangeParams = {
             cellRange: {
                 rowStartIndex: 0,
-                rowEndIndex: 100,
+                rowEndIndex: 79,
                 columns: ['sport', 'gold', 'silver', 'bronze']
             },
             chartType: 'groupedBar',
-            chartContainer: document.body,
+            chartContainer: document.querySelector('#myChart'),
             aggregate: true
         };
 
@@ -40,12 +40,14 @@ var gridOptions = {
         const opt = params.options;
 
         opt.title = {text: "Medal Totals by Sport"};
-        opt.height = 350;
+        // opt.height = 350;
         opt.xAxis.labelRotation = 45;
 
         return opt;
     }
 };
+
+console.log('bananas');
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
