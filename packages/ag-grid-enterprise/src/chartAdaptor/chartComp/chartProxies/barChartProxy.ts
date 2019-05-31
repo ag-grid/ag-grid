@@ -1,14 +1,15 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
-import { BarSeries } from "../../../charts/chart/series/barSeries";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
+import {BarSeries} from "../../../charts/chart/series/barSeries";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
 
 export class BarChartProxy extends ChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        const chartOptions = this.getChartOptions('bar', this.defaultOptions()) as BarChartOptions;
+        const barChartType = params.chartType === ChartType.GroupedBar ? 'groupedBar' : 'stackedBar';
+        const chartOptions = this.getChartOptions(barChartType, this.defaultOptions()) as BarChartOptions;
 
         this.chart = ChartBuilder.createBarChart(chartOptions);
 
