@@ -35,6 +35,62 @@ var gridOptions = {
     processChartOptions: processChartOptions
 };
 
+
+/*
+
+
+interface LineTooltipRendererParams {
+    // The datum object (an element in the `data` array used by the chart/series).
+    datum: any;
+    // The field of the datum object that contains the category name of the highlighted data point.
+    xField: string;
+    // The field of the datum object that contains the series value of the highlighted data point.
+    yField: string;
+}
+
+interface AxisOptions {
+    // The thickness of the axis line. Defaults to `1`.
+    lineWidth?: number;
+    // The color of the axis line. Depends on whether the light or dark mode is used.
+    lineColor?: string;
+
+    // The thickness of the ticks. Defaults to `1`.
+    tickWidth?: number;
+    // The length of the ticks. Defaults to `6`.
+    tickSize?: number;
+    // The padding between the ticks and the labels. Defaults to `5`.
+    tickPadding?: number;
+    // The color of the axis ticks. Depends on whether the light or dark mode is used.
+    tickColor?: string;
+
+    // The font to be used by axis labels. Defaults to `12px Verdana, sans-serif`.
+    labelFont?: string;
+    // The color of the axis labels. Depends on whether the light or dark mode is used.
+    labelColor?: string;
+    // The rotation of the axis labels from their default value. Defaults to `0`.
+    labelRotation?: number;
+    // The custom formatter function for the axis labels.
+    // The value is either a category name or a number. If it's the latter, the number
+    // of fractional digits used by the axis step will be provided as well.
+    // The returned string will be used as a label.
+    labelFormatter?: (value: any, fractionDigits?: number) => string;
+    // The styles of the grid lines. These are repeated. If only a single style is provided,
+    // it will be used for all grid lines, if two styles are provided, every style will be
+    // used by every other line, and so on.
+    gridStyle?: IGridStyle[];
+}
+
+interface IGridStyle {
+    // The stroke color of a grid line. Depends on whether the light or dark mode is used.
+    stroke?: string;
+    // The line dash array. Every number in the array specifies the length of alternating
+    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
+    // Defaults to `[4, 2]`.
+    lineDash?: number[];
+}
+
+*/
+
 function processChartOptions(params) {
 
     var options = params.options;
@@ -43,7 +99,7 @@ function processChartOptions(params) {
     // we are only interested in processing bar type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type!=='groupedBar') {
+    if (params.type!=='line') {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
@@ -61,7 +117,7 @@ function processChartOptions(params) {
     // all tooltips will have this CSS class on them
     options.tooltipClass = 'my-tool-tip-class';
 
-    // changes to the yAxis
+    // changes to the legend
     var legend = options.legend;
     legend.markerStrokeWidth = 4;
     legend.markerSize = 30;
@@ -122,22 +178,27 @@ function processChartOptions(params) {
     // seriesDefaults.showInLegend = false;
     // seriesDefaults.tooltipEnabled = true;
 
+    // TODO - how are fills and strokes set? it takes fill and stroke, not fills and strokes
     var gold = '#d4af37';
     var silver = '#c0c0c0';
     var bronze = '#cd7f32';
+
+    var gold2 = '#c49f27';
+    var silver2 = '#b0b0b0';
+    var bronze2 = '#bd6f22';
+
+    // doesn't work, gets overridden
     seriesDefaults.fills = [gold, silver, bronze];
-    seriesDefaults.strokes = ['black'];
-    seriesDefaults.strokeWidth = 3;
-    seriesDefaults.shadow = {
-        color: 'grey',
-        offset: [10,10],
-        blur: 8
-    };
-    // only impacts stacked
-    seriesDefaults.labelEnabled = true;
-    // seriesDefaults.grouped = false;
-    seriesDefaults.labelFont = 'italic 15px Comic Sans MS';
-    seriesDefaults.labelPadding = {x: 10, y: 10};
+    seriesDefaults.strokes = [gold2, silver2, bronze2];
+
+    // doesn't work, get's overridden
+    // seriesDefaults.title = 'Monday';
+
+    seriesDefaults.strokeWidth = 10;
+    seriesDefaults.marker = true;
+    seriesDefaults.markerSize = 20;
+    seriesDefaults.markerStrokeWidth = 10;
+
     seriesDefaults.tooltipRenderer = function(params) {
         var xField = params.xField;
         var yField = params.yField;
@@ -158,7 +219,7 @@ function onGridReady(params) {
 
     var chartRangeParams = {
         cellRange: cellRange,
-        chartType: 'groupedBar'
+        chartType: 'line'
     };
 
     setTimeout(function () {

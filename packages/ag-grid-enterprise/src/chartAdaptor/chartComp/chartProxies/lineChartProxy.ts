@@ -10,6 +10,8 @@ export class LineChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        const defaultOpts: LineChartOptions = this.defaultOptions();
+
         this.chartOptions = this.getChartOptions('line', this.defaultOptions()) as LineChartOptions;
         this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
@@ -115,12 +117,12 @@ export class LineChartProxy extends ChartProxy {
             },
             seriesDefaults: {
                 type: 'line',
-                fill: palette.fills[0], //TODO
-                stroke: palette.strokes[0], //TODO
+                fills: palette.fills,
+                strokes: palette.strokes,
                 strokeWidth: 3,
                 marker: true,
                 markerSize: 3,
-                markerLineWidth: 1,
+                markerStrokeWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,

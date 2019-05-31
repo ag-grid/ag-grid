@@ -31,7 +31,7 @@ interface BarChartOptions {
     legendPosition?: 'top' | 'right' | 'bottom' | 'left';
     // The padding amount between the legend and the series.
     legendPadding?: number;
-    // The CSS class name to be used by the tooltip element.
+    // Additional CSS class to be added to tooltip element.
     tooltipClass?: string;
     legend?: {
         // The stroke width of a legend marker. Defaults to `1`.
@@ -55,26 +55,12 @@ interface BarChartOptions {
     // The vertical chart axis.
     yAxis: AxisOptions;
     seriesDefaults?: {
-        // Whether this series should be represented in the legend. Defaults to `true`.
-        showInLegend?: boolean;
-        // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
-        tooltipEnabled?: boolean;
         // The fill colors to be used by the series.
         fills?: string[];
         // The stroke colors to be used by the series.
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
-        // The shadow type to use for bars. Defaults to no shadow.
-        // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
-        shadow?: {
-            // The shadow color. For example, 'rgba(0, 0, 0, 0.3)'.
-            color?: string;
-            // The shadow offset [offsetX, offsetY]
-            offset?: [number, number];
-            // The blur amount to apply in pixels
-            blur?: number;
-        };
         // Whether to show the labels for bars (only applies to the stacked bars).
         labelEnabled?: boolean;
         // The font to be used by the bar labels. Defaults to `12px Verdana, sans-serif`.
@@ -140,82 +126,6 @@ interface IGridStyle {
     lineDash?: number[];
 }
 </snippet>
-
-
-<h3>Default Bar Options</h3>
-
-<p>
-    The default values for the bar chart options are shown below:
-</p>
-
-    <snippet>{
-    parent: this.chartProxyParams.parentElement,
-    width: this.chartProxyParams.width,
-    height: this.chartProxyParams.height,
-    padding: {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20
-    },
-    xAxis: {
-        type: 'category',
-        labelFont: '12px Verdana, sans-serif',
-        labelColor: this.getLabelColor(),
-        tickSize: 6,
-        tickWidth: 1,
-        tickPadding: 5,
-        lineColor: 'rgba(195, 195, 195, 1)',
-        lineWidth: 1,
-        gridStyle: [{
-            strokeStyle: this.getAxisGridColor(),
-            lineDash: [4, 2]
-        }]
-    },
-    yAxis: {
-        type: 'number',
-        labelFont: '12px Verdana, sans-serif',
-        labelColor: this.getLabelColor(),
-        tickSize: 6,
-        tickWidth: 1,
-        tickPadding: 5,
-        lineColor: 'rgba(195, 195, 195, 1)',
-        lineWidth: 1,
-        gridStyle: [{
-            strokeStyle: this.getAxisGridColor(),
-            lineDash: [4, 2]
-        }]
-    },
-    legend: {
-        labelFont: '12px Verdana, sans-serif',
-        labelColor: this.getLabelColor(),
-        itemPaddingX: 16,
-        itemPaddingY: 8,
-        markerPadding: 4,
-        markerSize: 14,
-        markerLineWidth: 1
-    },
-    seriesDefaults: {
-        type: 'bar',
-        fills: palette.fills,
-        strokes: palette.strokes,
-        grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
-        strokeWidth: 1,
-        tooltipEnabled: true,
-        labelEnabled: false,
-        labelFont: '12px Verdana, sans-serif',
-        labelColor: this.getLabelColor(),
-        labelPadding: {x: 10, y: 10},
-        tooltipRenderer: undefined,
-        showInLegend: true,
-        title: '',
-        titleEnabled: true,
-        titleFont: 'bold 12px Verdana, sans-serif'
-    }
-}
-</snippet>
-
-    <?= example('Provided Container', 'provided-container', 'generated', array("enterprise" => true)) ?>
 
     <?= example('Custom Bar Chart', 'custom-bar-chart', 'generated', array("enterprise" => true)) ?>
 
