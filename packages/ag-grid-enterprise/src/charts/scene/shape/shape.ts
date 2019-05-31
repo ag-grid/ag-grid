@@ -23,7 +23,8 @@ export abstract class Shape extends Node {
         lineCap: null as ShapeLineCap,
         lineJoin: null as ShapeLineJoin,
         opacity: 1,
-        shadow: undefined
+        fillShadow: undefined,
+        strokeShadow: undefined
     });
 
     /**
@@ -179,22 +180,74 @@ export abstract class Shape extends Node {
         return this._opacity;
     }
 
-    private _shadow: DropShadow | undefined = Shape.defaultStyles.shadow;
-    set shadow(value: DropShadow | undefined) {
-        if (this._shadow !== value) {
-            this._shadow = value;
+    private _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
+    set fillShadow(value: DropShadow | undefined) {
+        if (this._fillShadow !== value) {
+            this._fillShadow = value;
             this.dirty = true;
         }
     }
-    get shadow(): DropShadow | undefined {
-        return this._shadow;
+    get fillShadow(): DropShadow | undefined {
+        return this._fillShadow;
     }
 
-    applyContextAttributes(ctx: CanvasRenderingContext2D) {
+    private _strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
+    set strokeShadow(value: DropShadow | undefined) {
+        if (this._strokeShadow !== value) {
+            this._strokeShadow = value;
+            this.dirty = true;
+        }
+    }
+    get strokeShadow(): DropShadow | undefined {
+        return this._strokeShadow;
+    }
+
+    // protected applyContextAttributes(ctx: CanvasRenderingContext2D) {
+    //     if (this.fill) {
+    //         ctx.fillStyle = this.fill;
+    //     }
+    //     if (this.stroke) {
+    //         ctx.strokeStyle = this.stroke;
+    //         ctx.lineWidth = this.strokeWidth;
+    //         if (this.lineDash) {
+    //             ctx.setLineDash(this.lineDash);
+    //         }
+    //         if (this.lineDashOffset) {
+    //             ctx.lineDashOffset = this.lineDashOffset;
+    //         }
+    //         if (this.lineCap) {
+    //             ctx.lineCap = this.lineCap;
+    //         }
+    //         if (this.lineJoin) {
+    //             ctx.lineJoin = this.lineJoin;
+    //         }
+    //     }
+    //     if (this.opacity < 1) {
+    //         ctx.globalAlpha = this.opacity;
+    //     }
+    // }
+
+    protected fillStroke(ctx: CanvasRenderingContext2D) {
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+
         if (this.fill) {
             ctx.fillStyle = this.fill;
+
+            const fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x;
+                ctx.shadowOffsetY = fillShadow.offset.y;
+                ctx.shadowBlur = fillShadow.blur;
+            }
+            ctx.fill();
         }
-        if (this.stroke) {
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+
+        if (this.stroke && this.strokeWidth) {
             ctx.strokeStyle = this.stroke;
             ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
@@ -209,17 +262,15 @@ export abstract class Shape extends Node {
             if (this.lineJoin) {
                 ctx.lineJoin = this.lineJoin;
             }
-        }
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
 
-        const shadow = this.shadow;
-        if (shadow) {
-            ctx.shadowColor = shadow.color;
-            ctx.shadowOffsetX = shadow.offset.x;
-            ctx.shadowOffsetY = shadow.offset.y;
-            ctx.shadowBlur = shadow.blur;
+            const strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x;
+                ctx.shadowOffsetY = strokeShadow.offset.y;
+                ctx.shadowBlur = strokeShadow.blur;
+            }
+            ctx.stroke();
         }
     }
 

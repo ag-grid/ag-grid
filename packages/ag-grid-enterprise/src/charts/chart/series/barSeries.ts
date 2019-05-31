@@ -417,7 +417,7 @@ export class BarSeries extends Series<CartesianChart> {
                 rect.fill = datum.fill;
                 rect.stroke = datum.stroke;
                 rect.strokeWidth = datum.strokeWidth;
-                rect.shadow = this.shadow;
+                rect.fillShadow = this.shadow;
                 rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
             });
 
