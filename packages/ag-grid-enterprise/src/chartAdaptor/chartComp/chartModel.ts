@@ -55,6 +55,8 @@ export class ChartModel extends BeanStub {
 
     private datasource: ChartDatasource;
 
+    private chartId: string;
+
     public constructor(params: ChartModelParams) {
         super();
 
@@ -63,6 +65,8 @@ export class ChartModel extends BeanStub {
         this.cellRanges = params.cellRanges;
         this.palettes = params.palettes;
         this.activePalette = params.activePalette;
+
+        this.chartId = 'id-' + Math.random().toString(36).substr(2, 16);
     }
 
     @PostConstruct
@@ -214,6 +218,10 @@ export class ChartModel extends BeanStub {
         });
     }
 
+    public getChartId(): string {
+        return this.chartId;
+    }
+
     public getValueColState(): ColState[] {
         return this.valueColState;
     }
@@ -270,6 +278,7 @@ export class ChartModel extends BeanStub {
 
     private addRange(cellRangeType: CellRangeType, columns: Column[]) {
         const newRange = {
+            id: this.chartId,
             startRow: this.referenceCellRange.startRow,
             endRow: this.referenceCellRange.endRow,
             columns: columns,
