@@ -68,7 +68,7 @@ function processChartOptions(params) {
     legend.markerSize = 30;
     legend.markerPadding = 20;
     legend.itemPaddingX = 40;
-    legend.itemPaddingY = 100;
+    legend.itemPaddingY = 20;
     legend.labelFont = 'italic 20px Comic Sans MS';
     legend.labelColor = '#2222aa';
 
