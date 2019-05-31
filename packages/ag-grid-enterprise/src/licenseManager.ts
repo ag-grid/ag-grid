@@ -5,7 +5,7 @@ import {MD5} from './license/md5';
 export class LicenseManager {
     private static RELEASE_INFORMATION: string = 'MTU1OTI4MjgxMDUxNg==';
     private static licenseKey: string;
-    private displayWatermark: boolean = false;
+    private watermarkMessage: string | undefined = undefined
 
     @Autowired('md5') private md5: MD5;
 
@@ -62,7 +62,11 @@ export class LicenseManager {
 
 
     public isDisplayWatermark(): boolean {
-        return this.displayWatermark;
+        return !_.missingOrEmpty(this.watermarkMessage);
+    }
+
+    public getWatermarkMessage() : string {
+        return this.watermarkMessage!;
     }
 
     private static formatDate(date: any): string {
@@ -213,8 +217,13 @@ export class LicenseManager {
         console.error('*****************************************************************************************************************');
         console.error('*****************************************************************************************************************');
 
-        this.displayWatermark = true;
+        this.watermarkMessage = "Invalid License";
     }
+
+// invalid license = Invalid License
+// expired trial = Trial Period Expired
+// missing license = No License Key, for Trial Use Only
+// incompatible version = Incompatible Version
 
     private outputExpiredTrialKey(formattedExpiryDate: string) {
         console.error('****************************************************************************************************************');
@@ -225,7 +234,7 @@ export class LicenseManager {
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
 
-        this.displayWatermark = true;
+        this.watermarkMessage = "Trial Period Expired";
     }
 
     private outputMissingLicenseKey() {
@@ -234,11 +243,11 @@ export class LicenseManager {
         console.error('****************************************** License Key Not Found ***********************************************');
         console.error('* All ag-Grid Enterprise features are unlocked.                                                                *');
         console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
-        console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
+        console.error('* If you want to hide the watermarkMessage, please email info@ag-grid.com for a trial license.                        *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
 
-        this.displayWatermark = true;
+        this.watermarkMessage = "For Trial Use Only";
     }
 
     private outputIncompatibleVersion(formattedExpiryDate: string, formattedReleaseDate: string) {
@@ -250,6 +259,6 @@ export class LicenseManager {
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
 
-        this.displayWatermark = true;
+        this.watermarkMessage = "Incompatible License Version";
     }
 }

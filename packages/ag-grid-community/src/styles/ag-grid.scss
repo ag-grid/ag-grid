@@ -92,12 +92,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
             height: 60px;
             width: 110px;
         }
-        &:after {
-            content: 'Invalid License Key';
-            font-weight: bold;
-            font-family: Impact;
-            font-size: 19px;
-        }
+
+      .ag-watermark-text {
+        opacity: 0.5;
+        font-weight: bold;
+        font-family: Impact;
+        font-size: 19px;
+      }
     }
 }
 
