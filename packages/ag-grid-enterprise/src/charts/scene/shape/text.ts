@@ -161,15 +161,17 @@ export class Text extends Shape {
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
 
+        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+
         if (this.fill) {
             ctx.fillStyle = this.fill;
 
             const fillShadow = this.fillShadow;
             if (fillShadow) {
                 ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.offset.x;
-                ctx.shadowOffsetY = fillShadow.offset.y;
-                ctx.shadowBlur = fillShadow.blur;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fillText(this.text, this.x, this.y);
         }
@@ -193,9 +195,9 @@ export class Text extends Shape {
             const strokeShadow = this.strokeShadow;
             if (strokeShadow) {
                 ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.offset.x;
-                ctx.shadowOffsetY = strokeShadow.offset.y;
-                ctx.shadowBlur = strokeShadow.blur;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
             ctx.strokeText(this.text, this.x, this.y);
         }
