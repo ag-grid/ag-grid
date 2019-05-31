@@ -8,6 +8,10 @@
     "types": [
       "react",
       "react-dom"
+    ],
+    "lib": [
+      "es2015",
+      "dom"
     ]
   },
   "exclude": [
