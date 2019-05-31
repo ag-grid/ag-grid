@@ -70,9 +70,9 @@ interface BarChartOptions {
         shadow?: {
             // The shadow color. For example, 'rgba(0, 0, 0, 0.3)'.
             color?: string;
-            // The shadow offset.
+            // The shadow offset [offsetX, offsetY]
             offset?: [number, number];
-            // The blur amount to apply.
+            // The blur amount to apply in pixels
             blur?: number;
         };
         // Whether to show the labels for bars (only applies to the stacked bars).
