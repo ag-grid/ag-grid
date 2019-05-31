@@ -512,7 +512,7 @@ export class PieSeries extends Series<PolarChart> {
                 sector.endAngle = datum.endAngle;
                 sector.fill = fills[index % fills.length];
                 sector.stroke = strokes[index % strokes.length];
-                sector.shadow = this.shadow;
+                sector.fillShadow = this.shadow;
                 sector.strokeWidth = this.strokeWidth;
                 sector.lineJoin = 'round';
             });

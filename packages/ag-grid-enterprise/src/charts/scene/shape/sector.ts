@@ -224,16 +224,10 @@ export class Sector extends Shape {
         }
         this.matrix.toContext(ctx);
 
-        this.applyContextAttributes(ctx);
         this.updatePath();
         this.scene!.appendPath(this.path);
 
-        if (this.fill) {
-            ctx.fill();
-        }
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
 
         this.dirty = false;
     }

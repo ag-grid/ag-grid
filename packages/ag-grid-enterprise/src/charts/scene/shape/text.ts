@@ -143,22 +143,8 @@ export class Text extends Shape {
         return false;
     }
 
-    applyContextAttributes(ctx: CanvasRenderingContext2D) {
-        super.applyContextAttributes(ctx);
-        ctx.font = this.font;
-        ctx.textAlign = this.textAlign;
-        ctx.textBaseline = this.textBaseline;
-    }
-
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene) {
-            return;
-        }
-
-        const lines = this.lines;
-        const lineCount = lines.length;
-
-        if (!lineCount) {
+        if (!this.scene || !this.lines.length) {
             return;
         }
 
@@ -167,17 +153,51 @@ export class Text extends Shape {
         }
         this.matrix.toContext(ctx);
 
-        this.applyContextAttributes(ctx);
 
-        if (lineCount > 1) {
-            // TODO: multi-line text
-        } else if (lineCount === 1) {
-            if (this.fill) {
-                ctx.fillText(this.text, this.x, this.y);
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+        ctx.font = this.font;
+        ctx.textAlign = this.textAlign;
+        ctx.textBaseline = this.textBaseline;
+
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+
+            const fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x;
+                ctx.shadowOffsetY = fillShadow.offset.y;
+                ctx.shadowBlur = fillShadow.blur;
             }
-            if (this.stroke) {
-                ctx.strokeText(this.text, this.x, this.y);
+            ctx.fillText(this.text, this.x, this.y);
+        }
+
+        if (this.stroke && this.strokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
             }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+
+            const strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x;
+                ctx.shadowOffsetY = strokeShadow.offset.y;
+                ctx.shadowBlur = strokeShadow.blur;
+            }
+            ctx.strokeText(this.text, this.x, this.y);
         }
 
         // // debug

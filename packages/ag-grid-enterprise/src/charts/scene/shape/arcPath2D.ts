@@ -97,7 +97,7 @@ export class Arc extends Shape {
     render(ctx: CanvasRenderingContext2D): void {
         // Path2D approach:
         this.updatePath();
-        this.applyContextAttributes(ctx);
+        // this.applyContextAttributes(ctx);
         ctx.fill(this.path);
         ctx.stroke(this.path);
 
