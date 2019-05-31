@@ -220,11 +220,6 @@ export class LicenseManager {
         this.watermarkMessage = "Invalid License";
     }
 
-// invalid license = Invalid License
-// expired trial = Trial Period Expired
-// missing license = No License Key, for Trial Use Only
-// incompatible version = Incompatible Version
-
     private outputExpiredTrialKey(formattedExpiryDate: string) {
         console.error('****************************************************************************************************************');
         console.error('***************************************** ag-Grid Enterprise License *******************************************');
