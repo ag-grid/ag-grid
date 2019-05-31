@@ -202,31 +202,6 @@ export abstract class Shape extends Node {
         return this._strokeShadow;
     }
 
-    // protected applyContextAttributes(ctx: CanvasRenderingContext2D) {
-    //     if (this.fill) {
-    //         ctx.fillStyle = this.fill;
-    //     }
-    //     if (this.stroke) {
-    //         ctx.strokeStyle = this.stroke;
-    //         ctx.lineWidth = this.strokeWidth;
-    //         if (this.lineDash) {
-    //             ctx.setLineDash(this.lineDash);
-    //         }
-    //         if (this.lineDashOffset) {
-    //             ctx.lineDashOffset = this.lineDashOffset;
-    //         }
-    //         if (this.lineCap) {
-    //             ctx.lineCap = this.lineCap;
-    //         }
-    //         if (this.lineJoin) {
-    //             ctx.lineJoin = this.lineJoin;
-    //         }
-    //     }
-    //     if (this.opacity < 1) {
-    //         ctx.globalAlpha = this.opacity;
-    //     }
-    // }
-
     protected fillStroke(ctx: CanvasRenderingContext2D) {
         if (this.opacity < 1) {
             ctx.globalAlpha = this.opacity;
