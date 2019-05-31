@@ -20,6 +20,10 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface PieChartOptions {
+    // width of chart in pixels
+    width?: number,
+    // height of chart in pixels
+    height?: number;
     // The padding of contents from the edges of the chart.
     padding?: {
         top: number;
@@ -75,10 +79,8 @@ interface PieChartOptions {
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
-        // The callout stroke colors. Same as stroke colors by default.
-        calloutColors?: string[];
         // The thickness of a callout line. Defaults to `2`.
-        calloutWidth?: number;
+        calloutStrokeWidth?: number;
         // The length of a callout line. Defaults to `10`.
         calloutLength?: number;
         // The padding between the callouts and the labels. Defaults to `3`.

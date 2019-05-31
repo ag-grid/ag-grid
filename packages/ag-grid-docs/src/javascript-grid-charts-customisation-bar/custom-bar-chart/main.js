@@ -118,10 +118,6 @@ function processChartOptions(params) {
 
     var seriesDefaults = options.seriesDefaults;
 
-    // leaving this out, as it will hide all the items form the legend!
-    // seriesDefaults.showInLegend = false;
-    // seriesDefaults.tooltipEnabled = true;
-
     var gold = '#d4af37';
     var silver = '#c0c0c0';
     var bronze = '#cd7f32';

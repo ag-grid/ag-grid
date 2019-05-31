@@ -20,6 +20,10 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface LineChartOptions {
+    // width of chart in pixels
+    width?: number,
+    // height of chart in pixels
+    height?: number;
     // The padding of contents from the edges of the chart. Defaults to `20` for all sides.
     padding?:  {
         top: number;
