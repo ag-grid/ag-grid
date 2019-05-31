@@ -181,6 +181,6 @@ interface PieTooltipRendererParams {
 }
 </snippet>
 
-    <?= example('Provided Container', 'provided-container', 'generated', array("enterprise" => true)) ?>
+    <?= example('Custom Pie Chart', 'custom-pie-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
