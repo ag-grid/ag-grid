@@ -23,6 +23,7 @@ export class MarkerLabel extends Group {
         label.textBaseline = 'middle';
         label.font = MarkerLabel.defaults.labelFont;
         label.fill = MarkerLabel.defaults.labelColor;
+        label.y = 2; // for better looking vertical alignment of labels to markers
 
         this.append([this.marker, label]);
         this.update();
