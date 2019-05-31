@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "20.2.0",
+  "version": "21.0.0",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",
@@ -21,7 +21,6 @@
     "update-webdriver": "webdriver-manager update --gecko false",
     "start-server": "http-server .",
     "ci": "start-server-and-test start-server http://localhost:8080 e2e"
-
   },
   "repository": {
     "type": "git",
@@ -41,7 +40,7 @@
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "@types/jest": "^23.3.10",
-    "ag-grid-community": "^20.2.0",
+    "ag-grid-community": "^21.0.0",
     "css-loader": "^1.0.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
@@ -63,6 +62,6 @@
     "start-server-and-test": "^1.7.11"
   },
   "peerDependencies": {
-    "ag-grid-community": "^20.2.0"
+    "ag-grid-community": "^21.0.0"
   }
 }
