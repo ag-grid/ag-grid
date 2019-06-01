@@ -43,7 +43,7 @@ function processChartOptions(params) {
     // we are only interested in processing bar type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type!=='groupedBar') {
+    if (params.type!=='line') {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
@@ -67,6 +67,7 @@ function processChartOptions(params) {
     legend.labelFont = 'italic 20px Comic Sans MS';
     legend.labelColor = '#2222aa';
 
+    // changes to the xAxis
     var xAxis = options.xAxis;
     xAxis.lineWidth = 4;
     xAxis.lineColor = '#000000';
@@ -118,21 +119,18 @@ function processChartOptions(params) {
     var gold = '#d4af37';
     var silver = '#c0c0c0';
     var bronze = '#cd7f32';
+
+    var gold2 = '#c49f27';
+    var silver2 = '#b0b0b0';
+    var bronze2 = '#bd6f22';
+
     seriesDefaults.fills = [gold, silver, bronze];
-    seriesDefaults.strokes = ['black'];
-    seriesDefaults.strokeWidth = 3;
+    seriesDefaults.strokes = [gold2, silver2, bronze2];
+    seriesDefaults.strokeWidth = 10;
 
-    // only impacts stacked bar chart
-    seriesDefaults.labelEnabled = true;
-    seriesDefaults.labelFont = 'italic 15px Comic Sans MS';
-    seriesDefaults.labelPadding = {x: 10, y: 10};
-    seriesDefaults.labelColor = 'green';
-
-    seriesDefaults.shadow = {
-        color: 'grey',
-        offset: [10,10],
-        blur: 8
-    };
+    seriesDefaults.marker = true;
+    seriesDefaults.markerSize = 20;
+    seriesDefaults.markerStrokeWidth = 10;
 
     seriesDefaults.tooltipRenderer = function(params) {
         var xField = params.xField;
@@ -154,7 +152,7 @@ function onGridReady(params) {
 
     var chartRangeParams = {
         cellRange: cellRange,
-        chartType: 'groupedBar'
+        chartType: 'line'
     };
 
     setTimeout(function () {

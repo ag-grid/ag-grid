@@ -4,6 +4,7 @@ import { BBox } from "../bbox";
 
 export class Line extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
+        fill: undefined,
         strokeWidth: 1
     });
 
@@ -103,8 +104,6 @@ export class Line extends Shape {
         }
         this.matrix.toContext(ctx);
 
-        this.applyContextAttributes(ctx);
-
         let x1 = this.x1;
         let y1 = this.y1;
         let x2 = this.x2;
@@ -126,9 +125,7 @@ export class Line extends Shape {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
 
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
 
         this.dirty = false;
     }

@@ -137,7 +137,7 @@ export class PieSeries extends Series<PolarChart> {
         return this._calloutColors;
     }
 
-    private _calloutStrokeWidth: number = 2;
+    private _calloutStrokeWidth: number = 1;
     set calloutStrokeWidth(value: number) {
         if (this._calloutStrokeWidth !== value) {
             this._calloutStrokeWidth = value;
@@ -512,7 +512,7 @@ export class PieSeries extends Series<PolarChart> {
                 sector.endAngle = datum.endAngle;
                 sector.fill = fills[index % fills.length];
                 sector.stroke = strokes[index % strokes.length];
-                sector.shadow = this.shadow;
+                sector.fillShadow = this.shadow;
                 sector.strokeWidth = this.strokeWidth;
                 sector.lineJoin = 'round';
             });

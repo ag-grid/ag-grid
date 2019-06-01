@@ -6,9 +6,7 @@ var columnDefs = [
 ];
 
 function createRowData() {
-    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
-        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
-        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany"];
     let rowData = [];
     countries.forEach( function(country, index) {
         rowData.push({
@@ -43,7 +41,7 @@ function processChartOptions(params) {
     // we are only interested in processing bar type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type!=='groupedBar') {
+    if (params.type!=='doughnut') {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
@@ -51,7 +49,7 @@ function processChartOptions(params) {
     options.height = 500;
     options.width = 1000;
 
-    options.padding = {top: 10, right: 10, bottom: 20, left: 20};
+    options.padding = {top: 40, right: 10, bottom: 40, left: 20};
 
     options.tooltipClass = 'my-tool-tip-class';
 
@@ -62,84 +60,45 @@ function processChartOptions(params) {
     legend.markerStrokeWidth = 4;
     legend.markerSize = 30;
     legend.markerPadding = 20;
+
     legend.itemPaddingX = 40;
-    legend.itemPaddingY = 100;
+    legend.itemPaddingY = 20;
+
     legend.labelFont = 'italic 20px Comic Sans MS';
     legend.labelColor = '#2222aa';
 
-    var xAxis = options.xAxis;
-    xAxis.lineWidth = 4;
-    xAxis.lineColor = '#000000';
-
-    xAxis.tickWidth = 4;
-    xAxis.tickSize = 10;
-    xAxis.tickPadding = 10;
-    xAxis.tickColor = 'black';
-
-    xAxis.labelFont = 'italic 15px Comic Sans MS';
-    xAxis.labelColor = 'rgb(0,0,0)';
-    xAxis.labelRotation = 20;
-    xAxis.labelFormatter = function(value) {
-        return value.toString().toUpperCase();
-    };
-    xAxis.gridStyle = [
-        {
-            stroke: 'red',
-            lineDash: [4,2]
-        },
-        {
-            stroke: 'blue'
-        }
-    ];
-
-    // changes to the yAxis
-    var yAxis = options.yAxis;
-    yAxis.lineWidth = 4;
-    yAxis.lineColor = '#000000';
-    yAxis.tickWidth = 4;
-    yAxis.tickSize = 10;
-    yAxis.tickPadding = 10;
-    yAxis.tickColor = 'black';
-    yAxis.labelFont = 'italic 15px Comic Sans MS';
-    yAxis.labelColor = 'rgb(0,0,0)';
-    yAxis.labelRotation = -20;
-    yAxis.labelFormatter = function(value) {
-        return value.toString().toUpperCase();
-    };
-    yAxis.gridStyle = [
-        {
-            stroke: 'black',
-            lineDash: [2,2]
-        }
-    ];
-
     var seriesDefaults = options.seriesDefaults;
+    seriesDefaults.fills = ['#503030','#505050','#507070','#509090','#50b0b0'];
+    seriesDefaults.strokes = ['#001010','#003030','#005050','#007070','#009090'];
+    // seriesDefaults.tooltipEnabled = false;
 
-    var gold = '#d4af37';
-    var silver = '#c0c0c0';
-    var bronze = '#cd7f32';
-    seriesDefaults.fills = [gold, silver, bronze];
-    seriesDefaults.strokes = ['black'];
-    seriesDefaults.strokeWidth = 3;
-
-    // only impacts stacked bar chart
     seriesDefaults.labelEnabled = true;
-    seriesDefaults.labelFont = 'italic 15px Comic Sans MS';
-    seriesDefaults.labelPadding = {x: 10, y: 10};
-    seriesDefaults.labelColor = 'green';
+    seriesDefaults.labelMinAngle = 30;
 
-    seriesDefaults.shadow = {
-        color: 'grey',
-        offset: [10,10],
-        blur: 8
-    };
+    seriesDefaults.labelFont = 'italic 20px Comic Sans MS';
+    seriesDefaults.labelColor = '#2222aa';
+
+    seriesDefaults.strokeWidth = 4;
+    seriesDefaults.calloutStrokeWidth = 10;
+    seriesDefaults.calloutLength = 30;
+    seriesDefaults.calloutPadding = 10;
+
+    seriesDefaults.titleEnabled = true;
+    seriesDefaults.titleFont = 'italic 15px Comic Sans MS';
+
+    // leaving out shadow, as it doesn't look great for doughnut charts
+    // seriesDefaults.shadow = {
+    //     color: 'grey',
+    //     offset: [10,10],
+    //     blur: 8
+    // };
 
     seriesDefaults.tooltipRenderer = function(params) {
-        var xField = params.xField;
-        var yField = params.yField;
-        var x = params.datum[xField];
-        var y = params.datum[yField];
-        return '<b>'+xField.toUpperCase()+':</b> ' + x + '<br/><b>'+yField.toUpperCase()+':</b> '+y;
+        var angleField = params.angleField;
+        var value = params.datum[angleField];
+        var labelField = params.labelField;
+        var label = params.datum[labelField];
+        return '<b>'+angleField.toUpperCase()+'-'+label+':</b> ' + value;
     };
 
     return options;
@@ -154,7 +113,7 @@ function onGridReady(params) {
 
     var chartRangeParams = {
         cellRange: cellRange,
-        chartType: 'groupedBar'
+        chartType: 'doughnut'
     };
 
     setTimeout(function () {
