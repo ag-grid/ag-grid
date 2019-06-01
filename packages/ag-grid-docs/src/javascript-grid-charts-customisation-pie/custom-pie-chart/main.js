@@ -49,20 +49,16 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    // width and height of the chart
     options.height = 500;
     options.width = 1000;
 
-    // padding, we could take padding out by setting options.padding = {}
     options.padding = {top: 40, right: 10, bottom: 40, left: 20};
+
+    options.tooltipClass = 'my-tool-tip-class';
 
     options.legendPosition = 'bottom';
     options.legendPadding = 20;
 
-    // all tooltips will have this CSS class on them
-    options.tooltipClass = 'my-tool-tip-class';
-
-    // changes to the legend
     var legend = options.legend;
     legend.markerStrokeWidth = 4;
     legend.markerSize = 30;
@@ -77,12 +73,10 @@ function processChartOptions(params) {
     seriesDefaults.strokes = ['#001010','#003030','#005050','#007070','#009090'];
 
     // seriesDefaults.tooltipEnabled = false;
+
     seriesDefaults.labelEnabled = true;
     seriesDefaults.labelMinAngle = 30;
-
-    // The font to be used for slice labels.
     seriesDefaults.labelFont = 'italic 20px Comic Sans MS';
-    // The color to use for slice labels.
     seriesDefaults.labelColor = '#2222aa';
 
     seriesDefaults.strokeWidth = 4;
@@ -91,7 +85,7 @@ function processChartOptions(params) {
     seriesDefaults.calloutLength = 30;
     seriesDefaults.calloutPadding = 10;
 
-    // shadows don't look great, so leaving out
+    // leaving out shadow, as it doesn't look great for pie charts
     // seriesDefaults.shadow = {
     //     color: 'grey',
     //     offset: [10,10],

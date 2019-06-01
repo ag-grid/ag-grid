@@ -24,19 +24,23 @@ interface BarChartOptions {
     width?: number,
     // height of chart in pixels
     height?: number;
+
     // The padding of contents from the edges of the chart.
-    padding?:  {
+    padding?: {
         top: number;
         right: number;
         bottom: number;
         left: number;
     };
+
+    // Additional CSS class to be added to tooltip element.
+    tooltipClass?: string;
+
     // The side of the chart to dock the legend to.
     legendPosition?: 'top' | 'right' | 'bottom' | 'left';
     // The padding amount between the legend and the series.
     legendPadding?: number;
-    // Additional CSS class to be added to tooltip element.
-    tooltipClass?: string;
+
     legend?: {
         // The stroke width of a legend marker. Defaults to `1`.
         markerStrokeWidth?: number;
@@ -51,13 +55,15 @@ interface BarChartOptions {
         // The font to be used by the legend's labels. Defaults to `12px Verdana, sans-serif`.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
-        // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
+        // The color to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
+
     // The horizontal chart axis.
     xAxis: AxisOptions;
     // The vertical chart axis.
     yAxis: AxisOptions;
+
     seriesDefaults?: {
         // The fill colors to be used by the series.
         fills?: string[];
@@ -65,6 +71,7 @@ interface BarChartOptions {
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
+
         // Whether to show the labels for bars (only applies to the stacked bars).
         labelEnabled?: boolean;
         // The font to be used by the bar labels. Defaults to `12px Verdana, sans-serif`.
@@ -75,6 +82,18 @@ interface BarChartOptions {
         // The labels will only show if they are small enough to fit inside a bar with the given amount of padding.
         // Defaults to `{x: 10, y: 10}`.
         labelPadding?: {x: number, y: number};
+
+        // The shadow type to use for bars. Defaults to no shadow.
+        // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
+        shadow?: {
+            // The shadow color. For example, 'rgba(0, 0, 0, 0.3)'.
+            color?: string;
+            // The shadow offset.
+            offset?: [number, number];
+            // The blur amount to apply.
+            blur?: number;
+        };
+
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     };

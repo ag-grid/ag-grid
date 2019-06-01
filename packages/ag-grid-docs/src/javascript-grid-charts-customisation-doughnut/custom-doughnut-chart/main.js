@@ -46,32 +46,31 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    // width and height of the chart
     options.height = 500;
     options.width = 1000;
 
-    // padding, we could take padding out by setting options.padding = {}
     options.padding = {top: 40, right: 10, bottom: 40, left: 20};
+
+    options.tooltipClass = 'my-tool-tip-class';
 
     options.legendPosition = 'bottom';
     options.legendPadding = 20;
 
-    // all tooltips will have this CSS class on them
-    options.tooltipClass = 'my-tool-tip-class';
-
-    // changes to the legend
     var legend = options.legend;
     legend.markerStrokeWidth = 4;
     legend.markerSize = 30;
     legend.markerPadding = 20;
+
     legend.itemPaddingX = 40;
     legend.itemPaddingY = 20;
+
     legend.labelFont = 'italic 20px Comic Sans MS';
     legend.labelColor = '#2222aa';
 
     var seriesDefaults = options.seriesDefaults;
     seriesDefaults.fills = ['#503030','#505050','#507070','#509090','#50b0b0'];
     seriesDefaults.strokes = ['#001010','#003030','#005050','#007070','#009090'];
+    // seriesDefaults.tooltipEnabled = false;
 
     seriesDefaults.labelEnabled = true;
     seriesDefaults.labelMinAngle = 30;
@@ -87,7 +86,12 @@ function processChartOptions(params) {
     seriesDefaults.titleEnabled = true;
     seriesDefaults.titleFont = 'italic 15px Comic Sans MS';
 
-    // seriesDefaults.tooltipEnabled = false;
+    // leaving out shadow, as it doesn't look great for doughnut charts
+    // seriesDefaults.shadow = {
+    //     color: 'grey',
+    //     offset: [10,10],
+    //     blur: 8
+    // };
 
     seriesDefaults.tooltipRenderer = function(params) {
         var angleField = params.angleField;
@@ -95,12 +99,6 @@ function processChartOptions(params) {
         var labelField = params.labelField;
         var label = params.datum[labelField];
         return '<b>'+angleField.toUpperCase()+'-'+label+':</b> ' + value;
-    };
-
-    seriesDefaults.shadow = {
-        color: 'grey',
-        offset: [10,10],
-        blur: 8
     };
 
     return options;

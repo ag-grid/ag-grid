@@ -31,12 +31,15 @@ interface PieChartOptions {
         bottom: number;
         left: number;
     };
+
+    // Additional CSS class to be added to tooltip element.
+    tooltipClass?: string;
+
     // The side of the chart to dock the legend to.
     legendPosition?: 'top' | 'right' | 'bottom' | 'left';
     // The padding amount between the legend and the series.
     legendPadding?: number;
-    // The CSS class name to be used by the tooltip element.
-    tooltipClass?: string;
+
     legend?: {
         // The stroke width of a legend marker. Defaults to `1`.
         markerStrokeWidth?: number;
@@ -51,40 +54,39 @@ interface PieChartOptions {
         // The font to be used by the legend's labels. Defaults to `12px Verdana, sans-serif`.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
-        // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
+        // The color to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
+
+
+
     seriesDefaults?: {
-        // The title of the series. Shown above the series and in (default) tooltips.
-        title?: string;
-        // Whether to show series title or not. Defaults to `false`.
-        titleEnabled?: boolean;
-        // The font to be used by the series title.
-        titleFont?: string;
-        // Whether this series should be represented in the legend. Defaults to `true`.
-        showInLegend?: boolean;
-        // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
-        tooltipEnabled?: boolean;
-        // Whether to show pie slice labels or not.
-        labelEnabled?: boolean;
-        // The font to be used for slice labels.
-        labelFont?: string;
-        // The color to use for slice labels.
-        labelColor?: string;
-        // If the pie slice angle is smaller than this value (in degrees), the label won't be shown.
-        labelMinAngle?: number;
         // The fill colors of pie slices.
         fills?: string[];
         // The stroke colors of pie slices. Darker versions of fill colors by default.
         strokes?: string[];
+        // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
+        tooltipEnabled?: boolean;
+
+        // Whether to show pie slice labels or not.
+        labelEnabled?: boolean;
+        // If the pie slice angle is smaller than this value (in degrees), the label won't be shown.
+        labelMinAngle?: number;
+        // The font to be used for slice labels.
+        labelFont?: string;
+        // The color to use for slice labels.
+        labelColor?: string;
+
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
+
         // The thickness of a callout line. Defaults to `2`.
         calloutStrokeWidth?: number;
         // The length of a callout line. Defaults to `10`.
         calloutLength?: number;
         // The padding between the callouts and the labels. Defaults to `3`.
         calloutPadding?: number;
+
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
         shadow?: {
@@ -95,6 +97,7 @@ interface PieChartOptions {
             // The blur amount to apply.
             blur?: number;
         };
+
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: DoughnutTooltipRendererParams) => string;
     };

@@ -48,20 +48,16 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    // width and height of the chart
     options.height = 500;
     options.width = 1000;
 
-    // padding, we could take padding out by setting options.padding = {}
     options.padding = {top: 10, right: 10, bottom: 20, left: 20};
+
+    options.tooltipClass = 'my-tool-tip-class';
 
     options.legendPosition = 'bottom';
     options.legendPadding = 20;
 
-    // all tooltips will have this CSS class on them
-    options.tooltipClass = 'my-tool-tip-class';
-
-    // changes to the legend
     var legend = options.legend;
     legend.markerStrokeWidth = 4;
     legend.markerSize = 30;
@@ -75,10 +71,12 @@ function processChartOptions(params) {
     var xAxis = options.xAxis;
     xAxis.lineWidth = 4;
     xAxis.lineColor = '#000000';
+
     xAxis.tickWidth = 4;
     xAxis.tickSize = 10;
     xAxis.tickPadding = 10;
     xAxis.tickColor = 'black';
+
     xAxis.labelFont = 'italic 15px Comic Sans MS';
     xAxis.labelColor = 'rgb(0,0,0)';
     xAxis.labelRotation = 20;
@@ -129,6 +127,7 @@ function processChartOptions(params) {
     seriesDefaults.fills = [gold, silver, bronze];
     seriesDefaults.strokes = [gold2, silver2, bronze2];
     seriesDefaults.strokeWidth = 10;
+
     seriesDefaults.marker = true;
     seriesDefaults.markerSize = 20;
     seriesDefaults.markerStrokeWidth = 10;

@@ -20,23 +20,28 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface LineChartOptions {
+
     // width of chart in pixels
     width?: number,
     // height of chart in pixels
     height?: number;
-    // The padding of contents from the edges of the chart. Defaults to `20` for all sides.
-    padding?:  {
+
+    // The padding of contents from the edges of the chart.
+    padding?: {
         top: number;
         right: number;
         bottom: number;
         left: number;
     };
+
+    // Additional CSS class to be added to tooltip element.
+    tooltipClass?: string;
+
     // The side of the chart to dock the legend to.
     legendPosition?: 'top' | 'right' | 'bottom' | 'left';
     // The padding amount between the legend and the series.
     legendPadding?: number;
-    // Additional CSS class to be added to tooltip element.
-    tooltipClass?: string;
+
     legend?: {
         // The stroke width of a legend marker. Defaults to `1`.
         markerStrokeWidth?: number;
@@ -51,13 +56,15 @@ interface LineChartOptions {
         // The font to be used by the legend's labels. Defaults to `12px Verdana, sans-serif`.
         // Should use the same format as the shorthand `font` property in CSS.
         labelFont?: string;
-        // The color to be used by the legend's labels. Depends on whether the light or dark mode is used.
+        // The color to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
+
     // The horizontal chart axis.
     xAxis: AxisOptions;
     // The vertical chart axis.
     yAxis: AxisOptions;
+
     seriesDefaults?: {
         // The fill colors to be used by the series' markers.
         fills?: string[];
@@ -65,6 +72,7 @@ interface LineChartOptions {
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
+
         // Whether to show line series markers at each data point or not. Defaults to `true`.
         // Note: tooltips won't show without markers.
         marker?: boolean;
@@ -72,6 +80,7 @@ interface LineChartOptions {
         markerSize?: number;
         // The stroke width of the marker. Defaults to `2`.
         markerStrokeWidth?: number;
+
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: LineTooltipRendererParams) => string;
     };
