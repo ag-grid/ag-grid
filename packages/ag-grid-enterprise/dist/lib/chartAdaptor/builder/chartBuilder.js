@@ -149,8 +149,8 @@ var ChartBuilder = /** @class */ (function () {
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;
         }
-        if (options.markerLineWidth !== undefined) {
-            series.markerStrokeWidth = options.markerLineWidth;
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;

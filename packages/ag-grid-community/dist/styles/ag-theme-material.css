@@ -6,6 +6,7 @@
   font-style: normal; }
 
 .ag-theme-material {
+  -webkit-font-smoothing: antialiased;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.87);
   font-family: "Roboto", sans-serif;
@@ -17,7 +18,6 @@
   .ag-theme-material label {
     margin-bottom: 0; }
   .ag-theme-material * {
-    -webkit-font-smoothing: antialiased;
     box-sizing: border-box; }
     .ag-theme-material *:focus, .ag-theme-material * *:before, .ag-theme-material * *:after {
       outline: none;
@@ -425,6 +425,8 @@
       margin: 0; }
   .ag-theme-material .ag-radio-button-label, .ag-theme-material .ag-checkbox-label {
     margin-left: 8px; }
+  .ag-theme-material .ag-cell {
+    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-material .ag-ltr .ag-row-group-leaf-indent {
     margin-left: 42px; }
   .ag-theme-material .ag-ltr .ag-cell {
@@ -1197,6 +1199,8 @@
     content: "\E909"; }
   .ag-theme-material .ag-icon-contracted:before {
     content: "\E90A"; }
+  .ag-theme-material .ag-group-expanded .ag-icon-contracted:empty:before {
+    content: "\E932"; }
   .ag-theme-material .ag-icon-copy:before {
     content: "\E90B"; }
   .ag-theme-material .ag-icon-cross:before {

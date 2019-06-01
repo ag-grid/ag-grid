@@ -21,7 +21,8 @@ export declare abstract class Shape extends Node {
         lineCap: ShapeLineCap;
         lineJoin: ShapeLineJoin;
         opacity: number;
-        shadow: undefined;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     };
     /**
      * Restores the default styles introduced by this subclass.
@@ -58,9 +59,11 @@ export declare abstract class Shape extends Node {
     lineJoin: ShapeLineJoin;
     private _opacity;
     opacity: number;
-    private _shadow;
-    shadow: DropShadow | undefined;
-    applyContextAttributes(ctx: CanvasRenderingContext2D): void;
+    private _fillShadow;
+    fillShadow: DropShadow | undefined;
+    private _strokeShadow;
+    strokeShadow: DropShadow | undefined;
+    protected fillStroke(ctx: CanvasRenderingContext2D): void;
     isPointInNode(x: number, y: number): boolean;
     abstract isPointInPath(x: number, y: number): boolean;
     abstract isPointInStroke(x: number, y: number): boolean;

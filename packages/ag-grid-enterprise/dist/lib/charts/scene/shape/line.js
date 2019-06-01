@@ -115,7 +115,6 @@ var Line = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         var x1 = this.x1;
         var y1 = this.y1;
         var x2 = this.x2;
@@ -135,12 +134,11 @@ var Line = /** @class */ (function (_super) {
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     Line.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
+        fill: undefined,
         strokeWidth: 1
     });
     return Line;

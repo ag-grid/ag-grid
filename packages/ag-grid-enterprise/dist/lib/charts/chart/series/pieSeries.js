@@ -59,7 +59,7 @@ var PieSeries = /** @class */ (function (_super) {
          * `null` means make the callout color the same as {@link strokeStyle}.
          */
         _this._calloutColors = palettes_1.default.strokes;
-        _this._calloutStrokeWidth = 2;
+        _this._calloutStrokeWidth = 1;
         _this._calloutLength = 10;
         _this._calloutPadding = 3;
         _this._labelFont = '12px Verdana, sans-serif';
@@ -540,7 +540,7 @@ var PieSeries = /** @class */ (function (_super) {
             sector.endAngle = datum.endAngle;
             sector.fill = fills[index % fills.length];
             sector.stroke = strokes[index % strokes.length];
-            sector.shadow = _this.shadow;
+            sector.fillShadow = _this.shadow;
             sector.strokeWidth = _this.strokeWidth;
             sector.lineJoin = 'round';
         });

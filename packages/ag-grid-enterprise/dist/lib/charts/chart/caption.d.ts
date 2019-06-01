@@ -2,7 +2,11 @@
 import { Padding } from "../util/padding";
 import { Text } from "../scene/shape/text";
 export declare class Caption {
-    static create(text: string, font?: string): Caption;
+    static create(params?: {
+        text?: string;
+        font?: string;
+        color?: string;
+    }): Caption;
     onLayoutChange?: () => void;
     readonly node: Text;
     constructor();

@@ -11,7 +11,8 @@ export declare class Text extends Shape {
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        shadow: undefined;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
         textAlign: CanvasTextAlign;
         font: string;
@@ -35,6 +36,5 @@ export declare class Text extends Shape {
     readonly getBBox: () => BBox;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;
-    applyContextAttributes(ctx: CanvasRenderingContext2D): void;
     render(ctx: CanvasRenderingContext2D): void;
 }

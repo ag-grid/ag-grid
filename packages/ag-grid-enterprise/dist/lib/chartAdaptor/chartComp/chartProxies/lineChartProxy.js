@@ -20,6 +20,7 @@ var LineChartProxy = /** @class */ (function (_super) {
     __extends(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
+        var defaultOpts = _this.defaultOptions();
         _this.chartOptions = _this.getChartOptions('line', _this.defaultOptions());
         _this.chart = chartBuilder_1.ChartBuilder.createLineChart(_this.chartOptions);
         return _this;
@@ -113,12 +114,12 @@ var LineChartProxy = /** @class */ (function (_super) {
             },
             seriesDefaults: {
                 type: 'line',
-                fill: palette.fills[0],
-                stroke: palette.strokes[0],
+                fills: palette.fills,
+                strokes: palette.strokes,
                 strokeWidth: 3,
                 marker: true,
-                markerSize: 3,
-                markerLineWidth: 1,
+                markerSize: 6,
+                markerStrokeWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,

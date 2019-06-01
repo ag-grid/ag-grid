@@ -20,7 +20,8 @@ export declare class Arc extends Shape {
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        shadow: undefined;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
         lineWidth: number;
         fillStyle: null;

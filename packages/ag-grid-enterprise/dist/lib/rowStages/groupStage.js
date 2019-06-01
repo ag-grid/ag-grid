@@ -209,18 +209,34 @@ var GroupStage = /** @class */ (function () {
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
         var checkAgain = true;
+        var groupShouldBeRemoved = function (rowNode) {
+            // because of the while loop below, it's possible we already moved the node,
+            // so double check before trying to remove again.
+            var mapKey = _this.getChildrenMappedKey(rowNode.key, rowNode.rowGroupColumn);
+            var parentRowNode = rowNode.parent;
+            var groupAlreadyRemoved = (parentRowNode && parentRowNode.childrenMapped) ?
+                !parentRowNode.childrenMapped[mapKey] : true;
+            if (groupAlreadyRemoved) {
+                // if not linked, then group was already removed
+                return false;
+            }
+            else {
+                // if still not removed, then we remove if this group is empty
+                return rowNode.isEmptyRowGroupNode();
+            }
+        };
         var _loop_1 = function () {
             checkAgain = false;
             var batchRemover = new BatchRemover();
             nodesToRemove.forEach(function (nodeToRemove) {
                 // remove empty groups
-                _this.forEachParentGroup(details, nodeToRemove, function (node) {
-                    if (node.isEmptyRowGroupNode()) {
+                _this.forEachParentGroup(details, nodeToRemove, function (rowNode) {
+                    if (groupShouldBeRemoved(rowNode)) {
                         checkAgain = true;
-                        _this.removeFromParent(node, batchRemover);
+                        _this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        node.setSelected(false);
+                        rowNode.setSelected(false);
                     }
                 });
             });
@@ -536,7 +552,10 @@ var BatchRemover = /** @class */ (function () {
         var _this = this;
         this.allParents.forEach(function (parent) {
             var nodeDetails = _this.allSets[parent.id];
-            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(function (child) { return !nodeDetails.removeFromChildrenAfterGroup[child.id]; });
+            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(function (child) {
+                var res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
+                return res;
+            });
             parent.allLeafChildren = parent.allLeafChildren.filter(function (child) { return !nodeDetails.removeFromAllLeafChildren[child.id]; });
         });
         this.allSets = {};

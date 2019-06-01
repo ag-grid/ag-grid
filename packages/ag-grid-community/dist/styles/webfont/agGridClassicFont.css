@@ -66,6 +66,9 @@
 .ag-icon-contracted:before {
   content: "\E90A"; }
 
+.ag-group-expanded .ag-icon-contracted:empty:before {
+  content: "\E932"; }
+
 .ag-icon-copy:before {
   content: "\E90B"; }
 

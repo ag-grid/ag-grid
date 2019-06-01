@@ -21,7 +21,8 @@ var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
-        var chartOptions = _this.getChartOptions('bar', _this.defaultOptions());
+        var barChartType = params.chartType === ag_grid_community_1.ChartType.GroupedBar ? 'groupedBar' : 'stackedBar';
+        var chartOptions = _this.getChartOptions(barChartType, _this.defaultOptions());
         _this.chart = chartBuilder_1.ChartBuilder.createBarChart(chartOptions);
         var barSeries = chartBuilder_1.ChartBuilder.createSeries(chartOptions.seriesDefaults);
         if (barSeries) {

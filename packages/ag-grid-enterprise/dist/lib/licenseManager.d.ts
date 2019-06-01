@@ -2,7 +2,7 @@
 export declare class LicenseManager {
     private static RELEASE_INFORMATION;
     private static licenseKey;
-    private displayWatermark;
+    private watermarkMessage;
     private md5;
     validateLicense(): void;
     private static extractExpiry;
@@ -15,6 +15,7 @@ export declare class LicenseManager {
         isTrial: boolean | null;
     };
     isDisplayWatermark(): boolean;
+    getWatermarkMessage(): string;
     private static formatDate;
     private static getGridReleaseDate;
     private static decode;

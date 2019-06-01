@@ -421,7 +421,7 @@ var BarSeries = /** @class */ (function (_super) {
             rect.fill = datum.fill;
             rect.stroke = datum.stroke;
             rect.strokeWidth = datum.strokeWidth;
-            rect.shadow = _this.shadow;
+            rect.fillShadow = _this.shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
         groupSelection.selectByTag(BarSeriesNodeTag.Label)

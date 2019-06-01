@@ -38,7 +38,8 @@ var Shape = /** @class */ (function (_super) {
         _this._lineCap = Shape.defaultStyles.lineCap;
         _this._lineJoin = Shape.defaultStyles.lineJoin;
         _this._opacity = Shape.defaultStyles.opacity;
-        _this._shadow = Shape.defaultStyles.shadow;
+        _this._fillShadow = Shape.defaultStyles.fillShadow;
+        _this._strokeShadow = Shape.defaultStyles.strokeShadow;
         return _this;
     }
     /**
@@ -193,24 +194,56 @@ var Shape = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Shape.prototype, "shadow", {
+    Object.defineProperty(Shape.prototype, "fillShadow", {
         get: function () {
-            return this._shadow;
+            return this._fillShadow;
         },
         set: function (value) {
-            if (this._shadow !== value) {
-                this._shadow = value;
+            if (this._fillShadow !== value) {
+                this._fillShadow = value;
                 this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Shape.prototype.applyContextAttributes = function (ctx) {
+    Object.defineProperty(Shape.prototype, "strokeShadow", {
+        get: function () {
+            return this._strokeShadow;
+        },
+        set: function (value) {
+            if (this._strokeShadow !== value) {
+                this._strokeShadow = value;
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Shape.prototype.fillStroke = function (ctx) {
+        if (!this.scene) {
+            return;
+        }
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;
+            // The canvas context scaling (depends on the device's pixel ratio)
+            // has no effect on shadows, so we have to account for the pixel ratio
+            // manually here.
+            var fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
+            }
+            ctx.fill();
         }
-        if (this.stroke) {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+        if (this.stroke && this.strokeWidth) {
             ctx.strokeStyle = this.stroke;
             ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
@@ -225,16 +258,14 @@ var Shape = /** @class */ (function (_super) {
             if (this.lineJoin) {
                 ctx.lineJoin = this.lineJoin;
             }
-        }
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
-        var shadow = this.shadow;
-        if (shadow) {
-            ctx.shadowColor = shadow.color;
-            ctx.shadowOffsetX = shadow.offset.x;
-            ctx.shadowOffsetY = shadow.offset.y;
-            ctx.shadowBlur = shadow.blur;
+            var strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.stroke();
         }
     };
     Shape.prototype.isPointInNode = function (x, y) {
@@ -257,7 +288,8 @@ var Shape = /** @class */ (function (_super) {
         lineCap: null,
         lineJoin: null,
         opacity: 1,
-        shadow: undefined
+        fillShadow: undefined,
+        strokeShadow: undefined
     });
     return Shape;
 }(node_1.Node));

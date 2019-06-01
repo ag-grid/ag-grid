@@ -6,6 +6,7 @@
   font-style: normal; }
 
 .ag-theme-fresh {
+  -webkit-font-smoothing: antialiased;
   background-color: white;
   color: black;
   font-family: "Helvetica Neue", sans-serif;
@@ -30,7 +31,6 @@
   .ag-theme-fresh label {
     margin-bottom: 0; }
   .ag-theme-fresh * {
-    -webkit-font-smoothing: antialiased;
     box-sizing: border-box; }
     .ag-theme-fresh *:focus, .ag-theme-fresh * *:before, .ag-theme-fresh * *:after {
       outline: none;
@@ -438,6 +438,8 @@
       margin: 0; }
   .ag-theme-fresh .ag-radio-button-label, .ag-theme-fresh .ag-checkbox-label {
     margin-left: 4px; }
+  .ag-theme-fresh .ag-cell {
+    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-fresh .ag-ltr .ag-row-group-leaf-indent {
     margin-left: 24px; }
   .ag-theme-fresh .ag-ltr .ag-cell {
@@ -1170,6 +1172,8 @@
     content: "\E909"; }
   .ag-theme-fresh .ag-icon-contracted:before {
     content: "\E90A"; }
+  .ag-theme-fresh .ag-group-expanded .ag-icon-contracted:empty:before {
+    content: "\E932"; }
   .ag-theme-fresh .ag-icon-copy:before {
     content: "\E90B"; }
   .ag-theme-fresh .ag-icon-cross:before {

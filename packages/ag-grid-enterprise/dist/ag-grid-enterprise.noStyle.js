@@ -15004,6 +15004,11 @@ var CellComp = /** @class */ (function (_super) {
         if (!this.usingCellRenderer) {
             return;
         }
+        // never use task service if angularCompileRows=true, as that assume the cell renderers
+        // are finished when the row is created.
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
+            useTaskService = false;
+        }
         var params = this.createCellRendererParams();
         this.cellRendererVersion++;
         var callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
@@ -44109,15 +44114,9 @@ var Sector = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         this.updatePath();
         this.scene.appendPath(this.path);
-        if (this.fill) {
-            ctx.fill();
-        }
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     return Sector;
@@ -44170,7 +44169,8 @@ var Shape = /** @class */ (function (_super) {
         _this._lineCap = Shape.defaultStyles.lineCap;
         _this._lineJoin = Shape.defaultStyles.lineJoin;
         _this._opacity = Shape.defaultStyles.opacity;
-        _this._shadow = Shape.defaultStyles.shadow;
+        _this._fillShadow = Shape.defaultStyles.fillShadow;
+        _this._strokeShadow = Shape.defaultStyles.strokeShadow;
         return _this;
     }
     /**
@@ -44325,24 +44325,56 @@ var Shape = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Shape.prototype, "shadow", {
+    Object.defineProperty(Shape.prototype, "fillShadow", {
         get: function () {
-            return this._shadow;
+            return this._fillShadow;
         },
         set: function (value) {
-            if (this._shadow !== value) {
-                this._shadow = value;
+            if (this._fillShadow !== value) {
+                this._fillShadow = value;
                 this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Shape.prototype.applyContextAttributes = function (ctx) {
+    Object.defineProperty(Shape.prototype, "strokeShadow", {
+        get: function () {
+            return this._strokeShadow;
+        },
+        set: function (value) {
+            if (this._strokeShadow !== value) {
+                this._strokeShadow = value;
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Shape.prototype.fillStroke = function (ctx) {
+        if (!this.scene) {
+            return;
+        }
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;
+            // The canvas context scaling (depends on the device's pixel ratio)
+            // has no effect on shadows, so we have to account for the pixel ratio
+            // manually here.
+            var fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
+            }
+            ctx.fill();
         }
-        if (this.stroke) {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+        if (this.stroke && this.strokeWidth) {
             ctx.strokeStyle = this.stroke;
             ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
@@ -44357,16 +44389,14 @@ var Shape = /** @class */ (function (_super) {
             if (this.lineJoin) {
                 ctx.lineJoin = this.lineJoin;
             }
-        }
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
-        var shadow = this.shadow;
-        if (shadow) {
-            ctx.shadowColor = shadow.color;
-            ctx.shadowOffsetX = shadow.offset.x;
-            ctx.shadowOffsetY = shadow.offset.y;
-            ctx.shadowBlur = shadow.blur;
+            var strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.stroke();
         }
     };
     Shape.prototype.isPointInNode = function (x, y) {
@@ -44389,7 +44419,8 @@ var Shape = /** @class */ (function (_super) {
         lineCap: null,
         lineJoin: null,
         opacity: 1,
-        shadow: undefined
+        fillShadow: undefined,
+        strokeShadow: undefined
     });
     return Shape;
 }(node_1.Node));
@@ -45392,14 +45423,8 @@ var Path = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         this.scene.appendPath(this.path);
-        if (this.fill) {
-            ctx.fill();
-        }
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     return Path;
@@ -45899,7 +45924,6 @@ var Line = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         var x1 = this.x1;
         var y1 = this.y1;
         var x2 = this.x2;
@@ -45919,12 +45943,11 @@ var Line = /** @class */ (function (_super) {
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     Line.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
+        fill: undefined,
         strokeWidth: 1
     });
     return Line;
@@ -46297,15 +46320,9 @@ var Rect = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         this.updatePath();
         this.scene.appendPath(this.path);
-        if (this.fill) {
-            ctx.fill();
-        }
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     return Rect;
@@ -48198,7 +48215,8 @@ var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
-        var chartOptions = _this.getChartOptions('bar', _this.defaultOptions());
+        var barChartType = params.chartType === ag_grid_community_1.ChartType.GroupedBar ? 'groupedBar' : 'stackedBar';
+        var chartOptions = _this.getChartOptions(barChartType, _this.defaultOptions());
         _this.chart = chartBuilder_1.ChartBuilder.createBarChart(chartOptions);
         var barSeries = chartBuilder_1.ChartBuilder.createSeries(chartOptions.seriesDefaults);
         if (barSeries) {
@@ -48443,8 +48461,8 @@ var ChartBuilder = /** @class */ (function () {
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;
         }
-        if (options.markerLineWidth !== undefined) {
-            series.markerStrokeWidth = options.markerLineWidth;
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
@@ -50285,6 +50303,7 @@ var MarkerLabel = /** @class */ (function (_super) {
         label.textBaseline = 'middle';
         label.font = MarkerLabel.defaults.labelFont;
         label.fill = MarkerLabel.defaults.labelColor;
+        label.y = 2; // for better looking vertical alignment of labels to markers
         _this.append([_this.marker, label]);
         _this.update();
         return _this;
@@ -50572,36 +50591,55 @@ var Text = /** @class */ (function (_super) {
     Text.prototype.isPointInStroke = function (x, y) {
         return false;
     };
-    Text.prototype.applyContextAttributes = function (ctx) {
-        _super.prototype.applyContextAttributes.call(this, ctx);
-        ctx.font = this.font;
-        ctx.textAlign = this.textAlign;
-        ctx.textBaseline = this.textBaseline;
-    };
     Text.prototype.render = function (ctx) {
-        if (!this.scene) {
-            return;
-        }
-        var lines = this.lines;
-        var lineCount = lines.length;
-        if (!lineCount) {
+        if (!this.scene || !this.lines.length) {
             return;
         }
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
-        if (lineCount > 1) {
-            // TODO: multi-line text
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
         }
-        else if (lineCount === 1) {
-            if (this.fill) {
-                ctx.fillText(this.text, this.x, this.y);
+        ctx.font = this.font;
+        ctx.textAlign = this.textAlign;
+        ctx.textBaseline = this.textBaseline;
+        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+            var fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
-            if (this.stroke) {
-                ctx.strokeText(this.text, this.x, this.y);
+            ctx.fillText(this.text, this.x, this.y);
+        }
+        if (this.stroke && this.strokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
             }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+            var strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.strokeText(this.text, this.x, this.y);
         }
         // // debug
         // this.matrix.transformBBox(this.getBBox!()).render(ctx);
@@ -50755,6 +50793,23 @@ var PolarChart = /** @class */ (function (_super) {
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
             shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+            var legendPadding = this.legendPadding;
+            switch (this.legendPosition) {
+                case 'right':
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'bottom':
+                    shrinkRect.height -= legendPadding;
+                    break;
+                case 'left':
+                    shrinkRect.x += legendPadding;
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'top':
+                    shrinkRect.y += legendPadding;
+                    shrinkRect.height -= legendPadding;
+                    break;
+            }
         }
         var padding = this.padding;
         shrinkRect.x += padding.left;
@@ -51801,15 +51856,9 @@ var Arc = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         this.updatePath();
         this.scene.appendPath(this.path);
-        if (this.fill) {
-            ctx.fill();
-        }
-        if (this.stroke && this.strokeWidth) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     Arc.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
@@ -52472,7 +52521,7 @@ var BarSeries = /** @class */ (function (_super) {
             rect.fill = datum.fill;
             rect.stroke = datum.stroke;
             rect.strokeWidth = datum.strokeWidth;
-            rect.shadow = _this.shadow;
+            rect.fillShadow = _this.shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
         groupSelection.selectByTag(BarSeriesNodeTag.Label)
@@ -52622,7 +52671,7 @@ var PieSeries = /** @class */ (function (_super) {
          * `null` means make the callout color the same as {@link strokeStyle}.
          */
         _this._calloutColors = palettes_1.default.strokes;
-        _this._calloutStrokeWidth = 2;
+        _this._calloutStrokeWidth = 1;
         _this._calloutLength = 10;
         _this._calloutPadding = 3;
         _this._labelFont = '12px Verdana, sans-serif';
@@ -53103,7 +53152,7 @@ var PieSeries = /** @class */ (function (_super) {
             sector.endAngle = datum.endAngle;
             sector.fill = fills[index % fills.length];
             sector.stroke = strokes[index % strokes.length];
-            sector.shadow = _this.shadow;
+            sector.fillShadow = _this.shadow;
             sector.strokeWidth = _this.strokeWidth;
             sector.lineJoin = 'round';
         });
@@ -53751,11 +53800,12 @@ var Caption = /** @class */ (function () {
         this.node.textAlign = 'center';
         this.node.textBaseline = 'top';
     }
-    Caption.create = function (text, font) {
-        if (font === void 0) { font = 'bold 14px Verdana, sans-serif'; }
+    Caption.create = function (params) {
+        if (params === void 0) { params = {}; }
         var caption = new Caption();
-        caption.text = text;
-        caption.font = font;
+        caption.text = params.text || '';
+        caption.font = params.font || 'bold 14px Verdana, sans-serif';
+        caption.color = params.color || 'black';
         caption.requestLayout();
         return caption;
     };
@@ -53918,6 +53968,7 @@ var LineChartProxy = /** @class */ (function (_super) {
     __extends(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
+        var defaultOpts = _this.defaultOptions();
         _this.chartOptions = _this.getChartOptions('line', _this.defaultOptions());
         _this.chart = chartBuilder_1.ChartBuilder.createLineChart(_this.chartOptions);
         return _this;
@@ -54011,12 +54062,12 @@ var LineChartProxy = /** @class */ (function (_super) {
             },
             seriesDefaults: {
                 type: 'line',
-                fill: palette.fills[0],
-                stroke: palette.strokes[0],
+                fills: palette.fills,
+                strokes: palette.strokes,
                 strokeWidth: 3,
                 marker: true,
-                markerSize: 3,
-                markerLineWidth: 1,
+                markerSize: 6,
+                markerStrokeWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,
@@ -57610,18 +57661,34 @@ var GroupStage = /** @class */ (function () {
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
         var checkAgain = true;
+        var groupShouldBeRemoved = function (rowNode) {
+            // because of the while loop below, it's possible we already moved the node,
+            // so double check before trying to remove again.
+            var mapKey = _this.getChildrenMappedKey(rowNode.key, rowNode.rowGroupColumn);
+            var parentRowNode = rowNode.parent;
+            var groupAlreadyRemoved = (parentRowNode && parentRowNode.childrenMapped) ?
+                !parentRowNode.childrenMapped[mapKey] : true;
+            if (groupAlreadyRemoved) {
+                // if not linked, then group was already removed
+                return false;
+            }
+            else {
+                // if still not removed, then we remove if this group is empty
+                return rowNode.isEmptyRowGroupNode();
+            }
+        };
         var _loop_1 = function () {
             checkAgain = false;
             var batchRemover = new BatchRemover();
             nodesToRemove.forEach(function (nodeToRemove) {
                 // remove empty groups
-                _this.forEachParentGroup(details, nodeToRemove, function (node) {
-                    if (node.isEmptyRowGroupNode()) {
+                _this.forEachParentGroup(details, nodeToRemove, function (rowNode) {
+                    if (groupShouldBeRemoved(rowNode)) {
                         checkAgain = true;
-                        _this.removeFromParent(node, batchRemover);
+                        _this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        node.setSelected(false);
+                        rowNode.setSelected(false);
                     }
                 });
             });
@@ -57937,7 +58004,10 @@ var BatchRemover = /** @class */ (function () {
         var _this = this;
         this.allParents.forEach(function (parent) {
             var nodeDetails = _this.allSets[parent.id];
-            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(function (child) { return !nodeDetails.removeFromChildrenAfterGroup[child.id]; });
+            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(function (child) {
+                var res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
+                return res;
+            });
             parent.allLeafChildren = parent.allLeafChildren.filter(function (child) { return !nodeDetails.removeFromAllLeafChildren[child.id]; });
         });
         this.allSets = {};
@@ -59403,7 +59473,7 @@ var ag_grid_community_1 = __webpack_require__(2);
 var md5_1 = __webpack_require__(252);
 var LicenseManager = /** @class */ (function () {
     function LicenseManager() {
-        this.displayWatermark = false;
+        this.watermarkMessage = undefined;
     }
     LicenseManager_1 = LicenseManager;
     LicenseManager.prototype.validateLicense = function () {
@@ -59453,7 +59523,10 @@ var LicenseManager = /** @class */ (function () {
         };
     };
     LicenseManager.prototype.isDisplayWatermark = function () {
-        return this.displayWatermark;
+        return !ag_grid_community_1._.missingOrEmpty(this.watermarkMessage);
+    };
+    LicenseManager.prototype.getWatermarkMessage = function () {
+        return this.watermarkMessage;
     };
     LicenseManager.formatDate = function (date) {
         var monthNames = [
@@ -59588,7 +59661,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('* Your license for ag-Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
         console.error('*****************************************************************************************************************');
         console.error('*****************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "Invalid License";
     };
     LicenseManager.prototype.outputExpiredTrialKey = function (formattedExpiryDate) {
         console.error('****************************************************************************************************************');
@@ -59598,7 +59671,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('* Please email info@ag-grid.com to purchase a license.                                                         *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "Trial Period Expired";
     };
     LicenseManager.prototype.outputMissingLicenseKey = function () {
         console.error('****************************************************************************************************************');
@@ -59606,10 +59679,10 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************** License Key Not Found ***********************************************');
         console.error('* All ag-Grid Enterprise features are unlocked.                                                                *');
         console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
-        console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
+        console.error('* If you want to hide the watermarkMessage, please email info@ag-grid.com for a trial license.                        *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "For Trial Use Only";
     };
     LicenseManager.prototype.outputIncompatibleVersion = function (formattedExpiryDate, formattedReleaseDate) {
         console.error('****************************************************************************************************************************');
@@ -59619,7 +59692,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('* Please contact info@ag-grid.com to renew your subscription to new versions.                                              *');
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "Incompatible License Version";
     };
     var LicenseManager_1;
     LicenseManager.RELEASE_INFORMATION = 'MTU1OTI4MjgxMDUxNg==';
@@ -68131,13 +68204,14 @@ var licenseManager_1 = __webpack_require__(251);
 var WatermarkComp = /** @class */ (function (_super) {
     __extends(WatermarkComp, _super);
     function WatermarkComp() {
-        return _super.call(this, "<div class=\"ag-watermark\"></div>") || this;
+        return _super.call(this, "<div class=\"ag-watermark\">\n                    <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n               </div>") || this;
     }
     WatermarkComp.prototype.postContruct = function () {
         var _this = this;
         var show = this.shouldDisplayWatermark();
         ag_grid_community_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
         if (show) {
+            this.eLicenseTextRef.innerText = this.licenseManager.getWatermarkMessage();
             window.setTimeout(function () {
                 _this.addCssClass('ag-opacity-zero');
             }, 0);
@@ -68156,6 +68230,10 @@ var WatermarkComp = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('licenseManager'),
         __metadata("design:type", licenseManager_1.LicenseManager)
     ], WatermarkComp.prototype, "licenseManager", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eLicenseTextRef'),
+        __metadata("design:type", HTMLElement)
+    ], WatermarkComp.prototype, "eLicenseTextRef", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

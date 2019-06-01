@@ -14,7 +14,7 @@ var ag_grid_community_1 = require("ag-grid-community");
 var md5_1 = require("./license/md5");
 var LicenseManager = /** @class */ (function () {
     function LicenseManager() {
-        this.displayWatermark = false;
+        this.watermarkMessage = undefined;
     }
     LicenseManager_1 = LicenseManager;
     LicenseManager.prototype.validateLicense = function () {
@@ -64,7 +64,10 @@ var LicenseManager = /** @class */ (function () {
         };
     };
     LicenseManager.prototype.isDisplayWatermark = function () {
-        return this.displayWatermark;
+        return !ag_grid_community_1._.missingOrEmpty(this.watermarkMessage);
+    };
+    LicenseManager.prototype.getWatermarkMessage = function () {
+        return this.watermarkMessage;
     };
     LicenseManager.formatDate = function (date) {
         var monthNames = [
@@ -199,7 +202,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('* Your license for ag-Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
         console.error('*****************************************************************************************************************');
         console.error('*****************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "Invalid License";
     };
     LicenseManager.prototype.outputExpiredTrialKey = function (formattedExpiryDate) {
         console.error('****************************************************************************************************************');
@@ -209,7 +212,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('* Please email info@ag-grid.com to purchase a license.                                                         *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "Trial Period Expired";
     };
     LicenseManager.prototype.outputMissingLicenseKey = function () {
         console.error('****************************************************************************************************************');
@@ -217,10 +220,10 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************** License Key Not Found ***********************************************');
         console.error('* All ag-Grid Enterprise features are unlocked.                                                                *');
         console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
-        console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
+        console.error('* If you want to hide the watermarkMessage, please email info@ag-grid.com for a trial license.                        *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "For Trial Use Only";
     };
     LicenseManager.prototype.outputIncompatibleVersion = function (formattedExpiryDate, formattedReleaseDate) {
         console.error('****************************************************************************************************************************');
@@ -230,7 +233,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('* Please contact info@ag-grid.com to renew your subscription to new versions.                                              *');
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
-        this.displayWatermark = true;
+        this.watermarkMessage = "Incompatible License Version";
     };
     var LicenseManager_1;
     LicenseManager.RELEASE_INFORMATION = 'MTU1OTI4MjgxMDUxNg==';

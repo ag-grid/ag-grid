@@ -76,6 +76,23 @@ var PolarChart = /** @class */ (function (_super) {
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
             shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+            var legendPadding = this.legendPadding;
+            switch (this.legendPosition) {
+                case 'right':
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'bottom':
+                    shrinkRect.height -= legendPadding;
+                    break;
+                case 'left':
+                    shrinkRect.x += legendPadding;
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'top':
+                    shrinkRect.y += legendPadding;
+                    shrinkRect.height -= legendPadding;
+                    break;
+            }
         }
         var padding = this.padding;
         shrinkRect.x += padding.left;

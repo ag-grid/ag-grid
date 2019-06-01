@@ -11,11 +11,12 @@ var Caption = /** @class */ (function () {
         this.node.textAlign = 'center';
         this.node.textBaseline = 'top';
     }
-    Caption.create = function (text, font) {
-        if (font === void 0) { font = 'bold 14px Verdana, sans-serif'; }
+    Caption.create = function (params) {
+        if (params === void 0) { params = {}; }
         var caption = new Caption();
-        caption.text = text;
-        caption.font = font;
+        caption.text = params.text || '';
+        caption.font = params.font || 'bold 14px Verdana, sans-serif';
+        caption.color = params.color || 'black';
         caption.requestLayout();
         return caption;
     };

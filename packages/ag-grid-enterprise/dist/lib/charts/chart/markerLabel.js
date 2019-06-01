@@ -30,6 +30,7 @@ var MarkerLabel = /** @class */ (function (_super) {
         label.textBaseline = 'middle';
         label.font = MarkerLabel.defaults.labelFont;
         label.fill = MarkerLabel.defaults.labelColor;
+        label.y = 2; // for better looking vertical alignment of labels to markers
         _this.append([_this.marker, label]);
         _this.update();
         return _this;

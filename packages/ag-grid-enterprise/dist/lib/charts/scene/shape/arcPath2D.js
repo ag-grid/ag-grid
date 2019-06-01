@@ -130,7 +130,7 @@ var Arc = /** @class */ (function (_super) {
     Arc.prototype.render = function (ctx) {
         // Path2D approach:
         this.updatePath();
-        this.applyContextAttributes(ctx);
+        // this.applyContextAttributes(ctx);
         ctx.fill(this.path);
         ctx.stroke(this.path);
         // Traditional approach:

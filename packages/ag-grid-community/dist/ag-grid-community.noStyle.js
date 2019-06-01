@@ -14965,6 +14965,11 @@ var CellComp = /** @class */ (function (_super) {
         if (!this.usingCellRenderer) {
             return;
         }
+        // never use task service if angularCompileRows=true, as that assume the cell renderers
+        // are finished when the row is created.
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
+            useTaskService = false;
+        }
         var params = this.createCellRendererParams();
         this.cellRendererVersion++;
         var callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);

@@ -11,8 +11,10 @@ export declare class Line extends Shape {
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        shadow: undefined;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
+        fill: undefined;
         strokeWidth: number;
     };
     constructor();

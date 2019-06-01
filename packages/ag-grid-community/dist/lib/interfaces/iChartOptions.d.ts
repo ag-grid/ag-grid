@@ -33,7 +33,7 @@ export interface BarChartOptions extends CartesianChartOptions {
 }
 export interface LineChartOptions extends CartesianChartOptions {
     series?: LineChartOptions[];
-    seriesDefaults?: LineSeriesOptions;
+    seriesDefaults?: LineSeriesDefaultOptions;
 }
 export interface PolarChartOptions extends ChartOptions {
 }
@@ -98,8 +98,12 @@ export interface LineSeriesOptions extends SeriesOptions {
     strokeWidth?: number;
     marker?: boolean;
     markerSize?: number;
-    markerLineWidth?: number;
+    markerStrokeWidth?: number;
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+}
+export interface LineSeriesDefaultOptions extends LineSeriesOptions {
+    fills?: string[];
+    strokes?: string[];
 }
 export interface BarTooltipRendererParams {
     datum: any;

@@ -6,6 +6,7 @@
   font-style: normal; }
 
 .ag-theme-balham-dark {
+  -webkit-font-smoothing: antialiased;
   background-color: #2d3436;
   color: #F5F5F5;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -28,7 +29,6 @@
   .ag-theme-balham-dark label {
     margin-bottom: 0; }
   .ag-theme-balham-dark * {
-    -webkit-font-smoothing: antialiased;
     box-sizing: border-box; }
     .ag-theme-balham-dark *:focus, .ag-theme-balham-dark * *:before, .ag-theme-balham-dark * *:after {
       outline: none;
@@ -436,6 +436,8 @@
       margin: 0; }
   .ag-theme-balham-dark .ag-radio-button-label, .ag-theme-balham-dark .ag-checkbox-label {
     margin-left: 4px; }
+  .ag-theme-balham-dark .ag-cell {
+    -webkit-font-smoothing: subpixel-antialiased; }
   .ag-theme-balham-dark .ag-ltr .ag-row-group-leaf-indent {
     margin-left: 28px; }
   .ag-theme-balham-dark .ag-ltr .ag-cell {
@@ -1168,6 +1170,8 @@
     content: "\E909"; }
   .ag-theme-balham-dark .ag-icon-contracted:before {
     content: "\E90A"; }
+  .ag-theme-balham-dark .ag-group-expanded .ag-icon-contracted:empty:before {
+    content: "\E932"; }
   .ag-theme-balham-dark .ag-icon-copy:before {
     content: "\E90B"; }
   .ag-theme-balham-dark .ag-icon-cross:before {
