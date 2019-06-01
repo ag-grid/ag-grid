@@ -809,6 +809,10 @@ export class CellComp extends Component {
     private createCellRendererInstance(useTaskService = false): void {
         if (!this.usingCellRenderer) { return; }
 
+        // never use task service if angularCompileRows=true, as that assume the cell renderers
+        // are finished when the row is created.
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) { useTaskService = false; }
+
         const params = this.createCellRendererParams();
 
         this.cellRendererVersion++;
