@@ -300,18 +300,37 @@ export class GroupStage implements IRowNodeStage {
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
         let checkAgain = true;
+
+        const groupShouldBeRemoved = (rowNode: RowNode): boolean => {
+
+            // because of the while loop below, it's possible we already moved the node,
+            // so double check before trying to remove again.
+            const mapKey = this.getChildrenMappedKey(rowNode.key, rowNode.rowGroupColumn);
+            const parentRowNode = rowNode.parent;
+            const groupAlreadyRemoved = (parentRowNode && parentRowNode.childrenMapped) ?
+                        !parentRowNode.childrenMapped[mapKey] : true;
+
+            if (groupAlreadyRemoved) {
+                // if not linked, then group was already removed
+                return false;
+            } else {
+                // if still not removed, then we remove if this group is empty
+                return rowNode.isEmptyRowGroupNode();
+            }
+        };
+
         while (checkAgain) {
             checkAgain = false;
             const batchRemover: BatchRemover = new BatchRemover();
             nodesToRemove.forEach(nodeToRemove => {
                 // remove empty groups
-                this.forEachParentGroup(details, nodeToRemove, node => {
-                    if (node.isEmptyRowGroupNode()) {
+                this.forEachParentGroup(details, nodeToRemove, rowNode => {
+                    if (groupShouldBeRemoved(rowNode)) {
                         checkAgain = true;
-                        this.removeFromParent(node, batchRemover);
+                        this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        node.setSelected(false);
+                        rowNode.setSelected(false);
                     }
                 });
             });
@@ -629,7 +648,10 @@ class BatchRemover {
     public flush(): void {
         this.allParents.forEach(parent => {
             const nodeDetails = this.allSets[parent.id];
-            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(child => !nodeDetails.removeFromChildrenAfterGroup[child.id]);
+            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(child => {
+                    const res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
+                    return res;
+            });
             parent.allLeafChildren = parent.allLeafChildren.filter(child => !nodeDetails.removeFromAllLeafChildren[child.id]);
         });
         this.allSets = {};
