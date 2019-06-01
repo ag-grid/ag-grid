@@ -89,6 +89,7 @@ function processChartOptions(params) {
 
     seriesDefaults.calloutStrokeWidth = 10;
     seriesDefaults.calloutLength = 30;
+    seriesDefaults.calloutPadding = 10;
 
     // shadows don't look great, so leaving out
     // seriesDefaults.shadow = {

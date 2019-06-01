@@ -6,9 +6,7 @@ var columnDefs = [
 ];
 
 function createRowData() {
-    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
-        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
-        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany"];
     let rowData = [];
     countries.forEach( function(country, index) {
         rowData.push({
@@ -35,7 +33,6 @@ var gridOptions = {
     processChartOptions: processChartOptions
 };
 
-
 function processChartOptions(params) {
 
     var options = params.options;
@@ -44,7 +41,7 @@ function processChartOptions(params) {
     // we are only interested in processing bar type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type!=='pie') {
+    if (params.type!=='doughnut') {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
@@ -76,31 +73,34 @@ function processChartOptions(params) {
     seriesDefaults.fills = ['#503030','#505050','#507070','#509090','#50b0b0'];
     seriesDefaults.strokes = ['#001010','#003030','#005050','#007070','#009090'];
 
-    // seriesDefaults.tooltipEnabled = false;
     seriesDefaults.labelEnabled = true;
     seriesDefaults.labelMinAngle = 30;
 
-    // The font to be used for slice labels.
     seriesDefaults.labelFont = 'italic 20px Comic Sans MS';
-    // The color to use for slice labels.
     seriesDefaults.labelColor = '#2222aa';
 
     seriesDefaults.strokeWidth = 4;
-
     seriesDefaults.calloutStrokeWidth = 10;
     seriesDefaults.calloutLength = 30;
+    seriesDefaults.calloutPadding = 10;
 
-    // shadows don't look great, so leaving out
-    // seriesDefaults.shadow = {
-    //     color: 'grey',
-    //     offset: [10,10],
-    //     blur: 8
-    // };
+    seriesDefaults.titleEnabled = true;
+    seriesDefaults.titleFont = 'italic 15px Comic Sans MS';
+
+    // seriesDefaults.tooltipEnabled = false;
 
     seriesDefaults.tooltipRenderer = function(params) {
         var angleField = params.angleField;
         var value = params.datum[angleField];
-        return '<b>'+angleField.toUpperCase()+':</b> ' + value;
+        var labelField = params.labelField;
+        var label = params.datum[labelField];
+        return '<b>'+angleField.toUpperCase()+'-'+label+':</b> ' + value;
+    };
+
+    seriesDefaults.shadow = {
+        color: 'grey',
+        offset: [10,10],
+        blur: 8
     };
 
     return options;
@@ -110,12 +110,12 @@ function onGridReady(params) {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
-        columns: ['country', 'gold']
+        columns: ['country', 'gold', 'silver', 'bronze']
     };
 
     var chartRangeParams = {
         cellRange: cellRange,
-        chartType: 'pie'
+        chartType: 'doughnut'
     };
 
     setTimeout(function () {
