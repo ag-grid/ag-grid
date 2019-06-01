@@ -116,6 +116,7 @@
     // Chinese wall of inline vars over
     ////////////////////////////////////////
 
+    -webkit-font-smoothing: antialiased;
     background-color: $background-color;
     color: $foreground-color;
     font-family: $font-family;
@@ -128,7 +129,6 @@
     }
 
     * {
-        -webkit-font-smoothing: antialiased;
         box-sizing: border-box;
         &:focus, *:before, *:after {
             outline: none;
@@ -175,6 +175,9 @@
         margin-left: $grid-size;
     }
 
+    .ag-cell {
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-ltr {
         .ag-row-group-leaf-indent {

@@ -193,6 +193,13 @@
             content: $ag-icon-contracted; 
         }
     }
+    .ag-group-expanded {
+        .ag-icon-contracted:empty {
+            &:before {
+                content: $ag-icon-tree-open;
+            }
+        }
+    }
     .ag-icon-copy {
         &:before {
             content: $ag-icon-copy; 
