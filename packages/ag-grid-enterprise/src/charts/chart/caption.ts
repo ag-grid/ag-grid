@@ -3,11 +3,16 @@ import { Text } from "../scene/shape/text";
 
 export class Caption {
 
-    static create(text: string, font: string = 'bold 14px Verdana, sans-serif'): Caption {
+    static create(params: {
+        text?: string,
+        font?: string,
+        color?: string
+    } = {}): Caption {
         const caption = new Caption();
 
-        caption.text = text;
-        caption.font = font;
+        caption.text = params.text || '';
+        caption.font = params.font || 'bold 14px Verdana, sans-serif';
+        caption.color = params.color || 'black';
         caption.requestLayout();
 
         return caption;
