@@ -137,7 +137,7 @@ export class PieSeries extends Series<PolarChart> {
         return this._calloutColors;
     }
 
-    private _calloutStrokeWidth: number = 2;
+    private _calloutStrokeWidth: number = 1;
     set calloutStrokeWidth(value: number) {
         if (this._calloutStrokeWidth !== value) {
             this._calloutStrokeWidth = value;
