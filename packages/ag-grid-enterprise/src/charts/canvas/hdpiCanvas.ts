@@ -9,9 +9,20 @@ export interface DownloadOptions {
  * provide resolution independent rendering based on `window.devicePixelRatio`.
  */
 export class HdpiCanvas {
+    readonly canvas = document.createElement('canvas');
+
+    readonly context = this.canvas.getContext('2d')!;
+
+    /**
+     * The canvas flickers on size changes in Safari.
+     * A temporary canvas is used (during resize only) to prevent that.
+     */
+    private tempCanvas = document.createElement('canvas');
+
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
     constructor(width = 300, height = 150) {
+        this.canvas.style.userSelect = 'none';
         this.updatePixelRatio(0, false);
         this.resize(width, height);
     }
@@ -38,10 +49,6 @@ export class HdpiCanvas {
             parent.removeChild(this.canvas);
         }
     }
-
-    readonly canvas = document.createElement('canvas');
-
-    readonly context = this.canvas.getContext('2d')!;
 
     destroy() {
         this.canvas.remove();
@@ -149,12 +156,6 @@ export class HdpiCanvas {
 
         this._pixelRatio = pixelRatio;
     }
-
-    /**
-     * The canvas flickers on size changes in Safari.
-     * A temporary canvas is used (during resize only) to prevent that.
-     */
-    private tempCanvas = document.createElement('canvas');
 
     resize(width: number, height: number) {
         const canvas = this.canvas;
