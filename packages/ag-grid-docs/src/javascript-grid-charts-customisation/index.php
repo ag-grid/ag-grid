@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Customising Charts</h1>
 
     <p class="lead">
-        This section covers how to customisation each of the chart types to suit your application.
+        This section covers how to customise each of the chart types to suit your application.
     </p>
 
     <h2>Configuring Chart Toolbar Items</h2>
