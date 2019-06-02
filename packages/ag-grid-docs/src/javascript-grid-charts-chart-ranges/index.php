@@ -67,6 +67,10 @@ gridOptions = {
         columns around in the grid to connect the series range.
     </note>
 
+    <p>
+        <img alt="Charting Ranges" src="contiguous-range.gif" style="margin-bottom: 0px; width: 100%">
+    </p>
+
     <h2>Defining categories and series</h2>
 
     <p>
