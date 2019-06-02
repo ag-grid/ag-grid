@@ -95,6 +95,9 @@ interface BarChartOptions {
             blur?: number;
         };
 
+        // Whether to show the tooltip for bars when they are hovered/tapped.
+        // Defaults to `true`.
+        tooltipEnabled?: boolean;
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     };
