@@ -92,7 +92,9 @@ export class ChartController extends BeanStub {
     }
 
     public setChartRange() {
-        this.rangeController.setCellRanges(this.model.getCellRanges());
+        if (!this.model.isSuppressChartRanges()) {
+            this.rangeController.setCellRanges(this.model.getCellRanges());
+        }
     }
 
     private raiseChartUpdatedEvent() {
