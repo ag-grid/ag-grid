@@ -287,6 +287,8 @@ export abstract class Chart {
     };
 
     processData(): void {
+        this.layoutPending = false;
+
         const legendData: LegendDatum[] = [];
         this.series.forEach(series => {
             if (series.visible) {
