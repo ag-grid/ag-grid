@@ -30,6 +30,7 @@ export class PieChartProxy extends ChartProxy {
         const pieSeriesName = params.fields[0].displayName;
 
         let pieSeries = existingSeries;
+        let calloutColors: string[] | undefined = undefined;
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
 
@@ -39,6 +40,7 @@ export class PieChartProxy extends ChartProxy {
                 text: pieSeriesName
             };
             seriesOptions.angleField = pieSeriesId;
+            calloutColors = seriesOptions.calloutColors;
 
             pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
         }
@@ -50,6 +52,9 @@ export class PieChartProxy extends ChartProxy {
 
         pieSeries.fills = palette.fills;
         pieSeries.strokes = palette.strokes;
+        if (calloutColors) {
+            pieSeries.calloutColors = calloutColors;
+        }
 
         if (!existingSeries) {
             pieChart.addSeries(pieSeries)

@@ -42,6 +42,7 @@ export class DoughnutChartProxy extends ChartProxy {
             };
             seriesOptions.angleField = f.colId;
             seriesOptions.showInLegend = index === 0;
+            const calloutColors = seriesOptions.calloutColors;
 
             const pieSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
@@ -68,6 +69,9 @@ export class DoughnutChartProxy extends ChartProxy {
 
             pieSeries.fills = palette.fills;
             pieSeries.strokes = palette.strokes;
+            if (calloutColors) {
+                pieSeries.calloutColors = calloutColors;
+            }
 
             if (!existingSeries) {
                 doughnutChart.addSeries(pieSeries)
