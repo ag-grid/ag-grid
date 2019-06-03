@@ -1,3 +1,35 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_21_0_0">
+    <p>Release 21.0.0 (3rd June 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-2946 - Filters Refactor - The simple provided filters (number, text, date) were part of the first
+            grid release and the design was built on top of as new requirements were catered for. All the
+            additional requirements made the original design difficult to maintain - the old design was
+            coming to it's 'end of life'. For that reason the simple provided filters were rewritten from scratch.
+            The has the benefits of a) implementing floating filters is now simpler; b) all provided filters
+            now work in a more consistent way; c) code is easier to follow for anyone debugging through the
+            ag-Grid code. The documentation for column filters was also rewritten from scratch to make it
+            easier to follow.
+        </li>
+
+        <li>
+            AG-2804 - Scroll Performance Improvements - Now when you scroll vertically the performance is vastly
+            improved over the previous version of the grid. We make better use of debounced scrolling, animation
+            and animation frames.
+        </li>
+
+        <li>
+            AG-2999 - Change of License Messaging - Now anyone can try out ag-Grid Enterprise without needing
+            a license from us. We want everyone to give ag-Grid Enterprise a trial. You only need to get in touch
+            with us if you decided to start using ag-Grid inside your project.
+        </li>
+
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_20_2_0">
     <p>Release 20.2.0 (22nd Mar 2019)</p>
 
