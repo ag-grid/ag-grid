@@ -9,16 +9,16 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Charts - BETA</h1>
 
     <p class="lead">
-       This section provides an overview of ag-Grid's built-in charting functionality.
+       This section provides an overview of the grid's built-in charting functionality.
     </p>
 
     <p>
-        The charting functionality provided by ag-Grid is deeply integrated with the grid. This integration gives users
+        The charting functionality provided by the grid is deeply integrated with the grid. This integration gives users
         a seamless charting experience while keeping the coding required by developers to a minimum.
     </p>
 
     <p>
-        In fact we are not aware of any other datagrid that provides such integration, as other companies may provide
+        We are not aware of any other datagrid that provides such integration. Other companies may provide
         a grid library and / or a charting library, but it's up to the developer to tie the two together.
     </p>
 
@@ -109,7 +109,7 @@ gridOptions = {
 
     <ul>
         <li>
-            Select a <a href="../javascript-grid-range-selection/">Cell Range</a> in the grid by dragging
+            Select a <a href="../javascript-grid-range-selection/">Cell Range</a> of numeric values in the grid by dragging
             the mouse over a range of cells.
         </li>
         <li>
@@ -129,7 +129,8 @@ gridOptions = {
 
     <ul>
         <li><a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>: when a chart is created, corresponding
-            chart ranges appear in the grid and are adjusted via the chart range handle.
+            chart ranges appear in the grid and are adjusted via the chart range handle. The range handle is the small
+            draggable square that appears to the bottom right of the highlighted range.
         </li>
         <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
             columns can be configured as either categories / series for charting or left to the grid to infer based
@@ -169,7 +170,7 @@ gridOptions = {
     </p>
 
     <p>
-        The dummy financial application below just touches on what is possible with ag-Grid's integrated grid and
+        The dummy financial application below just touches on what is possible with the grid's integrated
         charting capabilities. The following should be noted:
     </p>
 
@@ -186,7 +187,7 @@ gridOptions = {
         </li>
     </ul>
 
-    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array('height' => '150%', 'width' => '50%', 'enterprise' => true)) ?>
+    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array( "exampleHeight" => 650, 'enterprise' => true)) ?>
 
     <p>
         To learn how to create charts in your applications see the following sections for details:
