@@ -554,6 +554,11 @@
         "enterprise": true
       },
       {
+        "title": "Chart Container",
+        "url": "javascript-grid-charts-container/",
+        "enterprise": true
+      },
+      {
         "title": "Customising",
         "url": "javascript-grid-charts-customisation/",
         "enterprise": true,
