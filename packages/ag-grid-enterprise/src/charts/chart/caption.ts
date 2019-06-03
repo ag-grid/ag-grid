@@ -1,5 +1,6 @@
 import { Padding } from "../util/padding";
 import { Text } from "../scene/shape/text";
+import { PointerEvents } from "../scene/node";
 
 export class Caption {
 
@@ -23,8 +24,11 @@ export class Caption {
     readonly node: Text = new Text();
 
     constructor() {
-        this.node.textAlign = 'center';
-        this.node.textBaseline = 'top';
+        const node = this.node;
+
+        node.textAlign = 'center';
+        node.textBaseline = 'top';
+        node.pointerEvents = PointerEvents.None;
     }
 
     set text(value: string) {

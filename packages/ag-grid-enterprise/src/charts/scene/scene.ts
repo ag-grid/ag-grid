@@ -18,10 +18,10 @@ export class Scene {
         this.ctx = this.hdpiCanvas.context;
     }
 
-    set parent(value: HTMLElement | null) {
+    set parent(value: HTMLElement | undefined) {
         this.hdpiCanvas.parent = value;
     }
-    get parent(): HTMLElement | null {
+    get parent(): HTMLElement | undefined {
         return this.hdpiCanvas.parent;
     }
 

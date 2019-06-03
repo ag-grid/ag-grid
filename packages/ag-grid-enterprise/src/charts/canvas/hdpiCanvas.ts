@@ -27,8 +27,8 @@ export class HdpiCanvas {
         this.resize(width, height);
     }
 
-    private _parent: HTMLElement | null = null;
-    set parent(value: HTMLElement | null) {
+    private _parent: HTMLElement | undefined = undefined;
+    set parent(value: HTMLElement | undefined) {
         if (this._parent !== value) {
             this.remove();
             if (value) {
@@ -38,7 +38,7 @@ export class HdpiCanvas {
         }
 
     }
-    get parent(): HTMLElement | null {
+    get parent(): HTMLElement | undefined {
         return this._parent;
     }
 

@@ -44,7 +44,7 @@ export abstract class Chart {
 
         this.legend.onLayoutChange = undefined;
         this.cleanupListeners(this.scene.hdpiCanvas.canvas);
-        this.scene.parent = null;
+        this.scene.parent = undefined;
     }
 
     private readonly onLayoutChange = () => {
@@ -55,15 +55,15 @@ export abstract class Chart {
         return this.scene.hdpiCanvas.canvas;
     }
 
-    set parent(value: HTMLElement | null) {
+    set parent(value: HTMLElement | undefined) {
         this.scene.parent = value;
     }
-    get parent(): HTMLElement | null {
+    get parent(): HTMLElement | undefined {
         return this.scene.parent;
     }
 
-    private _title: Caption | null = null;
-    set title(value: Caption | null) {
+    private _title: Caption | undefined = undefined;
+    set title(value: Caption | undefined) {
         const oldTitle = this._title;
         if (oldTitle !== value) {
             if (oldTitle) {
@@ -78,7 +78,7 @@ export abstract class Chart {
             this.layoutPending = true;
         }
     }
-    get title(): Caption | null {
+    get title(): Caption | undefined {
         return this._title;
     }
 

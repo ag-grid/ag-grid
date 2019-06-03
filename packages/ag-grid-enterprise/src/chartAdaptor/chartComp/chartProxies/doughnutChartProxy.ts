@@ -3,6 +3,7 @@ import { DoughnutChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
+import { Caption } from "../../../charts/chart/caption";
 
 export class DoughnutChartProxy extends ChartProxy {
     private readonly chartOptions: DoughnutChartOptions;
@@ -36,7 +37,9 @@ export class DoughnutChartProxy extends ChartProxy {
 
             const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
 
-            seriesOptions.title = f.displayName;
+            seriesOptions.title = {
+                text: f.displayName
+            };
             seriesOptions.angleField = f.colId;
             seriesOptions.showInLegend = index === 0;
 

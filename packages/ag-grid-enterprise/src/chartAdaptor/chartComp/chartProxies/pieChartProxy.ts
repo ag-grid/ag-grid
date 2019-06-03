@@ -3,6 +3,7 @@ import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
+import { Caption } from "../../../charts/chart/caption";
 
 export class PieChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
@@ -34,7 +35,9 @@ export class PieChartProxy extends ChartProxy {
 
             const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
 
-            seriesOptions.title = pieSeriesName;
+            seriesOptions.title = {
+                text: pieSeriesName
+            };
             seriesOptions.angleField = pieSeriesId;
 
             pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
