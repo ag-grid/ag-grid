@@ -25,6 +25,10 @@ interface LineChartOptions {
     // The subtitle to render under the chart's title.
     // If the title is not not specified or disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
+    // The width of the chart.
+    width?: number,
+    // The height of the chart.
+    height?: number;
 
     // The padding of contents from the edges of the chart.
     padding?: {
@@ -105,7 +109,8 @@ interface CaptionOptions {
 interface LineTooltipRendererParams {
     // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
-    // The field of the datum object that contains the category name of the highlighted data point.
+    // The field of the datum object that contains the category name
+    // of the highlighted data point.
     xField: string;
     // The field of the datum object that contains the series value of the highlighted data point.
     yField: string;
