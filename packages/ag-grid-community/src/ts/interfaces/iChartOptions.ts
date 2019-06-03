@@ -161,9 +161,7 @@ export interface PieTooltipRendererParams {
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
-    title?: string;
-    titleEnabled?: boolean;
-    titleFont?: string;
+    title?: CaptionOptions;
 
     fills?: string[];
     strokes?: string[];
