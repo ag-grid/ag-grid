@@ -25,6 +25,10 @@ interface PieChartOptions {
     // The subtitle to render under the chart's title.
     // If the title is not not specified or disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
+    // The width of the chart.
+    width?: number,
+    // The height of the chart.
+    height?: number;
 
     // The padding of contents from the edges of the chart.
     padding?: {
@@ -73,7 +77,8 @@ interface PieChartOptions {
 
         // Whether to show pie slice labels or not.
         labelEnabled?: boolean;
-        // If the pie slice angle is smaller than this value (in degrees), the label won't be shown.
+        // If the pie slice angle is smaller than this value (in degrees),
+        // the label won't be shown.
         labelMinAngle?: number;
         // The font to be used for slice labels.
         labelFont?: string;
