@@ -129,7 +129,7 @@ export interface ProcessChartOptionsParams {
         </li>
         <li>All data is editable in the grid. Changes to the grid data is reflected in the charts.</li>
         <li>
-            The two pic charts have legend on the bottom. This is configured in the
+            The two pie charts have legend on the bottom. This is configured in the
             <code>processChartOptions()</code>.
         </li>
     </ul>
