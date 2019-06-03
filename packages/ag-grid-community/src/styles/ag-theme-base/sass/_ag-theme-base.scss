@@ -962,10 +962,11 @@
     ////////////////////////////////////////
     // Floating filter
     ////////////////////////////////////////
-    .ag-floating-filter-button {
-        line-height: $icon-size;
+    .ag-ltr .ag-floating-filter-button {
         margin-left: $grid-size * 3;
+    }
 
+    .ag-floating-filter-button {
         button {
             appearance: none;
             background: transparent;
@@ -1388,12 +1389,6 @@
             margin-left: 0;
         }
 
-        .ag-header-cell-label {
-            .ag-header-icon {
-                margin-top: 2px;
-            }
-        }
-
         .ag-tool-panel-wrapper {
             .ag-pivot-mode-panel {
                 .ag-pivot-mode-select {
@@ -1422,14 +1417,6 @@
             .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
                 margin-left: 0;
                 margin-right: $icon-size + $grid-size * 2;
-            }
-        }
-
-        .ag-header-group-cell-label {
-            height: 100%;
-
-            span {
-                height: 100%;
             }
         }
 
@@ -1467,10 +1454,10 @@
                 margin-left: $cell-horizontal-padding;
                 margin-right: 0;
             }
+        }
 
-            .ag-right-arrow {
-                height: 100%;
-            }
+        .ag-floating-filter-button {
+            margin-right: $grid-size * 3;
         }
 
         .ag-set-filter-item {
