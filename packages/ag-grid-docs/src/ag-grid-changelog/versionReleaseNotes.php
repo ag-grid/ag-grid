@@ -1,5 +1,5 @@
 <div class="note" style="display: none" fixVersionNote id="fix_version_21_0_0">
-    <p>Release 21.0.0 (3rd June 2019)</p>
+    <p>Release 21.0.0 (4th June 2019)</p>
 
     <p>Feature Highlights:</p>
 
@@ -27,6 +27,11 @@
             with us if you decided to start using ag-Grid inside your project.
         </li>
 
+
+        <li>AG-2663: React - Declarative Column Definitions Now Reactive.</li>
+        <li>AG-2536: React - Component Container Configurable (see <a href="/react-more-details/#control-react-components-container">Control React Components Container</a>).</li>
+        <li>AG-2656: React - Allow React Change Detection to be Configurable (see <a href="/react-more-details/#react-row-data-control">Row Data Control</a>).</li>
+        <li>AG-2257: All Frameworks - Expand & Improve Testing Documentation (see <a href="/javascript-grid-testing/">ag-Grid Testing</a>).</li>
     </ul>
 </div>
 
