@@ -260,7 +260,7 @@ var gridOptions = {
         defaultToolPanel: 'columns',
         hiddenByDefault: isSmall
     },
-    
+
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
@@ -380,6 +380,36 @@ var gridOptions = {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
 
+    processChartOptions: function(params) {
+        var options = params.options;
+        if (params.type === 'groupedBar' || params.type === 'stackedBar' || params.type === 'line') {
+            options.yAxis.labelFormatter = function(n) {
+                if (n < 1e3) return n;
+                if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
+                if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";
+                if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + "B";
+                if (n >= 1e12) return +(n / 1e12).toFixed(1) + "T";
+            };
+
+            options.seriesDefaults.tooltipRenderer = (params) => {
+                var strArr = params.yField.replace(/([A-Z])/g, " $1");
+                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
+                const value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return `<b>${seriesName}</b>: $${value}`;
+            };
+        }
+
+        if (params.type === 'pie' || params.type === 'doughnut')  {
+            options.seriesDefaults.tooltipRenderer = (params) => {
+                var strArr = params.angleField.replace(/([A-Z])/g, " $1");
+                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
+                const value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return `<b>${seriesName}</b>: $${value}`;
+            };
+        }
+
+        return options;
+    },
     getContextMenuItems: getContextMenuItems,
     excelStyles: [
         {

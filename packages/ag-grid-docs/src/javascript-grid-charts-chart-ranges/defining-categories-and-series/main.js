@@ -37,17 +37,15 @@ var gridOptions = {
 
         params.api.chartRange(chartRangeParams);
         setTimeout(() => params.api.sizeColumnsToFit(), 100);
-        // params.api.sizeColumnsToFit();
     },
     processChartOptions: function(params) {
         const opt = params.options;
 
         opt.title = {text: "Medals by Age"};
         opt.legendPosition = 'bottom';
-        // opt.legendPadding = 0;
 
-        if (params.type === 'bar') {
-            opt.yAxis.labelFormatter = (value) => value % 1 === 0 ? value.toFixed(0) : '';
+        if (params.type === 'groupedBar') {
+            opt.xAxis.labelRotation = 0;
         }
 
         opt.seriesDefaults.tooltipRenderer = (params) => {
@@ -56,10 +54,7 @@ var gridOptions = {
         };
 
         return opt;
-    },
-    // getChartToolbarItems: function() {
-    //     return [];
-    // }
+    }
 };
 
 // setup the grid after the page has finished loading

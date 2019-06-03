@@ -54,13 +54,20 @@ var gridOptions = {
         chartRef = params.api.chartRange(chartRangeParams);
     },
     processChartOptions: function(params) {
-        const opts = params.options;
+        var opts = params.options;
 
         opts.legendPosition = 'bottom';
         opts.yAxis.labelFormatter = yAxisLabelFormatter;
         opts.seriesDefaults.tooltipEnabled = true;
         opts.seriesDefaults.fills =['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
         opts.seriesDefaults.strokes =['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+
+        opts.seriesDefaults.tooltipRenderer = (params) => {
+            var strArr = params.yField.replace(/([A-Z])/g, " $1");
+            var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
+            var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            return `<b>${seriesName}</b>: ${value}`;
+        };
 
         return opts;
     },
@@ -76,7 +83,7 @@ function createChart(type) {
         chartRef.destroyChart();
     }
 
-    let params = {
+    var params = {
         cellRange: {
             columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
         },

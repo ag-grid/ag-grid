@@ -135,7 +135,8 @@ interface AxisOptions {
     labelFont?: string;
     // The color of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
-    // The rotation of the axis labels from their default value. Defaults to `0`.
+    // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
+    // is present the default category, i.e. (none), is used with the value  `0`.
     labelRotation?: number;
     // The custom formatter function for the axis labels.
     // The value is either a category name or a number. If it's the latter, the number

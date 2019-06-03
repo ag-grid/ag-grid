@@ -2,18 +2,22 @@ import {ChartBuilder} from "../../builder/chartBuilder";
 import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
 import {BarSeries} from "../../../charts/chart/series/barSeries";
 import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
+import {ChartModel} from "../chartModel";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import {LineSeries} from "../../../charts/chart/series/lineSeries";
 
 export class BarChartProxy extends ChartProxy {
+    private readonly chartOptions: BarChartOptions;
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
         const barChartType = params.chartType === ChartType.GroupedBar ? 'groupedBar' : 'stackedBar';
-        const chartOptions = this.getChartOptions(barChartType, this.defaultOptions()) as BarChartOptions;
+        this.chartOptions = this.getChartOptions(barChartType, this.defaultOptions()) as BarChartOptions;
 
-        this.chart = ChartBuilder.createBarChart(chartOptions);
+        this.chart = ChartBuilder.createBarChart(this.chartOptions);
 
-        const barSeries = ChartBuilder.createSeries(chartOptions.seriesDefaults as BarSeriesOptions);
+        const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
         if (barSeries) {
             this.chart.addSeries(barSeries);
         }
@@ -26,6 +30,13 @@ export class BarChartProxy extends ChartProxy {
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
+
+        const chart = this.chart as CartesianChart;
+        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        } else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
+        }
 
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
@@ -50,6 +61,7 @@ export class BarChartProxy extends ChartProxy {
                 type: 'category',
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 45,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
