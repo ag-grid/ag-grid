@@ -37,6 +37,26 @@ include '../documentation-main/documentation_header.php';
         to customise the filter experience to your application.
     </p>
 
+    <h2>Example Simple Filters</h2>
+
+    <p>
+        The example below demonstrates simple filters. The following can be noted:
+    </p>
+
+    <ul>
+        <li>
+            Column <b>Athlete</b> has a simple text filter.
+        </li>
+        <li>
+            Column <b>Age</b> has a simple number filter.
+        </li>
+        <li>
+            Column <b>Date</b> has a simple date filter.
+        </li>
+    </ul>
+
+    <?= example('Provided Simple', 'provided-simple', 'generated', array("processVue" => true)) ?>
+
     <h2>Configuring Filters to Columns</h2>
 
     <p>
