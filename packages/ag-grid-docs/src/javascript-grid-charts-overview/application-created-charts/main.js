@@ -76,7 +76,6 @@ function createChart(type) {
     // destroy existing chart
     if (chartRef) {
         chartRef.destroyChart();
-        chartContainer.removeChild(chartContainer.firstChild);
     }
 
     let params = {

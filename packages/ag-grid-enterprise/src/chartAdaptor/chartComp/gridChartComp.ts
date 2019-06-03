@@ -238,6 +238,9 @@ export class GridChartComp extends Component {
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
-        _.clearElement(this.getGui());
+        let eGui = this.getGui();
+        _.clearElement(eGui);
+        // remove from parent, so if user provided container, we detach from the provided dom element
+        _.removeFromParent(eGui);
     }
 }
