@@ -27,23 +27,6 @@ include '../documentation-main/documentation_header.php';
         <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
     </p>
 
-    <h2>Enabling Chart Ranges</h2>
-
-    <p>
-        All that is required for chart ranges to be displayed in the grid is to ensure the following <code>GridOption</code> properties are enabled:
-    </p>
-
-<snippet>
-gridOptions = {
-    enableCharts: true,
-    enableRangeSelection: true
-}
-</snippet>
-    <p>
-        In applications where charts are not created off selected cell ranges it may be desirable to hide the chart
-        ranges in the grid. In this case set <code>gridOptions.enableRangeSelection=false</code>.
-    </p>
-
     <h2>Category and Series Ranges</h2>
 
     <p>
