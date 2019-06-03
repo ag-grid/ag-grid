@@ -26,6 +26,7 @@ function chartRange(params: ChartRangeParams): ChartRef | undefined;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggregate?: boolean;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
 interface CellRangeParams {
@@ -42,7 +43,11 @@ interface CellRangeParams {
     columnEnd?: string | Column;
     columns?: (string | Column)[];
 }
-</snippet>
+
+export interface ProcessChartOptionsParams {
+    type: string;
+    options: ChartOptions;
+}</snippet>
 
     <p>
         The provided params contains the following attributes:
@@ -74,6 +79,11 @@ interface CellRangeParams {
         </li>
         <li>
             <code>aggregate</code>: When set to true, series values will be summed for each category before charting.
+        </li>
+        <li>
+            <code>processChartOptions</code>: Options for changing the display of the chart. This works the same
+            as the grid callback <code>processChartOptions</code> described in
+            <a href="../javascript-grid-charts-customisation/">Chart Customisation</a>.
         </li>
     </ul>
 
@@ -118,6 +128,10 @@ interface CellRangeParams {
             always chart the first five rows.
         </li>
         <li>All data is editable in the grid. Changes to the grid data is reflected in the charts.</li>
+        <li>
+            The two pic charts have legend on the bottom. This is configured in the
+            <code>processChartOptions()</code>.
+        </li>
     </ul>
 
     <?= example('Dashboard', 'dashboard', 'generated', array("enterprise" => true, "exampleHeight" => 700)) ?>
