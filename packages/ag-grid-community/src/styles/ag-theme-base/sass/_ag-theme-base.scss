@@ -984,7 +984,6 @@
     .ag-group-checkbox:not(.ag-invisible),
     .ag-group-expanded:not(.ag-hidden),
     .ag-group-contracted:not(.ag-hidden) {
-        display: inline-flex;
         ~ .ag-cell-value, + .ag-group-value {
             &:not(:empty) {
                 margin-left: $cell-horizontal-padding;
