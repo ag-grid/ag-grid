@@ -54,21 +54,12 @@ var gridOptions = {
     enableCharts: true,
     // needed for the menu's in the carts, otherwise popups appear over grid
     popupParent: document.body,
-    processChartOptions: processChartOptions,
     onFirstDataRendered: onFirstDataRendered,
     getChartToolbarItems: getChartToolbarItems
 };
 
 function getChartToolbarItems(params) {
     return [];
-}
-
-function processChartOptions(params) {
-    var options = params.options;
-    if (params.type==='pie') {
-        options.legendPosition = 'bottom';
-    }
-    return options;
 }
 
 function onFirstDataRendered(event) {
@@ -92,7 +83,12 @@ function onFirstDataRendered(event) {
         },
         chartType: 'pie',
         chartContainer: eContainer2,
-        aggregate: true
+        aggregate: true,
+        processChartOptions: function(params) {
+            params.options.legendPosition = 'bottom';
+            params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+            return params.options;
+        }
     };
     event.api.chartRange(params2);
 
@@ -104,7 +100,12 @@ function onFirstDataRendered(event) {
         },
         chartType: 'pie',
         chartContainer: eContainer3,
-        aggregate: true
+        aggregate: true,
+        processChartOptions: function(params) {
+            params.options.legendPosition = 'bottom';
+            params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+            return params.options;
+        }
     };
     event.api.chartRange(params3);
 
