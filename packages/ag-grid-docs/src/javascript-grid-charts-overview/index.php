@@ -126,23 +126,41 @@ gridOptions = {
         provided below:
     </p>
 
-    <ul>
-        <li><a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>: when a chart is created, corresponding
-            chart ranges appear in the grid and are adjusted via the chart range handle. The range handle is the small
-            draggable square that appears to the bottom right of the highlighted range.
-        </li>
-        <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
-            columns can be configured as either categories / series for charting or left to the grid to infer based
-            on the data contained in the columns.
-        </li>
-        <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
-            located in the top left area of the chart, the chart toolbar allows users to perform actions after chart has
-            been created, such as change the chart type, colour palette and chart data.
-        </li>
-        <li><a href="../javascript-grid-charts-customisation/">Chart Customisation</a>: each chart type can be
-            customised to suit each applications requirements.
-        </li>
-    </ul>
+    <div style="display: flex; margin-bottom: 25px; margin-top: 25px;">
+
+        <div style="flex-grow: 1;">
+            <ul>
+                <li><a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>: when a chart is created, corresponding
+                    chart ranges appear in the grid and are adjusted via the chart range handle.
+                </li>
+                <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
+                    columns can be configured as either categories / series for charting or left to the grid to infer based
+                    on the data contained in the columns.
+                </li>
+            </ul>
+        </div>
+
+        <img src="./category-range-fill-handle.png"/>
+
+    </div>
+
+    <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
+
+        <img src="./chart-toolbar.png"/>
+
+        <div style="flex-grow: 1;">
+            <ul>
+                <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
+                    located in the top left area of the chart, the chart toolbar allows users to perform actions after chart has
+                    been created, such as change the chart type, colour palette and chart data.
+                </li>
+                <li><a href="../javascript-grid-charts-customisation/">Chart Customisation</a>: each chart type can be
+                    customised to suit each applications requirements.
+                </li>
+            </ul>
+        </div>
+
+    </div>
 
     <p>
         By default, user created charts are displayed inside the grid's own popup windows. The windows can be moved (by mouse
