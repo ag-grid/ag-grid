@@ -53,6 +53,17 @@ function processChartOptions(params) {
     options.height = 500;
     options.width = 1000;
 
+    options.title = {
+        text: 'Precious Metals Production',
+        font: 'italic bold 18px Arial, sans-serif',
+        color: '#414182'
+    };
+    options.subtitle = {
+        text: 'by country',
+        font: 'italic 14px Arial, sans-serif',
+        color: 'rgb(100, 100, 100)'
+    };
+
     options.padding = {top: 40, right: 10, bottom: 40, left: 20};
 
     options.tooltipClass = 'my-tool-tip-class';
@@ -61,41 +72,41 @@ function processChartOptions(params) {
     options.legendPadding = 20;
 
     var legend = options.legend;
-    legend.markerStrokeWidth = 4;
-    legend.markerSize = 30;
-    legend.markerPadding = 20;
-
-    legend.itemPaddingX = 40;
-    legend.itemPaddingY = 20;
-
-    legend.labelFont = 'italic 20px Comic Sans MS';
+    legend.markerStrokeWidth = 2;
+    legend.markerSize = 10;
+    legend.markerPadding = 10;
+    legend.itemPaddingX = 100;
+    legend.itemPaddingY = 5;
+    legend.labelFont = '12px Arial, sans-serif';
     legend.labelColor = '#2222aa';
 
     var seriesDefaults = options.seriesDefaults;
-    seriesDefaults.fills = ['#503030','#505050','#507070','#509090','#50b0b0'];
-    seriesDefaults.strokes = ['#001010','#003030','#005050','#007070','#009090'];
+    seriesDefaults.fills = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
+    seriesDefaults.strokes = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
     // seriesDefaults.tooltipEnabled = false;
 
     seriesDefaults.labelEnabled = true;
     seriesDefaults.labelMinAngle = 30;
-
-    seriesDefaults.labelFont = 'italic 20px Comic Sans MS';
+    seriesDefaults.labelFont = '12px Arial, sans-serif';
     seriesDefaults.labelColor = '#2222aa';
 
-    seriesDefaults.strokeWidth = 4;
-    seriesDefaults.calloutStrokeWidth = 10;
-    seriesDefaults.calloutLength = 30;
-    seriesDefaults.calloutPadding = 10;
+    seriesDefaults.strokeWidth = 2;
+    seriesDefaults.calloutStrokeWidth = 3;
+    seriesDefaults.calloutColors = ['black'];
+    seriesDefaults.calloutLength = 15;
+    seriesDefaults.calloutPadding = 0;
 
-    seriesDefaults.titleEnabled = true;
-    seriesDefaults.titleFont = 'italic 15px Comic Sans MS';
+    seriesDefaults.title = {
+        enabled: true,
+        font: 'bold 12px Arial, sans-serif',
+        color: 'maroon'
+    };
 
-    // leaving out shadow, as it doesn't look great for doughnut charts
-    // seriesDefaults.shadow = {
-    //     color: 'grey',
-    //     offset: [10,10],
-    //     blur: 8
-    // };
+    seriesDefaults.shadow = {
+        color: 'rgba(96, 96, 175, 0.5)',
+        offset: [0, 0],
+        blur: 10
+    };
 
     seriesDefaults.tooltipRenderer = function(params) {
         var angleField = params.angleField;

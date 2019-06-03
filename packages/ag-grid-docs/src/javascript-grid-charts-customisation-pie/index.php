@@ -63,6 +63,9 @@ interface PieChartOptions {
 
 
     seriesDefaults?: {
+        // The title of this series. Renders on top of the doughnut. Also shown in the tooltip.
+        title?: CaptionOptions;
+
         // The fill colors of pie slices.
         fills?: string[];
         // The stroke colors of pie slices. Darker versions of fill colors by default.
@@ -107,7 +110,7 @@ interface PieChartOptions {
 }
 
 interface CaptionOptions {
-    // The text to use for the chart's title/subtitle.
+    // The text to use for the chart's title/subtitle or series' title.
     text?: string;
     // The font to be used by the title/subtitle.
     // Defaults to `bold 16px Verdana, sans-serif` for the title

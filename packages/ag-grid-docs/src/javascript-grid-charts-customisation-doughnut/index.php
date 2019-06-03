@@ -63,6 +63,8 @@ interface DoughnutChartOptions {
     };
 
     seriesDefaults?: {
+        // The title of this series. Renders on top of the doughnut. Also shown in the tooltip.
+        title?: CaptionOptions;
 
         // The fill colors of pie slices.
         fills?: string[];
@@ -90,11 +92,6 @@ interface DoughnutChartOptions {
         // The padding between the callouts and the labels. Defaults to `3`.
         calloutPadding?: number;
 
-        // Whether to show series title or not. Defaults to `false`.
-        titleEnabled?: boolean;
-        // The font to be used by the series title.
-        titleFont?: string;
-
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
         shadow?: {
@@ -116,7 +113,7 @@ interface DoughnutChartOptions {
 }
 
 interface CaptionOptions {
-    // The text to use for the chart's title/subtitle.
+    // The text to use for the chart's title/subtitle or series' title.
     text?: string;
     // The font to be used by the title/subtitle.
     // Defaults to `bold 16px Verdana, sans-serif` for the title

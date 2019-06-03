@@ -3,7 +3,7 @@ import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import { Caption } from "../../../charts/chart/caption";
+import { CaptionOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
 export class PieChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
@@ -35,10 +35,11 @@ export class PieChartProxy extends ChartProxy {
             pieChart.removeSeries(existingSeries);
 
             const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+            // Use `Object.create` to prevent mutating the original user config that is possibly reused.
+            const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
+            title.text = pieSeriesName;
+            seriesOptions.title = title;
 
-            seriesOptions.title = {
-                text: pieSeriesName
-            };
             seriesOptions.angleField = pieSeriesId;
             calloutColors = seriesOptions.calloutColors;
 
@@ -99,9 +100,12 @@ export class PieChartProxy extends ChartProxy {
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: '',
-                titleEnabled: false,
-                titleFont: 'bold 12px Verdana, sans-serif'
+                shadow: undefined,
+                title: {
+                    enabled: false,
+                    font: 'bold 12px Verdana, sans-serif',
+                    color: 'black'
+                }
             }
         };
     }

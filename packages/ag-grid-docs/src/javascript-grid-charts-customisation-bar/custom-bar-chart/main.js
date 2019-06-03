@@ -55,7 +55,7 @@ function processChartOptions(params) {
     options.height = 500;
     options.width = 1000;
 
-    options.padding = {top: 10, right: 10, bottom: 20, left: 20};
+    options.padding = {top: 20, right: 10, bottom: 10, left: 20};
 
     options.tooltipClass = 'my-tool-tip-class';
 
@@ -63,78 +63,75 @@ function processChartOptions(params) {
     options.legendPadding = 20;
 
     var legend = options.legend;
-    legend.markerStrokeWidth = 4;
-    legend.markerSize = 30;
-    legend.markerPadding = 20;
-    legend.itemPaddingX = 40;
-    legend.itemPaddingY = 100;
-    legend.labelFont = 'italic 20px Comic Sans MS';
-    legend.labelColor = '#2222aa';
+    legend.markerStrokeWidth = 2;
+    legend.markerSize = 25;
+    legend.markerPadding = 10;
+    legend.itemPaddingX = 120;
+    legend.itemPaddingY = 20;
+    legend.labelFont = 'bold 18px Arial, sans-serif';
+    legend.labelColor = '#555';
 
     var xAxis = options.xAxis;
-    xAxis.lineWidth = 4;
-    xAxis.lineColor = '#000000';
+    xAxis.lineWidth = 2;
+    xAxis.lineColor = 'gray';
 
-    xAxis.tickWidth = 4;
+    xAxis.tickWidth = 2;
     xAxis.tickSize = 10;
     xAxis.tickPadding = 10;
-    xAxis.tickColor = 'black';
+    xAxis.tickColor = 'gray';
 
-    xAxis.labelFont = 'italic 15px Comic Sans MS';
-    xAxis.labelColor = 'rgb(0,0,0)';
+    xAxis.labelFont = 'bold 15px Arial, sans-serif';
+    xAxis.labelColor = '#de7b73';
     xAxis.labelRotation = 20;
     xAxis.labelFormatter = function(value) {
-        return value.toString().toUpperCase();
+        return value === 'United Kingdom' ? 'UK' : '(' + String(value) + ')';
     };
     xAxis.gridStyle = [
         {
-            stroke: 'red',
-            lineDash: [4,2]
-        },
-        {
-            stroke: 'blue'
+            stroke: 'rgba(94,100,178,0.5)'
         }
     ];
 
     // changes to the yAxis
     var yAxis = options.yAxis;
-    yAxis.lineWidth = 4;
-    yAxis.lineColor = '#000000';
-    yAxis.tickWidth = 4;
+    yAxis.lineWidth = 2;
+    yAxis.lineColor = 'gray';
+    yAxis.tickWidth = 2;
     yAxis.tickSize = 10;
     yAxis.tickPadding = 10;
-    yAxis.tickColor = 'black';
-    yAxis.labelFont = 'italic 15px Comic Sans MS';
-    yAxis.labelColor = 'rgb(0,0,0)';
-    yAxis.labelRotation = -20;
+    yAxis.tickColor = 'gray';
+    yAxis.labelFont = 'bold 15px Arial, sans-serif';
+    yAxis.labelColor = '#de7b73';
+    yAxis.labelRotation = 20;
     yAxis.labelFormatter = function(value) {
         return value.toString().toUpperCase();
     };
     yAxis.gridStyle = [
         {
-            stroke: 'black',
-            lineDash: [2,2]
+            stroke: '#80808044',
+            lineDash: undefined
+        },
+        {
+            stroke: '#80808044',
+            lineDash: [6, 3]
         }
     ];
 
     var seriesDefaults = options.seriesDefaults;
 
-    var gold = '#d4af37';
-    var silver = '#c0c0c0';
-    var bronze = '#cd7f32';
-    seriesDefaults.fills = [gold, silver, bronze];
+    seriesDefaults.fills = ['#e1ba00', 'silver', 'peru'];
     seriesDefaults.strokes = ['black'];
-    seriesDefaults.strokeWidth = 3;
+    seriesDefaults.strokeWidth = 2;
 
     // only impacts stacked bar chart
     seriesDefaults.labelEnabled = true;
-    seriesDefaults.labelFont = 'italic 15px Comic Sans MS';
+    seriesDefaults.labelFont = 'italic 15px Arial, sans-serif';
     seriesDefaults.labelPadding = {x: 10, y: 10};
     seriesDefaults.labelColor = 'green';
 
     seriesDefaults.shadow = {
-        color: 'grey',
-        offset: [10,10],
+        color: 'rgba(0, 0, 0, 0.3)',
+        offset: [5, 5],
         blur: 8
     };
 
