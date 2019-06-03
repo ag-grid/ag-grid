@@ -46,4 +46,22 @@ include '../documentation-main/documentation_header.php';
             <li><a href="../javascript-grid-charts-customisation-doughnut/">Customising Doughnut Charts</a></li>
         </ul>
     </p>
+
+    <h2>Customising Based on Chart Type</h2>
+
+    <p>
+        The params passed to <code>ProcessChartOptionsParams</code> details the chart type. The type will be
+        one of <code>{groupedBar, stackedBar, line, pie, doughnut}</code>. The example below demonstrates
+        customising based on chart type. The following can be noted:
+    </p>
+
+    <ul>
+        <li>Stacked Bar and Grouped Bar charts have the legend on the bottom.</li>
+        <li>Line charts have the legend on the left.</li>
+        <li>Pie charts have the legend on the top.</li>
+        <li>Doughnut charts have the legend on the right.</li>
+    </ul>
+
+    <?= example('Custom Chart', 'custom-chart', 'generated', array("enterprise" => true)) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
