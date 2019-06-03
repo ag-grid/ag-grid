@@ -56,8 +56,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ul>
-        <li>Select a range of numbers and bring up a chart from the context menu.</li>
-        <li>Using the chart options, change the chart type and notice the position of the legend.</li>
+        <li>Click a button to create a chart of that type.</li>
         <li><b>Stacked Bar</b> and <b>Grouped Bar</b> charts have the <b>legend bottom</b>.</li>
         <li><b>Line</b> charts have the <b>legend left</b>.</li>
         <li><b>Pie</b> charts have the <b>legend top</b>.</li>

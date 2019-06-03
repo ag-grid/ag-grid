@@ -1,10 +1,25 @@
 var columnDefs = [
-    {field: "athlete", width: 150, enableRowGroup: true},
-    {field: "gold", enableValue: true},
-    {field: "silver", enableValue: true},
-    {field: "bronze", enableValue: true},
-    {field: "total", enableValue: true}
+    {field: "country", width: 150, chartType: 'category'},
+    {field: "gold", chartType: 'series'},
+    {field: "silver", chartType: 'series'},
+    {field: "bronze", chartType: 'series'}
 ];
+
+function createRowData() {
+    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
+        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+    let rowData = [];
+    countries.forEach( function(country, index) {
+        rowData.push({
+            country: country,
+            gold: Math.floor(((index+1 / 7) * 333)%100),
+            silver: Math.floor(((index+1 / 3) * 555)%100),
+            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+        });
+    });
+    return rowData;
+}
 
 var gridOptions = {
     defaultColDef: {
@@ -13,6 +28,7 @@ var gridOptions = {
     },
     popupParent: document.body,
     columnDefs: columnDefs,
+    rowData: createRowData(),
     enableRangeSelection: true,
     enableCharts: true,
     processChartOptions: processChartOptions
@@ -42,20 +58,83 @@ function processChartOptions(params) {
     return options;
 }
 
+function chartGroupedBar(params) {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'groupedBar'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartStackedBar(params) {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'stackedBar'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartDoughnut(params) {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'doughnut'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartLine(params) {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'line'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartPie(params) {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'pie'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/wideSpreadOfSports.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
 });
