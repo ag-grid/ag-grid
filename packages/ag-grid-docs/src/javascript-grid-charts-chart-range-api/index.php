@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Chart API</h1>
 
     <p class="lead">
-        This section covers how to the chart range api in your applications.
+        This section covers how to use the chart range api in your applications.
     </p>
 
     <h2>Charting API</h2>
@@ -24,6 +24,7 @@ function chartRange(params: ChartRangeParams): ChartRef | undefined;
     cellRange: CellRangeParams;
     chartType: string;
     chartContainer?: HTMLElement;
+    suppressChartRanges?: boolean;
     aggregate?: boolean;
 }
 
@@ -60,6 +61,9 @@ interface CellRangeParams {
         <li>
             <code>chartContainer</code>: If the chart is to be displayed outside of the grid then provide a chart
             container. If the chart is to be displayed using the grid's popup window mechanism then leave undefined.
+        </li>
+        <li>
+            <code>suppressChartRanges</code>: when set to true, the chart range will not appear in the grid.
         </li>
         <li>
             <code>aggregate</code>: when set to true, series values will be summed for each category.
