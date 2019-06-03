@@ -10,6 +10,7 @@ const path = require('path');
 const rename = require("gulp-rename");
 const replace = require('gulp-replace');
 const tslint = require("gulp-tslint");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
@@ -160,6 +161,15 @@ function webpackTask(minify, styles) {
                         }]
                     }
                 ]
+            },
+            optimization: {
+                minimizer: [
+                    new UglifyJsPlugin({
+                        uglifyOptions: {
+                            keep_fnames: false,
+                        },
+                    }),
+                ],
             }
         }))
         .pipe(header(bundleTemplate, {pkg: pkg}))

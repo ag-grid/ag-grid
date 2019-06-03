@@ -218,11 +218,11 @@ will be empty.
 <?php 
 include './angular.php'; 
 
-include './react.php'; 
+include './react.php';
 
-include './polymer.php'; 
+include './vuejs.php';
 
-include './vuejs.php'; 
+include './polymer.php';
 
 include '../documentation-main/documentation_footer.php'; 
 ?>
