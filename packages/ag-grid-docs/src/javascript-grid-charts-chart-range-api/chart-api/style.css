@@ -1,0 +1,15 @@
+.outer-div {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.button-bar {
+    padding-bottom: 4px;
+}
+
+.grid-wrapper {
+    height: 20px;
+    flex: 1;
+}
+
