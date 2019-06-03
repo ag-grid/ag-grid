@@ -1,7 +1,28 @@
 var columnDefs = [
     {
         field: "athlete",
-        width: 150
+        width: 150,
+        filterParams: {
+            filterOptions: [
+                'contains',
+                {
+                    displayKey: 'startsA',
+                    displayName: 'Starts With "A"',
+                    test: function(filterValue, cellValue) {
+                        return cellValue != null && cellValue.indexOf('a')==0;
+                    },
+                    hideFilterInput: true
+                },
+                {
+                    displayKey: 'startsB',
+                    displayName: 'Starts With "N"',
+                    test: function(filterValue, cellValue) {
+                        return cellValue != null && cellValue.indexOf('n')==0;
+                    },
+                    hideFilterInput: true
+                }
+            ]
+        }
     },
     {
         field: "age",
