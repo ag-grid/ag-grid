@@ -40,13 +40,13 @@
 
     function chartRange() {
         gridOptions.api.chartRange({
-            rowStart: 1,
-            // floatingStart:
-            rowEnd: 3,
-            // floatingEnd: string, // the end floating ('top', 'bottom' or null/undefined)
-            columnStart: 'price',
-            columnEnd: 'price'
-        }, 'pie');
+            cellRange: {
+                rowStartIndex: 1,
+                rowEndIndex: 3,
+                columns: ['price']
+            },
+            chartType: 'pie'
+        });
     }
 
 </script>
