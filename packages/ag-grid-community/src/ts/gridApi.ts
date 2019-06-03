@@ -55,8 +55,8 @@ import { SideBarDef } from "./entities/sideBar";
 import { IRangeChartService } from "./interfaces/iRangeChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
-import {ChartRef, ProcessChartOptionsParams} from "./entities/gridOptions";
-import {ChartOptions} from "./interfaces/iChartOptions";
+import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
+import { ChartOptions } from "./interfaces/iChartOptions";
 
 export interface StartEditingCellParams {
     rowIndex: number;

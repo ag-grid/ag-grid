@@ -4,7 +4,6 @@ import {BarSeries} from "../../../charts/chart/series/barSeries";
 import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
 import {ChartModel} from "../chartModel";
 import {CartesianChart} from "../../../charts/chart/cartesianChart";
-import {LineSeries} from "../../../charts/chart/series/lineSeries";
 
 export class BarChartProxy extends ChartProxy {
     private readonly chartOptions: BarChartOptions;
