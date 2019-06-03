@@ -8,10 +8,18 @@ include '../documentation-main/documentation_header.php';
 
     <h1>ag-Grid Graphing Integration</h1>
 
-    <p>ag-Grid is great at displaying tabular data - it is after all the Best Data Grid for Enterprise in the world!</p>
+    <p class="lead">
+        This section goes through examples of integrating the grid with <a href="https://d3js.org/">D3</a>
+        (for charting outside of the grid) and
+        <a href="https://omnipotent.net/jquery.sparkline/">Sparklines</a> (for charting inside the grid).
+    </p>
 
-    <p>Sometimes however a picture (or graph) is worth a thousand words, so in this section we offer some examples of how
-    you can interact with external Graphs, or embed Graphs into ag-Grid itself.</p>
+    <note>
+        In v21 of ag-Grid we introduced charting using the grid's own
+        <a href="../javascript-grid-charts-overview/">internal charting library</a>. This page pre-dates the grids
+        internal charting library. It is our plan in the future to allow using the charting library
+        to achieve the below, but for now we will leave the examples using D3 and Sparklines.
+    </note>
 
     <h2>External Graphs using D3</h2>
 
