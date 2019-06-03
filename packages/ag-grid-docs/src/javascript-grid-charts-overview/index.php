@@ -187,7 +187,7 @@ gridOptions = {
         </li>
     </ul>
 
-    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array( "exampleHeight" => 650, 'enterprise' => true)) ?>
+    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array( "exampleHeight" => 700, 'enterprise' => true)) ?>
 
     <p>
         To learn how to create charts in your applications see the following sections for details:
