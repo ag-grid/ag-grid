@@ -106,15 +106,10 @@ export class GridChartComp extends Component {
             this.chartProxy.destroy();
             _.clearElement(this.eChart);
         }
-
-        const composedProcessChartOptionsFunc = (params: ProcessChartOptionsParams) => {
-            return this.params.processChartOptions ?
-                this.params.processChartOptions(params) : this.gridOptionsWrapper.getProcessChartOptionsFunc()(params);
-        };
-
+        
         const chartProxyParams: ChartProxyParams = {
             chartType: this.model.getChartType(),
-            processChartOptions: composedProcessChartOptionsFunc,
+            processChartOptions: this.params.processChartOptions ? this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc(),
             getSelectedPalette: this.getSelectedPalette.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
