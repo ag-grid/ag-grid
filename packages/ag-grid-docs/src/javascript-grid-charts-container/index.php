@@ -71,4 +71,5 @@ interface ChartRef {
 
     <?= example('Provided Container', 'provided-container', 'generated', array("enterprise" => true)) ?>
 
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
