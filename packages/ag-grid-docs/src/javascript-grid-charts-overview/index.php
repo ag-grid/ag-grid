@@ -54,9 +54,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        // order of imports is important!
-        import 'ag-grid-enterprise/chartsModule';
         import 'ag-grid-enterprise';
+        import 'ag-grid-enterprise/chartsModule';
     </snippet>
 
     <p>
