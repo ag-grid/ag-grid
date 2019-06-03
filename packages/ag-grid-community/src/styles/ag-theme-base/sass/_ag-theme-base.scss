@@ -658,7 +658,6 @@
     ////////////////////////////////////////
     // Tool panel
     ////////////////////////////////////////
-
     .ag-primary-cols-header-panel {
         border-top: 1px solid $border-color;
         height: $header-height;
@@ -772,16 +771,33 @@
     // Pagination
     ////////////////////////////////////////
     .ag-paging-panel {
-        align-items: center;
         border-top: 1px solid $border-color;
         color: $secondary-foreground-color;
-        display: flex;
         height: $header-height;
-        justify-content: flex-end;
         padding: 0 $cell-horizontal-padding;
 
         & > span {
             margin-left: $grid-size * 4;
+        }
+    }
+
+    .ag-paging-page-summary-panel {
+        .ag-icon {
+            width: $icon-size;
+            height: $icon-size;
+            cursor: pointer;
+            &.ag-disabled {
+                color: $disabled-foreground-color;
+                opacity: $disabled-foreground-color-opacity;
+            }
+            button {
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+            }
+        }
+        span {
+            margin: 0 $grid-size;
         }
     }
 

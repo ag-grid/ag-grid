@@ -105,11 +105,19 @@ export class PaginationComp extends Component {
                     <span ref="lbFirstRowOnPage"></span> ${strTo} <span ref="lbLastRowOnPage"></span> ${strOf} <span ref="lbRecordCount"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel">
-                    <button type="button" class="ag-paging-button" ref="btFirst">${strFirst}</button>
-                    <button type="button" class="ag-paging-button" ref="btPrevious">${strPrevious}</button>
+                    <div class="ag-icon ag-icon-first" ref="btFirst">
+                        <button type="button" class="ag-paging-button">${strFirst}</button>
+                    </div>
+                    <div class="ag-icon ag-icon-previous" ref="btPrevious">
+                        <button type="button" class="ag-paging-button">${strPrevious}</button>
+                    </div>
                     ${strPage} <span ref="lbCurrent"></span> ${strOf} <span ref="lbTotal"></span>
-                    <button type="button" class="ag-paging-button" ref="btNext">${strNext}</button>
-                    <button type="button" class="ag-paging-button" ref="btLast">${strLast}</button>
+                    <div class="ag-icon ag-icon-next" ref="btNext">
+                        <button type="button" class="ag-paging-button">${strNext}</button>
+                    </div>
+                    <div class="ag-icon ag-icon-last" ref="btLast">
+                        <button type="button" class="ag-paging-button">${strLast}</button>
+                    </div>
                 </span>
             </div>`;
     }
@@ -136,17 +144,17 @@ export class PaginationComp extends Component {
         const totalPages = this.paginationProxy.getTotalPages();
 
         const disablePreviousAndFirst = currentPage === 0;
-        this.btPrevious.disabled = disablePreviousAndFirst;
-        this.btFirst.disabled = disablePreviousAndFirst;
+        _.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', disablePreviousAndFirst);
+        _.addOrRemoveCssClass(this.btFirst, 'ag-disabled', disablePreviousAndFirst);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
         const onLastPage = maxRowFound && currentPage === (totalPages - 1);
 
         const disableNext = onLastPage || zeroPagesToDisplay;
-        this.btNext.disabled = disableNext;
+        _.addOrRemoveCssClass(this.btNext, 'ag-disabled', disableNext);
 
         const disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        this.btLast.disabled = disableLast;
+        _.addOrRemoveCssClass(this.btLast, 'ag-disabled', disableLast);
     }
 
     private updateRowLabels() {
