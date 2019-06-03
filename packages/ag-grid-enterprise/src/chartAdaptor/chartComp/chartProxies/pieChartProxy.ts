@@ -3,7 +3,7 @@ import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import { Caption } from "../../../charts/chart/caption";
+import { CaptionOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
 export class PieChartProxy extends ChartProxy {
     private readonly chartOptions: PieChartOptions;
@@ -30,15 +30,18 @@ export class PieChartProxy extends ChartProxy {
         const pieSeriesName = params.fields[0].displayName;
 
         let pieSeries = existingSeries;
+        let calloutColors: string[] | undefined = undefined;
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
 
             const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+            // Use `Object.create` to prevent mutating the original user config that is possibly reused.
+            const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
+            title.text = pieSeriesName;
+            seriesOptions.title = title;
 
-            seriesOptions.title = {
-                text: pieSeriesName
-            };
             seriesOptions.angleField = pieSeriesId;
+            calloutColors = seriesOptions.calloutColors;
 
             pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
         }
@@ -50,6 +53,9 @@ export class PieChartProxy extends ChartProxy {
 
         pieSeries.fills = palette.fills;
         pieSeries.strokes = palette.strokes;
+        if (calloutColors) {
+            pieSeries.calloutColors = calloutColors;
+        }
 
         if (!existingSeries) {
             pieChart.addSeries(pieSeries)
@@ -94,9 +100,12 @@ export class PieChartProxy extends ChartProxy {
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: '',
-                titleEnabled: false,
-                titleFont: 'bold 12px Verdana, sans-serif'
+                shadow: undefined,
+                title: {
+                    enabled: false,
+                    font: 'bold 12px Verdana, sans-serif',
+                    color: 'black'
+                }
             }
         };
     }

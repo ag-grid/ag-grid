@@ -10,6 +10,8 @@ import {
     PostConstruct,
     RefSelector,
     ResizeObserverService,
+    ProcessChartOptionsParams,
+    ChartOptions
 } from "ag-grid-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
@@ -27,6 +29,7 @@ export interface GridChartParams {
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggregate: boolean;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
     height: number;
     width: number;
 }
@@ -104,9 +107,14 @@ export class GridChartComp extends Component {
             _.clearElement(this.eChart);
         }
 
+        const composedProcessChartOptionsFunc = (params: ProcessChartOptionsParams) => {
+            return this.params.processChartOptions ?
+                this.params.processChartOptions(params) : this.gridOptionsWrapper.getProcessChartOptionsFunc()(params);
+        };
+
         const chartProxyParams: ChartProxyParams = {
             chartType: this.model.getChartType(),
-            processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
+            processChartOptions: composedProcessChartOptionsFunc,
             getSelectedPalette: this.getSelectedPalette.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
