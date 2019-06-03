@@ -153,7 +153,6 @@ export class Text extends Shape {
         }
         this.matrix.toContext(ctx);
 
-
         if (this.opacity < 1) {
             ctx.globalAlpha = this.opacity;
         }
