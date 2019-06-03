@@ -2,7 +2,11 @@ var columnDefs = [
     {field: "country", width: 150, chartType: 'category'},
     {field: "gold", chartType: 'series'},
     {field: "silver", chartType: 'series'},
-    {field: "bronze", chartType: 'series'}
+    {field: "bronze", chartType: 'series'},
+    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'}
 ];
 
 function createRowData() {
@@ -58,7 +62,7 @@ function processChartOptions(params) {
     return options;
 }
 
-function chartGroupedBar(params) {
+function chartGroupedBar() {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
@@ -73,7 +77,7 @@ function chartGroupedBar(params) {
     gridOptions.api.chartRange(chartRangeParams);
 }
 
-function chartStackedBar(params) {
+function chartStackedBar() {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
@@ -88,7 +92,7 @@ function chartStackedBar(params) {
     gridOptions.api.chartRange(chartRangeParams);
 }
 
-function chartDoughnut(params) {
+function chartDoughnut() {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
@@ -103,7 +107,7 @@ function chartDoughnut(params) {
     gridOptions.api.chartRange(chartRangeParams);
 }
 
-function chartLine(params) {
+function chartLine() {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
@@ -118,7 +122,7 @@ function chartLine(params) {
     gridOptions.api.chartRange(chartRangeParams);
 }
 
-function chartPie(params) {
+function chartPie() {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,

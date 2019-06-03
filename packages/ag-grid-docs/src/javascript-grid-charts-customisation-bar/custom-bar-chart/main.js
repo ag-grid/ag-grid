@@ -2,7 +2,11 @@ var columnDefs = [
     {field: "country", width: 150, chartType: 'category'},
     {field: "gold", chartType: 'series'},
     {field: "silver", chartType: 'series'},
-    {field: "bronze", chartType: 'series'}
+    {field: "bronze", chartType: 'series'},
+    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'}
 ];
 
 function createRowData() {
