@@ -949,12 +949,12 @@ var RowRenderer = /** @class */ (function (_super) {
         if (!nextCell) {
             return;
         }
-        this.ensureCellVisible(nextCell);
         // in case we have col spanning we get the cellComp and use it to
         // get the position. This was we always focus the first cell inside
         // the spanning.
         var cellComp = this.getComponentForCell(nextCell);
         nextCell = cellComp.getCellPosition();
+        this.ensureCellVisible(nextCell);
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);

@@ -12,12 +12,17 @@ export interface DownloadOptions {
  * provide resolution independent rendering based on `window.devicePixelRatio`.
  */
 export declare class HdpiCanvas {
+    readonly canvas: HTMLCanvasElement;
+    readonly context: CanvasRenderingContext2D;
+    /**
+     * The canvas flickers on size changes in Safari.
+     * A temporary canvas is used (during resize only) to prevent that.
+     */
+    private tempCanvas;
     constructor(width?: number, height?: number);
     private _parent;
     parent: HTMLElement | null;
     private remove;
-    readonly canvas: HTMLCanvasElement;
-    readonly context: CanvasRenderingContext2D;
     destroy(): void;
     toImage(): HTMLImageElement;
     /**
@@ -36,11 +41,6 @@ export declare class HdpiCanvas {
      * @param resize
      */
     updatePixelRatio(ratio?: number, resize?: boolean): void;
-    /**
-     * The canvas flickers on size changes in Safari.
-     * A temporary canvas is used (during resize only) to prevent that.
-     */
-    private tempCanvas;
     resize(width: number, height: number): void;
     private static _textMeasuringContext?;
     private static readonly textMeasuringContext;

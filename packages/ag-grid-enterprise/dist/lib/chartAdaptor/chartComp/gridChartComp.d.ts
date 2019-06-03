@@ -4,6 +4,7 @@ export interface GridChartParams {
     cellRange: CellRange;
     chartType: ChartType;
     insideDialog: boolean;
+    suppressChartRanges: boolean;
     aggregate: boolean;
     height: number;
     width: number;

@@ -142,4 +142,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isAllowValue(): boolean;
     isAllowRowGroup(): boolean;
     getMenuTabs(defaultValues: string[]): string[];
+    isLockPosition(): boolean;
+    isLockVisible(): boolean;
+    isLockPinned(): boolean;
 }

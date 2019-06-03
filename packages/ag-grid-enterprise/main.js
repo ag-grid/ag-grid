@@ -104,9 +104,6 @@ var fillHandle_2 = require("./dist/lib/widgets/selection/fillHandle");
 exports.FillHandle = fillHandle_2.FillHandle;
 var rangeHandle_2 = require("./dist/lib/widgets/selection/rangeHandle");
 exports.RangeHandle = rangeHandle_2.RangeHandle;
-// modules
-// spl put in exports...
-// export { ChartsModule } from "./modules/chartModule";
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
 ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, excelXlsxFactory_1.ExcelXlsxFactory,
     rangeController_1.RangeController, clipboardService_1.ClipboardService, pivotStage_1.PivotStage, pivotColDefService_1.PivotColDefService,

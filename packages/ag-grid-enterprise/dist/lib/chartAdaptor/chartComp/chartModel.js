@@ -38,7 +38,9 @@ var ChartModel = /** @class */ (function (_super) {
         _this.cellRanges = params.cellRanges;
         _this.palettes = params.palettes;
         _this.activePalette = params.activePalette;
-        _this.chartId = 'id-' + Math.random().toString(36).substr(2, 16);
+        _this.suppressChartRanges = params.suppressChartRanges;
+        // this is used associate chart ranges with charts
+        _this.chartId = _this.generateId();
         return _this;
     }
     ChartModel.prototype.init = function () {
@@ -196,6 +198,9 @@ var ChartModel = /** @class */ (function (_super) {
     ChartModel.prototype.getPalettes = function () {
         return this.palettes;
     };
+    ChartModel.prototype.isSuppressChartRanges = function () {
+        return this.suppressChartRanges;
+    };
     ChartModel.prototype.getSelectedColState = function () {
         return this.valueColState.filter(function (cs) { return cs.selected; });
     };
@@ -280,6 +285,9 @@ var ChartModel = /** @class */ (function (_super) {
             isNumberCol ? valueCols.push(col) : dimensionCols.push(col);
         });
         return { dimensionCols: dimensionCols, valueCols: valueCols };
+    };
+    ChartModel.prototype.generateId = function () {
+        return 'id-' + Math.random().toString(36).substr(2, 16);
     };
     ChartModel.prototype.destroy = function () {
         _super.prototype.destroy.call(this);

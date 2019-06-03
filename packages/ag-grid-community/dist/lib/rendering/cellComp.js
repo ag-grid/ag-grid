@@ -1208,8 +1208,9 @@ var CellComp = /** @class */ (function (_super) {
         // behind, making it impossible to select the text field.
         var forceBrowserFocus = false;
         var button = mouseEvent.button, ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey, target = mouseEvent.target;
-        if (this.beans.rangeController) {
-            var cellInRange = this.beans.rangeController.isCellInAnyRange(this.getCellPosition());
+        var _a = this.beans, eventService = _a.eventService, rangeController = _a.rangeController;
+        if (rangeController) {
+            var cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
             if (cellInRange && button === 2) {
                 return;
             }
@@ -1219,7 +1220,7 @@ var CellComp = /** @class */ (function (_super) {
                 forceBrowserFocus = true;
             }
         }
-        if (!shiftKey || !this.beans.rangeController.getCellRanges().length) {
+        if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
             this.focusCell(forceBrowserFocus);
         }
         else {
@@ -1235,18 +1236,18 @@ var CellComp = /** @class */ (function (_super) {
         // don't change the range, however if the cell is not in a range,
         // we set a new range
         var leftMouseButtonClick = utils_1._.isLeftClick(mouseEvent);
-        if (leftMouseButtonClick && this.beans.rangeController) {
+        if (leftMouseButtonClick && rangeController) {
             var thisCell = this.cellPosition;
             if (shiftKey) {
-                this.beans.rangeController.extendLatestRangeToCell(thisCell);
+                rangeController.extendLatestRangeToCell(thisCell);
             }
             else {
                 var ctrlKeyPressed = ctrlKey || metaKey;
-                this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
+                rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
         var cellMouseDownEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN);
-        this.beans.eventService.dispatchEvent(cellMouseDownEvent);
+        eventService.dispatchEvent(cellMouseDownEvent);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {

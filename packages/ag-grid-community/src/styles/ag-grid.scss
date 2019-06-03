@@ -1121,6 +1121,25 @@ $handleSize: 5px;
 
 /**
  ****************************
+ * Pagination
+ ****************************
+*/
+.ag-paging-panel {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ag-paging-page-summary-panel {
+    display: flex;
+    align-items: center;
+    .ag-disabled { 
+        pointer-events: none;
+    }
+}
+
+/**
+ ****************************
  * Tool Panel
  ****************************
 */

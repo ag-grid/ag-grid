@@ -10680,6 +10680,24 @@ var Column = /** @class */ (function () {
         }
         return menuTabs;
     };
+    // this used to be needed, as previous version of ag-grid had lockPosition as column state,
+    // so couldn't depend on colDef version.
+    Column.prototype.isLockPosition = function () {
+        console.warn('ag-Grid: since v21, col.isLockPosition() should not be used, please use col.getColDef().lockPosition instead.');
+        return this.colDef ? !!this.colDef.lockPosition : false;
+    };
+    // this used to be needed, as previous version of ag-grid had lockVisible as column state,
+    // so couldn't depend on colDef version.
+    Column.prototype.isLockVisible = function () {
+        console.warn('ag-Grid: since v21, col.isLockVisible() should not be used, please use col.getColDef().lockVisible instead.');
+        return this.colDef ? !!this.colDef.lockVisible : false;
+    };
+    // this used to be needed, as previous version of ag-grid had lockPinned as column state,
+    // so couldn't depend on colDef version.
+    Column.prototype.isLockPinned = function () {
+        console.warn('ag-Grid: since v21, col.isLockPinned() should not be used, please use col.getColDef().lockPinned instead.');
+        return this.colDef ? !!this.colDef.lockPinned : false;
+    };
     // + renderedHeaderCell - for making header cell transparent when moving
     Column.EVENT_MOVING_CHANGED = 'movingChanged';
     // + renderedCell - changing left position
@@ -12660,12 +12678,12 @@ var RowRenderer = /** @class */ (function (_super) {
         if (!nextCell) {
             return;
         }
-        this.ensureCellVisible(nextCell);
         // in case we have col spanning we get the cellComp and use it to
         // get the position. This was we always focus the first cell inside
         // the spanning.
         var cellComp = this.getComponentForCell(nextCell);
         nextCell = cellComp.getCellPosition();
+        this.ensureCellVisible(nextCell);
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
@@ -15524,8 +15542,9 @@ var CellComp = /** @class */ (function (_super) {
         // behind, making it impossible to select the text field.
         var forceBrowserFocus = false;
         var button = mouseEvent.button, ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey, target = mouseEvent.target;
-        if (this.beans.rangeController) {
-            var cellInRange = this.beans.rangeController.isCellInAnyRange(this.getCellPosition());
+        var _a = this.beans, eventService = _a.eventService, rangeController = _a.rangeController;
+        if (rangeController) {
+            var cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
             if (cellInRange && button === 2) {
                 return;
             }
@@ -15535,7 +15554,7 @@ var CellComp = /** @class */ (function (_super) {
                 forceBrowserFocus = true;
             }
         }
-        if (!shiftKey || !this.beans.rangeController.getCellRanges().length) {
+        if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
             this.focusCell(forceBrowserFocus);
         }
         else {
@@ -15551,18 +15570,18 @@ var CellComp = /** @class */ (function (_super) {
         // don't change the range, however if the cell is not in a range,
         // we set a new range
         var leftMouseButtonClick = utils_1._.isLeftClick(mouseEvent);
-        if (leftMouseButtonClick && this.beans.rangeController) {
+        if (leftMouseButtonClick && rangeController) {
             var thisCell = this.cellPosition;
             if (shiftKey) {
-                this.beans.rangeController.extendLatestRangeToCell(thisCell);
+                rangeController.extendLatestRangeToCell(thisCell);
             }
             else {
                 var ctrlKeyPressed = ctrlKey || metaKey;
-                this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
+                rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
         var cellMouseDownEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN);
-        this.beans.eventService.dispatchEvent(cellMouseDownEvent);
+        eventService.dispatchEvent(cellMouseDownEvent);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
@@ -38974,7 +38993,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var strPrevious = localeTextFunc('previous', 'Previous');
         var strNext = localeTextFunc('next', 'Next');
         var strLast = localeTextFunc('last', 'Last');
-        return "<div class=\"ag-paging-panel ag-unselectable\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\"></span> " + strTo + " <span ref=\"lbLastRowOnPage\"></span> " + strOf + " <span ref=\"lbRecordCount\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btFirst\">" + strFirst + "</button>\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btPrevious\">" + strPrevious + "</button>\n                    " + strPage + " <span ref=\"lbCurrent\"></span> " + strOf + " <span ref=\"lbTotal\"></span>\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btNext\">" + strNext + "</button>\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btLast\">" + strLast + "</button>\n                </span>\n            </div>";
+        return "<div class=\"ag-paging-panel ag-unselectable\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\"></span> " + strTo + " <span ref=\"lbLastRowOnPage\"></span> " + strOf + " <span ref=\"lbRecordCount\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <div class=\"ag-icon ag-icon-first\" ref=\"btFirst\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strFirst + "</button>\n                    </div>\n                    <div class=\"ag-icon ag-icon-previous\" ref=\"btPrevious\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strPrevious + "</button>\n                    </div>\n                    " + strPage + " <span ref=\"lbCurrent\"></span> " + strOf + " <span ref=\"lbTotal\"></span>\n                    <div class=\"ag-icon ag-icon-next\" ref=\"btNext\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strNext + "</button>\n                    </div>\n                    <div class=\"ag-icon ag-icon-last\" ref=\"btLast\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strLast + "</button>\n                    </div>\n                </span>\n            </div>";
     };
     PaginationComp.prototype.onBtNext = function () {
         this.paginationProxy.goToNextPage();
@@ -38993,14 +39012,14 @@ var PaginationComp = /** @class */ (function (_super) {
         var maxRowFound = this.paginationProxy.isLastPageFound();
         var totalPages = this.paginationProxy.getTotalPages();
         var disablePreviousAndFirst = currentPage === 0;
-        this.btPrevious.disabled = disablePreviousAndFirst;
-        this.btFirst.disabled = disablePreviousAndFirst;
+        utils_1._.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', disablePreviousAndFirst);
+        utils_1._.addOrRemoveCssClass(this.btFirst, 'ag-disabled', disablePreviousAndFirst);
         var zeroPagesToDisplay = this.isZeroPagesToDisplay();
         var onLastPage = maxRowFound && currentPage === (totalPages - 1);
         var disableNext = onLastPage || zeroPagesToDisplay;
-        this.btNext.disabled = disableNext;
+        utils_1._.addOrRemoveCssClass(this.btNext, 'ag-disabled', disableNext);
         var disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        this.btLast.disabled = disableLast;
+        utils_1._.addOrRemoveCssClass(this.btLast, 'ag-disabled', disableLast);
     };
     PaginationComp.prototype.updateRowLabels = function () {
         var currentPage = this.paginationProxy.getCurrentPage();

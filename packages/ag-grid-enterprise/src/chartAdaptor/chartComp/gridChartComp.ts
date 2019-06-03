@@ -25,6 +25,7 @@ export interface GridChartParams {
     cellRange: CellRange;
     chartType: ChartType;
     insideDialog: boolean;
+    suppressChartRanges: boolean;
     aggregate: boolean;
     height: number;
     width: number;
@@ -64,6 +65,7 @@ export class GridChartComp extends Component {
             chartType: this.params.chartType,
             aggregate: this.params.aggregate,
             cellRanges: [this.params.cellRange],
+            suppressChartRanges: this.params.suppressChartRanges,
             palettes: palettes,
             activePalette: 0
         };

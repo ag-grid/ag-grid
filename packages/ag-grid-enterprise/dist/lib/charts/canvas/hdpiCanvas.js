@@ -11,17 +11,18 @@ var HdpiCanvas = /** @class */ (function () {
     function HdpiCanvas(width, height) {
         if (width === void 0) { width = 300; }
         if (height === void 0) { height = 150; }
-        this._parent = null;
         this.canvas = document.createElement('canvas');
         this.context = this.canvas.getContext('2d');
-        // `NaN` is deliberate here, so that overrides are always applied
-        // and the `resetTransform` inside the `resize` method works in IE11.
-        this._pixelRatio = NaN;
         /**
          * The canvas flickers on size changes in Safari.
          * A temporary canvas is used (during resize only) to prevent that.
          */
         this.tempCanvas = document.createElement('canvas');
+        this._parent = null;
+        // `NaN` is deliberate here, so that overrides are always applied
+        // and the `resetTransform` inside the `resize` method works in IE11.
+        this._pixelRatio = NaN;
+        this.canvas.style.userSelect = 'none';
         this.updatePixelRatio(0, false);
         this.resize(width, height);
     }

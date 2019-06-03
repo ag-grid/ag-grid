@@ -360,8 +360,10 @@ class StyledRenderer extends Component {
 </snippet>
 
     <h3 id="react-hooks">React Hooks</h3>
-    <p>React Hooks are fully supported - please refer to our working example in <a
+    <p>React Hooks are fully supported as cell renderers - please refer to our working example in <a
                 href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
+
+    <note>You can currently use Hooks for renderers only - support for React Hooks in Editors/Filter etc is not currently supported.</note>
 
     <h2 id="react-row-data-control">Row Data Control</h2>
     <p>By default the ag-Grid React component will check props passed in to deteremine if data has changed and will only re-render based on actual changes.</p>

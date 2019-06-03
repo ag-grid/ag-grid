@@ -60,11 +60,11 @@ export class RangeChartService implements IRangeChartService {
         }
 
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, params.chartContainer, params.aggregate);
+            return this.chartRange(cellRange, chartType, params.chartContainer, params.suppressChartRanges, params.aggregate);
         }
     }
 
-    private chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, aggregate = false): ChartRef | undefined {
+    private chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, suppressChartRanges = false, aggregate = false): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -72,6 +72,7 @@ export class RangeChartService implements IRangeChartService {
             cellRange: cellRange,
             chartType: chartType,
             insideDialog: !(container || createChartContainerFunc),
+            suppressChartRanges: suppressChartRanges,
             aggregate: aggregate,
             height: 400, //TODO
             width: 800   //TODO

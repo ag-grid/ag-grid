@@ -86,7 +86,9 @@ var ChartController = /** @class */ (function (_super) {
         return { dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState() };
     };
     ChartController.prototype.setChartRange = function () {
-        this.rangeController.setCellRanges(this.model.getCellRanges());
+        if (!this.model.isSuppressChartRanges()) {
+            this.rangeController.setCellRanges(this.model.getCellRanges());
+        }
     };
     ChartController.prototype.raiseChartUpdatedEvent = function () {
         var event = {

@@ -529,6 +529,24 @@ var Column = /** @class */ (function () {
         }
         return menuTabs;
     };
+    // this used to be needed, as previous version of ag-grid had lockPosition as column state,
+    // so couldn't depend on colDef version.
+    Column.prototype.isLockPosition = function () {
+        console.warn('ag-Grid: since v21, col.isLockPosition() should not be used, please use col.getColDef().lockPosition instead.');
+        return this.colDef ? !!this.colDef.lockPosition : false;
+    };
+    // this used to be needed, as previous version of ag-grid had lockVisible as column state,
+    // so couldn't depend on colDef version.
+    Column.prototype.isLockVisible = function () {
+        console.warn('ag-Grid: since v21, col.isLockVisible() should not be used, please use col.getColDef().lockVisible instead.');
+        return this.colDef ? !!this.colDef.lockVisible : false;
+    };
+    // this used to be needed, as previous version of ag-grid had lockPinned as column state,
+    // so couldn't depend on colDef version.
+    Column.prototype.isLockPinned = function () {
+        console.warn('ag-Grid: since v21, col.isLockPinned() should not be used, please use col.getColDef().lockPinned instead.');
+        return this.colDef ? !!this.colDef.lockPinned : false;
+    };
     // + renderedHeaderCell - for making header cell transparent when moving
     Column.EVENT_MOVING_CHANGED = 'movingChanged';
     // + renderedCell - changing left position

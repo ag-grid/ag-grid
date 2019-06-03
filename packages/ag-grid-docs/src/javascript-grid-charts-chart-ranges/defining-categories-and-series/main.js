@@ -36,7 +36,6 @@ var gridOptions = {
         };
 
         params.api.chartRange(chartRangeParams);
-
         setTimeout(() => params.api.sizeColumnsToFit(), 100);
         // params.api.sizeColumnsToFit();
     },
@@ -47,15 +46,14 @@ var gridOptions = {
         opt.legendPosition = 'bottom';
         // opt.legendPadding = 0;
 
-        // if (params.type === 'bar') {
-        //
-        //     opt.yAxis.labelFormatter = (value) => value % 1 === 0 ? value.toFixed(0) : '';
-        //
-        //     opt.seriesDefaults.tooltipRenderer = (params) => {
-        //         const value = params.datum[params.yField];
-        //         return `<b>${params.yField}</b>: ${value}`;
-        //     };
-        // }
+        if (params.type === 'bar') {
+            opt.yAxis.labelFormatter = (value) => value % 1 === 0 ? value.toFixed(0) : '';
+        }
+
+        opt.seriesDefaults.tooltipRenderer = (params) => {
+            const value = params.datum[params.yField];
+            return `<b>${params.yField}</b>: ${value}`;
+        };
 
         return opt;
     },

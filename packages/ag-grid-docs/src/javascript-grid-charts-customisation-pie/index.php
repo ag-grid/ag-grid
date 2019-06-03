@@ -20,10 +20,12 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface PieChartOptions {
-    // width of chart in pixels
-    width?: number,
-    // height of chart in pixels
-    height?: number;
+    // The chart title to render at the top of the chart.
+    title?: CaptionOptions;
+    // The subtitle to render under the chart's title.
+    // If the title is not not specified or disabled, the subtitle won't be visible either.
+    subtitle?: CaptionOptions;
+
     // The padding of contents from the edges of the chart.
     padding?: {
         top: number;
@@ -65,8 +67,6 @@ interface PieChartOptions {
         fills?: string[];
         // The stroke colors of pie slices. Darker versions of fill colors by default.
         strokes?: string[];
-        // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
-        tooltipEnabled?: boolean;
 
         // Whether to show pie slice labels or not.
         labelEnabled?: boolean;
@@ -98,9 +98,25 @@ interface PieChartOptions {
             blur?: number;
         };
 
+        // Whether to show the tooltip for bars when they are hovered/tapped.
+        // Defaults to `true`.
+        tooltipEnabled?: boolean;
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: DoughnutTooltipRendererParams) => string;
     };
+}
+
+interface CaptionOptions {
+    // The text to use for the chart's title/subtitle.
+    text?: string;
+    // The font to be used by the title/subtitle.
+    // Defaults to `bold 16px Verdana, sans-serif` for the title
+    // and '12px Verdana, sans-serif' for the subtitle.
+    font?: string;
+    // The color of the title/subtitle's text. Defaults to `black`.
+    color?: string;
+    // Whether to show the title/subtitle or not. Defaults to `true`.
+    enabled?: boolean;
 }
 
 interface PieTooltipRendererParams {

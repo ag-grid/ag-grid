@@ -14,6 +14,7 @@ export interface ChartModelParams {
     cellRanges: CellRange[];
     palettes: Palette[];
     activePalette: number;
+    suppressChartRanges: boolean;
 }
 export declare class ChartModel extends BeanStub {
     static DEFAULT_CATEGORY: string;
@@ -28,6 +29,7 @@ export declare class ChartModel extends BeanStub {
     private chartType;
     private activePalette;
     private palettes;
+    private suppressChartRanges;
     private readonly aggregate;
     private initialising;
     private datasource;
@@ -48,6 +50,7 @@ export declare class ChartModel extends BeanStub {
     setActivePalette(palette: number): void;
     getActivePalette(): number;
     getPalettes(): Palette[];
+    isSuppressChartRanges(): boolean;
     getSelectedColState(): ColState[];
     getSelectedValueCols(): Column[];
     getSelectedDimensionId(): string;
@@ -57,5 +60,6 @@ export declare class ChartModel extends BeanStub {
     private getColDisplayName;
     private getRowIndexes;
     private getAllChartColumns;
+    private generateId;
     destroy(): void;
 }

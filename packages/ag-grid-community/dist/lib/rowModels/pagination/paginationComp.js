@@ -91,7 +91,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var strPrevious = localeTextFunc('previous', 'Previous');
         var strNext = localeTextFunc('next', 'Next');
         var strLast = localeTextFunc('last', 'Last');
-        return "<div class=\"ag-paging-panel ag-unselectable\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\"></span> " + strTo + " <span ref=\"lbLastRowOnPage\"></span> " + strOf + " <span ref=\"lbRecordCount\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btFirst\">" + strFirst + "</button>\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btPrevious\">" + strPrevious + "</button>\n                    " + strPage + " <span ref=\"lbCurrent\"></span> " + strOf + " <span ref=\"lbTotal\"></span>\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btNext\">" + strNext + "</button>\n                    <button type=\"button\" class=\"ag-paging-button\" ref=\"btLast\">" + strLast + "</button>\n                </span>\n            </div>";
+        return "<div class=\"ag-paging-panel ag-unselectable\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\"></span> " + strTo + " <span ref=\"lbLastRowOnPage\"></span> " + strOf + " <span ref=\"lbRecordCount\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <div class=\"ag-icon ag-icon-first\" ref=\"btFirst\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strFirst + "</button>\n                    </div>\n                    <div class=\"ag-icon ag-icon-previous\" ref=\"btPrevious\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strPrevious + "</button>\n                    </div>\n                    " + strPage + " <span ref=\"lbCurrent\"></span> " + strOf + " <span ref=\"lbTotal\"></span>\n                    <div class=\"ag-icon ag-icon-next\" ref=\"btNext\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strNext + "</button>\n                    </div>\n                    <div class=\"ag-icon ag-icon-last\" ref=\"btLast\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strLast + "</button>\n                    </div>\n                </span>\n            </div>";
     };
     PaginationComp.prototype.onBtNext = function () {
         this.paginationProxy.goToNextPage();
@@ -110,14 +110,14 @@ var PaginationComp = /** @class */ (function (_super) {
         var maxRowFound = this.paginationProxy.isLastPageFound();
         var totalPages = this.paginationProxy.getTotalPages();
         var disablePreviousAndFirst = currentPage === 0;
-        this.btPrevious.disabled = disablePreviousAndFirst;
-        this.btFirst.disabled = disablePreviousAndFirst;
+        utils_1._.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', disablePreviousAndFirst);
+        utils_1._.addOrRemoveCssClass(this.btFirst, 'ag-disabled', disablePreviousAndFirst);
         var zeroPagesToDisplay = this.isZeroPagesToDisplay();
         var onLastPage = maxRowFound && currentPage === (totalPages - 1);
         var disableNext = onLastPage || zeroPagesToDisplay;
-        this.btNext.disabled = disableNext;
+        utils_1._.addOrRemoveCssClass(this.btNext, 'ag-disabled', disableNext);
         var disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        this.btLast.disabled = disableLast;
+        utils_1._.addOrRemoveCssClass(this.btLast, 'ag-disabled', disableLast);
     };
     PaginationComp.prototype.updateRowLabels = function () {
         var currentPage = this.paginationProxy.getCurrentPage();

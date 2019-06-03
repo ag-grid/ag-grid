@@ -441,8 +441,8 @@ var PieSeries = /** @class */ (function (_super) {
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce(function (start, end) {
             var radius = useRadiusField ? radiusData[datumIndex] : 1;
-            var startAngle = angleScale.convert(start + rotation);
-            var endAngle = angleScale.convert(end + rotation);
+            var startAngle = angleScale.convert(start) + rotation;
+            var endAngle = angleScale.convert(end) + rotation;
             var midAngle = (startAngle + endAngle) / 2;
             var span = Math.abs(endAngle - startAngle);
             var midCos = Math.cos(midAngle);
@@ -475,7 +475,7 @@ var PieSeries = /** @class */ (function (_super) {
                 radius: radius,
                 startAngle: startAngle,
                 endAngle: endAngle,
-                midAngle: angle_1.normalizeAngle180(midAngle),
+                midAngle: midAngle,
                 midCos: midCos,
                 midSin: midSin,
                 label: labelVisible ? {

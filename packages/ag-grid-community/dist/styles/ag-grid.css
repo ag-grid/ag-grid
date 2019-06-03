@@ -1141,6 +1141,32 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 /**
  ****************************
+ * Pagination
+ ****************************
+*/
+.ag-paging-panel {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end; }
+
+.ag-paging-page-summary-panel {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+  .ag-paging-page-summary-panel .ag-disabled {
+    pointer-events: none; }
+
+/**
+ ****************************
  * Tool Panel
  ****************************
 */

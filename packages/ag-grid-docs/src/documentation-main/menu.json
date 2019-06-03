@@ -544,6 +544,11 @@
         "enterprise": true
       },
       {
+        "title": "Chart API",
+        "url": "javascript-grid-charts-chart-range-api/",
+        "enterprise": true
+      },
+      {
         "title": "Chart Toolbar",
         "url": "javascript-grid-charts-chart-toolbar/",
         "enterprise": true
@@ -570,6 +575,11 @@
             "url": "javascript-grid-charts-customisation-doughnut/"
           }
         ]
+      },
+      {
+        "title": "Overview (Old)",
+        "url": "javascript-grid-charts-overview-old/",
+        "enterprise": true
       }
     ]
   },

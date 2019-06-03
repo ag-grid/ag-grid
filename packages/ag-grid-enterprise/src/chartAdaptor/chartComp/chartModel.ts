@@ -28,6 +28,7 @@ export interface ChartModelParams {
     cellRanges: CellRange[];
     palettes: Palette[];
     activePalette: number;
+    suppressChartRanges: boolean;
 }
 
 export class ChartModel extends BeanStub {
@@ -48,6 +49,7 @@ export class ChartModel extends BeanStub {
     private chartType: ChartType;
     private activePalette: number;
     private palettes: Palette[];
+    private suppressChartRanges: boolean;
 
     private readonly aggregate: boolean;
 
@@ -65,8 +67,10 @@ export class ChartModel extends BeanStub {
         this.cellRanges = params.cellRanges;
         this.palettes = params.palettes;
         this.activePalette = params.activePalette;
+        this.suppressChartRanges = params.suppressChartRanges;
 
-        this.chartId = 'id-' + Math.random().toString(36).substr(2, 16);
+        // this is used associate chart ranges with charts
+        this.chartId = this.generateId();
     }
 
     @PostConstruct
@@ -254,6 +258,10 @@ export class ChartModel extends BeanStub {
         return this.palettes;
     }
 
+    public isSuppressChartRanges(): boolean {
+        return this.suppressChartRanges;
+    }
+
     public getSelectedColState(): ColState[] {
         return this.valueColState.filter(cs => cs.selected);
     }
@@ -351,6 +359,10 @@ export class ChartModel extends BeanStub {
         });
 
         return {dimensionCols, valueCols};
+    }
+
+    private generateId(): string {
+        return 'id-' + Math.random().toString(36).substr(2, 16);
     }
 
     public destroy() {

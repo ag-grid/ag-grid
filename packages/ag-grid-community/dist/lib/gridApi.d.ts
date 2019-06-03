@@ -52,6 +52,7 @@ export interface ChartRangeParams {
     cellRange: CellRangeParams;
     chartType: string;
     chartContainer?: HTMLElement;
+    suppressChartRanges?: boolean;
     aggregate?: boolean;
 }
 export interface DetailGridInfo {

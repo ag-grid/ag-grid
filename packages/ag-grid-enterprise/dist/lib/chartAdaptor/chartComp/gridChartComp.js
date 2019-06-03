@@ -44,6 +44,7 @@ var GridChartComp = /** @class */ (function (_super) {
             chartType: this.params.chartType,
             aggregate: this.params.aggregate,
             cellRanges: [this.params.cellRange],
+            suppressChartRanges: this.params.suppressChartRanges,
             palettes: palettes_1.palettes,
             activePalette: 0
         };

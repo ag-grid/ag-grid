@@ -51,17 +51,19 @@ var RangeChartService = /** @class */ (function () {
                 chartType = ag_grid_community_1.ChartType.GroupedBar;
         }
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, params.chartContainer, params.aggregate);
+            return this.chartRange(cellRange, chartType, params.chartContainer, params.suppressChartRanges, params.aggregate);
         }
     };
-    RangeChartService.prototype.chartRange = function (cellRange, chartType, container, aggregate) {
+    RangeChartService.prototype.chartRange = function (cellRange, chartType, container, suppressChartRanges, aggregate) {
         var _this = this;
+        if (suppressChartRanges === void 0) { suppressChartRanges = false; }
         if (aggregate === void 0) { aggregate = false; }
         var createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
         var params = {
             cellRange: cellRange,
             chartType: chartType,
             insideDialog: !(container || createChartContainerFunc),
+            suppressChartRanges: suppressChartRanges,
             aggregate: aggregate,
             height: 400,
             width: 800 //TODO

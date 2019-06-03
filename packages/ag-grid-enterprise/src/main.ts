@@ -67,10 +67,6 @@ export { WatermarkComp } from "./license/watermark";
 export { FillHandle } from "./widgets/selection/fillHandle";
 export { RangeHandle } from "./widgets/selection/rangeHandle";
 
-// modules
-// spl put in exports...
-// export { ChartsModule } from "./modules/chartModule";
-
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,

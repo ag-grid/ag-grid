@@ -1454,9 +1454,10 @@ export class CellComp extends Component {
         // behind, making it impossible to select the text field.
         let forceBrowserFocus = false;
         const {button, ctrlKey, metaKey, shiftKey, target} = mouseEvent;
+        const { eventService, rangeController } = this.beans;
 
-        if (this.beans.rangeController) {
-            const cellInRange = this.beans.rangeController.isCellInAnyRange(this.getCellPosition());
+        if (rangeController) {
+            const cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
 
             if (cellInRange && button === 2) {
                 return;
@@ -1469,7 +1470,7 @@ export class CellComp extends Component {
             }
         }
 
-        if (!shiftKey || !this.beans.rangeController.getCellRanges().length) {
+        if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
             this.focusCell(forceBrowserFocus);
         } else {
             // if a range is being changed, we need to make sure the focused cell does not change.
@@ -1486,18 +1487,18 @@ export class CellComp extends Component {
         // don't change the range, however if the cell is not in a range,
         // we set a new range
         const leftMouseButtonClick = _.isLeftClick(mouseEvent);
-        if (leftMouseButtonClick && this.beans.rangeController) {
+        if (leftMouseButtonClick && rangeController) {
             const thisCell = this.cellPosition;
             if (shiftKey) {
-                this.beans.rangeController.extendLatestRangeToCell(thisCell);
+                rangeController.extendLatestRangeToCell(thisCell);
             } else {
                 const ctrlKeyPressed = ctrlKey || metaKey;
-                this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
+                rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
 
         const cellMouseDownEvent: CellMouseDownEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN);
-        this.beans.eventService.dispatchEvent(cellMouseDownEvent);
+        eventService.dispatchEvent(cellMouseDownEvent);
     }
 
     // returns true if on iPad and this is second 'click' event in 200ms

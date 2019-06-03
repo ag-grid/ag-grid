@@ -396,8 +396,8 @@ export class PieSeries extends Series<PolarChart> {
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
             const radius = useRadiusField ? radiusData[datumIndex] : 1;
-            const startAngle = angleScale.convert(start + rotation);
-            const endAngle = angleScale.convert(end + rotation);
+            const startAngle = angleScale.convert(start) + rotation;
+            const endAngle = angleScale.convert(end) + rotation;
 
             const midAngle = (startAngle + endAngle) / 2;
             const span = Math.abs(endAngle - startAngle);
@@ -432,7 +432,7 @@ export class PieSeries extends Series<PolarChart> {
                 radius,
                 startAngle,
                 endAngle,
-                midAngle: normalizeAngle180(midAngle),
+                midAngle,
                 midCos,
                 midSin,
 
