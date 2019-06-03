@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        To see how chart ranges are created from a cell range, do the following on our <a href="../example.php">demo page</a>:
+        To see how chart ranges are created from a cell range, using our <a href="../example.php">demo page</a> do the following:
     </p>
 
     <ul>
