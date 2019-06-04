@@ -66,7 +66,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                22nd Mar 2019: <a href="./ag-grid-changelog/?fixVersion=20.2.0">Version 20.2.0</a> Tree Data filtering, Enhanced Custom Filters, Column Group Header Spanning and bug fixes ...
+                4th Jun 2019: <a href="./ag-grid-changelog/?fixVersion=21.0.0">Version 21.0.0</a> Integrated Charts, Filtering Improvements, Icon Customisation and Better Scroll Performance with bug fixes ...
             </div>
         </section>
 

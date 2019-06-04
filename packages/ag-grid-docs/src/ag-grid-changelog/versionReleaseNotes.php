@@ -33,7 +33,10 @@
             with us if you decided to start using ag-Grid inside your project.
         </li>
 
-        <li>AG-2984 - Replaced all SVG icons with a WebFont.</li>
+        <li>
+            AG-2983 - Improved customisation for icons (see <a href="/javascript-grid-icons/">Custom Icons</a>).
+        </li>
+
         <li>AG-2663 - React - Declarative Column Definitions Now Reactive.</li>
         <li>AG-2536 - React - Component Container Configurable (see <a href="/react-more-details/#control-react-components-container">Control React Components Container</a>).</li>
         <li>AG-2656 - React - Allow React Change Detection to be Configurable (see <a href="/react-more-details/#react-row-data-control">Row Data Control</a>).</li>
@@ -57,8 +60,7 @@
         </li>
 
         <li>
-            AG-2983 - Change icons implementation to make customisation easier
-            (see <a href="/javascript-grid-icons/">Custom Icons</a>).
+            AG-2984 - Replaced all SVG icons with a WebFont (see <a href="/javascript-grid-icons/">Custom Icons</a>).
         </li>
     </ul>
 </div>
