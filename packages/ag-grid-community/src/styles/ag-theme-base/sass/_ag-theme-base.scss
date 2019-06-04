@@ -986,10 +986,10 @@
     ////////////////////////////////////////
     // Selection checkbox
     ////////////////////////////////////////
-    .ag-selection-checkbox,
-    .ag-group-checkbox:not(.ag-invisible),
+    .ag-selection-checkbox:not(.ag-hidden),
     .ag-group-expanded:not(.ag-hidden),
-    .ag-group-contracted:not(.ag-hidden) {
+    .ag-group-contracted:not(.ag-hidden),
+    .ag-group-checkbox:not(.ag-invisible) {
         ~ .ag-cell-value, + .ag-group-value {
             &:not(:empty) {
                 margin-left: $cell-horizontal-padding;
