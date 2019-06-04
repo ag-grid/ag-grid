@@ -24,7 +24,8 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
-import { ChartRef } from "./entities/gridOptions";
+import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
+import { ChartOptions } from "./interfaces/iChartOptions";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -54,6 +55,7 @@ export interface ChartRangeParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggregate?: boolean;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 export interface DetailGridInfo {
     id: string;

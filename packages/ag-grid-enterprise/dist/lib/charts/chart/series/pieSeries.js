@@ -35,8 +35,7 @@ var PieSeriesNodeTag;
 var PieSeries = /** @class */ (function (_super) {
     __extends(PieSeries, _super);
     function PieSeries() {
-        var _this = _super.call(this) || this;
-        _this.titleNode = new text_1.Text();
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.radiusScale = linearScale_1.default();
         _this.groupSelection = selection_1.Selection.select(_this.group).selectAll();
         /**
@@ -52,9 +51,7 @@ var PieSeries = /** @class */ (function (_super) {
             scale.range = [-Math.PI, Math.PI].map(function (angle) { return angle + Math.PI / 2; });
             return scale;
         })();
-        _this._title = '';
-        _this._titleEnabled = false;
-        _this._titleFont = 'bold 12px Verdana, sans-serif';
+        _this._title = undefined;
         /**
          * `null` means make the callout color the same as {@link strokeStyle}.
          */
@@ -93,12 +90,6 @@ var PieSeries = /** @class */ (function (_super) {
         _this._innerRadiusOffset = 0;
         _this._strokeWidth = 1;
         _this._shadow = undefined;
-        var title = _this.titleNode;
-        title.pointerEvents = node_1.PointerEvents.None;
-        title.fill = _this.labelColor;
-        title.textAlign = 'center';
-        title.textBaseline = 'bottom';
-        _this.group.appendChild(title);
         return _this;
     }
     Object.defineProperty(PieSeries.prototype, "data", {
@@ -122,34 +113,19 @@ var PieSeries = /** @class */ (function (_super) {
             return this._title;
         },
         set: function (value) {
-            if (this._title !== value) {
+            var _this = this;
+            var oldTitle = this._title;
+            if (oldTitle !== value) {
+                if (oldTitle) {
+                    oldTitle.onLayoutChange = undefined;
+                    this.group.removeChild(oldTitle.node);
+                }
+                if (value) {
+                    value.node.textBaseline = 'bottom';
+                    value.onLayoutChange = function () { return _this.scheduleLayout(); };
+                    this.group.appendChild(value.node);
+                }
                 this._title = value;
-                this.scheduleLayout();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PieSeries.prototype, "titleEnabled", {
-        get: function () {
-            return this._titleEnabled;
-        },
-        set: function (value) {
-            if (this._titleEnabled !== value) {
-                this._titleEnabled = value;
-                this.scheduleLayout();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PieSeries.prototype, "titleFont", {
-        get: function () {
-            return this._titleFont;
-        },
-        set: function (value) {
-            if (this._titleFont !== value) {
-                this._titleFont = value;
                 this.scheduleLayout();
             }
         },
@@ -505,12 +481,11 @@ var PieSeries = /** @class */ (function (_super) {
         radiusScale.range = [0, chart.radius];
         this.group.translationX = chart.centerX;
         this.group.translationY = chart.centerY;
-        var title = this.titleNode;
-        title.visible = this.titleEnabled;
-        title.translationY = -chart.radius - outerRadiusOffset - 2;
-        title.text = this.title;
-        title.fill = this.labelColor;
-        title.font = this.titleFont;
+        var title = this.title;
+        if (title) {
+            title.node.translationY = -chart.radius - outerRadiusOffset - 2;
+            title.node.visible = title.enabled;
+        }
         var updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(group_1.Group);
@@ -596,7 +571,7 @@ var PieSeries = /** @class */ (function (_super) {
             });
         }
         else {
-            var title = this.title ? "<div class=\"title\">" + this.title + "</div>" : '';
+            var title = this.title ? "<div class=\"title\">" + this.title.text + "</div>" : '';
             var label = this.labelField ? nodeDatum.seriesDatum[this.labelField] + ": " : '';
             var value = nodeDatum.seriesDatum[angleField];
             var formattedValue = typeof (value) === 'number' ? number_1.toFixed(value) : value.toString();

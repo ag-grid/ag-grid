@@ -8,8 +8,7 @@ var columnDefs = [
         filterParams: {
             includeBlanksInEquals: false,
             includeBlanksInLessThan: false,
-            includeBlanksInGreaterThan: false,
-            debounceMs: 0
+            includeBlanksInGreaterThan: false
         }
     },
     {
@@ -17,7 +16,6 @@ var columnDefs = [
         field: 'date',
         width: 145,
         filter: 'agDateColumnFilter',
-        debounceMs: 0,
         filterParams: {
             comparator: function(filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
@@ -60,15 +58,15 @@ function changeNull(toChange, value) {
     switch (toChange) {
         case 'equals':
             columnDefs[1].filterParams.includeBlanksInEquals = value;
-            columnDefs[4].filterParams.includeBlanksInEquals = value;
+            columnDefs[2].filterParams.includeBlanksInEquals = value;
             break;
         case 'lessThan':
             columnDefs[1].filterParams.includeBlanksInLessThan = value;
-            columnDefs[4].filterParams.includeBlanksInLessThan = value;
+            columnDefs[2].filterParams.includeBlanksInLessThan = value;
             break;
         case 'greaterThan':
             columnDefs[1].filterParams.includeBlanksInGreaterThan = value;
-            columnDefs[4].filterParams.includeBlanksInGreaterThan = value;
+            columnDefs[2].filterParams.includeBlanksInGreaterThan = value;
             break;
     }
     var filterModel = gridOptions.api.getFilterModel();

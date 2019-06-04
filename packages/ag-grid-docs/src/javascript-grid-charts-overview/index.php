@@ -9,16 +9,17 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Charts - BETA</h1>
 
     <p class="lead">
-       This section provides an overview of ag-Grid's built-in charting functionality.
+       This section introduces the grid's integrated charting functionality that allows users to chart directly inside
+        the grid and supports applications that want to create pre-defined charts.
     </p>
 
     <p>
-        The charting functionality provided by ag-Grid is deeply integrated with the grid. This integration gives users
+        The charting functionality is deeply integrated with the grid. This integration gives users
         a seamless charting experience while keeping the coding required by developers to a minimum.
     </p>
 
     <p>
-        In fact we are not aware of any other datagrid that provides such integration, as other companies may provide
+        We are not aware of any other datagrid that provides such integration. Other companies may provide
         a grid library and / or a charting library, but it's up to the developer to tie the two together.
     </p>
 
@@ -54,9 +55,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        // order of imports is important!
-        import 'ag-grid-enterprise/chartsModule';
         import 'ag-grid-enterprise';
+        import 'ag-grid-enterprise/chartsModule';
     </snippet>
 
     <p>
@@ -109,7 +109,7 @@ gridOptions = {
 
     <ul>
         <li>
-            Select a <a href="../javascript-grid-range-selection/">Cell Range</a> in the grid by dragging
+            Select a <a href="../javascript-grid-range-selection/">Cell Range</a> of numeric values in the grid by dragging
             the mouse over a range of cells.
         </li>
         <li>
@@ -127,22 +127,53 @@ gridOptions = {
         provided below:
     </p>
 
-    <ul>
-        <li><a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>: when a chart is created, corresponding
-            chart ranges appear in the grid and are adjusted via the chart range handle.
-        </li>
-        <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
-            columns can be configured as either categories / series for charting or left to the grid to infer based
-            on the data contained in the columns.
-        </li>
-        <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
-            located in the top left area of the chart, the chart toolbar allows users to perform actions after chart has
-            been created, such as change the chart type, colour palette and chart data.
-        </li>
-        <li><a href="../javascript-grid-charts-customisation/">Chart Customisation</a>: each chart type can be
-            customised to suit each applications requirements.
-        </li>
-    </ul>
+    <div style="display: flex; margin-bottom: 25px; margin-top: 25px;">
+
+        <div style="flex-grow: 1;">
+            <ul>
+                <p>
+                <li><a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>: When a chart is created, corresponding
+                    chart ranges appear in the grid and are adjusted via the chart range handle.
+                </li>
+                </p>
+                <p>
+                <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
+                    Columns can be configured as either categories or series for charting. If not configured then the
+                    grid will infer whether a column is category or series data.
+                </li>
+                </p>
+            </ul>
+        </div>
+
+        <img src="./category-range-fill-handle.png"/>
+
+    </div>
+
+    <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
+
+        <img src="./chart-toolbar.png"/>
+
+        <div style="flex-grow: 1;">
+            <ul>
+                <p>
+                    <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
+                    The chart toolbar is located in the top left area of the chart and allows users
+                    to perform the following actions:
+                </p>
+                    <p>
+                    <ul>
+                        <li style="padding-bottom: 5px">Change the chart type</li>
+                        <li style="padding-bottom: 5px">Change the colour palette</li>
+                        <li style="padding-bottom: 5px">Select categories and series</li>
+                        <li>Download the chart</li>
+                    </ul>
+                    </p>
+
+                </li>
+            </ul>
+        </div>
+
+    </div>
 
     <p>
         By default, user created charts are displayed inside the grid's own popup windows. The windows can be moved (by mouse
@@ -169,7 +200,7 @@ gridOptions = {
     </p>
 
     <p>
-        The dummy financial application below just touches on what is possible with ag-Grid's integrated grid and
+        The dummy financial application below just touches on what is possible with the grid's integrated
         charting capabilities. The following should be noted:
     </p>
 
@@ -186,7 +217,7 @@ gridOptions = {
         </li>
     </ul>
 
-    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array('height' => '150%', 'width' => '50%', 'enterprise' => true)) ?>
+    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array( "exampleHeight" => 660, 'enterprise' => true)) ?>
 
     <p>
         To learn how to create charts in your applications see the following sections for details:
@@ -200,6 +231,20 @@ gridOptions = {
             used to target chart containers inside the application instead of the popup window provided by the grid.
         </li>
     </ul>
+
+    <h2>Chart Customisation</h2>
+
+    <p>
+        Before each chart is created, the developer can do fine grained
+        <a href="../javascript-grid-charts-customisation/">Chart Customisation</a> to change the charts
+        appearance and behaviour. For example you can change the thickness of the lines, or customise the
+        formatting of the axis labels.
+    </p>
+
+    <p>
+        The section <a href="../javascript-grid-charts-customisation/">Chart Customisation</a> outlines all
+        the items that can be customised for each chart type.
+    </p>
 
     <h2>Next Up</h2>
 

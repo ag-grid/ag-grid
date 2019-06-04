@@ -252,7 +252,7 @@
         }
 
         input[type="date"] {
-            width: 0;
+            flex: 1 1 auto;
         }
 
         textarea {
@@ -386,6 +386,8 @@
     }
 
     .ag-row-drag {
+        // added 'move' as IE fallback
+        cursor: move;
         cursor: grab;
         min-width: $icon-size + $grid-size * 3;
     }
@@ -395,6 +397,8 @@
     }
 
     .ag-column-drag {
+        // added 'move' as IE fallback
+        cursor: move;
         cursor: grab;
     }
 
@@ -469,6 +473,7 @@
 
         .ag-menu-option-popup-pointer {
             width: $icon-size + $grid-size * 2;
+            text-align: center;
         }
     }
 
@@ -744,6 +749,7 @@
             }
 
             .ag-column-drop-list {
+                cursor: default;
                 margin-top: $grid-size;
             }
 
@@ -984,7 +990,6 @@
     .ag-group-checkbox:not(.ag-invisible),
     .ag-group-expanded:not(.ag-hidden),
     .ag-group-contracted:not(.ag-hidden) {
-        display: inline-flex;
         ~ .ag-cell-value, + .ag-group-value {
             &:not(:empty) {
                 margin-left: $cell-horizontal-padding;

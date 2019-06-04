@@ -497,7 +497,7 @@
     .ag-theme-material .ag-input-text-wrapper input[type="datetime-local"]:disabled {
       color: rgba(0, 0, 0, 0.38); }
   .ag-theme-material .ag-input-text-wrapper input[type="date"] {
-    width: 0; }
+    flex: 1 1 auto; }
   .ag-theme-material .ag-input-text-wrapper textarea {
     background: transparent;
     color: rgba(0, 0, 0, 0.87);
@@ -587,11 +587,13 @@
     padding-left: 23px;
     padding-right: 23px; }
   .ag-theme-material .ag-row-drag {
+    cursor: move;
     cursor: grab;
     min-width: 42px; }
   .ag-theme-material .ag-row-dragging, .ag-theme-material .ag-row-dragging .ag-row-drag {
     cursor: move; }
   .ag-theme-material .ag-column-drag {
+    cursor: move;
     cursor: grab; }
   .ag-theme-material .ag-row-dragging {
     opacity: 0.5; }
@@ -632,7 +634,8 @@
       .ag-theme-material .ag-menu .ag-menu-separator > span {
         background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'16px'%20viewBox%3D'0%200%201%2016px'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'8px'%20x2%3D'1'%20y2%3D'8px'%20stroke-width%3D'1'%20stroke%3D'%23E2E2E2'%2F%3E%3C%2Fsvg%3E"); }
     .ag-theme-material .ag-menu .ag-menu-option-popup-pointer {
-      width: 34px; }
+      width: 34px;
+      text-align: center; }
   .ag-theme-material.ag-dnd-ghost {
     background: #fff;
     border-radius: 2px;
@@ -802,6 +805,7 @@
         padding-right: 8px;
         margin-top: 8px; }
       .ag-theme-material .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-list {
+        cursor: default;
         margin-top: 8px; }
       .ag-theme-material .ag-tool-panel-wrapper .ag-column-drop > div > :first-child {
         padding-left: 8px;
@@ -924,24 +928,19 @@
     height: 18px;
     padding: 0;
     width: 18px; }
-  .ag-theme-material .ag-selection-checkbox,
-  .ag-theme-material .ag-group-checkbox:not(.ag-invisible),
-  .ag-theme-material .ag-group-expanded:not(.ag-hidden),
-  .ag-theme-material .ag-group-contracted:not(.ag-hidden) {
-    display: inline-flex; }
-    .ag-theme-material .ag-selection-checkbox ~ .ag-cell-value:not(:empty), .ag-theme-material .ag-selection-checkbox + .ag-group-value:not(:empty),
-    .ag-theme-material .ag-group-checkbox:not(.ag-invisible) ~ .ag-cell-value:not(:empty),
-    .ag-theme-material .ag-group-checkbox:not(.ag-invisible) + .ag-group-value:not(:empty),
-    .ag-theme-material .ag-group-expanded:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
-    .ag-theme-material .ag-group-expanded:not(.ag-hidden) + .ag-group-value:not(:empty),
-    .ag-theme-material .ag-group-contracted:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
-    .ag-theme-material .ag-group-contracted:not(.ag-hidden) + .ag-group-value:not(:empty) {
-      margin-left: 24px; }
-    .ag-theme-material .ag-selection-checkbox ~ .ag-group-checkbox,
-    .ag-theme-material .ag-group-checkbox:not(.ag-invisible) ~ .ag-group-checkbox,
-    .ag-theme-material .ag-group-expanded:not(.ag-hidden) ~ .ag-group-checkbox,
-    .ag-theme-material .ag-group-contracted:not(.ag-hidden) ~ .ag-group-checkbox {
-      margin-left: 24px; }
+  .ag-theme-material .ag-selection-checkbox ~ .ag-cell-value:not(:empty), .ag-theme-material .ag-selection-checkbox + .ag-group-value:not(:empty),
+  .ag-theme-material .ag-group-checkbox:not(.ag-invisible) ~ .ag-cell-value:not(:empty),
+  .ag-theme-material .ag-group-checkbox:not(.ag-invisible) + .ag-group-value:not(:empty),
+  .ag-theme-material .ag-group-expanded:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
+  .ag-theme-material .ag-group-expanded:not(.ag-hidden) + .ag-group-value:not(:empty),
+  .ag-theme-material .ag-group-contracted:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
+  .ag-theme-material .ag-group-contracted:not(.ag-hidden) + .ag-group-value:not(:empty) {
+    margin-left: 24px; }
+  .ag-theme-material .ag-selection-checkbox ~ .ag-group-checkbox,
+  .ag-theme-material .ag-group-checkbox:not(.ag-invisible) ~ .ag-group-checkbox,
+  .ag-theme-material .ag-group-expanded:not(.ag-hidden) ~ .ag-group-checkbox,
+  .ag-theme-material .ag-group-contracted:not(.ag-hidden) ~ .ag-group-checkbox {
+    margin-left: 24px; }
   .ag-theme-material .ag-group-child-count {
     margin-left: 2px; }
   .ag-theme-material .ag-selection-checkbox span {
@@ -1382,6 +1381,8 @@
   .ag-theme-material .ag-cell-highlight-animation {
     -webkit-transition: background-color 1s;
     transition: background-color 1s; }
+  .ag-theme-material .ag-menu-option {
+    height: 38px; }
   .ag-theme-material .ag-side-bar {
     border-bottom: 0;
     border-right: 0;

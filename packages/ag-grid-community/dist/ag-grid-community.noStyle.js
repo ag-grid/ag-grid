@@ -25366,6 +25366,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
         var notExpandable = !displayedGroup.isExpandable();
         var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     };
     GroupCellRenderer.prototype.destroy = function () {
@@ -26548,7 +26549,7 @@ var providedFilter_1 = __webpack_require__(65);
 var DateFloatingFilter = /** @class */ (function (_super) {
     __extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
-        return _super.call(this, "<div class=\"ag-input-text-wrapper\">\n                <input ref=\"eReadOnlyText\" disabled=\"true\" class=\"ag-floating-filter-input\">\n                <div ref=\"eDateWrapper\" style=\"display: flex; flex: 1 1 auto;\"></div>\n            </div>") || this;
+        return _super.call(this, "<div class=\"ag-input-text-wrapper\">\n                <input ref=\"eReadOnlyText\" disabled=\"true\" class=\"ag-floating-filter-input\">\n                <div ref=\"eDateWrapper\" style=\"display: flex; flex: 1 1 auto; overflow: hidden;\"></div>\n            </div>") || this;
     }
     DateFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return dateFilter_1.DateFilter.DEFAULT_FILTER_OPTIONS;
@@ -26867,14 +26868,14 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.createValueTemplate = function (position) {
         var pos = position === simpleFilter_1.ConditionPosition.One ? '1' : '2';
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n            <div class=\"ag-input-text-wrapper\">\n                <input class=\"ag-filter-filter\" ref=\"eValue" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n            <div class=\"ag-input-text-wrapper\" ref=\"eInputWrapper" + pos + "\">\n                <input class=\"ag-filter-filter\" ref=\"eValue" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n            </div>\n        </div>";
     };
     TextFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
         var showValue1 = this.showValueFrom(this.getCondition1Type());
-        utils_1._.setVisible(this.eValue1, showValue1);
+        utils_1._.setVisible(this.eInputWrapper1, showValue1);
         var showValue2 = this.showValueFrom(this.getCondition2Type());
-        utils_1._.setVisible(this.eValue2, showValue2);
+        utils_1._.setVisible(this.eInputWrapper2, showValue2);
     };
     TextFilter.prototype.afterGuiAttached = function () {
         this.eValue1.focus();
@@ -26896,19 +26897,19 @@ var TextFilter = /** @class */ (function (_super) {
         var filterText = filterModel.filter;
         var filterOption = filterModel.type;
         var cellValue = this.textFilterParams.valueGetter(params.node);
-        var formattedCellValue = this.formatter(filterText);
+        var cellValueFormatted = this.formatter(cellValue);
         var customFilterOption = this.optionsFactory.getCustomOption(filterOption);
         if (customFilterOption) {
             // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
             if (filterText != null || customFilterOption.hideFilterInput) {
-                return customFilterOption.test(filterText, formattedCellValue);
+                return customFilterOption.test(filterText, cellValueFormatted);
             }
         }
-        if (cellValue == null || cellValue === undefined) {
+        if (cellValue == null) {
             return filterOption === simpleFilter_1.SimpleFilter.NOT_EQUAL || filterOption === simpleFilter_1.SimpleFilter.NOT_CONTAINS;
         }
-        var valueFormatted = this.formatter(cellValue);
-        return this.comparator(filterOption, valueFormatted, formattedCellValue);
+        var filterTextFormatted = this.formatter(filterText);
+        return this.comparator(filterOption, cellValueFormatted, filterTextFormatted);
     };
     TextFilter.FILTER_TYPE = 'text';
     TextFilter.DEFAULT_FILTER_OPTIONS = [simpleFilter_1.SimpleFilter.CONTAINS, simpleFilter_1.SimpleFilter.NOT_CONTAINS,
@@ -26952,6 +26953,14 @@ var TextFilter = /** @class */ (function (_super) {
         componentAnnotations_1.RefSelector('eValue2'),
         __metadata("design:type", HTMLInputElement)
     ], TextFilter.prototype, "eValue2", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('eInputWrapper1'),
+        __metadata("design:type", HTMLElement)
+    ], TextFilter.prototype, "eInputWrapper1", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('eInputWrapper2'),
+        __metadata("design:type", HTMLElement)
+    ], TextFilter.prototype, "eInputWrapper2", void 0);
     return TextFilter;
 }(simpleFilter_1.SimpleFilter));
 exports.TextFilter = TextFilter;

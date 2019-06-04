@@ -1,13 +1,13 @@
-import {IFloatingFilterParams} from "../floatingFilter";
-import {RefSelector} from "../../../widgets/componentAnnotations";
-import {ProvidedFilterModel} from "../../../interfaces/iFilter";
-import {_} from "../../../utils";
-import {Constants} from "../../../constants";
-import {ProvidedFilter} from "../../provided/providedFilter";
-import {PostConstruct} from "../../../context/context";
-import {SimpleFloatingFilter} from "./simpleFloatingFilter";
-import {ISimpleFilterModel, SimpleFilter} from "../../provided/simpleFilter";
-import {FilterChangedEvent} from "../../../events";
+import { IFloatingFilterParams } from "../floatingFilter";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { ProvidedFilterModel } from "../../../interfaces/iFilter";
+import { _ } from "../../../utils";
+import { Constants } from "../../../constants";
+import { ProvidedFilter } from "../../provided/providedFilter";
+import { PostConstruct } from "../../../context/context";
+import { SimpleFloatingFilter } from "./simpleFloatingFilter";
+import { ISimpleFilterModel, SimpleFilter } from "../../provided/simpleFilter";
+import { FilterChangedEvent } from "../../../events";
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 

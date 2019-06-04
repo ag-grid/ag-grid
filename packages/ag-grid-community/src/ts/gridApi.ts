@@ -55,7 +55,8 @@ import { SideBarDef } from "./entities/sideBar";
 import { IRangeChartService } from "./interfaces/iRangeChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
-import { ChartRef } from "./entities/gridOptions";
+import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
+import { ChartOptions } from "./interfaces/iChartOptions";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -90,6 +91,7 @@ export interface ChartRangeParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggregate?: boolean;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
 export interface DetailGridInfo {

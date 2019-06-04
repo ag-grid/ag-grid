@@ -488,7 +488,7 @@
       background-color: #ebebeb;
       border-color: rgba(0, 0, 0, 0.3); }
   .ag-theme-fresh .ag-input-text-wrapper input[type="date"] {
-    width: 0; }
+    flex: 1 1 auto; }
   .ag-theme-fresh .ag-input-text-wrapper textarea {
     border-width: 1px;
     border-style: solid;
@@ -565,11 +565,13 @@
     padding-left: 11px;
     padding-right: 11px; }
   .ag-theme-fresh .ag-row-drag {
+    cursor: move;
     cursor: grab;
     min-width: 24px; }
   .ag-theme-fresh .ag-row-dragging, .ag-theme-fresh .ag-row-dragging .ag-row-drag {
     cursor: move; }
   .ag-theme-fresh .ag-column-drag {
+    cursor: move;
     cursor: grab; }
   .ag-theme-fresh .ag-row-dragging {
     opacity: 0.5; }
@@ -610,7 +612,8 @@
       .ag-theme-fresh .ag-menu .ag-menu-separator > span {
         background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'8px'%20viewBox%3D'0%200%201%208px'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'4px'%20x2%3D'1'%20y2%3D'4px'%20stroke-width%3D'1'%20stroke%3D'%23A9A9A9'%2F%3E%3C%2Fsvg%3E"); }
     .ag-theme-fresh .ag-menu .ag-menu-option-popup-pointer {
-      width: 20px; }
+      width: 20px;
+      text-align: center; }
   .ag-theme-fresh.ag-dnd-ghost {
     background: #f6f6f6;
     border-radius: 0;
@@ -770,6 +773,7 @@
         padding-right: 4px;
         margin-top: 4px; }
       .ag-theme-fresh .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-list {
+        cursor: default;
         margin-top: 4px; }
       .ag-theme-fresh .ag-tool-panel-wrapper .ag-column-drop > div > :first-child {
         padding-left: 4px;
@@ -889,24 +893,19 @@
     height: 12px;
     padding: 0;
     width: 12px; }
-  .ag-theme-fresh .ag-selection-checkbox,
-  .ag-theme-fresh .ag-group-checkbox:not(.ag-invisible),
-  .ag-theme-fresh .ag-group-expanded:not(.ag-hidden),
-  .ag-theme-fresh .ag-group-contracted:not(.ag-hidden) {
-    display: inline-flex; }
-    .ag-theme-fresh .ag-selection-checkbox ~ .ag-cell-value:not(:empty), .ag-theme-fresh .ag-selection-checkbox + .ag-group-value:not(:empty),
-    .ag-theme-fresh .ag-group-checkbox:not(.ag-invisible) ~ .ag-cell-value:not(:empty),
-    .ag-theme-fresh .ag-group-checkbox:not(.ag-invisible) + .ag-group-value:not(:empty),
-    .ag-theme-fresh .ag-group-expanded:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
-    .ag-theme-fresh .ag-group-expanded:not(.ag-hidden) + .ag-group-value:not(:empty),
-    .ag-theme-fresh .ag-group-contracted:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
-    .ag-theme-fresh .ag-group-contracted:not(.ag-hidden) + .ag-group-value:not(:empty) {
-      margin-left: 12px; }
-    .ag-theme-fresh .ag-selection-checkbox ~ .ag-group-checkbox,
-    .ag-theme-fresh .ag-group-checkbox:not(.ag-invisible) ~ .ag-group-checkbox,
-    .ag-theme-fresh .ag-group-expanded:not(.ag-hidden) ~ .ag-group-checkbox,
-    .ag-theme-fresh .ag-group-contracted:not(.ag-hidden) ~ .ag-group-checkbox {
-      margin-left: 12px; }
+  .ag-theme-fresh .ag-selection-checkbox ~ .ag-cell-value:not(:empty), .ag-theme-fresh .ag-selection-checkbox + .ag-group-value:not(:empty),
+  .ag-theme-fresh .ag-group-checkbox:not(.ag-invisible) ~ .ag-cell-value:not(:empty),
+  .ag-theme-fresh .ag-group-checkbox:not(.ag-invisible) + .ag-group-value:not(:empty),
+  .ag-theme-fresh .ag-group-expanded:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
+  .ag-theme-fresh .ag-group-expanded:not(.ag-hidden) + .ag-group-value:not(:empty),
+  .ag-theme-fresh .ag-group-contracted:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
+  .ag-theme-fresh .ag-group-contracted:not(.ag-hidden) + .ag-group-value:not(:empty) {
+    margin-left: 12px; }
+  .ag-theme-fresh .ag-selection-checkbox ~ .ag-group-checkbox,
+  .ag-theme-fresh .ag-group-checkbox:not(.ag-invisible) ~ .ag-group-checkbox,
+  .ag-theme-fresh .ag-group-expanded:not(.ag-hidden) ~ .ag-group-checkbox,
+  .ag-theme-fresh .ag-group-contracted:not(.ag-hidden) ~ .ag-group-checkbox {
+    margin-left: 12px; }
   .ag-theme-fresh .ag-group-child-count {
     margin-left: 2px; }
   .ag-theme-fresh .ag-selection-checkbox span {

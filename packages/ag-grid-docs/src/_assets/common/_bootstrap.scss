@@ -30,3 +30,7 @@
 @import "~bootstrap/scss/utilities/text";
 @import "~bootstrap/scss/utilities/position";
 @import "~bootstrap/scss/utilities/screenreaders";
+
+.btn-group {
+    position: relative;
+}

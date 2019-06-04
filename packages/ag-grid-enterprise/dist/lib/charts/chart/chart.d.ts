@@ -19,9 +19,9 @@ export declare abstract class Chart {
     destroy(): void;
     private readonly onLayoutChange;
     readonly element: HTMLElement;
-    parent: HTMLElement | null;
+    parent: HTMLElement | undefined;
     private _title;
-    title: Caption | null;
+    title: Caption | undefined;
     private _subtitle;
     subtitle: Caption | null;
     abstract readonly seriesRoot: Node;

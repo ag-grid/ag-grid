@@ -40,7 +40,7 @@ var providedFilter_1 = require("../providedFilter");
 var DateFloatingFilter = /** @class */ (function (_super) {
     __extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
-        return _super.call(this, "<div class=\"ag-input-text-wrapper\">\n                <input ref=\"eReadOnlyText\" disabled=\"true\" class=\"ag-floating-filter-input\">\n                <div ref=\"eDateWrapper\" style=\"display: flex; flex: 1 1 auto;\"></div>\n            </div>") || this;
+        return _super.call(this, "<div class=\"ag-input-text-wrapper\">\n                <input ref=\"eReadOnlyText\" disabled=\"true\" class=\"ag-floating-filter-input\">\n                <div ref=\"eDateWrapper\" style=\"display: flex; flex: 1 1 auto; overflow: hidden;\"></div>\n            </div>") || this;
     }
     DateFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return dateFilter_1.DateFilter.DEFAULT_FILTER_OPTIONS;

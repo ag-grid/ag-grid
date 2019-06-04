@@ -10,6 +10,8 @@ import {
     PostConstruct,
     RefSelector,
     ResizeObserverService,
+    ProcessChartOptionsParams,
+    ChartOptions
 } from "ag-grid-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
@@ -27,6 +29,7 @@ export interface GridChartParams {
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggregate: boolean;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
     height: number;
     width: number;
 }
@@ -104,9 +107,12 @@ export class GridChartComp extends Component {
             _.clearElement(this.eChart);
         }
 
+        const processChartOptionsFunc = this.params.processChartOptions ?
+            this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
+
         const chartProxyParams: ChartProxyParams = {
             chartType: this.model.getChartType(),
-            processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
+            processChartOptions: processChartOptionsFunc,
             getSelectedPalette: this.getSelectedPalette.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
@@ -238,6 +244,9 @@ export class GridChartComp extends Component {
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
-        _.clearElement(this.getGui());
+        const eGui = this.getGui();
+        _.clearElement(eGui);
+        // remove from parent, so if user provided container, we detach from the provided dom element
+        _.removeFromParent(eGui);
     }
 }

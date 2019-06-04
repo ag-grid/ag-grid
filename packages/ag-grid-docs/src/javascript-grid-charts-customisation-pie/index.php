@@ -25,6 +25,10 @@ interface PieChartOptions {
     // The subtitle to render under the chart's title.
     // If the title is not not specified or disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
+    // The width of the chart.
+    width?: number,
+    // The height of the chart.
+    height?: number;
 
     // The padding of contents from the edges of the chart.
     padding?: {
@@ -63,6 +67,9 @@ interface PieChartOptions {
 
 
     seriesDefaults?: {
+        // The title of this series. Renders on top of the doughnut. Also shown in the tooltip.
+        title?: CaptionOptions;
+
         // The fill colors of pie slices.
         fills?: string[];
         // The stroke colors of pie slices. Darker versions of fill colors by default.
@@ -70,7 +77,8 @@ interface PieChartOptions {
 
         // Whether to show pie slice labels or not.
         labelEnabled?: boolean;
-        // If the pie slice angle is smaller than this value (in degrees), the label won't be shown.
+        // If the pie slice angle is smaller than this value (in degrees),
+        // the label won't be shown.
         labelMinAngle?: number;
         // The font to be used for slice labels.
         labelFont?: string;
@@ -107,7 +115,7 @@ interface PieChartOptions {
 }
 
 interface CaptionOptions {
-    // The text to use for the chart's title/subtitle.
+    // The text to use for the chart's title/subtitle or series' title.
     text?: string;
     // The font to be used by the title/subtitle.
     // Defaults to `bold 16px Verdana, sans-serif` for the title

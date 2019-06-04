@@ -1,11 +1,12 @@
 // ag-grid-enterprise v21.0.0
-import { CellRange, ChartType, Component } from "ag-grid-community";
+import { CellRange, ChartType, Component, ProcessChartOptionsParams, ChartOptions } from "ag-grid-community";
 export interface GridChartParams {
     cellRange: CellRange;
     chartType: ChartType;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggregate: boolean;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
     height: number;
     width: number;
 }

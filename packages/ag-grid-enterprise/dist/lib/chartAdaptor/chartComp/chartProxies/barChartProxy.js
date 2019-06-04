@@ -17,14 +17,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var chartBuilder_1 = require("../../builder/chartBuilder");
 var ag_grid_community_1 = require("ag-grid-community");
 var chartProxy_1 = require("./chartProxy");
+var chartModel_1 = require("../chartModel");
 var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
         var barChartType = params.chartType === ag_grid_community_1.ChartType.GroupedBar ? 'groupedBar' : 'stackedBar';
-        var chartOptions = _this.getChartOptions(barChartType, _this.defaultOptions());
-        _this.chart = chartBuilder_1.ChartBuilder.createBarChart(chartOptions);
-        var barSeries = chartBuilder_1.ChartBuilder.createSeries(chartOptions.seriesDefaults);
+        _this.chartOptions = _this.getChartOptions(barChartType, _this.defaultOptions());
+        _this.chart = chartBuilder_1.ChartBuilder.createBarChart(_this.chartOptions);
+        var barSeries = chartBuilder_1.ChartBuilder.createSeries(_this.chartOptions.seriesDefaults);
         if (barSeries) {
             _this.chart.addSeries(barSeries);
         }
@@ -36,6 +37,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(function (f) { return f.colId; });
         barSeries.yFieldNames = params.fields.map(function (f) { return f.displayName; });
+        var chart = this.chart;
+        if (params.categoryId === chartModel_1.ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        }
+        else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation;
+        }
         var palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
         barSeries.fills = palette.fills;
         barSeries.strokes = palette.strokes;
@@ -56,6 +64,7 @@ var BarChartProxy = /** @class */ (function (_super) {
                 type: 'category',
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 45,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,

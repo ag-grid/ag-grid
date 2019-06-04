@@ -34,6 +34,7 @@ export declare class ChartBuilder {
     static initLegend(legend: Legend, options: LegendOptions): void;
     static createTitle(options: CaptionOptions): Caption;
     static createSubtitle(options: CaptionOptions): Caption;
+    static createPieTitle(options: CaptionOptions): Caption;
     static createCaption(options: CaptionOptions): Caption;
     static createDropShadow(options?: DropShadowOptions): DropShadow;
     static createAxis(options: AxisOptions): CategoryAxis | NumberAxis;

@@ -45,7 +45,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -ms-flex-align: center;
   align-items: center;
   line-height: normal;
-  position: relative; }
+  position: relative;
+  overflow: hidden; }
 
 .ag-shake-left-to-right {
   -webkit-animation-direction: alternate;
@@ -490,8 +491,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       .ag-column-drop .ag-column-drop-list .ag-column-drop-cell .ag-column-drop-cell-text {
         overflow: hidden;
         -webkit-box-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
         text-overflow: ellipsis;
         white-space: nowrap; }
 
@@ -597,6 +598,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   align-items: center;
   width: 100%;
   height: 100%; }
+  .ag-cell-wrapper.ag-row-group {
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start; }
   .ag-cell-wrapper .ag-cell-value, .ag-cell-wrapper .ag-group-value {
     overflow: hidden;
     text-overflow: ellipsis; }
@@ -680,8 +685,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   height: 100%;
   width: 100%; }
+  .ag-floating-filter-full-body > div {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto; }
   .ag-floating-filter-full-body input {
     margin: 0;
     width: 100%; }
@@ -1184,12 +1196,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   .ag-tool-panel-wrapper .ag-filter-toolpanel-header {
     cursor: pointer; }
 
-.ag-ltr .ag-column-tool-panel-column {
-  margin-left: 16px; }
-
-.ag-rtl .ag-column-tool-panel-column {
-  margin-right: 16px; }
-
 .ag-column-tool-panel-column,
 .ag-column-tool-panel-column-group {
   -webkit-box-align: center;
@@ -1334,7 +1340,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     white-space: nowrap;
     outline: none;
     cursor: pointer; }
-    .ag-side-bar .ag-side-buttons div button span {
+    .ag-side-bar .ag-side-buttons div button span:not(.ag-icon) {
       -webkit-writing-mode: tb;
       -ms-writing-mode: tb;
       writing-mode: tb;
@@ -1346,7 +1352,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   .ag-side-bar.full-width .panel-container {
     width: 200px; }
 
-.ag-rtl .ag-side-bar .ag-side-buttons button span {
+.ag-rtl .ag-side-bar .ag-side-buttons button span:not(.ag-icon) {
   -webkit-writing-mode: tb-rl;
   -ms-writing-mode: tb-rl;
   writing-mode: tb-rl;

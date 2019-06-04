@@ -14,17 +14,53 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
+        Chart ranges appear in the grid once a chart is created. They provide useful visual feedback for users by
+        highlighting the charted category and series data in the grid.
+    </p>
+
+    <h2>Creating Cell Ranges</h2>
+
+    <p>
         When a chart is created off a selected range of cells in the grid, or via the charting api, the underlying cell
         range is replaced by a chart range.
     </p>
 
     <p>
-        The resulting chart range can then be modified by dragging on the chart range handle, located at the bottom right
-        corner of the chart range, as illustrated below:
+        To see how chart ranges are created from a cell range, using our <a href="../example.php">demo page</a> do the following:
     </p>
+
+    <ul>
+        <li>
+            Select a <a href="../javascript-grid-range-selection/">Cell Range</a> of numeric values in the grid by dragging
+            the mouse over a range of cells.
+        </li>
+        <li>
+            The bring up the <a href="../javascript-grid-context-menu">Context Menu</a> and select the desired chart type
+            from the 'Chart Range' sub menu.
+        </li>
+    </ul>
 
     <p>
         <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
+    </p>
+
+    <p>
+        As illustrated above, the resulting chart range can subsequently modified by dragging on the chart range handle,
+        located at the bottom right corner of the chart range.
+    </p>
+
+    <h2>Hiding Chart Ranges</h2>
+
+    <p>
+        In some cases it may be desirable to hide the chart ranges in the grid, like in this
+        <a href="../javascript-grid-charts-overview/#example-application-created-charts">example</a>.
+    </p>
+
+    <p>
+        To hide the chart ranges simply enable <code>suppressChartRanges=true</code> on the <code>ChartRangeParams</code>.
+    </p>
+    <p>
+        For more details refer to the section on the: <a href="../javascript-grid-charts-chart-range-api/#charting-api">Chart Range API</a>.
     </p>
 
     <h2>Category and Series Ranges</h2>
@@ -142,7 +178,11 @@ include '../documentation-main/documentation_header.php';
         <li><b>Bronze</b>: considered a 'series' as data is a <code>number</code>.</li>
     </ul>
 
-
 <?= example('Defining categories and series', 'defining-categories-and-series', 'generated', array("enterprise" => true)) ?>
 
+    <h2>Next Up</h2>
+
+    <p>
+        Continue to the next section to learn about the: <a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>.
+    </p>
 <?php include '../documentation-main/documentation_footer.php'; ?>

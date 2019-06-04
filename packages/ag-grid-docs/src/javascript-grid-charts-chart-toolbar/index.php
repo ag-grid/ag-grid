@@ -12,14 +12,79 @@ include '../documentation-main/documentation_header.php';
         This section covers the functionality that is available via the chart toolbar along with configuration details.
     </p>
 
+    <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
+
+        <img src="./chart-toolbar.png"/>
+
+        <div style="flex-grow: 1;">
+            <ul>
+            <p>
+                The chart toolbar appears when the mouse hovers over the top left area of the chart. It allows
+                users to perform the following:</p>
+            <p>
+                <ul>
+                    <li style="padding-bottom: 5px">Change the chart type</li>
+                    <li style="padding-bottom: 5px">Change the colour palette</li>
+                    <li style="padding-bottom: 5px">Select categories and series</li>
+                    <li>Download the chart</li>
+                </ul>
+            </p>
+            </ul>
+        </div>
+    </div>
+
     <p>
-        The chart toolbar appears when the mouse hovers over the top left area of the chart. This toolbar allows users
-        to change the chart type and color palette, as well changing the categories and series on the chart.
+        The following sections discuss these toolbar features along with details on how to configure toolbar items.
+    </p>
+
+    <h2>Chart Settings</h2>
+
+    <p>
+        The chart settings toolbar item allows users to change the chart type as well as the color palette used in the
+        chart as demonstrated below:
+    </p>
+        <img alt="Chart Settings" src="chart-settings.gif" style="height: 420px; width: 100%; border: grey solid 1px">
+    <p>
+       <br>
+       Right now the toolbar allow users to switch between the 5 most commonly used charts: Grouped Bar, Stacked Bar,
+       Line, Pie and Doughnut. However more chart types will be added soon...
     </p>
 
     <p>
-        <img alt="Charting Toolbar" src="chart-toolbar.gif" style="margin-bottom: 0px; width: 100%; border: grey solid 1px">
+        The color palette used by the grid can also be changed via the carousel located at the bottom of the chart
+        setting panel. When themes are added (also coming soon) the available palettes can be customised to suit
+        application requirements.
     </p>
+
+    <h2>Chart Data</h2>
+
+    <p>
+        The chart data toolbar is used to dynamically change the data being charted as shown below:
+    </p>
+    <img alt="Chart Data" src="chart-data.gif" style="height: 420px; width: 100%; border: grey solid 1px">
+
+    <p>
+        <br>
+        Using the chart data panel the category used in the chart can be changed via radio button selections. Multiple
+        series can be charted and these can also be changed via checkbox selection.
+    </p>
+
+    <p>
+        Grid columns can either be configured as categories or series for charting or left for the grid to infer based
+        on the data contained in the columns.
+    </p>
+
+    <p>
+        For more details on how the grid determines which columns are to be used as chart categories and series see the
+        section on <a href="../javascript-grid-charts-chart-ranges/#defining-categories-and-series">Defining Categories and Series</a>.
+    </p>
+
+    <h2>Chart Download</h2>
+
+    <p>
+        A toolbar item is also provided to download charts and is located at the bottom of the toolbar by default.
+    </p>
+
 
     <h2>Configuring Toolbar Items</h2>
 
@@ -54,5 +119,10 @@ interface GetChartToolbarItemsParams {
     omit items from the toolbar. For instance returning an empty array will hide all toolbar items.
 </p>
 
+    <h2>Next Up</h2>
+
+    <p>
+        Continue to the next section to learn about the: <a href="../javascript-grid-charts-chart-range-api/">Chart API</a>.
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

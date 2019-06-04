@@ -3,6 +3,7 @@ import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../charts/chart/series/lineSeries";
+import {ChartModel} from "../chartModel";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
@@ -36,6 +37,13 @@ export class LineChartProxy extends ChartProxy {
         lineChart.series
             .map(series => series as LineSeries)
             .forEach(updateSeries);
+
+        const chart = this.chart as CartesianChart;
+        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        } else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
+        }
 
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const seriesOptions = this.chartOptions.seriesDefaults as LineSeriesOptions;
@@ -81,7 +89,7 @@ export class LineChartProxy extends ChartProxy {
                 type: 'category',
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 0,
+                labelRotation: 45,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,

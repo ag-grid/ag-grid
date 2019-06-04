@@ -13,6 +13,7 @@ import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
+import { Caption } from "../caption";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     radius: number, // in the [0, 1] range
@@ -43,7 +44,6 @@ export interface PieTooltipRendererParams {
 }
 
 export class PieSeries extends Series<PolarChart> {
-    private titleNode = new Text();
     private radiusScale: LinearScale<number> = scaleLinear();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
@@ -63,18 +63,6 @@ export class PieSeries extends Series<PolarChart> {
         return scale;
     })();
 
-    constructor() {
-        super();
-
-        const title = this.titleNode;
-        title.pointerEvents = PointerEvents.None;
-        title.fill = this.labelColor;
-        title.textAlign = 'center';
-        title.textBaseline = 'bottom';
-
-        this.group.appendChild(title);
-    }
-
     set data(data: any[]) {
         this._data = data;
 
@@ -90,37 +78,25 @@ export class PieSeries extends Series<PolarChart> {
         return this._data;
     }
 
-    protected _title: string = '';
-    set title(value: string) {
-        if (this._title !== value) {
+    private _title: Caption | undefined = undefined;
+    set title(value: Caption | undefined) {
+        const oldTitle = this._title;
+        if (oldTitle !== value) {
+            if (oldTitle) {
+                oldTitle.onLayoutChange = undefined;
+                this.group.removeChild(oldTitle.node);
+            }
+            if (value) {
+                value.node.textBaseline = 'bottom';
+                value.onLayoutChange = () => this.scheduleLayout();
+                this.group.appendChild(value.node);
+            }
             this._title = value;
             this.scheduleLayout();
         }
     }
-    get title(): string {
+    get title(): Caption | undefined {
         return this._title;
-    }
-
-    private _titleEnabled: boolean = false;
-    set titleEnabled(value: boolean) {
-        if (this._titleEnabled !== value) {
-            this._titleEnabled = value;
-            this.scheduleLayout();
-        }
-    }
-    get titleEnabled(): boolean {
-        return this._titleEnabled;
-    }
-
-    private _titleFont: string = 'bold 12px Verdana, sans-serif';
-    set titleFont(value: string) {
-        if (this._titleFont !== value) {
-            this._titleFont = value;
-            this.scheduleLayout();
-        }
-    }
-    get titleFont(): string {
-        return this._titleFont;
     }
 
     /**
@@ -471,12 +447,11 @@ export class PieSeries extends Series<PolarChart> {
         this.group.translationX = chart.centerX;
         this.group.translationY = chart.centerY;
 
-        const title = this.titleNode;
-        title.visible = this.titleEnabled;
-        title.translationY = -chart.radius - outerRadiusOffset - 2;
-        title.text = this.title;
-        title.fill = this.labelColor;
-        title.font = this.titleFont;
+        const title = this.title;
+        if (title) {
+            title.node.translationY = -chart.radius - outerRadiusOffset - 2;
+            title.node.visible = title.enabled;
+        }
 
         const updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
@@ -574,7 +549,7 @@ export class PieSeries extends Series<PolarChart> {
                 labelField: this.labelField
             });
         } else {
-            const title = this.title ? `<div class="title">${this.title}</div>` : '';
+            const title = this.title ? `<div class="title">${this.title.text}</div>` : '';
             const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
             const value = nodeDatum.seriesDatum[angleField];
             const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();

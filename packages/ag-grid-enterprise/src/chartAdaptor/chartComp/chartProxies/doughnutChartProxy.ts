@@ -3,6 +3,7 @@ import { DoughnutChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
+import { CaptionOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
 export class DoughnutChartProxy extends ChartProxy {
     private readonly chartOptions: DoughnutChartOptions;
@@ -30,20 +31,30 @@ export class DoughnutChartProxy extends ChartProxy {
             fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
         });
 
+        const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+        // Use `Object.create` to prevent mutating the original user config that is possibly reused.
+        const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
+        seriesOptions.title = title;
+
         let offset = 0;
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const existingSeries = existingSeriesMap[f.colId];
 
-            const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+            title.text = f.displayName;
 
-            seriesOptions.title = f.displayName;
             seriesOptions.angleField = f.colId;
-            seriesOptions.showInLegend = index === 0;
+            seriesOptions.showInLegend = index === 0; // show legend items for the first series only
+            const calloutColors = seriesOptions.calloutColors;
 
             const pieSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
             pieSeries.labelField = params.categoryId;
             pieSeries.data = params.data;
+            // Normally all series provide legend items for every slice.
+            // For our use case, where all series have the same number of slices in the same order with the same labels
+            // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
+            // so we only show legend items for the first series, and then when the user toggles the slices of the
+            // first series in the legend, we programmatically toggle the corresponding slices of other series.
             if (index === 0) {
                 pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
                     const chart = pieSeries.chart;
@@ -65,9 +76,12 @@ export class DoughnutChartProxy extends ChartProxy {
 
             pieSeries.fills = palette.fills;
             pieSeries.strokes = palette.strokes;
+            if (calloutColors) {
+                pieSeries.calloutColors = calloutColors;
+            }
 
             if (!existingSeries) {
-                doughnutChart.addSeries(pieSeries)
+                doughnutChart.addSeries(pieSeries);
             }
         });
     }
@@ -110,9 +124,12 @@ export class DoughnutChartProxy extends ChartProxy {
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: '',
-                titleEnabled: false,
-                titleFont: 'bold 12px Verdana, sans-serif'
+                shadow: undefined,
+                title: {
+                    enabled: false,
+                    font: 'bold 12px Verdana, sans-serif',
+                    color: 'black'
+                }
             }
         };
     }

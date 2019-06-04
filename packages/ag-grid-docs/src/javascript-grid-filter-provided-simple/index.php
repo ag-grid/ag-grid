@@ -566,6 +566,9 @@ export interface IFilterOptionDef {
     The following example demonstrates several custom filter options:
 </p>
 <ul class="content">
+    <li>The 'Athlete' column contains two custom filter options <code>Starts with "A"</code> and
+        <code>Starts with "B"</code>. Both these options take no text filter input.
+    </li>
     <li>The 'Age' column contains two custom filter options <code>evenNumbers</code>, <code>oddNumbers</code> and
         <code>blanks</code>. It also has uses the build in 'empty' filter along with <code>suppressAndOrCondition=true</code>.
     </li>

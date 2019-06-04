@@ -34,6 +34,10 @@
         transition: background-color 1s;
     }
 
+    .ag-menu-option {
+        height: $grid-size * 5 - 2;
+    }
+
     .ag-side-bar {
         border-bottom: 0;
         border-right: 0;

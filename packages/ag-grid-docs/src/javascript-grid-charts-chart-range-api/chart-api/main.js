@@ -1,29 +1,29 @@
 var columnDefs = [
-    {field: "name", width: 150, enableRowGroup: true},
-    {field: "group", width: 150, enableRowGroup: true},
-    {field: "apples", enableValue: true},
-    {field: "oranges", enableValue: true},
-    {field: "pears", enableValue: true},
-    {field: "bananas", enableValue: true},
+    {field: "country", width: 150, chartType: 'category'},
+    {field: "gold", chartType: 'series'},
+    {field: "silver", chartType: 'series'},
+    {field: "bronze", chartType: 'series'},
+    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
+    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'}
 ];
 
-var names = ['Andy Murray', 'Magnus Moan', 'Eric Lamaze', 'Christine Girard', 'Alistair Brownlee',
-    'Jonny Brownlee', 'Simon Whitfield', 'Simon Whitfield', 'Jade Jones', 'Lutalo Muhammad',
-    'Karine Sergerie', 'Nina Solheim', 'Sarah Stevenson', 'Dominique Bosshart', 'Trude Gundersen',
-    'Laura Robson', 'Sébastien Lareau', 'Daniel Nestor', 'Sara Nordenstam', 'Alexander Dale Oen',
-    'Håvard Bøkko', 'Lasse Sætre', 'Ådne Søndrål', 'Jasey-Jay Anderson', 'Maëlle Ricker',
-    'Mike Robertson', 'Kjersti Buaas', 'Dominique Maltais', 'Jon Montgomery', 'Amy Williams',
-    'Duff Gibson', 'Mellisa Hollingsworth-Richards', 'Jeff Pain', 'Shelley Rudman', 'Alex Coomber',
-    'Peter Wilson', 'Tore Brovold', 'Richard Faulds', 'Ian Peel', 'Harald Stenvaag', 'Ross MacDonald',
-    'Siren Sundby', 'Mike Wolfs', 'Paul Davis', 'Herman Horn Johannessen', 'Espen Stokkeland',
-    'Fredrik Bekken', 'Olaf Tufte', 'Karina Bryant', 'Gemma Gibbons', 'Antoine Valois-Fortier',
-    'Nicolas Gill', 'Kate Howey', 'Kyle Shewfelt', 'Hedda Berntsen', 'Audun Grønvold', 'Kari Traa',
-    'Bartosz Piasecki', 'Mac Cone', 'Jill Henselwood', 'Ian Millar', 'Tom Daley', 'Leon Taylor',
-    'Peter Waterfield', 'Alexander Kristoff', 'Gunn Rita Dahle-Flesjå', 'Chandra Crawford', 'Sara Renner',
-    'Beckie Scott', 'Gail Emms', 'Nathan Robertson', 'Simon Archer', 'Joanne Wright-Goode', 'Derek Drouin',
-    'Priscilla Lopes-Schliep', 'Alison Williamson'];
-
-var groups = ['Fast Ducks', 'Speedy Spanners', 'Lightening Strikers', 'Burning Buddies'];
+function createRowData() {
+    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
+        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+    let rowData = [];
+    countries.forEach( function(country, index) {
+        rowData.push({
+            country: country,
+            gold: Math.floor(((index+1 / 7) * 333)%100),
+            silver: Math.floor(((index+1 / 3) * 555)%100),
+            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+        });
+    });
+    return rowData;
+}
 
 var gridOptions = {
     defaultColDef: {
@@ -31,30 +31,17 @@ var gridOptions = {
         resizable: true
     },
     columnDefs: columnDefs,
+    rowData: createRowData(),
     enableRangeSelection: true,
-    enableCharts: true,
-    onGridReady: function(params) {
-        var rowData = [];
-        names.forEach( function(name, index) {
-            rowData.push({
-                name: name,
-                group: groups[index % 4],
-                apples: ((index+1) * 17 % 20),
-                oranges: ((index+1) * 19 % 20),
-                pears: ((index+1) * 13 % 20),
-                bananas: ((index+1) * 133 % 20),
-            })
-        });
-        params.api.setRowData(rowData);
-    }
+    enableCharts: true
 };
 
 function onChart1() {
-    let params = {
+    var params = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
-            columns: ['apples','oranges']
+            columns: ['country','gold','silver']
         },
         chartType: 'groupedBar'
     };
@@ -62,9 +49,9 @@ function onChart1() {
 }
 
 function onChart2() {
-    let params = {
+    var params = {
         cellRange: {
-            columns: ['bananas','pears']
+            columns: ['country','bronze']
         },
         chartType: 'line'
     };

@@ -530,6 +530,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         const pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
         const notExpandable = !displayedGroup.isExpandable();
         const addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }
 

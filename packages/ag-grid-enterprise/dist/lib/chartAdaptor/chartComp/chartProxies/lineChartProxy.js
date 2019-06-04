@@ -16,6 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var chartBuilder_1 = require("../../builder/chartBuilder");
 var chartProxy_1 = require("./chartProxy");
+var chartModel_1 = require("../chartModel");
 var LineChartProxy = /** @class */ (function (_super) {
     __extends(LineChartProxy, _super);
     function LineChartProxy(params) {
@@ -42,6 +43,13 @@ var LineChartProxy = /** @class */ (function (_super) {
         lineChart.series
             .map(function (series) { return series; })
             .forEach(updateSeries);
+        var chart = this.chart;
+        if (params.categoryId === chartModel_1.ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        }
+        else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation;
+        }
         params.fields.forEach(function (f, index) {
             var seriesOptions = _this.chartOptions.seriesDefaults;
             var existingSeries = existingSeriesMap[f.colId];
@@ -78,7 +86,7 @@ var LineChartProxy = /** @class */ (function (_super) {
                 type: 'category',
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 0,
+                labelRotation: 45,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,

@@ -3,6 +3,7 @@ import { DropShadow } from "../../scene/dropShadow";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
+import { Caption } from "../caption";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     radius: number;
     startAngle: number;
@@ -23,7 +24,6 @@ export interface PieTooltipRendererParams {
     labelField?: string;
 }
 export declare class PieSeries extends Series<PolarChart> {
-    private titleNode;
     private radiusScale;
     private groupSelection;
     /**
@@ -32,14 +32,9 @@ export declare class PieSeries extends Series<PolarChart> {
     private groupSelectionData;
     readonly enabled: boolean[];
     private angleScale;
-    constructor();
     data: any[];
-    protected _title: string;
-    title: string;
-    private _titleEnabled;
-    titleEnabled: boolean;
-    private _titleFont;
-    titleFont: string;
+    private _title;
+    title: Caption | undefined;
     /**
      * `null` means make the callout color the same as {@link strokeStyle}.
      */

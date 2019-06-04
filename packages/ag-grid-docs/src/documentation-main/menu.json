@@ -1,174 +1,5 @@
 [
   {
-    "title": "Guides",
-    "gtm": {
-      "category": "guides"
-    },
-    "items": [
-      {
-        "title": "Vanilla JavaScript",
-        "gtm": {
-          "tech": "vanilla"
-        },
-        "items": [
-          {
-            "title": "Install with NPM",
-            "url": "javascript-grid-npm/"
-          },
-          {
-            "title": "Download for Local Usage",
-            "url": "javascript-grid-download/"
-          },
-          {
-            "title": "Use with TypeScript",
-            "gtm": {
-              "tech": "typescript"
-            },
-            "url": "ag-grid-typescript-webpack-2/"
-          }
-        ]
-      },
-      {
-        "title": "Angular",
-        "gtm": {
-          "tech": "angular"
-        },
-        "items": [
-          {
-            "title": "Ag-Grid Angular Overview",
-            "url": "angular-more-details/"
-          },
-          {
-            "title": "Building",
-            "items": [
-              {
-                "title": "SystemJS",
-                "url": "ag-grid-angular-systemjs/"
-              },
-              {
-                "title": "Webpack 3",
-                "url": "ag-grid-angular-webpack-3/"
-              },
-              {
-                "title": "Webpack 2",
-                "url": "ag-grid-angular-webpack-2/"
-              },
-              {
-                "title": "Webpack",
-                "url": "ag-grid-angular-webpack/"
-              }
-            ]
-          },
-          {
-            "title": "Use with RxJS",
-            "url": "example-angular-rxjs/"
-          }
-        ]
-      },
-      {
-        "title": "React",
-        "gtm": {
-          "tech": "react"
-        },
-        "items": [
-          {
-            "title": "Ag-Grid React Overview",
-            "url": "react-more-details/"
-          },
-          {
-            "title": "Redux Integration Part 1",
-            "url": "react-redux-integration-pt1/"
-          },
-          {
-            "title": "Redux Integration Part 2",
-            "url": "react-redux-integration-pt2/"
-          }
-        ]
-      },
-      {
-        "title": "Vue.js",
-        "gtm": {
-          "tech": "vue"
-        },
-        "items": [
-          {
-            "title": "Ag-Grid Vue.js Overview",
-            "url": "best-vuejs-data-grid/"
-          },
-          {
-            "title": "Vuex & Unidirectional Data Flow",
-            "url": "vuex-data-flow/"
-          }
-        ]
-      },
-      {
-        "title": "Server-side Operations",
-        "gtm": {
-          "tech": "server-side-operations"
-        },
-        "items": [
-          {
-            "title": "Using Node.js & MySQL",
-            "url": "nodejs-server-side-operations/"
-          },
-          {
-            "title": "Using GraphQL & MySQL",
-            "url": "graphql-server-side-operations/"
-          },
-          {
-            "title": "Using Java & Oracle",
-            "url": "oracle-server-side-operations/"
-          },
-          {
-            "title": "Using Java & Apache Spark",
-            "url": "spark-server-side-operations/"
-          }
-        ]
-      },
-      {
-        "title": "Use  With RxJS",
-        "url": "javascript-grid-rxjs/"
-      },
-      {
-        "title": "Resize With Parent Container",
-        "url": "javascript-grid-responsiveness/"
-      },
-      {
-        "title": "Testing ag-Grid",
-        "gtm": {
-          "tech": "ag-grid testing"
-        },
-        "items": [
-          {
-            "title": "Testing Overview",
-            "url": "javascript-grid-testing/"
-          },
-          {
-            "title": "Testing Angular",
-            "url": "javascript-grid-testing-angular/"
-          },
-          {
-            "title": "Testing React",
-            "url": "javascript-grid-testing-react/"
-          },
-          {
-            "title": "Testing Vue",
-            "url": "javascript-grid-testing-vue/"
-          },
-          {
-            "title": "Jasmine &amp; Protractor ",
-            "url": "javascript-grid-e2e-test-with-jasmine/"
-          }
-        ]
-      },
-
-      {
-        "title": "Use in OpenFin",
-        "url": "javascript-grid-openfin/"
-      }
-    ]
-  },
-  {
     "title": "Reference",
     "gtm": {
       "category": "reference"
@@ -544,13 +375,18 @@
         "enterprise": true
       },
       {
+        "title": "Chart Toolbar",
+        "url": "javascript-grid-charts-chart-toolbar/",
+        "enterprise": true
+      },
+      {
         "title": "Chart API",
         "url": "javascript-grid-charts-chart-range-api/",
         "enterprise": true
       },
       {
-        "title": "Chart Toolbar",
-        "url": "javascript-grid-charts-chart-toolbar/",
+        "title": "Chart Container",
+        "url": "javascript-grid-charts-container/",
         "enterprise": true
       },
       {
@@ -575,11 +411,6 @@
             "url": "javascript-grid-charts-customisation-doughnut/"
           }
         ]
-      },
-      {
-        "title": "Overview (Old)",
-        "url": "javascript-grid-charts-overview-old/",
-        "enterprise": true
       }
     ]
   },
@@ -752,14 +583,171 @@
     ]
   },
   {
-    "title": "Examples",
+    "title": "Guides",
     "gtm": {
-      "category": "examples"
+      "category": "guides"
     },
     "items": [
       {
-        "title": "Overview",
-        "url": "javascript-grid-examples/"
+        "title": "Vanilla JavaScript",
+        "gtm": {
+          "tech": "vanilla"
+        },
+        "items": [
+          {
+            "title": "Install with NPM",
+            "url": "javascript-grid-npm/"
+          },
+          {
+            "title": "Download for Local Usage",
+            "url": "javascript-grid-download/"
+          },
+          {
+            "title": "Use with TypeScript",
+            "gtm": {
+              "tech": "typescript"
+            },
+            "url": "ag-grid-typescript-webpack-2/"
+          }
+        ]
+      },
+      {
+        "title": "Angular",
+        "gtm": {
+          "tech": "angular"
+        },
+        "items": [
+          {
+            "title": "Ag-Grid Angular Overview",
+            "url": "angular-more-details/"
+          },
+          {
+            "title": "Building",
+            "items": [
+              {
+                "title": "SystemJS",
+                "url": "ag-grid-angular-systemjs/"
+              },
+              {
+                "title": "Webpack 3",
+                "url": "ag-grid-angular-webpack-3/"
+              },
+              {
+                "title": "Webpack 2",
+                "url": "ag-grid-angular-webpack-2/"
+              },
+              {
+                "title": "Webpack",
+                "url": "ag-grid-angular-webpack/"
+              }
+            ]
+          },
+          {
+            "title": "Use with RxJS",
+            "url": "example-angular-rxjs/"
+          }
+        ]
+      },
+      {
+        "title": "React",
+        "gtm": {
+          "tech": "react"
+        },
+        "items": [
+          {
+            "title": "Ag-Grid React Overview",
+            "url": "react-more-details/"
+          },
+          {
+            "title": "Redux Integration Part 1",
+            "url": "react-redux-integration-pt1/"
+          },
+          {
+            "title": "Redux Integration Part 2",
+            "url": "react-redux-integration-pt2/"
+          }
+        ]
+      },
+      {
+        "title": "Vue.js",
+        "gtm": {
+          "tech": "vue"
+        },
+        "items": [
+          {
+            "title": "Ag-Grid Vue.js Overview",
+            "url": "best-vuejs-data-grid/"
+          },
+          {
+            "title": "Vuex & Unidirectional Data Flow",
+            "url": "vuex-data-flow/"
+          }
+        ]
+      },
+      {
+        "title": "Server-side Operations",
+        "gtm": {
+          "tech": "server-side-operations"
+        },
+        "items": [
+          {
+            "title": "Using Node.js & MySQL",
+            "url": "nodejs-server-side-operations/"
+          },
+          {
+            "title": "Using GraphQL & MySQL",
+            "url": "graphql-server-side-operations/"
+          },
+          {
+            "title": "Using Java & Oracle",
+            "url": "oracle-server-side-operations/"
+          },
+          {
+            "title": "Using Java & Apache Spark",
+            "url": "spark-server-side-operations/"
+          }
+        ]
+      },
+      {
+        "title": "Use  With RxJS",
+        "url": "javascript-grid-rxjs/"
+      },
+      {
+        "title": "Resize With Parent Container",
+        "url": "javascript-grid-responsiveness/"
+      },
+      {
+        "title": "Testing ag-Grid",
+        "gtm": {
+          "tech": "ag-grid testing"
+        },
+        "items": [
+          {
+            "title": "Testing Overview",
+            "url": "javascript-grid-testing/"
+          },
+          {
+            "title": "Testing Angular",
+            "url": "javascript-grid-testing-angular/"
+          },
+          {
+            "title": "Testing React",
+            "url": "javascript-grid-testing-react/"
+          },
+          {
+            "title": "Testing Vue",
+            "url": "javascript-grid-testing-vue/"
+          },
+          {
+            "title": "Jasmine &amp; Protractor ",
+            "url": "javascript-grid-e2e-test-with-jasmine/"
+          }
+        ]
+      },
+
+      {
+        "title": "Use in OpenFin",
+        "url": "javascript-grid-openfin/"
       },
       {
         "title": "Angular & Material Design",

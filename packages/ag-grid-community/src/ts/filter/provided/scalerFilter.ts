@@ -49,7 +49,7 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
                 'Please use filterParams.includeBlanksInEquals, filterParams.includeBlanksInLessThan and ' +
                 'filterParams.includeBlanksInGreaterThan instead.');
             this.scalarFilterParams.includeBlanksInEquals = this.scalarFilterParams.nullComparator.equals;
-            this.scalarFilterParams.includeBlanksInLessThan= this.scalarFilterParams.nullComparator.lessThan;
+            this.scalarFilterParams.includeBlanksInLessThan = this.scalarFilterParams.nullComparator.lessThan;
             this.scalarFilterParams.includeBlanksInGreaterThan = this.scalarFilterParams.nullComparator.greaterThan;
         }
     }

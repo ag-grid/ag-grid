@@ -1,36 +1,39 @@
 var columnDefs = [
-    {field: "name", width: 150, enableRowGroup: true, editable: true},
-    {field: "group", width: 150, enableRowGroup: true, editable: true},
-    {field: "apples", enableValue: true, editable: true, valueParser: numberValueParser},
-    {field: "oranges", enableValue: true, editable: true, valueParser: numberValueParser},
-    {field: "pears", enableValue: true, editable: true, valueParser: numberValueParser},
-    {field: "bananas", enableValue: true, editable: true, valueParser: numberValueParser},
+    {field: "country", width: 150, chartType: 'category'},
+    {field: "group", chartType: 'category'},
+    {field: "gold", chartType: 'series', editable: true, valueParser: numberValueParser},
+    {field: "silver", chartType: 'series', editable: true, valueParser: numberValueParser},
+    {field: "bronze", chartType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'a', chartType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'b', chartType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'c', chartType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'd', chartType: 'series', editable: true, valueParser: numberValueParser}
 ];
 
-function numberValueParser(params) {
-    return parseInt(params.newValue);
+function createRowData() {
+    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
+        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+    var rowData = [];
+    countries.forEach( function(country, index) {
+        var group = index % 2 == 0 ? 'Group A' : 'Group B';
+        rowData.push({
+            country: country,
+            group: group,
+            gold: Math.floor(((index+1 / 7) * 333)%100),
+            silver: Math.floor(((index+1 / 3) * 555)%100),
+            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+            a: Math.floor(Math.random()*1000),
+            b: Math.floor(Math.random()*1000),
+            c: Math.floor(Math.random()*1000),
+            d: Math.floor(Math.random()*1000)
+        });
+    });
+    return rowData;
 }
 
-var names = ['Andy Murray', 'Magnus Moan', 'Eric Lamaze', 'Christine Girard', 'Alistair Brownlee',
-    'Jonny Brownlee', 'Simon Whitfield', 'Simon Whitfield', 'Jade Jones', 'Lutalo Muhammad',
-    'Karine Sergerie', 'Nina Solheim', 'Sarah Stevenson', 'Dominique Bosshart', 'Trude Gundersen',
-    'Laura Robson', 'Sébastien Lareau', 'Daniel Nestor', 'Sara Nordenstam', 'Alexander Dale Oen',
-    'Håvard Bøkko', 'Lasse Sætre', 'Ådne Søndrål', 'Jasey-Jay Anderson', 'Maëlle Ricker',
-    'Mike Robertson', 'Kjersti Buaas', 'Dominique Maltais', 'Jon Montgomery', 'Amy Williams',
-    'Duff Gibson', 'Mellisa Hollingsworth-Richards', 'Jeff Pain', 'Shelley Rudman', 'Alex Coomber',
-    'Peter Wilson', 'Tore Brovold', 'Richard Faulds', 'Ian Peel', 'Harald Stenvaag', 'Ross MacDonald',
-    'Siren Sundby', 'Mike Wolfs', 'Paul Davis', 'Herman Horn Johannessen', 'Espen Stokkeland',
-    'Fredrik Bekken', 'Olaf Tufte', 'Karina Bryant', 'Gemma Gibbons', 'Antoine Valois-Fortier',
-    'Nicolas Gill', 'Kate Howey', 'Kyle Shewfelt', 'Hedda Berntsen', 'Audun Grønvold', 'Kari Traa',
-    'Bartosz Piasecki', 'Mac Cone', 'Jill Henselwood', 'Ian Millar', 'Tom Daley', 'Leon Taylor',
-    'Peter Waterfield', 'Alexander Kristoff', 'Gunn Rita Dahle-Flesjå', 'Chandra Crawford', 'Sara Renner',
-    'Beckie Scott', 'Gail Emms', 'Nathan Robertson', 'Simon Archer', 'Joanne Wright-Goode', 'Derek Drouin',
-    'Priscilla Lopes-Schliep', 'Alison Williamson'];
-
-var groups = ['Fast Ducks', 'Speedy Spanners', 'Lightening Strikers', 'Burning Buddies'];
-
 function numberValueParser(params) {
-    let res = Number.parseInt(params.newValue);
+    var res = Number.parseInt(params.newValue);
     if (isNaN(res)) {
         return undefined;
     } else {
@@ -45,65 +48,64 @@ var gridOptions = {
         sortable: true,
         editable: true
     },
+    rowData: createRowData(),
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
     // needed for the menu's in the carts, otherwise popups appear over grid
     popupParent: document.body,
-    onGridReady: function(params) {
-        var rowData = [];
-        names.forEach( function(name, index) {
-            rowData.push({
-                name: name,
-                group: groups[index % 4],
-                apples: ((index+1) * 17 % 20),
-                oranges: ((index+1) * 19 % 20),
-                pears: ((index+1) * 13 % 20),
-                bananas: ((index+1) * 133 % 20),
-            })
-        });
-
-        params.api.setRowData(rowData);
-    },
-    onFirstDataRendered: onFirstDataRendered
+    onFirstDataRendered: onFirstDataRendered,
+    getChartToolbarItems: getChartToolbarItems
 };
 
-function onFirstDataRendered() {
-    let eContainer1 = document.querySelector('#chart1');
-    let params1 = {
+function getChartToolbarItems(params) {
+    return [];
+}
+
+function onFirstDataRendered(event) {
+    var eContainer1 = document.querySelector('#chart1');
+    var params1 = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
-            columns: ['apples','oranges']
+            columns: ['country','gold','silver']
         },
         chartType: 'groupedBar',
         chartContainer: eContainer1
     };
-    gridOptions.api.chartRange(params1);
+    event.api.chartRange(params1);
 
-
-    let eContainer2 = document.querySelector('#chart2');
-    let params2 = {
+    var eContainer2 = document.querySelector('#chart2');
+    var params2 = {
         cellRange: {
-            columns: ['group','pears']
+            columns: ['group','gold']
         },
         chartType: 'pie',
         chartContainer: eContainer2,
-        aggregate: true
+        aggregate: true,
+        processChartOptions: function(params) {
+            params.options.legendPosition = 'bottom';
+            params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+            return params.options;
+        }
     };
-    gridOptions.api.chartRange(params2);
+    event.api.chartRange(params2);
 
-
-    let eContainer3 = document.querySelector('#chart3');
-    let params3 = {
+    var eContainer3 = document.querySelector('#chart3');
+    var params3 = {
         cellRange: {
-            columns: ['group','bananas']
+            columns: ['group','silver']
         },
         chartType: 'pie',
         chartContainer: eContainer3,
-        aggregate: true
+        aggregate: true,
+        processChartOptions: function(params) {
+            params.options.legendPosition = 'bottom';
+            params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+            return params.options;
+        }
     };
-    gridOptions.api.chartRange(params3);
+    event.api.chartRange(params3);
 
 }
 

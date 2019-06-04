@@ -9,7 +9,7 @@ export declare class Scene {
     readonly hdpiCanvas: HdpiCanvas;
     private readonly ctx;
     constructor(width?: number, height?: number);
-    parent: HTMLElement | null;
+    parent: HTMLElement | undefined;
     download(options?: DownloadOptions): void;
     private _width;
     width: number;

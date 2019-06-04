@@ -44,6 +44,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     line-height: normal;
     position: relative;
+    overflow: hidden;
 }
 
 // setting shake class to an item will give it a left ot right animation
@@ -475,7 +476,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
             .ag-column-drop-cell-text {
                 overflow: hidden;
-                flex: 1;
+                flex: 1 1 auto;
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
@@ -574,6 +575,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     width: 100%;
     height: 100%;
+    &.ag-row-group {
+        align-items: flex-start;
+    }
 
     .ag-cell-value, .ag-group-value {
         overflow: hidden;
@@ -670,8 +674,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-floating-filter-full-body {
     display: flex;
+    align-items: center;
     height: 100%;
     width: 100%;
+    > div {
+        flex: 1 1 auto;
+    }
 
     input {
         margin: 0;
@@ -1154,14 +1162,6 @@ $handleSize: 5px;
     }
 }
 
-.ag-ltr .ag-column-tool-panel-column {
-    margin-left: 16px;
-}
-
-.ag-rtl .ag-column-tool-panel-column {
-    margin-right: 16px;
-}
-
 .ag-column-tool-panel-column,
 .ag-column-tool-panel-column-group {
     align-items: center;
@@ -1280,7 +1280,7 @@ $handleSize: 5px;
                 outline: none;
                 cursor: pointer;
 
-                span {
+                span:not(.ag-icon) {
                   writing-mode: tb;
                   writing-mode: vertical-lr;
                 }
@@ -1300,7 +1300,7 @@ $handleSize: 5px;
 .ag-rtl .ag-side-bar {
     .ag-side-buttons {
         button {
-            span {
+            span:not(.ag-icon) {
                 writing-mode: tb-rl;
                 writing-mode: vertical-rl;
             }

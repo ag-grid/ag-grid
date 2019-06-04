@@ -20,7 +20,7 @@ var Chart = /** @class */ (function () {
         this.onLayoutChange = function () {
             _this.layoutPending = true;
         };
-        this._title = null;
+        this._title = undefined;
         this._subtitle = null;
         this._series = [];
         this._legendPosition = 'right';
@@ -99,7 +99,7 @@ var Chart = /** @class */ (function () {
         }
         this.legend.onLayoutChange = undefined;
         this.cleanupListeners(this.scene.hdpiCanvas.canvas);
-        this.scene.parent = null;
+        this.scene.parent = undefined;
     };
     Object.defineProperty(Chart.prototype, "element", {
         get: function () {

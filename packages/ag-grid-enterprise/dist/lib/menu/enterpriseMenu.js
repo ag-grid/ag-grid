@@ -66,7 +66,7 @@ var EnterpriseMenuFactory = /** @class */ (function () {
                 eventSource: eventSource,
                 ePopup: menu.getGui(),
                 nudgeX: 9 * multiplier,
-                nudgeY: -26,
+                nudgeY: -23,
                 minWidth: minDims.width,
                 minHeight: minDims.height,
                 alignSide: alignSide,

@@ -105,6 +105,17 @@ include '../documentation-main/documentation_header.php';
         <code>suppressClipboardPaste=true</code>.
     </p>
 
+    <h2>Using enableCellTextSelection</h2>
+    <p>
+        If instead of using the Clipboard service to copy/paste the contents from a cell, you
+        just want to manually select the text and use the operating system copy/paste. You should
+        set <code>enableCellTextSelection=true</code> in the gridOptions <br>
+
+        <note> This is not an enterprise config and can be at any time to enable cell text selection. </note>
+    </p>
+
+    <?= example('Using enableCellTextSelection', 'cellTextSelection', 'generated', array( "processVue" => true)) ?>
+
     <h2 id="events">Clipboard Events</h2>
 
     <p>

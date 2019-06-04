@@ -455,6 +455,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
         var notExpandable = !displayedGroup.isExpandable();
         var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     };
     GroupCellRenderer.prototype.destroy = function () {

@@ -25,6 +25,8 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel> {
     static DEFAULT_COMPARATOR: TextComparator;
     private eValue1;
     private eValue2;
+    private eInputWrapper1;
+    private eInputWrapper2;
     private comparator;
     private formatter;
     private textFilterParams;

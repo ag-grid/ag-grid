@@ -51,10 +51,10 @@ var RangeChartService = /** @class */ (function () {
                 chartType = ag_grid_community_1.ChartType.GroupedBar;
         }
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, params.chartContainer, params.suppressChartRanges, params.aggregate);
+            return this.chartRange(cellRange, chartType, params.chartContainer, params.suppressChartRanges, params.aggregate, params.processChartOptions);
         }
     };
-    RangeChartService.prototype.chartRange = function (cellRange, chartType, container, suppressChartRanges, aggregate) {
+    RangeChartService.prototype.chartRange = function (cellRange, chartType, container, suppressChartRanges, aggregate, processChartOptions) {
         var _this = this;
         if (suppressChartRanges === void 0) { suppressChartRanges = false; }
         if (aggregate === void 0) { aggregate = false; }
@@ -65,6 +65,7 @@ var RangeChartService = /** @class */ (function () {
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges: suppressChartRanges,
             aggregate: aggregate,
+            processChartOptions: processChartOptions,
             height: 400,
             width: 800 //TODO
         };

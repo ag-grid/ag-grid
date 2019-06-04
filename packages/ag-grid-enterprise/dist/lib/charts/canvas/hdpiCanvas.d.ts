@@ -21,7 +21,7 @@ export declare class HdpiCanvas {
     private tempCanvas;
     constructor(width?: number, height?: number);
     private _parent;
-    parent: HTMLElement | null;
+    parent: HTMLElement | undefined;
     private remove;
     destroy(): void;
     toImage(): HTMLImageElement;

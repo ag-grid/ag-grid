@@ -200,13 +200,7 @@ var ChartBuilder = /** @class */ (function () {
     ChartBuilder.initPieSeries = function (series, options) {
         ChartBuilder.initSeries(series, options);
         if (options.title !== undefined) {
-            series.title = options.title;
-        }
-        if (options.titleEnabled !== undefined) {
-            series.titleEnabled = options.titleEnabled;
-        }
-        if (options.titleFont !== undefined) {
-            series.titleFont = options.titleFont;
+            series.title = ChartBuilder.createPieTitle(options.title);
         }
         if (options.calloutColors !== undefined) {
             series.calloutColors = options.calloutColors;
@@ -310,6 +304,13 @@ var ChartBuilder = /** @class */ (function () {
         }
         if (!options.font) {
             options.font = '12px Verdana, sans-serif';
+        }
+        return ChartBuilder.createCaption(options);
+    };
+    ChartBuilder.createPieTitle = function (options) {
+        options = Object.create(options);
+        if (!options.font) {
+            options.font = 'bold 12px Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     };

@@ -3,13 +3,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var padding_1 = require("../util/padding");
 var text_1 = require("../scene/shape/text");
+var node_1 = require("../scene/node");
 var Caption = /** @class */ (function () {
     function Caption() {
         this.node = new text_1.Text();
         this._enabled = true;
         this._padding = new padding_1.Padding(10);
-        this.node.textAlign = 'center';
-        this.node.textBaseline = 'top';
+        var node = this.node;
+        node.textAlign = 'center';
+        node.textBaseline = 'top';
+        node.pointerEvents = node_1.PointerEvents.None;
     }
     Caption.create = function (params) {
         if (params === void 0) { params = {}; }

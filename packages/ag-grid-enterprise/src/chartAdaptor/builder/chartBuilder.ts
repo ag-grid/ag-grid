@@ -257,13 +257,7 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         if (options.title !== undefined) {
-            series.title = options.title;
-        }
-        if (options.titleEnabled !== undefined) {
-            series.titleEnabled = options.titleEnabled;
-        }
-        if (options.titleFont !== undefined) {
-            series.titleFont = options.titleFont;
+            series.title = ChartBuilder.createPieTitle(options.title);
         }
         if (options.calloutColors !== undefined) {
             series.calloutColors = options.calloutColors;
@@ -373,6 +367,15 @@ export class ChartBuilder {
         }
         if (!options.font) {
             options.font = '12px Verdana, sans-serif';
+        }
+        return ChartBuilder.createCaption(options);
+    }
+
+    static createPieTitle(options: CaptionOptions) {
+        options = Object.create(options);
+
+        if (!options.font) {
+            options.font = 'bold 12px Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     }

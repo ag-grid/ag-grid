@@ -25,6 +25,10 @@ interface DoughnutChartOptions {
     // The subtitle to render under the chart's title.
     // If the title is not not specified or disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
+    // The width of the chart.
+    width?: number,
+    // The height of the chart.
+    height?: number;
 
     // The padding of contents from the edges of the chart.
     padding?: {
@@ -63,6 +67,8 @@ interface DoughnutChartOptions {
     };
 
     seriesDefaults?: {
+        // The title of this series. Renders on top of the doughnut. Also shown in the tooltip.
+        title?: CaptionOptions;
 
         // The fill colors of pie slices.
         fills?: string[];
@@ -73,7 +79,8 @@ interface DoughnutChartOptions {
 
         // Whether to show pie slice labels or not.
         labelEnabled?: boolean;
-        // If the pie slice angle is smaller than this value (in degrees), the label won't be shown.
+        // If the pie slice angle is smaller than this value (in degrees),
+        // the label won't be shown.
         labelMinAngle?: number;
 
         // The font to be used for slice labels.
@@ -89,11 +96,6 @@ interface DoughnutChartOptions {
         calloutLength?: number;
         // The padding between the callouts and the labels. Defaults to `3`.
         calloutPadding?: number;
-
-        // Whether to show series title or not. Defaults to `false`.
-        titleEnabled?: boolean;
-        // The font to be used by the series title.
-        titleFont?: string;
 
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
@@ -116,7 +118,7 @@ interface DoughnutChartOptions {
 }
 
 interface CaptionOptions {
-    // The text to use for the chart's title/subtitle.
+    // The text to use for the chart's title/subtitle or series' title.
     text?: string;
     // The font to be used by the title/subtitle.
     // Defaults to `bold 16px Verdana, sans-serif` for the title

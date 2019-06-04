@@ -35,11 +35,16 @@ var PieChartProxy = /** @class */ (function (_super) {
         var pieSeriesId = params.fields[0].colId;
         var pieSeriesName = params.fields[0].displayName;
         var pieSeries = existingSeries;
+        var calloutColors = undefined;
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
             var seriesOptions = this.chartOptions.seriesDefaults;
-            seriesOptions.title = pieSeriesName;
+            // Use `Object.create` to prevent mutating the original user config that is possibly reused.
+            var title = (seriesOptions.title ? Object.create(seriesOptions.title) : {});
+            title.text = pieSeriesName;
+            seriesOptions.title = title;
             seriesOptions.angleField = pieSeriesId;
+            calloutColors = seriesOptions.calloutColors;
             pieSeries = chartBuilder_1.ChartBuilder.createSeries(seriesOptions);
         }
         pieSeries.labelField = params.categoryId;
@@ -47,6 +52,9 @@ var PieChartProxy = /** @class */ (function (_super) {
         var palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
         pieSeries.fills = palette.fills;
         pieSeries.strokes = palette.strokes;
+        if (calloutColors) {
+            pieSeries.calloutColors = calloutColors;
+        }
         if (!existingSeries) {
             pieChart.addSeries(pieSeries);
         }
@@ -88,9 +96,12 @@ var PieChartProxy = /** @class */ (function (_super) {
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: '',
-                titleEnabled: false,
-                titleFont: 'bold 12px Verdana, sans-serif'
+                shadow: undefined,
+                title: {
+                    enabled: false,
+                    font: 'bold 12px Verdana, sans-serif',
+                    color: 'black'
+                }
             }
         };
     };

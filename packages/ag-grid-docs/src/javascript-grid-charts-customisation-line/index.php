@@ -25,6 +25,10 @@ interface LineChartOptions {
     // The subtitle to render under the chart's title.
     // If the title is not not specified or disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
+    // The width of the chart.
+    width?: number,
+    // The height of the chart.
+    height?: number;
 
     // The padding of contents from the edges of the chart.
     padding?: {
@@ -105,7 +109,8 @@ interface CaptionOptions {
 interface LineTooltipRendererParams {
     // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
-    // The field of the datum object that contains the category name of the highlighted data point.
+    // The field of the datum object that contains the category name
+    // of the highlighted data point.
     xField: string;
     // The field of the datum object that contains the series value of the highlighted data point.
     yField: string;
@@ -130,7 +135,8 @@ interface AxisOptions {
     labelFont?: string;
     // The color of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
-    // The rotation of the axis labels from their default value. Defaults to `0`.
+    // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
+    // is present the default category, i.e. (none), is used with the value  `0`.
     labelRotation?: number;
     // The custom formatter function for the axis labels.
     // The value is either a category name or a number. If it's the latter, the number

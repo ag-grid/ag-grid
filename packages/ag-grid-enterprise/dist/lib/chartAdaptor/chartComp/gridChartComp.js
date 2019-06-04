@@ -73,9 +73,11 @@ var GridChartComp = /** @class */ (function (_super) {
             this.chartProxy.destroy();
             ag_grid_community_1._.clearElement(this.eChart);
         }
+        var processChartOptionsFunc = this.params.processChartOptions ?
+            this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
         var chartProxyParams = {
             chartType: this.model.getChartType(),
-            processChartOptions: this.gridOptionsWrapper.getProcessChartOptionsFunc(),
+            processChartOptions: processChartOptionsFunc,
             getSelectedPalette: this.getSelectedPalette.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
@@ -186,7 +188,10 @@ var GridChartComp = /** @class */ (function (_super) {
         }
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
-        ag_grid_community_1._.clearElement(this.getGui());
+        var eGui = this.getGui();
+        ag_grid_community_1._.clearElement(eGui);
+        // remove from parent, so if user provided container, we detach from the provided dom element
+        ag_grid_community_1._.removeFromParent(eGui);
     };
     GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\"></div>\n        </div>";
     __decorate([

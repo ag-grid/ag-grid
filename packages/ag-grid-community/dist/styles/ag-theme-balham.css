@@ -486,7 +486,7 @@
       background-color: #ebebeb;
       border-color: rgba(149, 165, 166, 0.3); }
   .ag-theme-balham .ag-input-text-wrapper input[type="date"] {
-    width: 0; }
+    flex: 1 1 auto; }
   .ag-theme-balham .ag-input-text-wrapper textarea {
     border-width: 1px;
     border-style: solid;
@@ -562,11 +562,13 @@
     padding-left: 11px;
     padding-right: 11px; }
   .ag-theme-balham .ag-row-drag {
+    cursor: move;
     cursor: grab;
     min-width: 28px; }
   .ag-theme-balham .ag-row-dragging, .ag-theme-balham .ag-row-dragging .ag-row-drag {
     cursor: move; }
   .ag-theme-balham .ag-column-drag {
+    cursor: move;
     cursor: grab; }
   .ag-theme-balham .ag-row-dragging {
     opacity: 0.5; }
@@ -607,7 +609,8 @@
       .ag-theme-balham .ag-menu .ag-menu-separator > span {
         background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'8px'%20viewBox%3D'0%200%201%208px'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'4px'%20x2%3D'1'%20y2%3D'4px'%20stroke-width%3D'1'%20stroke%3D'%23BDC3C7'%2F%3E%3C%2Fsvg%3E"); }
     .ag-theme-balham .ag-menu .ag-menu-option-popup-pointer {
-      width: 24px; }
+      width: 24px;
+      text-align: center; }
   .ag-theme-balham.ag-dnd-ghost {
     background: white;
     border-radius: 2px;
@@ -767,6 +770,7 @@
         padding-right: 4px;
         margin-top: 4px; }
       .ag-theme-balham .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-list {
+        cursor: default;
         margin-top: 4px; }
       .ag-theme-balham .ag-tool-panel-wrapper .ag-column-drop > div > :first-child {
         padding-left: 4px;
@@ -889,24 +893,19 @@
     height: 16px;
     padding: 0;
     width: 16px; }
-  .ag-theme-balham .ag-selection-checkbox,
-  .ag-theme-balham .ag-group-checkbox:not(.ag-invisible),
-  .ag-theme-balham .ag-group-expanded:not(.ag-hidden),
-  .ag-theme-balham .ag-group-contracted:not(.ag-hidden) {
-    display: inline-flex; }
-    .ag-theme-balham .ag-selection-checkbox ~ .ag-cell-value:not(:empty), .ag-theme-balham .ag-selection-checkbox + .ag-group-value:not(:empty),
-    .ag-theme-balham .ag-group-checkbox:not(.ag-invisible) ~ .ag-cell-value:not(:empty),
-    .ag-theme-balham .ag-group-checkbox:not(.ag-invisible) + .ag-group-value:not(:empty),
-    .ag-theme-balham .ag-group-expanded:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
-    .ag-theme-balham .ag-group-expanded:not(.ag-hidden) + .ag-group-value:not(:empty),
-    .ag-theme-balham .ag-group-contracted:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
-    .ag-theme-balham .ag-group-contracted:not(.ag-hidden) + .ag-group-value:not(:empty) {
-      margin-left: 12px; }
-    .ag-theme-balham .ag-selection-checkbox ~ .ag-group-checkbox,
-    .ag-theme-balham .ag-group-checkbox:not(.ag-invisible) ~ .ag-group-checkbox,
-    .ag-theme-balham .ag-group-expanded:not(.ag-hidden) ~ .ag-group-checkbox,
-    .ag-theme-balham .ag-group-contracted:not(.ag-hidden) ~ .ag-group-checkbox {
-      margin-left: 12px; }
+  .ag-theme-balham .ag-selection-checkbox ~ .ag-cell-value:not(:empty), .ag-theme-balham .ag-selection-checkbox + .ag-group-value:not(:empty),
+  .ag-theme-balham .ag-group-checkbox:not(.ag-invisible) ~ .ag-cell-value:not(:empty),
+  .ag-theme-balham .ag-group-checkbox:not(.ag-invisible) + .ag-group-value:not(:empty),
+  .ag-theme-balham .ag-group-expanded:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
+  .ag-theme-balham .ag-group-expanded:not(.ag-hidden) + .ag-group-value:not(:empty),
+  .ag-theme-balham .ag-group-contracted:not(.ag-hidden) ~ .ag-cell-value:not(:empty),
+  .ag-theme-balham .ag-group-contracted:not(.ag-hidden) + .ag-group-value:not(:empty) {
+    margin-left: 12px; }
+  .ag-theme-balham .ag-selection-checkbox ~ .ag-group-checkbox,
+  .ag-theme-balham .ag-group-checkbox:not(.ag-invisible) ~ .ag-group-checkbox,
+  .ag-theme-balham .ag-group-expanded:not(.ag-hidden) ~ .ag-group-checkbox,
+  .ag-theme-balham .ag-group-contracted:not(.ag-hidden) ~ .ag-group-checkbox {
+    margin-left: 12px; }
   .ag-theme-balham .ag-group-child-count {
     margin-left: 2px; }
   .ag-theme-balham .ag-selection-checkbox span {

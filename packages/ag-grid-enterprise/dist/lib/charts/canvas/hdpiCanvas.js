@@ -18,7 +18,7 @@ var HdpiCanvas = /** @class */ (function () {
          * A temporary canvas is used (during resize only) to prevent that.
          */
         this.tempCanvas = document.createElement('canvas');
-        this._parent = null;
+        this._parent = undefined;
         // `NaN` is deliberate here, so that overrides are always applied
         // and the `resetTransform` inside the `resize` method works in IE11.
         this._pixelRatio = NaN;

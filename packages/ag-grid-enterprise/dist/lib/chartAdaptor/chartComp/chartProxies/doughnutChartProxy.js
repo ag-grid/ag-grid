@@ -38,16 +38,25 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             var id = pieSeries.angleField;
             fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
         });
+        var seriesOptions = this.chartOptions.seriesDefaults;
+        // Use `Object.create` to prevent mutating the original user config that is possibly reused.
+        var title = (seriesOptions.title ? Object.create(seriesOptions.title) : {});
+        seriesOptions.title = title;
         var offset = 0;
         params.fields.forEach(function (f, index) {
             var existingSeries = existingSeriesMap[f.colId];
-            var seriesOptions = _this.chartOptions.seriesDefaults;
-            seriesOptions.title = f.displayName;
+            title.text = f.displayName;
             seriesOptions.angleField = f.colId;
-            seriesOptions.showInLegend = index === 0;
+            seriesOptions.showInLegend = index === 0; // show legend items for the first series only
+            var calloutColors = seriesOptions.calloutColors;
             var pieSeries = existingSeries ? existingSeries : chartBuilder_1.ChartBuilder.createSeries(seriesOptions);
             pieSeries.labelField = params.categoryId;
             pieSeries.data = params.data;
+            // Normally all series provide legend items for every slice.
+            // For our use case, where all series have the same number of slices in the same order with the same labels
+            // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
+            // so we only show legend items for the first series, and then when the user toggles the slices of the
+            // first series in the legend, we programmatically toggle the corresponding slices of other series.
             if (index === 0) {
                 pieSeries.toggleSeriesItem = function (itemId, enabled) {
                     var chart = pieSeries.chart;
@@ -66,6 +75,9 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             var palette = _this.overriddenPalette ? _this.overriddenPalette : _this.chartProxyParams.getSelectedPalette();
             pieSeries.fills = palette.fills;
             pieSeries.strokes = palette.strokes;
+            if (calloutColors) {
+                pieSeries.calloutColors = calloutColors;
+            }
             if (!existingSeries) {
                 doughnutChart.addSeries(pieSeries);
             }
@@ -108,9 +120,12 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: '',
-                titleEnabled: false,
-                titleFont: 'bold 12px Verdana, sans-serif'
+                shadow: undefined,
+                title: {
+                    enabled: false,
+                    font: 'bold 12px Verdana, sans-serif',
+                    color: 'black'
+                }
             }
         };
     };
