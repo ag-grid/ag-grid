@@ -11,10 +11,10 @@ var columnDefs = [
 ];
 
 function createRowData() {
-    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-    let rowData = [];
+    var rowData = [];
     countries.forEach( function(country, index) {
         var group = index % 2 == 0 ? 'Group A' : 'Group B';
         rowData.push({
@@ -33,7 +33,7 @@ function createRowData() {
 }
 
 function numberValueParser(params) {
-    let res = Number.parseInt(params.newValue);
+    var res = Number.parseInt(params.newValue);
     if (isNaN(res)) {
         return undefined;
     } else {
@@ -63,8 +63,8 @@ function getChartToolbarItems(params) {
 }
 
 function onFirstDataRendered(event) {
-    let eContainer1 = document.querySelector('#chart1');
-    let params1 = {
+    var eContainer1 = document.querySelector('#chart1');
+    var params1 = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
@@ -75,9 +75,8 @@ function onFirstDataRendered(event) {
     };
     event.api.chartRange(params1);
 
-
-    let eContainer2 = document.querySelector('#chart2');
-    let params2 = {
+    var eContainer2 = document.querySelector('#chart2');
+    var params2 = {
         cellRange: {
             columns: ['group','gold']
         },
@@ -92,9 +91,8 @@ function onFirstDataRendered(event) {
     };
     event.api.chartRange(params2);
 
-
-    let eContainer3 = document.querySelector('#chart3');
-    let params3 = {
+    var eContainer3 = document.querySelector('#chart3');
+    var params3 = {
         cellRange: {
             columns: ['group','silver']
         },

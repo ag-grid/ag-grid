@@ -37,7 +37,7 @@ var gridOptions = {
 };
 
 function onChart1() {
-    let params = {
+    var params = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
@@ -49,7 +49,7 @@ function onChart1() {
 }
 
 function onChart2() {
-    let params = {
+    var params = {
         cellRange: {
             columns: ['country','bronze']
         },

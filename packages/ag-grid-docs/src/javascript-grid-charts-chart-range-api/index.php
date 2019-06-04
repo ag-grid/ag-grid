@@ -136,4 +136,11 @@ export interface ProcessChartOptionsParams {
 
     <?= example('Dashboard', 'dashboard', 'generated', array("enterprise" => true, "exampleHeight" => 700)) ?>
 
+    <h2>Next Up</h2>
+
+    <p>
+        Continue to the next section to learn how to: <a href="../javascript-grid-charts-container/">Provide a Chart Container</a>.
+    </p>
+
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -178,7 +178,11 @@ include '../documentation-main/documentation_header.php';
         <li><b>Bronze</b>: considered a 'series' as data is a <code>number</code>.</li>
     </ul>
 
-
 <?= example('Defining categories and series', 'defining-categories-and-series', 'generated', array("enterprise" => true)) ?>
 
+    <h2>Next Up</h2>
+
+    <p>
+        Continue to the next section to learn about the: <a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>.
+    </p>
 <?php include '../documentation-main/documentation_footer.php'; ?>

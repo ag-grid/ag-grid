@@ -9,11 +9,12 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Charts - BETA</h1>
 
     <p class="lead">
-       This section provides an overview of the grid's built-in charting functionality.
+       This section introduces the grid's integrated charting functionality that allows users to chart directly inside
+        the grid and supports applications that want to create pre-defined charts.
     </p>
 
     <p>
-        The charting functionality provided by the grid is deeply integrated with the grid. This integration gives users
+        The charting functionality is deeply integrated with the grid. This integration gives users
         a seamless charting experience while keeping the coding required by developers to a minimum.
     </p>
 
@@ -130,13 +131,17 @@ gridOptions = {
 
         <div style="flex-grow: 1;">
             <ul>
+                <p>
                 <li><a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>: When a chart is created, corresponding
                     chart ranges appear in the grid and are adjusted via the chart range handle.
                 </li>
+                </p>
+                <p>
                 <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
                     Columns can be configured as either categories or series for charting. If not configured then the
                     grid will infer whether a column is category or series data.
                 </li>
+                </p>
             </ul>
         </div>
 
@@ -150,14 +155,20 @@ gridOptions = {
 
         <div style="flex-grow: 1;">
             <ul>
-                <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
-                    The chart toolbar provides access to the chart settings where the user
-                    can:
+                <p>
+                    <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
+                    The chart toolbar is located in the top left area of the chart and allows users
+                    to perform the following actions:
+                </p>
+                    <p>
                     <ul>
-                        <li>Change colour palette.</li>
-                        <li>Change chart type.</li>
-                        <li>Select columns for category and series.</li>
+                        <li style="padding-bottom: 5px">Change the chart type</li>
+                        <li style="padding-bottom: 5px">Change the colour palette</li>
+                        <li style="padding-bottom: 5px">Select categories and series</li>
+                        <li>Download the chart</li>
                     </ul>
+                    </p>
+
                 </li>
             </ul>
         </div>
@@ -206,7 +217,7 @@ gridOptions = {
         </li>
     </ul>
 
-    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array( "exampleHeight" => 700, 'enterprise' => true)) ?>
+    <?= example('Application Created Charts', 'application-created-charts', 'vanilla', array( "exampleHeight" => 660, 'enterprise' => true)) ?>
 
     <p>
         To learn how to create charts in your applications see the following sections for details:
@@ -232,7 +243,7 @@ gridOptions = {
 
     <p>
         The section <a href="../javascript-grid-charts-customisation/">Chart Customisation</a> outlines all
-        the items that can be cusomised for each chart type.
+        the items that can be customised for each chart type.
     </p>
 
     <h2>Next Up</h2>

@@ -71,5 +71,10 @@ interface ChartRef {
 
     <?= example('Provided Container', 'provided-container', 'generated', array("enterprise" => true)) ?>
 
+    <h2>Next Up</h2>
+
+    <p>
+        Continue to the next section to learn how to: <a href="../javascript-grid-charts-customisation/">Customise Charts</a>.
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

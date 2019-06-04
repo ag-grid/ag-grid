@@ -22,7 +22,7 @@ body {
 
 .my-chart {
     flex-grow: 1;
-    height: 120px;
+    height: 135px;
     display: inline-block;
     border: 1px solid lightslategrey;
 }
