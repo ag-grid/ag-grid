@@ -9,4 +9,10 @@
 .test-header {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
+    display: flex;
+}
+
+button {
+    float: left;
+    margin-right: 5px;
 }

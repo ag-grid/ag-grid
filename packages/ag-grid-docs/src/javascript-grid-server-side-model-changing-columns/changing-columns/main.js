@@ -57,6 +57,16 @@ var gridOptions = {
     sideBar: {
         toolPanels: ['columns','filters']
     },
+    onGridReady: function(params) {
+        document.getElementById('athlete').checked = true;
+        document.getElementById('age').checked = true;
+        document.getElementById('country').checked = true;
+        document.getElementById('year').checked = true;
+        document.getElementById('sport').checked = true;
+        document.getElementById('gold').checked = true;
+        document.getElementById('silver').checked = true;
+        document.getElementById('bronze').checked = true;
+    },
     suppressAggFuncInHeader: true,
 };
 
