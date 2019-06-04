@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Chart API</h1>
 
     <p class="lead">
-        This section covers how to use the chart range api in your applications.
+        This section covers how to use the chart range API in your applications.
     </p>
 
     <h2>Charting API</h2>

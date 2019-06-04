@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
                 <ul>
                     <li style="padding-bottom: 5px">Change the chart type</li>
                     <li style="padding-bottom: 5px">Change the colour palette</li>
-                    <li style="padding-bottom: 5px">Select categories and series</li>
+                    <li style="padding-bottom: 5px">Select categories and series columns</li>
                     <li>Download the chart</li>
                 </ul>
             </p>
@@ -43,11 +43,11 @@ include '../documentation-main/documentation_header.php';
         The chart settings toolbar item allows users to change the chart type as well as the color palette used in the
         chart as demonstrated below:
     </p>
-        <img alt="Chart Settings" src="chart-settings.gif" style="height: 420px; width: 100%; border: grey solid 1px">
+        <img alt="Chart Settings" src="chart-settings.gif" style="max-width: 100%; border: grey solid 1px">
     <p>
        <br>
        Right now the toolbar allow users to switch between the 5 most commonly used charts: Grouped Bar, Stacked Bar,
-       Line, Pie and Doughnut. However more chart types will be added soon...
+       Line, Pie and Doughnut. However more chart types will be added soon.
     </p>
 
     <p>
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The chart data toolbar is used to dynamically change the data being charted as shown below:
     </p>
-    <img alt="Chart Data" src="chart-data.gif" style="height: 420px; width: 100%; border: grey solid 1px">
+    <img alt="Chart Data" src="chart-data.gif" style="max-width: 100%; border: grey solid 1px">
 
     <p>
         <br>
@@ -82,7 +82,9 @@ include '../documentation-main/documentation_header.php';
     <h2>Chart Download</h2>
 
     <p>
-        A toolbar item is also provided to download charts and is located at the bottom of the toolbar by default.
+        The 'Download Chart' toolbar item will download the chart as a PNG file. Note that the chart is drawn
+        using Canvas in the browser and as such the user can also right click on the chart and save just like
+        any other image on a web page.
     </p>
 
 
@@ -111,7 +113,7 @@ interface GetChartToolbarItemsParams {
 
 <p>
     This function receives the <code>GetChartToolbarItemsParams</code> object which contains the list of items that are
-    shown by default in <code>defaultItems</code> along with the grid api's.
+    shown by default in <code>defaultItems</code> along with the grid API's.
 </p>
 
 <p>

@@ -1,17 +1,15 @@
 <div class="note" style="display: none" fixVersionNote id="fix_version_21_0_0">
     <p>Release 21.0.0 (4th June 2019)</p>
 
-    <p>Breaking Changes:</p>
-    <ul>
-        <li>
-            AG-2983 - Change icons implementation to make customisation easier
-            (see <a href="/javascript-grid-icons/">Custom Icons</a>).
-        </li>
-    </ul>
-
     <p>Feature Highlights:</p>
 
     <ul>
+
+        <li>
+            AG-3008 / AG-3009 - Integrated Charts - a major new component has been added to ag-Grid which provides integrated charting from within the grid (see <a href="/javascript-grid-charts-overview/#user-created-charts">User Created Charts</a> and
+            <a href="/javascript-grid-charts-overview/#application-created-charts">Application Created Charts</a>).
+        </li>
+
         <li>
             AG-2946 - Filters Refactor - The simple provided filters (number, text, date) were part of the first
             grid release and the design was built on top of as new requirements were catered for. All the
@@ -35,11 +33,35 @@
             with us if you decided to start using ag-Grid inside your project.
         </li>
 
-        <li>AG-2984 - Replaced all SVG icons with a WebFont.</li>
+        <li>
+            AG-2983 - Improved customisation for icons (see <a href="/javascript-grid-icons/">Custom Icons</a>).
+        </li>
+
         <li>AG-2663 - React - Declarative Column Definitions Now Reactive.</li>
         <li>AG-2536 - React - Component Container Configurable (see <a href="/react-more-details/#control-react-components-container">Control React Components Container</a>).</li>
         <li>AG-2656 - React - Allow React Change Detection to be Configurable (see <a href="/react-more-details/#react-row-data-control">Row Data Control</a>).</li>
         <li>AG-2257 - All Frameworks - Expand & Improve Testing Documentation (see <a href="/javascript-grid-testing/">ag-Grid Testing</a>).</li>
+    </ul>
+
+
+    <p>Breaking Changes:</p>
+    <ul>
+        <li>
+            AG-2946 - Number and Date Column Filters – Null Comparator is replaced with includeBlanksInEquals, includeBlanksInLessThan and includeBlanksInGreaterThan. (see <a href="/javascript-grid-filter-provided-simple/#blank-cells-date-and-number-filters">Blank Cells - Date and Number Filters</a>).
+        </li>
+
+        <li>
+            AG-2946 - Floating Filters: floatingFilterParams.debounceMs is no longer a property, instead the floating filter uses the property of the same name form filterParams.
+        </li>
+
+        <li>
+            AG-2946 - Custom Floating Filters – params.onParentModelChanged() is no longer used -instead you call methods on the parent filter directly. Also IFloatingFilter no longer takes generics. (see
+            <a href="/javascript-grid-floating-filter-component/">Custom Floating Filters</a>).
+        </li>
+
+        <li>
+            AG-2984 - Replaced all SVG icons with a WebFont (see <a href="/javascript-grid-icons/">Custom Icons</a>).
+        </li>
     </ul>
 </div>
 

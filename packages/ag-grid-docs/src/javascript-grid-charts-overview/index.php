@@ -29,12 +29,12 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            <a href="../javascript-grid-charts-overview/#user-created-charts">User Created Charts</a>: a user creates a
-            chart from a range of selected cells via the context menu.
+            <a href="../javascript-grid-charts-overview/#user-created-charts">User Created Charts</a>: A user creates a
+            chart using the grid's UI by selecting a range of cells and then selecting to chart via the context menu.
         </li>
         <li>
             <a href="../javascript-grid-charts-overview/#application-created-charts">Application Created Charts</a>:
-            the application requests the grid to create a chart through the chart API.
+            The application requests the grid to create a chart through the grid's charting API.
         </li>
     </ul>
     </p>
@@ -64,12 +64,13 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        The enterprise bundle of ag-Grid automatically includes charts, i.e. <code>ag-grid-enterprise.js</code>
+        If you are not using ES6 Modules and instead using the bundled version of ag-Grid Enterprise, note that
+        <code>ag-grid-enterprise.js</code> already contains the charting module.
     </note>
 
     <h2>Enabling Charts</h2>
     <p>
-        All that is required to enable charting is set the following grid option:
+        To enable charting in the grid set the following grid option:
     </p>
 
 <snippet>
@@ -81,8 +82,8 @@ gridOptions = {
     <p>
         To allow users to create charts from a
         <a href="../javascript-grid-range-selection/">Range Selection</a> and / or display the
-        <a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a> in the grid, the following grid option
-        should also be enabled:
+        <a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a> in the grid, then set the following grid
+        option:
     </p>
 
 <snippet>
@@ -94,7 +95,7 @@ gridOptions = {
     <h2>User Created Charts</h2>
     <p>
         User created charts are designed to provide an out-of-the box charting experience, similar to that found in
-        spreadsheet applications such as Excel, but yet more compelling once integrated inside applications.
+        spreadsheet applications such as Excel, but more compelling it will be integrated inside your applications.
     </p>
 
     <p>
@@ -157,14 +158,14 @@ gridOptions = {
             <ul>
                 <p>
                     <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
-                    The chart toolbar is located in the top left area of the chart and allows users
-                    to perform the following actions:
+                    The chart toolbar is located in the top left area of the chart and brings
+                    the user to UI components to perform the following:
                 </p>
                     <p>
                     <ul>
                         <li style="padding-bottom: 5px">Change the chart type</li>
                         <li style="padding-bottom: 5px">Change the colour palette</li>
-                        <li style="padding-bottom: 5px">Select categories and series</li>
+                        <li style="padding-bottom: 5px">Select categories and series columns</li>
                         <li>Download the chart</li>
                     </ul>
                     </p>
@@ -206,14 +207,14 @@ gridOptions = {
 
     <ul class="content">
         <li>
-            <b>Pre-Defined Chart</b>: a pre-defined chart is shown in a separate chart container below the grid.
+            <b>Pre-Defined Chart</b>: A pre-defined chart is shown in a separate chart container below the grid.
         </li>
         <li>
-            <b>Dynamic Charts</b>: buttons positions above the grid dynamically create different chart types.
+            <b>Dynamic Charts</b>: Buttons positioned above the grid dynamically create different chart types.
         </li>
         <li>
-            <b>High Performance</b>: 100 rows are randomly updated 10 times a second. Try updating the example via
-            plunker with higher update frequencies and more data.
+            <b>High Performance</b>: 100 rows are randomly updated 10 times a second (1,000 updates per second).
+            Try updating the example via plunker with higher update frequencies and more data.
         </li>
     </ul>
 
@@ -224,11 +225,11 @@ gridOptions = {
     </p>
 
     <ul>
-        <li><a href="../javascript-grid-charts-chart-range-api/">Chart Range API</a>: used to create charts programmatically
+        <li><a href="../javascript-grid-charts-chart-range-api/">Chart Range API</a>: Used to create charts programmatically
             inside applications.
         </li>
         <li><a href="../javascript-grid-charts-customisation/#providing-a-chart-container/">Provide a Chart Container</a>:
-            used to target chart containers inside the application instead of the popup window provided by the grid.
+            Used to target chart containers inside the application instead of the popup window provided by the grid.
         </li>
     </ul>
 

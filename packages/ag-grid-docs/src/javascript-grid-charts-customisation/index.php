@@ -57,10 +57,10 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>Click a button to create a chart of that type.</li>
-        <li><b>Stacked Bar</b> and <b>Grouped Bar</b> charts have the <b>legend bottom</b>.</li>
-        <li><b>Line</b> charts have the <b>legend left</b>.</li>
-        <li><b>Pie</b> charts have the <b>legend top</b>.</li>
-        <li><b>Doughnut</b> charts have the <b>legend right</b>.</li>
+        <li><b>Stacked Bar</b> and <b>Grouped Bar</b> charts have the legend docked to the <b>bottom</b>.</li>
+        <li><b>Line</b> charts have the legend docked to the <b>left</b>.</li>
+        <li><b>Pie</b> charts have the legend docked to the <b>top</b>.</li>
+        <li><b>Doughnut</b> charts have the legend docked to the <b>right</b>.</li>
     </ul>
 
     <?= example('Custom Chart', 'custom-chart', 'generated', array("enterprise" => true)) ?>

@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         highlighting the charted category and series data in the grid.
     </p>
 
-    <h2>Creating Cell Ranges</h2>
+    <h2>Creating Chart Ranges</h2>
 
     <p>
         When a chart is created off a selected range of cells in the grid, or via the charting api, the underlying cell
@@ -60,7 +60,7 @@ include '../documentation-main/documentation_header.php';
         To hide the chart ranges simply enable <code>suppressChartRanges=true</code> on the <code>ChartRangeParams</code>.
     </p>
     <p>
-        For more details refer to the section on the: <a href="../javascript-grid-charts-chart-range-api/#charting-api">Chart Range API</a>.
+        For more details refer to <a href="../javascript-grid-charts-chart-range-api/#charting-api">Chart Range API</a>.
     </p>
 
     <h2>Category and Series Ranges</h2>
@@ -141,8 +141,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ul>
-        <li><b>enableRowGroup / enablePivot</b>: row grouping and pivoting enabled columns map to chart 'categories'.</li>
-        <li><b>enableValue</b>: value columns will be considered chart 'series' columns.</li>
+        <li><b>enableRowGroup / enablePivot</b>: Row grouping and pivoting enabled columns map to chart 'categories'.</li>
+        <li><b>enableValue</b>: Value columns will be considered chart 'series' columns.</li>
     </ul>
 
     <snippet>
