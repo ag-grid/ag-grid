@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -68,25 +68,25 @@ var column_1 = require("./dist/lib/entities/column");
 exports.Column = column_1.Column;
 var columnGroup_1 = require("./dist/lib/entities/columnGroup");
 exports.ColumnGroup = columnGroup_1.ColumnGroup;
-var gridCell_1 = require("./dist/lib/entities/gridCell");
-exports.GridCell = gridCell_1.GridCell;
-var gridRow_1 = require("./dist/lib/entities/gridRow");
-exports.GridRow = gridRow_1.GridRow;
 var originalColumnGroup_1 = require("./dist/lib/entities/originalColumnGroup");
 exports.OriginalColumnGroup = originalColumnGroup_1.OriginalColumnGroup;
 var rowNode_1 = require("./dist/lib/entities/rowNode");
 exports.RowNode = rowNode_1.RowNode;
 // filter
-var baseFilter_1 = require("./dist/lib/filter/baseFilter");
-exports.BaseFilter = baseFilter_1.BaseFilter;
-var dateFilter_1 = require("./dist/lib/filter/dateFilter");
-exports.DateFilter = dateFilter_1.DateFilter;
 var filterManager_1 = require("./dist/lib/filter/filterManager");
 exports.FilterManager = filterManager_1.FilterManager;
-var numberFilter_1 = require("./dist/lib/filter/numberFilter");
+var providedFilter_1 = require("./dist/lib/filter/provided/providedFilter");
+exports.ProvidedFilter = providedFilter_1.ProvidedFilter;
+var simpleFilter_1 = require("./dist/lib/filter/provided/simpleFilter");
+exports.SimpleFilter = simpleFilter_1.SimpleFilter;
+var scalerFilter_1 = require("./dist/lib/filter/provided/scalerFilter");
+exports.ScalerFilter = scalerFilter_1.ScalerFilter;
+var numberFilter_1 = require("./dist/lib/filter/provided/number/numberFilter");
 exports.NumberFilter = numberFilter_1.NumberFilter;
-var textFilter_1 = require("./dist/lib/filter/textFilter");
+var textFilter_1 = require("./dist/lib/filter/provided/text/textFilter");
 exports.TextFilter = textFilter_1.TextFilter;
+var dateFilter_1 = require("./dist/lib/filter/provided/date/dateFilter");
+exports.DateFilter = dateFilter_1.DateFilter;
 // gridPanel
 var gridPanel_1 = require("./dist/lib/gridPanel/gridPanel");
 exports.GridPanel = gridPanel_1.GridPanel;
@@ -121,6 +121,8 @@ exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
 var simpleHttpRequest_1 = require("./dist/lib/misc/simpleHttpRequest");
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
+var resizeObserverService_1 = require("./dist/lib/misc/resizeObserverService");
+exports.ResizeObserverService = resizeObserverService_1.ResizeObserverService;
 var largeTextCellEditor_1 = require("./dist/lib/rendering/cellEditors/largeTextCellEditor");
 exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
 var popupEditorWrapper_1 = require("./dist/lib/rendering/cellEditors/popupEditorWrapper");
@@ -189,10 +191,14 @@ exports.StylingService = stylingService_1.StylingService;
 // widgets
 var agCheckbox_1 = require("./dist/lib/widgets/agCheckbox");
 exports.AgCheckbox = agCheckbox_1.AgCheckbox;
-var popupWindow_1 = require("./dist/lib/widgets/popupWindow");
-exports.PopupWindow = popupWindow_1.PopupWindow;
-var popupMessageBox_1 = require("./dist/lib/widgets/popupMessageBox");
-exports.PopupMessageBox = popupMessageBox_1.PopupMessageBox;
+var agRadioButton_1 = require("./dist/lib/widgets/agRadioButton");
+exports.AgRadioButton = agRadioButton_1.AgRadioButton;
+var agGroupComponent_1 = require("./dist/lib/widgets/agGroupComponent");
+exports.AgGroupComponent = agGroupComponent_1.AgGroupComponent;
+var dialog_1 = require("./dist/lib/widgets/dialog");
+exports.Dialog = dialog_1.Dialog;
+var messageBox_1 = require("./dist/lib/widgets/messageBox");
+exports.MessageBox = messageBox_1.MessageBox;
 var component_1 = require("./dist/lib/widgets/component");
 exports.Component = component_1.Component;
 var popupComponent_1 = require("./dist/lib/widgets/popupComponent");
@@ -201,6 +207,9 @@ var popupService_1 = require("./dist/lib/widgets/popupService");
 exports.PopupService = popupService_1.PopupService;
 var touchListener_1 = require("./dist/lib/widgets/touchListener");
 exports.TouchListener = touchListener_1.TouchListener;
+// range
+var iRangeController_1 = require("./dist/lib/interfaces/iRangeController");
+exports.CellRangeType = iRangeController_1.CellRangeType;
 // exporter
 var csvCreator_1 = require("./dist/lib/exporter/csvCreator");
 exports.CsvCreator = csvCreator_1.CsvCreator;
@@ -217,8 +226,8 @@ exports.RowType = gridSerializer_2.RowType;
 var zipContainer_1 = require("./dist/lib/exporter/files/zip/zipContainer");
 exports.ZipContainer = zipContainer_1.ZipContainer;
 // root
-var baseFrameworkFactory_1 = require("./dist/lib/baseFrameworkFactory");
-exports.BaseFrameworkFactory = baseFrameworkFactory_1.BaseFrameworkFactory;
+var vanillaFrameworkOverrides_1 = require("./dist/lib/vanillaFrameworkOverrides");
+exports.VanillaFrameworkOverrides = vanillaFrameworkOverrides_1.VanillaFrameworkOverrides;
 var cellNavigationService_1 = require("./dist/lib/cellNavigationService");
 exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
 var alignedGridsService_1 = require("./dist/lib/alignedGridsService");
@@ -262,6 +271,10 @@ var expressionService_1 = require("./dist/lib/valueService/expressionService");
 exports.ExpressionService = expressionService_1.ExpressionService;
 var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
+var cellPosition_1 = require("./dist/lib/entities/cellPosition");
+exports.CellPositionUtils = cellPosition_1.CellPositionUtils;
+var rowPosition_1 = require("./dist/lib/entities/rowPosition");
+exports.RowPositionUtils = rowPosition_1.RowPositionUtils;
 var columnApi_1 = require("./dist/lib/columnController/columnApi");
 exports.ColumnApi = columnApi_1.ColumnApi;
 var frameworkComponentWrapper_1 = require("./dist/lib/components/framework/frameworkComponentWrapper");
@@ -270,3 +283,6 @@ var environment_1 = require("./dist/lib/environment");
 exports.Environment = environment_1.Environment;
 var tooltipManager_1 = require("./dist/lib/widgets/tooltipManager");
 exports.TooltipManager = tooltipManager_1.TooltipManager;
+// charts
+var iChartOptions_1 = require("./dist/lib/interfaces/iChartOptions");
+exports.ChartType = iChartOptions_1.ChartType;
