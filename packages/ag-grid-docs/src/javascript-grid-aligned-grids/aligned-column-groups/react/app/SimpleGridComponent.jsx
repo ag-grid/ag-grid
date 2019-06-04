@@ -85,6 +85,7 @@ export default class extends Component {
                 <div style={{width: '100%', height: '45%'}} className="ag-theme-balham">
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions}
                                  columnDefs={this.state.columnDefs}
+                                 defaultColDef={{resizable: true}}
                                  onGridReady={this.onGridReady.bind(this)}
                                  onFirstDataRendered={this.onFirstDataRendered.bind(this)}/>
                 </div>

@@ -184,6 +184,9 @@ var gridOptions = {
     animateRows: true,
     getRowNodeId: function(data) {
         return data.student;
+    },
+    onGridReady:function(params) {
+        document.getElementById('pivot-mode').checked = true;
     }
 };
 
