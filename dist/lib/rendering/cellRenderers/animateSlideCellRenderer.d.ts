@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRenderer } from "./iCellRenderer";
@@ -10,6 +10,7 @@ export declare class AnimateSlideCellRenderer extends Component implements ICell
     private ePrevious;
     private lastValue;
     private refreshCount;
+    private filterManager;
     constructor();
     init(params: any): void;
     addSlideAnimation(): void;

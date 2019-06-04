@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -201,6 +201,12 @@ var Component = /** @class */ (function (_super) {
     };
     Component.prototype.getGui = function () {
         return this.eGui;
+    };
+    Component.prototype.setParentComponent = function (component) {
+        this.parentComponent = component;
+    };
+    Component.prototype.getParentComponent = function () {
+        return this.parentComponent;
     };
     // this method is for older code, that wants to provide the gui element,
     // it is not intended for this to be in ag-Stack

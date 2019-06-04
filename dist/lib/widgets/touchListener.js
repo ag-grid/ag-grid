@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,8 +10,8 @@ var eventService_1 = require("../eventService");
 var utils_1 = require("../utils");
 var TouchListener = /** @class */ (function () {
     function TouchListener(eElement, preventMouseClick) {
-        if (preventMouseClick === void 0) { preventMouseClick = false; }
         var _this = this;
+        if (preventMouseClick === void 0) { preventMouseClick = false; }
         this.destroyFuncs = [];
         this.touching = false;
         this.eventService = new eventService_1.EventService();

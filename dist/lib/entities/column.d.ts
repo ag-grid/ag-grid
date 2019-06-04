@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -29,7 +29,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     static SORT_DESC: string;
     private gridOptionsWrapper;
     private columnUtils;
-    private frameworkFactory;
     private columnApi;
     private gridApi;
     private readonly colId;
@@ -45,9 +44,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private sortedAt;
     private moving;
     private menuVisible;
-    private readonly lockPosition;
-    private readonly lockPinned;
-    private readonly lockVisible;
     private lastLeftPinned;
     private firstRightPinned;
     private minWidth;
@@ -65,9 +61,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean);
     setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void;
     getUserProvidedColDef(): ColDef;
-    isLockPosition(): boolean;
-    isLockVisible(): boolean;
-    isLockPinned(): boolean;
     setParent(parent: ColumnGroup): void;
     getParent(): ColumnGroup;
     setOriginalParent(originalParent: OriginalColumnGroup | null): void;
@@ -111,7 +104,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getRight(): number;
     setLeft(left: number | null, source?: ColumnEventType): void;
     isFilterActive(): boolean;
-    setFilterActive(active: boolean, source?: ColumnEventType): void;
+    setFilterActive(active: boolean, source?: ColumnEventType, additionalEventAttributes?: any): void;
     setPinned(pinned: string | boolean | null | undefined): void;
     setFirstRightPinned(firstRightPinned: boolean, source?: ColumnEventType): void;
     setLastLeftPinned(lastLeftPinned: boolean, source?: ColumnEventType): void;
@@ -149,4 +142,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isAllowValue(): boolean;
     isAllowRowGroup(): boolean;
     getMenuTabs(defaultValues: string[]): string[];
+    isLockPosition(): boolean;
+    isLockVisible(): boolean;
+    isLockPinned(): boolean;
 }

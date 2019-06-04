@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -73,6 +73,7 @@ var GridPanel = /** @class */ (function (_super) {
         var _this = _super.call(this, GRID_PANEL_NORMAL_TEMPLATE) || this;
         _this.scrollLeft = -1;
         _this.scrollTop = -1;
+        _this.nextScrollTop = -1;
         _this.resetLastHorizontalScrollElementDebounce = utils_1._.debounce(_this.resetLastHorizontalScrollElement.bind(_this), 500);
         return _this;
     }
@@ -150,6 +151,7 @@ var GridPanel = /** @class */ (function (_super) {
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
+        this.animationFrameService.registerGridComp(this);
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
         }
@@ -168,7 +170,9 @@ var GridPanel = /** @class */ (function (_super) {
         }
     };
     GridPanel.prototype.onCenterViewportResized = function () {
-        this.checkViewportAndScrolls();
+        if (utils_1._.isVisible(this.eCenterViewport)) {
+            this.checkViewportAndScrolls();
+        }
     };
     // used by ColumnAnimationService
     GridPanel.prototype.setColumnMovingCss = function (moving) {
@@ -272,10 +276,7 @@ var GridPanel = /** @class */ (function (_super) {
                 eElement: container,
                 onDragStart: _this.rangeController.onDragStart.bind(_this.rangeController),
                 onDragStop: _this.rangeController.onDragStop.bind(_this.rangeController),
-                onDragging: _this.rangeController.onDragging.bind(_this.rangeController),
-                // for range selection by dragging the mouse, we want to ignore the event if shift key is pressed,
-                // as shift key click is another type of range selection
-                skipMouseEvent: function (mouseEvent) { return mouseEvent.shiftKey; }
+                onDragging: _this.rangeController.onDragging.bind(_this.rangeController)
             };
             _this.dragService.addDragSource(params);
             _this.addDestroyFunc(function () { return _this.dragService.removeDragSource(params); });
@@ -297,7 +298,7 @@ var GridPanel = /** @class */ (function (_super) {
         eventNames.forEach(function (eventName) {
             var listener = _this.processKeyboardEvent.bind(_this, eventName);
             _this.eAllCellContainers.forEach(function (container) {
-                _this.addDestroyableEventListener(container, eventName, listener, true);
+                _this.addDestroyableEventListener(container, eventName, listener);
             });
         });
     };
@@ -339,18 +340,18 @@ var GridPanel = /** @class */ (function (_super) {
     };
     GridPanel.prototype.processKeyboardEvent = function (eventName, keyboardEvent) {
         var cellComp = utils_1._.getCellCompForEvent(this.gridOptionsWrapper, keyboardEvent);
-        var rowNode = cellComp.getRenderedRow().getRowNode();
-        var column = cellComp.getColumn();
-        var editing = cellComp.isEditing();
         if (!cellComp) {
             return;
         }
+        var rowNode = cellComp.getRenderedRow().getRowNode();
+        var column = cellComp.getColumn();
+        var editing = cellComp.isEditing();
         var gridProcessingAllowed = !utils_1._.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
         if (gridProcessingAllowed) {
             switch (eventName) {
                 case 'keydown':
                     // first see if it's a scroll key, page up / down, home / end etc
-                    var wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+                    var wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
                     // if not a scroll key, then we pass onto cell
                     if (!wasScrollKey) {
                         cellComp.onKeyDown(keyboardEvent);
@@ -361,9 +362,6 @@ var GridPanel = /** @class */ (function (_super) {
                     cellComp.onKeyPress(keyboardEvent);
                     break;
             }
-        }
-        else {
-            keyboardEvent.preventDefault();
         }
         if (eventName === 'keydown') {
             var cellKeyDownEvent = cellComp.createEvent(keyboardEvent, events_1.Events.EVENT_CELL_KEY_DOWN);
@@ -501,13 +499,13 @@ var GridPanel = /** @class */ (function (_super) {
             if (utils_1._.missingOrEmpty(allDisplayedColumns)) {
                 return;
             }
-            rangeController.setRange({
-                rowStart: 0,
-                floatingStart: floatingStart,
-                rowEnd: rowEnd,
-                floatingEnd: floatingEnd,
+            rangeController.setCellRange({
+                rowStartIndex: 0,
+                rowStartPinned: floatingStart,
+                rowEndIndex: rowEnd,
+                rowEndPinned: floatingEnd,
                 columnStart: allDisplayedColumns[0],
-                columnEnd: allDisplayedColumns[allDisplayedColumns.length - 1]
+                columnEnd: utils_1._.last(allDisplayedColumns)
             });
         }
         event.preventDefault();
@@ -523,7 +521,7 @@ var GridPanel = /** @class */ (function (_super) {
         // because of the trickery the copy logic uses with a temporary
         // widget. so we set it back again.
         if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
     };
     GridPanel.prototype.onCtrlAndV = function () {
@@ -1034,9 +1032,22 @@ var GridPanel = /** @class */ (function (_super) {
     };
     GridPanel.prototype.onVerticalScroll = function () {
         var scrollTop = this.eBodyViewport.scrollTop;
-        this.scrollTop = scrollTop;
         this.animationFrameService.setScrollTop(scrollTop);
-        this.redrawRowsAfterScroll();
+        this.nextScrollTop = scrollTop;
+        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            this.redrawRowsAfterScroll();
+        }
+        else {
+            this.animationFrameService.schedule();
+        }
+    };
+    GridPanel.prototype.executeFrame = function () {
+        var frameNeeded = this.scrollTop !== this.nextScrollTop;
+        if (frameNeeded) {
+            this.scrollTop = this.nextScrollTop;
+            this.redrawRowsAfterScroll();
+        }
+        return frameNeeded;
     };
     GridPanel.prototype.isControllingScroll = function (eDiv) {
         if (!this.lastHorizontalScrollElement) {

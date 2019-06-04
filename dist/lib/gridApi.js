@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,6 @@ var constants_1 = require("./constants");
 var context_1 = require("./context/context");
 var sortController_1 = require("./sortController");
 var focusedCellController_1 = require("./focusedCellController");
-var gridCell_1 = require("./entities/gridCell");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var paginationProxy_1 = require("./rowModels/paginationProxy");
 var immutableService_1 = require("./rowModels/clientSide/immutableService");
@@ -714,6 +713,10 @@ var GridApi = /** @class */ (function () {
         this.rowModel.forEachNode(function (node) { return node.quickFilterAggregateText = null; });
     };
     GridApi.prototype.getRangeSelections = function () {
+        console.warn("ag-Grid: in v20.1.x, api.getRangeSelections() is gone, please use getCellRanges() instead.\n        We had to change how cell selections works a small bit to allow charting to integrate. The return type of\n        getCellRanges() is a bit different, please check the ag-Grid documentation.");
+        return null;
+    };
+    GridApi.prototype.getCellRanges = function () {
         if (this.rangeController) {
             return this.rangeController.getCellRanges();
         }
@@ -725,17 +728,29 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.camelCaseToHumanReadable = function (camelCase) {
         return utils_1._.camelCaseToHumanText(camelCase);
     };
-    GridApi.prototype.addRangeSelection = function (rangeSelection) {
+    GridApi.prototype.addRangeSelection = function (deprecatedNoLongerUsed) {
+        console.warn('ag-Grid: As of version 21.x, range selection changed slightly to allow charting integration. Please call api.addCellRange() instead of api.addRangeSelection()');
+    };
+    GridApi.prototype.addCellRange = function (params) {
         if (!this.rangeController) {
             console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
         }
-        this.rangeController.addRange(rangeSelection);
+        this.rangeController.addCellRange(params);
     };
     GridApi.prototype.clearRangeSelection = function () {
         if (!this.rangeController) {
             console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
         }
-        this.rangeController.clearSelection();
+        this.rangeController.removeAllCellRanges();
+    };
+    GridApi.prototype.chartRange = function (params) {
+        if (!this.context.isModuleRegistered("chartsModule" /* ChartsModule */)) {
+            utils_1._.doOnce(function () {
+                console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
+            }, 'ChartsModuleCheck');
+            return;
+        }
+        return this.rangeChartService.chartCellRange(params);
     };
     GridApi.prototype.copySelectedRowsToClipboard = function (includeHeader, columnKeys) {
         if (!this.clipboardService) {
@@ -756,11 +771,13 @@ var GridApi = /** @class */ (function () {
         this.clipboardService.copyRangeDown();
     };
     GridApi.prototype.showColumnMenuAfterButtonClick = function (colKey, buttonElement) {
-        var column = this.columnController.getPrimaryColumn(colKey);
+        // use grid column so works with pivot mode
+        var column = this.columnController.getGridColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     };
     GridApi.prototype.showColumnMenuAfterMouseClick = function (colKey, mouseEvent) {
-        var column = this.columnController.getPrimaryColumn(colKey);
+        // use grid column so works with pivot mode
+        var column = this.columnController.getGridColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     };
     GridApi.prototype.hidePopupMenu = function () {
@@ -801,17 +818,16 @@ var GridApi = /** @class */ (function () {
             console.warn("ag-Grid: no column found for " + params.colKey);
             return;
         }
-        var gridCellDef = {
+        var cellPosition = {
             rowIndex: params.rowIndex,
-            floating: params.rowPinned,
+            rowPinned: params.rowPinned,
             column: column
         };
-        var gridCell = new gridCell_1.GridCell(gridCellDef);
         var notPinned = utils_1._.missing(params.rowPinned);
         if (notPinned) {
             this.gridPanel.ensureIndexVisible(params.rowIndex);
         }
-        this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
+        this.rowRenderer.startEditingCell(cellPosition, params.keyPress, params.charPress);
     };
     GridApi.prototype.addAggFunc = function (key, aggFunc) {
         if (this.aggFuncService) {
@@ -839,8 +855,7 @@ var GridApi = /** @class */ (function () {
         else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
         }
-        // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
-        // to the data change event on the row node and refreshed itself.
+        // refresh all the full width rows
         this.rowRenderer.refreshFullWidthRows();
         // do change detection for all present cells
         if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
@@ -1131,6 +1146,10 @@ var GridApi = /** @class */ (function () {
         context_1.Optional('statusBarService'),
         __metadata("design:type", Object)
     ], GridApi.prototype, "statusBarService", void 0);
+    __decorate([
+        context_1.Optional('rangeChartService'),
+        __metadata("design:type", Object)
+    ], GridApi.prototype, "rangeChartService", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

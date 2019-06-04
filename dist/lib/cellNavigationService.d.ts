@@ -1,25 +1,25 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridRow } from "./entities/gridRow";
-import { GridCell } from "./entities/gridCell";
+import { CellPosition } from "./entities/cellPosition";
+import { RowPosition } from "./entities/rowPosition";
 export declare class CellNavigationService {
     private columnController;
     private rowModel;
     private pinnedRowModel;
     private gridOptionsWrapper;
-    getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell | null;
+    getNextCellToFocus(key: any, lastCellToFocus: CellPosition): CellPosition | null;
     private isCellGoodToFocusOn;
     private getCellToLeft;
     private getCellToRight;
-    getRowBelow(lastRow: GridRow): GridRow | null;
+    getRowBelow(rowPosition: RowPosition): RowPosition | null;
     private getCellBelow;
     private isLastRowInContainer;
-    private getRowAbove;
+    getRowAbove(rowIndex: number, pinned: string): RowPosition | null;
     private getCellAbove;
     private getLastBodyCell;
     private getLastFloatingTopRow;
-    getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell | null;
-    getNextTabbedCellForwards(gridCell: GridCell): GridCell | null;
-    getNextTabbedCellBackwards(gridCell: GridCell): GridCell | null;
+    getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null;
+    getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null;
+    getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null;
 }

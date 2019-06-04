@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -365,7 +365,7 @@ var ClientSideRowModel = /** @class */ (function () {
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        var lastNode = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+        var lastNode = utils_1._.last(this.rowsToDisplay);
         if (lastNode.rowTop <= pixelToMatch) {
             return this.rowsToDisplay.length - 1;
         }
@@ -391,7 +391,7 @@ var ClientSideRowModel = /** @class */ (function () {
     };
     ClientSideRowModel.prototype.getCurrentPageHeight = function () {
         if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            var lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+            var lastRow = utils_1._.last(this.rowsToDisplay);
             var lastPixel = lastRow.rowTop + lastRow.rowHeight;
             return lastPixel;
         }
@@ -613,7 +613,7 @@ var ClientSideRowModel = /** @class */ (function () {
                 var rowNodeTran = _this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
                 rowNodeTrans.push(rowNodeTran);
                 if (tranItem.callback) {
-                    callbackFuncsBound.push(tranItem.callback.bind(rowNodeTran));
+                    callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
                 }
             });
         }

@@ -1,8 +1,8 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../interfaces/iComponent";
-import { IDateFilterParams } from "../filter/dateFilter";
+import { IDateFilterParams } from "../filter/provided/date/dateFilter";
 export interface IDate {
     /** Returns the current date represented by this editor */
     getDate(): Date;

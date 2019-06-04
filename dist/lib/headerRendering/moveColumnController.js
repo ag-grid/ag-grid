@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -71,14 +71,14 @@ var MoveColumnController = /** @class */ (function () {
     MoveColumnController.prototype.setColumnsVisible = function (columns, visible, source) {
         if (source === void 0) { source = "api"; }
         if (columns) {
-            var allowedCols = columns.filter(function (c) { return !c.isLockVisible(); });
+            var allowedCols = columns.filter(function (c) { return !c.getColDef().lockVisible; });
             this.columnController.setColumnsVisible(allowedCols, visible, source);
         }
     };
     MoveColumnController.prototype.setColumnsPinned = function (columns, pinned, source) {
         if (source === void 0) { source = "api"; }
         if (columns) {
-            var allowedCols = columns.filter(function (c) { return !c.isLockPinned(); });
+            var allowedCols = columns.filter(function (c) { return !c.getColDef().lockPinned; });
             this.columnController.setColumnsPinned(allowedCols, pinned, source);
         }
     };
@@ -140,7 +140,7 @@ var MoveColumnController = /** @class */ (function () {
         var dragSourceType = draggingEvent.dragSource.type;
         var columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
         columnsToMove = columnsToMove.filter(function (col) {
-            if (col.isLockPinned()) {
+            if (col.getColDef().lockPinned) {
                 // if locked return true only if both col and container are same pin type.
                 // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
                 return col.getPinned() == _this.pinned;
@@ -172,7 +172,7 @@ var MoveColumnController = /** @class */ (function () {
         movingCols.forEach(function (col) { return indexes.push(gridCols.indexOf(col)); });
         utils_1._.sortNumberArray(indexes);
         var firstIndex = indexes[0];
-        var lastIndex = indexes[indexes.length - 1];
+        var lastIndex = utils_1._.last(indexes);
         var spread = lastIndex - firstIndex;
         var gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
@@ -327,7 +327,7 @@ var MoveColumnController = /** @class */ (function () {
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
             var columns = this.lastDraggingEvent.dragItem.columns;
-            var columnsThatCanPin = columns.filter(function (c) { return !c.isLockPinned(); });
+            var columnsThatCanPin = columns.filter(function (c) { return !c.getColDef().lockPinned; });
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_PINNED);
                 if (this.failedMoveAttempts > 7) {

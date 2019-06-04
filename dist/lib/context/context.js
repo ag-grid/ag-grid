@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,12 +10,14 @@ var utils_1 = require("../utils");
 var Context = /** @class */ (function () {
     function Context(params, logger) {
         this.beanWrappers = {};
+        this.registeredModules = [];
         this.componentsMappedByName = {};
         this.destroyed = false;
         if (!params || !params.beans) {
             return;
         }
         this.contextParams = params;
+        this.registeredModules = params.registeredModules;
         this.logger = logger;
         this.logger.log(">> creating ag-Application Context");
         this.setupComponents();
@@ -51,9 +53,7 @@ var Context = /** @class */ (function () {
             this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
         }
-        else {
-            return null;
-        }
+        return null;
     };
     // public createBean(BeanClass: new () => any): Component {
     //     const beanInstance = new BeanClass();
@@ -227,6 +227,9 @@ var Context = /** @class */ (function () {
         this.contextParams.seed = null;
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
+    };
+    Context.prototype.isModuleRegistered = function (moduleName) {
+        return this.registeredModules.indexOf(moduleName) !== -1;
     };
     return Context;
 }());

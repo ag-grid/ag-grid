@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -206,7 +206,8 @@ var RowComp = /** @class */ (function (_super) {
         }
         var newChildScope = this.parentScope.$new();
         newChildScope.data = __assign({}, data);
-        newChildScope.rowNode = this.rowNode;
+        console.log(newChildScope.data, newChildScope.data === data, this.beans.doingMasterDetail && this.rowNode.detail);
+        // newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
         this.addDestroyFunc(function () {
             newChildScope.$destroy();
@@ -220,7 +221,13 @@ var RowComp = /** @class */ (function (_super) {
         var isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         var isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
         var isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
-        var isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
+        var pivotMode = this.beans.columnController.isPivotMode();
+        // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
+        // for totals. if users complain about this, then we should introduce a new property 'footerUseEntireRow'
+        // so each can be set independently (as a customer complained about footers getting full width, hence
+        // introducing this logic)
+        var isGroupRow = this.rowNode.group && !this.rowNode.footer;
+        var isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
         if (this.rowNode.stub) {
             this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME);
         }
@@ -230,7 +237,7 @@ var RowComp = /** @class */ (function (_super) {
         else if (isFullWidthCell) {
             this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null);
         }
-        else if (isGroupSpanningRow) {
+        else if (isFullWidthGroup) {
             this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME);
         }
         else {
@@ -311,6 +318,29 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.isFullWidth = function () {
         return this.fullWidthRow;
     };
+    RowComp.prototype.refreshFullWidth = function () {
+        var _this = this;
+        // returns 'true' if refresh succeeded
+        var tryRefresh = function (eRow, eCellComp, pinned) {
+            if (!eRow || !eCellComp) {
+                // no refresh needed
+                return true;
+            }
+            if (!eCellComp.refresh) {
+                // no refresh method present, so can't refresh, hard refresh needed
+                return false;
+            }
+            var params = _this.createFullWidthParams(eRow, pinned);
+            var refreshSucceeded = eCellComp.refresh(params);
+            return refreshSucceeded;
+        };
+        var normalSuccess = tryRefresh(this.eFullWidthRow, this.fullWidthRowComponent, null);
+        var bodySuccess = tryRefresh(this.eFullWidthRowBody, this.fullWidthRowComponentBody, null);
+        var leftSuccess = tryRefresh(this.eFullWidthRowLeft, this.fullWidthRowComponentLeft, column_1.Column.PINNED_LEFT);
+        var rightSuccess = tryRefresh(this.eFullWidthRowRight, this.fullWidthRowComponentRight, column_1.Column.PINNED_RIGHT);
+        var allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
+        return allFullWidthRowsRefreshed;
+    };
     RowComp.prototype.addListeners = function () {
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
@@ -329,6 +359,16 @@ var RowComp = /** @class */ (function (_super) {
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addListenersForCellComps();
+    };
+    RowComp.prototype.addListenersForCellComps = function () {
+        var _this = this;
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, function () {
+            _this.forEachCellComp(function (cellComp) { return cellComp.onRowIndexChanged(); });
+        });
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, function (event) {
+            _this.forEachCellComp(function (cellComp) { return cellComp.onCellChanged(event); });
+        });
     };
     // when grid columns change, then all cells should be cleaned out,
     // as the new columns could have same id as the previous columns and may conflict
@@ -502,7 +542,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         // we want to try and keep editing and focused cells
         var editing = renderedCell.isEditing();
-        var focused = this.beans.focusedCellController.isCellFocused(renderedCell.getGridCell());
+        var focused = this.beans.focusedCellController.isCellFocused(renderedCell.getCellPosition());
         var mightWantToKeepCell = editing || focused;
         if (mightWantToKeepCell) {
             var column = renderedCell.getColumn();
@@ -689,10 +729,7 @@ var RowComp = /** @class */ (function (_super) {
             res.then(callback);
             _this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
-            var isDetailRow = _this.beans.doingMasterDetail && _this.rowNode.detail;
-            if (!isDetailRow) {
-                _this.angular1Compile(eRow);
-            }
+            _this.angular1Compile(eRow);
         });
     };
     RowComp.prototype.angular1Compile = function (element) {
@@ -816,6 +853,7 @@ var RowComp = /** @class */ (function (_super) {
             node: this.rowNode,
             rowIndex: this.rowNode.rowIndex,
             api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             $scope: this.scope,
             context: this.beans.gridOptionsWrapper.getContext()
         }, onApplicableClass, onNotApplicableClass);
@@ -1056,6 +1094,9 @@ var RowComp = /** @class */ (function (_super) {
         var maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
         return Math.min(Math.max(minPixel, rowTop), maxPixel);
     };
+    RowComp.prototype.getFrameworkOverrides = function () {
+        return this.beans.frameworkOverrides;
+    };
     RowComp.prototype.onRowHeightChanged = function () {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
@@ -1183,7 +1224,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         var spanList = Object.keys(this.cellComps)
             .map(function (name) { return _this.cellComps[name]; })
-            .filter(function (cmp) { return cmp.getColSpanningList().indexOf(column) !== -1; });
+            .filter(function (cmp) { return cmp && cmp.getColSpanningList().indexOf(column) !== -1; });
         return spanList.length ? spanList[0] : undefined;
     };
     RowComp.prototype.onRowIndexChanged = function () {

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -170,6 +170,10 @@ var Beans = /** @class */ (function () {
         context_1.Autowired('tooltipManager'),
         __metadata("design:type", tooltipManager_1.TooltipManager)
     ], Beans.prototype, "tooltipManager", void 0);
+    __decorate([
+        context_1.Autowired('frameworkOverrides'),
+        __metadata("design:type", Object)
+    ], Beans.prototype, "frameworkOverrides", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,6 +49,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
     /** Range selection has changed */
     Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
+    /** Chart Range selection has changed */
+    Events.EVENT_CHART_RANGE_SELECTION_CHANGED = 'chartRangeSelectionChanged';
     /** For when the tool panel is shown / hidden */
     Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
     /** Model was updated - grid updates the drawn rows when this happens */

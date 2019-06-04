@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
@@ -11,7 +11,6 @@ export declare class DragService {
     private gridApi;
     private currentDragParams;
     private dragging;
-    private mouseEventLastTime;
     private mouseStartEvent;
     private touchLastTime;
     private touchStart;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,9 +18,20 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var utils_1 = require("../../utils");
+var filterManager_1 = require("../../filter/filterManager");
+var context_1 = require("../../context/context");
 var ARROW_UP = '\u2191';
 var ARROW_DOWN = '\u2193';
 var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
@@ -84,6 +95,11 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
         else {
             utils_1._.clearElement(this.eValue);
         }
+        // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
+        // with regards processingFilterChange
+        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
+            return;
+        }
         if (typeof value === 'number' && typeof this.lastValue === 'number') {
             var delta = value - this.lastValue;
             this.showDelta(params, delta);
@@ -101,6 +117,10 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
         '<span class="ag-value-change-delta"></span>' +
         '<span class="ag-value-change-value"></span>' +
         '</span>';
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], AnimateShowChangeCellRenderer.prototype, "filterManager", void 0);
     return AnimateShowChangeCellRenderer;
 }(component_1.Component));
 exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;

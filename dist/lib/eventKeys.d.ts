@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -42,6 +42,8 @@ export declare class Events {
     static EVENT_PINNED_ROW_DATA_CHANGED: string;
     /** Range selection has changed */
     static EVENT_RANGE_SELECTION_CHANGED: string;
+    /** Chart Range selection has changed */
+    static EVENT_CHART_RANGE_SELECTION_CHANGED: string;
     /** For when the tool panel is shown / hidden */
     static EVENT_TOOL_PANEL_VISIBLE_CHANGED: string;
     /** Model was updated - grid updates the drawn rows when this happens */

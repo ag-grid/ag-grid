@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -39,9 +39,11 @@ export declare class ClientSideNodeManager {
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {
         [id: string]: number;
     } | null | undefined): RowNodeTransaction | null;
+    private executeAdd;
+    private executeRemove;
+    private executeUpdate;
     private addRowNode;
     private lookupRowNode;
-    private updatedRowNode;
     private recursiveFunction;
     private createNode;
     private isExpanded;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -8,8 +8,8 @@ import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { GridCore } from "./gridCore";
 import { IRowModel } from "./interfaces/iRowModel";
-import { AddRangeSelectionParams, RangeSelection } from "./interfaces/iRangeController";
-import { GridCell, GridCellDef } from "./entities/gridCell";
+import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
+import { CellPosition } from "./entities/cellPosition";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exporter/exportParams";
@@ -24,6 +24,8 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
+import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
+import { ChartOptions } from "./interfaces/iChartOptions";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -46,6 +48,14 @@ export interface GetCellEditorInstancesParams extends GetCellsParams {
 }
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
+}
+export interface ChartRangeParams {
+    cellRange: CellRangeParams;
+    chartType: string;
+    chartContainer?: HTMLElement;
+    suppressChartRanges?: boolean;
+    aggregate?: boolean;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 export interface DetailGridInfo {
     id: string;
@@ -80,6 +90,7 @@ export declare class GridApi {
     private sideBarComp;
     private animationFrameService;
     private statusBarService;
+    private rangeChartService;
     private gridPanel;
     private gridCore;
     private headerRootComp;
@@ -211,7 +222,7 @@ export declare class GridApi {
     }[];
     setFilterModel(model: any): void;
     getFilterModel(): any;
-    getFocusedCell(): GridCell;
+    getFocusedCell(): CellPosition;
     clearFocusedCell(): void;
     setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string): void;
     setSuppressRowDrag(value: boolean): void;
@@ -246,10 +257,13 @@ export declare class GridApi {
     dispatchEvent(event: AgEvent): void;
     destroy(): void;
     resetQuickFilter(): void;
-    getRangeSelections(): RangeSelection[];
+    getRangeSelections(): any;
+    getCellRanges(): CellRange[];
     camelCaseToHumanReadable(camelCase: string): string;
-    addRangeSelection(rangeSelection: AddRangeSelectionParams): void;
+    addRangeSelection(deprecatedNoLongerUsed: any): void;
+    addCellRange(params: CellRangeParams): void;
     clearRangeSelection(): void;
+    chartRange(params: ChartRangeParams): ChartRef | undefined;
     copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void;
     copySelectedRangeToClipboard(includeHeader: boolean): void;
     copySelectedRangeDown(): void;
@@ -261,7 +275,7 @@ export declare class GridApi {
     tabToPreviousCell(): boolean;
     getCellRendererInstances(params?: GetCellRendererInstancesParams): ICellRendererComp[];
     getCellEditorInstances(params?: GetCellEditorInstancesParams): ICellEditorComp[];
-    getEditingCells(): GridCellDef[];
+    getEditingCells(): CellPosition[];
     stopEditing(cancel?: boolean): void;
     startEditingCell(params: StartEditingCellParams): void;
     addAggFunc(key: string, aggFunc: IAggFunc): void;

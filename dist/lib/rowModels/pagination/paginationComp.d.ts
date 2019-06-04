@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -7,6 +7,7 @@ export declare class PaginationComp extends Component {
     private eventService;
     private paginationProxy;
     private rowRenderer;
+    private rowModel;
     private btFirst;
     private btPrevious;
     private btNext;
@@ -17,6 +18,7 @@ export declare class PaginationComp extends Component {
     private eSummaryPanel;
     private lbCurrent;
     private lbTotal;
+    private serverSideRowModel;
     constructor();
     private postConstruct;
     private onPaginationChanged;

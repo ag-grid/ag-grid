@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -29,6 +29,7 @@ import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { TooltipManager } from "../widgets/tooltipManager";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
@@ -64,6 +65,7 @@ export declare class Beans {
     filterManager: FilterManager;
     maxDivHeightScaler: MaxDivHeightScaler;
     tooltipManager: TooltipManager;
+    frameworkOverrides: IFrameworkOverrides;
     doingMasterDetail: boolean;
     gridPanel: GridPanel;
     registerGridComp(gridPanel: GridPanel): void;

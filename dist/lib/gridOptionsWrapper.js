@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = require("./utils");
 var eventService_1 = require("./eventService");
 var constants_1 = require("./constants");
 var componentUtil_1 = require("./components/componentUtil");
@@ -31,7 +32,6 @@ var colDefUtil_1 = require("./components/colDefUtil");
 var eventKeys_1 = require("./eventKeys");
 var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var sideBar_1 = require("./entities/sideBar");
-var utils_1 = require("./utils");
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -372,6 +372,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.rowClassRules = function () {
         return this.gridOptions.rowClassRules;
     };
+    GridOptionsWrapper.prototype.getCreateChartContainerFunc = function () {
+        return this.gridOptions.createChartContainer;
+    };
     GridOptionsWrapper.prototype.getPopupParent = function () {
         return this.gridOptions.popupParent;
     };
@@ -424,7 +427,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         return isTrue(this.gridOptions.ensureDomOrder);
     };
     GridOptionsWrapper.prototype.isEnableCharts = function () {
-        return isTrue(this.gridOptions.enableCharts);
+        if (isTrue((this.gridOptions.enableCharts))) {
+            if (!this.context.isModuleRegistered("chartsModule" /* ChartsModule */)) {
+                utils_1._.doOnce(function () {
+                    console.warn('ag-grid: Charts is enabled but the Charts Module has not been included.');
+                }, 'ChartsModuleCheck');
+                return false;
+            }
+            return true;
+        }
+        return false;
     };
     GridOptionsWrapper.prototype.getColResizeDefault = function () {
         return this.gridOptions.colResizeDefault;
@@ -468,8 +480,10 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getRowData = function () {
         return this.gridOptions.rowData;
     };
-    GridOptionsWrapper.prototype.isGroupUseEntireRow = function () {
-        return isTrue(this.gridOptions.groupUseEntireRow);
+    // this property is different - we never allow groupUseEntireRow if in pivot mode,
+    // as otherwise we don't see the pivot values.
+    GridOptionsWrapper.prototype.isGroupUseEntireRow = function (pivotMode) {
+        return pivotMode ? false : isTrue(this.gridOptions.groupUseEntireRow);
     };
     GridOptionsWrapper.prototype.isEnableRtl = function () {
         return isTrue(this.gridOptions.enableRtl);
@@ -581,7 +595,13 @@ var GridOptionsWrapper = /** @class */ (function () {
         return isTrue(this.gridOptions.suppressAggAtRootLevel);
     };
     GridOptionsWrapper.prototype.isEnableRangeSelection = function () {
-        return isTrue(this.gridOptions.enableRangeSelection);
+        return this.enterprise && isTrue(this.gridOptions.enableRangeSelection);
+    };
+    GridOptionsWrapper.prototype.isEnableRangeHandle = function () {
+        return isTrue(this.gridOptions.enableRangeHandle);
+    };
+    GridOptionsWrapper.prototype.isEnableFillHandle = function () {
+        return isTrue(this.gridOptions.enableFillHandle);
     };
     GridOptionsWrapper.prototype.isSuppressMultiRangeSelection = function () {
         return isTrue(this.gridOptions.suppressMultiRangeSelection);
@@ -662,6 +682,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressCsvExport = function () {
         return isTrue(this.gridOptions.suppressCsvExport);
     };
+    GridOptionsWrapper.prototype.isAllowShowChangeAfterFilter = function () {
+        return isTrue(this.gridOptions.allowShowChangeAfterFilter);
+    };
     GridOptionsWrapper.prototype.isSuppressExcelExport = function () {
         return isTrue(this.gridOptions.suppressExcelExport);
     };
@@ -688,6 +711,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.getMainMenuItemsFunc = function () {
         return this.gridOptions.getMainMenuItems;
+    };
+    GridOptionsWrapper.prototype.getChartToolbarItemsFunc = function () {
+        return this.gridOptions.getChartToolbarItems;
     };
     GridOptionsWrapper.prototype.getRowNodeIdFunc = function () {
         return this.gridOptions.getRowNodeId;
@@ -754,6 +780,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.getPostSortFunc = function () {
         return this.gridOptions.postSort;
+    };
+    GridOptionsWrapper.prototype.getProcessChartOptionsFunc = function () {
+        return this.gridOptions.processChartOptions;
     };
     GridOptionsWrapper.prototype.getClipboardDeliminator = function () {
         return utils_1._.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
@@ -876,33 +905,34 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
         return this.gridOptions.colWidth;
     };
-    GridOptionsWrapper.prototype.getRowBufferInPixels = function () {
-        var rowsToBuffer;
-        if (typeof this.gridOptions.rowBuffer === 'number') {
-            if (this.gridOptions.rowBuffer < 0) {
+    GridOptionsWrapper.prototype.getRowBuffer = function () {
+        var rowBuffer = this.gridOptions.rowBuffer;
+        if (typeof rowBuffer === 'number') {
+            if (rowBuffer < 0) {
                 utils_1._.doOnce(function () { return console.warn("ag-Grid: rowBuffer should not be negative"); }, 'warn rowBuffer negative');
-                rowsToBuffer = 0;
-            }
-            else {
-                rowsToBuffer = this.gridOptions.rowBuffer;
+                this.gridOptions.rowBuffer = rowBuffer = 0;
             }
         }
         else {
-            rowsToBuffer = constants_1.Constants.ROW_BUFFER_SIZE;
+            rowBuffer = constants_1.Constants.ROW_BUFFER_SIZE;
         }
+        return rowBuffer;
+    };
+    GridOptionsWrapper.prototype.getRowBufferInPixels = function () {
+        var rowsToBuffer = this.getRowBuffer();
         var defaultRowHeight = this.getRowHeightAsNumber();
-        var res = rowsToBuffer * defaultRowHeight;
-        return res;
+        return rowsToBuffer * defaultRowHeight;
     };
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     GridOptionsWrapper.prototype.getScrollbarWidth = function () {
-        var scrollbarWidth = this.gridOptions.scrollbarWidth;
-        if (typeof scrollbarWidth !== 'number' || scrollbarWidth < 0) {
-            scrollbarWidth = utils_1._.getScrollbarWidth();
+        if (this.scrollWidth == null) {
+            var useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' &&
+                this.gridOptions.scrollbarWidth >= 0;
+            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : utils_1._.getScrollbarWidth();
         }
-        return scrollbarWidth;
+        return this.scrollWidth;
     };
     GridOptionsWrapper.prototype.checkForDeprecated = function () {
         var _this = this;
@@ -1257,10 +1287,6 @@ var GridOptionsWrapper = /** @class */ (function () {
         __metadata("design:type", Boolean)
     ], GridOptionsWrapper.prototype, "enterprise", void 0);
     __decorate([
-        context_1.Autowired('frameworkFactory'),
-        __metadata("design:type", Object)
-    ], GridOptionsWrapper.prototype, "frameworkFactory", void 0);
-    __decorate([
         context_1.Autowired('gridApi'),
         __metadata("design:type", gridApi_1.GridApi)
     ], GridOptionsWrapper.prototype, "gridApi", void 0);
@@ -1276,6 +1302,10 @@ var GridOptionsWrapper = /** @class */ (function () {
         context_1.Autowired('autoHeightCalculator'),
         __metadata("design:type", autoHeightCalculator_1.AutoHeightCalculator)
     ], GridOptionsWrapper.prototype, "autoHeightCalculator", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], GridOptionsWrapper.prototype, "context", void 0);
     __decorate([
         __param(0, context_1.Qualifier('gridApi')), __param(1, context_1.Qualifier('columnApi')),
         __metadata("design:type", Function),

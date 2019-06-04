@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,11 +21,15 @@ var utils_1 = require("../utils");
 var ResizeObserverService = /** @class */ (function () {
     function ResizeObserverService() {
     }
-    ResizeObserverService.prototype.observeResize = function (element, callback) {
+    ResizeObserverService.prototype.observeResize = function (element, callback, debounceDelay) {
+        if (debounceDelay === void 0) { debounceDelay = 50; }
         // put in variable, so available to usePolyfill() function below
-        var frameworkFactory = this.frameworkFactory;
+        var frameworkFactory = this.frameworkOverrides;
+        // this gets fired too often and might cause some relayout issues
+        // so we add a debounce to the callback here to avoid the flashing effect.
+        var debouncedCallback = utils_1._.debounce(callback, debounceDelay);
         var useBrowserResizeObserver = function () {
-            var resizeObserver = new window.ResizeObserver(callback);
+            var resizeObserver = new window.ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
             return function () { return resizeObserver.disconnect(); };
         };
@@ -45,7 +49,7 @@ var ResizeObserverService = /** @class */ (function () {
                         heightLastTime = newHeight;
                         callback();
                     }
-                    frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, 500);
+                    frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, debounceDelay);
                 }
             };
             periodicallyCheckWidthAndHeight();
@@ -66,9 +70,9 @@ var ResizeObserverService = /** @class */ (function () {
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], ResizeObserverService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_1.Autowired('frameworkFactory'),
+        context_1.Autowired('frameworkOverrides'),
         __metadata("design:type", Object)
-    ], ResizeObserverService.prototype, "frameworkFactory", void 0);
+    ], ResizeObserverService.prototype, "frameworkOverrides", void 0);
     ResizeObserverService = __decorate([
         context_1.Bean('resizeObserverService')
     ], ResizeObserverService);

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,7 +45,8 @@ var clientSideRowModel_1 = require("./rowModels/clientSide/clientSideRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
 var agCheckbox_1 = require("./widgets/agCheckbox");
-var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
+var agRadioButton_1 = require("./widgets/agRadioButton");
+var vanillaFrameworkOverrides_1 = require("./vanillaFrameworkOverrides");
 var scrollVisibleService_1 = require("./gridPanel/scrollVisibleService");
 var downloader_1 = require("./exporter/downloader");
 var xmlFactory_1 = require("./exporter/xmlFactory");
@@ -90,14 +91,19 @@ var Grid = /** @class */ (function () {
         }
         this.gridOptions = gridOptions;
         var rowModelClass = this.getRowModelClass(gridOptions);
-        var enterprise = utils_1._.exists(Grid.enterpriseBeans);
-        var frameworkFactory = params ? params.frameworkFactory : null;
-        if (utils_1._.missing(frameworkFactory)) {
-            frameworkFactory = new baseFrameworkFactory_1.BaseFrameworkFactory();
+        var enterprise = !utils_1._.missingOrEmpty(Grid.enterpriseBeans);
+        var moduleBeans = this.extractModuleEntity(Grid.modulesToInclude, function (module) { return module.beans ? module.beans : []; });
+        var moduleEnterpriseBeans = this.extractModuleEntity(Grid.modulesToInclude, function (module) { return module.enterpriseBeans ? module.enterpriseBeans : []; });
+        var moduleEnterpriseComponents = this.extractModuleEntity(Grid.modulesToInclude, function (module) { return module.enterpriseComponents ? module.enterpriseComponents : []; });
+        var modulesEnterpriseDefaultComponents = this.extractModuleEntity(Grid.modulesToInclude, function (module) { return module.enterpriseDefaultComponents ? module.enterpriseDefaultComponents : []; });
+        var frameworkOverrides = params ? params.frameworkOverrides : null;
+        if (utils_1._.missing(frameworkOverrides)) {
+            frameworkOverrides = new vanillaFrameworkOverrides_1.VanillaFrameworkOverrides();
         }
         var overrideBeans = [];
         if (Grid.enterpriseBeans) {
-            overrideBeans = overrideBeans.concat(Grid.enterpriseBeans);
+            overrideBeans = overrideBeans.concat(Grid.enterpriseBeans)
+                .concat(moduleEnterpriseBeans);
         }
         if (Grid.frameworkBeans) {
             overrideBeans = overrideBeans.concat(Grid.frameworkBeans);
@@ -110,20 +116,22 @@ var Grid = /** @class */ (function () {
             $compile: params ? params.$compile : null,
             quickFilterOnScope: params ? params.quickFilterOnScope : null,
             globalEventListener: params ? params.globalEventListener : null,
-            frameworkFactory: frameworkFactory
+            frameworkOverrides: frameworkOverrides
         };
         if (params && params.seedBeanInstances) {
             utils_1._.assign(seed, params.seedBeanInstances);
         }
         var components = [
             { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox },
+            { componentName: 'AgRadioButton', theClass: agRadioButton_1.AgRadioButton },
             { componentName: 'AgGridComp', theClass: gridPanel_1.GridPanel },
             { componentName: 'AgHeaderRoot', theClass: headerRootComp_1.HeaderRootComp },
             { componentName: 'AgPagination', theClass: paginationComp_1.PaginationComp },
             { componentName: 'AgOverlayWrapper', theClass: overlayWrapperComponent_1.OverlayWrapperComponent }
         ];
         if (Grid.enterpriseComponents) {
-            components = components.concat(Grid.enterpriseComponents);
+            components = components.concat(Grid.enterpriseComponents)
+                .concat(moduleEnterpriseComponents);
         }
         var contextParams = {
             overrideBeans: overrideBeans,
@@ -143,9 +151,10 @@ var Grid = /** @class */ (function () {
                 valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController,
                 columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService,
                 immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService, tooltipManager_1.TooltipManager, zipContainer_1.ZipContainer
-            ],
+            ].concat(moduleBeans),
             components: components,
-            enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
+            enterpriseDefaultComponents: Grid.enterpriseDefaultComponents.concat(modulesEnterpriseDefaultComponents),
+            registeredModules: Grid.modulesToInclude.map(function (module) { return module.moduleName; }),
             debug: !!gridOptions.debug
         };
         this.logger = new logger_1.Logger('ag-Grid', function () { return gridOptions.debug; });
@@ -158,18 +167,26 @@ var Grid = /** @class */ (function () {
         this.logger.log("initialised successfully, enterprise = " + enterprise);
     }
     Grid.setEnterpriseBeans = function (enterpriseBeans, rowModelClasses) {
-        this.enterpriseBeans = enterpriseBeans;
+        Grid.enterpriseBeans = enterpriseBeans;
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
         utils_1._.iterateObject(rowModelClasses, function (key, value) { return Grid.RowModelClasses[key] = value; });
     };
     Grid.setEnterpriseComponents = function (components) {
-        this.enterpriseComponents = components;
+        Grid.enterpriseComponents = components;
     };
     Grid.setFrameworkBeans = function (frameworkBeans) {
-        this.frameworkBeans = frameworkBeans;
+        Grid.frameworkBeans = frameworkBeans;
     };
     Grid.setEnterpriseDefaultComponents = function (enterpriseDefaultComponents) {
-        this.enterpriseDefaultComponents = enterpriseDefaultComponents;
+        Grid.enterpriseDefaultComponents = enterpriseDefaultComponents;
+    };
+    Grid.addModule = function (modulesToInclude) {
+        var _a;
+        // de-duping would need to be done here (while ensuring order etc)
+        (_a = Grid.modulesToInclude).push.apply(_a, modulesToInclude);
+    };
+    Grid.prototype.extractModuleEntity = function (moduleEntities, extractor) {
+        return [].concat.apply([], moduleEntities.map(extractor));
     };
     Grid.prototype.setColumnsAndData = function () {
         var gridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
@@ -226,6 +243,10 @@ var Grid = /** @class */ (function () {
     Grid.prototype.destroy = function () {
         this.gridOptions.api.destroy();
     };
+    Grid.enterpriseBeans = [];
+    Grid.enterpriseComponents = [];
+    Grid.enterpriseDefaultComponents = [];
+    Grid.modulesToInclude = [];
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     Grid.RowModelClasses = {

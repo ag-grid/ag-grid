@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,12 +36,15 @@ var HoverFeature = /** @class */ (function (_super) {
     function HoverFeature(columns, element) {
         var _this = _super.call(this) || this;
         _this.columns = columns;
-        _this.addMouseHoverListeners(element);
+        _this.element = element;
         return _this;
     }
-    HoverFeature.prototype.addMouseHoverListeners = function (element) {
-        this.addDestroyableEventListener(element, 'mouseout', this.onMouseOut.bind(this));
-        this.addDestroyableEventListener(element, 'mouseover', this.onMouseOver.bind(this));
+    HoverFeature.prototype.postConstruct = function () {
+        this.addMouseHoverListeners();
+    };
+    HoverFeature.prototype.addMouseHoverListeners = function () {
+        this.addDestroyableEventListener(this.element, 'mouseout', this.onMouseOut.bind(this));
+        this.addDestroyableEventListener(this.element, 'mouseover', this.onMouseOver.bind(this));
     };
     HoverFeature.prototype.onMouseOut = function () {
         this.columnHoverService.clearMouseOver();
@@ -53,6 +56,12 @@ var HoverFeature = /** @class */ (function (_super) {
         context_1.Autowired('columnHoverService'),
         __metadata("design:type", columnHoverService_1.ColumnHoverService)
     ], HoverFeature.prototype, "columnHoverService", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], HoverFeature.prototype, "postConstruct", null);
     return HoverFeature;
 }(beanStub_1.BeanStub));
 exports.HoverFeature = HoverFeature;

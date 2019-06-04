@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,9 @@ var ClientSideNodeManager = /** @class */ (function () {
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
         this.doingLegacyTreeData = utils_1._.exists(this.getNodeChildDetails);
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        if (this.getNodeChildDetails) {
+            console.warn("ag-Grid: the callback nodeChildDetailsFunc() is now deprecated. The new way of doing\n                                    tree data in ag-Grid was introduced in v14 (released November 2017). In the next\n                                    major release of ag-Grid we will be dropping support for the old version of\n                                    tree data. If you are reading this message, please go to the docs to see how\n                                    to implement Tree Data without using nodeChildDetailsFunc().");
+        }
     };
     ClientSideNodeManager.prototype.getCopyOfNodesMap = function () {
         var result = utils_1._.cloneObject(this.allNodesMap);
@@ -75,7 +78,6 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
     };
     ClientSideNodeManager.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
-        var _this = this;
         if (this.isLegacyTreeData()) {
             return null;
         }
@@ -85,59 +87,88 @@ var ClientSideNodeManager = /** @class */ (function () {
             update: [],
             add: []
         };
-        if (utils_1._.exists(add)) {
-            var useIndex = typeof addIndex === 'number' && addIndex >= 0;
-            if (useIndex) {
-                // items get inserted in reverse order for index insertion
-                add.reverse().forEach(function (item) {
-                    var newRowNode = _this.addRowNode(item, addIndex);
-                    rowNodeTransaction.add.push(newRowNode);
-                });
-            }
-            else {
-                add.forEach(function (item) {
-                    var newRowNode = _this.addRowNode(item);
-                    rowNodeTransaction.add.push(newRowNode);
-                });
-            }
-        }
-        if (utils_1._.exists(remove)) {
-            var anyNodesSelected_1 = false;
-            remove.forEach(function (item) {
-                var rowNode = _this.lookupRowNode(item);
-                if (!rowNode) {
-                    return;
-                }
-                if (rowNode.isSelected()) {
-                    anyNodesSelected_1 = true;
-                }
-                _this.updatedRowNode(rowNode, item, false);
-                rowNodeTransaction.remove.push(rowNode);
-            });
-            if (anyNodesSelected_1) {
-                this.selectionController.updateGroupsFromChildrenSelections();
-                var event_1 = {
-                    type: events_1.Events.EVENT_SELECTION_CHANGED,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.eventService.dispatchEvent(event_1);
-            }
-        }
-        if (utils_1._.exists(update)) {
-            update.forEach(function (item) {
-                var rowNode = _this.lookupRowNode(item);
-                if (!rowNode) {
-                    return;
-                }
-                _this.updatedRowNode(rowNode, item, true);
-                rowNodeTransaction.update.push(rowNode);
-            });
-        }
+        this.executeAdd(rowDataTran, rowNodeTransaction);
+        this.executeRemove(rowDataTran, rowNodeTransaction);
+        this.executeUpdate(rowDataTran, rowNodeTransaction);
         if (rowNodeOrder) {
             utils_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
+    };
+    ClientSideNodeManager.prototype.executeAdd = function (rowDataTran, rowNodeTransaction) {
+        var _this = this;
+        var add = rowDataTran.add, addIndex = rowDataTran.addIndex;
+        if (!add) {
+            return;
+        }
+        var useIndex = typeof addIndex === 'number' && addIndex >= 0;
+        if (useIndex) {
+            // items get inserted in reverse order for index insertion
+            add.reverse().forEach(function (item) {
+                var newRowNode = _this.addRowNode(item, addIndex);
+                rowNodeTransaction.add.push(newRowNode);
+            });
+        }
+        else {
+            add.forEach(function (item) {
+                var newRowNode = _this.addRowNode(item);
+                rowNodeTransaction.add.push(newRowNode);
+            });
+        }
+    };
+    ClientSideNodeManager.prototype.executeRemove = function (rowDataTran, rowNodeTransaction) {
+        var _this = this;
+        var remove = rowDataTran.remove;
+        if (!remove) {
+            return;
+        }
+        var rowIdsRemoved = {};
+        var anyNodesSelected = false;
+        remove.forEach(function (item) {
+            var rowNode = _this.lookupRowNode(item);
+            if (!rowNode) {
+                return;
+            }
+            if (rowNode.isSelected()) {
+                anyNodesSelected = true;
+            }
+            // do delete - setting 'tailingNodeInSequence = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+            // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
+            rowNode.setSelected(false, false, true);
+            // so row renderer knows to fade row out (and not reposition it)
+            rowNode.clearRowTop();
+            // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
+            // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
+            rowIdsRemoved[rowNode.id] = true;
+            // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            delete _this.allNodesMap[rowNode.id];
+            rowNodeTransaction.remove.push(rowNode);
+        });
+        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(function (rowNode) { return !rowIdsRemoved[rowNode.id]; });
+        if (anyNodesSelected) {
+            this.selectionController.updateGroupsFromChildrenSelections();
+            var event_1 = {
+                type: events_1.Events.EVENT_SELECTION_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_1);
+        }
+    };
+    ClientSideNodeManager.prototype.executeUpdate = function (rowDataTran, rowNodeTransaction) {
+        var _this = this;
+        var update = rowDataTran.update;
+        if (!update) {
+            return;
+        }
+        update.forEach(function (item) {
+            var rowNode = _this.lookupRowNode(item);
+            if (!rowNode) {
+                return;
+            }
+            rowNode.updateData(item);
+            rowNodeTransaction.update.push(rowNode);
+        });
     };
     ClientSideNodeManager.prototype.addRowNode = function (data, index) {
         var newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
@@ -170,21 +201,6 @@ var ClientSideNodeManager = /** @class */ (function () {
             }
         }
         return rowNode;
-    };
-    ClientSideNodeManager.prototype.updatedRowNode = function (rowNode, data, update) {
-        if (update) {
-            // do update
-            rowNode.updateData(data);
-        }
-        else {
-            // do delete - setting 'tailingNodeInSequence = true' to ensure EVENT_SELECTION_CHANGED is not raised for
-            // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
-            rowNode.setSelected(false, false, true);
-            // so row renderer knows to fade row out (and not reposition it)
-            rowNode.clearRowTop();
-            utils_1._.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-            delete this.allNodesMap[rowNode.id];
-        }
     };
     ClientSideNodeManager.prototype.recursiveFunction = function (rowData, parent, level) {
         var _this = this;

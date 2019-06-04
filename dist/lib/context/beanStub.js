@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,6 +38,10 @@ var BeanStub = /** @class */ (function () {
     //         }
     //     }, 5000);
     // }
+    // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
+    BeanStub.prototype.getFrameworkOverrides = function () {
+        return this.frameworkOverrides;
+    };
     BeanStub.prototype.getContext = function () {
         return this.context;
     };
@@ -71,12 +75,13 @@ var BeanStub = /** @class */ (function () {
             this.localEventService.dispatchEvent(event);
         }
     };
-    BeanStub.prototype.addDestroyableEventListener = function (eElement, event, listener, options) {
+    BeanStub.prototype.addDestroyableEventListener = function (eElement, event, listener) {
+        var _this = this;
         if (this.destroyed) {
             return;
         }
         if (eElement instanceof HTMLElement) {
-            utils_1._.addSafePassiveEventListener(eElement, event, listener, options);
+            utils_1._.addSafePassiveEventListener(this.getFrameworkOverrides(), eElement, event, listener);
         }
         else if (eElement instanceof Window) {
             eElement.addEventListener(event, listener);
@@ -87,7 +92,7 @@ var BeanStub = /** @class */ (function () {
         else {
             eElement.addEventListener(event, listener);
         }
-        this.destroyFunctions.push(function () {
+        var destroyFunc = function () {
             if (eElement instanceof HTMLElement) {
                 eElement.removeEventListener(event, listener);
             }
@@ -100,7 +105,10 @@ var BeanStub = /** @class */ (function () {
             else {
                 eElement.removeEventListener(event, listener);
             }
-        });
+            _this.destroyFunctions = _this.destroyFunctions.filter(function (fn) { return fn !== destroyFunc; });
+        };
+        this.destroyFunctions.push(destroyFunc);
+        return destroyFunc;
     };
     BeanStub.prototype.isAlive = function () {
         return !this.destroyed;
@@ -119,6 +127,10 @@ var BeanStub = /** @class */ (function () {
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], BeanStub.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('frameworkOverrides'),
+        __metadata("design:type", Object)
+    ], BeanStub.prototype, "frameworkOverrides", void 0);
     __decorate([
         context_1.PreDestroy,
         __metadata("design:type", Function),

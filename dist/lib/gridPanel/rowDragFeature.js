@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,7 +69,7 @@ var RowDragFeature = /** @class */ (function () {
         if (rowWasMoved) {
             this.focusedCellController.clearFocusedCell();
             if (this.rangeController) {
-                this.rangeController.clearSelection();
+                this.rangeController.removeAllCellRanges();
             }
         }
     };

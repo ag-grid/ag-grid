@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -330,7 +330,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
         this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
         // expand / contract as the user hits enter
-        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this), { capture: true });
+        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
         // because we don't show the expand / contract when there are no children, we need to check every time
@@ -348,7 +348,11 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.setIndent();
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
-        if (!event.defaultPrevented && utils_1._.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
+        var enterKeyPressed = utils_1._.isKeyPressed(event, constants_1.Constants.KEY_ENTER);
+        if (enterKeyPressed) {
+            if (this.params.suppressEnterExpand) {
+                return;
+            }
             var cellEditable = this.params.column.isCellEditable(this.params.node);
             if (cellEditable) {
                 return;
@@ -370,9 +374,16 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         else {
             var rowGroupColumn = rowNode.rowGroupColumn;
-            // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
-            // then nothing was dragged down
-            this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+            if (rowGroupColumn) {
+                // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
+                // then nothing was dragged down
+                this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+            }
+            else {
+                // the only way we can end up here (no column, but a group) is if we are at the root node,
+                // which only happens when 'groupIncludeTotalFooter' is true. here, we are never dragging
+                this.draggedFromHideOpenParents = false;
+            }
         }
         if (this.draggedFromHideOpenParents) {
             var pointer = rowNode.parent;
@@ -444,6 +455,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
         var notExpandable = !displayedGroup.isExpandable();
         var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     };
     GroupCellRenderer.prototype.destroy = function () {
@@ -455,7 +467,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.prototype.refresh = function () {
         return false;
     };
-    GroupCellRenderer.TEMPLATE = '<span>' +
+    GroupCellRenderer.TEMPLATE = '<span class="ag-cell-wrapper">' +
         '<span class="ag-group-expanded" ref="eExpanded"></span>' +
         '<span class="ag-group-contracted" ref="eContracted"></span>' +
         '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +

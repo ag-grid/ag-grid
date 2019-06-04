@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,7 @@ var beanStub_1 = require("../context/beanStub");
 var context_1 = require("../context/context");
 var eventService_1 = require("../eventService");
 var eventKeys_1 = require("../eventKeys");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -49,7 +50,7 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
     }
     MaxDivHeightScaler.prototype.postConstruct = function () {
         this.addDestroyableEventListener(this.eventService, eventKeys_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.scrollBarWidth = utils_1._.getScrollbarWidth();
+        this.scrollBarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.maxDivHeight = utils_1._.getMaxDivHeight();
     };
     MaxDivHeightScaler.prototype.registerGridComp = function (gridPanel) {
@@ -128,6 +129,10 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], MaxDivHeightScaler.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], MaxDivHeightScaler.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),
