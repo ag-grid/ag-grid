@@ -57,8 +57,8 @@ interface PieChartOptions {
         itemPaddingX?: number;
         // The amount of vertical padding between legend items. Defaults to `8`.
         itemPaddingY?: number;
-        // The font to be used by the legend's labels. Defaults to `12px Verdana, sans-serif`.
-        // Should use the same format as the shorthand `font` property in CSS.
+        // The font to be used by the legend's labels, in the CSS `font` property format.
+        // Defaults to `12px Verdana, sans-serif`.
         labelFont?: string;
         // The color to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
