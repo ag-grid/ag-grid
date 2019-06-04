@@ -69,7 +69,7 @@ interface ChartRef {
         </li>
     </ul>
 
-    <?= example('Provided Container', 'provided-container', 'generated', array("enterprise" => true)) ?>
+    <?= example('Provided Container', 'provided-container', 'generated', array("exampleHeight" => 650, "enterprise" => true)) ?>
 
     <h2>Next Up</h2>
 
